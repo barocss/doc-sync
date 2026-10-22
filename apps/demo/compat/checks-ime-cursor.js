@@ -53,7 +53,7 @@ async page=>{
         const starts=final.probe.events.filter(e=>e.name===name&&e.type==='compositionstart').length;
         const ended=final.probe.events.some(e=>e.name===name&&e.type==='compositionend');
         const passed=same&&compositionSurvived&&starts===1&&ended&&expected.includes(text);
-        const image=`output/playwright/editor-compatibility/ime-cursor/${doc}.png`;
+        const image=`output/playwright/editor-compatibility/input-fixed/${doc}.png`;
         await page.screenshot({path:image,fullPage:true});
         results.push({category:'ime-cdp',name,case:mode,status:passed?'passed':'failed',inputMethod:'Chrome Input.imeSetComposition + Input.insertText; OS keyboard not used',compositionSurvived,converged:same,starts,ended,expected,actual:text,during,afterRemote,final,submitted,screenshot:image});
       }catch(error){results.push({category:'ime-cdp',name,case:mode,status:'error',error:String(error)});}

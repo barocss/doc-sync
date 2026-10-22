@@ -8,6 +8,8 @@
 
 **원격 사용자 표시**: 데모와 ProseMirror에서 사용자 색 선택 범위와 이름 커서를 표시한다. 전방·역방향·여러 문단 선택, 편집 후 위치 추적, 겹친 참여자를 지원한다. 데모의 범위는 같은 CRDT 줄(slot) 안으로 한정한다. 상세 규칙과 브라우저 결과는 [`HANDOFF.md` §5.5](HANDOFF.md#55-원격-사용자-선택-범위-2026-10-22)에 있다.
 
+**비교 데모 입력 보존**: Slate·Lexical·ProseMirror를 함께 연결한 [`apps/demo/compat`](apps/demo/compat/README.md)는 토큰 기준 선택 복원과 IME 조합 초안을 사용한다. Chrome CDP로 원격 편집 중 입력과 커서를 검사했다. 기본 `/pm`의 IME 구현과 OS 한글 키보드 검증은 별도 범위다.
+
 ```ts
 import {Doc, commands} from "@barocss/doc-sync";     // 핵심 — 의존성 없음
 import {SyncClient, HttpTransport} from "@barocss/doc-sync/sync";
@@ -325,7 +327,7 @@ data/               기존 데모 로그 (위치 유지)
 
 ## 시험 결과
 
-- 최종 통합 검증(2026-10-22): `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test` **107/107 통과**(라이브러리 97 + 데모 10), 타입 오류 0. 모노레포 브라우저 흐름과 Presence 14개 항목도 확인했다. 실행 방법·측정값·지원 범위는 [`HANDOFF.md`](HANDOFF.md) §5.4~5.5, 최종 기록은 `output/validation/presence-20261022/validation.json`에 있다.
+- 입력 수정 통합 검증(2026-10-22): `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test` **113/113**, `npm test --prefix apps/demo/compat` **31/31**, 타입 검사·빌드 통과. Chrome 입력 84개 항목과 일반 회귀 20개, 연산 기록 30개를 확인했다. 실행 방법·지원 범위는 [`HANDOFF.md`](HANDOFF.md) §5.6, 최종 기록은 로컬 `output/validation/ime-cursor-fix-20261022/validation.json`에 있다. 이전 모노레포·Presence 검증 기록은 §5.4~5.5에 보존했다.
 - 시나리오 14개: 같은 자리 동시 Enter, 그 뒤 글자, 혼자 끝에서 두 번, 끝에서 동시, 넷이 동시(동기화 순서 세 가지), Enter 대 뒷부분 입력, 걸친 범위 삭제, Enter 되돌리기 대 남의 글자, 되돌리기 대 동시 삭제, 문단 종류 동시 변경, 끊긴 동안 편집, 늦게 들어온 참여자
 - 기능 15개: 서식 3 · 목록 4 · 되돌리기 3 · GC 4 · 서버 원자성 1
 - 표·스키마 30개: 표 9 · 칸 합치기 6 · 칸 배경색 3 · 빈 자리·구분선 2 · 이미지 3 · 캡션 3 · 스키마 검사 1 · 다른 스키마(할 일 목록) 주입 1 · 스키마 없는 서버 1 · 표 GC 1

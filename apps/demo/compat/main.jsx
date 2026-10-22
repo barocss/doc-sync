@@ -4,17 +4,19 @@ import {tracingEnabled, recordOperation, readOperations, clearOperations} from '
 import {createRoot} from 'react-dom/client';
 import {createEditor as createSlateEditor, Editor, Transforms} from 'slate';
 import {Slate, Editable, withReact} from 'slate-react';
-import {createEditor as createLexicalEditor, $getRoot, $createParagraphNode, $createTextNode, UNDO_COMMAND, REDO_COMMAND, COMMAND_PRIORITY_HIGH, SKIP_DOM_SELECTION_TAG} from 'lexical';
+import {createEditor as createLexicalEditor, $getRoot, $getSelection, $isRangeSelection, $createRangeSelection, $setSelection, $createParagraphNode, $createTextNode, UNDO_COMMAND, REDO_COMMAND, COMMAND_PRIORITY_HIGH, SKIP_DOM_SELECTION_TAG} from 'lexical';
 import {registerRichText, HeadingNode, QuoteNode, $createHeadingNode, $createQuoteNode} from '@lexical/rich-text';
 import {TableNode, TableRowNode, TableCellNode, $createTableNode, $createTableRowNode, $createTableCellNode, $createTableNodeWithDimensions, $insertTableColumnAtNode, $insertTableRowAtNode, registerTablePlugin, registerTableSelectionObserver} from '@lexical/table';
 import {SyncClient, HttpTransport} from '@barocss/doc-sync/sync';
-import {PmBinding, buildPmSchema, fromPmJSON} from '@barocss/doc-sync/prosemirror';
+import {PmBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@barocss/doc-sync/prosemirror';
+import {TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {keymap} from 'prosemirror-keymap';
 import {baseKeymap, toggleMark} from 'prosemirror-commands';
 import {addColumnAfter, addRowAfter, tableEditing} from 'prosemirror-tables';
 import {resetAndWait, createActionGuard} from '../ui/reset.ts';
-import {schema, canon, fromSlate, toSlate, fromLexical, editsFor, commitModelEdits, safeSlateRange} from './model.mjs';
+import {schema, canon, fromSlate, toSlate, fromLexical, editsFor, commitModelEdits} from './model.mjs';
+import {InputSession, slateModelPoint, slateNativePoint, lexicalBlocks, lexicalModelPoint, lexicalNativePoint} from './input-session.mjs';
 
 const DOC=new URLSearchParams(location.search).get('doc') ?? 'editor-compat-chrome';
 const peers=[], failures=[];
@@ -33,29 +35,62 @@ function makePeer(name,kind) {
   section.innerHTML=`<h2>${kind} · ${name}</h2><div class="meta"></div><nav></nav><div class="mount"></div>`;
   document.querySelector('#panes').append(section);
   const peer={name,kind,client,transport,section,pull:()=>{},read:()=>client.doc.toJSON(),local:0,remote:0,ready:Promise.resolve()};
+  peer.input=new InputSession(client);
+  peer.captureSelection=()=>{
+    if(!section.contains(document.activeElement))return peer.savedRange=null;
+    const range=peer.readRange?.();
+    peer.savedRange=range?.anchor&&range?.focus?peer.input.capture(range):null;
+  };
+  client.onEvent=event=>{
+    if(event.type==='reset'){peer.input.cancel();peer.savedRange=null;peer.resetPending=true;}
+    else peer.captureSelection();
+  };
+  client.onUpdate=()=>{
+    peer.input.reserveClock();
+    if(peer.resetPending){peer.resetPending=false;peer.pull();}
+  };
+  let finishTimer;
+  section.addEventListener('compositionstart',()=>{clearTimeout(finishTimer);peer.input.begin();},true);
+  const finish=()=>{
+    clearTimeout(finishTimer);
+    finishTimer=setTimeout(()=>{
+      if(!peer.input.active)return;
+      try{
+        // Let each native editor consume compositionend and flush its last update.
+        peer.flushInput?.();peer.captureSelection();
+        const ops=peer.input.end();
+        if(tracingEnabled)recordOperation({name,kind,phase:'composition-commit',wireOps:ops,model:client.doc.toJSON()});
+        peer.pull();
+      }catch(error){peer.input.cancel();report(error);}
+    },0);
+  };
+  section.addEventListener('compositionend',finish,true);
+  section.addEventListener('focusout',event=>{if(!section.contains(event.relatedTarget))finish();},true);
   const action=(label,fn)=>{
     const b=document.createElement('button'); b.textContent=label;
     b.addEventListener('mousedown',e=>e.preventDefault());
-    b.addEventListener('click',()=>{try{fn();}catch(error){report(error);}});
+    b.addEventListener('click',()=>{try{peer.captureSelection();fn();}catch(error){report(error);}});
     section.querySelector('nav').append(b);
   };
   peer.action=action;
   peer.send=next=>{
     try {
-      const before=client.doc.toJSON();
+      const doc=peer.input.doc,before=doc.toJSON();
       if(equal(before,next)) return;
       const edits=editsFor(before,next);let tokenEdits;
-      const ops=commitModelEdits(client.doc,before,edits,tracingEnabled?mapped=>{tokenEdits=mapped;}:undefined);
-      client.commit(ops);
-      if(tracingEnabled)recordOperation({name,kind,phase:'local',native:peer.nativeUpdate,modelBefore:before,modelAfter:client.doc.toJSON(),modelEdits:edits,tokenEdits,wireOps:ops});
+      const ops=commitModelEdits(doc,before,edits,tracingEnabled?mapped=>{tokenEdits=mapped;}:undefined);
+      peer.input.commit(ops);
+      if(tracingEnabled)recordOperation({name,kind,phase:'local',native:peer.nativeUpdate,modelBefore:before,modelAfter:doc.toJSON(),modelEdits:edits,tokenEdits,deferred:peer.input.active,wireOps:peer.input.active?[]:ops,stagedOps:peer.input.active?ops:undefined});
       peer.local++;
-      if(!equal(client.doc.toJSON(),next)) peer.pull();
+      if(!peer.input.active&&!equal(client.doc.toJSON(),next)){peer.captureSelection();peer.pull();}
     } catch(error) {report(error);}
   };
   client.onModelEvents=(events,info)=>{
     const nativeBefore=tracingEnabled?peer.rawRead?.():undefined;
+    if(info.cause==='reset'){peer.input.cancel();peer.savedRange=null;peer.resetPending=false;}
+    peer.input.reserveClock();
     peer.remote++;peer.pull();
-    if(tracingEnabled)recordOperation({name,kind,phase:'remote',cause:info.cause,events,nativeBefore,nativeAfter:peer.rawRead?.(),model:client.doc.toJSON()});
+    if(tracingEnabled)recordOperation({name,kind,phase:'remote',cause:info.cause,events,deferred:peer.input.active,nativeBefore,nativeAfter:peer.rawRead?.(),model:client.doc.toJSON()});
   };
   action('되돌리기',()=>client.undo());
   action('다시하기',()=>client.redo());
@@ -77,18 +112,21 @@ function mountSlate(name) {
   const initialValue=toSlate(peer.client.doc.toJSON());
   const read=()=>fromSlate(editor.children);
   peer.read=read;
+  peer.readRange=()=>editor.selection?{anchor:slateModelPoint(editor.children,editor.selection.anchor),focus:slateModelPoint(editor.children,editor.selection.focus)}:null;
+  peer.flushInput=()=>peer.send(read());
   peer.rawRead=()=>structuredClone(editor.children);
   peer.pull=()=>{
+    if(peer.input.active)return;
     const next=toSlate(peer.client.doc.toJSON());
     if(equal(read(),peer.client.doc.toJSON()))return;
     remote=true;
-    const previous=editor.selection?structuredClone(editor.selection):null;
+    const saved=peer.input.resolve(peer.savedRange);
     Editor.withoutNormalizing(editor,()=>{
       Transforms.deselect(editor);
       for(let i=editor.children.length-1;i>=0;i--) Transforms.removeNodes(editor,{at:[i]});
       Transforms.insertNodes(editor,next,{at:[0]});
-      const range=safeSlateRange(editor.children,previous);
-      if(range)Transforms.select(editor,range);
+      const anchor=slateNativePoint(editor.children,saved?.anchor),focus=slateNativePoint(editor.children,saved?.focus);
+      if(anchor&&focus)Transforms.select(editor,{anchor,focus});
     });
     queueMicrotask(()=>{remote=false;});
   };
@@ -100,7 +138,7 @@ function mountSlate(name) {
     <Slate editor={editor} initialValue={initialValue} onChange={onChange}>
       <Ready/>
       <Editable className="editor" aria-label={name} renderElement={slateElement} renderLeaf={slateLeaf}
-        onKeyDown={event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.shiftKey?peer.client.redo():peer.client.undo();}}}/>
+        onKeyDown={event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();peer.captureSelection();event.shiftKey?peer.client.redo():peer.client.undo();}}}/>
     </Slate>
   );
   const paragraph=()=>({type:'paragraph',children:[{text:''}]});
@@ -132,7 +170,7 @@ function mountLexical(name) {
   registerRichText(editor);registerTablePlugin(editor);registerTableSelectionObserver(editor,true);
   editor.registerCommand(UNDO_COMMAND,()=>{peer.client.undo();return true;},COMMAND_PRIORITY_HIGH);
   editor.registerCommand(REDO_COMMAND,()=>{peer.client.redo();return true;},COMMAND_PRIORITY_HIGH);
-  element.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.stopPropagation();event.shiftKey?peer.client.redo():peer.client.undo();}},true);
+  element.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.stopPropagation();peer.captureSelection();event.shiftKey?peer.client.redo():peer.client.undo();}},true);
   const build=item=>{
     if(['paragraph','heading1','heading2','quote'].includes(item.type)){
       const block=item.type==='paragraph'?$createParagraphNode():item.type==='quote'?$createQuoteNode():$createHeadingNode(item.type==='heading1'?'h1':'h2');
@@ -150,11 +188,22 @@ function mountLexical(name) {
     throw new Error(`시험 범위 밖 node: ${item.type}`);
   };
   peer.read=()=>fromLexical(editor.getEditorState().toJSON());
+  peer.readRange=()=>editor.getEditorState().read(()=>{
+    const s=$getSelection(),blocks=lexicalBlocks($getRoot());
+    return $isRangeSelection(s)?{anchor:lexicalModelPoint(blocks,s.anchor),focus:lexicalModelPoint(blocks,s.focus)}:null;
+  });
+  peer.flushInput=()=>peer.send(peer.read());
   peer.rawRead=()=>editor.getEditorState().toJSON();
   peer.pull=()=>{
+    if(peer.input.active)return;
     const model=peer.client.doc.toJSON();
     if(equal(peer.read(),model))return;
-    editor.update(()=>{$getRoot().clear().append(...model.children.map(build));},{tag:['doc-sync-remote',SKIP_DOM_SELECTION_TAG],discrete:true});
+    const saved=peer.input.resolve(peer.savedRange),focused=element===document.activeElement;
+    editor.update(()=>{
+      $getRoot().clear().append(...model.children.map(build));
+      const blocks=lexicalBlocks($getRoot()),anchor=lexicalNativePoint(blocks,saved?.anchor),focus=lexicalNativePoint(blocks,saved?.focus);
+      if(anchor&&focus){const range=$createRangeSelection();range.anchor.set(anchor.key,anchor.offset,anchor.type);range.focus.set(focus.key,focus.offset,focus.type);$setSelection(range);}
+    },{tag:focused?['doc-sync-remote']:['doc-sync-remote',SKIP_DOM_SELECTION_TAG],discrete:true});
   };
   editor.update(()=>{$getRoot().append($createParagraphNode());},{tag:'doc-sync-remote',discrete:true});
   editor.registerUpdateListener(({editorState,prevEditorState,tags,dirtyElements,dirtyLeaves})=>{
@@ -179,32 +228,43 @@ function mountProseMirror(name) {
   const info=buildPmSchema(schema,{
     paragraph:()=>['p',0],heading1:()=>['h1',0],heading2:()=>['h2',0],quote:()=>['blockquote',0],
   });
-  const binding=new PmBinding(peer.client,info,[keymap({
+  const binding=new PmBinding(peer.input.bindingClient(),info,[keymap({
     'Mod-z':()=>{binding.undo();return true;},'Mod-y':()=>{binding.redo();return true;},
     'Shift-Mod-z':()=>{binding.redo();return true;},'Mod-b':toggleMark(info.pm.marks.bold),'Mod-i':toggleMark(info.pm.marks.italic),
   }),keymap(baseKeymap),tableEditing()]);
   const view=new EditorView(peer.section.querySelector('.mount'),{
     state:binding.state,dispatchTransaction:tr=>{
       const trace=tracingEnabled&&tr.docChanged;
-      const before=trace?peer.client.doc.toJSON():undefined;
+      const before=trace?peer.input.doc.toJSON():undefined;
       const nativeBefore=trace?binding.state.doc.toJSON():undefined;
       const previousSeq=trace?peer.client.pending.at(-1)?.seq:undefined;
       if(tr.docChanged)peer.local++;
       binding.dispatch(tr);
       if(trace){
         const pending=peer.client.pending.at(-1);
-        recordOperation({name,kind:'ProseMirror',phase:'local',native:{before:nativeBefore,steps:tr.steps.map(step=>step.toJSON()),after:binding.state.doc.toJSON()},modelBefore:before,modelAfter:peer.client.doc.toJSON(),wireOps:pending?.seq!==previousSeq?pending?.ops??[]:[],bindingStats:structuredClone(binding.stats)});
+        recordOperation({name,kind:'ProseMirror',phase:'local',native:{before:nativeBefore,steps:tr.steps.map(step=>step.toJSON()),after:binding.state.doc.toJSON()},modelBefore:before,modelAfter:peer.input.doc.toJSON(),deferred:peer.input.active,wireOps:pending?.seq!==previousSeq?pending?.ops??[]:[],bindingStats:structuredClone(binding.stats)});
       }
     },
     attributes:{class:'editor ProseMirror','aria-label':name,role:'textbox'},
   });
   binding.view=view;
   binding.onChange=()=>view.updateState(binding.state);
-  const receive=peer.client.onModelEvents;
+  peer.readRange=()=>view.state.selection instanceof TextSelection?{anchor:pmPosToPath(schema,view.state.doc,view.state.selection.anchor,peer.input.doc.toJSON()),focus:pmPosToPath(schema,view.state.doc,view.state.selection.head,peer.input.doc.toJSON())}:null;
+  peer.pull=()=>{
+    if(peer.input.active)return;
+    const saved=peer.input.resolve(peer.savedRange);
+    binding.pull();
+    if(saved&&view.hasFocus()){
+      const model=peer.client.doc.toJSON(),anchor=pathToPmPos(schema,view.state.doc,saved.anchor,model),focus=pathToPmPos(schema,view.state.doc,saved.focus,model);
+      view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc,anchor,focus)));
+    }
+  };
   peer.client.onModelEvents=(events,detail)=>{
     const nativeBefore=tracingEnabled?view.state.doc.toJSON():undefined;
-    peer.remote++;receive(events,detail);
-    if(tracingEnabled)recordOperation({name,kind:'ProseMirror',phase:'remote',cause:detail.cause,events,nativeBefore,nativeAfter:view.state.doc.toJSON(),model:peer.client.doc.toJSON()});
+    if(detail.cause==='reset'){peer.input.cancel();peer.savedRange=null;peer.resetPending=false;}
+    peer.input.reserveClock();
+    peer.remote++;peer.pull();
+    if(tracingEnabled)recordOperation({name,kind:'ProseMirror',phase:'remote',cause:detail.cause,events,deferred:peer.input.active,nativeBefore,nativeAfter:view.state.doc.toJSON(),model:peer.client.doc.toJSON()});
   };
   peer.read=()=>canon(fromPmJSON(info,schema,view.state.doc.toJSON()));
   const run=command=>{command(view.state,view.dispatch,view);view.focus();};
