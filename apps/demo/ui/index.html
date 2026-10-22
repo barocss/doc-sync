@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>doc-sync 데모</title>
+    <link rel="stylesheet" href="/apps/demo/ui/style.css" />
+    <script type="importmap">
+        {
+            "imports": {
+                "@barocss/doc-sync": "/packages/doc-sync/src/index.ts",
+                "@barocss/doc-sync/sync": "/packages/doc-sync/src/sync/index.ts",
+                "@barocss/doc-sync/server": "/packages/doc-sync/src/server/index.ts",
+                "@barocss/doc-sync/prosemirror": "/packages/doc-sync/src/pm/index.ts"
+            }
+        }
+    </script>
+</head>
+<body>
+    <header class="top">
+        <div class="title">
+            <h1>@barocss/doc-sync</h1>
+            <span class="sub">의존성 없는 TypeScript 동시편집 시제품 · 문서 <b id="doc-name"></b></span>
+        </div>
+        <div class="controls">
+            <div class="group">
+                <span class="label">시나리오</span>
+                <button type="button" class="btn primary" id="sc-concurrent">같은 자리 동시 Enter</button>
+                <button type="button" class="btn" id="sc-sequential">보고 친 Enter (차례로)</button>
+                <button type="button" class="btn" id="sc-undo">되돌리기 대 동시 삭제</button>
+                <button type="button" class="btn" id="sc-gc">묘비 정리(GC)</button>
+                <button type="button" class="btn" id="sc-table-grow">표: 행·열 동시 추가</button>
+                <button type="button" class="btn" id="sc-table-cut">표: 열 지우기 대 칸 입력</button>
+            </div>
+            <div class="group">
+                <span class="label">연결</span>
+                <button type="button" class="btn" id="all-off">모두 끊기</button>
+                <button type="button" class="btn" id="all-on">모두 잇기</button>
+                <button type="button" class="btn" id="gc-now">지금 GC</button>
+                <button type="button" class="btn danger" id="reset">문서 비우기</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="status">
+        <span id="converged" class="badge">…</span>
+        <span id="server-seq" class="muted"></span>
+        <span id="gc-state" class="muted"></span>
+        <span id="caption" class="caption">편집기를 눌러 쓰거나, 위의 시나리오를 눌러 보세요. 참여자를 끊어 두고 각자 쓴 뒤 다시 이으면 합쳐집니다.</span>
+    </div>
+
+    <main id="peers" class="peers"></main>
+
+    <section class="inspect">
+        <div class="inspect-head">
+            <h2>문서 아래의 토큰 줄들</h2>
+            <div id="inspect-tabs" class="tabs"></div>
+        </div>
+        <p class="legend">
+            <span class="tok char"><b>a</b><i>3A</i></span> 글자 토큰(이름표 = 시계 + 참여자)
+            <span class="tok block primary"><b>¶</b><i>9B</i></span> 블록을 여는 표지
+            <span class="tok block alias"><b>¶</b><i>9A</i></span> 같은 경계의 동시 Enter → 흡수됨
+            <span class="tok char dead"><b>d</b><i>4A</i></span> 묘비(지운 토큰, 자리 기준으로 남음)
+            <span class="tok compact"><b>▒×5</b><i>6A</i></span> GC 로 압축된 묘비 묶음
+            <span class="tok node"><b>▦ table</b><i>7A</i></span> 표·상자·구분선 (표는 행 줄·열 줄·칸 줄을 따로 가진다)
+            · 토큰에 마우스를 올리면 기준 토큰·경계·지우기 기록이 보입니다
+        </p>
+        <div id="tokens"></div>
+        <div class="inspect-cols">
+            <div>
+                <h3>여기서 계산한 모델 (스키마의 종류 이름)</h3>
+                <pre id="model"></pre>
+            </div>
+            <div>
+                <h3>서버 로그 (최근 것이 위)</h3>
+                <ol id="log" class="log"></ol>
+            </div>
+        </div>
+    </section>
+
+    <script type="module" src="/apps/demo/ui/app.ts"></script>
+</body>
+</html>

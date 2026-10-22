@@ -1,0 +1,81 @@
+
+> doc-sync-workspace@0.0.0 bench:client
+> npm run client --workspace @doc-sync/benchmarks -- --label monorepo-after-repeat --out results/monorepo-2026-10-22/client-after-repeat.json
+
+
+> @doc-sync/benchmarks@0.0.0 client
+> node client.ts --label monorepo-after-repeat --out results/monorepo-2026-10-22/client-after-repeat.json
+
+{
+  "work_id": "sync-client-local-edit-20261022",
+  "label": "monorepo-after-repeat",
+  "node": "v22.19.0",
+  "samples": 30,
+  "warmups": 5,
+  "unit": "ms",
+  "rows": [
+    {
+      "chars": 10000,
+      "paragraphs": 63,
+      "correct": true,
+      "cases": [
+        {
+          "path": "doc",
+          "p50": 0.060374999999993406,
+          "p95": 0.12458300000000122,
+          "max": 0.12583399999999756,
+          "notices": 0,
+          "normalizations": 0
+        },
+        {
+          "path": "client",
+          "p50": 0.028959000000014612,
+          "p95": 0.03249999999999886,
+          "max": 0.04758299999997462,
+          "notices": 0,
+          "normalizations": 0
+        },
+        {
+          "path": "client-observed",
+          "p50": 0.23920799999999076,
+          "p95": 0.48483300000000895,
+          "max": 0.5212500000000091,
+          "notices": 35,
+          "normalizations": 0
+        }
+      ]
+    },
+    {
+      "chars": 100000,
+      "paragraphs": 625,
+      "correct": true,
+      "cases": [
+        {
+          "path": "doc",
+          "p50": 0.09833299999996825,
+          "p95": 0.1710830000000101,
+          "max": 0.19754100000000108,
+          "notices": 0,
+          "normalizations": 0
+        },
+        {
+          "path": "client",
+          "p50": 0.08712499999990087,
+          "p95": 0.09208300000000236,
+          "max": 0.10158400000000256,
+          "notices": 0,
+          "normalizations": 0
+        },
+        {
+          "path": "client-observed",
+          "p50": 0.3208340000001044,
+          "p95": 1.4190830000000005,
+          "max": 1.5168340000000171,
+          "notices": 35,
+          "normalizations": 0
+        }
+      ]
+    }
+  ]
+}
+

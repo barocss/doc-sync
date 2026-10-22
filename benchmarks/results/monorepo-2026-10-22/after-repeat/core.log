@@ -1,0 +1,30 @@
+
+> doc-sync-workspace@0.0.0 bench
+> npm run bench --workspace @doc-sync/benchmarks -- --out-dir results/monorepo-2026-10-22/after-repeat
+
+
+> @doc-sync/benchmarks@0.0.0 bench
+> node --expose-gc run.ts --out-dir results/monorepo-2026-10-22/after-repeat
+
+씨앗 1 · Node v22.19.0
+
+  ours 10000자 — 0.3초
+  yjs 10000자 — 0.1초
+
+## 10,147자 · 문단 54 · 편집 4,261
+
+| 엔진 | 맞음 | local p50/p95/max ms | local 합 ms | remote p50/p95 ms | remote 합 ms | server 합 ms | read ms | 편집당 B (한 글자) | 저장 | 저장/불러오기 ms | 힙 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| ours | ✓ | 0.011 / 0.037 / 4.138 | 149 | 0.0015 / 0.0023 | 13 | 17 | 5.381 | 105 (98) | 164KB | 2.997 / 5.713 | 3779KB |
+| yjs | ✓ | 0.0065 / 0.014 / 0.543 | 37 | 0.0057 / 0.010 | 32 | — | 0.091 | 20 (15) | 27KB | 0.574 / 2.042 | 461KB |
+
+  ours 100000자 — 19.8초
+  yjs 100000자 — 0.7초
+
+## 100,031자 · 문단 625 · 편집 41,549
+
+| 엔진 | 맞음 | local p50/p95/max ms | local 합 ms | remote p50/p95 ms | remote 합 ms | server 합 ms | read ms | 편집당 B (한 글자) | 저장 | 저장/불러오기 ms | 힙 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| ours | ✓ | 0.046 / 0.184 / 38 | 9447 | 0.010 / 0.095 | 3403 | 3105 | 80 | 107 (100) | 1610KB | 19 / 119 | 35622KB |
+| yjs | ✓ | 0.0036 / 0.0091 / 1.929 | 208 | 0.0033 / 0.0079 | 201 | — | 0.830 | 23 (18) | 283KB | 3.769 / 20 | 3664KB |
+

@@ -1,0 +1,21 @@
+{
+  "name": "@doc-sync/benchmarks",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "bench": "node --expose-gc run.ts",
+    "client": "node client.ts",
+    "profile": "node profile.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@barocss/doc-sync": "0.0.0"
+  },
+  "devDependencies": {
+    "yjs": "^13.6.33"
+  }
+}

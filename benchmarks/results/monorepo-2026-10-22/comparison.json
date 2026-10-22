@@ -1,0 +1,3829 @@
+{
+  "work_id": "doc-sync-monorepo-20261022-performance",
+  "status": "complete_with_timing_variability",
+  "completedAt": "2026-10-22T06:52:47.999580+00:00",
+  "summary": {
+    "allCoreAndClientCorrect": true,
+    "traceCountsUnchanged": true,
+    "wireAndSnapshotBytesUnchanged": true,
+    "coreSourceFilesUnchanged": 18,
+    "runsAfter": 2,
+    "conclusionKo": "두 번 모두 정확성·대본·전송 크기·스냅숏 크기는 기준과 같다. 시간의 여러 항목은 줄었으나 일부 최대 시간은 늘었다. 반복·외부 부하·단일 기준 측정의 한계로 모노레포 전환이 속도를 개선했다고 단정하지 않는다.",
+    "core100kOurs": {
+      "localP50Ms": {
+        "before": 0.04700005054473877,
+        "afterRange": [
+          0.04575002193450928,
+          0.045791029930114746
+        ]
+      },
+      "localP95Ms": {
+        "before": 0.28766703605651855,
+        "afterRange": [
+          0.15108299255371094,
+          0.18437504768371582
+        ]
+      },
+      "remoteP95Ms": {
+        "before": 0.10008394718170166,
+        "afterRange": [
+          0.09466695785522461,
+          0.10041701793670654
+        ]
+      },
+      "localMaxMs": {
+        "before": 35.49800002574921,
+        "afterRange": [
+          28.57020890712738,
+          37.54100000858307
+        ]
+      },
+      "remoteMaxMs": {
+        "before": 32.56400001049042,
+        "afterRange": [
+          33.86970889568329,
+          39.6432089805603
+        ]
+      },
+      "heapBytes": {
+        "before": 36475960,
+        "afterRange": [
+          36475960,
+          36477376
+        ]
+      }
+    },
+    "client100kObserved": {
+      "p50Ms": {
+        "before": 0.48649999999997817,
+        "afterRange": [
+          0.3039169999999558,
+          0.3208340000001044
+        ]
+      },
+      "p95Ms": {
+        "before": 2.835542000000032,
+        "afterRange": [
+          1.4190830000000005,
+          1.5089169999999967
+        ]
+      },
+      "maxMs": {
+        "before": 4.93745899999999,
+        "afterRange": [
+          1.5168340000000171,
+          1.6736249999999018
+        ]
+      }
+    },
+    "maxVariabilityExamples": [
+      {
+        "case": "100k client Doc max",
+        "beforeMs": 0.38400000000001455,
+        "run1Ms": 1.8295829999999569,
+        "run2Ms": 0.19754100000000108
+      },
+      {
+        "case": "100k Yjs remote max",
+        "beforeMs": 5.620917081832886,
+        "run1Ms": 1.3631250858306885,
+        "run2Ms": 9.80525004863739
+      }
+    ]
+  },
+  "conditions": {
+    "node": "v22.19.0",
+    "system": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+    "cpuCount": 14,
+    "cwd": "/Users/user/github/doc-sync",
+    "workspaceCwd": "/Users/user/github/doc-sync/benchmarks",
+    "core": {
+      "sizes": [
+        10000,
+        100000
+      ],
+      "seed": 1,
+      "engineOrder": [
+        "ours",
+        "yjs"
+      ],
+      "gcExposed": true,
+      "traceExpected": {
+        "10000": {
+          "ops": 4261,
+          "chars": 10147,
+          "paragraphs": 54
+        },
+        "100000": {
+          "ops": 41549,
+          "chars": 100031,
+          "paragraphs": 625
+        }
+      }
+    },
+    "client": {
+      "sizes": [
+        10000,
+        100000
+      ],
+      "paragraphs": [
+        63,
+        625
+      ],
+      "paragraphMaxInitialChars": 160,
+      "warmups": 5,
+      "samples": 30,
+      "edit": "single character insert",
+      "paths": [
+        "doc",
+        "client",
+        "client-observed"
+      ]
+    },
+    "gcExposedForCore": true,
+    "execution": "core then client sequentially for each run; parent confirmed browser and repository tests stopped; no other work was stopped",
+    "baselineRuns": 1,
+    "afterRuns": 2,
+    "repeatReason": "Run 1 timing differences and external CPU load: 100k Doc max 4.765x baseline while multiple p95 values decreased to 0.263-0.568x; repeat once to expose variability, preserve both.",
+    "clientCharsField": "Initial chars. Each path inserts 35 chars including warmups. Final model equality is asserted; final char count is not separately serialized."
+  },
+  "correctnessDefinitions": {
+    "core": "correct aggregates reference equality for local, remote, and snapshot reload; individual booleans are not serialized. Server validation throws on rejection.",
+    "client": "All three final models must match; observed notifications must equal 35; all normalizations must equal zero; assertions fail otherwise.",
+    "separateCoreFlagsAvailable": false,
+    "serverCheck": "Both runs exited zero. Each ours payload passed doc.check before server application. No serialized final server model correctness flag."
+  },
+  "sourceIntegrity": {
+    "core": [
+      {
+        "path": "packages/doc-sync/src/crdt/commands.ts",
+        "expectedSha256": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10",
+        "actualSha256": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/doc.ts",
+        "expectedSha256": "46194520c8880ace5397d465e2cd90d4bcdb8af564939a7d3d34a3e3a6002d3e",
+        "actualSha256": "46194520c8880ace5397d465e2cd90d4bcdb8af564939a7d3d34a3e3a6002d3e",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/edit.ts",
+        "expectedSha256": "e7bad427f0f7ae0200f4c134cea8cee4ecc808014059cc481d00785c13777dc8",
+        "actualSha256": "e7bad427f0f7ae0200f4c134cea8cee4ecc808014059cc481d00785c13777dc8",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/history.ts",
+        "expectedSha256": "0e902894af01a132c3545084b29465d991773e823da6e9b71957f22352d92da0",
+        "actualSha256": "0e902894af01a132c3545084b29465d991773e823da6e9b71957f22352d92da0",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/model.ts",
+        "expectedSha256": "26fd81b8e75fba126330baa82f5ad7175154e483faff27e7abf18eb5ebaf18b0",
+        "actualSha256": "26fd81b8e75fba126330baa82f5ad7175154e483faff27e7abf18eb5ebaf18b0",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/schema.ts",
+        "expectedSha256": "5ce816a0fec6d7f09f2cc6038aac462757ae98cf022ccde52981fb73b29edb69",
+        "actualSha256": "5ce816a0fec6d7f09f2cc6038aac462757ae98cf022ccde52981fb73b29edb69",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/ticket.ts",
+        "expectedSha256": "c65165b09b8bfa59d4b0a1c0f7d09af45f1d9dd604af1df743cf3f1c85ee1a37",
+        "actualSha256": "c65165b09b8bfa59d4b0a1c0f7d09af45f1d9dd604af1df743cf3f1c85ee1a37",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/index.ts",
+        "expectedSha256": "02823efb610ac8eb4e4111aedd33f0328446ce3cd9ddeffeafeb405e78567852",
+        "actualSha256": "02823efb610ac8eb4e4111aedd33f0328446ce3cd9ddeffeafeb405e78567852",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/pm/binding.ts",
+        "expectedSha256": "73b4f8ecd4e6bec3ef259b52dcc7eb27a324f25765575ce3a8669e4ae39c0044",
+        "actualSha256": "73b4f8ecd4e6bec3ef259b52dcc7eb27a324f25765575ce3a8669e4ae39c0044",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/pm/convert.ts",
+        "expectedSha256": "67e952a2120dc635fa2c8c67715aec422d695d160b50040396aa9977608ae49b",
+        "actualSha256": "67e952a2120dc635fa2c8c67715aec422d695d160b50040396aa9977608ae49b",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/pm/index.ts",
+        "expectedSha256": "2bee5e889b32515e15e7881d8b72843be4ac863b27115507696816e3efa207eb",
+        "actualSha256": "2bee5e889b32515e15e7881d8b72843be4ac863b27115507696816e3efa207eb",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/pm/schema.ts",
+        "expectedSha256": "2a618cc269715f0491586c924134dec4fa544fe4f54207c1a3a2969c105b0bad",
+        "actualSha256": "2a618cc269715f0491586c924134dec4fa544fe4f54207c1a3a2969c105b0bad",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/server/hub.ts",
+        "expectedSha256": "4cb5bd6210dcabeefae62a1a33883663d0f10f3e340ed8d65a98a368e219f14b",
+        "actualSha256": "4cb5bd6210dcabeefae62a1a33883663d0f10f3e340ed8d65a98a368e219f14b",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/server/index.ts",
+        "expectedSha256": "4e027766d473a4c11c91dcb9f5e86e048d6af2c512f341b9a3c63a0959b24029",
+        "actualSha256": "4e027766d473a4c11c91dcb9f5e86e048d6af2c512f341b9a3c63a0959b24029",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/sync/client.ts",
+        "expectedSha256": "0c5b36a8e72feed4cc29453841d4e4cfcb93383ce89e822b44a21a0a8b8b8d2f",
+        "actualSha256": "0c5b36a8e72feed4cc29453841d4e4cfcb93383ce89e822b44a21a0a8b8b8d2f",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/sync/http-transport.ts",
+        "expectedSha256": "37058de584460d468d096fbe37b9bfae21ff2231f5727e76553b143c63cdb8e7",
+        "actualSha256": "37058de584460d468d096fbe37b9bfae21ff2231f5727e76553b143c63cdb8e7",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/sync/index.ts",
+        "expectedSha256": "46522c8dc778d76d9017c30b18ad9e16e213b5883624df9cfe80c195edaf430a",
+        "actualSha256": "46522c8dc778d76d9017c30b18ad9e16e213b5883624df9cfe80c195edaf430a",
+        "equal": true
+      },
+      {
+        "path": "packages/doc-sync/src/sync/protocol.ts",
+        "expectedSha256": "84f21f530ec26eeebd14698f491c65652b4ac938e8ed1daa9d079d255113ccd6",
+        "actualSha256": "84f21f530ec26eeebd14698f491c65652b4ac938e8ed1daa9d079d255113ccd6",
+        "equal": true
+      }
+    ],
+    "scripts": [
+      {
+        "path": "package.json",
+        "equal": true,
+        "sha256": "89e50ec62097e6f182a9569c79d65e19dee361e8a310452d9e3c0cbc775a6fc3"
+      },
+      {
+        "path": "benchmarks/package.json",
+        "equal": true,
+        "sha256": "8440d3541536ab91326aa847ca616ecd45bf1245f293f1b8e68de9ecf590f9f8"
+      },
+      {
+        "path": "benchmarks/run.ts",
+        "equal": true,
+        "sha256": "3f4ef2422202cf11cb502369b1ef9f92b9f39c6052b28ece1f67983200d02c42"
+      },
+      {
+        "path": "benchmarks/client.ts",
+        "equal": true,
+        "sha256": "62dcb71e420d1b8c92eeda00eb7b527022f09056feb580195610fea5385c6d4e"
+      },
+      {
+        "path": "benchmarks/trace.ts",
+        "equal": true,
+        "sha256": "48e32a1f29012b40d5c0322512186c857e4be867a8eb3d9ac36b9a171e318107"
+      },
+      {
+        "path": "benchmarks/engines.ts",
+        "equal": true,
+        "sha256": "66aeba47e692c050878a77bf8d9069cfcbd8d54f99258de4e60890d3de53b540"
+      }
+    ],
+    "baseline": [
+      {
+        "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/before/2026-10-22-10000.json",
+        "equal": true,
+        "sha256": "9002b3cd315f8fa55efc22bbff2f1e720396d8305057da0a02e7377be78632a2"
+      },
+      {
+        "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/before/2026-10-22-100000.json",
+        "equal": true,
+        "sha256": "f80b31ecd0338f79569f4ead722821dee3b62ae89c0fb34e935f39a2bb5feeb3"
+      },
+      {
+        "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/client-before.json",
+        "equal": true,
+        "sha256": "822d8f953164d39d3c8724abb31387d0619b6a25ec8700f709be1970c7f5ea68"
+      }
+    ]
+  },
+  "coreComparisons": [
+    {
+      "requestedChars": 10000,
+      "baselineFile": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/before/2026-10-22-10000.json",
+      "baseline": {
+        "seed": 1,
+        "node": "v22.19.0",
+        "rows": [
+          {
+            "engine": "ours",
+            "chars": 10147,
+            "paragraphs": 54,
+            "ops": 4261,
+            "correct": true,
+            "local": {
+              "p50": 0.010957956314086914,
+              "p95": 0.05991697311401367,
+              "max": 4.242790937423706,
+              "total": 178.12219178676605
+            },
+            "remote": {
+              "p50": 0.00162506103515625,
+              "p95": 0.0032080411911010742,
+              "max": 0.35637497901916504,
+              "total": 15.073013663291931
+            },
+            "server": {
+              "p50": 0.0022499561309814453,
+              "p95": 0.004915952682495117,
+              "max": 0.8449579477310181,
+              "total": 20.358070254325867
+            },
+            "readMs": 6.776916980743408,
+            "bytes": {
+              "total": 449304,
+              "mean": 105.44567003050928,
+              "oneChar": 97.78077753779698
+            },
+            "save": {
+              "bytes": 167595,
+              "ms": 3.5094999074935913,
+              "loadMs": 6.924207925796509
+            },
+            "heapBytes": 3868776
+          },
+          {
+            "engine": "yjs",
+            "chars": 10147,
+            "paragraphs": 54,
+            "ops": 4261,
+            "correct": true,
+            "local": {
+              "p50": 0.006999969482421875,
+              "p95": 0.022665977478027344,
+              "max": 1.2535420656204224,
+              "total": 48.82241714000702
+            },
+            "remote": {
+              "p50": 0.0064580440521240234,
+              "p95": 0.021541953086853027,
+              "max": 1.1317089796066284,
+              "total": 49.14058184623718
+            },
+            "server": null,
+            "readMs": 0.10520792007446289,
+            "bytes": {
+              "total": 86310,
+              "mean": 20.255808495658297,
+              "oneChar": 15.363930885529157
+            },
+            "save": {
+              "bytes": 27231,
+              "ms": 0.5558749437332153,
+              "loadMs": 2.216499924659729
+            },
+            "heapBytes": 440832
+          }
+        ]
+      },
+      "runs": [
+        {
+          "run": 1,
+          "file": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after/2026-10-22-10000.json",
+          "raw": {
+            "seed": 1,
+            "node": "v22.19.0",
+            "rows": [
+              {
+                "engine": "ours",
+                "chars": 10147,
+                "paragraphs": 54,
+                "ops": 4261,
+                "correct": true,
+                "local": {
+                  "p50": 0.010709047317504883,
+                  "p95": 0.03704202175140381,
+                  "max": 4.444875001907349,
+                  "total": 148.78419244289398
+                },
+                "remote": {
+                  "p50": 0.0015419721603393555,
+                  "p95": 0.002375006675720215,
+                  "max": 0.3692500591278076,
+                  "total": 13.311837792396545
+                },
+                "server": {
+                  "p50": 0.0021250247955322266,
+                  "p95": 0.00395810604095459,
+                  "max": 0.5765830278396606,
+                  "total": 17.065630435943604
+                },
+                "readMs": 4.838917016983032,
+                "bytes": {
+                  "total": 449304,
+                  "mean": 105.44567003050928,
+                  "oneChar": 97.78077753779698
+                },
+                "save": {
+                  "bytes": 167595,
+                  "ms": 3.1726250648498535,
+                  "loadMs": 5.015125036239624
+                },
+                "heapBytes": 3868608
+              },
+              {
+                "engine": "yjs",
+                "chars": 10147,
+                "paragraphs": 54,
+                "ops": 4261,
+                "correct": true,
+                "local": {
+                  "p50": 0.006540894508361816,
+                  "p95": 0.013000011444091797,
+                  "max": 0.7236660718917847,
+                  "total": 36.54528880119324
+                },
+                "remote": {
+                  "p50": 0.005666971206665039,
+                  "p95": 0.010040998458862305,
+                  "max": 1.0361250638961792,
+                  "total": 31.01916754245758
+                },
+                "server": null,
+                "readMs": 0.08566594123840332,
+                "bytes": {
+                  "total": 86310,
+                  "mean": 20.255808495658297,
+                  "oneChar": 15.363930885529157
+                },
+                "save": {
+                  "bytes": 27231,
+                  "ms": 0.4741250276565552,
+                  "loadMs": 1.8866660594940186
+                },
+                "heapBytes": 501568
+              }
+            ]
+          },
+          "rows": [
+            {
+              "engine": "ours",
+              "trace": {
+                "chars": {
+                  "before": 10147,
+                  "after": 10147,
+                  "equal": true
+                },
+                "paragraphs": {
+                  "before": 54,
+                  "after": 54,
+                  "equal": true
+                },
+                "ops": {
+                  "before": 4261,
+                  "after": 4261,
+                  "equal": true
+                }
+              },
+              "correct": {
+                "before": true,
+                "after": true,
+                "equal": true
+              },
+              "metrics": {
+                "local.p50": {
+                  "before": 0.010957956314086914,
+                  "after": 0.010709047317504883,
+                  "ratioAfterOverBefore": 0.9772850895324297,
+                  "delta": -0.00024890899658203125,
+                  "equal": false
+                },
+                "local.p95": {
+                  "before": 0.05991697311401367,
+                  "after": 0.03704202175140381,
+                  "ratioAfterOverBefore": 0.6182225140265011,
+                  "delta": -0.022874951362609863,
+                  "equal": false
+                },
+                "local.max": {
+                  "before": 4.242790937423706,
+                  "after": 4.444875001907349,
+                  "ratioAfterOverBefore": 1.0476299840044325,
+                  "delta": 0.20208406448364258,
+                  "equal": false
+                },
+                "local.total": {
+                  "before": 178.12219178676605,
+                  "after": 148.78419244289398,
+                  "ratioAfterOverBefore": 0.8352928456045879,
+                  "delta": -29.33799934387207,
+                  "equal": false
+                },
+                "remote.p50": {
+                  "before": 0.00162506103515625,
+                  "after": 0.0015419721603393555,
+                  "ratioAfterOverBefore": 0.9488703051643192,
+                  "delta": -8.308887481689453e-05,
+                  "equal": false
+                },
+                "remote.p95": {
+                  "before": 0.0032080411911010742,
+                  "after": 0.002375006675720215,
+                  "ratioAfterOverBefore": 0.7403292333989818,
+                  "delta": -0.0008330345153808594,
+                  "equal": false
+                },
+                "remote.max": {
+                  "before": 0.35637497901916504,
+                  "after": 0.3692500591278076,
+                  "ratioAfterOverBefore": 1.0361279014146225,
+                  "delta": 0.012875080108642578,
+                  "equal": false
+                },
+                "remote.total": {
+                  "before": 15.073013663291931,
+                  "after": 13.311837792396545,
+                  "ratioAfterOverBefore": 0.8831570175522055,
+                  "delta": -1.7611758708953857,
+                  "equal": false
+                },
+                "server.p50": {
+                  "before": 0.0022499561309814453,
+                  "after": 0.0021250247955322266,
+                  "ratioAfterOverBefore": 0.9444738794108297,
+                  "delta": -0.00012493133544921875,
+                  "equal": false
+                },
+                "server.p95": {
+                  "before": 0.004915952682495117,
+                  "after": 0.00395810604095459,
+                  "ratioAfterOverBefore": 0.8051554391580581,
+                  "delta": -0.0009578466415405273,
+                  "equal": false
+                },
+                "server.max": {
+                  "before": 0.8449579477310181,
+                  "after": 0.5765830278396606,
+                  "ratioAfterOverBefore": 0.6823807378674527,
+                  "delta": -0.2683749198913574,
+                  "equal": false
+                },
+                "server.total": {
+                  "before": 20.358070254325867,
+                  "after": 17.065630435943604,
+                  "ratioAfterOverBefore": 0.8382734818550567,
+                  "delta": -3.292439818382263,
+                  "equal": false
+                },
+                "readMs": {
+                  "before": 6.776916980743408,
+                  "after": 4.838917016983032,
+                  "ratioAfterOverBefore": 0.7140292600208623,
+                  "delta": -1.937999963760376,
+                  "equal": false
+                },
+                "bytes.total": {
+                  "before": 449304,
+                  "after": 449304,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "bytes.mean": {
+                  "before": 105.44567003050928,
+                  "after": 105.44567003050928,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "bytes.oneChar": {
+                  "before": 97.78077753779698,
+                  "after": 97.78077753779698,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "save.bytes": {
+                  "before": 167595,
+                  "after": 167595,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "save.ms": {
+                  "before": 3.5094999074935913,
+                  "after": 3.1726250648498535,
+                  "ratioAfterOverBefore": 0.9040105851194262,
+                  "delta": -0.3368748426437378,
+                  "equal": false
+                },
+                "save.loadMs": {
+                  "before": 6.924207925796509,
+                  "after": 5.015125036239624,
+                  "ratioAfterOverBefore": 0.7242886247762009,
+                  "delta": -1.9090828895568848,
+                  "equal": false
+                },
+                "heapBytes": {
+                  "before": 3868776,
+                  "after": 3868608,
+                  "ratioAfterOverBefore": 0.9999565754129989,
+                  "delta": -168,
+                  "equal": false
+                }
+              }
+            },
+            {
+              "engine": "yjs",
+              "trace": {
+                "chars": {
+                  "before": 10147,
+                  "after": 10147,
+                  "equal": true
+                },
+                "paragraphs": {
+                  "before": 54,
+                  "after": 54,
+                  "equal": true
+                },
+                "ops": {
+                  "before": 4261,
+                  "after": 4261,
+                  "equal": true
+                }
+              },
+              "correct": {
+                "before": true,
+                "after": true,
+                "equal": true
+              },
+              "metrics": {
+                "local.p50": {
+                  "before": 0.006999969482421875,
+                  "after": 0.006540894508361816,
+                  "ratioAfterOverBefore": 0.9344175749318802,
+                  "delta": -0.0004590749740600586,
+                  "equal": false
+                },
+                "local.p95": {
+                  "before": 0.022665977478027344,
+                  "after": 0.013000011444091797,
+                  "ratioAfterOverBefore": 0.5735473555770606,
+                  "delta": -0.009665966033935547,
+                  "equal": false
+                },
+                "local.max": {
+                  "before": 1.2535420656204224,
+                  "after": 0.7236660718917847,
+                  "ratioAfterOverBefore": 0.5772969984326906,
+                  "delta": -0.5298759937286377,
+                  "equal": false
+                },
+                "local.total": {
+                  "before": 48.82241714000702,
+                  "after": 36.54528880119324,
+                  "ratioAfterOverBefore": 0.7485350161257498,
+                  "delta": -12.277128338813782,
+                  "equal": false
+                },
+                "remote.p50": {
+                  "before": 0.0064580440521240234,
+                  "after": 0.005666971206665039,
+                  "ratioAfterOverBefore": 0.8775058145974084,
+                  "delta": -0.0007910728454589844,
+                  "equal": false
+                },
+                "remote.p95": {
+                  "before": 0.021541953086853027,
+                  "after": 0.010040998458862305,
+                  "ratioAfterOverBefore": 0.46611365359393936,
+                  "delta": -0.011500954627990723,
+                  "equal": false
+                },
+                "remote.max": {
+                  "before": 1.1317089796066284,
+                  "after": 1.0361250638961792,
+                  "ratioAfterOverBefore": 0.9155401985555746,
+                  "delta": -0.09558391571044922,
+                  "equal": false
+                },
+                "remote.total": {
+                  "before": 49.14058184623718,
+                  "after": 31.01916754245758,
+                  "ratioAfterOverBefore": 0.6312332165605564,
+                  "delta": -18.121414303779602,
+                  "equal": false
+                },
+                "server.p50": null,
+                "server.p95": null,
+                "server.max": null,
+                "server.total": null,
+                "readMs": {
+                  "before": 0.10520792007446289,
+                  "after": 0.08566594123840332,
+                  "ratioAfterOverBefore": 0.8142537289756477,
+                  "delta": -0.01954197883605957,
+                  "equal": false
+                },
+                "bytes.total": {
+                  "before": 86310,
+                  "after": 86310,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "bytes.mean": {
+                  "before": 20.255808495658297,
+                  "after": 20.255808495658297,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "bytes.oneChar": {
+                  "before": 15.363930885529157,
+                  "after": 15.363930885529157,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "save.bytes": {
+                  "before": 27231,
+                  "after": 27231,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "save.ms": {
+                  "before": 0.5558749437332153,
+                  "after": 0.4741250276565552,
+                  "ratioAfterOverBefore": 0.8529346987154454,
+                  "delta": -0.08174991607666016,
+                  "equal": false
+                },
+                "save.loadMs": {
+                  "before": 2.216499924659729,
+                  "after": 1.8866660594940186,
+                  "ratioAfterOverBefore": 0.8511915739332382,
+                  "delta": -0.32983386516571045,
+                  "equal": false
+                },
+                "heapBytes": {
+                  "before": 440832,
+                  "after": 501568,
+                  "ratioAfterOverBefore": 1.1377758420441346,
+                  "delta": 60736,
+                  "equal": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "run": 2,
+          "file": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after-repeat/2026-10-22-10000.json",
+          "raw": {
+            "seed": 1,
+            "node": "v22.19.0",
+            "rows": [
+              {
+                "engine": "ours",
+                "chars": 10147,
+                "paragraphs": 54,
+                "ops": 4261,
+                "correct": true,
+                "local": {
+                  "p50": 0.010542035102844238,
+                  "p95": 0.036624908447265625,
+                  "max": 4.137833952903748,
+                  "total": 148.95236432552338
+                },
+                "remote": {
+                  "p50": 0.0015000104904174805,
+                  "p95": 0.002250075340270996,
+                  "max": 0.2887500524520874,
+                  "total": 12.832201480865479
+                },
+                "server": {
+                  "p50": 0.0021250247955322266,
+                  "p95": 0.004209041595458984,
+                  "max": 0.44941699504852295,
+                  "total": 17.44586741924286
+                },
+                "readMs": 5.3809579610824585,
+                "bytes": {
+                  "total": 449304,
+                  "mean": 105.44567003050928,
+                  "oneChar": 97.78077753779698
+                },
+                "save": {
+                  "bytes": 167595,
+                  "ms": 2.997209072113037,
+                  "loadMs": 5.713124990463257
+                },
+                "heapBytes": 3869928
+              },
+              {
+                "engine": "yjs",
+                "chars": 10147,
+                "paragraphs": 54,
+                "ops": 4261,
+                "correct": true,
+                "local": {
+                  "p50": 0.0065000057220458984,
+                  "p95": 0.013959050178527832,
+                  "max": 0.5425829887390137,
+                  "total": 37.15190613269806
+                },
+                "remote": {
+                  "p50": 0.005708098411560059,
+                  "p95": 0.010166049003601074,
+                  "max": 1.0384169816970825,
+                  "total": 32.06769633293152
+                },
+                "server": null,
+                "readMs": 0.0906670093536377,
+                "bytes": {
+                  "total": 86310,
+                  "mean": 20.255808495658297,
+                  "oneChar": 15.363930885529157
+                },
+                "save": {
+                  "bytes": 27231,
+                  "ms": 0.5735830068588257,
+                  "loadMs": 2.0423749685287476
+                },
+                "heapBytes": 472424
+              }
+            ]
+          },
+          "rows": [
+            {
+              "engine": "ours",
+              "trace": {
+                "chars": {
+                  "before": 10147,
+                  "after": 10147,
+                  "equal": true
+                },
+                "paragraphs": {
+                  "before": 54,
+                  "after": 54,
+                  "equal": true
+                },
+                "ops": {
+                  "before": 4261,
+                  "after": 4261,
+                  "equal": true
+                }
+              },
+              "correct": {
+                "before": true,
+                "after": true,
+                "equal": true
+              },
+              "metrics": {
+                "local.p50": {
+                  "before": 0.010957956314086914,
+                  "after": 0.010542035102844238,
+                  "ratioAfterOverBefore": 0.9620439067905399,
+                  "delta": -0.0004159212112426758,
+                  "equal": false
+                },
+                "local.p95": {
+                  "before": 0.05991697311401367,
+                  "after": 0.036624908447265625,
+                  "ratioAfterOverBefore": 0.6112609923998249,
+                  "delta": -0.023292064666748047,
+                  "equal": false
+                },
+                "local.max": {
+                  "before": 4.242790937423706,
+                  "after": 4.137833952903748,
+                  "ratioAfterOverBefore": 0.9752622775743718,
+                  "delta": -0.1049569845199585,
+                  "equal": false
+                },
+                "local.total": {
+                  "before": 178.12219178676605,
+                  "after": 148.95236432552338,
+                  "ratioAfterOverBefore": 0.8362369833391534,
+                  "delta": -29.169827461242676,
+                  "equal": false
+                },
+                "remote.p50": {
+                  "before": 0.00162506103515625,
+                  "after": 0.0015000104904174805,
+                  "ratioAfterOverBefore": 0.9230487089201878,
+                  "delta": -0.00012505054473876953,
+                  "equal": false
+                },
+                "remote.p95": {
+                  "before": 0.0032080411911010742,
+                  "after": 0.002250075340270996,
+                  "ratioAfterOverBefore": 0.701386050313998,
+                  "delta": -0.0009579658508300781,
+                  "equal": false
+                },
+                "remote.max": {
+                  "before": 0.35637497901916504,
+                  "after": 0.2887500524520874,
+                  "ratioAfterOverBefore": 0.8102422152273465,
+                  "delta": -0.06762492656707764,
+                  "equal": false
+                },
+                "remote.total": {
+                  "before": 15.073013663291931,
+                  "after": 12.832201480865479,
+                  "ratioAfterOverBefore": 0.8513361539714108,
+                  "delta": -2.2408121824264526,
+                  "equal": false
+                },
+                "server.p50": {
+                  "before": 0.0022499561309814453,
+                  "after": 0.0021250247955322266,
+                  "ratioAfterOverBefore": 0.9444738794108297,
+                  "delta": -0.00012493133544921875,
+                  "equal": false
+                },
+                "server.p95": {
+                  "before": 0.004915952682495117,
+                  "after": 0.004209041595458984,
+                  "ratioAfterOverBefore": 0.8562005916872787,
+                  "delta": -0.0007069110870361328,
+                  "equal": false
+                },
+                "server.max": {
+                  "before": 0.8449579477310181,
+                  "after": 0.44941699504852295,
+                  "ratioAfterOverBefore": 0.5318809015943943,
+                  "delta": -0.3955409526824951,
+                  "equal": false
+                },
+                "server.total": {
+                  "before": 20.358070254325867,
+                  "after": 17.44586741924286,
+                  "ratioAfterOverBefore": 0.8569509389297743,
+                  "delta": -2.912202835083008,
+                  "equal": false
+                },
+                "readMs": {
+                  "before": 6.776916980743408,
+                  "after": 5.3809579610824585,
+                  "ratioAfterOverBefore": 0.7940126721889078,
+                  "delta": -1.3959590196609497,
+                  "equal": false
+                },
+                "bytes.total": {
+                  "before": 449304,
+                  "after": 449304,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "bytes.mean": {
+                  "before": 105.44567003050928,
+                  "after": 105.44567003050928,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "bytes.oneChar": {
+                  "before": 97.78077753779698,
+                  "after": 97.78077753779698,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "save.bytes": {
+                  "before": 167595,
+                  "after": 167595,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "save.ms": {
+                  "before": 3.5094999074935913,
+                  "after": 2.997209072113037,
+                  "ratioAfterOverBefore": 0.8540273973831157,
+                  "delta": -0.5122908353805542,
+                  "equal": false
+                },
+                "save.loadMs": {
+                  "before": 6.924207925796509,
+                  "after": 5.713124990463257,
+                  "ratioAfterOverBefore": 0.8250943720477691,
+                  "delta": -1.211082935333252,
+                  "equal": false
+                },
+                "heapBytes": {
+                  "before": 3868776,
+                  "after": 3869928,
+                  "ratioAfterOverBefore": 1.0002977685965795,
+                  "delta": 1152,
+                  "equal": false
+                }
+              }
+            },
+            {
+              "engine": "yjs",
+              "trace": {
+                "chars": {
+                  "before": 10147,
+                  "after": 10147,
+                  "equal": true
+                },
+                "paragraphs": {
+                  "before": 54,
+                  "after": 54,
+                  "equal": true
+                },
+                "ops": {
+                  "before": 4261,
+                  "after": 4261,
+                  "equal": true
+                }
+              },
+              "correct": {
+                "before": true,
+                "after": true,
+                "equal": true
+              },
+              "metrics": {
+                "local.p50": {
+                  "before": 0.006999969482421875,
+                  "after": 0.0065000057220458984,
+                  "ratioAfterOverBefore": 0.9285762942779292,
+                  "delta": -0.0004999637603759766,
+                  "equal": false
+                },
+                "local.p95": {
+                  "before": 0.022665977478027344,
+                  "after": 0.013959050178527832,
+                  "ratioAfterOverBefore": 0.6158591744856313,
+                  "delta": -0.008706927299499512,
+                  "equal": false
+                },
+                "local.max": {
+                  "before": 1.2535420656204224,
+                  "after": 0.5425829887390137,
+                  "ratioAfterOverBefore": 0.43283987320399187,
+                  "delta": -0.7109590768814087,
+                  "equal": false
+                },
+                "local.total": {
+                  "before": 48.82241714000702,
+                  "after": 37.15190613269806,
+                  "ratioAfterOverBefore": 0.7609599915169771,
+                  "delta": -11.67051100730896,
+                  "equal": false
+                },
+                "remote.p50": {
+                  "before": 0.0064580440521240234,
+                  "after": 0.005708098411560059,
+                  "ratioAfterOverBefore": 0.8838741831875069,
+                  "delta": -0.0007499456405639648,
+                  "equal": false
+                },
+                "remote.p95": {
+                  "before": 0.021541953086853027,
+                  "after": 0.010166049003601074,
+                  "ratioAfterOverBefore": 0.4719186307115939,
+                  "delta": -0.011375904083251953,
+                  "equal": false
+                },
+                "remote.max": {
+                  "before": 1.1317089796066284,
+                  "after": 1.0384169816970825,
+                  "ratioAfterOverBefore": 0.9175653815683487,
+                  "delta": -0.0932919979095459,
+                  "equal": false
+                },
+                "remote.total": {
+                  "before": 49.14058184623718,
+                  "after": 32.06769633293152,
+                  "ratioAfterOverBefore": 0.6525705461378664,
+                  "delta": -17.072885513305664,
+                  "equal": false
+                },
+                "server.p50": null,
+                "server.p95": null,
+                "server.max": null,
+                "server.total": null,
+                "readMs": {
+                  "before": 0.10520792007446289,
+                  "after": 0.0906670093536377,
+                  "ratioAfterOverBefore": 0.8617888205514035,
+                  "delta": -0.014540910720825195,
+                  "equal": false
+                },
+                "bytes.total": {
+                  "before": 86310,
+                  "after": 86310,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "bytes.mean": {
+                  "before": 20.255808495658297,
+                  "after": 20.255808495658297,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "bytes.oneChar": {
+                  "before": 15.363930885529157,
+                  "after": 15.363930885529157,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "save.bytes": {
+                  "before": 27231,
+                  "after": 27231,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "save.ms": {
+                  "before": 0.5558749437332153,
+                  "after": 0.5735830068588257,
+                  "ratioAfterOverBefore": 1.031856199537767,
+                  "delta": 0.01770806312561035,
+                  "equal": false
+                },
+                "save.loadMs": {
+                  "before": 2.216499924659729,
+                  "after": 2.0423749685287476,
+                  "ratioAfterOverBefore": 0.9214414788858102,
+                  "delta": -0.17412495613098145,
+                  "equal": false
+                },
+                "heapBytes": {
+                  "before": 440832,
+                  "after": 472424,
+                  "ratioAfterOverBefore": 1.0716644889663183,
+                  "delta": 31592,
+                  "equal": false
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requestedChars": 100000,
+      "baselineFile": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/before/2026-10-22-100000.json",
+      "baseline": {
+        "seed": 1,
+        "node": "v22.19.0",
+        "rows": [
+          {
+            "engine": "ours",
+            "chars": 100031,
+            "paragraphs": 625,
+            "ops": 41549,
+            "correct": true,
+            "local": {
+              "p50": 0.04700005054473877,
+              "p95": 0.28766703605651855,
+              "max": 35.49800002574921,
+              "total": 10995.519001722336
+            },
+            "remote": {
+              "p50": 0.010542035102844238,
+              "p95": 0.10008394718170166,
+              "max": 32.56400001049042,
+              "total": 3575.085627913475
+            },
+            "server": {
+              "p50": 0.017750024795532227,
+              "p95": 0.09208393096923828,
+              "max": 74.74725008010864,
+              "total": 3853.342703938484
+            },
+            "readMs": 47.81745898723602,
+            "bytes": {
+              "total": 4436790,
+              "mean": 106.78451948302005,
+              "oneChar": 99.78460811299246
+            },
+            "save": {
+              "bytes": 1648279,
+              "ms": 19.627416968345642,
+              "loadMs": 126.30116593837738
+            },
+            "heapBytes": 36475960
+          },
+          {
+            "engine": "yjs",
+            "chars": 100031,
+            "paragraphs": 625,
+            "ops": 41549,
+            "correct": true,
+            "local": {
+              "p50": 0.003708958625793457,
+              "p95": 0.008875012397766113,
+              "max": 2.4296250343322754,
+              "total": 216.38433873653412
+            },
+            "remote": {
+              "p50": 0.0032919645309448242,
+              "p95": 0.00787508487701416,
+              "max": 5.620917081832886,
+              "total": 200.25883829593658
+            },
+            "server": null,
+            "readMs": 0.8407919406890869,
+            "bytes": {
+              "total": 957314,
+              "mean": 23.040602661917255,
+              "oneChar": 17.833597464342315
+            },
+            "save": {
+              "bytes": 289774,
+              "ms": 4.476040959358215,
+              "loadMs": 14.372583031654358
+            },
+            "heapBytes": 3753736
+          }
+        ]
+      },
+      "runs": [
+        {
+          "run": 1,
+          "file": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after/2026-10-22-100000.json",
+          "raw": {
+            "seed": 1,
+            "node": "v22.19.0",
+            "rows": [
+              {
+                "engine": "ours",
+                "chars": 100031,
+                "paragraphs": 625,
+                "ops": 41549,
+                "correct": true,
+                "local": {
+                  "p50": 0.04575002193450928,
+                  "p95": 0.15108299255371094,
+                  "max": 28.57020890712738,
+                  "total": 9283.68389904499
+                },
+                "remote": {
+                  "p50": 0.006292104721069336,
+                  "p95": 0.10041701793670654,
+                  "max": 33.86970889568329,
+                  "total": 2833.552141189575
+                },
+                "server": {
+                  "p50": 0.015332937240600586,
+                  "p95": 0.08775007724761963,
+                  "max": 31.240749955177307,
+                  "total": 3273.1603796482086
+                },
+                "readMs": 45.666082978248596,
+                "bytes": {
+                  "total": 4436790,
+                  "mean": 106.78451948302005,
+                  "oneChar": 99.78460811299246
+                },
+                "save": {
+                  "bytes": 1648279,
+                  "ms": 19.107666969299316,
+                  "loadMs": 94.880499958992
+                },
+                "heapBytes": 36475960
+              },
+              {
+                "engine": "yjs",
+                "chars": 100031,
+                "paragraphs": 625,
+                "ops": 41549,
+                "correct": true,
+                "local": {
+                  "p50": 0.0035409927368164062,
+                  "p95": 0.00929105281829834,
+                  "max": 2.1461249589920044,
+                  "total": 213.80765986442566
+                },
+                "remote": {
+                  "p50": 0.0032080411911010742,
+                  "p95": 0.00774991512298584,
+                  "max": 1.3631250858306885,
+                  "total": 182.91034269332886
+                },
+                "server": null,
+                "readMs": 0.886167049407959,
+                "bytes": {
+                  "total": 957314,
+                  "mean": 23.040602661917255,
+                  "oneChar": 17.833597464342315
+                },
+                "save": {
+                  "bytes": 289774,
+                  "ms": 3.865999937057495,
+                  "loadMs": 12.838124990463257
+                },
+                "heapBytes": 3472944
+              }
+            ]
+          },
+          "rows": [
+            {
+              "engine": "ours",
+              "trace": {
+                "chars": {
+                  "before": 100031,
+                  "after": 100031,
+                  "equal": true
+                },
+                "paragraphs": {
+                  "before": 625,
+                  "after": 625,
+                  "equal": true
+                },
+                "ops": {
+                  "before": 41549,
+                  "after": 41549,
+                  "equal": true
+                }
+              },
+              "correct": {
+                "before": true,
+                "after": true,
+                "equal": true
+              },
+              "metrics": {
+                "local.p50": {
+                  "before": 0.04700005054473877,
+                  "after": 0.04575002193450928,
+                  "ratioAfterOverBefore": 0.9734036751930808,
+                  "delta": -0.0012500286102294922,
+                  "equal": false
+                },
+                "local.p95": {
+                  "before": 0.28766703605651855,
+                  "after": 0.15108299255371094,
+                  "ratioAfterOverBefore": 0.5252009219576599,
+                  "delta": -0.13658404350280762,
+                  "equal": false
+                },
+                "local.max": {
+                  "before": 35.49800002574921,
+                  "after": 28.57020890712738,
+                  "ratioAfterOverBefore": 0.8048399596147217,
+                  "delta": -6.927791118621826,
+                  "equal": false
+                },
+                "local.total": {
+                  "before": 10995.519001722336,
+                  "after": 9283.68389904499,
+                  "ratioAfterOverBefore": 0.8443152067301959,
+                  "delta": -1711.8351026773453,
+                  "equal": false
+                },
+                "remote.p50": {
+                  "before": 0.010542035102844238,
+                  "after": 0.006292104721069336,
+                  "ratioAfterOverBefore": 0.5968586387434555,
+                  "delta": -0.004249930381774902,
+                  "equal": false
+                },
+                "remote.p95": {
+                  "before": 0.10008394718170166,
+                  "after": 0.10041701793670654,
+                  "ratioAfterOverBefore": 1.0033279138601539,
+                  "delta": 0.0003330707550048828,
+                  "equal": false
+                },
+                "remote.max": {
+                  "before": 32.56400001049042,
+                  "after": 33.86970889568329,
+                  "ratioAfterOverBefore": 1.0400966983408746,
+                  "delta": 1.305708885192871,
+                  "equal": false
+                },
+                "remote.total": {
+                  "before": 3575.085627913475,
+                  "after": 2833.552141189575,
+                  "ratioAfterOverBefore": 0.7925830136950648,
+                  "delta": -741.5334867238998,
+                  "equal": false
+                },
+                "server.p50": {
+                  "before": 0.017750024795532227,
+                  "after": 0.015332937240600586,
+                  "ratioAfterOverBefore": 0.8638262434686833,
+                  "delta": -0.0024170875549316406,
+                  "equal": false
+                },
+                "server.p95": {
+                  "before": 0.09208393096923828,
+                  "after": 0.08775007724761963,
+                  "ratioAfterOverBefore": 0.9529358306492538,
+                  "delta": -0.004333853721618652,
+                  "equal": false
+                },
+                "server.max": {
+                  "before": 74.74725008010864,
+                  "after": 31.240749955177307,
+                  "ratioAfterOverBefore": 0.4179518299562292,
+                  "delta": -43.506500124931335,
+                  "equal": false
+                },
+                "server.total": {
+                  "before": 3853.342703938484,
+                  "after": 3273.1603796482086,
+                  "ratioAfterOverBefore": 0.8494340190149,
+                  "delta": -580.1823242902756,
+                  "equal": false
+                },
+                "readMs": {
+                  "before": 47.81745898723602,
+                  "after": 45.666082978248596,
+                  "ratioAfterOverBefore": 0.9550085668591948,
+                  "delta": -2.1513760089874268,
+                  "equal": false
+                },
+                "bytes.total": {
+                  "before": 4436790,
+                  "after": 4436790,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "bytes.mean": {
+                  "before": 106.78451948302005,
+                  "after": 106.78451948302005,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "bytes.oneChar": {
+                  "before": 99.78460811299246,
+                  "after": 99.78460811299246,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "save.bytes": {
+                  "before": 1648279,
+                  "after": 1648279,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "save.ms": {
+                  "before": 19.627416968345642,
+                  "after": 19.107666969299316,
+                  "ratioAfterOverBefore": 0.9735191849297052,
+                  "delta": -0.5197499990463257,
+                  "equal": false
+                },
+                "save.loadMs": {
+                  "before": 126.30116593837738,
+                  "after": 94.880499958992,
+                  "ratioAfterOverBefore": 0.751224260315098,
+                  "delta": -31.420665979385376,
+                  "equal": false
+                },
+                "heapBytes": {
+                  "before": 36475960,
+                  "after": 36475960,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "engine": "yjs",
+              "trace": {
+                "chars": {
+                  "before": 100031,
+                  "after": 100031,
+                  "equal": true
+                },
+                "paragraphs": {
+                  "before": 625,
+                  "after": 625,
+                  "equal": true
+                },
+                "ops": {
+                  "before": 41549,
+                  "after": 41549,
+                  "equal": true
+                }
+              },
+              "correct": {
+                "before": true,
+                "after": true,
+                "equal": true
+              },
+              "metrics": {
+                "local.p50": {
+                  "before": 0.003708958625793457,
+                  "after": 0.0035409927368164062,
+                  "ratioAfterOverBefore": 0.9547134638254106,
+                  "delta": -0.00016796588897705078,
+                  "equal": false
+                },
+                "local.p95": {
+                  "before": 0.008875012397766113,
+                  "after": 0.00929105281829834,
+                  "ratioAfterOverBefore": 1.0468777283778157,
+                  "delta": 0.00041604042053222656,
+                  "equal": false
+                },
+                "local.max": {
+                  "before": 2.4296250343322754,
+                  "after": 2.1461249589920044,
+                  "ratioAfterOverBefore": 0.8833152970790885,
+                  "delta": -0.283500075340271,
+                  "equal": false
+                },
+                "local.total": {
+                  "before": 216.38433873653412,
+                  "after": 213.80765986442566,
+                  "ratioAfterOverBefore": 0.9880921193874119,
+                  "delta": -2.5766788721084595,
+                  "equal": false
+                },
+                "remote.p50": {
+                  "before": 0.0032919645309448242,
+                  "after": 0.0032080411911010742,
+                  "ratioAfterOverBefore": 0.974506608727141,
+                  "delta": -8.392333984375e-05,
+                  "equal": false
+                },
+                "remote.p95": {
+                  "before": 0.00787508487701416,
+                  "after": 0.00774991512298584,
+                  "ratioAfterOverBefore": 0.984105599370279,
+                  "delta": -0.0001251697540283203,
+                  "equal": false
+                },
+                "remote.max": {
+                  "before": 5.620917081832886,
+                  "after": 1.3631250858306885,
+                  "ratioAfterOverBefore": 0.24250937453540883,
+                  "delta": -4.257791996002197,
+                  "equal": false
+                },
+                "remote.total": {
+                  "before": 200.25883829593658,
+                  "after": 182.91034269332886,
+                  "ratioAfterOverBefore": 0.9133696382630032,
+                  "delta": -17.348495602607727,
+                  "equal": false
+                },
+                "server.p50": null,
+                "server.p95": null,
+                "server.max": null,
+                "server.total": null,
+                "readMs": {
+                  "before": 0.8407919406890869,
+                  "after": 0.886167049407959,
+                  "ratioAfterOverBefore": 1.0539671071081913,
+                  "delta": 0.04537510871887207,
+                  "equal": false
+                },
+                "bytes.total": {
+                  "before": 957314,
+                  "after": 957314,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "bytes.mean": {
+                  "before": 23.040602661917255,
+                  "after": 23.040602661917255,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "bytes.oneChar": {
+                  "before": 17.833597464342315,
+                  "after": 17.833597464342315,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "save.bytes": {
+                  "before": 289774,
+                  "after": 289774,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "save.ms": {
+                  "before": 4.476040959358215,
+                  "after": 3.865999937057495,
+                  "ratioAfterOverBefore": 0.8637096872348127,
+                  "delta": -0.6100410223007202,
+                  "equal": false
+                },
+                "save.loadMs": {
+                  "before": 14.372583031654358,
+                  "after": 12.838124990463257,
+                  "ratioAfterOverBefore": 0.8932371420076968,
+                  "delta": -1.534458041191101,
+                  "equal": false
+                },
+                "heapBytes": {
+                  "before": 3753736,
+                  "after": 3472944,
+                  "ratioAfterOverBefore": 0.9251966574101109,
+                  "delta": -280792,
+                  "equal": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "run": 2,
+          "file": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after-repeat/2026-10-22-100000.json",
+          "raw": {
+            "seed": 1,
+            "node": "v22.19.0",
+            "rows": [
+              {
+                "engine": "ours",
+                "chars": 100031,
+                "paragraphs": 625,
+                "ops": 41549,
+                "correct": true,
+                "local": {
+                  "p50": 0.045791029930114746,
+                  "p95": 0.18437504768371582,
+                  "max": 37.54100000858307,
+                  "total": 9446.923238515854
+                },
+                "remote": {
+                  "p50": 0.010250091552734375,
+                  "p95": 0.09466695785522461,
+                  "max": 39.6432089805603,
+                  "total": 3402.8498858213425
+                },
+                "server": {
+                  "p50": 0.00950002670288086,
+                  "p95": 0.08604097366333008,
+                  "max": 29.010125041007996,
+                  "total": 3105.0744457244873
+                },
+                "readMs": 80.04495799541473,
+                "bytes": {
+                  "total": 4436790,
+                  "mean": 106.78451948302005,
+                  "oneChar": 99.78460811299246
+                },
+                "save": {
+                  "bytes": 1648279,
+                  "ms": 19.02149999141693,
+                  "loadMs": 119.35491704940796
+                },
+                "heapBytes": 36477376
+              },
+              {
+                "engine": "yjs",
+                "chars": 100031,
+                "paragraphs": 625,
+                "ops": 41549,
+                "correct": true,
+                "local": {
+                  "p50": 0.0036249160766601562,
+                  "p95": 0.009082913398742676,
+                  "max": 1.928583025932312,
+                  "total": 208.23041987419128
+                },
+                "remote": {
+                  "p50": 0.003291010856628418,
+                  "p95": 0.007917046546936035,
+                  "max": 9.80525004863739,
+                  "total": 201.03256142139435
+                },
+                "server": null,
+                "readMs": 0.8303749561309814,
+                "bytes": {
+                  "total": 957314,
+                  "mean": 23.040602661917255,
+                  "oneChar": 17.833597464342315
+                },
+                "save": {
+                  "bytes": 289774,
+                  "ms": 3.7690420150756836,
+                  "loadMs": 20.28724992275238
+                },
+                "heapBytes": 3751472
+              }
+            ]
+          },
+          "rows": [
+            {
+              "engine": "ours",
+              "trace": {
+                "chars": {
+                  "before": 100031,
+                  "after": 100031,
+                  "equal": true
+                },
+                "paragraphs": {
+                  "before": 625,
+                  "after": 625,
+                  "equal": true
+                },
+                "ops": {
+                  "before": 41549,
+                  "after": 41549,
+                  "equal": true
+                }
+              },
+              "correct": {
+                "before": true,
+                "after": true,
+                "equal": true
+              },
+              "metrics": {
+                "local.p50": {
+                  "before": 0.04700005054473877,
+                  "after": 0.045791029930114746,
+                  "ratioAfterOverBefore": 0.9742761847995638,
+                  "delta": -0.0012090206146240234,
+                  "equal": false
+                },
+                "local.p95": {
+                  "before": 0.28766703605651855,
+                  "after": 0.18437504768371582,
+                  "ratioAfterOverBefore": 0.6409321353298585,
+                  "delta": -0.10329198837280273,
+                  "equal": false
+                },
+                "local.max": {
+                  "before": 35.49800002574921,
+                  "after": 37.54100000858307,
+                  "ratioAfterOverBefore": 1.0575525376458372,
+                  "delta": 2.0429999828338623,
+                  "equal": false
+                },
+                "local.total": {
+                  "before": 10995.519001722336,
+                  "after": 9446.923238515854,
+                  "ratioAfterOverBefore": 0.8591611943952886,
+                  "delta": -1548.595763206482,
+                  "equal": false
+                },
+                "remote.p50": {
+                  "before": 0.010542035102844238,
+                  "after": 0.010250091552734375,
+                  "ratioAfterOverBefore": 0.9723067180803546,
+                  "delta": -0.0002919435501098633,
+                  "equal": false
+                },
+                "remote.p95": {
+                  "before": 0.10008394718170166,
+                  "after": 0.09466695785522461,
+                  "ratioAfterOverBefore": 0.9458755426917511,
+                  "delta": -0.005416989326477051,
+                  "equal": false
+                },
+                "remote.max": {
+                  "before": 32.56400001049042,
+                  "after": 39.6432089805603,
+                  "ratioAfterOverBefore": 1.2173937159989354,
+                  "delta": 7.079208970069885,
+                  "equal": false
+                },
+                "remote.total": {
+                  "before": 3575.085627913475,
+                  "after": 3402.8498858213425,
+                  "ratioAfterOverBefore": 0.9518233239653467,
+                  "delta": -172.23574209213257,
+                  "equal": false
+                },
+                "server.p50": {
+                  "before": 0.017750024795532227,
+                  "after": 0.00950002670288086,
+                  "ratioAfterOverBefore": 0.5352120243388091,
+                  "delta": -0.008249998092651367,
+                  "equal": false
+                },
+                "server.p95": {
+                  "before": 0.09208393096923828,
+                  "after": 0.08604097366333008,
+                  "ratioAfterOverBefore": 0.9343755501931501,
+                  "delta": -0.006042957305908203,
+                  "equal": false
+                },
+                "server.max": {
+                  "before": 74.74725008010864,
+                  "after": 29.010125041007996,
+                  "ratioAfterOverBefore": 0.3881095961378788,
+                  "delta": -45.73712503910065,
+                  "equal": false
+                },
+                "server.total": {
+                  "before": 3853.342703938484,
+                  "after": 3105.0744457244873,
+                  "ratioAfterOverBefore": 0.8058132079845389,
+                  "delta": -748.2682582139969,
+                  "equal": false
+                },
+                "readMs": {
+                  "before": 47.81745898723602,
+                  "after": 80.04495799541473,
+                  "ratioAfterOverBefore": 1.6739692926130023,
+                  "delta": 32.22749900817871,
+                  "equal": false
+                },
+                "bytes.total": {
+                  "before": 4436790,
+                  "after": 4436790,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "bytes.mean": {
+                  "before": 106.78451948302005,
+                  "after": 106.78451948302005,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "bytes.oneChar": {
+                  "before": 99.78460811299246,
+                  "after": 99.78460811299246,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "save.bytes": {
+                  "before": 1648279,
+                  "after": 1648279,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "save.ms": {
+                  "before": 19.627416968345642,
+                  "after": 19.02149999141693,
+                  "ratioAfterOverBefore": 0.969129051575869,
+                  "delta": -0.6059169769287109,
+                  "equal": false
+                },
+                "save.loadMs": {
+                  "before": 126.30116593837738,
+                  "after": 119.35491704940796,
+                  "ratioAfterOverBefore": 0.9450024959202791,
+                  "delta": -6.946248888969421,
+                  "equal": false
+                },
+                "heapBytes": {
+                  "before": 36475960,
+                  "after": 36477376,
+                  "ratioAfterOverBefore": 1.0000388200886283,
+                  "delta": 1416,
+                  "equal": false
+                }
+              }
+            },
+            {
+              "engine": "yjs",
+              "trace": {
+                "chars": {
+                  "before": 100031,
+                  "after": 100031,
+                  "equal": true
+                },
+                "paragraphs": {
+                  "before": 625,
+                  "after": 625,
+                  "equal": true
+                },
+                "ops": {
+                  "before": 41549,
+                  "after": 41549,
+                  "equal": true
+                }
+              },
+              "correct": {
+                "before": true,
+                "after": true,
+                "equal": true
+              },
+              "metrics": {
+                "local.p50": {
+                  "before": 0.003708958625793457,
+                  "after": 0.0036249160766601562,
+                  "ratioAfterOverBefore": 0.9773406614598399,
+                  "delta": -8.404254913330078e-05,
+                  "equal": false
+                },
+                "local.p95": {
+                  "before": 0.008875012397766113,
+                  "after": 0.009082913398742676,
+                  "ratioAfterOverBefore": 1.023425432175046,
+                  "delta": 0.0002079010009765625,
+                  "equal": false
+                },
+                "local.max": {
+                  "before": 2.4296250343322754,
+                  "after": 1.928583025932312,
+                  "ratioAfterOverBefore": 0.7937780516252941,
+                  "delta": -0.5010420083999634,
+                  "equal": false
+                },
+                "local.total": {
+                  "before": 216.38433873653412,
+                  "after": 208.23041987419128,
+                  "ratioAfterOverBefore": 0.9623174259747564,
+                  "delta": -8.153918862342834,
+                  "equal": false
+                },
+                "remote.p50": {
+                  "before": 0.0032919645309448242,
+                  "after": 0.003291010856628418,
+                  "ratioAfterOverBefore": 0.9997103023718993,
+                  "delta": -9.5367431640625e-07,
+                  "equal": false
+                },
+                "remote.p95": {
+                  "before": 0.00787508487701416,
+                  "after": 0.007917046546936035,
+                  "ratioAfterOverBefore": 1.0053284085920589,
+                  "delta": 4.1961669921875e-05,
+                  "equal": false
+                },
+                "remote.max": {
+                  "before": 5.620917081832886,
+                  "after": 9.80525004863739,
+                  "ratioAfterOverBefore": 1.7444217564298359,
+                  "delta": 4.184332966804504,
+                  "equal": false
+                },
+                "remote.total": {
+                  "before": 200.25883829593658,
+                  "after": 201.03256142139435,
+                  "ratioAfterOverBefore": 1.0038636153691973,
+                  "delta": 0.7737231254577637,
+                  "equal": false
+                },
+                "server.p50": null,
+                "server.p95": null,
+                "server.max": null,
+                "server.total": null,
+                "readMs": {
+                  "before": 0.8407919406890869,
+                  "after": 0.8303749561309814,
+                  "ratioAfterOverBefore": 0.9876105085527247,
+                  "delta": -0.010416984558105469,
+                  "equal": false
+                },
+                "bytes.total": {
+                  "before": 957314,
+                  "after": 957314,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "bytes.mean": {
+                  "before": 23.040602661917255,
+                  "after": 23.040602661917255,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "bytes.oneChar": {
+                  "before": 17.833597464342315,
+                  "after": 17.833597464342315,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0.0,
+                  "equal": true
+                },
+                "save.bytes": {
+                  "before": 289774,
+                  "after": 289774,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "save.ms": {
+                  "before": 4.476040959358215,
+                  "after": 3.7690420150756836,
+                  "ratioAfterOverBefore": 0.8420481513234627,
+                  "delta": -0.7069989442825317,
+                  "equal": false
+                },
+                "save.loadMs": {
+                  "before": 14.372583031654358,
+                  "after": 20.28724992275238,
+                  "ratioAfterOverBefore": 1.4115242805048671,
+                  "delta": 5.9146668910980225,
+                  "equal": false
+                },
+                "heapBytes": {
+                  "before": 3753736,
+                  "after": 3751472,
+                  "ratioAfterOverBefore": 0.9993968675474247,
+                  "delta": -2264,
+                  "equal": false
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "coreAfterRanges": [
+    {
+      "requestedChars": 10000,
+      "engine": "ours",
+      "metrics": {
+        "local.p50": {
+          "before": 0.010957956314086914,
+          "afterMin": 0.010542035102844238,
+          "afterMax": 0.010709047317504883,
+          "ratioMin": 0.9620439067905399,
+          "ratioMax": 0.9772850895324297
+        },
+        "local.p95": {
+          "before": 0.05991697311401367,
+          "afterMin": 0.036624908447265625,
+          "afterMax": 0.03704202175140381,
+          "ratioMin": 0.6112609923998249,
+          "ratioMax": 0.6182225140265011
+        },
+        "local.max": {
+          "before": 4.242790937423706,
+          "afterMin": 4.137833952903748,
+          "afterMax": 4.444875001907349,
+          "ratioMin": 0.9752622775743718,
+          "ratioMax": 1.0476299840044325
+        },
+        "local.total": {
+          "before": 178.12219178676605,
+          "afterMin": 148.78419244289398,
+          "afterMax": 148.95236432552338,
+          "ratioMin": 0.8352928456045879,
+          "ratioMax": 0.8362369833391534
+        },
+        "remote.p50": {
+          "before": 0.00162506103515625,
+          "afterMin": 0.0015000104904174805,
+          "afterMax": 0.0015419721603393555,
+          "ratioMin": 0.9230487089201878,
+          "ratioMax": 0.9488703051643192
+        },
+        "remote.p95": {
+          "before": 0.0032080411911010742,
+          "afterMin": 0.002250075340270996,
+          "afterMax": 0.002375006675720215,
+          "ratioMin": 0.701386050313998,
+          "ratioMax": 0.7403292333989818
+        },
+        "remote.max": {
+          "before": 0.35637497901916504,
+          "afterMin": 0.2887500524520874,
+          "afterMax": 0.3692500591278076,
+          "ratioMin": 0.8102422152273465,
+          "ratioMax": 1.0361279014146225
+        },
+        "remote.total": {
+          "before": 15.073013663291931,
+          "afterMin": 12.832201480865479,
+          "afterMax": 13.311837792396545,
+          "ratioMin": 0.8513361539714108,
+          "ratioMax": 0.8831570175522055
+        },
+        "server.p50": {
+          "before": 0.0022499561309814453,
+          "afterMin": 0.0021250247955322266,
+          "afterMax": 0.0021250247955322266,
+          "ratioMin": 0.9444738794108297,
+          "ratioMax": 0.9444738794108297
+        },
+        "server.p95": {
+          "before": 0.004915952682495117,
+          "afterMin": 0.00395810604095459,
+          "afterMax": 0.004209041595458984,
+          "ratioMin": 0.8051554391580581,
+          "ratioMax": 0.8562005916872787
+        },
+        "server.max": {
+          "before": 0.8449579477310181,
+          "afterMin": 0.44941699504852295,
+          "afterMax": 0.5765830278396606,
+          "ratioMin": 0.5318809015943943,
+          "ratioMax": 0.6823807378674527
+        },
+        "server.total": {
+          "before": 20.358070254325867,
+          "afterMin": 17.065630435943604,
+          "afterMax": 17.44586741924286,
+          "ratioMin": 0.8382734818550567,
+          "ratioMax": 0.8569509389297743
+        },
+        "readMs": {
+          "before": 6.776916980743408,
+          "afterMin": 4.838917016983032,
+          "afterMax": 5.3809579610824585,
+          "ratioMin": 0.7140292600208623,
+          "ratioMax": 0.7940126721889078
+        },
+        "bytes.total": {
+          "before": 449304,
+          "afterMin": 449304,
+          "afterMax": 449304,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "bytes.mean": {
+          "before": 105.44567003050928,
+          "afterMin": 105.44567003050928,
+          "afterMax": 105.44567003050928,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "bytes.oneChar": {
+          "before": 97.78077753779698,
+          "afterMin": 97.78077753779698,
+          "afterMax": 97.78077753779698,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "save.bytes": {
+          "before": 167595,
+          "afterMin": 167595,
+          "afterMax": 167595,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "save.ms": {
+          "before": 3.5094999074935913,
+          "afterMin": 2.997209072113037,
+          "afterMax": 3.1726250648498535,
+          "ratioMin": 0.8540273973831157,
+          "ratioMax": 0.9040105851194262
+        },
+        "save.loadMs": {
+          "before": 6.924207925796509,
+          "afterMin": 5.015125036239624,
+          "afterMax": 5.713124990463257,
+          "ratioMin": 0.7242886247762009,
+          "ratioMax": 0.8250943720477691
+        },
+        "heapBytes": {
+          "before": 3868776,
+          "afterMin": 3868608,
+          "afterMax": 3869928,
+          "ratioMin": 0.9999565754129989,
+          "ratioMax": 1.0002977685965795
+        }
+      }
+    },
+    {
+      "requestedChars": 10000,
+      "engine": "yjs",
+      "metrics": {
+        "local.p50": {
+          "before": 0.006999969482421875,
+          "afterMin": 0.0065000057220458984,
+          "afterMax": 0.006540894508361816,
+          "ratioMin": 0.9285762942779292,
+          "ratioMax": 0.9344175749318802
+        },
+        "local.p95": {
+          "before": 0.022665977478027344,
+          "afterMin": 0.013000011444091797,
+          "afterMax": 0.013959050178527832,
+          "ratioMin": 0.5735473555770606,
+          "ratioMax": 0.6158591744856313
+        },
+        "local.max": {
+          "before": 1.2535420656204224,
+          "afterMin": 0.5425829887390137,
+          "afterMax": 0.7236660718917847,
+          "ratioMin": 0.43283987320399187,
+          "ratioMax": 0.5772969984326906
+        },
+        "local.total": {
+          "before": 48.82241714000702,
+          "afterMin": 36.54528880119324,
+          "afterMax": 37.15190613269806,
+          "ratioMin": 0.7485350161257498,
+          "ratioMax": 0.7609599915169771
+        },
+        "remote.p50": {
+          "before": 0.0064580440521240234,
+          "afterMin": 0.005666971206665039,
+          "afterMax": 0.005708098411560059,
+          "ratioMin": 0.8775058145974084,
+          "ratioMax": 0.8838741831875069
+        },
+        "remote.p95": {
+          "before": 0.021541953086853027,
+          "afterMin": 0.010040998458862305,
+          "afterMax": 0.010166049003601074,
+          "ratioMin": 0.46611365359393936,
+          "ratioMax": 0.4719186307115939
+        },
+        "remote.max": {
+          "before": 1.1317089796066284,
+          "afterMin": 1.0361250638961792,
+          "afterMax": 1.0384169816970825,
+          "ratioMin": 0.9155401985555746,
+          "ratioMax": 0.9175653815683487
+        },
+        "remote.total": {
+          "before": 49.14058184623718,
+          "afterMin": 31.01916754245758,
+          "afterMax": 32.06769633293152,
+          "ratioMin": 0.6312332165605564,
+          "ratioMax": 0.6525705461378664
+        },
+        "readMs": {
+          "before": 0.10520792007446289,
+          "afterMin": 0.08566594123840332,
+          "afterMax": 0.0906670093536377,
+          "ratioMin": 0.8142537289756477,
+          "ratioMax": 0.8617888205514035
+        },
+        "bytes.total": {
+          "before": 86310,
+          "afterMin": 86310,
+          "afterMax": 86310,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "bytes.mean": {
+          "before": 20.255808495658297,
+          "afterMin": 20.255808495658297,
+          "afterMax": 20.255808495658297,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "bytes.oneChar": {
+          "before": 15.363930885529157,
+          "afterMin": 15.363930885529157,
+          "afterMax": 15.363930885529157,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "save.bytes": {
+          "before": 27231,
+          "afterMin": 27231,
+          "afterMax": 27231,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "save.ms": {
+          "before": 0.5558749437332153,
+          "afterMin": 0.4741250276565552,
+          "afterMax": 0.5735830068588257,
+          "ratioMin": 0.8529346987154454,
+          "ratioMax": 1.031856199537767
+        },
+        "save.loadMs": {
+          "before": 2.216499924659729,
+          "afterMin": 1.8866660594940186,
+          "afterMax": 2.0423749685287476,
+          "ratioMin": 0.8511915739332382,
+          "ratioMax": 0.9214414788858102
+        },
+        "heapBytes": {
+          "before": 440832,
+          "afterMin": 472424,
+          "afterMax": 501568,
+          "ratioMin": 1.0716644889663183,
+          "ratioMax": 1.1377758420441346
+        }
+      }
+    },
+    {
+      "requestedChars": 100000,
+      "engine": "ours",
+      "metrics": {
+        "local.p50": {
+          "before": 0.04700005054473877,
+          "afterMin": 0.04575002193450928,
+          "afterMax": 0.045791029930114746,
+          "ratioMin": 0.9734036751930808,
+          "ratioMax": 0.9742761847995638
+        },
+        "local.p95": {
+          "before": 0.28766703605651855,
+          "afterMin": 0.15108299255371094,
+          "afterMax": 0.18437504768371582,
+          "ratioMin": 0.5252009219576599,
+          "ratioMax": 0.6409321353298585
+        },
+        "local.max": {
+          "before": 35.49800002574921,
+          "afterMin": 28.57020890712738,
+          "afterMax": 37.54100000858307,
+          "ratioMin": 0.8048399596147217,
+          "ratioMax": 1.0575525376458372
+        },
+        "local.total": {
+          "before": 10995.519001722336,
+          "afterMin": 9283.68389904499,
+          "afterMax": 9446.923238515854,
+          "ratioMin": 0.8443152067301959,
+          "ratioMax": 0.8591611943952886
+        },
+        "remote.p50": {
+          "before": 0.010542035102844238,
+          "afterMin": 0.006292104721069336,
+          "afterMax": 0.010250091552734375,
+          "ratioMin": 0.5968586387434555,
+          "ratioMax": 0.9723067180803546
+        },
+        "remote.p95": {
+          "before": 0.10008394718170166,
+          "afterMin": 0.09466695785522461,
+          "afterMax": 0.10041701793670654,
+          "ratioMin": 0.9458755426917511,
+          "ratioMax": 1.0033279138601539
+        },
+        "remote.max": {
+          "before": 32.56400001049042,
+          "afterMin": 33.86970889568329,
+          "afterMax": 39.6432089805603,
+          "ratioMin": 1.0400966983408746,
+          "ratioMax": 1.2173937159989354
+        },
+        "remote.total": {
+          "before": 3575.085627913475,
+          "afterMin": 2833.552141189575,
+          "afterMax": 3402.8498858213425,
+          "ratioMin": 0.7925830136950648,
+          "ratioMax": 0.9518233239653467
+        },
+        "server.p50": {
+          "before": 0.017750024795532227,
+          "afterMin": 0.00950002670288086,
+          "afterMax": 0.015332937240600586,
+          "ratioMin": 0.5352120243388091,
+          "ratioMax": 0.8638262434686833
+        },
+        "server.p95": {
+          "before": 0.09208393096923828,
+          "afterMin": 0.08604097366333008,
+          "afterMax": 0.08775007724761963,
+          "ratioMin": 0.9343755501931501,
+          "ratioMax": 0.9529358306492538
+        },
+        "server.max": {
+          "before": 74.74725008010864,
+          "afterMin": 29.010125041007996,
+          "afterMax": 31.240749955177307,
+          "ratioMin": 0.3881095961378788,
+          "ratioMax": 0.4179518299562292
+        },
+        "server.total": {
+          "before": 3853.342703938484,
+          "afterMin": 3105.0744457244873,
+          "afterMax": 3273.1603796482086,
+          "ratioMin": 0.8058132079845389,
+          "ratioMax": 0.8494340190149
+        },
+        "readMs": {
+          "before": 47.81745898723602,
+          "afterMin": 45.666082978248596,
+          "afterMax": 80.04495799541473,
+          "ratioMin": 0.9550085668591948,
+          "ratioMax": 1.6739692926130023
+        },
+        "bytes.total": {
+          "before": 4436790,
+          "afterMin": 4436790,
+          "afterMax": 4436790,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "bytes.mean": {
+          "before": 106.78451948302005,
+          "afterMin": 106.78451948302005,
+          "afterMax": 106.78451948302005,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "bytes.oneChar": {
+          "before": 99.78460811299246,
+          "afterMin": 99.78460811299246,
+          "afterMax": 99.78460811299246,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "save.bytes": {
+          "before": 1648279,
+          "afterMin": 1648279,
+          "afterMax": 1648279,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "save.ms": {
+          "before": 19.627416968345642,
+          "afterMin": 19.02149999141693,
+          "afterMax": 19.107666969299316,
+          "ratioMin": 0.969129051575869,
+          "ratioMax": 0.9735191849297052
+        },
+        "save.loadMs": {
+          "before": 126.30116593837738,
+          "afterMin": 94.880499958992,
+          "afterMax": 119.35491704940796,
+          "ratioMin": 0.751224260315098,
+          "ratioMax": 0.9450024959202791
+        },
+        "heapBytes": {
+          "before": 36475960,
+          "afterMin": 36475960,
+          "afterMax": 36477376,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0000388200886283
+        }
+      }
+    },
+    {
+      "requestedChars": 100000,
+      "engine": "yjs",
+      "metrics": {
+        "local.p50": {
+          "before": 0.003708958625793457,
+          "afterMin": 0.0035409927368164062,
+          "afterMax": 0.0036249160766601562,
+          "ratioMin": 0.9547134638254106,
+          "ratioMax": 0.9773406614598399
+        },
+        "local.p95": {
+          "before": 0.008875012397766113,
+          "afterMin": 0.009082913398742676,
+          "afterMax": 0.00929105281829834,
+          "ratioMin": 1.023425432175046,
+          "ratioMax": 1.0468777283778157
+        },
+        "local.max": {
+          "before": 2.4296250343322754,
+          "afterMin": 1.928583025932312,
+          "afterMax": 2.1461249589920044,
+          "ratioMin": 0.7937780516252941,
+          "ratioMax": 0.8833152970790885
+        },
+        "local.total": {
+          "before": 216.38433873653412,
+          "afterMin": 208.23041987419128,
+          "afterMax": 213.80765986442566,
+          "ratioMin": 0.9623174259747564,
+          "ratioMax": 0.9880921193874119
+        },
+        "remote.p50": {
+          "before": 0.0032919645309448242,
+          "afterMin": 0.0032080411911010742,
+          "afterMax": 0.003291010856628418,
+          "ratioMin": 0.974506608727141,
+          "ratioMax": 0.9997103023718993
+        },
+        "remote.p95": {
+          "before": 0.00787508487701416,
+          "afterMin": 0.00774991512298584,
+          "afterMax": 0.007917046546936035,
+          "ratioMin": 0.984105599370279,
+          "ratioMax": 1.0053284085920589
+        },
+        "remote.max": {
+          "before": 5.620917081832886,
+          "afterMin": 1.3631250858306885,
+          "afterMax": 9.80525004863739,
+          "ratioMin": 0.24250937453540883,
+          "ratioMax": 1.7444217564298359
+        },
+        "remote.total": {
+          "before": 200.25883829593658,
+          "afterMin": 182.91034269332886,
+          "afterMax": 201.03256142139435,
+          "ratioMin": 0.9133696382630032,
+          "ratioMax": 1.0038636153691973
+        },
+        "readMs": {
+          "before": 0.8407919406890869,
+          "afterMin": 0.8303749561309814,
+          "afterMax": 0.886167049407959,
+          "ratioMin": 0.9876105085527247,
+          "ratioMax": 1.0539671071081913
+        },
+        "bytes.total": {
+          "before": 957314,
+          "afterMin": 957314,
+          "afterMax": 957314,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "bytes.mean": {
+          "before": 23.040602661917255,
+          "afterMin": 23.040602661917255,
+          "afterMax": 23.040602661917255,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "bytes.oneChar": {
+          "before": 17.833597464342315,
+          "afterMin": 17.833597464342315,
+          "afterMax": 17.833597464342315,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "save.bytes": {
+          "before": 289774,
+          "afterMin": 289774,
+          "afterMax": 289774,
+          "ratioMin": 1.0,
+          "ratioMax": 1.0
+        },
+        "save.ms": {
+          "before": 4.476040959358215,
+          "afterMin": 3.7690420150756836,
+          "afterMax": 3.865999937057495,
+          "ratioMin": 0.8420481513234627,
+          "ratioMax": 0.8637096872348127
+        },
+        "save.loadMs": {
+          "before": 14.372583031654358,
+          "afterMin": 12.838124990463257,
+          "afterMax": 20.28724992275238,
+          "ratioMin": 0.8932371420076968,
+          "ratioMax": 1.4115242805048671
+        },
+        "heapBytes": {
+          "before": 3753736,
+          "afterMin": 3472944,
+          "afterMax": 3751472,
+          "ratioMin": 0.9251966574101109,
+          "ratioMax": 0.9993968675474247
+        }
+      }
+    }
+  ],
+  "clientBaseline": {
+    "work_id": "sync-client-local-edit-20261022",
+    "label": "monorepo-before",
+    "node": "v22.19.0",
+    "samples": 30,
+    "warmups": 5,
+    "unit": "ms",
+    "rows": [
+      {
+        "chars": 10000,
+        "paragraphs": 63,
+        "correct": true,
+        "cases": [
+          {
+            "path": "doc",
+            "p50": 0.0654999999999859,
+            "p95": 0.1389159999999947,
+            "max": 0.13937499999997272,
+            "notices": 0,
+            "normalizations": 0
+          },
+          {
+            "path": "client",
+            "p50": 0.029957999999965068,
+            "p95": 0.031084000000021206,
+            "max": 0.04858400000000529,
+            "notices": 0,
+            "normalizations": 0
+          },
+          {
+            "path": "client-observed",
+            "p50": 0.29216599999995196,
+            "p95": 0.7797499999999786,
+            "max": 1.420458999999994,
+            "notices": 35,
+            "normalizations": 0
+          }
+        ]
+      },
+      {
+        "chars": 100000,
+        "paragraphs": 625,
+        "correct": true,
+        "cases": [
+          {
+            "path": "doc",
+            "p50": 0.18037500000002638,
+            "p95": 0.34695800000008603,
+            "max": 0.38400000000001455,
+            "notices": 0,
+            "normalizations": 0
+          },
+          {
+            "path": "client",
+            "p50": 0.10570800000004965,
+            "p95": 0.35733300000003965,
+            "max": 2.768750000000068,
+            "notices": 0,
+            "normalizations": 0
+          },
+          {
+            "path": "client-observed",
+            "p50": 0.48649999999997817,
+            "p95": 2.835542000000032,
+            "max": 4.93745899999999,
+            "notices": 35,
+            "normalizations": 0
+          }
+        ]
+      }
+    ]
+  },
+  "clientComparisons": [
+    {
+      "run": 1,
+      "file": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/client-after.json",
+      "raw": {
+        "work_id": "sync-client-local-edit-20261022",
+        "label": "monorepo-after",
+        "node": "v22.19.0",
+        "samples": 30,
+        "warmups": 5,
+        "unit": "ms",
+        "rows": [
+          {
+            "chars": 10000,
+            "paragraphs": 63,
+            "correct": true,
+            "cases": [
+              {
+                "path": "doc",
+                "p50": 0.05612500000000864,
+                "p95": 0.11958400000000324,
+                "max": 0.13170900000000074,
+                "notices": 0,
+                "normalizations": 0
+              },
+              {
+                "path": "client",
+                "p50": 0.02641599999998334,
+                "p95": 0.027166999999991504,
+                "max": 0.04112499999999386,
+                "notices": 0,
+                "normalizations": 0
+              },
+              {
+                "path": "client-observed",
+                "p50": 0.24545799999998508,
+                "p95": 0.5174590000000023,
+                "max": 0.5843330000000151,
+                "notices": 35,
+                "normalizations": 0
+              }
+            ]
+          },
+          {
+            "chars": 100000,
+            "paragraphs": 625,
+            "correct": true,
+            "cases": [
+              {
+                "path": "doc",
+                "p50": 0.10300000000000864,
+                "p95": 0.19695799999999508,
+                "max": 1.8295829999999569,
+                "notices": 0,
+                "normalizations": 0
+              },
+              {
+                "path": "client",
+                "p50": 0.09137500000002774,
+                "p95": 0.09412499999996271,
+                "max": 0.09450000000003911,
+                "notices": 0,
+                "normalizations": 0
+              },
+              {
+                "path": "client-observed",
+                "p50": 0.3039169999999558,
+                "p95": 1.5089169999999967,
+                "max": 1.6736249999999018,
+                "notices": 35,
+                "normalizations": 0
+              }
+            ]
+          }
+        ]
+      },
+      "rows": [
+        {
+          "initialChars": 10000,
+          "paragraphs": 63,
+          "correct": {
+            "before": true,
+            "after": true,
+            "equal": true
+          },
+          "cases": [
+            {
+              "path": "doc",
+              "metrics": {
+                "p50": {
+                  "before": 0.0654999999999859,
+                  "after": 0.05612500000000864,
+                  "ratioAfterOverBefore": 0.85687022900795,
+                  "delta": -0.009374999999977263,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.1389159999999947,
+                  "after": 0.11958400000000324,
+                  "ratioAfterOverBefore": 0.8608367646635938,
+                  "delta": -0.019331999999991467,
+                  "equal": false
+                },
+                "max": {
+                  "before": 0.13937499999997272,
+                  "after": 0.13170900000000074,
+                  "ratioAfterOverBefore": 0.9449973094172307,
+                  "delta": -0.007665999999971973,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "path": "client",
+              "metrics": {
+                "p50": {
+                  "before": 0.029957999999965068,
+                  "after": 0.02641599999998334,
+                  "ratioAfterOverBefore": 0.8817678082653763,
+                  "delta": -0.0035419999999817264,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.031084000000021206,
+                  "after": 0.027166999999991504,
+                  "ratioAfterOverBefore": 0.8739866169081512,
+                  "delta": -0.003917000000029702,
+                  "equal": false
+                },
+                "max": {
+                  "before": 0.04858400000000529,
+                  "after": 0.04112499999999386,
+                  "ratioAfterOverBefore": 0.8464720895765969,
+                  "delta": -0.007459000000011429,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "path": "client-observed",
+              "metrics": {
+                "p50": {
+                  "before": 0.29216599999995196,
+                  "after": 0.24545799999998508,
+                  "ratioAfterOverBefore": 0.8401319797650152,
+                  "delta": -0.04670799999996689,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.7797499999999786,
+                  "after": 0.5174590000000023,
+                  "ratioAfterOverBefore": 0.6636216736133588,
+                  "delta": -0.2622909999999763,
+                  "equal": false
+                },
+                "max": {
+                  "before": 1.420458999999994,
+                  "after": 0.5843330000000151,
+                  "ratioAfterOverBefore": 0.41136914194638324,
+                  "delta": -0.8361259999999788,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 35,
+                  "after": 35,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "initialChars": 100000,
+          "paragraphs": 625,
+          "correct": {
+            "before": true,
+            "after": true,
+            "equal": true
+          },
+          "cases": [
+            {
+              "path": "doc",
+              "metrics": {
+                "p50": {
+                  "before": 0.18037500000002638,
+                  "after": 0.10300000000000864,
+                  "ratioAfterOverBefore": 0.5710325710325355,
+                  "delta": -0.07737500000001774,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.34695800000008603,
+                  "after": 0.19695799999999508,
+                  "ratioAfterOverBefore": 0.5676710149353704,
+                  "delta": -0.15000000000009095,
+                  "equal": false
+                },
+                "max": {
+                  "before": 0.38400000000001455,
+                  "after": 1.8295829999999569,
+                  "ratioAfterOverBefore": 4.764539062499707,
+                  "delta": 1.4455829999999423,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "path": "client",
+              "metrics": {
+                "p50": {
+                  "before": 0.10570800000004965,
+                  "after": 0.09137500000002774,
+                  "ratioAfterOverBefore": 0.864409505429909,
+                  "delta": -0.014333000000021912,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.35733300000003965,
+                  "after": 0.09412499999996271,
+                  "ratioAfterOverBefore": 0.26340976064329985,
+                  "delta": -0.26320800000007694,
+                  "equal": false
+                },
+                "max": {
+                  "before": 2.768750000000068,
+                  "after": 0.09450000000003911,
+                  "ratioAfterOverBefore": 0.03413092550791396,
+                  "delta": -2.674250000000029,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "path": "client-observed",
+              "metrics": {
+                "p50": {
+                  "before": 0.48649999999997817,
+                  "after": 0.3039169999999558,
+                  "ratioAfterOverBefore": 0.6247009249742435,
+                  "delta": -0.18258300000002237,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 2.835542000000032,
+                  "after": 1.5089169999999967,
+                  "ratioAfterOverBefore": 0.5321441191842616,
+                  "delta": -1.3266250000000355,
+                  "equal": false
+                },
+                "max": {
+                  "before": 4.93745899999999,
+                  "after": 1.6736249999999018,
+                  "ratioAfterOverBefore": 0.33896484001181687,
+                  "delta": -3.263834000000088,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 35,
+                  "after": 35,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "file": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/client-after-repeat.json",
+      "raw": {
+        "work_id": "sync-client-local-edit-20261022",
+        "label": "monorepo-after-repeat",
+        "node": "v22.19.0",
+        "samples": 30,
+        "warmups": 5,
+        "unit": "ms",
+        "rows": [
+          {
+            "chars": 10000,
+            "paragraphs": 63,
+            "correct": true,
+            "cases": [
+              {
+                "path": "doc",
+                "p50": 0.060374999999993406,
+                "p95": 0.12458300000000122,
+                "max": 0.12583399999999756,
+                "notices": 0,
+                "normalizations": 0
+              },
+              {
+                "path": "client",
+                "p50": 0.028959000000014612,
+                "p95": 0.03249999999999886,
+                "max": 0.04758299999997462,
+                "notices": 0,
+                "normalizations": 0
+              },
+              {
+                "path": "client-observed",
+                "p50": 0.23920799999999076,
+                "p95": 0.48483300000000895,
+                "max": 0.5212500000000091,
+                "notices": 35,
+                "normalizations": 0
+              }
+            ]
+          },
+          {
+            "chars": 100000,
+            "paragraphs": 625,
+            "correct": true,
+            "cases": [
+              {
+                "path": "doc",
+                "p50": 0.09833299999996825,
+                "p95": 0.1710830000000101,
+                "max": 0.19754100000000108,
+                "notices": 0,
+                "normalizations": 0
+              },
+              {
+                "path": "client",
+                "p50": 0.08712499999990087,
+                "p95": 0.09208300000000236,
+                "max": 0.10158400000000256,
+                "notices": 0,
+                "normalizations": 0
+              },
+              {
+                "path": "client-observed",
+                "p50": 0.3208340000001044,
+                "p95": 1.4190830000000005,
+                "max": 1.5168340000000171,
+                "notices": 35,
+                "normalizations": 0
+              }
+            ]
+          }
+        ]
+      },
+      "rows": [
+        {
+          "initialChars": 10000,
+          "paragraphs": 63,
+          "correct": {
+            "before": true,
+            "after": true,
+            "equal": true
+          },
+          "cases": [
+            {
+              "path": "doc",
+              "metrics": {
+                "p50": {
+                  "before": 0.0654999999999859,
+                  "after": 0.060374999999993406,
+                  "ratioAfterOverBefore": 0.9217557251909374,
+                  "delta": -0.005124999999992497,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.1389159999999947,
+                  "after": 0.12458300000000122,
+                  "ratioAfterOverBefore": 0.896822540240188,
+                  "delta": -0.01433299999999349,
+                  "equal": false
+                },
+                "max": {
+                  "before": 0.13937499999997272,
+                  "after": 0.12583399999999756,
+                  "ratioAfterOverBefore": 0.9028448430494865,
+                  "delta": -0.013540999999975156,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "path": "client",
+              "metrics": {
+                "p50": {
+                  "before": 0.029957999999965068,
+                  "after": 0.028959000000014612,
+                  "ratioAfterOverBefore": 0.9666533146421116,
+                  "delta": -0.0009989999999504562,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.031084000000021206,
+                  "after": 0.03249999999999886,
+                  "ratioAfterOverBefore": 1.0455539827556521,
+                  "delta": 0.0014159999999776574,
+                  "equal": false
+                },
+                "max": {
+                  "before": 0.04858400000000529,
+                  "after": 0.04758299999997462,
+                  "ratioAfterOverBefore": 0.9793965091381821,
+                  "delta": -0.0010010000000306718,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "path": "client-observed",
+              "metrics": {
+                "p50": {
+                  "before": 0.29216599999995196,
+                  "after": 0.23920799999999076,
+                  "ratioAfterOverBefore": 0.8187400313521426,
+                  "delta": -0.0529579999999612,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.7797499999999786,
+                  "after": 0.48483300000000895,
+                  "ratioAfterOverBefore": 0.6217800577108332,
+                  "delta": -0.2949169999999697,
+                  "equal": false
+                },
+                "max": {
+                  "before": 1.420458999999994,
+                  "after": 0.5212500000000091,
+                  "ratioAfterOverBefore": 0.36695884921705685,
+                  "delta": -0.8992089999999848,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 35,
+                  "after": 35,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "initialChars": 100000,
+          "paragraphs": 625,
+          "correct": {
+            "before": true,
+            "after": true,
+            "equal": true
+          },
+          "cases": [
+            {
+              "path": "doc",
+              "metrics": {
+                "p50": {
+                  "before": 0.18037500000002638,
+                  "after": 0.09833299999996825,
+                  "ratioAfterOverBefore": 0.5451586971584415,
+                  "delta": -0.08204200000005812,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.34695800000008603,
+                  "after": 0.1710830000000101,
+                  "ratioAfterOverBefore": 0.49309426501181025,
+                  "delta": -0.17587500000007594,
+                  "equal": false
+                },
+                "max": {
+                  "before": 0.38400000000001455,
+                  "after": 0.19754100000000108,
+                  "ratioAfterOverBefore": 0.5144296874999833,
+                  "delta": -0.18645900000001348,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "path": "client",
+              "metrics": {
+                "p50": {
+                  "before": 0.10570800000004965,
+                  "after": 0.08712499999990087,
+                  "ratioAfterOverBefore": 0.8242044121529113,
+                  "delta": -0.018583000000148786,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 0.35733300000003965,
+                  "after": 0.09208300000000236,
+                  "ratioAfterOverBefore": 0.25769520307386146,
+                  "delta": -0.2652500000000373,
+                  "equal": false
+                },
+                "max": {
+                  "before": 2.768750000000068,
+                  "after": 0.10158400000000256,
+                  "ratioAfterOverBefore": 0.036689480812641104,
+                  "delta": -2.6671660000000657,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            },
+            {
+              "path": "client-observed",
+              "metrics": {
+                "p50": {
+                  "before": 0.48649999999997817,
+                  "after": 0.3208340000001044,
+                  "ratioAfterOverBefore": 0.6594737923948999,
+                  "delta": -0.16566599999987375,
+                  "equal": false
+                },
+                "p95": {
+                  "before": 2.835542000000032,
+                  "after": 1.4190830000000005,
+                  "ratioAfterOverBefore": 0.5004626981367176,
+                  "delta": -1.4164590000000317,
+                  "equal": false
+                },
+                "max": {
+                  "before": 4.93745899999999,
+                  "after": 1.5168340000000171,
+                  "ratioAfterOverBefore": 0.3072094370808994,
+                  "delta": -3.4206249999999727,
+                  "equal": false
+                },
+                "notices": {
+                  "before": 35,
+                  "after": 35,
+                  "ratioAfterOverBefore": 1.0,
+                  "delta": 0,
+                  "equal": true
+                },
+                "normalizations": {
+                  "before": 0,
+                  "after": 0,
+                  "ratioAfterOverBefore": 1,
+                  "delta": 0,
+                  "equal": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "runMetadata": [
+    {
+      "run": 1,
+      "cwd": "/Users/user/github/doc-sync",
+      "node": "v22.19.0",
+      "sourceReceiptSha256": "2cd380faf82b2f52b5fdb9f597c30c61e004fed6877abda5bd87698095a0aea4",
+      "pre": {
+        "time": "2026-10-22T06:49:01.754779+00:00",
+        "loadavg": [
+          6.6015625,
+          11.93896484375,
+          22.5791015625
+        ],
+        "cpus": 14,
+        "topProcesses": [
+          "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+          "66789     1  44.2  1.2    02:45:12 /Applications/Claude.app/Contents/MacOS/Claude",
+          "  385     1  34.4  0.3 07-15:12:22 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+          "33014 33008  24.1  2.5 01-21:59:42 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "33008 32934  15.8  1.1 01-21:59:42 /Users/user/github/barocss/barocss-dashboard/native/out/Baro Operations.app/Contents/Resources/runtime/node",
+          "93245     1  12.3  0.2 01-23:17:09 /Applications/WORKS.app/Contents/MacOS/WORKS",
+          " 5763     1  11.0  0.1    05:22:38 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "32160  5356   9.7  0.0       00:00 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          " 5361  4788   6.5  5.7 01-02:39:09 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+          "  315     1   6.2  0.0 07-15:12:23 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+          " 4876  4788   4.9  0.2 01-02:39:18 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+          "32155     1   4.8  0.1       00:00 /System/Library/Frameworks/CoreServices.framework/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared",
+          "  731     1   4.3  0.3 07-15:11:50 /Library/Application Support/ahnlab/EPrM/eprmc"
+        ]
+      },
+      "commands": [
+        {
+          "label": "core",
+          "args": [
+            "npm",
+            "run",
+            "bench",
+            "--",
+            "--out-dir",
+            "results/monorepo-2026-10-22/after"
+          ],
+          "before": {
+            "time": "2026-10-22T06:49:01.814218+00:00",
+            "loadavg": [
+              6.6015625,
+              11.93896484375,
+              22.5791015625
+            ],
+            "cpus": 14,
+            "topProcesses": [
+              "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+              "66789     1  44.2  1.2    02:45:12 /Applications/Claude.app/Contents/MacOS/Claude",
+              "  385     1  34.4  0.3 07-15:12:22 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+              "33014 33008  24.1  2.5 01-21:59:42 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "33008 32934  15.8  1.1 01-21:59:42 /Users/user/github/barocss/barocss-dashboard/native/out/Baro Operations.app/Contents/Resources/runtime/node",
+              "93245     1  12.3  0.2 01-23:17:09 /Applications/WORKS.app/Contents/MacOS/WORKS",
+              " 5763     1  11.0  0.1    05:22:38 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "32160  5356   9.7  0.0       00:00 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              " 5361  4788   6.5  5.7 01-02:39:09 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+              "  315     1   6.2  0.0 07-15:12:23 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+              " 4876  4788   4.9  0.2 01-02:39:18 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+              "32155     1   4.8  0.1       00:00 /System/Library/Frameworks/CoreServices.framework/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared",
+              "  731     1   4.3  0.3 07-15:11:50 /Library/Application Support/ahnlab/EPrM/eprmc"
+            ]
+          },
+          "after": {
+            "time": "2026-10-22T06:49:23.057473+00:00",
+            "loadavg": [
+              7.44091796875,
+              11.78125,
+              22.27490234375
+            ],
+            "cpus": 14,
+            "topProcesses": [
+              "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+              " 4788     1  70.3  1.2 01-02:39:41 /Applications/ChatGPT.app/Contents/MacOS/ChatGPT",
+              " 5361  4788  61.3  5.7 01-02:39:31 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+              "33014 33008  60.3  2.7 01-22:00:04 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "  385     1  42.9  0.3 07-15:12:44 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+              " 5356  4788  38.1  3.2 01-02:39:31 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+              "  597     1  18.8  0.0 07-15:12:41 /usr/libexec/trustd",
+              " 5763     1  16.9  0.1    05:23:00 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "93245     1  12.9  0.2 01-23:17:31 /Applications/WORKS.app/Contents/MacOS/WORKS",
+              " 4876  4788   9.1  0.2 01-02:39:40 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+              "32677 32674   8.5  0.1       00:01 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl",
+              "  315     1   8.0  0.0 07-15:12:45 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+              "40450   737   7.3  0.2    04:19:54 /Library/Tanium/TaniumClient/TaniumCX"
+            ]
+          },
+          "durationSeconds": 21.315182083984837,
+          "exitCode": 0,
+          "log": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after/core.log"
+        },
+        {
+          "label": "client",
+          "args": [
+            "npm",
+            "run",
+            "bench:client",
+            "--",
+            "--label",
+            "monorepo-after",
+            "--out",
+            "results/monorepo-2026-10-22/client-after.json"
+          ],
+          "before": {
+            "time": "2026-10-22T06:49:23.129728+00:00",
+            "loadavg": [
+              7.44091796875,
+              11.78125,
+              22.27490234375
+            ],
+            "cpus": 14,
+            "topProcesses": [
+              "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+              "33014 33008  74.8  2.7 01-22:00:04 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              " 4788     1  47.8  1.2 01-02:39:41 /Applications/ChatGPT.app/Contents/MacOS/ChatGPT",
+              " 5361  4788  40.4  5.7 01-02:39:31 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+              "  731     1  37.8  0.3 07-15:12:12 /Library/Application Support/ahnlab/EPrM/eprmc",
+              "  385     1  35.4  0.3 07-15:12:44 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+              " 5356  4788  24.9  3.2 01-02:39:31 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+              "  597     1  24.1  0.0 07-15:12:41 /usr/libexec/trustd",
+              "93245     1  12.0  0.2 01-23:17:31 /Applications/WORKS.app/Contents/MacOS/WORKS",
+              " 5763     1  11.1  0.1    05:23:00 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "32677 32674   8.5  0.1       00:01 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl",
+              "  383     1   7.1  0.1 07-15:12:44 /System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow",
+              " 4876  4788   6.9  0.2 01-02:39:40 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)"
+            ]
+          },
+          "after": {
+            "time": "2026-10-22T06:49:24.379131+00:00",
+            "loadavg": [
+              7.44091796875,
+              11.78125,
+              22.27490234375
+            ],
+            "cpus": 14,
+            "topProcesses": [
+              "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+              "33014 33008  80.3  2.7 01-22:00:05 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "  385     1  40.6  0.3 07-15:12:45 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+              "  945     1  26.3  0.2 07-15:12:08 /usr/local/share/iMonTOP/iMonClientSVC",
+              " 5361  4788  20.6  5.7 01-02:39:32 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+              "  731     1  19.9  0.3 07-15:12:13 /Library/Application Support/ahnlab/EPrM/eprmc",
+              "93245     1  11.0  0.2 01-23:17:32 /Applications/WORKS.app/Contents/MacOS/WORKS",
+              " 5763     1  10.7  0.1    05:23:01 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              " 5356  4788  10.3  3.2 01-02:39:32 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+              " 4876  4788   7.2  0.2 01-02:39:41 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+              " 4788     1   5.6  1.2 01-02:39:42 /Applications/ChatGPT.app/Contents/MacOS/ChatGPT",
+              "  736     1   5.2  0.1 07-15:12:13 /Applications/EndpointProtectorClient.app/Contents/MacOS/EppClient",
+              "  597     1   5.0  0.0 07-15:12:42 /usr/libexec/trustd"
+            ]
+          },
+          "durationSeconds": 1.3337430000538006,
+          "exitCode": 0,
+          "log": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after/client.log"
+        }
+      ],
+      "post": {
+        "time": "2026-10-22T06:49:24.463542+00:00",
+        "loadavg": [
+          7.44091796875,
+          11.78125,
+          22.27490234375
+        ],
+        "cpus": 14,
+        "topProcesses": [
+          "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+          "33014 33008  80.3  2.7 01-22:00:05 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "  385     1  41.5  0.3 07-15:12:45 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+          " 5361  4788  20.6  5.7 01-02:39:32 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+          "  945     1  16.8  0.2 07-15:12:08 /usr/local/share/iMonTOP/iMonClientSVC",
+          "  731     1  12.3  0.3 07-15:12:13 /Library/Application Support/ahnlab/EPrM/eprmc",
+          "93245     1  11.0  0.2 01-23:17:32 /Applications/WORKS.app/Contents/MacOS/WORKS",
+          " 5763     1  10.7  0.1    05:23:01 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          " 5356  4788  10.3  3.2 01-02:39:32 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+          "  383     1   9.6  0.1 07-15:12:45 /System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow",
+          " 4876  4788   7.2  0.2 01-02:39:41 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+          " 4788     1   5.6  1.2 01-02:39:42 /Applications/ChatGPT.app/Contents/MacOS/ChatGPT",
+          "  736     1   4.3  0.1 07-15:12:13 /Applications/EndpointProtectorClient.app/Contents/MacOS/EppClient"
+        ]
+      }
+    },
+    {
+      "run": 2,
+      "cwd": "/Users/user/github/doc-sync",
+      "node": "v22.19.0",
+      "repeatReason": "Run 1 timing differences and external CPU load: 100k Doc max 4.765x baseline while multiple p95 values decreased to 0.263-0.568x; repeat once to expose variability, preserve both.",
+      "pre": {
+        "time": "2026-10-22T06:50:25.755930+00:00",
+        "loadavg": [
+          6.763671875,
+          10.783203125,
+          21.12890625
+        ],
+        "cpus": 14,
+        "topProcesses": [
+          "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+          "  731     1  89.4  0.3 07-15:13:14 /Library/Application Support/ahnlab/EPrM/eprmc",
+          "33014 33008  85.0  3.1 01-22:01:06 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "  385     1  31.5  0.3 07-15:13:46 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+          "66789     1  23.9  1.1    02:46:36 /Applications/Claude.app/Contents/MacOS/Claude",
+          " 5763     1  18.6  0.1    05:24:02 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "33008 32934  15.6  1.1 01-22:01:06 /Users/user/github/barocss/barocss-dashboard/native/out/Baro Operations.app/Contents/Resources/runtime/node",
+          "93245     1   9.6  0.2 01-23:18:33 /Applications/WORKS.app/Contents/MacOS/WORKS",
+          " 5356  4788   8.6  3.2 01-02:40:33 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+          " 4876  4788   7.6  0.2 01-02:40:42 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+          " 5361  4788   7.6  5.6 01-02:40:33 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+          "  315     1   5.2  0.0 07-15:13:47 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+          "  767     1   3.0  0.1 07-15:13:14 /System/Library/DriverExtensions/com.apple.DriverKit-AppleBCMWLAN.dext/com.apple.DriverKit-AppleBCMWLAN"
+        ]
+      },
+      "commands": [
+        {
+          "label": "core",
+          "args": [
+            "npm",
+            "run",
+            "bench",
+            "--",
+            "--out-dir",
+            "results/monorepo-2026-10-22/after-repeat"
+          ],
+          "before": {
+            "time": "2026-10-22T06:50:25.825149+00:00",
+            "loadavg": [
+              6.763671875,
+              10.783203125,
+              21.12890625
+            ],
+            "cpus": 14,
+            "topProcesses": [
+              "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+              "  731     1  89.4  0.3 07-15:13:14 /Library/Application Support/ahnlab/EPrM/eprmc",
+              "33014 33008  85.0  3.1 01-22:01:06 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "66789     1  59.2  1.1    02:46:36 /Applications/Claude.app/Contents/MacOS/Claude",
+              "  385     1  31.5  0.3 07-15:13:46 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+              " 5763     1  18.3  0.1    05:24:02 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "33008 32934  15.6  1.1 01-22:01:06 /Users/user/github/barocss/barocss-dashboard/native/out/Baro Operations.app/Contents/Resources/runtime/node",
+              "33759  5356  13.0  0.0       00:00 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "93245     1   9.6  0.2 01-23:18:33 /Applications/WORKS.app/Contents/MacOS/WORKS",
+              " 4876  4788   7.5  0.2 01-02:40:42 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+              " 5361  4788   7.0  5.6 01-02:40:33 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+              " 5356  4788   6.1  3.2 01-02:40:33 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+              "  315     1   5.2  0.0 07-15:13:47 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd"
+            ]
+          },
+          "after": {
+            "time": "2026-10-22T06:50:47.655088+00:00",
+            "loadavg": [
+              7.01953125,
+              10.57177734375,
+              20.8115234375
+            ],
+            "cpus": 14,
+            "topProcesses": [
+              "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+              "96871   775  42.6  1.3 03-17:13:48 /Applications/Slack.app/Contents/Frameworks/Slack Helper (Renderer).app/Contents/MacOS/Slack Helper (Renderer)",
+              "  385     1  19.7  0.3 07-15:14:08 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+              "93245     1  13.1  0.2 01-23:18:55 /Applications/WORKS.app/Contents/MacOS/WORKS",
+              "34081  5763  10.8  0.0       00:00 (ps)",
+              "  556     1   8.4  0.7 07-15:14:06 /System/Library/Frameworks/CoreServices.framework/Frameworks/Metadata.framework/Versions/A/Support/mds_stores",
+              "  731     1   7.5  0.2 07-15:13:36 /Library/Application Support/ahnlab/EPrM/eprmc",
+              " 5763     1   6.7  0.1    05:24:24 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "51142     1   5.8  0.1    01:46:58 /usr/libexec/duetexpertd",
+              "  353     1   5.4  0.0 07-15:14:09 /System/Library/CoreServices/launchservicesd",
+              " 5361  4788   5.1  5.5 01-02:40:55 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+              " 4876  4788   4.4  0.2 01-02:41:04 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+              "  984   775   4.3  0.2 07-15:13:30 /Applications/Slack.app/Contents/Frameworks/Slack Helper.app/Contents/MacOS/Slack Helper"
+            ]
+          },
+          "durationSeconds": 21.9138407909777,
+          "exitCode": 0,
+          "log": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after-repeat/core.log"
+        },
+        {
+          "label": "client",
+          "args": [
+            "npm",
+            "run",
+            "bench:client",
+            "--",
+            "--label",
+            "monorepo-after-repeat",
+            "--out",
+            "results/monorepo-2026-10-22/client-after-repeat.json"
+          ],
+          "before": {
+            "time": "2026-10-22T06:50:47.739264+00:00",
+            "loadavg": [
+              7.01953125,
+              10.57177734375,
+              20.8115234375
+            ],
+            "cpus": 14,
+            "topProcesses": [
+              "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+              "96871   775  42.6  1.3 03-17:13:48 /Applications/Slack.app/Contents/Frameworks/Slack Helper (Renderer).app/Contents/MacOS/Slack Helper (Renderer)",
+              "  385     1  19.7  0.3 07-15:14:08 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+              "93245     1  13.1  0.2 01-23:18:55 /Applications/WORKS.app/Contents/MacOS/WORKS",
+              "  556     1   8.4  0.7 07-15:14:06 /System/Library/Frameworks/CoreServices.framework/Frameworks/Metadata.framework/Versions/A/Support/mds_stores",
+              "  731     1   7.5  0.2 07-15:13:36 /Library/Application Support/ahnlab/EPrM/eprmc",
+              " 5763     1   6.7  0.1    05:24:24 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "51142     1   5.8  0.1    01:46:58 /usr/libexec/duetexpertd",
+              "  353     1   5.4  0.0 07-15:14:09 /System/Library/CoreServices/launchservicesd",
+              " 5361  4788   5.1  5.5 01-02:40:55 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+              " 4876  4788   4.4  0.2 01-02:41:04 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+              "  984   775   4.3  0.2 07-15:13:30 /Applications/Slack.app/Contents/Frameworks/Slack Helper.app/Contents/MacOS/Slack Helper",
+              "  383     1   4.0  0.1 07-15:14:08 /System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow"
+            ]
+          },
+          "after": {
+            "time": "2026-10-22T06:50:49.953782+00:00",
+            "loadavg": [
+              7.01953125,
+              10.57177734375,
+              20.8115234375
+            ],
+            "cpus": 14,
+            "topProcesses": [
+              "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+              "  385     1  29.2  0.3 07-15:14:11 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+              " 5763     1  23.2  0.1    05:24:27 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "33014 33008  19.0  2.9 01-22:01:31 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+              "93245     1  15.3  0.2 01-23:18:58 /Applications/WORKS.app/Contents/MacOS/WORKS",
+              "  315     1  12.3  0.0 07-15:14:12 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+              " 5361  4788  12.1  5.6 01-02:40:58 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+              " 1952   763   8.7  1.6 01-22:11:13 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/155.0.8059.40/Helpers/Google Chrome Helper (Aperitif Renderer).app/Contents/MacOS/Google Chrome Helper (Aperitif Renderer)",
+              "  945     1   8.3  0.2 07-15:13:34 /usr/local/share/iMonTOP/iMonClientSVC",
+              "  767     1   5.6  0.1 07-15:13:39 /System/Library/DriverExtensions/com.apple.DriverKit-AppleBCMWLAN.dext/com.apple.DriverKit-AppleBCMWLAN",
+              "  791     1   5.6  0.1 07-15:13:38 /System/Applications/Utilities/Activity Monitor.app/Contents/MacOS/Activity Monitor",
+              "  353     1   5.0  0.0 07-15:14:12 /System/Library/CoreServices/launchservicesd",
+              " 1874   763   4.6  0.2 07-15:13:29 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/155.0.8059.40/Helpers/Google Chrome Helper (Aperitif).app/Contents/MacOS/Google Chrome Helper (Aperitif)"
+            ]
+          },
+          "durationSeconds": 2.280616167001426,
+          "exitCode": 0,
+          "log": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after-repeat/client.log"
+        }
+      ],
+      "post": {
+        "time": "2026-10-22T06:50:50.019962+00:00",
+        "loadavg": [
+          7.01953125,
+          10.57177734375,
+          20.8115234375
+        ],
+        "cpus": 14,
+        "topProcesses": [
+          "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+          "  385     1  27.2  0.3 07-15:14:11 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+          " 5763     1  23.2  0.1    05:24:27 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "33014 33008  19.0  2.9 01-22:01:31 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "  731     1  19.0  0.2 07-15:13:39 /Library/Application Support/ahnlab/EPrM/eprmc",
+          "93245     1  14.7  0.2 01-23:18:58 /Applications/WORKS.app/Contents/MacOS/WORKS",
+          " 5361  4788  12.1  5.6 01-02:40:58 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/155.0.8059.80/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+          "  383     1   9.5  0.1 07-15:14:11 /System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow",
+          "  353     1   8.2  0.0 07-15:14:12 /System/Library/CoreServices/launchservicesd",
+          " 1952   763   8.0  1.6 01-22:11:13 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/155.0.8059.40/Helpers/Google Chrome Helper (Aperitif Renderer).app/Contents/MacOS/Google Chrome Helper (Aperitif Renderer)",
+          "  315     1   7.7  0.0 07-15:14:12 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+          "  767     1   5.9  0.1 07-15:13:39 /System/Library/DriverExtensions/com.apple.DriverKit-AppleBCMWLAN.dext/com.apple.DriverKit-AppleBCMWLAN",
+          "  945     1   5.4  0.2 07-15:13:34 /usr/local/share/iMonTOP/iMonClientSVC"
+        ]
+      }
+    }
+  ],
+  "externalLoad": {
+    "observed": true,
+    "noteKo": "외부 앱과 모니터 프로세스의 CPU 사용이 있었다. 14개 논리 CPU에서 측정 전후 load average를 기록했다. 전환 전 부하 원자료는 없어 부하를 같게 맞췄다고 주장하지 않는다.",
+    "loads": [
+      {
+        "run": 1,
+        "before": [
+          6.6015625,
+          11.93896484375,
+          22.5791015625
+        ],
+        "after": [
+          7.44091796875,
+          11.78125,
+          22.27490234375
+        ]
+      },
+      {
+        "run": 2,
+        "before": [
+          6.763671875,
+          10.783203125,
+          21.12890625
+        ],
+        "after": [
+          7.01953125,
+          10.57177734375,
+          20.8115234375
+        ]
+      }
+    ]
+  },
+  "ratioDefinition": "after / before; below 1 means lower measured value. Zero / zero is represented as 1. Null server statistics mean not applicable for Yjs.",
+  "limits": [
+    "Only the existing single-user typing/paste core trace and local client insert benchmark are covered.",
+    "JSON ours and binary Yjs differ in wire and snapshot encoding; cross-engine byte ratios are not format-neutral.",
+    "Client excludes network, rendering, commit and subscriber model-update cost.",
+    "Remote model-event subscription, long-duration, multi-user, large tables and browser latency are outside this measurement.",
+    "Single-run timing, max and heap vary with runtime and external load; no broad performance equivalence claim from one run.",
+    "One baseline run and two after runs do not establish statistical equivalence or causality. No elapsed-time acceptance threshold was defined for this migration.",
+    "Some maximum times increased, especially 100k ours remote and repeat Yjs remote; results do not establish every metric is equal or faster.",
+    "All client observed p95 values here are below 2ms; this excludes browser rendering, network, commit, model-update callback cost and remote event handling, so it does not establish editor latency acceptance.",
+    "Presence selection-range work did not modify sources during these runs; this comparison covers the migration source receipt only."
+  ],
+  "artifacts": [
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/before/2026-10-22-100000.json",
+      "sha256": "f80b31ecd0338f79569f4ead722821dee3b62ae89c0fb34e935f39a2bb5feeb3",
+      "bytes": 1558
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/before/2026-10-22-10000.json",
+      "sha256": "9002b3cd315f8fa55efc22bbff2f1e720396d8305057da0a02e7377be78632a2",
+      "bytes": 1555
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/client-before.json",
+      "sha256": "822d8f953164d39d3c8724abb31387d0619b6a25ec8700f709be1970c7f5ea68",
+      "bytes": 1688
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after/core.log",
+      "sha256": "647fde6f98bc89bb370b1fc86dbb8b657d932252735bdcd769f8de0c096a1ed2",
+      "bytes": 1431
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after/client.log",
+      "sha256": "7296811c9e78875dc976128a562781ddbbfb04717c67a191dcb0fadeb0e5b509",
+      "bytes": 1993
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after/2026-10-22-100000.json",
+      "sha256": "96573d2ab476459ebb20e6aa6df695c0602de4e9d473a1f4d9dde2dd5b2f81ec",
+      "bytes": 1556
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after/2026-10-22-10000.json",
+      "sha256": "a786e7e2d1e19e4dafbcaf8bdd1a36875ca201992e9afb7382310ae8982c436c",
+      "bytes": 1554
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after-repeat/core.log",
+      "sha256": "3e4252e0247629d9eae4f49135305707ea22f3d0c531313e3cec9a9f8fc95694",
+      "bytes": 1445
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after-repeat/client.log",
+      "sha256": "be417dbe3f73949da8e713d2cfb5e2e0f464f9ff3ab91c09635a9aa3b081fead",
+      "bytes": 2030
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after-repeat/2026-10-22-100000.json",
+      "sha256": "5ff6f209b09bdfe7bb96fb13153cf5cc51b9ea8c104a8e68ef6de58491870cdb",
+      "bytes": 1557
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/after-repeat/2026-10-22-10000.json",
+      "sha256": "aebbe3761d9b66fbc4e17bfec9178a566d69f8c4eae5383882ed4bb31d65469b",
+      "bytes": 1556
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/client-after.json",
+      "sha256": "2037829b21facf75775793ef061813be47f2287bd637691adb25ad0019c0a831",
+      "bytes": 1692
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/client-after-repeat.json",
+      "sha256": "0a367abeb94742e6b4685e250a09213878a1be51a7290d3686889282744e2577",
+      "bytes": 1701
+    },
+    {
+      "path": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/migration-source-receipt.json",
+      "sha256": "2cd380faf82b2f52b5fdb9f597c30c61e004fed6877abda5bd87698095a0aea4",
+      "bytes": 4456
+    },
+    {
+      "path": "/tmp/doc-sync-monorepo-20261022/performance-ready.json",
+      "sha256": "ee5e7591913fb7f5e3821ab70584f49f416db4a0fe1a1be9304f3f2676eaa3a4",
+      "bytes": 7224
+    },
+    {
+      "path": "/tmp/doc-sync-monorepo-20261022/performance-run-1.json",
+      "sha256": "90e6dd88a45110eae8636f7e2ca8870504817c931f15e4f8391d181966a253e6",
+      "bytes": 12560
+    },
+    {
+      "path": "/tmp/doc-sync-monorepo-20261022/performance-run-2.json",
+      "sha256": "597a5b130cf8a1517d9576af2246e46d57959f9cacd0ddd57d29b4005eeb0792",
+      "bytes": 13056
+    }
+  ],
+  "sourceEdits": [],
+  "otherWorkStopped": false,
+  "markdownEdits": []
+}

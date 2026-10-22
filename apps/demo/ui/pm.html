@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>doc-sync × ProseMirror</title>
+    <link rel="stylesheet" href="/apps/demo/ui/style.css" />
+    <link rel="stylesheet" href="/node_modules/prosemirror-view/style/prosemirror.css" />
+    <link rel="stylesheet" href="/node_modules/prosemirror-tables/style/tables.css" />
+    <script type="importmap">
+        {
+            "imports": {
+                "@barocss/doc-sync": "/packages/doc-sync/src/index.ts",
+                "@barocss/doc-sync/sync": "/packages/doc-sync/src/sync/index.ts",
+                "@barocss/doc-sync/server": "/packages/doc-sync/src/server/index.ts",
+                "@barocss/doc-sync/prosemirror": "/packages/doc-sync/src/pm/index.ts",
+                "orderedmap": "/node_modules/orderedmap/dist/index.js",
+                "w3c-keyname": "/node_modules/w3c-keyname/index.js",
+                "prosemirror-model": "/node_modules/prosemirror-model/dist/index.js",
+                "prosemirror-state": "/node_modules/prosemirror-state/dist/index.js",
+                "prosemirror-view": "/node_modules/prosemirror-view/dist/index.js",
+                "prosemirror-transform": "/node_modules/prosemirror-transform/dist/index.js",
+                "prosemirror-keymap": "/node_modules/prosemirror-keymap/dist/index.js",
+                "prosemirror-commands": "/node_modules/prosemirror-commands/dist/index.js",
+                "prosemirror-tables": "/node_modules/prosemirror-tables/dist/index.js"
+            }
+        }
+    </script>
+    <style>
+        .pm-surface {
+            min-height: 220px;
+            padding: 10px 14px 16px;
+        }
+
+        .pm-surface .ProseMirror {
+            outline: none;
+            min-height: 200px;
+        }
+
+        .pm-surface p,
+        .pm-surface h1,
+        .pm-surface h2,
+        .pm-surface blockquote,
+        .pm-surface .pm-li {
+            margin: 2px 0;
+        }
+
+        .pm-surface h1 {
+            font-size: 21px;
+        }
+
+        .pm-surface h2 {
+            font-size: 17px;
+        }
+
+        .pm-surface blockquote {
+            border-left: 3px solid var(--line);
+            padding-left: 10px;
+            color: var(--muted);
+        }
+
+        .pm-surface .pm-li {
+            position: relative;
+            padding-left: calc(22px + var(--level, 0) * 22px);
+        }
+
+        .pm-surface .pm-li::before {
+            content: "•";
+            position: absolute;
+            left: calc(var(--level, 0) * 22px + 6px);
+            color: var(--muted);
+        }
+
+        .pm-surface .pm-li.numbered::before {
+            content: "#";
+        }
+
+        .pm-surface table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 6px 0;
+        }
+
+        .pm-surface td {
+            border: 1px solid var(--line);
+            padding: 3px 6px;
+            vertical-align: top;
+        }
+
+        .pm-surface figure {
+            margin: 6px 0;
+        }
+
+        .pm-surface figcaption {
+            font-size: 12.5px;
+            color: var(--muted);
+        }
+
+        .pm-surface img {
+            border-radius: 4px;
+            vertical-align: bottom;
+        }
+
+        .pm-surface .pm-box {
+            margin: 6px 0;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            background: var(--sel);
+        }
+
+        .pm-surface a.pm-link {
+            color: var(--accent);
+        }
+
+        .pm-remote-caret {
+            position: relative;
+            display: inline-block;
+            width: 0;
+            height: 1.2em;
+            vertical-align: text-bottom;
+            border-left: 2px solid var(--who);
+            margin-left: -1px;
+        }
+
+        .pm-remote-selection {
+            border-bottom: 1px solid var(--who);
+        }
+
+        .pm-remote-caret::after {
+            content: attr(data-name);
+            position: absolute;
+            left: -2px;
+            top: -1.05em;
+            font-size: 10px;
+            line-height: 1;
+            padding: 1px 3px;
+            border-radius: 3px;
+            color: #fff;
+            background: var(--who);
+            font-weight: 600;
+        }
+
+        .two {
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+
+        .stats {
+            font-size: 12px;
+            color: var(--muted);
+            padding: 0 10px 8px;
+        }
+    </style>
+</head>
+<body>
+    <header class="top">
+        <div class="title">
+            <h1>doc-sync × ProseMirror</h1>
+            <span class="sub">왼쪽은 데모 편집기, 오른쪽은 ProseMirror — 같은 CRDT 문서를 함께 편집한다 · 문서 <b id="doc-name"></b></span>
+        </div>
+        <div class="controls">
+            <div class="group">
+                <button type="button" class="btn" id="all-off">모두 끊기</button>
+                <button type="button" class="btn" id="all-on">모두 잇기</button>
+                <button type="button" class="btn danger" id="reset">문서 비우기</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="status">
+        <span id="converged" class="badge">…</span>
+        <span id="server-seq" class="muted"></span>
+        <span class="caption">오른쪽 ProseMirror 의 Step 은 모델 연산으로 CRDT 에 들어가고, 남의 변경은 ProseMirror 의 최소 교체 하나로 들어온다.</span>
+    </div>
+
+    <main class="peers two">
+        <section class="pane" id="pane-a">
+            <header><span class="who"><i class="dot"></i>A · 데모 편집기</span><button type="button" class="btn link-toggle"></button><span class="pending"></span></header>
+            <div class="editor"></div>
+        </section>
+        <section class="pane" id="pane-p">
+            <header><span class="who"><i class="dot"></i>P · ProseMirror</span><button type="button" class="btn link-toggle"></button><span class="pending"></span></header>
+            <div class="tools" id="pm-tools"></div>
+            <div class="pm-surface" id="pm-mount"></div>
+            <div class="stats" id="pm-stats"></div>
+        </section>
+    </main>
+
+    <section class="inspect">
+        <div class="inspect-cols">
+            <div>
+                <h3>CRDT 모델 (서버)</h3>
+                <pre id="model"></pre>
+            </div>
+            <div>
+                <h3>ProseMirror 문서 (P)</h3>
+                <pre id="pm-doc"></pre>
+            </div>
+        </div>
+    </section>
+
+    <script type="module" src="/apps/demo/ui/pm-app.ts"></script>
+</body>
+</html>

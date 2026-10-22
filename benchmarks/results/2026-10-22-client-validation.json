@@ -1,0 +1,84 @@
+{
+  "work_id": "sync-client-local-edit-20261022",
+  "artifact_type": "validation",
+  "status": "done",
+  "owner_role": "executor",
+  "source_request": "SyncClient 로컬 편집의 전체 문서 비교 개선, 동시편집 규칙 유지, 수정 전후 성능과 시험 검증",
+  "last_updated": "2026-10-22",
+  "node": "v22.19.0",
+  "checks": [
+    {
+      "command": "npm test",
+      "tests": 90,
+      "passed": 90,
+      "failed": 0,
+      "durationMs": 26022.23025,
+      "note": "로컬 회귀 시험 4개를 포함한 상태"
+    },
+    {
+      "command": "FUZZ_SEEDS=3000 PM_SEEDS=300 npm test",
+      "tests": 91,
+      "passed": 91,
+      "failed": 0,
+      "durationMs": 153294.146458,
+      "fuzz": {
+        "seedsPerCase": 3000,
+        "peers": [
+          2,
+          4
+        ],
+        "gc": [
+          false,
+          true
+        ],
+        "divergences": 0,
+        "mirrorMismatches": 0,
+        "eventFallbacks": 0
+      },
+      "prosemirror": {
+        "seedsPerCase": 300,
+        "peers": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "command": "node --test test/client-edit.test.ts",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "durationMs": 181.72075,
+      "note": "보정 경로 시험 및 전선 연산 동치 단언을 포함한 최종 로컬 회귀 시험"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    }
+  ],
+  "performance": {
+    "before": "2026-10-22-client-before.json",
+    "after": [
+      "2026-10-22-client-after.json",
+      "2026-10-22-client-after-repeat.json"
+    ],
+    "primaryAfter": "2026-10-22-client-after-repeat.json",
+    "scope": "Doc.edit only; no commit, network, rendering, callback model work, or ProseMirror transaction"
+  },
+  "baselineSourceSha256": {
+    "src/crdt/doc.ts": "415a06ed11dd22c494f815a413e75bb30d9b50c8231084c595ec932c55f50aaa",
+    "src/sync/client.ts": "0766491694addc5e204a40b05852c753fa2191447dabf180adb7f92fb04e3620"
+  },
+  "finalSourceSha256": {
+    "src/crdt/doc.ts": "46194520c8880ace5397d465e2cd90d4bcdb8af564939a7d3d34a3e3a6002d3e",
+    "src/sync/client.ts": "0c5b36a8e72feed4cc29453841d4e4cfcb93383ce89e822b44a21a0a8b8b8d2f",
+    "test/client-edit.test.ts": "6a643d45391f42e4a6671cc0c2c3474f2b824409b33a300cad2b9e2b5e3a510e",
+    "bench/client.ts": "1451aaa2ecf6fbf1f8e4f25c3ab140c45c55e0ed33fab7080b12db3534ce92ad"
+  },
+  "limits": [
+    "원격 withEvents 및 undo/redo의 전체 모델 비교는 유지",
+    "구조 변경 및 가상 블록은 전체 검산 유지",
+    "단일 블록의 크기에 비례하는 검산 비용은 유지",
+    "브라우저 검증 미실행"
+  ]
+}

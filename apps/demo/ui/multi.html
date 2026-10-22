@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>doc-sync 여러 창 시험</title>
+    <link rel="stylesheet" href="/apps/demo/ui/style.css" />
+    <style>
+        .multi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
+            padding: 0 20px 20px;
+        }
+
+        .multi-grid iframe {
+            width: 100%;
+            height: 330px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--card);
+        }
+
+        .status-table {
+            margin: 0 20px 14px;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .status-table th,
+        .status-table td {
+            padding: 3px 10px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+        }
+
+        .status-table td.hash {
+            font-family: var(--mono);
+        }
+
+        .status-table tr.diff td.hash {
+            color: var(--bad);
+            font-weight: 700;
+        }
+
+        .controls input {
+            width: 64px;
+            border: 1px solid var(--line);
+            border-radius: 7px;
+            background: var(--card);
+            color: var(--fg);
+            padding: 4px 6px;
+            font: inherit;
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "@barocss/doc-sync": "/packages/doc-sync/src/index.ts",
+                "@barocss/doc-sync/sync": "/packages/doc-sync/src/sync/index.ts",
+                "@barocss/doc-sync/server": "/packages/doc-sync/src/server/index.ts",
+                "@barocss/doc-sync/prosemirror": "/packages/doc-sync/src/pm/index.ts"
+            }
+        }
+    </script>
+</head>
+<body>
+    <header class="top">
+        <div class="title">
+            <h1>여러 창 시험</h1>
+            <span class="sub">창마다 다른 호스트(a.localhost, b.localhost …)로 열어 브라우저의 "호스트당 연결 6개" 제한을 피한다 · 문서 <b id="doc-name"></b></span>
+        </div>
+        <div class="controls">
+            <div class="group">
+                <span class="label">창</span>
+                <input id="count" type="number" min="1" max="10" value="10" aria-label="창 수" />
+                <button type="button" class="btn" id="reload">다시 열기</button>
+            </div>
+            <div class="group">
+                <span class="label">모두</span>
+                <button type="button" class="btn primary" id="auto-on">자동 입력 시작</button>
+                <button type="button" class="btn" id="auto-off">멈춤</button>
+                <button type="button" class="btn" id="off">끊기</button>
+                <button type="button" class="btn" id="on">잇기</button>
+                <button type="button" class="btn danger" id="reset">문서 비우기</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="status">
+        <span id="converged" class="badge">…</span>
+        <span id="summary" class="muted"></span>
+    </div>
+
+    <table class="status-table" aria-label="창별 상태">
+        <thead>
+            <tr><th>창</th><th>연결</th><th>자동 입력</th><th>받은 곳</th><th>보낼 것</th><th>문서 지문</th><th>크기</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+    </table>
+
+    <main id="frames" class="multi-grid"></main>
+
+    <script type="module" src="/apps/demo/ui/multi.ts"></script>
+</body>
+</html>

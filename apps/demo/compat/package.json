@@ -1,0 +1,22 @@
+{
+  "name": "@doc-sync/editor-compatibility",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node serve.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@lexical/rich-text": "0.52.0",
+    "@lexical/table": "0.52.0",
+    "esbuild": "0.28.2",
+    "lexical": "0.52.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "slate": "0.146.0",
+    "slate-dom": "0.147.3",
+    "slate-react": "0.147.3"
+  }
+}

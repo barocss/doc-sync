@@ -1,0 +1,51 @@
+{
+  "name": "@barocss/doc-sync",
+  "version": "0.0.0",
+  "private": true,
+  "description": "스키마를 주입받는 문서 전용 CRDT — 표지+글자 토큰 줄, 동기화 서버, ProseMirror 연결",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./sync": "./src/sync/index.ts",
+    "./server": "./src/server/index.ts",
+    "./prosemirror": "./src/pm/index.ts"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "prosemirror-model": "^1.25.0",
+    "prosemirror-state": "^1.4.0",
+    "prosemirror-transform": "^1.12.0",
+    "prosemirror-view": "^1.42.0"
+  },
+  "peerDependenciesMeta": {
+    "prosemirror-model": {
+      "optional": true
+    },
+    "prosemirror-state": {
+      "optional": true
+    },
+    "prosemirror-transform": {
+      "optional": true
+    },
+    "prosemirror-view": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "prosemirror-commands": "^1.7.2",
+    "prosemirror-model": "^1.25.12",
+    "prosemirror-state": "^1.4.4",
+    "prosemirror-tables": "^1.8.5",
+    "prosemirror-transform": "^1.12.2",
+    "prosemirror-view": "^1.42.6"
+  },
+  "files": [
+    "src"
+  ]
+}
