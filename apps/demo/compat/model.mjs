@@ -71,7 +71,7 @@ export function editsFor(before, after) {
 }
 
 /** Model diffs count Unicode code points; CRDT token offsets count UTF-16 units. */
-export function commitModelEdits(doc,before,edits) {
+export function commitModelEdits(doc,before,edits,onTranslated) {
   const work=structuredClone(before),mappedEdits=[];
   for(const edit of edits){
     let block=work;
@@ -88,5 +88,6 @@ export function commitModelEdits(doc,before,edits) {
     mappedEdits.push(mapped);
     applyEdit(schema,work,edit);
   }
+  onTranslated?.(structuredClone(mappedEdits));
   return doc.edit(mappedEdits).ops;
 }

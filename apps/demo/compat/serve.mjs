@@ -4,6 +4,7 @@ import {readFileSync, mkdtempSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {remoteEdit} from './remote-edit.mjs';
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const dataDir = mkdtempSync(join(tmpdir(), 'doc-sync-editor-compat-'));
 const child = spawn(process.execPath, [`${root}apps/demo/server.ts`], {
@@ -19,8 +20,16 @@ const backend = await new Promise((resolve, reject) => {
     if (match) resolve(match[0]);
   });
 });
-const server = createServer((req, res) => {
+const server = createServer(async(req, res) => {
   const path = new URL(req.url, 'http://localhost').pathname;
+  if(path==='/test/remote'&&req.method==='POST'){
+    try{
+      let body='';for await(const chunk of req)body+=chunk;
+      const result=await remoteEdit(backend,JSON.parse(body));
+      res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify(result));
+    }catch(error){res.writeHead(500,{'content-type':'application/json'});res.end(JSON.stringify({error:error.stack}));}
+    return;
+  }
   if (path === '/' || path === '/bundle.js' || path === '/bundle.js.map') {
     const file = path === '/' ? `${root}apps/demo/compat/index.html` : `${root}output/playwright/editor-compatibility${path}`;
     res.writeHead(200, {'content-type': path === '/' ? 'text/html; charset=utf-8' : 'text/javascript', 'cache-control': 'no-store'});

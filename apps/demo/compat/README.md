@@ -44,3 +44,24 @@ node apps/demo/compat/reproduce-empty-reconnect.mjs
 API 기준: [Slate 설치와 Editable](https://docs.slatejs.org/walkthroughs/01-installing-slate), [Slate Editor](https://docs.slatejs.org/concepts/07-editor), [Lexical 업데이트 수신](https://lexicaljs.org/docs/concepts/listeners), [Lexical rich-text](https://lexicaljs.org/docs/api/modules/lexical_rich-text).
 
 수정 전 결과는 `output/playwright/editor-compatibility/`에 있다. 수정 후 다섯 참여자의 결과와 화면 캡처는 `output/playwright/editor-compatibility/reconnect-fixed/`에 저장한다.
+
+## 관찰 도구와 추가 시험
+
+기본 화면은 연산 기록을 끈다. `/?doc=이름&trace=1`로 열면 `window.compat.trace()`에서 최근 150개 연산을 읽을 수 있다. `window.compat.clearTrace()`로 기록을 비운다. 기록에는 편집기 원본 구조·연산, 공통 모델 편집, UTF-16 위치로 바꾼 편집, 전송 연산과 원격 반영 결과가 있다. 기록 모드는 문서 복사 비용을 더하므로 일반 편집 성능 측정과 구분한다.
+
+`window.imeProbe.read()`는 실제 입력 이벤트, 조합 상태와 DOM 선택 위치를 읽는다. 입력이나 선택을 바꾸지 않는다. 시험 서버의 `POST /test/remote`에 `{doc, edits}`를 보내면 별도 CRDT 참여자가 HTTP로 변경을 제출한다. `edits`의 글자 위치는 CRDT의 UTF-16 단위다. 입력 초점을 옮기지 않고 원격 변경을 만들기 위한 로컬 시험 도구다. 문서 이름·편집 배열, HTTP 응답과 SSE hello를 검사하며 요청 제한 시간은 10초다.
+
+Chrome을 시험 서버 주소로 연 뒤 다음 스크립트를 실행한다. 새 스크립트는 현재 페이지의 origin을 사용하므로 별도 포트에서도 실행할 수 있다.
+
+```sh
+# 기본 기록 끔/trace=1, 세 편집기 입력, 원격 제출, trusted input 관찰
+bash /Users/user/.codex/skills/playwright/scripts/playwright_cli.sh --session doc-sync-editors-chrome run-code --filename apps/demo/compat/checks-probes.js
+# 편집기별 10개 연산의 구조 기록
+bash /Users/user/.codex/skills/playwright/scripts/playwright_cli.sh --session doc-sync-editors-chrome run-code --filename apps/demo/compat/checks-operation-traces.js
+# 커서와 CDP 조합 입력 진단. 결과의 status를 직접 확인한다
+bash /Users/user/.codex/skills/playwright/scripts/playwright_cli.sh --session doc-sync-editors-chrome run-code --filename apps/demo/compat/checks-ime-cursor.js
+```
+
+**2026-10-22 검토 결과**: 루트 기본 시험 113개, compat 시험 14개, 전체 타입 검사와 compat 빌드가 통과했다. 격리된 Chrome에서 일반 편집 회귀 20개 항목을 통과했고 연산 30개를 수집했다. 기록을 껐을 때 추가 연산 기록이 없고, 켰을 때 로컬·원격 기록과 Unicode 편집이 유지되는 것을 확인했다. 관련 결과는 로컬 `output/validation/compat-review-20261022/validation.json`에 있다.
+
+**기존 기능 제약**: 커서·IME 진단 36개 중 14개 통과, 22개 실패다. 이 수치는 위 일반 편집 회귀 통과와 별개다. Slate 커서 1/8, Lexical 0/8, PM 8/8이다. 원격 변경이 없는 CDP 조합 입력은 각 편집기 1/1이다. 원격 변경 중 CDP 조합 입력은 Slate 0/3, Lexical 0/3, PM 2/3이다. Slate는 숫자 선택 위치를 복원하고, Lexical은 문서를 교체하며, PM은 조합 위치와 같은 경계의 원격 입력에서 중복이 생겼다. 관찰 도구 추가는 이 문제들을 고치지 않는다. OS 한글 키보드 IME는 시험하지 않았다. 진단 스크립트가 끝났다는 사실을 전 항목 통과로 해석하지 않는다.

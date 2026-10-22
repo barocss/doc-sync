@@ -1,4 +1,6 @@
 import React, {useEffect} from 'react';
+import './ime-probe.mjs';
+import {tracingEnabled, recordOperation, readOperations, clearOperations} from './operation-probe.mjs';
 import {createRoot} from 'react-dom/client';
 import {createEditor as createSlateEditor, Editor, Transforms} from 'slate';
 import {Slate, Editable, withReact} from 'slate-react';
@@ -42,13 +44,19 @@ function makePeer(name,kind) {
     try {
       const before=client.doc.toJSON();
       if(equal(before,next)) return;
-      const ops=commitModelEdits(client.doc,before,editsFor(before,next));
+      const edits=editsFor(before,next);let tokenEdits;
+      const ops=commitModelEdits(client.doc,before,edits,tracingEnabled?mapped=>{tokenEdits=mapped;}:undefined);
       client.commit(ops);
+      if(tracingEnabled)recordOperation({name,kind,phase:'local',native:peer.nativeUpdate,modelBefore:before,modelAfter:client.doc.toJSON(),modelEdits:edits,tokenEdits,wireOps:ops});
       peer.local++;
       if(!equal(client.doc.toJSON(),next)) peer.pull();
     } catch(error) {report(error);}
   };
-  client.onModelEvents=()=>{peer.remote++;peer.pull();};
+  client.onModelEvents=(events,info)=>{
+    const nativeBefore=tracingEnabled?peer.rawRead?.():undefined;
+    peer.remote++;peer.pull();
+    if(tracingEnabled)recordOperation({name,kind,phase:'remote',cause:info.cause,events,nativeBefore,nativeAfter:peer.rawRead?.(),model:client.doc.toJSON()});
+  };
   action('되돌리기',()=>client.undo());
   action('다시하기',()=>client.redo());
   action('연결 전환',()=>client.online?client.disconnect():client.connect());
@@ -69,6 +77,7 @@ function mountSlate(name) {
   const initialValue=toSlate(peer.client.doc.toJSON());
   const read=()=>fromSlate(editor.children);
   peer.read=read;
+  peer.rawRead=()=>structuredClone(editor.children);
   peer.pull=()=>{
     const next=toSlate(peer.client.doc.toJSON());
     if(equal(read(),peer.client.doc.toJSON()))return;
@@ -83,7 +92,7 @@ function mountSlate(name) {
     });
     queueMicrotask(()=>{remote=false;});
   };
-  const onChange=()=>{if(!remote)peer.send(read());};
+  const onChange=()=>{if(!remote){if(tracingEnabled)peer.nativeUpdate={operations:structuredClone(editor.operations),after:structuredClone(editor.children)};peer.send(read());}};
   let mounted;
   peer.ready=new Promise(resolve=>{mounted=resolve;});
   function Ready(){useEffect(()=>{mounted();},[]);return null;}
@@ -141,14 +150,16 @@ function mountLexical(name) {
     throw new Error(`시험 범위 밖 node: ${item.type}`);
   };
   peer.read=()=>fromLexical(editor.getEditorState().toJSON());
+  peer.rawRead=()=>editor.getEditorState().toJSON();
   peer.pull=()=>{
     const model=peer.client.doc.toJSON();
     if(equal(peer.read(),model))return;
     editor.update(()=>{$getRoot().clear().append(...model.children.map(build));},{tag:['doc-sync-remote',SKIP_DOM_SELECTION_TAG],discrete:true});
   };
   editor.update(()=>{$getRoot().append($createParagraphNode());},{tag:'doc-sync-remote',discrete:true});
-  editor.registerUpdateListener(({editorState,tags,dirtyElements,dirtyLeaves})=>{
+  editor.registerUpdateListener(({editorState,prevEditorState,tags,dirtyElements,dirtyLeaves})=>{
     if(tags.has('doc-sync-remote')||(!dirtyElements.size&&!dirtyLeaves.size))return;
+    if(tracingEnabled)peer.nativeUpdate={before:prevEditorState.toJSON(),after:editorState.toJSON(),dirtyElements:[...dirtyElements],dirtyLeaves:[...dirtyLeaves],tags:[...tags]};
     peer.send(fromLexical(editorState.toJSON()));
   });
   peer.action('표 2×3',()=>editor.update(()=>{$getRoot().append($createTableNodeWithDimensions(2,3,false));},{discrete:true}));
@@ -173,13 +184,28 @@ function mountProseMirror(name) {
     'Shift-Mod-z':()=>{binding.redo();return true;},'Mod-b':toggleMark(info.pm.marks.bold),'Mod-i':toggleMark(info.pm.marks.italic),
   }),keymap(baseKeymap),tableEditing()]);
   const view=new EditorView(peer.section.querySelector('.mount'),{
-    state:binding.state,dispatchTransaction:tr=>{if(tr.docChanged)peer.local++;binding.dispatch(tr);},
+    state:binding.state,dispatchTransaction:tr=>{
+      const trace=tracingEnabled&&tr.docChanged;
+      const before=trace?peer.client.doc.toJSON():undefined;
+      const nativeBefore=trace?binding.state.doc.toJSON():undefined;
+      const previousSeq=trace?peer.client.pending.at(-1)?.seq:undefined;
+      if(tr.docChanged)peer.local++;
+      binding.dispatch(tr);
+      if(trace){
+        const pending=peer.client.pending.at(-1);
+        recordOperation({name,kind:'ProseMirror',phase:'local',native:{before:nativeBefore,steps:tr.steps.map(step=>step.toJSON()),after:binding.state.doc.toJSON()},modelBefore:before,modelAfter:peer.client.doc.toJSON(),wireOps:pending?.seq!==previousSeq?pending?.ops??[]:[],bindingStats:structuredClone(binding.stats)});
+      }
+    },
     attributes:{class:'editor ProseMirror','aria-label':name,role:'textbox'},
   });
   binding.view=view;
   binding.onChange=()=>view.updateState(binding.state);
   const receive=peer.client.onModelEvents;
-  peer.client.onModelEvents=(events,info)=>{peer.remote++;receive(events,info);};
+  peer.client.onModelEvents=(events,detail)=>{
+    const nativeBefore=tracingEnabled?view.state.doc.toJSON():undefined;
+    peer.remote++;receive(events,detail);
+    if(tracingEnabled)recordOperation({name,kind:'ProseMirror',phase:'remote',cause:detail.cause,events,nativeBefore,nativeAfter:view.state.doc.toJSON(),model:peer.client.doc.toJSON()});
+  };
   peer.read=()=>canon(fromPmJSON(info,schema,view.state.doc.toJSON()));
   const run=command=>{command(view.state,view.dispatch,view);view.focus();};
   peer.action('표 2×3',()=>run((state,dispatch)=>{
@@ -205,7 +231,7 @@ document.querySelector('#connect').onclick=()=>peers.forEach(p=>p.client.connect
 await Promise.all(peers.map(p=>p.ready));
 peers.forEach(p=>p.client.connect());
 window.addEventListener('pagehide',()=>peers.forEach(p=>{p.client.disconnect();p.transport.leave();}));
-window.compat={snapshot};
+window.compat={snapshot,trace:readOperations,clearTrace:clearOperations};
 setInterval(async()=>{
   try {
     const state=await(await fetch(`/api/docs/${DOC}/state`)).json();

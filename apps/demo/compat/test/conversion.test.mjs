@@ -20,11 +20,11 @@ test('Enter and join retain semantic intent, including Unicode offsets',()=>{
 });
 test('simultaneous Enter remains one boundary in two adapter clients',()=>{
   const seed=new Doc('seed',schema);const seedOps=seed.edit([{op:'insert',at:[0,0],content:'abcdefgh'}]).ops;
-  const a=new Doc('a',schema),b=new Doc('b',schema);a.apply(seedOps);b.apply(seedOps);
+  const a=new Doc('a',schema),b=new Doc('b',schema);seedOps.forEach(op=>{a.apply(op);b.apply(op);});
   const next=canon({type:'content',children:[paragraph('abcd'),paragraph('efgh')]});
   const aOps=a.edit(editsFor(a.toJSON(),next)).ops,bOps=b.edit(editsFor(b.toJSON(),next)).ops;
-  a.apply(bOps);b.apply(aOps);
-  assert.deepEqual(a.toJSON(),b.toJSON());assert.equal(a.toJSON().children.length,2);
+  bOps.forEach(op=>a.apply(op));aOps.forEach(op=>b.apply(op));
+  assert.deepEqual(a.toJSON(),b.toJSON());assert.deepEqual(a.toJSON(),next);
 });
 test('adapter maps Unicode model offsets to UTF-16 CRDT tokens for split, insertion and delete',()=>{
   const doc=new Doc('unicode',schema);
