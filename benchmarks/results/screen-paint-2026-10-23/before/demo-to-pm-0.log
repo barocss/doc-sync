@@ -1,0 +1,24 @@
+### Result
+[{"id":"demo-to-pm:measured:0","correct":true,"trusted":true,"domMs":64.59999990463257,"frameMs":83.89999997615814,"spans":29,"remoteReceived":true},{"id":"demo-to-pm:measured:1","correct":true,"trusted":true,"domMs":61.39999997615814,"frameMs":78.39999997615814,"spans":26,"remoteReceived":true},{"id":"demo-to-pm:measured:2","correct":true,"trusted":true,"domMs":64.70000004768372,"frameMs":84.60000002384186,"spans":29,"remoteReceived":true},{"id":"demo-to-pm:measured:3","correct":true,"trusted":true,"domMs":62.60000002384186,"frameMs":81.80000007152557,"spans":29,"remoteReceived":true},{"id":"demo-to-pm:measured:4","correct":true,"trusted":true,"domMs":62.39999997615814,"frameMs":80.60000002384186,"spans":29,"remoteReceived":true}]
+### Ran Playwright code
+```js
+await (async (page) => {
+  const config = {"phase": "measured", "start": 0, "count": 5};
+  const output = [];
+  for (let i = config.start; i < config.start + config.count; i++) {
+    const char = 'qwertyuiopasdfghjklzcvbnm'[i % 23];
+    const id = await page.evaluate(({char, phase, index}) => __latency.begin(__latency.currentDirection, char, phase, index), {char, phase: config.phase, index: i});
+    await page.keyboard.press(char);
+    await page.waitForFunction(id => __latency.samples.some(s => s.id === id && s.done), id.id, {timeout: 60000});
+    const result = await page.evaluate(id => {
+      const s = __latency.samples.find(s => s.id === id);
+      return {id, correct: s.correct && s.sourceCorrect, trusted: s.inputEvents.every(e => e.trusted), domMs: s.inputToRemoteDomMs, frameMs: s.inputToRenderOpportunityMs, spans: s.spans.length, remoteReceived: s.remoteReceive != null};
+    }, id.id);
+    if (!result.correct || !result.trusted || !result.remoteReceived) throw new Error(JSON.stringify(result));
+    output.push(result);
+    await page.waitForTimeout(120);
+  }
+  return output;
+}
+)(page);
+```

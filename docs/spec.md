@@ -43,6 +43,8 @@ Enter는 text 노드 표지를 삽입한다. 같은 왼쪽·오른쪽 경계를 
 
 모델 편집은 `insert`, `delete`, `update`, `split`, `merge`를 사용한다. 경로는 모델 자식 번호와 text 안의 자리다. 내 편집은 wire 연산과 필요할 때 정규화 편집을 낸다. 원격 변경·undo·redo·snapshot·reset은 `onModelEvents` 구독자가 있을 때 모델 편집 이벤트를 낸다. 이벤트를 이전 모델에 적용한 결과는 이후 모델과 같아야 한다. 검산에 실패하면 전체 자식을 교체하는 fallback을 사용한다. 계산 비용 최적화는 이 계약을 바꾸지 않는다.
 
+`Doc.toJSON()`은 불변 TextBlock과 내부 raw 모델을 기준으로 문단 계산을 재사용한다. 글자 서식의 실제 LWW 쓰기는 해당 문단을, 구조 변경·되살리기·GC는 전체 캐시를 무효화한다. 목록 묶음과 표·흐름 정규화는 유지한다. 반환 모델 컨테이너는 복사하므로 소비자가 수정해도 내부 캐시를 바꾸지 않는다. 공개 `canonical()`은 이 캐시를 사용하지 않는다.
+
 ### 문자 단위의 알려진 제한
 
 저장과 `Pos.o`는 UTF-16 토큰 단위다. `model.ts`의 `runsToUnits`는 문자열 순회로 code point 단위를 만든다. 예를 들어 `가😀`는 저장 글자 토큰 3개이며 모델 Unit은 2개다. 사용자에게 보이는 grapheme 하나와도 같지 않다. 어댑터는 이 차이를 명시적으로 변환해야 한다.
@@ -51,9 +53,15 @@ Enter는 text 노드 표지를 삽입한다. 같은 왼쪽·오른쪽 경계를 
 
 ## 5. Undo와 redo
 
-`History`는 actor의 로컬 편집을 기록한다. undo는 과거 모델을 덮어쓰지 않고 새 반대 연산을 만든다. 삽입 undo는 해당 ID를 지우고, 삭제 undo는 그 기록이 만든 삭제 ID만 취소한다. 다른 actor의 입력과 삭제는 유지한다. 속성 undo는 현재 쓰기 ID가 자신이 기록한 ID일 때만 이전 값을 쓴다. 다른 actor의 나중 쓰기를 덮어쓰지 않는다.
+`History`는 actor의 로컬 편집을 기록한다. undo는 과거 모델을 덮어쓰지 않고 새 반대 연산을 만든다. 삽입 undo는 해당 ID를 지우고, 삭제 undo는 그 기록이 만든 삭제 ID만 취소한다. 다른 actor의 입력과 삭제는 유지한다. 속성 undo는 현재 쓰기 ID가 해당 기록의 편집 후 상태 ID일 때만 이전 값을 쓴다. redo는 실제 undo한 대상에서 현재 ID가 편집 전 상태 ID와 같을 때만 적용한다. 같은 History에서 정확한 이전 Ticket으로 이어진 상태 참조를 공유하고, 성공한 undo·redo가 만든 새 Ticket을 그 참조에 기록한다. 따라서 연속 서식 변경도 차례로 취소·복원할 수 있다. 이미 관측한 다른 actor의 쓰기로 현재 Ticket이 달라졌다면 그 대상을 건너뛴다. 아직 받지 못한 쓰기와 undo가 경쟁하면 일반 LWW 규칙을 따른다.
 
 연속 타이핑은 커서와 시간 창 조건에 따라 한 기록으로 묶인다. 기록 깊이는 현재 100이며 타이핑 창은 1500ms다. undo와 redo가 되살릴 수 있는 삭제의 가장 이른 서버 번호를 GC pin으로 보낸다. `clear()`는 이 기록과 pin을 해제한다.
+
+### 5.1 동시편집 의도 보존 사례
+
+삭제·서식·삽입·undo의 대상 ID, 관측 관계와 단계별 기대 결과는 [동시편집 의도 보존 규칙](collaboration-intent.md)에 정리한다. `intent-preservation.test.ts`는 각 사례 ID에 연결된 고정 기대 모델을 검사한다. 수렴만으로 사람의 모든 의도가 만족된다고 판정하지 않는다.
+
+서식 undo의 보호 조건은 **현재 로컬 쓰기 Ticket과 해당 History Step의 편집 후 상태 Ticket이 정확히 같음**이다. 이미 받은 다른 쓰기는 건너뛴다. 값이나 actor만 같은 쓰기는 연결하지 않으며 같은 actor의 미기록 쓰기와 독립 History도 구분한다. 미수신 쓰기와 undo가 경쟁하면 일반 LWW를 따른다. 승자 undo는 기록 전에 본 값을 새로 쓸 뿐 패자 쓰기를 재선출하지 않는다. `history-format.test.ts`는 연속 서식 undo·redo, 분기, 부분 범위와 원격 쓰기 보존의 고정 회귀 19개를 확인한다.
 
 ## 6. 검사와 원자성
 
@@ -90,6 +98,7 @@ Enter는 text 노드 표지를 삽입한다. 같은 왼쪽·오른쪽 경계를 
 로컬 집중 시험:
 
 ```sh
+node --test packages/doc-sync/test/intent-preservation.test.ts
 node --test packages/doc-sync/test/properties.test.ts
 node packages/doc-sync/test/long-fuzz.ts --ops 1000 --peers 8 --seed 23 --out output/long-fuzz/smoke.json
 ```

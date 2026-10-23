@@ -247,12 +247,19 @@ const regroup = (schema: Schema, flow: FlowSpec, items: NodeJSON[]): NodeJSON[] 
 
 const defaultBlock = (schema: Schema, flow: FlowSpec): NodeJSON => canonText(schema, {type: flow.default, runs: []});
 
-const canonText = (schema: Schema, node: NodeJSON): NodeJSON => {
+const canonText = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, NodeJSON>): NodeJSON => {
+    const cached = cache?.get(node);
+
+    if (cached) {
+        return cached;
+    }
+
     const out: NodeJSON = {type: node.type};
     const attrs = fullAttrs(schema, node.type, node.attrs);
 
     attrs && (out.attrs = attrs);
     out.runs = unitsToRuns(schema, runsToUnits(schema, node.runs));
+    cache?.set(node, out);
 
     return out;
 };
@@ -261,10 +268,10 @@ const canonText = (schema: Schema, node: NodeJSON): NodeJSON => {
  * 흐름의 자식들을 정리한다. 펼쳐서 블록마다 정리하고, 행·열이 없는 표는 빼고, 다시 묶는다.
  * 흐름은 언제나 글 블록으로 시작한다 (CRDT 의 줄 머리가 글 블록이라서) — 아니면 맨 앞에 빈 기본 블록을 둔다.
  */
-const canonFlow = (schema: Schema, flowType: string, children: NodeJSON[] = []): NodeJSON[] => {
+const canonFlow = (schema: Schema, flowType: string, children: NodeJSON[] = [], cache?: WeakMap<NodeJSON, NodeJSON>): NodeJSON[] => {
     const flow = schema.nodes[flowType] as FlowSpec;
     const items = flatten(schema, children)
-        .map(child => canonBlock(schema, child))
+        .map(child => canonBlock(schema, child, cache))
         .filter((child): child is NodeJSON => child !== null);
 
     (!items.length || !isTextNode(schema, items[0])) && items.unshift(defaultBlock(schema, flow));
@@ -272,28 +279,28 @@ const canonFlow = (schema: Schema, flowType: string, children: NodeJSON[] = []):
     return regroup(schema, flow, items);
 };
 
-const canonBlock = (schema: Schema, node: NodeJSON): NodeJSON | null => {
+const canonBlock = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, NodeJSON>): NodeJSON | null => {
     const shape = shapeOf(schema, node.type);
 
     if (shape === "text") {
-        return canonText(schema, node);
+        return canonText(schema, node, cache);
     }
 
     if (shape === "grid") {
-        return canonGrid(schema, node);
+        return canonGrid(schema, node, cache);
     }
 
     const out: NodeJSON = {type: node.type};
     const attrs = fullAttrs(schema, node.type, node.attrs);
 
     attrs && (out.attrs = attrs);
-    shape === "flow" && (out.children = canonFlow(schema, node.type, node.children));
+    shape === "flow" && (out.children = canonFlow(schema, node.type, node.children, cache));
 
     return out;
 };
 
 /** 표: 칸 수를 가장 긴 행에 맞추고, 칸 합치기를 다시 센다 (왼쪽 위 칸의 colspan·rowspan → 가려진 칸의 spanned) */
-const canonGrid = (schema: Schema, node: NodeJSON): NodeJSON | null => {
+const canonGrid = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, NodeJSON>): NodeJSON | null => {
     const parts = gridParts(schema, node.type);
     const rows = node.children ?? [];
     const width = Math.max(0, ...rows.map(r => (r.children ?? []).length));
@@ -354,7 +361,7 @@ const canonGrid = (schema: Schema, node: NodeJSON): NodeJSON | null => {
             const c: NodeJSON = {type: parts.cell};
 
             Object.keys(a).length && (c.attrs = a);
-            c.children = [{type: parts.body, children: canonFlow(schema, parts.body, body?.children)}];
+            c.children = [{type: parts.body, children: canonFlow(schema, parts.body, body?.children, cache)}];
 
             return c;
         }),
@@ -365,6 +372,10 @@ const canonGrid = (schema: Schema, node: NodeJSON): NodeJSON | null => {
 
 /** 문서 전체를 정리한 꼴로 */
 export const canonical = (schema: Schema, doc: NodeJSON): NodeJSON => ({type: schema.root, children: canonFlow(schema, schema.root, doc.children)});
+
+/** Doc 내부의 불변 글 블록만 재사용한다. 목록 묶음과 표·흐름의 정규화는 매번 수행한다. */
+export const canonicalWithTextCache = (schema: Schema, doc: NodeJSON, cache: WeakMap<NodeJSON, NodeJSON>): NodeJSON =>
+    ({type: schema.root, children: canonFlow(schema, schema.root, doc.children, cache)});
 
 // ── 편집 연산 적용 ──────────────────────────────────────────────────────
 

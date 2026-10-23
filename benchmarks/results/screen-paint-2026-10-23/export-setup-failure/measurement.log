@@ -1,0 +1,26 @@
+{"direction": "demo-to-pm", "completed": 5, "frameMs": [36, 63.200000047683716, 35.300000071525574, 35.699999928474426, 35.799999952316284], "load": [18.96142578125, 34.60791015625, 46.31494140625]}
+{"direction": "demo-to-pm", "completed": 10, "frameMs": [34.89999997615814, 37.60000002384186, 36.200000047683716, 35.10000002384186, 67], "load": [18.24365234375, 34.19921875, 46.10205078125]}
+{"direction": "demo-to-pm", "completed": 15, "frameMs": [37.39999997615814, 62.89999997615814, 35.200000047683716, 36.300000071525574, 35.39999997615814], "load": [16.822265625, 33.369140625, 45.66796875]}
+{"direction": "demo-to-pm", "completed": 20, "frameMs": [36.89999997615814, 64.10000002384186, 35.299999952316284, 34.800000071525574, 35.90000009536743], "load": [16.83642578125, 33.09716796875, 45.49951171875]}
+{"direction": "demo-to-pm", "completed": 25, "frameMs": [76.5, 64.09999990463257, 35.700000047683716, 34.89999997615814, 34.89999997615814], "load": [16.30029296875, 32.4501953125, 45.12548828125]}
+{"direction": "demo-to-pm", "completed": 30, "frameMs": [41.5, 35.40000009536743, 36.10000002384186, 65.20000004768372, 34.799999952316284], "load": [16.51611328125, 32.2265625, 44.97216796875]}
+{"direction": "pm-to-demo", "completed": 5, "frameMs": [35.10000002384186, 45.5, 36.299999952316284, 50, 36.799999952316284], "load": [17.421875, 31.14111328125, 44.208984375]}
+{"direction": "pm-to-demo", "completed": 10, "frameMs": [39.40000009536743, 43.299999952316284, 38.699999928474426, 50.200000047683716, 65.19999992847443], "load": [16.33447265625, 30.4599609375, 43.814453125]}
+{"direction": "pm-to-demo", "completed": 15, "frameMs": [64.10000002384186, 37.60000002384186, 48.699999928474426, 48.5, 35.39999997615814], "load": [16.0673828125, 30.169921875, 43.6337890625]}
+{"direction": "pm-to-demo", "completed": 20, "frameMs": [50.39999997615814, 65.89999997615814, 39.89999997615814, 47.59999990463257, 46.700000047683716], "load": [15.46044921875, 29.572265625, 43.263671875]}
+{"direction": "pm-to-demo", "completed": 25, "frameMs": [51.300000071525574, 36.199999928474426, 41.39999997615814, 49.5, 50.10000002384186], "load": [15.18310546875, 29.2802734375, 43.080078125]}
+{"direction": "pm-to-demo", "completed": 30, "frameMs": [48.200000047683716, 43.799999952316284, 47.699999928474426, 36.200000047683716, 35.199999928474426], "load": [14.84033203125, 28.74365234375, 42.728515625]}
+Traceback (most recent call last):
+  File "/Users/user/github/doc-sync/output/playwright/screen-next-20261023/after-final/measure.py", line 40, in <module>
+    raw=json.loads((base/'browser-raw.json').read_text());model=raw['server']['model'];assert all(c['model']==model and c['pending']==0 for c in raw['clients']);assert len(raw['samples'])==70
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/user/github/doc-sync/output/playwright/screen-next-20261023/after-final/browser-raw.json'

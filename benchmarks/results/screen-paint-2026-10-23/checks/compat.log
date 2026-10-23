@@ -1,0 +1,200 @@
+
+> @doc-sync/editor-compatibility@0.0.0 test
+> node --test test/*.test.mjs
+
+TAP version 13
+# Subtest: Slate round trip preserves Korean, emoji, marks and 2x3 table
+ok 1 - Slate round trip preserves Korean, emoji, marks and 2x3 table
+  ---
+  duration_ms: 2.122542
+  type: 'test'
+  ...
+# Subtest: Lexical conversion preserves marks and rejects unsupported inline nodes
+ok 2 - Lexical conversion preserves marks and rejects unsupported inline nodes
+  ---
+  duration_ms: 0.327292
+  type: 'test'
+  ...
+# Subtest: Enter and join retain semantic intent, including Unicode offsets
+ok 3 - Enter and join retain semantic intent, including Unicode offsets
+  ---
+  duration_ms: 0.661
+  type: 'test'
+  ...
+# Subtest: simultaneous Enter remains one boundary in two adapter clients
+ok 4 - simultaneous Enter remains one boundary in two adapter clients
+  ---
+  duration_ms: 3.130083
+  type: 'test'
+  ...
+# Subtest: adapter maps Unicode model offsets to UTF-16 CRDT tokens for split, insertion and delete
+ok 5 - adapter maps Unicode model offsets to UTF-16 CRDT tokens for split, insertion and delete
+  ---
+  duration_ms: 1.349
+  type: 'test'
+  ...
+# Subtest: Slate reset drops a removed selection path and clamps a surviving offset
+ok 6 - Slate reset drops a removed selection path and clamps a surviving offset
+  ---
+  duration_ms: 0.122
+  type: 'test'
+  ...
+# Subtest: token selection survives prefix
+ok 7 - token selection survives prefix
+  ---
+  duration_ms: 3.827916
+  type: 'test'
+  ...
+# Subtest: token selection survives suffix
+ok 8 - token selection survives suffix
+  ---
+  duration_ms: 0.470917
+  type: 'test'
+  ...
+# Subtest: token selection survives delete-before
+ok 9 - token selection survives delete-before
+  ---
+  duration_ms: 0.437291
+  type: 'test'
+  ...
+# Subtest: token selection survives delete-anchor
+ok 10 - token selection survives delete-anchor
+  ---
+  duration_ms: 0.286542
+  type: 'test'
+  ...
+# Subtest: token selection survives forward
+ok 11 - token selection survives forward
+  ---
+  duration_ms: 0.462917
+  type: 'test'
+  ...
+# Subtest: token selection survives backward
+ok 12 - token selection survives backward
+  ---
+  duration_ms: 0.298416
+  type: 'test'
+  ...
+# Subtest: token selection survives split
+ok 13 - token selection survives split
+  ---
+  duration_ms: 0.303792
+  type: 'test'
+  ...
+# Subtest: token selection survives format
+ok 14 - token selection survives format
+  ---
+  duration_ms: 0.302708
+  type: 'test'
+  ...
+# Subtest: composition preserves prefix remote edit and undoes as one group
+ok 15 - composition preserves prefix remote edit and undoes as one group
+  ---
+  duration_ms: 3.437667
+  type: 'test'
+  ...
+# Subtest: composition preserves same-boundary remote edit and undoes as one group
+ok 16 - composition preserves same-boundary remote edit and undoes as one group
+  ---
+  duration_ms: 2.639375
+  type: 'test'
+  ...
+# Subtest: composition preserves other-paragraph remote edit and undoes as one group
+ok 17 - composition preserves other-paragraph remote edit and undoes as one group
+  ---
+  duration_ms: 2.895
+  type: 'test'
+  ...
+# Subtest: composition cancellation and reset discard drafts without resurrecting text
+ok 18 - composition cancellation and reset discard drafts without resurrecting text
+  ---
+  duration_ms: 0.905917
+  type: 'test'
+  ...
+# Subtest: local composition IDs observe later remote clocks and facade keeps transport state live
+ok 19 - local composition IDs observe later remote clocks and facade keeps transport state live
+  ---
+  duration_ms: 0.608667
+  type: 'test'
+  ...
+# Subtest: draft tickets stay distinct from live undo and later input after cancellation
+ok 20 - draft tickets stay distinct from live undo and later input after cancellation
+  ---
+  duration_ms: 0.302
+  type: 'test'
+  ...
+# Subtest: a reconnect snapshot cannot release tickets reserved by an active draft
+ok 21 - a reconnect snapshot cannot release tickets reserved by an active draft
+  ---
+  duration_ms: 0.486625
+  type: 'test'
+  ...
+# Subtest: Slate positions cross formatted leaves and UTF-16 emoji offsets
+ok 22 - Slate positions cross formatted leaves and UTF-16 emoji offsets
+  ---
+  duration_ms: 0.225333
+  type: 'test'
+  ...
+# Subtest: Lexical maps formatted text and table cell-body paths using real nodes
+ok 23 - Lexical maps formatted text and table cell-body paths using real nodes
+  ---
+  duration_ms: 6.439291
+  type: 'test'
+  ...
+# Subtest: operation trace is off by default and does not clone values
+ok 24 - operation trace is off by default and does not clone values
+  ---
+  duration_ms: 3.330208
+  type: 'test'
+  ...
+# Subtest: opt-in operation trace keeps 150 independent records and can clear them
+ok 25 - opt-in operation trace keeps 150 independent records and can clear them
+  ---
+  duration_ms: 1.397542
+  type: 'test'
+  ...
+# Subtest: translated edit observation cannot change Unicode edits sent to the CRDT
+ok 26 - translated edit observation cannot change Unicode edits sent to the CRDT
+  ---
+  duration_ms: 2.095958
+  type: 'test'
+  ...
+# Subtest: remote edit reads SSE comments and unrelated frames, then submits a separate actor
+ok 27 - remote edit reads SSE comments and unrelated frames, then submits a separate actor
+  ---
+  duration_ms: 37.077041
+  type: 'test'
+  ...
+# Subtest: remote edit with no operations does not submit a change
+ok 28 - remote edit with no operations does not submit a change
+  ---
+  duration_ms: 10.011542
+  type: 'test'
+  ...
+# Subtest: remote edit rejects invalid document names and edit containers before fetching
+ok 29 - remote edit rejects invalid document names and edit containers before fetching
+  ---
+  duration_ms: 1.7685
+  type: 'test'
+  ...
+# Subtest: remote edit rejects HTTP errors, missing hello and malformed SSE data
+ok 30 - remote edit rejects HTTP errors, missing hello and malformed SSE data
+  ---
+  duration_ms: 10.475708
+  type: 'test'
+  ...
+# Subtest: remote edit reports rejected change submission
+ok 31 - remote edit reports rejected change submission
+  ---
+  duration_ms: 7.062208
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 589.248083

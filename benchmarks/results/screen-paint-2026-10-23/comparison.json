@@ -1,0 +1,387 @@
+{
+  "base": "f9370df85d93a69902254bbba5d6c90f95dc4559 + preserved screen-latency model-cache WIP",
+  "onlyProductDifference": "apps/demo/ui/style.css: top-level plain paragraphs, outside composition, isolation:isolate",
+  "runs": {
+    "before": {
+      "summary": {
+        "unit": "ms",
+        "metric": "key event timestamp through remote DOM and second rAF; rendering opportunity, not physical display",
+        "rows": [
+          {
+            "direction": "demo-to-pm",
+            "samples": 30,
+            "p50": 81,
+            "p95": 111.69999992847443,
+            "max": 135.80000007152557
+          },
+          {
+            "direction": "pm-to-demo",
+            "samples": 30,
+            "p50": 88.70000004768372,
+            "p95": 120.40000009536743,
+            "max": 175.79999995231628
+          }
+        ],
+        "correctness": {
+          "modelsEqual": true,
+          "pending": [
+            0,
+            0
+          ],
+          "fallbacks": [
+            0,
+            0
+          ],
+          "totalInputs": 70
+        },
+        "limits": [
+          "Same renderer thread and local HTTP/SSE",
+          "External desktop load is recorded; no other test jobs are launched during timing",
+          "ASCII sequential inserts only; no OS IME or large-table performance claim"
+        ]
+      },
+      "conditions": {
+        "startedAt": "2026-10-23T06:50:21.680325+00:00",
+        "url": "http://localhost:50224/pm?doc=latency100k",
+        "serverPid": 18740,
+        "dataDirectory": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-roadmap-latency-71q8998i",
+        "loadBefore": [
+          53.68359375,
+          49.0966796875,
+          41.22021484375
+        ],
+        "status": "passed",
+        "completedAt": "2026-10-23T06:53:08.114928+00:00",
+        "loadAfter": [
+          40.7216796875,
+          46.36376953125,
+          41.68310546875
+        ],
+        "browserClosed": true,
+        "serverStopped": true
+      }
+    },
+    "after": {
+      "summary": {
+        "unit": "ms",
+        "metric": "key event timestamp through remote DOM and second rAF; rendering opportunity, not physical display",
+        "rows": [
+          {
+            "direction": "demo-to-pm",
+            "samples": 30,
+            "p50": 35.89999997615814,
+            "p95": 69.5,
+            "max": 74.10000002384186
+          },
+          {
+            "direction": "pm-to-demo",
+            "samples": 30,
+            "p50": 45.39999997615814,
+            "p95": 68.5,
+            "max": 72.5
+          }
+        ],
+        "correctness": {
+          "modelsEqual": true,
+          "pending": [
+            0,
+            0
+          ],
+          "fallbacks": [
+            0,
+            0
+          ],
+          "totalInputs": 70
+        },
+        "limits": [
+          "Same renderer thread and local HTTP/SSE",
+          "External desktop load is recorded; no other test jobs are launched during timing",
+          "ASCII sequential inserts only; no OS IME or large-table performance claim"
+        ]
+      },
+      "conditions": {
+        "startedAt": "2026-10-23T07:35:31.965356+00:00",
+        "url": "http://localhost:53989/pm?doc=latency100k",
+        "serverPid": 99477,
+        "dataDirectory": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-roadmap-latency-eqx2m68o",
+        "loadBefore": [
+          15.62255859375,
+          23.83544921875,
+          38.74462890625
+        ],
+        "status": "passed",
+        "completedAt": "2026-10-23T07:38:06.918277+00:00",
+        "loadAfter": [
+          10.23388671875,
+          19.01171875,
+          34.35791015625
+        ],
+        "browserClosed": true,
+        "serverStopped": true
+      }
+    },
+    "before-repeat-final": {
+      "summary": {
+        "unit": "ms",
+        "metric": "key event timestamp through remote DOM and second rAF; rendering opportunity, not physical display",
+        "rows": [
+          {
+            "direction": "demo-to-pm",
+            "samples": 30,
+            "p50": 79.10000002384186,
+            "p95": 108.10000002384186,
+            "max": 132.20000004768372
+          },
+          {
+            "direction": "pm-to-demo",
+            "samples": 30,
+            "p50": 88.39999997615814,
+            "p95": 121.89999997615814,
+            "max": 124.10000002384186
+          }
+        ],
+        "correctness": {
+          "modelsEqual": true,
+          "pending": [
+            0,
+            0
+          ],
+          "fallbacks": [
+            0,
+            0
+          ],
+          "totalInputs": 70
+        },
+        "limits": [
+          "Same renderer thread and local HTTP/SSE",
+          "External desktop load is recorded; no other test jobs are launched during timing",
+          "ASCII sequential inserts only; no OS IME or large-table performance claim"
+        ]
+      },
+      "conditions": {
+        "startedAt": "2026-10-23T07:38:17.219460+00:00",
+        "url": "http://localhost:54274/pm?doc=latency100k",
+        "serverPid": 3285,
+        "dataDirectory": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-roadmap-latency-2i_m2oo_",
+        "loadBefore": [
+          10.49853515625,
+          18.7802734375,
+          34.09619140625
+        ],
+        "status": "passed",
+        "completedAt": "2026-10-23T07:40:43.181040+00:00",
+        "loadAfter": [
+          9.4453125,
+          15.1650390625,
+          30.22412109375
+        ],
+        "browserClosed": true,
+        "serverStopped": true
+      }
+    }
+  },
+  "trace": {
+    "before": {
+      "scope": "Three diagnostic inputs per direction. Main-thread intervals clipped to input through second rAF; nested spans unioned per category. Different categories may still overlap.",
+      "excludes": [
+        "physical display scanout",
+        "pure network latency",
+        "proof that every document character was repainted"
+      ],
+      "directions": [
+        {
+          "direction": "demo-to-pm",
+          "samples": [
+            {
+              "index": 0,
+              "inputToFrameMs": 123.059,
+              "mainThreadUnionMs": {
+                "Paint": 29.793,
+                "PrePaint": 20.699,
+                "Layout": 9.601,
+                "UpdateLayoutTree": 0.57,
+                "FunctionCall": 18.017
+              }
+            },
+            {
+              "index": 1,
+              "inputToFrameMs": 89.915,
+              "mainThreadUnionMs": {
+                "Paint": 29.908,
+                "PrePaint": 19.973,
+                "Layout": 9.624,
+                "UpdateLayoutTree": 0.473,
+                "FunctionCall": 16.63
+              }
+            },
+            {
+              "index": 2,
+              "inputToFrameMs": 91.667,
+              "mainThreadUnionMs": {
+                "Paint": 29.856,
+                "PrePaint": 19.473,
+                "Layout": 9.48,
+                "UpdateLayoutTree": 0.476,
+                "FunctionCall": 19.173
+              }
+            }
+          ],
+          "medianUnionMs": {
+            "Paint": 29.856,
+            "PrePaint": 19.973,
+            "Layout": 9.601,
+            "UpdateLayoutTree": 0.476,
+            "FunctionCall": 18.017
+          }
+        },
+        {
+          "direction": "pm-to-demo",
+          "samples": [
+            {
+              "index": 0,
+              "inputToFrameMs": 136.434,
+              "mainThreadUnionMs": {
+                "Paint": 42.211,
+                "PrePaint": 20.744,
+                "Layout": 11.408,
+                "UpdateLayoutTree": 0.411,
+                "FunctionCall": 20.02
+              }
+            },
+            {
+              "index": 1,
+              "inputToFrameMs": 96.897,
+              "mainThreadUnionMs": {
+                "Paint": 30.331,
+                "PrePaint": 19.065,
+                "Layout": 9.694,
+                "UpdateLayoutTree": 0.398,
+                "FunctionCall": 19.317
+              }
+            },
+            {
+              "index": 2,
+              "inputToFrameMs": 111.296,
+              "mainThreadUnionMs": {
+                "Paint": 29.919,
+                "PrePaint": 26.542,
+                "Layout": 10.204,
+                "UpdateLayoutTree": 0.442,
+                "FunctionCall": 33.749
+              }
+            }
+          ],
+          "medianUnionMs": {
+            "Paint": 30.331,
+            "PrePaint": 20.744,
+            "Layout": 10.204,
+            "UpdateLayoutTree": 0.411,
+            "FunctionCall": 20.02
+          }
+        }
+      ]
+    },
+    "after": {
+      "scope": "Three diagnostic inputs per direction. Main-thread intervals clipped to input through second rAF; nested spans unioned per category. Different categories may still overlap.",
+      "excludes": [
+        "physical display scanout",
+        "pure network latency",
+        "proof that every document character was repainted"
+      ],
+      "directions": [
+        {
+          "direction": "demo-to-pm",
+          "samples": [
+            {
+              "index": 0,
+              "inputToFrameMs": 76.413,
+              "mainThreadUnionMs": {
+                "Paint": 13.453,
+                "PrePaint": 0.633,
+                "Layout": 9.07,
+                "UpdateLayoutTree": 0.522,
+                "FunctionCall": 17.721
+              }
+            },
+            {
+              "index": 1,
+              "inputToFrameMs": 43.177,
+              "mainThreadUnionMs": {
+                "Paint": 14.096,
+                "PrePaint": 0.531,
+                "Layout": 7.267,
+                "UpdateLayoutTree": 0.427,
+                "FunctionCall": 15.818
+              }
+            },
+            {
+              "index": 2,
+              "inputToFrameMs": 42.13,
+              "mainThreadUnionMs": {
+                "Paint": 13.674,
+                "PrePaint": 0.558,
+                "Layout": 7.381,
+                "UpdateLayoutTree": 0.381,
+                "FunctionCall": 15.212
+              }
+            }
+          ],
+          "medianUnionMs": {
+            "Paint": 13.674,
+            "PrePaint": 0.558,
+            "Layout": 7.381,
+            "UpdateLayoutTree": 0.427,
+            "FunctionCall": 15.818
+          }
+        },
+        {
+          "direction": "pm-to-demo",
+          "samples": [
+            {
+              "index": 0,
+              "inputToFrameMs": 57.348,
+              "mainThreadUnionMs": {
+                "Paint": 14.07,
+                "PrePaint": 0.684,
+                "Layout": 9.115,
+                "UpdateLayoutTree": 0.435,
+                "FunctionCall": 19.722
+              }
+            },
+            {
+              "index": 1,
+              "inputToFrameMs": 53.154,
+              "mainThreadUnionMs": {
+                "Paint": 19.89,
+                "PrePaint": 0.572,
+                "Layout": 10.614,
+                "UpdateLayoutTree": 0.359,
+                "FunctionCall": 18.89
+              }
+            },
+            {
+              "index": 2,
+              "inputToFrameMs": 54.47,
+              "mainThreadUnionMs": {
+                "Paint": 21.082,
+                "PrePaint": 0.636,
+                "Layout": 10.84,
+                "UpdateLayoutTree": 0.361,
+                "FunctionCall": 18.35
+              }
+            }
+          ],
+          "medianUnionMs": {
+            "Paint": 19.89,
+            "PrePaint": 0.636,
+            "Layout": 10.614,
+            "UpdateLayoutTree": 0.361,
+            "FunctionCall": 18.89
+          }
+        }
+      ]
+    }
+  },
+  "seedLineSha256": "99e7fa1e2f42778c72db917f5bd97dedd3b0869cb5a91073a9d69525acca94a3",
+  "earlierCandidate": "after-rejected is not accepted: 155-pixel IME stacking regression; before-repeat is an earlier baseline repeat, not final acceptance repeat"
+}

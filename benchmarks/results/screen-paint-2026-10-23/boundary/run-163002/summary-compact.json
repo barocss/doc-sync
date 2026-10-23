@@ -1,0 +1,824 @@
+{
+  "startedAt": "2026-10-23T07:30:02.929180+00:00",
+  "output": "/Users/user/github/doc-sync/output/playwright/screen-next-boundary-20261023/run-163002",
+  "session": "boundary-163002",
+  "data": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-boundary-kpbv7z6q",
+  "status": "passed",
+  "fixtureFiles": {
+    "seed-next.mjs": "442986bf97de87e58786448b1e078a0d336227fa877d4a2bb534be164dd8cc93",
+    "check-next.js": "c40fcc8bf4cfc3a7a5f59fa35cb0e5076b526977d31f12ec1d6bf483c95c435b",
+    "run-next.py": "498e667cdd4842dd3dea2c382d2fcee32978a09c2ed6f893aa04fd0369cdf761"
+  },
+  "initialSourceHashes": {
+    "apps/demo/ui/editor.ts": "4a20dab005d88723f6adde4a1adbfe104c0deaa0d59aa6a143463952bda07de3",
+    "apps/demo/ui/style.css": "8be763b66e6576f238a95d59bbb4a91c35de77c1788983ba3b657459411b9aec",
+    "apps/demo/ui/pm-app.ts": "8917144afe4c86105ec3e23886f6879a6fde79c701e8e1dff3f78d6a1dc0dc51",
+    "apps/demo/ui/pm.html": "cd7f9395a4a94f234ac41dc3869655998a146ed3b7bfc6d6e31e643045a588db",
+    "fixtures/demo-schema.ts": "2e0fd61e1ce9b32a252824d8b4c378dcd4c1d340e7f8285df4c6d76bade4dcde",
+    "packages/doc-sync/src/crdt/doc.ts": "51594832d35fa497a5fe43508305d2c376c846da90232eac8d45979f977104ef",
+    "packages/doc-sync/src/crdt/model.ts": "6e69e5557e30d05a5a5b5c5c996d514fc49fe7093ca8afeb2c8d01f02d61e8c1",
+    "packages/doc-sync/src/pm/binding.ts": "89232ab2bf1bb2c45531a5e386eb760f6e644f89e0cb7492f63b79b7c7647f5a"
+  },
+  "url": "http://localhost:53606/pm?doc=boundary",
+  "serverPid": 92050,
+  "pixelChecks": [
+    {
+      "name": "paragraph-long-label",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 896,
+              "outsideBoundaryPixels": 351,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 896,
+              "outsideBoundaryPixels": 351,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 896,
+              "outsideBoundaryPixels": 351,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 94384,
+      "diffImage": "paragraph-long-label-diff.png"
+    },
+    {
+      "name": "cell-long-label",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 1104,
+              "outsideBoundaryPixels": 0,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 1104,
+              "outsideBoundaryPixels": 0,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 1104,
+              "outsideBoundaryPixels": 0,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 107859,
+      "diffImage": "cell-long-label-diff.png"
+    },
+    {
+      "name": "overlapping-forward-reverse",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-D",
+              "coloredPixels": 722,
+              "outsideBoundaryPixels": 264,
+              "rightOfCellPixels": 0
+            },
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 749,
+              "outsideBoundaryPixels": 301,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-D",
+              "coloredPixels": 722,
+              "outsideBoundaryPixels": 264,
+              "rightOfCellPixels": 0
+            },
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 749,
+              "outsideBoundaryPixels": 301,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-D",
+              "coloredPixels": 722,
+              "outsideBoundaryPixels": 264,
+              "rightOfCellPixels": 0
+            },
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 749,
+              "outsideBoundaryPixels": 301,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 94384,
+      "diffImage": "overlapping-forward-reverse-diff.png"
+    },
+    {
+      "name": "cell-nowrap-stress",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 1679,
+              "outsideBoundaryPixels": 1526,
+              "rightOfCellPixels": 1526
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 1679,
+              "outsideBoundaryPixels": 1526,
+              "rightOfCellPixels": 1526
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 1679,
+              "outsideBoundaryPixels": 1526,
+              "rightOfCellPixels": 1526
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 115866,
+      "diffImage": "cell-nowrap-stress-diff.png"
+    },
+    {
+      "name": "overlapping-caret-nowrap-stress",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 0,
+              "outsideBoundaryPixels": 0,
+              "rightOfCellPixels": 0
+            },
+            {
+              "actor": "boundary-D",
+              "coloredPixels": 2326,
+              "outsideBoundaryPixels": 1420,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 0,
+              "outsideBoundaryPixels": 0,
+              "rightOfCellPixels": 0
+            },
+            {
+              "actor": "boundary-D",
+              "coloredPixels": 2326,
+              "outsideBoundaryPixels": 1420,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 0,
+              "outsideBoundaryPixels": 0,
+              "rightOfCellPixels": 0
+            },
+            {
+              "actor": "boundary-D",
+              "coloredPixels": 2326,
+              "outsideBoundaryPixels": 1420,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 94384,
+      "diffImage": "overlapping-caret-nowrap-stress-diff.png"
+    },
+    {
+      "name": "ime-preview",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": []
+        },
+        {
+          "mode": "candidate",
+          "actors": []
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": []
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 86750,
+      "diffImage": "ime-preview-diff.png"
+    },
+    {
+      "name": "boundary-image-placeholder",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 857,
+              "outsideBoundaryPixels": 622,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 857,
+              "outsideBoundaryPixels": 622,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 857,
+              "outsideBoundaryPixels": 622,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 129778,
+      "diffImage": "boundary-image-placeholder-diff.png"
+    },
+    {
+      "name": "boundary-divider",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 792,
+              "outsideBoundaryPixels": 557,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 792,
+              "outsideBoundaryPixels": 557,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 792,
+              "outsideBoundaryPixels": 557,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 77728,
+      "diffImage": "boundary-divider-diff.png"
+    },
+    {
+      "name": "boundary-callout-plain",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 997,
+              "outsideBoundaryPixels": 762,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 997,
+              "outsideBoundaryPixels": 762,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 997,
+              "outsideBoundaryPixels": 762,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 93690,
+      "diffImage": "boundary-callout-plain-diff.png"
+    },
+    {
+      "name": "boundary-empty-paragraph",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 838,
+              "outsideBoundaryPixels": 603,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 838,
+              "outsideBoundaryPixels": 603,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 838,
+              "outsideBoundaryPixels": 603,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 81198,
+      "diffImage": "boundary-empty-paragraph-diff.png"
+    },
+    {
+      "name": "boundary-list-marker",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 760,
+              "outsideBoundaryPixels": 525,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 760,
+              "outsideBoundaryPixels": 525,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 760,
+              "outsideBoundaryPixels": 525,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 81198,
+      "diffImage": "boundary-list-marker-diff.png"
+    },
+    {
+      "name": "boundary-quote-border",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 824,
+              "outsideBoundaryPixels": 611,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 824,
+              "outsideBoundaryPixels": 611,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 824,
+              "outsideBoundaryPixels": 611,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 81198,
+      "diffImage": "boundary-quote-border-diff.png"
+    },
+    {
+      "name": "boundary-table-background",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 995,
+              "outsideBoundaryPixels": 760,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 995,
+              "outsideBoundaryPixels": 760,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 995,
+              "outsideBoundaryPixels": 760,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 90914,
+      "diffImage": "boundary-table-background-diff.png"
+    }
+  ],
+  "completedAt": "2026-10-23T07:30:30.138681+00:00",
+  "serverStopped": true,
+  "sourceHashes": {
+    "apps/demo/ui/editor.ts": "4a20dab005d88723f6adde4a1adbfe104c0deaa0d59aa6a143463952bda07de3",
+    "apps/demo/ui/style.css": "8be763b66e6576f238a95d59bbb4a91c35de77c1788983ba3b657459411b9aec",
+    "apps/demo/ui/pm-app.ts": "8917144afe4c86105ec3e23886f6879a6fde79c701e8e1dff3f78d6a1dc0dc51",
+    "apps/demo/ui/pm.html": "cd7f9395a4a94f234ac41dc3869655998a146ed3b7bfc6d6e31e643045a588db",
+    "fixtures/demo-schema.ts": "2e0fd61e1ce9b32a252824d8b4c378dcd4c1d340e7f8285df4c6d76bade4dcde",
+    "packages/doc-sync/src/crdt/doc.ts": "51594832d35fa497a5fe43508305d2c376c846da90232eac8d45979f977104ef",
+    "packages/doc-sync/src/crdt/model.ts": "6e69e5557e30d05a5a5b5c5c996d514fc49fe7093ca8afeb2c8d01f02d61e8c1",
+    "packages/doc-sync/src/pm/binding.ts": "89232ab2bf1bb2c45531a5e386eb760f6e644f89e0cb7492f63b79b7c7647f5a"
+  },
+  "sourceChangedDuringRun": false,
+  "functionalChecks": [
+    {
+      "name": "forward/reverse ranges and two-user overlap",
+      "c": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "d": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "overlap": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "name": "offscreen scroll/hit-test/range/input/undo",
+      "selected": {
+        "b": 71,
+        "o": 4,
+        "line": null
+      },
+      "selection": {
+        "focus": "10237@boundary-seed",
+        "pos": {
+          "b": 71,
+          "o": 6
+        },
+        "chars": 2
+      }
+    },
+    {
+      "name": "heading scroll/hit-test/range/input/undo",
+      "selected": {
+        "b": 2,
+        "o": 4,
+        "line": null
+      },
+      "selection": {
+        "focus": "289@boundary-seed",
+        "pos": {
+          "b": 2,
+          "o": 6
+        },
+        "chars": 2
+      }
+    },
+    {
+      "name": "quote scroll/hit-test/range/input/undo",
+      "selected": {
+        "b": 3,
+        "o": 4,
+        "line": null
+      },
+      "selection": {
+        "focus": "333@boundary-seed",
+        "pos": {
+          "b": 3,
+          "o": 6
+        },
+        "chars": 2
+      }
+    },
+    {
+      "name": "list scroll/hit-test/range/input/undo",
+      "selected": {
+        "b": 4,
+        "o": 4,
+        "line": null
+      },
+      "selection": {
+        "focus": "702@boundary-seed",
+        "pos": {
+          "b": 4,
+          "o": 6
+        },
+        "chars": 2
+      }
+    },
+    {
+      "name": "table scroll/hit-test/range/input/undo",
+      "selected": {
+        "b": 0,
+        "o": 4,
+        "line": "0@735@boundary-seed/cell:736@boundary-seed,738@boundary-seed"
+      },
+      "selection": {
+        "focus": "743@boundary-seed",
+        "pos": {
+          "line": "0@735@boundary-seed/cell:736@boundary-seed,738@boundary-seed",
+          "b": 0,
+          "o": 6
+        },
+        "chars": 2
+      }
+    },
+    {
+      "name": "callout scroll/hit-test/range/input/undo",
+      "selected": {
+        "b": 0,
+        "o": 4,
+        "line": "0@1244@boundary-seed/body"
+      },
+      "selection": {
+        "focus": "1248@boundary-seed",
+        "pos": {
+          "line": "0@1244@boundary-seed/body",
+          "b": 0,
+          "o": 6
+        },
+        "chars": 2
+      }
+    },
+    {
+      "name": "wrapped scroll/hit-test/range/input/undo",
+      "selected": {
+        "b": 10,
+        "o": 4,
+        "line": null
+      },
+      "selection": {
+        "focus": "1306@boundary-seed",
+        "pos": {
+          "b": 10,
+          "o": 6
+        },
+        "chars": 2
+      }
+    },
+    {
+      "name": "IME auto/isolate preview transition",
+      "states": [
+        {
+          "step": "end",
+          "isolation": "isolate"
+        },
+        {
+          "step": "preview",
+          "text": "가",
+          "isolation": "auto"
+        },
+        {
+          "step": "preview",
+          "text": "가나다",
+          "isolation": "auto"
+        }
+      ]
+    },
+    {
+      "name": "synthetic IME preview shown and cancelled; not native OS IME"
+    }
+  ],
+  "final": {
+    "modelsEqual": true,
+    "pending": [
+      0,
+      0,
+      0
+    ],
+    "serverSeq": 15,
+    "images": 2
+  }
+}

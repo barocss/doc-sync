@@ -67,53 +67,109 @@ class ExistenceStep implements Step {
     }
 }
 
-/**
- * 속성 쓰기(블록 종류·속성·글자 서식)를 되돌리는 걸음. 토큰마다 직전 값으로 — 그 사이 남이 다시 바꾼 토큰은 건드리지 않는다.
- * "남이 바꿨나"는 지금 값을 쓴 연산의 이름표가 내 것인지로 본다.
- */
+type SetState = {readonly value: unknown; at?: Ticket; users: number};
+
+/** 같은 History 안에서 실제로 이어진 속성 상태만 공유한다. 값이나 actor의 일치로 연결하지 않는다. */
+class SetStates {
+    private readonly current = new Map<string, SetState>();
+
+    capture(slot: string, prior: {value: unknown; at?: Ticket}, op: Extract<Op, {t: "set"}>): {before: SetState; after: SetState} {
+        const cached = this.current.get(slot);
+        const same = cached && (cached.at ? !!prior.at && compareTicket(cached.at, prior.at) === 0 : !prior.at);
+        const before = same ? cached : {value: prior.value ?? null, at: prior.at, users: 0};
+        const after = {value: op.value, at: op.at, users: 1};
+
+        before.users += 1;
+        this.current.set(slot, after);
+
+        return {before, after};
+    }
+
+    restore(slot: string, state: SetState, at: Ticket): void {
+        state.at = at;
+        this.current.set(slot, state);
+    }
+
+    release(slot: string, state: SetState): void {
+        state.users -= 1;
+        if (state.users === 0 && this.current.get(slot) === state) {
+            this.current.delete(slot);
+        }
+    }
+
+    clear(): void {
+        this.current.clear();
+    }
+}
+
+/** 속성 undo/redo는 현재 쓰기 ID를 검사한다. 자기 History가 복원한 상태의 새 ID는 연결된 이전/다음 걸음도 사용한다. */
 class SetStep implements Step {
     private readonly key: string;
-    private readonly value: unknown;
-    private readonly targets: Array<{id: Ticket; before: unknown; mine: Ticket}>;
+    private readonly states: SetStates;
+    private readonly targets: Array<{id: Ticket; slot: string; before: SetState; after: SetState; undone: boolean}>;
 
-    constructor(op: Extract<Op, {t: "set"}>, before: Array<{id: Ticket; value: unknown}>) {
+    constructor(op: Extract<Op, {t: "set"}>, before: Array<{id: Ticket; value: unknown; at?: Ticket}>, states: SetStates) {
         this.key = op.key;
-        this.value = op.value;
-        this.targets = before.map(b => ({id: b.id, before: b.value ?? null, mine: op.at}));
+        this.states = states;
+        this.targets = before.map(prior => {
+            const slot = JSON.stringify([keyOf(prior.id), op.key]);
+
+            return {id: prior.id, slot, ...states.capture(slot, prior, op), undone: false};
+        });
     }
 
     undo(doc: Doc): Op[] {
-        return this.set(doc, t => t.before);
+        return this.set(doc, true);
     }
 
     redo(doc: Doc): Op[] {
-        return this.set(doc, () => this.value);
+        return this.set(doc, false);
     }
 
     pinned(): Ticket | null {
         return null;
     }
 
-    private set(doc: Doc, valueOf: (t: {before: unknown}) => unknown): Op[] {
-        const mine = this.targets.filter(t => {
-            const current = doc.setTicket(t.id, this.key);
+    release(): void {
+        for (const target of this.targets) {
+            this.states.release(target.slot, target.before);
+            this.states.release(target.slot, target.after);
+        }
+    }
 
-            return !!current && compareTicket(current, t.mine) === 0;
+    private set(doc: Doc, undo: boolean): Op[] {
+        const mine = this.targets.filter(t => {
+            if (undo ? t.undone : !t.undone) {
+                return false;
+            }
+            const current = doc.setTicket(t.id, this.key);
+            const source = undo ? t.after : t.before;
+
+            return !!current && !!source.at && compareTicket(current, source.at) === 0;
         });
         // 같은 값으로 돌아갈 토큰끼리 연산 하나로
         const groups = new Map<string, typeof mine>();
 
         mine.forEach(t => {
-            const k = JSON.stringify(valueOf(t));
+            const k = JSON.stringify((undo ? t.before : t.after).value);
 
-            groups.set(k, [...(groups.get(k) ?? []), t]);
+            const group = groups.get(k);
+
+            if (group) {
+                group.push(t);
+            } else {
+                groups.set(k, [t]);
+            }
         });
 
         return [...groups].map(([value, targets]) => {
             const op: Op = {t: "set", at: doc.clock.next(), ids: targets.map(t => t.id), key: this.key, value: JSON.parse(value)};
 
             doc.apply(op);
-            targets.forEach(t => (t.mine = op.at));
+            targets.forEach(t => {
+                this.states.restore(t.slot, undo ? t.before : t.after, op.at);
+                t.undone = undo;
+            });
 
             return op;
         });
@@ -148,6 +204,11 @@ export type RecordOptions = {
 export class History {
     private readonly undoStack: Group[] = [];
     private readonly redoStack: Group[] = [];
+    private readonly setStates = new SetStates();
+
+    private release(group: Group): void {
+        group.steps.forEach(step => step instanceof SetStep && step.release());
+    }
 
     /** 방금 한 내 편집을 쌓는다. 바로 앞 칸이 이어 치기였고 커서가 그 끝에 있으면 그 칸에 붙인다 */
     record(ops: Op[], doc: Doc, options: RecordOptions): void {
@@ -159,7 +220,7 @@ export class History {
             } else if (op.t === "del") {
                 steps.push(new ExistenceStep(op.ids, op.at));
             } else if (op.t === "set") {
-                steps.push(new SetStep(op, doc.priorOf(op)));
+                steps.push(new SetStep(op, doc.priorOf(op), this.setStates));
             }
         }
 
@@ -187,9 +248,10 @@ export class History {
                 typing: !!options.typing,
                 at: now,
             });
-            this.undoStack.length > DEPTH && this.undoStack.shift();
+            this.undoStack.length > DEPTH && this.release(this.undoStack.shift()!);
         }
 
+        this.redoStack.forEach(group => this.release(group));
         this.redoStack.length = 0;
     }
 
@@ -197,6 +259,7 @@ export class History {
     clear(): void {
         this.undoStack.length = 0;
         this.redoStack.length = 0;
+        this.setStates.clear();
     }
 
     get canUndo(): boolean {

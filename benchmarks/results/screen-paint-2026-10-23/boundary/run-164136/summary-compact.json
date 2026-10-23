@@ -1,0 +1,160 @@
+{
+  "startedAt": "2026-10-23T07:41:36.869451+00:00",
+  "output": "/Users/user/github/doc-sync/output/playwright/screen-next-boundary-20261023/run-164136",
+  "session": "boundary-164136",
+  "data": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-boundary-80e3l5h3",
+  "status": "passed",
+  "fixtureFiles": {
+    "seed-next.mjs": "442986bf97de87e58786448b1e078a0d336227fa877d4a2bb534be164dd8cc93",
+    "check-marker.js": "0fb2c67a42a547b7d908ed2dbe379742f105714febd667c422bbc0c21d8c1390",
+    "run-marker.py": "6e38d98bc7a270cfe2c9f659fa6184130df1ea12b82614cc771a829f30a95632"
+  },
+  "initialSourceHashes": {
+    "apps/demo/ui/editor.ts": "4a20dab005d88723f6adde4a1adbfe104c0deaa0d59aa6a143463952bda07de3",
+    "apps/demo/ui/style.css": "8be763b66e6576f238a95d59bbb4a91c35de77c1788983ba3b657459411b9aec",
+    "apps/demo/ui/pm-app.ts": "8917144afe4c86105ec3e23886f6879a6fde79c701e8e1dff3f78d6a1dc0dc51",
+    "apps/demo/ui/pm.html": "cd7f9395a4a94f234ac41dc3869655998a146ed3b7bfc6d6e31e643045a588db",
+    "fixtures/demo-schema.ts": "2e0fd61e1ce9b32a252824d8b4c378dcd4c1d340e7f8285df4c6d76bade4dcde",
+    "packages/doc-sync/src/crdt/doc.ts": "51594832d35fa497a5fe43508305d2c376c846da90232eac8d45979f977104ef",
+    "packages/doc-sync/src/crdt/model.ts": "6e69e5557e30d05a5a5b5c5c996d514fc49fe7093ca8afeb2c8d01f02d61e8c1",
+    "packages/doc-sync/src/pm/binding.ts": "89232ab2bf1bb2c45531a5e386eb760f6e644f89e0cb7492f63b79b7c7647f5a"
+  },
+  "url": "http://localhost:54480/pm?doc=boundary",
+  "serverPid": 7092,
+  "pixelChecks": [
+    {
+      "name": "boundary-marker-direct",
+      "passed": true,
+      "failures": [],
+      "pixelModes": [
+        {
+          "mode": "baseline",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 828,
+              "outsideBoundaryPixels": 583,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "candidate",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 828,
+              "outsideBoundaryPixels": 583,
+              "rightOfCellPixels": 0
+            }
+          ]
+        },
+        {
+          "mode": "baseline-repeat",
+          "actors": [
+            {
+              "actor": "boundary-C",
+              "coloredPixels": 828,
+              "outsideBoundaryPixels": 583,
+              "rightOfCellPixels": 0
+            }
+          ]
+        }
+      ],
+      "changedPixelsAbove12": 0,
+      "baselineRepeatChangedPixelsAbove12": 0,
+      "totalPixels": 81198,
+      "diffImage": "boundary-marker-direct-diff.png"
+    }
+  ],
+  "markerInkOverlap": {
+    "referenceInkPixelsInsideLabelRect": 8,
+    "positions": [
+      [
+        29,
+        79
+      ],
+      [
+        30,
+        79
+      ],
+      [
+        28,
+        80
+      ],
+      [
+        29,
+        80
+      ],
+      [
+        30,
+        80
+      ],
+      [
+        28,
+        81
+      ],
+      [
+        29,
+        81
+      ],
+      [
+        30,
+        81
+      ]
+    ],
+    "marker": {
+      "content": "\"•\"",
+      "color": "rgb(107, 114, 128)",
+      "rect": {
+        "left": 35,
+        "top": 511.34375,
+        "right": 53,
+        "bottom": 534.34375,
+        "width": 18,
+        "height": 23
+      },
+      "targetClass": "blk list-item bullet"
+    }
+  },
+  "completedAt": "2026-10-23T07:41:45.378127+00:00",
+  "serverStopped": true,
+  "sourceHashes": {
+    "apps/demo/ui/editor.ts": "4a20dab005d88723f6adde4a1adbfe104c0deaa0d59aa6a143463952bda07de3",
+    "apps/demo/ui/style.css": "8be763b66e6576f238a95d59bbb4a91c35de77c1788983ba3b657459411b9aec",
+    "apps/demo/ui/pm-app.ts": "8917144afe4c86105ec3e23886f6879a6fde79c701e8e1dff3f78d6a1dc0dc51",
+    "apps/demo/ui/pm.html": "cd7f9395a4a94f234ac41dc3869655998a146ed3b7bfc6d6e31e643045a588db",
+    "fixtures/demo-schema.ts": "2e0fd61e1ce9b32a252824d8b4c378dcd4c1d340e7f8285df4c6d76bade4dcde",
+    "packages/doc-sync/src/crdt/doc.ts": "51594832d35fa497a5fe43508305d2c376c846da90232eac8d45979f977104ef",
+    "packages/doc-sync/src/crdt/model.ts": "6e69e5557e30d05a5a5b5c5c996d514fc49fe7093ca8afeb2c8d01f02d61e8c1",
+    "packages/doc-sync/src/pm/binding.ts": "89232ab2bf1bb2c45531a5e386eb760f6e644f89e0cb7492f63b79b7c7647f5a"
+  },
+  "sourceChangedDuringRun": false,
+  "functionalChecks": [
+    {
+      "name": "direct bullet-label overlap",
+      "marker": {
+        "content": "\"•\"",
+        "color": "rgb(107, 114, 128)",
+        "rect": {
+          "left": 35,
+          "top": 511.34375,
+          "right": 53,
+          "bottom": 534.34375,
+          "width": 18,
+          "height": 23
+        },
+        "targetClass": "blk list-item bullet"
+      },
+      "referenceImage": "marker-without-presence.png"
+    }
+  ],
+  "final": {
+    "modelsEqual": true,
+    "pending": [
+      0,
+      0,
+      0
+    ]
+  }
+}

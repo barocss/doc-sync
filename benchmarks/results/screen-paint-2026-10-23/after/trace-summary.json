@@ -1,0 +1,100 @@
+{
+  "scope": "Three diagnostic inputs per direction. Main-thread intervals clipped to input through second rAF; nested spans unioned per category. Different categories may still overlap.",
+  "excludes": [
+    "physical display scanout",
+    "pure network latency",
+    "proof that every document character was repainted"
+  ],
+  "directions": [
+    {
+      "direction": "demo-to-pm",
+      "samples": [
+        {
+          "index": 0,
+          "inputToFrameMs": 76.413,
+          "mainThreadUnionMs": {
+            "Paint": 13.453,
+            "PrePaint": 0.633,
+            "Layout": 9.07,
+            "UpdateLayoutTree": 0.522,
+            "FunctionCall": 17.721
+          }
+        },
+        {
+          "index": 1,
+          "inputToFrameMs": 43.177,
+          "mainThreadUnionMs": {
+            "Paint": 14.096,
+            "PrePaint": 0.531,
+            "Layout": 7.267,
+            "UpdateLayoutTree": 0.427,
+            "FunctionCall": 15.818
+          }
+        },
+        {
+          "index": 2,
+          "inputToFrameMs": 42.13,
+          "mainThreadUnionMs": {
+            "Paint": 13.674,
+            "PrePaint": 0.558,
+            "Layout": 7.381,
+            "UpdateLayoutTree": 0.381,
+            "FunctionCall": 15.212
+          }
+        }
+      ],
+      "medianUnionMs": {
+        "Paint": 13.674,
+        "PrePaint": 0.558,
+        "Layout": 7.381,
+        "UpdateLayoutTree": 0.427,
+        "FunctionCall": 15.818
+      }
+    },
+    {
+      "direction": "pm-to-demo",
+      "samples": [
+        {
+          "index": 0,
+          "inputToFrameMs": 57.348,
+          "mainThreadUnionMs": {
+            "Paint": 14.07,
+            "PrePaint": 0.684,
+            "Layout": 9.115,
+            "UpdateLayoutTree": 0.435,
+            "FunctionCall": 19.722
+          }
+        },
+        {
+          "index": 1,
+          "inputToFrameMs": 53.154,
+          "mainThreadUnionMs": {
+            "Paint": 19.89,
+            "PrePaint": 0.572,
+            "Layout": 10.614,
+            "UpdateLayoutTree": 0.359,
+            "FunctionCall": 18.89
+          }
+        },
+        {
+          "index": 2,
+          "inputToFrameMs": 54.47,
+          "mainThreadUnionMs": {
+            "Paint": 21.082,
+            "PrePaint": 0.636,
+            "Layout": 10.84,
+            "UpdateLayoutTree": 0.361,
+            "FunctionCall": 18.35
+          }
+        }
+      ],
+      "medianUnionMs": {
+        "Paint": 19.89,
+        "PrePaint": 0.636,
+        "Layout": 10.614,
+        "UpdateLayoutTree": 0.361,
+        "FunctionCall": 18.89
+      }
+    }
+  ]
+}

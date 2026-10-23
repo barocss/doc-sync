@@ -1,0 +1,6 @@
+### Result
+{"ready":true}
+### Ran Playwright code
+```js
+await (async page=>{await page.locator(".ProseMirror > p:first-child").click({position:{x:15,y:8}});await page.waitForFunction(()=>__latency.editor&&__latency.binding&&__latency.view);return {ready:true};})(page);
+```

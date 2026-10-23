@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: 모델 재사용: 읽은 값을 수정해도 다음 읽기와 문서에 영향을 주지 않는다
+ok 1 - 모델 재사용: 읽은 값을 수정해도 다음 읽기와 문서에 영향을 주지 않는다
+  ---
+  duration_ms: 9.67375
+  type: 'test'
+  ...
+# Subtest: 모델 재사용: 변경 없는 재읽기에서 토큰과 서식을 다시 읽지 않는다
+ok 2 - 모델 재사용: 변경 없는 재읽기에서 토큰과 서식을 다시 읽지 않는다
+  ---
+  duration_ms: 9.390791
+  type: 'test'
+  ...
+# Subtest: 모델 재사용: 글자·서식·구조·원격 적용·GC 뒤 새로 연 문서와 같다
+ok 3 - 모델 재사용: 글자·서식·구조·원격 적용·GC 뒤 새로 연 문서와 같다
+  ---
+  duration_ms: 14.553458
+  type: 'test'
+  ...
+# Subtest: 문단 모델: 10만 자에서 한 문단을 바꿔도 나머지 글자와 서식을 다시 읽지 않는다
+ok 4 - 문단 모델: 10만 자에서 한 문단을 바꿔도 나머지 글자와 서식을 다시 읽지 않는다
+  ---
+  duration_ms: 900.207875
+  type: 'test'
+  ...
+# Subtest: 문단 모델: 같은 Block의 LWW 서식 쓰기·취소·중복은 캐시를 갱신한다
+ok 5 - 문단 모델: 같은 Block의 LWW 서식 쓰기·취소·중복은 캐시를 갱신한다
+  ---
+  duration_ms: 1.0145
+  type: 'test'
+  ...
+# Subtest: 문단 모델: 목록 묶음·링크·인라인·상자의 정규화는 새 snapshot 해석과 같다
+ok 6 - 문단 모델: 목록 묶음·링크·인라인·상자의 정규화는 새 snapshot 해석과 같다
+  ---
+  duration_ms: 3.499791
+  type: 'test'
+  ...
+# Subtest: 문단 모델: 숨은 표 칸의 글·서식과 합치기·행열 변경을 보존한다
+ok 7 - 문단 모델: 숨은 표 칸의 글·서식과 합치기·행열 변경을 보존한다
+  ---
+  duration_ms: 5.787083
+  type: 'test'
+  ...
+# Subtest: 문단 모델: 지우기·되살리기·큰 text·GC 뒤에도 새 해석과 같다
+ok 8 - 문단 모델: 지우기·되살리기·큰 text·GC 뒤에도 새 해석과 같다
+  ---
+  duration_ms: 6.794291
+  type: 'test'
+  ...
+# Subtest: 문단 모델: 캐시를 읽은 뒤 동시 Enter·원격 서식·참여자 undo를 해도 수렴한다
+ok 9 - 문단 모델: 캐시를 읽은 뒤 동시 Enter·원격 서식·참여자 undo를 해도 수렴한다
+  ---
+  duration_ms: 20.545167
+  type: 'test'
+  ...
+# Subtest: PM 재사용: selection·presence 갱신은 모델 읽기와 PM 변환을 반복하지 않는다
+ok 10 - PM 재사용: selection·presence 갱신은 모델 읽기와 PM 변환을 반복하지 않는다
+  ---
+  duration_ms: 13.005458
+  type: 'test'
+  ...
+# Subtest: PM 재사용: apply·서식·GC 뒤 갱신하고 모델과 선택을 유지한다
+ok 11 - PM 재사용: apply·서식·GC 뒤 갱신하고 모델과 선택을 유지한다
+  ---
+  duration_ms: 7.811
+  type: 'test'
+  ...
+# Subtest: PM 재사용: 같은 version의 Doc 교체와 동적 IME 문서 교체를 구분한다
+ok 12 - PM 재사용: 같은 version의 Doc 교체와 동적 IME 문서 교체를 구분한다
+  ---
+  duration_ms: 1.14925
+  type: 'test'
+  ...
+# Subtest: PM 재사용: snapshot과 reset은 version 0이어도 새 내용을 반영한다
+ok 13 - PM 재사용: snapshot과 reset은 version 0이어도 새 내용을 반영한다
+  ---
+  duration_ms: 10.811417
+  type: 'test'
+  ...
+# Subtest: PM 재사용: 한 transaction의 여러 Step과 동기 콜백 재진입도 새 version을 읽는다
+ok 14 - PM 재사용: 한 transaction의 여러 Step과 동기 콜백 재진입도 새 version을 읽는다
+  ---
+  duration_ms: 5.451459
+  type: 'test'
+  ...
+# Subtest: PM 재사용: 표 속성 diff가 숨은 칸 참조와 이전 모델을 변이하지 않는다
+ok 15 - PM 재사용: 표 속성 diff가 숨은 칸 참조와 이전 모델을 변이하지 않는다
+  ---
+  duration_ms: 4.779709
+  type: 'test'
+  ...
+# Subtest: 수신 범위: 큰 문서의 한 문단 삽입·지우기·서식은 전체 모델을 읽지 않고 같은 거울을 만든다
+ok 16 - 수신 범위: 큰 문서의 한 문단 삽입·지우기·서식은 전체 모델을 읽지 않고 같은 거울을 만든다
+  ---
+  duration_ms: 262.732209
+  type: 'test'
+  ...
+# Subtest: 수신 범위: 목록 항목·표 칸·상자 안에서도 원래 모델 경로를 쓴다
+ok 17 - 수신 범위: 목록 항목·표 칸·상자 안에서도 원래 모델 경로를 쓴다
+  ---
+  duration_ms: 5.439209
+  type: 'test'
+  ...
+# Subtest: 수신 범위: 구조·여러 블록·새 토큰 의존 묶음은 전체 경로를 유지한다
+ok 18 - 수신 범위: 구조·여러 블록·새 토큰 의존 묶음은 전체 경로를 유지한다
+  ---
+  duration_ms: 1.4475
+  type: 'test'
+  ...
+# Subtest: 수신 범위: 중복 삽입·죽은 origin·되살리기는 전체 경로를 유지한다
+ok 19 - 수신 범위: 중복 삽입·죽은 origin·되살리기는 전체 경로를 유지한다
+  ---
+  duration_ms: 0.828708
+  type: 'test'
+  ...
+# Subtest: 수신 범위: 동시 Enter 뒤에 늦게 온 글자는 원래 전체 경로로 경계 너머 삽입을 처리한다
+ok 20 - 수신 범위: 동시 Enter 뒤에 늦게 온 글자는 원래 전체 경로로 경계 너머 삽입을 처리한다
+  ---
+  duration_ms: 0.486084
+  type: 'test'
+  ...
+# Subtest: 수신 범위: 표 뒤 빈 가상 블록은 좁히지 않는다
+ok 21 - 수신 범위: 표 뒤 빈 가상 블록은 좁히지 않는다
+  ---
+  duration_ms: 0.809
+  type: 'test'
+  ...
+# Subtest: 수신 범위: 합친 표의 숨은 칸 편집은 전체 경로로 기존 full-grid 이벤트를 유지한다
+ok 22 - 수신 범위: 합친 표의 숨은 칸 편집은 전체 경로로 기존 full-grid 이벤트를 유지한다
+  ---
+  duration_ms: 1.627959
+  type: 'test'
+  ...
+# Subtest: 수신 범위: 같은 경계의 동시 Enter를 흡수한 뒤 최신 글자를 넣어도 문단 수와 경로가 같다
+ok 23 - 수신 범위: 같은 경계의 동시 Enter를 흡수한 뒤 최신 글자를 넣어도 문단 수와 경로가 같다
+  ---
+  duration_ms: 0.600167
+  type: 'test'
+  ...
+# Subtest: 수신 범위: undo와 redo는 기존 전체 비교와 이벤트 계약을 유지한다
+ok 24 - 수신 범위: undo와 redo는 기존 전체 비교와 이벤트 계약을 유지한다
+  ---
+  duration_ms: 0.826166
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1277.708959

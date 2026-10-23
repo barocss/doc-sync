@@ -254,6 +254,10 @@ body.running .controls .btn {
     padding: 1px 0;
 }
 
+.surface > .blk.paragraph:not(:has(.composing)) {
+    isolation: isolate;
+}
+
 .blk.heading1 {
     font-size: 21px;
     font-weight: 700;

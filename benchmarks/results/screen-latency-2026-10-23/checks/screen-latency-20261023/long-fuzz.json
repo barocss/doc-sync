@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "startedAt": "2026-10-23T06:38:43.272Z",
+  "completedAt": "2026-10-23T06:38:48.916Z",
+  "options": {
+    "ops": 10000,
+    "peers": 8,
+    "seed": 23
+  },
+  "counters": {
+    "wireOps": 10007,
+    "changes": 9980,
+    "batches": 20,
+    "snapshotJoins": 320,
+    "replayRestarts": 20,
+    "gcEntries": 616,
+    "duplicateSubmissions": 623
+  },
+  "coverage": [
+    "eight-peer configuration supported",
+    "causally ordered delayed delivery",
+    "duplicate Change rejection",
+    "stable GC model checks",
+    "JSON complete-log hub replacement",
+    "fresh-peer snapshot joins"
+  ],
+  "excluded": [
+    "expired-lease history discard and snapshot recovery",
+    "disk/process crash durability",
+    "long-lived single-document million-op history",
+    "OS IME",
+    "two-week CI observation"
+  ]
+}

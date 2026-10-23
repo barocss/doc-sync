@@ -1,0 +1,245 @@
+{
+  "metric": "key event timestamp through remote DOM match and second rAF; not physical scanout",
+  "initialCharacters": 100000,
+  "paragraphs": 625,
+  "warmupsPerDirection": 5,
+  "samplesPerDirection": 30,
+  "order": [
+    "before",
+    "after",
+    "before-repeat"
+  ],
+  "runs": [
+    {
+      "name": "before",
+      "sourceManifest": "before/source-manifest.json",
+      "loadBefore": [
+        18.23388671875,
+        25.88720703125,
+        34.5263671875
+      ],
+      "loadAfter": [
+        26.35009765625,
+        26.4541015625,
+        33.265625
+      ],
+      "directions": [
+        {
+          "direction": "demo-to-pm",
+          "samples": 30,
+          "p50": 216.70000004768372,
+          "p95": 246.5,
+          "max": 251.19999992847443,
+          "inclusiveMethodMedianMs": {
+            "Editor.insert": 6.549999952316284,
+            "Doc.edit": 0.30000007152557373,
+            "Doc.apply": 0.30000007152557373,
+            "Editor.commit": 6.0,
+            "SyncClient.commit": 0.2999999523162842,
+            "Editor.render": 5.749999940395355,
+            "requestAnimationFrame.application": 65.19999992847443,
+            "Doc.toJSON": 118.44999986886978,
+            "SyncClient.receive": 69.14999997615814,
+            "SyncClient.receiveEnvelope": 68.84999996423721,
+            "SyncClient.withEvents": 68.84999996423721,
+            "PmBinding.pull": 68.0,
+            "PmBinding.afterChange": 4.5,
+            "PmBinding.anchorOfPm": 0.19999992847442627,
+            "EditorView.updateState": 4.699999988079071
+          },
+          "phaseMedianMs": {
+            "inputToReceive": 125.90000003576279,
+            "inputToDom": 195.9000000357628,
+            "inputToFrame": 216.5
+          }
+        },
+        {
+          "direction": "pm-to-demo",
+          "samples": 30,
+          "p50": 226.89999997615814,
+          "p95": 260.40000009536743,
+          "max": 276,
+          "inclusiveMethodMedianMs": {
+            "PmBinding.dispatch": 72.05000007152557,
+            "PmBinding.anchorOfPm": 0.550000011920929,
+            "Doc.edit": 0.30000007152557373,
+            "Doc.apply": 0.34999996423721313,
+            "PmBinding.reconcile": 64.15000003576279,
+            "Doc.toJSON": 119.55000001192093,
+            "SyncClient.commit": 5.699999928474426,
+            "EditorView.updateState": 6.449999988079071,
+            "PmBinding.afterChange": 0.8500000238418579,
+            "requestAnimationFrame.application": 71.85000002384186,
+            "Editor.render": 6.350000023841858,
+            "SyncClient.receive": 0.5000000596046448,
+            "SyncClient.receiveEnvelope": 0.20000004768371582,
+            "SyncClient.withEvents": 0.20000004768371582
+          },
+          "phaseMedianMs": {
+            "inputToReceive": 90.35000002384186,
+            "inputToDom": 168.25000005960464,
+            "inputToFrame": 224.89999997615814
+          }
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "sourceManifest": "after/source-manifest.json",
+      "loadBefore": [
+        33.91845703125,
+        29.41552734375,
+        32.95556640625
+      ],
+      "loadAfter": [
+        30.74609375,
+        30.69580078125,
+        32.962890625
+      ],
+      "directions": [
+        {
+          "direction": "demo-to-pm",
+          "samples": 30,
+          "p50": 88.89999997615814,
+          "p95": 124.10000002384186,
+          "max": 157.5,
+          "inclusiveMethodMedianMs": {
+            "Editor.insert": 7.199999988079071,
+            "Doc.edit": 0.30000007152557373,
+            "Doc.apply": 0.30000007152557373,
+            "Editor.commit": 6.300000071525574,
+            "SyncClient.commit": 0.2999999523162842,
+            "Editor.render": 6.050000011920929,
+            "requestAnimationFrame.application": 1.9999998807907104,
+            "Doc.toJSON": 0.8500000238418579,
+            "SyncClient.receive": 6.850000083446503,
+            "SyncClient.receiveEnvelope": 6.400000095367432,
+            "SyncClient.withEvents": 6.400000095367432,
+            "PmBinding.pull": 5.5,
+            "PmBinding.afterChange": 4.750000059604645,
+            "PmBinding.anchorOfPm": 0.10000002384185791,
+            "EditorView.updateState": 5.100000023841858
+          },
+          "phaseMedianMs": {
+            "inputToReceive": 62.0,
+            "inputToDom": 68.5,
+            "inputToFrame": 88.59999996423721
+          }
+        },
+        {
+          "direction": "pm-to-demo",
+          "samples": 30,
+          "p50": 96.70000004768372,
+          "p95": 120.19999992847443,
+          "max": 123.89999997615814,
+          "inclusiveMethodMedianMs": {
+            "PmBinding.dispatch": 7.350000023841858,
+            "PmBinding.anchorOfPm": 0.40000009536743164,
+            "Doc.edit": 0.30000007152557373,
+            "Doc.apply": 0.30000007152557373,
+            "PmBinding.reconcile": 0.6000000238418579,
+            "Doc.toJSON": 0.8999999761581421,
+            "SyncClient.commit": 5.450000047683716,
+            "EditorView.updateState": 6.0000001192092896,
+            "PmBinding.afterChange": 0.7999999523162842,
+            "requestAnimationFrame.application": 8.199999868869781,
+            "Editor.render": 6.100000023841858,
+            "SyncClient.receive": 0.3999999761581421,
+            "SyncClient.receiveEnvelope": 0.20000004768371582,
+            "SyncClient.withEvents": 0.19999992847442627
+          },
+          "phaseMedianMs": {
+            "inputToReceive": 26.55000001192093,
+            "inputToDom": 38.94999998807907,
+            "inputToFrame": 96.20000004768372
+          }
+        }
+      ]
+    },
+    {
+      "name": "before-repeat",
+      "sourceManifest": "before-repeat/source-manifest.json",
+      "loadBefore": [
+        22.6064453125,
+        28.5458984375,
+        32.05224609375
+      ],
+      "loadAfter": [
+        23.1025390625,
+        26.39990234375,
+        30.5205078125
+      ],
+      "directions": [
+        {
+          "direction": "demo-to-pm",
+          "samples": 30,
+          "p50": 216.20000004768372,
+          "p95": 248.89999997615814,
+          "max": 269.10000002384186,
+          "inclusiveMethodMedianMs": {
+            "Editor.insert": 6.350000023841858,
+            "Doc.edit": 0.2999999523162842,
+            "Doc.apply": 0.25,
+            "Editor.commit": 5.899999976158142,
+            "SyncClient.commit": 0.2999999523162842,
+            "Editor.render": 5.600000023841858,
+            "requestAnimationFrame.application": 65.55000001192093,
+            "Doc.toJSON": 119.8500000834465,
+            "SyncClient.receive": 68.99999994039536,
+            "SyncClient.receiveEnvelope": 68.55000001192093,
+            "SyncClient.withEvents": 68.55000001192093,
+            "PmBinding.pull": 67.69999998807907,
+            "PmBinding.afterChange": 4.5,
+            "PmBinding.anchorOfPm": 0.10000002384185791,
+            "EditorView.updateState": 4.799999952316284
+          },
+          "phaseMedianMs": {
+            "inputToReceive": 124.69999998807907,
+            "inputToDom": 194.39999997615814,
+            "inputToFrame": 215.85000002384186
+          }
+        },
+        {
+          "direction": "pm-to-demo",
+          "samples": 30,
+          "p50": 219.09999990463257,
+          "p95": 276.5,
+          "max": 301.8000000715256,
+          "inclusiveMethodMedianMs": {
+            "PmBinding.dispatch": 68.25,
+            "PmBinding.anchorOfPm": 0.3999999761581421,
+            "Doc.edit": 0.30000007152557373,
+            "Doc.apply": 0.30000007152557373,
+            "PmBinding.reconcile": 61.34999996423721,
+            "Doc.toJSON": 114.90000003576279,
+            "SyncClient.commit": 5.400000035762787,
+            "EditorView.updateState": 5.899999976158142,
+            "PmBinding.afterChange": 0.7999999523162842,
+            "requestAnimationFrame.application": 68.6000000834465,
+            "Editor.render": 5.800000011920929,
+            "SyncClient.receive": 0.5,
+            "SyncClient.receiveEnvelope": 0.19999998807907104,
+            "SyncClient.withEvents": 0.19999992847442627
+          },
+          "phaseMedianMs": {
+            "inputToReceive": 86.44999992847443,
+            "inputToDom": 161.20000004768372,
+            "inputToFrame": 218.80000001192093
+          }
+        }
+      ]
+    }
+  ],
+  "p95ReductionPercent": {
+    "demo-to-pm": 49.655172404120954,
+    "pm-to-demo": 53.84024582010252
+  },
+  "limitations": [
+    "Three sequential runs on a shared desktop, no statistical confidence or controlled CPU-load claim",
+    "No other test or benchmark jobs were launched during these timing runs; external apps remained active",
+    "Two editors share one renderer; local HTTP/SSE and JSONL storage",
+    "ASCII insertion only; no native OS IME, table latency, sustained typing, or multi-user contention latency claim",
+    "Inclusive method totals overlap and cannot be added",
+    "Initial model construction, structural edits, revival and GC can still rebuild all text models; no new memory SLO qualification"
+  ]
+}

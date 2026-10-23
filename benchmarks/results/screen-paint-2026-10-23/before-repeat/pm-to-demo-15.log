@@ -1,0 +1,24 @@
+### Result
+[{"id":"pm-to-demo:measured:15","correct":true,"trusted":true,"domMs":34,"frameMs":105.79999995231628,"spans":31,"remoteReceived":true},{"id":"pm-to-demo:measured:16","correct":true,"trusted":true,"domMs":37.5,"frameMs":95.89999997615814,"spans":30,"remoteReceived":true},{"id":"pm-to-demo:measured:17","correct":true,"trusted":true,"domMs":31.699999928474426,"frameMs":100.29999995231628,"spans":31,"remoteReceived":true},{"id":"pm-to-demo:measured:18","correct":true,"trusted":true,"domMs":65.70000004768372,"frameMs":122.70000004768372,"spans":30,"remoteReceived":true},{"id":"pm-to-demo:measured:19","correct":true,"trusted":true,"domMs":42,"frameMs":99.70000004768372,"spans":27,"remoteReceived":true}]
+### Ran Playwright code
+```js
+await (async (page) => {
+  const config = {"phase": "measured", "start": 15, "count": 5};
+  const output = [];
+  for (let i = config.start; i < config.start + config.count; i++) {
+    const char = 'qwertyuiopasdfghjklzcvbnm'[i % 23];
+    const id = await page.evaluate(({char, phase, index}) => __latency.begin(__latency.currentDirection, char, phase, index), {char, phase: config.phase, index: i});
+    await page.keyboard.press(char);
+    await page.waitForFunction(id => __latency.samples.some(s => s.id === id && s.done), id.id, {timeout: 60000});
+    const result = await page.evaluate(id => {
+      const s = __latency.samples.find(s => s.id === id);
+      return {id, correct: s.correct && s.sourceCorrect, trusted: s.inputEvents.every(e => e.trusted), domMs: s.inputToRemoteDomMs, frameMs: s.inputToRenderOpportunityMs, spans: s.spans.length, remoteReceived: s.remoteReceive != null};
+    }, id.id);
+    if (!result.correct || !result.trusted || !result.remoteReceived) throw new Error(JSON.stringify(result));
+    output.push(result);
+    await page.waitForTimeout(120);
+  }
+  return output;
+}
+)(page);
+```

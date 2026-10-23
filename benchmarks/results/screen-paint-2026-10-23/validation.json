@@ -1,0 +1,78 @@
+{
+  "base": "f9370df85d93a69902254bbba5d6c90f95dc4559",
+  "includesPriorModelCacheWip": true,
+  "newProductScope": "CSS only, relative to preserved WIP",
+  "finalSelector": ".surface > .blk.paragraph:not(:has(.composing))",
+  "sourceManifest": "after/source-manifest.json",
+  "sourceHashesMatchCurrent": true,
+  "baselineMatchesFreshRepeat": true,
+  "onlyDifferenceFromBaseline": [
+    "apps/demo/ui/style.css"
+  ],
+  "initialWipPreservation": "checks/wip-preservation.json; later intentional HANDOFF/README/status updates only",
+  "tests": {
+    "expanded": {
+      "core": 144,
+      "demo": 10,
+      "fuzzSeeds": 3000,
+      "pmSeeds": 300,
+      "failed": 0
+    },
+    "compatUnit": 31,
+    "typecheck": "passed",
+    "isolatedCompatBundle": "passed",
+    "mainChrome": 30,
+    "compatCdpInput": 84,
+    "compatOrdinary": 20,
+    "compatOperationTraces": 30,
+    "compatPositiveStatuses": {
+      "passed": 84,
+      "captured": 30,
+      "snapshot-verified": 18,
+      "probe-verified": 2
+    },
+    "boundaryStationaryPairs": 13,
+    "boundaryBaselineRepeats": 13,
+    "boundaryFunctional": 10,
+    "bulletInkOverlapPixels": 8,
+    "bulletExtraStationaryPair": 1,
+    "nativeOsIme": false,
+    "deleteBoldCoreProbe": 2
+  },
+  "performance": {
+    "acceptedRuns": [
+      "before",
+      "after",
+      "before-repeat-final"
+    ],
+    "inputs": 210,
+    "measuredSamplesPerDirectionPerRun": 30,
+    "warmupPerDirectionPerRun": 5,
+    "modelsEqual": true,
+    "pending": 0,
+    "fallbacks": 0,
+    "diagnosticSamplesPerDirection": 3,
+    "traceTimingUsesCategoryUnion": true,
+    "physicalDisplayMeasured": false,
+    "externalCpuLoadControlled": false,
+    "priorRejectedCandidateNotAcceptanceData": true
+  },
+  "reviews": {
+    "architecture": "approved; remote_scope_review; main/compat final outcomes checked by root",
+    "securitySpec": "approved; execution_plan_review; main/compat final outcomes checked by root",
+    "qualityEvidence": "approved; roadmap_benchmarks; recomputed raw timing/source and compat outcomes; own boundary fixture is separately scoped evidence"
+  },
+  "limits": [
+    "Not native OS IME",
+    "Not G0/G1 or product SLO approval",
+    "Not large-table/contention/memory qualification",
+    "No lease-expiry recovery or two-week CI claim",
+    "No all-100k-character repaint/GPU/pure network latency claim"
+  ],
+  "git": {
+    "committed": false,
+    "pushed": false
+  },
+  "unitRunBinding": "Core/demo TypeScript and unit source hashes unchanged after unit runs; final CSS separately verified in Chrome",
+  "cleanup": "cleanup.json"
+}

@@ -1,5 +1,5 @@
 import {compileEdits, resolvePath} from "./edit.ts";
-import {applyEdits, canonMarks, canonical, diffModels, unitsToRuns} from "./model.ts";
+import {applyEdits, canonMarks, canonical, canonicalWithTextCache, diffModels, unitsToRuns} from "./model.ts";
 import {acceptsText, attrValueOk, gridParts, groupOf, inlineTypes, storedTypes} from "./schema.ts";
 import {Clock, ROOT, compareTicket, keyOf, ticketOf} from "./ticket.ts";
 import type {EditOp, Marks, NodeJSON, Run, Unit} from "./model.ts";
@@ -288,6 +288,8 @@ export class Doc {
     private posCache = new Map<string, Map<Item, {b: number; o: number}>>();
     private visibleCache = new Map<string, boolean>();
     private modelCache: NodeJSON | null = null;
+    private textModels = new WeakMap<TextBlock, NodeJSON>();
+    private canonicalTexts = new WeakMap<NodeJSON, NodeJSON>();
     private revision = 0;
 
     constructor(actor: string, schema: Schema | null = null) {
@@ -670,6 +672,10 @@ export class Doc {
                     const current = item?.attrs.get(op.key);
 
                     if (item && (!current || compareTicket(op.at, current.at) > 0)) {
+                        // 글자 서식은 Block 객체를 바꾸지 않는다. 실제 LWW 쓰기일 때 그 문단의 모델만 비운다.
+                        const block = this.blockCache.get(item.line.key)?.of.get(item);
+
+                        block && this.textModels.delete(block);
                         attrsFor(item).set(op.key, {value: op.value, at: op.at});
                     }
                 });
@@ -684,6 +690,8 @@ export class Doc {
         this.blockCache.clear();
         this.posCache.clear();
         this.visibleCache.clear();
+        this.textModels = new WeakMap();
+        this.canonicalTexts = new WeakMap();
     }
 
     /**
@@ -1333,7 +1341,7 @@ export class Doc {
      * 비어 있는 빈 자리(표 뒤 virtual)는 모델에 없다.
      */
     toJSON(): NodeJSON {
-        this.modelCache ??= canonical(this.need(), {type: this.need().root, children: this.rawFlow(MAIN)});
+        this.modelCache ??= canonicalWithTextCache(this.need(), {type: this.need().root, children: this.rawFlow(MAIN)}, this.canonicalTexts);
 
         // 변하지 않은 문서는 토큰·서식을 다시 읽지 않는다. 호출자는 예전처럼 모델을 자유롭게 고칠 수 있다.
         return copyModel(this.modelCache);
@@ -1346,6 +1354,12 @@ export class Doc {
     }
 
     private rawBlock(b: Block): NodeJSON {
+        const cached = b.kind === "text" ? this.textModels.get(b) : null;
+
+        if (cached) {
+            return cached;
+        }
+
         const node: NodeJSON = {type: b.type};
 
         Object.keys(b.attrs).length && (node.attrs = {...b.attrs});
@@ -1354,6 +1368,7 @@ export class Doc {
             const units: Unit[] = b.chars.map(c => (c.kind === "char" ? {ch: c.ch, marks: this.marksOf(c)} : {inline: c.born, attrs: this.attrsOf(c, c.born)}));
 
             node.runs = unitsToRuns(this.need(), units);
+            this.textModels.set(b, node);
         } else if (b.kind === "grid") {
             const parts = gridParts(this.need(), b.type)!;
 
@@ -1682,20 +1697,24 @@ export class Doc {
         return flow && this.schema ? inlineTypes(this.schema, flow) : [];
     }
 
-    /** 내 편집으로 만든 연산을 적용한다. 속성 쓰기는 되돌리기에 쓰도록 바꾸기 직전 값을 기억해 둔다 */
+    /** 내 편집으로 만든 연산을 적용한다. 속성 undo가 이전 상태를 식별하도록 값과 쓰기 ID를 기억한다 */
     private run(ops: Op[]): Op[] {
         ops.forEach(op => {
-            op.t === "set" && this.priors.set(op, op.ids.map(id => ({id, value: this.live(id)?.attrs.get(op.key)?.value})));
+            op.t === "set" && this.priors.set(op, op.ids.map(id => {
+                const prior = this.live(id)?.attrs.get(op.key);
+
+                return {id, value: prior?.value, at: prior?.at};
+            }));
             this.apply(op);
         });
 
         return ops;
     }
 
-    private readonly priors = new WeakMap<Op, Array<{id: Ticket; value: unknown}>>();
+    private readonly priors = new WeakMap<Op, Array<{id: Ticket; value: unknown; at?: Ticket}>>();
 
-    /** run() 으로 적용한 속성 쓰기의 직전 값 */
-    priorOf(op: Op): Array<{id: Ticket; value: unknown}> {
+    /** run() 으로 적용한 속성 쓰기의 직전 값과 쓰기 ID (wire나 snapshot에는 포함하지 않는다) */
+    priorOf(op: Op): Array<{id: Ticket; value: unknown; at?: Ticket}> {
         return this.priors.get(op) ?? [];
     }
 

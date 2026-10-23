@@ -1,0 +1,49 @@
+async page => {
+  const cdp = await page.context().newCDPSession(page);
+  const output = '/Users/user/github/doc-sync/output/playwright/screen-next-20261023/after-final';
+  const save = async (data, file) => {
+    const [download] = await Promise.all([page.waitForEvent('download'), page.evaluate(({data,file}) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'}));
+      a.download = file; a.click(); URL.revokeObjectURL(a.href);
+    }, {data,file})]);
+    await download.saveAs(output+'/'+file);
+  };
+  const summaries=[];
+  await cdp.send('Network.enable');
+  await cdp.send('Profiler.enable');
+  for (const direction of ['demo-to-pm','pm-to-demo']) {
+    await page.evaluate(direction => {
+      const B=__latency; B.currentDirection=direction;
+      if(direction==='demo-to-pm'){ B.editor.moveTo({b:0,o:50});B.editor.focusInput(); }
+      else {B.binding.dispatch(B.view.state.tr.setSelection(B.TextSelection.create(B.view.state.doc,51)));B.view.focus();}
+      window.scrollTo(0,0);
+    }, direction);
+    await page.waitForTimeout(1800);
+    const requests=[], responses=[];
+    const request=x=>requests.push(x),response=x=>responses.push(x);
+    cdp.on('Network.requestWillBeSent',request);cdp.on('Network.responseReceived',response);
+    await cdp.send('Tracing.start',{categories:'devtools.timeline,disabled-by-default-devtools.timeline,blink.user_timing,loading',transferMode:'ReturnAsStream'});
+    await cdp.send('Profiler.start');
+    for(let i=0;i<3;i++){
+      const id=await page.evaluate(({direction,i})=>__latency.begin(direction,'uio'[i],'profile',i),{direction,i});
+      await page.keyboard.press('uio'[i]);
+      await page.waitForFunction(id=>__latency.samples.some(s=>s.id===id&&s.done),id.id);
+      await page.waitForTimeout(120);
+    }
+    const cpu=await cdp.send('Profiler.stop');
+    const complete=new Promise(resolve=>cdp.once('Tracing.tracingComplete',resolve));
+    await cdp.send('Tracing.end');
+    const {stream}=await complete;let trace='';
+    for(;;){const chunk=await cdp.send('IO.read',{handle:stream});trace+=chunk.data;if(chunk.eof)break;}
+    await cdp.send('IO.close',{handle:stream});
+    const samples=await page.evaluate(direction=>__latency.samples.filter(s=>s.phase==='profile'&&s.direction===direction),direction);
+    await save(JSON.parse(trace),direction+'.trace.json');
+    await save(cpu.profile,direction+'.cpuprofile');
+    await save({samples,requests,responses},direction+'.diagnostic.json');
+    cdp.off('Network.requestWillBeSent',request);cdp.off('Network.responseReceived',response);
+    summaries.push({direction,samples:samples.length,correct:samples.every(s=>s.correct&&s.sourceCorrect)});
+  }
+  await cdp.detach();
+  return summaries;
+}

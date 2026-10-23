@@ -1,0 +1,15 @@
+diff --git a/apps/demo/ui/style.css b/apps/demo/ui/style.css
+index 971b7e4..94a371c 100644
+--- a/apps/demo/ui/style.css
++++ b/apps/demo/ui/style.css
+@@ -254,6 +254,10 @@ body.running .controls .btn {
+     padding: 1px 0;
+ }
+ 
++.surface > .blk.paragraph:not(:has(.composing)) {
++    isolation: isolate;
++}
++
+ .blk.heading1 {
+     font-size: 21px;
+     font-weight: 700;
