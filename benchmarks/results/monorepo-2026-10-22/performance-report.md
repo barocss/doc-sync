@@ -1,135 +1,135 @@
-# doc-sync 모노레포 전환 성능 검증 보고서
+# doc-sync monorepo migration performance report
 
-> 다른 편집기 비교: 10만 자·방향별 30회에서 p95는 **257.9~544.3ms**다. §10에 비교 결과, §11에 연속 문자열 저장 검토를 추가했다. 저장 구조 변경은 아직 구현하지 않았다.
+> Other editors: p95 was **257.9~544.3ms** for 100,000 characters and 30 edits per direction. §10 adds the comparison. §11 adds a review of continuous string storage. The storage change was not implemented.
 
-> 1·2번 최적화 후: 입력→상대 프레임 p95는 **288.1ms / 238.7ms**다. 기존 대비 **87.1% / 91.0% 감소**했다. 아래 §9와 [단계별 보고서](browser-latency-step12/report.md)를 참고한다.
+> After optimizations 1 and 2: input-to-remote-frame p95 was **288.1ms / 238.7ms**, a **87.1% / 91.0% decrease** from baseline. See §9 and the [report by stage](browser-latency-step12/report.md).
 
-> 최적화 전 측정 (2026-10-22 20:04 KST): 실제 편집기의 입력→상대 렌더링 프레임 p95는 **2.24~2.64초**다. 주요 병목은 반복적인 전체 문서 변환과 데모 DOM 재생성이다. 아래 §8을 참고한다.
+> Before optimization (2026-10-22 20:04 KST): input-to-remote-rendering-frame p95 in the actual editors was **2.24~2.64 seconds**. Repeated full-document conversion and demo DOM reconstruction were the main bottlenecks. See §8.
 
-측정 완료: 2026-10-22 15:52 KST  
-대상: `/Users/user/github/doc-sync`의 모노레포 전환 시점
+Measurement completed: 2026-10-22 15:52 KST  
+Target: the monorepo migration of `/Users/user/github/doc-sync`
 
-## 1. 결과와 판단
+## 1. Results and assessment
 
-두 번의 전환 후 측정에서 모든 정확성 검사를 통과했다. 편집 대본의 편집 수, 최종 글자 수, 문단 수는 전환 전과 같다. 두 엔진의 전송 크기와 스냅숏 크기도 같다. 측정 전후에 코어 18개 파일과 측정 소스의 해시를 확인했다.
+Both post-migration runs passed all correctness checks. Edit counts, final character counts, and paragraph counts matched the pre-migration run. Wire sizes and snapshot sizes for both engines also matched. The hashes of 18 core files and the measurement source were checked before and after measurement.
 
-시간은 여러 항목에서 줄었다. 일부 최대 시간은 늘었다. 외부 CPU 부하도 있었다. 따라서 모노레포 전환이 속도를 개선했다고 단정할 수 없다. 모든 지연 항목이 같거나 빨라졌다는 판정도 내릴 수 없다.
+Many timings decreased. Some maximum times increased. External CPU load was present. Thus, these results do not establish that the migration improved speed, or that every latency stayed the same or decreased.
 
-10만 자의 주요 결과는 다음과 같다. 비율은 **전환 후 ÷ 전환 전**이다. 1보다 작으면 측정값이 줄었다.
+The main 100,000-character results follow. Each ratio is **after migration ÷ before migration**. A value below 1 indicates a decrease.
 
-| 항목 | 전환 전 (ms) | 전환 후 2회 범위 (ms) | 전후 비율 범위 |
+| Item | Before migration (ms) | Range across 2 post-migration runs (ms) | After/before ratio range |
 | --- | --- | --- | --- |
-| ours 로컬 p50 | 0.047 | 0.04575 ~ 0.045791 | 0.973 ~ 0.974 |
-| ours 로컬 p95 | 0.287667 | 0.151083 ~ 0.184375 | 0.525 ~ 0.641 |
-| ours 로컬 최대 | 35.498 | 28.570209 ~ 37.541 | 0.805 ~ 1.058 |
-| ours 수신 p95 | 0.100084 | 0.094667 ~ 0.100417 | 0.946 ~ 1.003 |
-| ours 수신 최대 | 32.564 | 33.869709 ~ 39.643209 | 1.040 ~ 1.217 |
-| 로컬 구독 경로 p95 | 2.835542 | 1.419083 ~ 1.508917 | 0.500 ~ 0.532 |
+| ours local p50 | 0.047 | 0.04575 ~ 0.045791 | 0.973 ~ 0.974 |
+| ours local p95 | 0.287667 | 0.151083 ~ 0.184375 | 0.525 ~ 0.641 |
+| ours local maximum | 35.498 | 28.570209 ~ 37.541 | 0.805 ~ 1.058 |
+| ours receive p95 | 0.100084 | 0.094667 ~ 0.100417 | 0.946 ~ 1.003 |
+| ours receive maximum | 32.564 | 33.869709 ~ 39.643209 | 1.040 ~ 1.217 |
+| Local subscribed path p95 | 2.835542 | 1.419083 ~ 1.508917 | 0.500 ~ 0.532 |
 
-## 2. 측정 조건
+## 2. Measurement conditions
 
-| 항목 | 조건 |
+| Item | Condition |
 | --- | --- |
-| 환경 | macOS-15.6.1-arm64-arm-64bit-Mach-O, 논리 CPU 14개 |
-| Node | 전환 전후 모두 22.19.0 |
-| 비교 횟수 | 전환 전 1회, 전환 후 2회 |
-| 코어 대본 | 기존 타이핑·붙여 넣기 대본, 씨앗 1, 1만·10만 자 |
-| 엔진 순서 | ours 다음 yjs |
-| 코어 힙 측정 | --expose-gc 사용. 받은 변경을 모두 적용한 새 복제본 하나의 힙 증가량 |
-| 클라이언트 | 초기 1만·10만 자, 문단당 최대 160자, 한 글자 삽입 |
-| 클라이언트 횟수 | 경로별 준비 5회 뒤 측정 30회 |
-| 실행 순서 | 코어 완료 뒤 클라이언트 실행. 두 번째 측정도 같은 순서 |
-| 동시 작업 | 부모가 브라우저 검증·저장소 시험 종료를 확인한 뒤 실행. 다른 사용자의 작업은 중지하지 않음 |
+| Environment | macOS-15.6.1-arm64-arm-64bit-Mach-O, 14 logical CPUs |
+| Node | 22.19.0 before and after migration |
+| Runs | 1 before migration, 2 after migration |
+| Core script | Existing typing/paste script, seed 1, 10,000 and 100,000 characters |
+| Engine order | ours, then yjs |
+| Core heap measurement | --expose-gc; heap growth of one new replica after all received changes were applied |
+| Client | Initially 10,000 or 100,000 characters, at most 160 characters per paragraph, one-character insertions |
+| Client samples | 5 warmups, then 30 measured samples per path |
+| Run order | Core, then client. Same order in the second run |
+| Concurrent work | Started after the parent confirmed browser validation and repository tests had ended. Other users' work was kept running |
 
-첫 측정에서 10만 자 `Doc` 경로의 최대 시간이 기준의 4.76배였다. 여러 p95 값은 크게 줄었다. 외부 CPU 사용도 관찰됐다. 변동을 확인하기 위해 한 번 더 측정했다. 두 결과를 모두 보존했으며, 유리한 결과만 선택하지 않았다.
+In the first run, the maximum time on the 100,000-character `Doc` path was 4.76 times baseline. Several p95 values decreased substantially. External CPU use was also observed. A second run checked this variation. Both results were kept; favorable results were not selected in isolation.
 
-| 측정 | 코어 실행 시간 (초) | 클라이언트 실행 시간 (초) | 종료 코드 |
+| Run | Core elapsed time (seconds) | Client elapsed time (seconds) | Exit code |
 | --- | --- | --- | --- |
-| 1 | 21.315 | 1.334 | 모두 0 |
-| 2 | 21.914 | 2.281 | 모두 0 |
+| 1 | 21.315 | 1.334 | All 0 |
+| 2 | 21.914 | 2.281 | All 0 |
 
-실행 시간에는 npm 명령과 준비·검산 등이 포함된다. 아래의 편집 시간 합계와는 다르다.
+Elapsed times include npm commands, preparation, and validation. They differ from the total edit times below.
 
-## 3. 정확성과 데이터 크기
+## 3. Correctness and data sizes
 
-| 요청 크기 | 최종 글자 수 | 문단 수 | 편집 수 | 검사 결과 |
+| Requested size | Final characters | Paragraphs | Edits | Check result |
 | --- | --- | --- | --- | --- |
-| 10000 | 10147 | 54 | 4261 | 두 엔진·전환 전후 모두 일치 |
-| 100000 | 100031 | 625 | 41549 | 두 엔진·전환 전후 모두 일치 |
+| 10000 | 10147 | 54 | 4261 | Both engines matched before and after migration |
+| 100000 | 100031 | 625 | 41549 | Both engines matched before and after migration |
 
-코어의 `correct`는 로컬 문서, 수신 문서, 스냅숏을 다시 연 문서가 참조 문서와 같은지를 합친 값이다. 원자료에는 세 개의 개별 검사 값이 따로 저장되지 않는다. ours의 서버 경로는 각 변경을 검사한 뒤 적용했다. 두 번 모두 오류 없이 종료했다. 서버의 최종 문서 일치 여부는 별도 값으로 저장하지 않는다.
+Core `correct` combines checks that the local document, receiving document, and reopened snapshot match the reference document. The raw data does not store those three checks separately. The ours server path validated each change before application. Both runs ended without errors. Server final-document equality is not stored as a separate value.
 
-클라이언트는 `doc`, `client`, `client-observed`의 최종 문서를 비교했다. 두 크기에서 세 경로가 모두 일치했다. 구독 경로의 알림은 각각 35회였다. 나머지 경로의 알림은 0회였다. 보정 횟수는 모든 경로에서 0회였다.
+The client compared final documents on the `doc`, `client`, and `client-observed` paths. All three matched at both sizes. The subscribed path emitted 35 notifications at each size. Other paths emitted 0. All paths needed 0 corrections.
 
-아래 크기는 전환 전과 전환 후 두 번 모두 같다. 단위는 B다. 편집당 값은 평균이다.
+The following sizes were identical before migration and in both post-migration runs. Units are B. Per-edit values are means.
 
-| 요청 크기 | 엔진 | 총 전송 | 편집당 전송 | 한 글자 삽입 전송 | 스냅숏 |
+| Requested size | Engine | Total wire | Wire per edit | Wire per one-character insertion | Snapshot |
 | --- | --- | --- | --- | --- | --- |
 | 10000 | ours | 449,304 | 105.44567 | 97.780778 | 167,595 |
 | 10000 | yjs | 86,310 | 20.255808 | 15.363931 | 27,231 |
 | 100000 | ours | 4,436,790 | 106.784519 | 99.784608 | 1,648,279 |
 | 100000 | yjs | 957,314 | 23.040603 | 17.833597 | 289,774 |
 
-ours는 JSON을 사용한다. Yjs는 이진 형식을 사용한다. 엔진 사이의 크기 차이를 자료구조의 차이만으로 설명할 수 없다.
+ours uses JSON. Yjs uses a binary format. Data structures alone cannot explain the size difference between engines.
 
-## 4. 코어 시간과 힙
+## 4. Core timings and heap
 
-시간 단위는 ms다. 다음 세 표의 각 값은 **p50 / p95 / 최대 / 합계** 순서다. 수치는 표시할 때만 소수점 여섯 자리로 반올림했다.
+Times are in ms. Values in the next three tables are **p50 / p95 / maximum / total**. Displayed values alone are rounded to six decimal places.
 
-### 로컬 편집
+### Local edits
 
-| 요청 크기 | 엔진 | 전환 전 | 전환 후 1회 | 전환 후 2회 |
+| Requested size | Engine | Before migration | After migration, run 1 | After migration, run 2 |
 | --- | --- | --- | --- | --- |
 | 10000 | ours | 0.010958 / 0.059917 / 4.242791 / 178.122192 | 0.010709 / 0.037042 / 4.444875 / 148.784192 | 0.010542 / 0.036625 / 4.137834 / 148.952364 |
 | 10000 | yjs | 0.007 / 0.022666 / 1.253542 / 48.822417 | 0.006541 / 0.013 / 0.723666 / 36.545289 | 0.0065 / 0.013959 / 0.542583 / 37.151906 |
 | 100000 | ours | 0.047 / 0.287667 / 35.498 / 10995.519002 | 0.04575 / 0.151083 / 28.570209 / 9283.683899 | 0.045791 / 0.184375 / 37.541 / 9446.923239 |
 | 100000 | yjs | 0.003709 / 0.008875 / 2.429625 / 216.384339 | 0.003541 / 0.009291 / 2.146125 / 213.80766 | 0.003625 / 0.009083 / 1.928583 / 208.23042 |
 
-### 받은 변경 적용
+### Apply received changes
 
-| 요청 크기 | 엔진 | 전환 전 | 전환 후 1회 | 전환 후 2회 |
+| Requested size | Engine | Before migration | After migration, run 1 | After migration, run 2 |
 | --- | --- | --- | --- | --- |
 | 10000 | ours | 0.001625 / 0.003208 / 0.356375 / 15.073014 | 0.001542 / 0.002375 / 0.36925 / 13.311838 | 0.0015 / 0.00225 / 0.28875 / 12.832201 |
 | 10000 | yjs | 0.006458 / 0.021542 / 1.131709 / 49.140582 | 0.005667 / 0.010041 / 1.036125 / 31.019168 | 0.005708 / 0.010166 / 1.038417 / 32.067696 |
 | 100000 | ours | 0.010542 / 0.100084 / 32.564 / 3575.085628 | 0.006292 / 0.100417 / 33.869709 / 2833.552141 | 0.01025 / 0.094667 / 39.643209 / 3402.849886 |
 | 100000 | yjs | 0.003292 / 0.007875 / 5.620917 / 200.258838 | 0.003208 / 0.00775 / 1.363125 / 182.910343 | 0.003291 / 0.007917 / 9.80525 / 201.032561 |
 
-### 서버 검사와 적용
+### Server validation and application
 
-| 요청 크기 | 엔진 | 전환 전 | 전환 후 1회 | 전환 후 2회 |
+| Requested size | Engine | Before migration | After migration, run 1 | After migration, run 2 |
 | --- | --- | --- | --- | --- |
 | 10000 | ours | 0.00225 / 0.004916 / 0.844958 / 20.35807 | 0.002125 / 0.003958 / 0.576583 / 17.06563 | 0.002125 / 0.004209 / 0.449417 / 17.445867 |
 | 100000 | ours | 0.01775 / 0.092084 / 74.74725 / 3853.342704 | 0.015333 / 0.08775 / 31.24075 / 3273.16038 | 0.0095 / 0.086041 / 29.010125 / 3105.074446 |
 
-Yjs 어댑터에는 같은 서버 검사 경로가 없다. 서버 시간은 ours만 비교한다.
+The Yjs adapter has no equivalent server validation path. Server timings compare ours only.
 
-### 읽기·저장·열기
+### Read, save, and open
 
-각 값은 **문서 읽기 / 저장 / 불러오기** 순서다. 각 작업은 코어 측정 한 판에서 한 번씩 잰다.
+Values are **document read / save / load**. Each operation was measured once per core run.
 
-| 요청 크기 | 엔진 | 전환 전 (ms) | 전환 후 1회 (ms) | 전환 후 2회 (ms) |
+| Requested size | Engine | Before migration (ms) | After migration, run 1 (ms) | After migration, run 2 (ms) |
 | --- | --- | --- | --- | --- |
 | 10000 | ours | 6.776917 / 3.5095 / 6.924208 | 4.838917 / 3.172625 / 5.015125 | 5.380958 / 2.997209 / 5.713125 |
 | 10000 | yjs | 0.105208 / 0.555875 / 2.2165 | 0.085666 / 0.474125 / 1.886666 | 0.090667 / 0.573583 / 2.042375 |
 | 100000 | ours | 47.817459 / 19.627417 / 126.301166 | 45.666083 / 19.107667 / 94.8805 | 80.044958 / 19.0215 / 119.354917 |
 | 100000 | yjs | 0.840792 / 4.476041 / 14.372583 | 0.886167 / 3.866 / 12.838125 | 0.830375 / 3.769042 / 20.28725 |
 
-### 힙
+### Heap
 
-| 요청 크기 | 엔진 | 전환 전 (B) | 전환 후 1회 (B) | 전환 후 2회 (B) |
+| Requested size | Engine | Before migration (B) | After migration, run 1 (B) | After migration, run 2 (B) |
 | --- | --- | --- | --- | --- |
 | 10000 | ours | 3,868,776 | 3,868,608 | 3,869,928 |
 | 10000 | yjs | 440,832 | 501,568 | 472,424 |
 | 100000 | ours | 36,475,960 | 36,475,960 | 36,477,376 |
 | 100000 | yjs | 3,753,736 | 3,472,944 | 3,751,472 |
 
-10만 자 ours의 힙은 36,475,960B에서 36,475,960~36,477,376B로 측정됐다. 힙은 실행 시점과 GC의 영향을 받는다.
+For ours with 100,000 characters, the measured heap changed from 36,475,960B to 36,475,960~36,477,376B. Run timing and GC affect heap measurements.
 
-## 5. 로컬 클라이언트 시간
+## 5. Local client timings
 
-각 값은 **p50 / p95 / 최대** 순서다. 단위는 ms다. `doc`는 Doc 직접 편집이다. `client`는 로컬 구독이 없는 SyncClient 편집이다. `client-observed`는 로컬 편집 구독이 있는 SyncClient 편집이다.
+Values are **p50 / p95 / maximum**, in ms. `doc` edits Doc directly. `client` edits through SyncClient without a local subscription. `client-observed` edits through SyncClient with a local edit subscription.
 
-| 초기 글자 수 | 경로 | 전환 전 | 전환 후 1회 | 전환 후 2회 |
+| Initial characters | Path | Before migration | After migration, run 1 | After migration, run 2 |
 | --- | --- | --- | --- | --- |
 | 10000 | doc | 0.0655 / 0.138916 / 0.139375 | 0.056125 / 0.119584 / 0.131709 | 0.060375 / 0.124583 / 0.125834 |
 | 10000 | client | 0.029958 / 0.031084 / 0.048584 | 0.026416 / 0.027167 / 0.041125 | 0.028959 / 0.0325 / 0.047583 |
@@ -138,30 +138,30 @@ Yjs 어댑터에는 같은 서버 검사 경로가 없다. 서버 시간은 ours
 | 100000 | client | 0.105708 / 0.357333 / 2.76875 | 0.091375 / 0.094125 / 0.0945 | 0.087125 / 0.092083 / 0.101584 |
 | 100000 | client-observed | 0.4865 / 2.835542 / 4.937459 | 0.303917 / 1.508917 / 1.673625 | 0.320834 / 1.419083 / 1.516834 |
 
-초기 1만 자는 63문단이다. 초기 10만 자는 625문단이다. 준비와 측정을 합쳐 각 경로에 35자를 넣었다. 원자료의 글자 수는 초기 글자 수다. 최종 글자 수는 별도 필드로 저장하지 않는다.
+The initial 10,000-character document had 63 paragraphs. The 100,000-character document had 625. Each path inserted 35 characters across warmup and measurement. The raw character count is the initial count. No separate field stores the final count.
 
-10만 자 `Doc` 경로의 최대 시간은 0.384ms → 1.830ms → 0.198ms였다. 두 번째 측정에서 첫 측정의 큰 값이 반복되지는 않았다. 이 결과만으로 변동의 원인을 확정할 수 없다.
+Maximum times for the 100,000-character `Doc` path were 0.384ms → 1.830ms → 0.198ms. The high first post-migration value did not recur in the second run. These results alone do not establish the cause of the variation.
 
-구독 콜백은 알림 횟수만 센다. 화면 갱신, 네트워크, commit, 사용자 콜백의 문서 갱신 비용은 포함하지 않는다. 이번 구독 경로의 p95가 2ms보다 작아도 실제 편집기 지연 목표의 통과를 뜻하지 않는다.
+The subscription callback counts notifications only. It excludes screen updates, network, commit, and document updates inside user callbacks. A p95 below 2ms on this path does not establish an actual-editor latency target pass.
 
-## 6. 외부 부하와 해석 범위
+## 6. External load and interpretation
 
-외부 앱과 모니터 프로세스의 CPU 사용을 관찰했다. 다음 값은 1분 / 5분 / 15분 load average다. 논리 CPU는 14개다. 전환 전 부하 기록은 없어 부하 조건이 같았다고 확인할 수 없다.
+CPU use from external apps and monitor processes was observed. The values below are 1-minute / 5-minute / 15-minute load averages. There were 14 logical CPUs. No pre-migration load record exists, so equal load conditions cannot be confirmed.
 
-| 측정 | 시작 전 | 종료 후 |
+| Run | Before start | After end |
 | --- | --- | --- |
 | 1 | 6.60 / 11.94 / 22.58 | 7.44 / 11.78 / 22.27 |
 | 2 | 6.76 / 10.78 / 21.13 | 7.02 / 10.57 / 20.81 |
 
-10만 자 ours의 수신 최대 시간은 기준 32.564ms보다 두 번 모두 컸다. Yjs의 수신 최대 시간도 5.621ms → 1.363ms → 9.805ms로 변했다. 최대 시간의 증가를 숨기지 않고 원자료에 보존했다.
+The maximum receiving time for ours at 100,000 characters exceeded baseline 32.564ms in both runs. The Yjs maximum also varied: 5.621ms → 1.363ms → 9.805ms. The raw data preserves these increases.
 
-이 보고서는 기존의 한 사람 타이핑·붙여 넣기 대본과 로컬 클라이언트 삽입 경로만 다룬다. 장기 실행, 여러 사용자, 큰 표, 원격 모델 이벤트 구독, 브라우저 지연은 측정하지 않았다. Presence 선택 범위 기능 변경 이후의 성능도 이 보고서의 대상이 아니다.
+This report covers only the existing single-user typing/paste script and local client insertion path. It did not measure long runs, multiple users, large tables, remote model-event subscriptions, or browser latency. It also excludes performance after the Presence selection-range change.
 
-전환 전 1회와 전환 후 2회로 통계적 동등성이나 원인 관계를 입증할 수 없다. 이번 전환에 대한 시간 허용 기준도 사전에 정하지 않았다. 확인된 결과는 정확성, 대본과 크기의 유지다. 시간 결과에는 변동이 남는다.
+One pre-migration run and two post-migration runs cannot establish statistical equivalence or causality. No timing tolerance was set before this migration. Correctness, scripts, and sizes were preserved. Timing variation remains.
 
-## 7. 재현 명령과 근거
+## 7. Reproduction commands and evidence
 
-루트에서 다음 명령을 실행했다. 루트 명령이 `benchmarks` 작업 단위로 전달하므로 출력 경로는 `benchmarks` 기준이다.
+The following commands ran from the root. Root commands forward to the `benchmarks` workspace, so output paths are relative to `benchmarks`.
 
 ```bash
 cd /Users/user/github/doc-sync
@@ -169,79 +169,79 @@ env PATH=/Users/user/.nvm/versions/node/v22.19.0/bin:$PATH npm run bench -- --ou
 env PATH=/Users/user/.nvm/versions/node/v22.19.0/bin:$PATH npm run bench:client -- --label monorepo-after --out results/monorepo-2026-10-22/client-after.json
 ```
 
-반복 측정은 코어 출력 폴더를 `after-repeat`로 바꿨다. 클라이언트 라벨은 `monorepo-after-repeat`, 출력 파일은 `client-after-repeat.json`으로 바꿨다. 조건과 씨앗은 그대로 유지했다. 위 경로에는 이미 자료가 있다. 다시 측정할 때는 비어 있는 새 경로를 사용해야 한다. 코어 스크립트는 같은 이름의 파일을 덮어쓸 수 있다.
+The repeated run used core output folder `after-repeat`, client label `monorepo-after-repeat`, and output file `client-after-repeat.json`. Conditions and seed stayed the same. Those paths already contain data. Use a new empty path for reproduction. The core script can overwrite files with the same names.
 
-- [전환 전 코어 1만 자](before/2026-10-22-10000.json), [10만 자](before/2026-10-22-100000.json)
-- [전환 후 코어 1회: 1만 자](after/2026-10-22-10000.json), [10만 자](after/2026-10-22-100000.json)
-- [전환 후 코어 2회: 1만 자](after-repeat/2026-10-22-10000.json), [10만 자](after-repeat/2026-10-22-100000.json)
-- 클라이언트: [전환 전](client-before.json), [전환 후 1회](client-after.json), [전환 후 2회](client-after-repeat.json)
-- [전체 수치·비율·조건·부하 기록](comparison.json)
-- [모노레포 전환 소스 확인 기록](migration-source-receipt.json)
+- [Pre-migration core: 10,000 characters](before/2026-10-22-10000.json), [100,000 characters](before/2026-10-22-100000.json)
+- [Post-migration core run 1: 10,000 characters](after/2026-10-22-10000.json), [100,000 characters](after/2026-10-22-100000.json)
+- [Post-migration core run 2: 10,000 characters](after-repeat/2026-10-22-10000.json), [100,000 characters](after-repeat/2026-10-22-100000.json)
+- Client: [before migration](client-before.json), [after migration, run 1](client-after.json), [after migration, run 2](client-after-repeat.json)
+- [All values, ratios, conditions, and load records](comparison.json)
+- [Migration source receipt](migration-source-receipt.json)
 
-보고서는 고정된 `comparison.json`을 기준으로 작성했다. 이 보고서 작성 과정에서 측정을 다시 실행하지 않았다. 기존 원자료, 소스, HANDOFF는 수정하지 않았다.
+This report used the frozen `comparison.json`. No measurements were rerun while writing it. Existing raw data, source, and HANDOFF were unchanged.
 
-## 8. 실제 편집기 10만 자 지연
+## 8. Actual-editor latency with 100,000 characters
 
-추가 수집 종료: 2026-10-22 20:04 KST
+Additional collection completed: 2026-10-22 20:04 KST
 
-이 절은 Presence 기능 변경 후의 현재 소스를 측정했다. 앞 절의 모노레포 전환 비교와 소스 시점이 다르다. 실제 `/pm` 화면에서 HTTP POST·SSE와 서버 JSONL 저장을 그대로 사용했다. 시작 문서는 100,000자·625문단이다. 방향별 준비 5회 뒤 실제 키 입력 30회를 측정했다.
+This section measured source after the Presence feature change. It differs from the migration comparison above. The actual `/pm` page used HTTP POST, SSE, and server JSONL persistence. The starting document had 100,000 characters and 625 paragraphs. Each direction had 5 warmups and 30 measured real key inputs.
 
-| 방향 | 상대 DOM p95 | 상대 프레임 p50 | 상대 프레임 p95 | 상대 프레임 최대 |
+| Direction | Remote DOM p95 | Remote frame p50 | Remote frame p95 | Remote frame maximum |
 | --- | --- | --- | --- | --- |
-| 데모 → ProseMirror | 1,717.0ms | 1,722.4ms | 2,236.9ms | 2,251.9ms |
-| ProseMirror → 데모 | 1,784.4ms | 2,050.6ms | 2,642.4ms | 3,004.4ms |
+| Demo → ProseMirror | 1,717.0ms | 1,722.4ms | 2,236.9ms | 2,251.9ms |
+| ProseMirror → demo | 1,784.4ms | 2,050.6ms | 2,642.4ms | 3,004.4ms |
 
-시작점은 키 이벤트의 생성 시각이다. 핸들러 실행 대기도 포함한다. 상대 프레임 종료점은 DOM의 정확한 문자열을 확인한 뒤 두 번째 requestAnimationFrame 콜백이다. 이는 브라우저의 렌더링 기회 기준 추정값이다. 별도 진단에서 DOM 이후 Paint가 끝난 것을 확인했다. 물리 디스플레이의 표시 시각은 측정하지 않았다.
+The start was key-event creation, including waiting before handler execution. The remote frame endpoint was the second requestAnimationFrame callback after confirmation of the exact DOM string. This estimates a browser rendering opportunity. Separate diagnostics confirmed Paint completion after the DOM update. Physical display timing was not measured.
 
-주요 병목은 다음과 같다.
+The main bottlenecks follow.
 
-- `Doc.toJSON()`이 한 입력의 관찰 구간에서 보통 10~15회 실행됐다. 누적 p50은 569.4~866.0ms였다.
-- `Editor.render()`가 보통 3회 실행됐다. 누적 p50은 372.2~379.0ms였다. 10만 자의 DOM을 통째로 다시 만든다.
-- `/pm`의 700ms 상태 조회와 Presence·커서 갱신도 전체 모델 변환과 공통 화면 갱신을 부른다.
-- 원격 모델 이벤트 경로는 전후 전체 모델 생성·비교·검산·편집기 콜백을 실행한다. 데모 → PM의 포함 시간 p50은 328.8ms였다. 이 값은 다른 항목과 겹치므로 합산하지 않는다.
+- `Doc.toJSON()` usually ran 10~15 times per input observation window. Cumulative p50 was 569.4~866.0ms.
+- `Editor.render()` usually ran 3 times. Cumulative p50 was 372.2~379.0ms. It rebuilt the full 100,000-character DOM.
+- The `/pm` 700ms status poll and Presence/cursor updates also triggered full model conversion and shared-screen updates.
+- The remote model-event path built, compared, and validated full before/after models, then called the editor callback. Demo → PM inclusive p50 was 328.8ms. It overlaps other items and must not be added to them.
 
-반면 브라우저 CRDT 적용의 누적 p50은 약 0.3~0.4ms였다. 서버 검사·적용·저장의 p95는 1.89~3.54ms였다. 전송 시작→수신 콜백 구간에는 브라우저 이벤트 대기가 포함된다. 진단 POST에서 헤더 수신 뒤 렌더러 응답 이벤트 실행까지 약 669~712ms가 더 걸렸다. 이를 네트워크 지연으로만 해석하면 안 된다.
+Browser CRDT application had cumulative p50 around 0.3~0.4ms. Server validation, application, and persistence had p95 1.89~3.54ms. Transport-start-to-receive-callback includes browser event waiting. Diagnostic POSTs took another 669~712ms from header receipt to renderer response-event execution. This is not solely network latency.
 
-본 측정 60회는 모두 양쪽에 기대 문자를 표시했다. 최종 클라이언트·서버 모델은 같았다. 보낼 변경은 0개였다. 준비·진단을 합친 72회 뒤 문서는 100,072자·625문단이었다. 모델 이벤트 fallback은 0이었다.
+All 60 measured inputs displayed the expected characters on both sides. Final client and server models matched. There were 0 pending changes. After 72 inputs including warmups and diagnostics, the document had 100,072 characters and 625 paragraphs. Model-event fallback was 0.
 
-현재 실제 편집 흐름에는 큰 지연이 남는다. 다음은 전체 모델의 중복 계산과 데모 DOM 전체 재생성을 줄이는 작업이다. 이어 원격 이벤트 계산을 바뀐 블록으로 좁히고 같은 조건으로 다시 측정한다. 이번에는 최적화를 적용하지 않았다.
+The actual editing flow still had high latency. The next work was to reduce duplicate full-model computation and full demo DOM reconstruction, then restrict remote event computation to changed blocks and repeat measurements under the same conditions. This measurement did not apply those optimizations.
 
-두 편집기는 한 페이지의 렌더러 스레드를 공유한다. 외부 앱도 계속 실행됐다. 다른 컴퓨터, IME, 연속 입력, 큰 표, 여러 사용자 성능으로 확대할 수 없다.
+The editors shared one page and renderer thread. External apps kept running. These results do not establish performance on other computers, with IME, continuous input, large tables, or multiple users.
 
-[상세 보고서·구간별 시간·CPU/Paint 근거](browser-latency-100k/report.md) · [분석 수치](browser-latency-100k/summary.json) · [원자료](browser-latency-100k/browser-raw.json)
+[Detailed report, spans, and CPU/Paint evidence](browser-latency-100k/report.md) · [Analysis](browser-latency-100k/summary.json) · [Raw data](browser-latency-100k/browser-raw.json)
 
-## 9. 모델·문단 DOM 재사용 적용
+## 9. Model and paragraph DOM reuse
 
-최종 수집 종료: 2026-10-22 22:20 KST
+Final collection completed: 2026-10-22 22:20 KST
 
-1번 모델 계산 재사용을 적용하고 측정했다. 그 뒤 2번 문단 DOM 재사용을 적용하고 같은 조건으로 다시 측정했다. 초기 100,000자·625문단, 방향별 준비 5회와 본 측정 30회, 같은 키 순서·viewport·HTTP/SSE·JSONL 조건을 유지했다. 초기 seed도 바이트 동일하다.
+Optimization 1 reused model computation and was measured first. Optimization 2 then reused paragraph DOM and was measured under the same conditions: initially 100,000 characters and 625 paragraphs, 5 warmups and 30 measured inputs per direction, and the same keys, viewport, HTTP/SSE, and JSONL conditions. The initial seed was byte-identical.
 
-| 방향 | 상태 | p50 | p95 | 최대 | 기준 대비 p95 감소 |
+| Direction | Status | p50 | p95 | Maximum | p95 decrease from baseline |
 | --- | --- | --- | --- | --- | --- |
-| 데모 → ProseMirror | 최적화 전 | 1,722.4ms | 2,236.9ms | 2,251.9ms | — |
-| 데모 → ProseMirror | 1번: 모델 재사용 | 1,241.8ms | 1,626.9ms | 2,101.7ms | 27.3% |
-| 데모 → ProseMirror | 1+2번: 문단 DOM 재사용 추가 | 234.0ms | 288.1ms | 312.2ms | 87.1% |
-| ProseMirror → 데모 | 최적화 전 | 2,050.6ms | 2,642.4ms | 3,004.4ms | — |
-| ProseMirror → 데모 | 1번: 모델 재사용 | 1,253.6ms | 1,593.9ms | 1,959.6ms | 39.7% |
-| ProseMirror → 데모 | 1+2번: 문단 DOM 재사용 추가 | 207.1ms | 238.7ms | 239.3ms | 91.0% |
+| Demo → ProseMirror | Before optimization | 1,722.4ms | 2,236.9ms | 2,251.9ms | — |
+| Demo → ProseMirror | 1: model reuse | 1,241.8ms | 1,626.9ms | 2,101.7ms | 27.3% |
+| Demo → ProseMirror | 1+2: add paragraph DOM reuse | 234.0ms | 288.1ms | 312.2ms | 87.1% |
+| ProseMirror → demo | Before optimization | 2,050.6ms | 2,642.4ms | 3,004.4ms | — |
+| ProseMirror → demo | 1: model reuse | 1,253.6ms | 1,593.9ms | 1,959.6ms | 39.7% |
+| ProseMirror → demo | 1+2: add paragraph DOM reuse | 207.1ms | 238.7ms | 239.3ms | 91.0% |
 
-1번은 모델을 다시 계산하지 않고 반환 컨테이너만 복사한다. 2번은 변경된 문단과 선택·커서 표시의 영향을 받은 문단만 다시 만들고, 같은 노드와 상태는 유지한다. 표·상자 안의 문단에도 적용했다. 모델을 숨기거나 글자 수를 줄이지 않았다.
+Optimization 1 copied return containers while reusing model computation. Optimization 2 rebuilt changed paragraphs and paragraphs affected by selection/cursor display. It retained unchanged nodes and state. This also applied inside tables and boxes. The model was not hidden or shortened.
 
-`toJSON()` 누적 p50은 569.4~866.0ms에서 약 115~120ms로 줄었다. 데모 render의 누적 p50은 355~379ms에서 약 5.2ms로 줄었다. 남아 있는 전체 모델 생성과 원격 비교·검산은 이번 범위에서 좁히지 않았다.
+Cumulative `toJSON()` p50 fell from 569.4~866.0ms to about 115~120ms. Cumulative demo render p50 fell from 355~379ms to about 5.2ms. Full-model creation and remote comparison/validation remained in scope as existing costs.
 
-각 단계 60회는 모두 기대 문자를 표시했다. 최종 클라이언트·서버 모델이 같고 pending·fallback은 0이다. 1번의 확장 시험 116개, 2번의 기본 시험 116개, 타입 검사, 브라우저 회귀 30개 항목이 통과했다.
+All 60 measured inputs at each stage displayed expected characters. Final client and server models matched, with pending and fallback 0. Optimization 1 passed 116 extended tests; optimization 2 passed 116 default tests. Type checks and 30 browser regression items passed.
 
-2번 첫 실행은 디스크 저장 실패로 중단됐다. 부분 표본 61개를 보존하고 비교에서 제외했다. 같은 소스로 완주한 `step2-repeat` 결과를 사용했다. 1번 초반에는 다른 채팅의 추가 검증 부하가 겹쳤을 수 있다. 각 실행의 부하를 기록했으며 시간 감소 전부를 코드만의 효과로 단정하지 않는다.
+The first optimization 2 run stopped after a disk-write failure. Its 61 partial samples were preserved and excluded. The completed `step2-repeat` run used the same source. Early optimization 1 timing might overlap additional validation from another chat. Each run recorded load. Timing decreases are not attributed entirely to code.
 
-시작점은 키 이벤트 생성 시각이며 종료점은 상대 DOM 확인 뒤 두 번째 rAF다. 같은 페이지·로컬 환경의 렌더링 기회 기준이다. 물리 디스플레이, IME, 큰 표, 다중 사용자 지연 통과로 확대하지 않는다. 구조·GC·되살리기 등의 전체 블록 무효화 경로는 여전히 더 큰 DOM 갱신을 할 수 있다.
+The start was key-event creation. The endpoint was the second rAF after remote DOM confirmation. This is a rendering-opportunity measure on one local page. It does not establish passes for physical display, IME, large tables, or multiple users. Full block invalidation after structure changes, GC, or revival can still cause broader DOM updates.
 
-[단계별 상세 보고서](browser-latency-step12/report.md) · [전체 수치·비율](browser-latency-step12/comparison.json)
+[Detailed report by stage](browser-latency-step12/report.md) · [All values and ratios](browser-latency-step12/comparison.json)
 
-## 10. 다른 편집기 비교 — 10만 자
+## 10. Other editor comparison — 100,000 characters
 
-현재 최적화된 Doc와 Slate/Lexical/ProseMirror 호환성 어댑터를 비교했다. 조합당 두 실제 편집기를 열었다. 방향마다 준비 5회 후 30회, 총 180회를 측정했다. 초기 100000자 / 625문단이다. 별도 진단 6회는 분포에서 제외했다.
+The optimized Doc was compared through Slate/Lexical/ProseMirror compatibility adapters. Each pair opened two actual editors. Each direction had 5 warmups and 30 measured inputs, for 180 measurements total. Initial size was 100000 characters / 625 paragraphs. Six separate diagnostics were excluded from the distribution.
 
-| 방향 | p50 (ms) | p95 (ms) | 최대 (ms) |
+| Direction | p50 (ms) | p95 (ms) | Maximum (ms) |
 | --- | --- | --- | --- |
 | Slate → Lexical | 254.8 | 366.6 | 379.6 |
 | Lexical → Slate | 329.1 | 544.3 | 650.6 |
@@ -250,16 +250,16 @@ env PATH=/Users/user/.nvm/versions/node/v22.19.0/bin:$PATH npm run bench:client 
 | Lexical → ProseMirror | 209.2 | 257.9 | 297.6 |
 | ProseMirror → Lexical | 253.0 | 272.7 | 306.6 |
 
-입력 키 이벤트 시각부터 상대 DOM 확인 후 두 번째 rAF까지의 시간이다. 물리 화면의 표시 시각은 아니다. 모든 입력 표시와 최종 네이티브·클라이언트·서버 문서 일치를 확인했다. 조합별 최종 100072자 / 625문단, pending 0, fallback 0이다. 현재 코어에서 호환성 단위 검사 31개도 통과했다.
+Time ran from key-event creation to the second rAF after remote DOM confirmation. This is not physical display timing. Every input display and final native/client/server document equality check passed. Each pair ended with 100072 characters / 625 paragraphs, pending 0, fallback 0. The current core also passed 31 compatibility unit tests.
 
-Slate/Lexical 수신 화면은 입력마다 문단 DOM 625개를 제거하고 625개를 추가했다. ProseMirror는 문단 DOM을 유지했다. 공통 경로의 Doc.toJSON 호출 합계 p50은 116.0~118.8ms다. 모델 변환과 전체 문서 원격 적용이 남은 비용이다. 이 결과는 현재 연결 구현의 비교다. 편집기 제품 자체의 순위로 해석하지 않는다. 이전 /pm 시험과 화면·wrapper가 달라 개선율도 계산하지 않는다.
+Slate/Lexical receivers removed and added 625 paragraph DOM nodes per input. ProseMirror retained paragraph DOM. Shared-path cumulative Doc.toJSON p50 was 116.0~118.8ms. Model conversion and remote full-document application remained costs. This compares the current integrations, not editor-product rankings. Different screens and wrappers also prevent a gain calculation against the prior /pm test.
 
-[상세 보고서](other-editors-100k/report.md)와 [검산 결과](other-editors-100k/summary.json)에 조건과 원자료를 기록했다.
+The [detailed report](other-editors-100k/report.md) and [validation results](other-editors-100k/summary.json) record conditions and raw data.
 
-## 11. 연속 문자열 CRDT 저장 검토
+## 11. Review of continuous string CRDT storage
 
-초기 문서는 이미 160자씩 625개의 text 연산으로 넣는다. 모델도 625개 text run이다. 그러나 메모리에는 문자 Item 100000개와 전체 ID Map 항목 100625개가 있다. 전송 문자열 묶음과 메모리 저장 묶음을 구분해야 한다.
+The initial document already used 625 text operations of 160 characters each. The model also had 625 text runs. Memory still held 100000 character Items and 100625 total ID Map entries. Wire string batches and memory storage batches are distinct.
 
-제안은 기존 논리 ID를 유지하고 연속 문자열을 묶어 저장하는 것이다. 중간 편집·부분 삭제·서식 변경 경계에서만 나눈다. ID 조회, 블록·위치 캐시, 모델 변환도 구간으로 바꿔야 한다. selection, undo, GC와 기존 wire 형식의 동작을 유지해야 한다.
+The proposal keeps logical IDs and stores consecutive strings in batches. Batches split only at interior edits, partial deletions, and formatting boundaries. ID lookup, block/position caches, and model conversion must also use ranges. Selection, undo, GC, and existing wire behavior must remain compatible.
 
-[설계 문서](../../../docs/design/continuous-text-storage.md)에 전환 범위, API 호환성과 합격 조건을 적었다. 저장 변경은 아직 구현하지 않았다. 연속 입력·여러 글자 삽입의 새 측정과 저장 변경의 개선량은 아직 없다. 위 단일 문자 기준값과 구분한다.
+The [design document](../../../docs/design/continuous-text-storage.md) defines migration scope, API compatibility, and acceptance criteria. The storage change was not implemented. New continuous-input/multi-character measurements and gains from the storage change were not available. They are separate from the single-character baselines above.

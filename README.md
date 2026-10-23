@@ -1,160 +1,165 @@
 # @barocss/doc-sync
 
-스키마를 주입받는 문서 전용 CRDT 라이브러리다. TypeScript 로 만들었고, CRDT·동기화·서버는 **의존성이 하나도 없다** (ProseMirror 연동만 prosemirror 패키지를 peer 로 쓴다). CRDT, 동기화 클라이언트, 서버(DocHub), ProseMirror 연결, 브라우저 데모가 들어 있다.
-앞선 Yorkie 실험 저장소에서 시험한 생각("문서를 토큰 한 줄로")에서 출발했고, 이제 Yorkie·스키마 기반 문서 에디터와 떨어진 단독 라이브러리로 키운다. 이름은 `@barocss/doc-sync` 다 (2026-10-22 사용자 결정).
-**새 세션은 [`HANDOFF.md`](HANDOFF.md) 부터 읽는다.**
+A document CRDT library with an injected schema. It is written in TypeScript. The CRDT, sync client, and server have **no dependencies**. Only the ProseMirror integration uses prosemirror packages as peers. The repository contains the CRDT, a sync client, a server (DocHub), a ProseMirror binding, and browser demos.
+It started with an idea tested in an earlier Yorkie experiment repository: "a document as one token sequence." It is now a standalone library, separate from Yorkie and the schema-based document editor. Its name is `@barocss/doc-sync` (user decision, 2026-10-22).
+**Read [`HANDOFF.md`](HANDOFF.md) first in a new session.**
 
-**모노레포 구성**: 공개 API를 제공하는 라이브러리는 `packages/doc-sync` 하나다. `apps/demo`와 `benchmarks`는 각각 비공개 npm 워크스페이스다. 공유 예제 스키마는 `fixtures/demo-schema.ts`에 둔다. 기존 패키지 이름과 네 진입점을 유지한다. 라이브러리의 기존 `private: true` 설정도 배포 준비 전까지 유지한다.
+**Monorepo structure**: `packages/doc-sync` is the only library that provides the public API. `apps/demo`, `apps/docs`, and `benchmarks` are separate private npm workspaces. The shared example schema is in `fixtures/demo-schema.ts`. The existing package name and four entry points remain. The library also keeps its existing `private: true` setting until release preparation.
 
-**원격 사용자 표시**: 데모와 ProseMirror에서 사용자 색 선택 범위와 이름 커서를 표시한다. 전방·역방향·여러 문단 선택, 편집 후 위치 추적, 겹친 참여자를 지원한다. 데모의 범위는 같은 CRDT 줄(slot) 안으로 한정한다. 상세 규칙과 브라우저 결과는 [`HANDOFF.md` §5.5](HANDOFF.md#55-원격-사용자-선택-범위-2026-10-22)에 있다.
+**Documentation**: Read the [public documentation site](https://barocss.github.io/doc-sync/) for schema-driven block operations, ProseMirror, Slate, and Lexical integration examples, collaboration rules, and verification limits. The site is built from `apps/docs` and deployed to GitHub Pages. Slate and Lexical examples use private compatibility-test adapters; no additional binding package export exists.
 
-**비교 데모 입력 보존**: Slate·Lexical·ProseMirror를 함께 연결한 [`apps/demo/compat`](apps/demo/compat/README.md)는 토큰 기준 선택 복원과 IME 조합 초안을 사용한다. Chrome CDP로 원격 편집 중 입력과 커서를 검사했다. 기본 `/pm`의 IME 구현과 OS 한글 키보드 검증은 별도 범위다.
+**Remote user display**: The demo and ProseMirror show user-colored selection ranges and named carets. They support forward, backward, and multi-paragraph selections, position tracking after edits, and overlapping participants. Demo ranges stay within one CRDT sequence (slot). See [`HANDOFF.md` §5.5](HANDOFF.md#55-remote-user-selection-ranges-2026-10-22) for the rules and browser results.
+
+**Input preservation in the comparison demo**: [`apps/demo/compat`](apps/demo/compat/README.md) connects Slate, Lexical, and ProseMirror. It uses token-based selection restoration and an IME composition draft. Chrome CDP checks covered input and carets during remote edits. The default `/pm` IME implementation and OS Korean keyboard validation are separate scopes.
 
 ```ts
-import {Doc, commands} from "@barocss/doc-sync";     // 핵심 — 의존성 없음
+import {Doc, commands} from "@barocss/doc-sync";     // Core: no dependencies
 import {SyncClient, HttpTransport} from "@barocss/doc-sync/sync";
 import {DocHub} from "@barocss/doc-sync/server";
 import {PmBinding, buildPmSchema} from "@barocss/doc-sync/prosemirror";
 ```
 
-CRDT 는 블록 종류를 모른다. **스키마를 바깥에서 주입**하고(스키마 기반 문서 에디터의 스키마처럼 `children` 으로 트리를 적는다), CRDT 는 스키마의
-"모양" 몇 가지만 안다. 연산도 종류와 무관한 다섯 가지뿐이다. 새 블록 종류는 스키마만 고치면 된다.
+The CRDT does not know block types. **Inject the schema from outside**, with a tree defined through `children`, as in a schema-based document editor. The CRDT knows only a few schema
+"shapes." It has only five operations, independent of type. To add a block type, change the schema.
 
 ```bash
-npm install                  # 개발 의존성 (prosemirror-*, typescript, yjs — yjs 는 측정 비교용)
+npm install                  # Dev dependencies (prosemirror-*, typescript, yjs; yjs is for benchmarks)
 npm run dev                  # http://localhost:5410  (Node 22.18+, apps/demo/server.ts)
-npm test                     # 시나리오 + 무작위 500 대본
-FUZZ_SEEDS=3000 npm test     # 무작위 3000 대본 × 참여자 2·4
+npm test                     # Scenarios + 500 random traces
+FUZZ_SEEDS=3000 npm test     # 3000 random traces × 2 and 4 participants
 npm run typecheck
-npm run bench:client         # SyncClient 로컬 편집 측정
-npm run bench                # 단계 0 측정 — 같은 대본을 이 라이브러리와 Yjs 로 (benchmarks/)
+npm run bench:client         # SyncClient local edit benchmark
+npm run bench                # Stage 0: the same trace with this library and Yjs (benchmarks/)
+npm run docs:dev              # Local English documentation
+npm run docs:build            # Static GitHub Pages build
+npm run docs:check            # Check built pages, links, and English prose
 ```
 
-데모 주소 뒤에 `?doc=이름` (문서), `?peers=1..4` (이 창의 참여자 수), `?observer=0` (서버 관찰자 없이), `?auto=1` (자동 입력)을 붙일 수 있다.
+Add these parameters to a demo URL: `?doc=name` (document), `?peers=1..4` (participants in this window), `?observer=0` (no server observer), and `?auto=1` (automatic input).
 
-**여러 창 시험** — `http://localhost:5410/multi?n=10&doc=multi`
+**Multi-window test**: `http://localhost:5410/multi?n=10&doc=multi`
 
-- 편집기 창 10개를 창마다 다른 호스트(`a.localhost` … `j.localhost`)로 띄운다. 브라우저는 같은 호스트로 HTTP/1.1 연결을 6개까지만 열기 때문이다 (한 창에서 탭을 여러 개 열어도 합쳐서 6개)
-- 창마다 참여자 하나, 관찰자 없이 연결 하나만 쓴다. 창들은 자기 문서의 지문을 부모 창에 알리고, 부모 창은 서버 문서의 지문과 비교해 "모두 같은 문서"를 보여 준다
-- "자동 입력 시작"을 누르면 열 창이 동시에 무작위로 글자·Enter·Backspace 를 친다. "끊기 → 자동 입력 → 잇기" 로 끊긴 동안의 편집 합치기도 볼 수 있다
-- 결과(2026-10-22, 내장 브라우저): 자동 입력 20초 → 변경 373건, 열 창 + 서버 지문 하나로 모임. 모두 끊고 10초 입력(창마다 보낼 것 7~24건, 지문 11가지) → 잇자 6초 안에 514건으로 모두 같은 문서
-- 화면 밖 iframe 은 브라우저가 타이머를 늦춰서, 아래쪽 창은 자동 입력이 덜 된다
+- Opens 10 editor frames, each on a different host (`a.localhost` … `j.localhost`). Browsers allow only 6 HTTP/1.1 connections per host, including connections across tabs.
+- Each frame uses one participant and one connection, with no observer. Frames send document fingerprints to the parent. The parent compares them with the server fingerprint and shows whether all documents match.
+- Select "Start automatic input" to make all ten frames type random characters, Enter, and Backspace at the same time. Use "Disconnect → automatic input → reconnect" to test merging of offline edits.
+- Result (2026-10-22, in-app browser): 20 seconds of automatic input produced 373 changes. All ten frames and the server reached one fingerprint. After disconnection and 10 seconds of input, each frame had 7–24 pending changes and there were 11 fingerprints. Within 6 seconds of reconnection, all documents matched at 514 changes.
+- Browsers slow timers in offscreen iframes. Lower frames therefore produce less automatic input.
 
 
-## 어떻게 동작하나
+## How it works
 
-### 1. 문서는 토큰 줄이다
+### 1. A document is a token sequence
 
 ```
 ¶root a b c d ¶9C C ¶9B B ¶9A A e f g h
 ```
 
-토큰은 **글자 토큰**과 **노드 토큰**(블록을 여는 표지 ¶, 표, 행, 그림 …)이다. 블록 목록은 저장하지 않는다. 살아 있는 토큰을 앞에서부터 읽으며 그때그때 계산한다.
+There are **character tokens** and **node tokens** (the block-opening marker ¶, tables, rows, images, and so on). The block list is not stored. It is calculated as needed by reading live tokens in order.
 
-- Enter = 표지 하나 넣기
-- Backspace 로 문단 합치기 = 표지 하나 지우기
-- 블록 종류(제목·인용·목록 항목) = 표지의 속성 `$type`
+- Enter = insert one marker.
+- Join paragraphs with Backspace = delete one marker.
+- Block type (heading, quote, list item) = the marker's `$type` attribute.
 
-줄은 본문 하나와, 노드마다 이름 붙은 **자리(slot)** 줄들이 있다 — 표의 `rows`·`cols`·`cell:행,열`, 상자·이미지 그릇의 `body`.
-자리 줄 머리의 이름표는 주인 노드 이름표와 자리 이름에서 정해지므로, 줄을 만드는 연산이 따로 없다.
+There is one main sequence and named **slot** sequences for nodes: table `rows`, `cols`, and `cell:row,col`; container and image `body` slots.
+A slot's head ID is derived from its owner node ID and slot name. No separate operation creates the sequence.
 
-트리를 자르거나 노드를 옮기는 연산이 아예 없다. 그래서 Yorkie Tree 에서 본 문제 — 같은 경계를 동시에 자를 때 복제본마다 다른 노드를 옮기는 문제(§7.4, yorkie#2240) — 가 생길 자리가 없다.
+There is no tree-split or node-move operation. This removes the cause of the Yorkie Tree problem where concurrent splits at the same boundary move different nodes on different replicas (§7.4, yorkie#2240).
 
-### 2. 순서는 이름표로만 정한다 (RGA)
+### 2. IDs alone define order (RGA)
 
-모든 토큰에는 바뀌지 않는 이름표 `lamport@참여자` 가 붙는다. 새 토큰은 "왼쪽 기준 토큰" 바로 뒤에 들어간다. 같은 기준 뒤에 동시에 들어간 토큰끼리는 이름표가 큰 쪽이 앞에 선다. 판단에 쓰는 값은 이름표뿐이라, 받는 순서가 달라도 모든 복제본에서 같은 줄이 나온다. 트리를 읽지 않는다.
+Every token has an immutable ID, `lamport@actor`. A new token is inserted immediately after its left origin token. Concurrent tokens with the same origin are ordered with the larger ID first. Only IDs determine the result. All replicas produce the same sequence regardless of delivery order. No tree lookup is needed.
 
-### 3. 같은 자리 동시 Enter 는 새 줄 하나
+### 3. Concurrent Enter at the same position creates one new line
 
-표지에는 만든 쪽이 본 경계(왼쪽 토큰·오른쪽 토큰)가 적혀 있다. 같은 경계를 가진 살아 있는 표지가 여럿이면 순서상 첫 것만 문단을 연다. 나머지는 그 문단에 **흡수**된다(데모의 주황 ¶).
+A marker records the boundary seen by its creator (left and right tokens). If multiple live markers have the same boundary, only the first in sequence order opens a paragraph. The others are **absorbed** into that paragraph (orange ¶ in the demo).
 
-- 서로 모르고 같은 자리에서 친 Enter → 한 줄. 각자 그 줄에 친 글자는 모두 그 줄에 남는다.
-- 상대의 Enter 를 본 뒤 친 Enter → 왼쪽 토큰이 달라 경계가 다르므로 따로 줄.
+- Concurrent Enter at the same position, without seeing the other Enter → one line. All text typed into that line remains there.
+- Enter after seeing the other Enter → a separate line. The left token, and therefore the boundary, differs.
 
-### 4. 지우기 장부와 되돌리기
+### 4. Deletion ledger and undo
 
-토큰은 지워도 없애지 않는다. "나를 지운 연산들"과 "취소된 지우기들"을 기록하고, 취소되지 않은 지우기가 하나라도 남아 있으면 죽은 토큰(묘비)으로 친다.
+Deleting a token does not remove it. The token records its deletion operations and canceled deletions. If any uncanceled deletion remains, the token is dead (a tombstone).
 
-되돌리기는 **참여자마다 따로** 있고, 과거로 돌아가는 것이 아니라 반대 연산을 새로 보내는 것이다.
+Undo is **separate for each participant**. It sends a new inverse operation instead of returning the document to an earlier state.
 
-- 넣은 것을 되돌리기 → 새 지우기
-- 지운 것을 되돌리기 → **내가 한 그 지우기만** 취소
-- 블록 종류·속성·서식을 되돌리기 → 지금 값이 **아직 내가 정한 값일 때만** 이전 값으로. 그 사이 남이 바꿨으면 남의 값을 덮지 않는다
+- Undo an insertion → a new deletion.
+- Undo a deletion → cancel **only that participant's deletion**.
+- Undo a block type, attribute, or format → restore the previous value **only if the current value is still the participant's value**. Do not overwrite a value changed by someone else.
 
-그래서 B 가 `d` 를 지웠다 되돌리는 사이 A 가 `defgh` 를 지웠다면 `d` 는 계속 죽어 있다. 되돌리기가 보지 못한 남의 삭제까지 되살리는 문제(yorkie#2237)가 구조적으로 생기지 않는다.
+If A deletes `defgh` while B deletes and then restores `d`, `d` stays dead. The design prevents undo from restoring another participant's unseen deletion (yorkie#2237).
 
-편집기 쪽 다듬기:
+Editor behavior:
 
-- 이어 친 글자는 한 단위로 되돌린다 (1.5초 안, 커서가 이어질 때만)
-- 되돌리기·다시하기 뒤 커서는 그 편집 전·후 자리로 간다 (자리는 토큰 이름표로 기억하므로 남의 편집에 밀리지 않는다)
-- 선택한 글을 덮어 치기는 "지우기 + 넣기" 한 단위
-- 최근 100단위까지. "기록 비우기" 로 버릴 수 있다 (GC 를 막던 핀도 함께 풀린다 — 아래 9)
+- Consecutive input is one undo unit, within 1.5 seconds and only while the caret is continuous.
+- After undo or redo, the caret returns to its position before or after that edit. Token IDs store positions, so remote edits do not displace them.
+- Replacement of selected text is one unit: deletion + insertion.
+- Keep the latest 100 units. "Clear history" discards them and releases their GC pins (see §9).
 
-### 5. 동기화: 서버의 순서가 곧 인과 순서
-
-```
-편집기 ─ 연산 ─▶ SyncClient ─ Change{actor, seq, ops} ─▶ POST ─▶ DocHub ─▶ JSONL 로그
-   ▲                                                                 │
-   └──────────── 남의 Change 적용 ◀── SSE ◀── serverSeq 붙여 퍼뜨림 ─┘
-```
-
-- 내 편집은 바로 내 문서에 적용한다. 서버를 기다리지 않는다.
-- 서버는 받은 순서대로 `serverSeq` 를 붙인다. 누가 어떤 토큰을 기준으로 삼았다면 그 토큰은 이미 앞 번호로 로그에 있다. 그래서 참여자는 버전 벡터 없이 "마지막으로 받은 serverSeq" 하나만 기억한다.
-- 내 Change 가 돌아오면 확인으로만 쓴다. CRDT 연산은 순서를 바꿔도 결과가 같아 되감기(rebase)가 필요 없다.
-- 끊긴 동안 친 것은 쌓아 두었다가 이어지면 보낸다. 서버가 `(actor, seq)` 로 중복을 거르므로 다시 보내도 안전하다.
-- 서버도 같은 CRDT 코드로 문서를 들고 있다. 새 참여자에게는 스냅숏을 준다. **클라이언트와 서버가 같은 코드라 교차 구현 불일치가 없다.**
-
-### 6. 글자 서식 (굵게·기울임·밑줄·취소선)
-
-서식은 범위가 아니라 **글자 토큰마다** 둔다. 글자 하나·서식 하나마다 LWW(이름표가 큰 쪽이 이김) 값이다.
-
-- 서식 연산은 "내가 본 글자들의 이름표 목록 + 켜기/끄기"다. 그 사이 남이 범위 안에 넣은 글자는 바뀌지 않는다 — 보지 못한 글자에 서식을 입히지 않는다
-- 같은 글자를 동시에 켜고 끄면 이름표가 큰 쪽 하나로 모든 복제본이 모인다
-- 새로 치는 글자는 왼쪽 글자의 서식을 물려받는다. 선택 없이 ⌘B 를 누르면 다음에 칠 글자의 서식만 바꾼다
-- Peritext 처럼 범위 끝 규칙(굵은 글 끝에서 이어 치면 굵게?)을 따로 정하지 않고 "왼쪽을 물려받는다" 하나로 단순하게 했다
-
-### 7. 목록 편집 (저장 방식은 §11)
-
-- Tab / Shift+Tab 으로 수준(`level` 0~4), 항목에서 친 Enter 는 같은 `listType`·같은 수준으로 이어진다 (스키마의 `inherit`)
-- 빈 항목에서 Enter, 항목 맨 앞에서 Backspace → 한 수준 내어쓰기, 0 이면 그 줄의 기본 블록(문단)으로
-- 번호는 저장하지 않고 화면에서 센다. 그래서 동시에 항목을 넣어도 번호가 꼬이지 않는다
-
-### 8. 서버 적용은 한 덩어리
-
-Change 하나에 연산이 여럿 들어 있다. 서버는 적용하기 전에 모든 연산의 기준 토큰·대상 토큰이 있는지 먼저 검사한다(같은 Change 안에서 앞 연산이 만든 토큰도 셈에 넣는다). 하나라도 틀리면 Change 전체를 409 로 거절하고 문서는 그대로다. 어중간하게 반쯤 적용된 서버 문서가 생기지 않는다.
-
-### 9. GC — 묘비 압축
-
-묘비를 줄에서 **빼지 않는다**. 빼면 RGA 의 "같은 기준 뒤 이름표 비교" 결과가 달라져 늦게 온 연산이 다른 자리에 들어간다. 대신 **안정된 묘비를 압축**한다.
-
-- 내용·서식·지우기 장부를 버리고 자리만 남긴다 (데모의 점선 `▒`)
-- 한 사람이 연달아 친 글자들의 묘비는 토큰 하나(`▒×N`)로 합친다. 연달아 친 글자는 이름표가 1씩 늘고 바로 앞 글자를 기준으로 삼으므로, 묶음 하나가 자리 판단에서 원래 글자들과 똑같이 행동한다
-
-"안정"의 뜻: 죽었고, 이 묘비를 만든 지우기들이 모두 기준점 이하의 serverSeq 를 가진다. 기준점은 서버가 정한다.
+### 5. Synchronization: server order is causal order
 
 ```
-기준점 = min over 참여자 ( 받은 곳 ack ,  되돌리기 핀 − 1 )
+Editor ─ operations ─▶ SyncClient ─ Change{actor, seq, ops} ─▶ POST ─▶ DocHub ─▶ JSONL log
+   ▲                                                                          │
+   └──────── apply remote Change ◀── SSE ◀── broadcast with serverSeq ─────────┘
 ```
 
-- **받은 곳(ack)**: 참여자가 "여기까지 받아 적용했다"고 알린 serverSeq. 그 뒤에 그 참여자가 보낼 연산은 그 지우기를 이미 본 상태라, 압축된 토큰을 기준으로 삼지 않는다
-- **되돌리기 핀**: 내 되돌리기·다시하기가 취소할 수 있는 지우기 중 가장 이른 serverSeq. 되돌리면 살아나야 하므로 그 전까지만 압축한다
-- 끊긴 참여자도 2분(lease) 동안은 기준점에 넣는다. 창을 닫으면 `sendBeacon` 으로 바로 빠진다
-- ack 는 Change 와 **같은 줄에** 서서 차례로 나간다. ack 가 앞질러 가면 "아직 안 보낸 연산이 기댄 토큰"을 서버가 압축할 수 있다
+- Apply local edits immediately. Do not wait for the server.
+- The server assigns `serverSeq` in receive order. If a token is used as an origin, it is already in the log at a lower sequence number. A participant therefore needs only its last received `serverSeq`, with no version vector.
+- A participant's own returned Change is an acknowledgment only. CRDT operations converge across operation orders, so no rebase is needed.
+- Queue offline edits and send them after reconnection. The server deduplicates by `(actor, seq)`, so retries are safe.
+- The server holds a document with the same CRDT code. It gives new participants a snapshot. **Client and server share one implementation, which avoids differences between implementations.**
 
-GC 자체도 로그의 한 줄 `{serverSeq, gc: 기준점}` 이다. 모든 복제본이 로그의 같은 자리에서 같은 기준점으로 압축하므로 결과가 같다. 압축된 토큰을 기준으로 삼은 연산은 그 토큰(또는 묶음)에 그대로 붙는다. 서버는 압축할 묘비가 12개 이상 모이면 편집이 잦아든 뒤(0.8초) 스스로 GC 한다.
+### 6. Character formatting (bold, italic, underline, strikethrough)
 
-### 10. 스키마 주입과 모양
+Formatting is stored **per character token**, rather than per range. Each character and format has an LWW value: the larger ID wins.
 
-스키마는 `SyncClient` 를 만들 때 넣는다 (`new SyncClient(actor, transport, {schema})`). 서버도 같은 스키마로 검사하지만, 없어도 된다.
+- A format operation is a list of observed character IDs plus on/off. Characters inserted into the range by another participant remain unchanged. Unseen characters receive no formatting.
+- If the same character is formatted on and off concurrently, all replicas converge on the larger ID.
+- New input inherits the left character's formatting. With no selection, ⌘B changes only the format for the next input.
+- One rule, "inherit from the left," replaces separate range-end rules such as Peritext's rule for input at the end of bold text.
 
-| 모양 | 뜻 | 데모 스키마의 종류 |
+### 7. List editing (storage is in §11)
+
+- Tab / Shift+Tab changes `level` from 0 to 4. Enter in an item continues with the same `listType` and level (schema `inherit`).
+- Enter in an empty item, or Backspace at the start of an item → outdent one level. At level 0, convert to the sequence's default block (paragraph).
+- Numbers are calculated for display. They are not stored, so concurrent item insertion does not break numbering.
+
+### 8. Server application is atomic
+
+A Change contains multiple operations. Before application, the server checks that all origin and target tokens exist. Tokens created by earlier operations in the same Change count as existing. If any check fails, the server rejects the entire Change with 409 and leaves the document unchanged. No partially applied document remains on the server.
+
+### 9. GC: tombstone compaction
+
+Tombstones are **not removed from the sequence**. Removal would change RGA ID comparisons after a shared origin and place late operations elsewhere. Instead, **stable tombstones are compacted**.
+
+- Discard content, formatting, and the deletion ledger. Keep the position (dashed `▒` in the demo).
+- Merge tombstones from consecutive input by one participant into one token (`▒×N`). Those character IDs increase by 1 and each uses the previous character as its origin. One span therefore behaves like the original characters during position resolution.
+
+"Stable" means the token is dead and all deletions that made it dead have a `serverSeq` at or below the watermark. The server sets the watermark.
+
+```
+watermark = min over participants ( received ack , undo pin − 1 )
+```
+
+- **Acknowledgment (ack)**: the `serverSeq` that a participant has received and applied. Future operations from that participant have seen those deletions, so they do not use the compacted tokens as origins.
+- **Undo pin**: the earliest `serverSeq` of any deletion that local undo or redo can cancel. Compaction stops before it, because undo must restore that token.
+- Disconnected participants remain in the watermark calculation for a 2-minute lease. Closing a window removes the participant immediately through `sendBeacon`.
+- Acks use **the same queue as Changes**. If an ack overtakes an unsent operation, the server could compact a token that the operation needs.
+
+GC is itself one log entry, `{serverSeq, gc: watermark}`. All replicas compact at the same log position and watermark, so their results match. Operations that refer to compacted tokens still attach to those tokens or spans. The server runs GC after edits settle for 0.8 seconds when at least 12 tombstones can be compacted.
+
+### 10. Schema injection and shapes
+
+Provide a schema when creating `SyncClient`: `new SyncClient(actor, transport, {schema})`. The server can validate with the same schema, but a schema is optional there.
+
+| Shape | Meaning | Types in the demo schema |
 |---|---|---|
-| `text` | 글을 담는 블록. 흐름 줄에서 표지가 열고 다음 표지까지가 안. `children` = 올 수 있는 inline | paragraph · heading1·2 · quote · list-item · image |
-| `inline` | text 블록 안에서 글자 한 자리를 차지 | inline-image |
-| `flow` | 블록이 흐르는 줄 하나를 가진 그릇. Enter 로 나누고 Backspace 로 합치는 곳 | content · table-cell-body · image-component · callout |
-| `group` | 이어진 항목 블록을 묶어 **보이는** 그릇 (저장하지 않는다) | list |
-| `grid` · `row` · `cell` | 표 · 표 행 · 표 칸. 칸의 `children` 은 칸 안 흐름 그릇 하나 | table · table-row · table-cell |
-| `atom` | 안이 없는 블록 | divider |
+| `text` | Text block. A marker opens it in a flow sequence; it ends at the next marker. `children` lists allowed inline types. | paragraph · heading1·2 · quote · list-item · image |
+| `inline` | Occupies one character position in a text block. | inline-image |
+| `flow` | Container with one block sequence. Enter splits and Backspace joins blocks here. | content · table-cell-body · image-component · callout |
+| `group` | **Visible** container that groups consecutive item blocks; not stored. | list |
+| `grid` · `row` · `cell` | Table, table row, table cell. Cell `children` contains one inner flow container. | table · table-row · table-cell |
+| `atom` | Block with no content. | divider |
 
 ```
 content ─ paragraph(─ inline-image) · heading1 · heading2 · quote
@@ -166,209 +171,208 @@ content ─ paragraph(─ inline-image) · heading1 · heading2 · quote
         ─ divider
 ```
 
-연산은 종류와 무관한 다섯 가지다: 글자 넣기 `text`, 노드 넣기 `node`, 지우기 `del`, 지우기 취소 `undel`, 속성 쓰기 `set`
-(블록 종류 `$type`, 블록·그림 속성, 글자 서식이 모두 `set`).
+The five type-independent operations are character insertion `text`, node insertion `node`, deletion `del`, deletion cancellation `undel`, and attribute assignment `set`.
+Block type `$type`, block and image attributes, and character formatting all use `set`.
 
-**검사는 바뀌지 않는 사실만 본다.** 서버는 스키마로 "이 줄에 이 종류가 올 수 있나", "이 속성 값이 맞나"를 검사한다. 이때 쓰는
-것은 토큰이 어느 줄에 있는지, 노드가 태어날 때 무슨 종류였는지뿐이다. 지금 종류·살았나는 복제본마다 다를 수 있어서, 그것으로
-거절하면 이미 자기 화면에 적용한 참여자와 서버가 갈라진다. 그래서 서버가 스키마 없이 돌아도(검사만 덜 할 뿐) 수렴은 같다.
+**Validation uses immutable facts only.** The server checks whether a type is allowed in a sequence and whether an attribute value is valid. It uses only the token's sequence membership
+and the node's birth type. Current type and live status can differ between replicas. Rejection based on those values would cause the server and a participant that already applied the edit to diverge.
+A server without a schema therefore has the same convergence behavior, with fewer checks.
 
-모델 출력(`toJSON`)은 스키마의 종류 이름으로 된 트리다 — 스키마 기반 문서 에디터의 문서 JSON 과 같은 꼴.
+Model output (`toJSON`) is a tree with schema type names, in the same form as a schema-based document editor's document JSON.
 
-### 11. 목록 — 저장은 평평하게, 보이기는 list > list-item
+### 11. Lists: flat storage, list > list-item display
 
-list-item 은 흐름 줄의 text 블록이고 `listType`·`level` 속성을 가진다. 모델을 계산할 때 이어진 list-item 을 `listType` 이 같은
-것끼리 `list` 하나로 묶는다(스키마의 `group` 모양, `by: ["listType"]`).
+A list-item is a text block in a flow sequence with `listType` and `level` attributes. Model calculation groups consecutive list-items with the same `listType`
+into one `list` (schema shape `group`, `by: ["listType"]`).
 
-`list` 를 진짜 그릇으로 저장하면, 항목이 목록에 들고 나는 것(빈 항목에서 Enter, 문단 ↔ 목록, 두 목록 사이의 문단 지우기)이 모두
-**블록 옮기기**가 된다 — 이 연구 전체가 피해 온 바로 그 연산이다. 평평하게 두면 종류 바꾸기 하나다. 그래서 A 가 항목을 목록에서
-빼는 사이 B 가 그 항목에 친 글이 그대로 남는다 (시험 있음). 스키마 기반 문서 에디터도 목록을 `listGroupId`·`listItemLevel` 속성으로 들고 있다.
+If `list` were stored as a real container, moving an item into or out of a list would require a **block move**. This includes Enter in an empty item, paragraph ↔ list conversion, and deleting the paragraph between two lists.
+The design avoids that operation. Flat storage needs only a type change. Text typed by B remains when A takes the item out of a list (covered by tests). The schema-based document editor also stores lists through `listGroupId` and `listItemLevel` attributes.
 
-### 12. 표 — 행 줄 × 열 줄, 칸은 이름표로
+### 12. Tables: row sequence × column sequence, cells identified by IDs
 
-표 노드는 `rows` 줄(table-row 노드들)과 `cols` 줄(열 노드들)을 가진다. 칸은 따로 만들지 않는다 — (행, 열) 교차마다 `cell:행이름표,열이름표`
-자리 줄이 있고, 그 줄이 table-cell-body 다. 행·열의 수는 스키마가 정하지 않는다. 넣을 때 고르고 나중에 더하고 뺀다.
+A table node has a `rows` sequence (table-row nodes) and a `cols` sequence (column nodes). Cells are implicit. Each row/column intersection has a `cell:rowID,colID`
+slot sequence, which is its table-cell-body. The schema does not set row and column counts. Choose them at insertion, then add or remove rows and columns.
 
-- 칸을 **번호가 아니라 이름표로** 가리키므로, A 가 행을 더하는 사이 B 가 열을 더해도 칸이 엇갈리지 않는다. 두 사람이 서로 모르고 만든 행과 열이 만나는 칸도 바로 쓸 수 있다
-- 열을 지우는 사이 남이 그 열의 칸에 쓰면: 열은 사라지고, 그 글은 묘비가 아니라 **안 보이는 칸에 살아 있다**. 열 지우기를 되돌리면 그 글까지 돌아온다
-- 행이나 열이 하나도 안 남으면 표가 통째로 안 보인다 (두 사람이 남은 두 행을 하나씩 동시에 지운 경우)
-- 칸 안도 흐름 줄이라 Enter·목록·이미지·같은 자리 동시 Enter 규칙이 본문과 똑같다
-- 내가 있던 열을 남이 지우면 커서는 옆 칸으로 나온다
+- Cells use **IDs instead of indices**. If A adds a row while B adds a column, cells remain aligned. The cell at the intersection of independently created rows and columns is immediately usable.
+- If one participant deletes a column while another edits one of its cells, the column disappears. The text **remains live in a hidden cell**, rather than becoming a tombstone. Undoing the column deletion restores the text too.
+- With no rows or no columns, the entire table is hidden. This can occur when two participants concurrently delete the last two rows.
+- A cell contains a flow sequence. Enter, lists, images, and concurrent Enter follow the same rules as the main document.
+- If another participant deletes the current column, the caret moves to a neighboring cell.
 
-**칸 합치기 (colspan · rowspan)** — 칸에는 토큰이 없으므로 합치기는 표 노드의 속성으로 적는다:
-`$span:왼쪽위행,왼쪽위열` = `{row: 끝 행, col: 끝 열}` (모두 이름표, LWW). 모델은 스키마 기반 문서 에디터처럼 full grid 로 낸다 — 모든 행에 모든
-칸이 있고, 왼쪽 위 칸에 `colspan`·`rowspan`, 가려진 칸에 `spanned: true`.
+**Cell merging (colspan · rowspan)**: Cells have no tokens. Merge state is stored as a table-node attribute:
+`$span:topLeftRow,topLeftCol` = `{row: endRow, col: endCol}` (all IDs, LWW). The model returns a full grid, as in the schema-based document editor. Every row has every cell.
+The top-left cell has `colspan` and `rowspan`; covered cells have `spanned: true`.
 
-- 크기를 개수가 아니라 **끝 이름표**로 적으므로, 합치는 사이 남이 그 사이에 넣은 열도 함께 덮인다. 끝 열을 지우면 줄어든다
-- 왼쪽 위 칸의 행·열이 지워지면 그 합치기는 없어지고 가렸던 칸이 다시 보인다
-- 겹치는 합치기를 동시에 하면 나중 이름표 것 하나만 받는다 (나머지는 버린다) — 모든 복제본에서 같은 결과
-- 가려진 칸의 글은 지우지 않는다. 숨을 뿐이고 나누면 다시 보인다 (합칠 때 글을 옮기면 블록 옮기기가 된다). 가려진 칸에 있던 커서는 왼쪽 위 칸으로
-- 편집기: 칸 안에서 "→ 합치기"·"↓ 합치기"·"나누기". Tab·화살표는 가려진 칸을 건너뛴다
+- The span uses **end IDs instead of counts**. A column inserted within the span during a merge is covered too. Deleting the end column shrinks the span.
+- Deleting the top-left cell's row or column removes the merge and exposes the covered cells.
+- For concurrent overlapping merges, only the later ID wins. The others are discarded. All replicas produce the same result.
+- Covered-cell text is hidden, not deleted. Splitting reveals it again. Moving text during a merge would require block moves. A caret in a covered cell moves to the top-left cell.
+- Editor controls: "Merge →", "Merge ↓", and "Split" inside cells. Tab and arrow keys skip covered cells.
 
-**칸 속성 (backgroundColor)** — 같은 방식으로 표 노드에 `$cell:행,열|이름` 으로 적는다(LWW). 스키마의 table-cell 속성 가운데
-`computed` 가 아닌 것을 쓸 수 있고(`backgroundColor` 는 `#rrggbb` 꼴 `pattern`), colspan·rowspan·spanned 는 계산값이라 직접 쓰면
-거절된다. 색은 행·열 이름표에 붙어 있으므로 앞에 행·열이 들어와도 같은 칸에 남고, 열을 지웠다 되돌리면 색도 돌아온다.
+**Cell attributes (backgroundColor)**: These also use table-node attributes, `$cell:row,col|name` (LWW). Writable attributes are table-cell attributes without
+`computed`. `backgroundColor` has a `#rrggbb` schema `pattern`. Direct writes to calculated `colspan`, `rowspan`, and `spanned` are rejected.
+Color belongs to row and column IDs. It stays with the same cell after earlier row or column insertion and returns when a deleted column is restored.
 
-표·이미지·구분선 바로 뒤에 자기 표지를 가진 블록이 없으면 **빈 자리**(virtual)가 하나 생긴다. 그래서 표 앞뒤에는 언제나 커서를
-둘 곳이 있고, 표 바로 뒤로 동시에 들어온 글자도 갈 곳이 있다.
+If a table, image, or divider has no following block with its own marker, it gets an empty **virtual** block. There is always a caret position before and after a table,
+and a destination for text inserted concurrently just after it.
 
-### 13. 이미지 — image-component > [image > inline-image, caption > caption-paragraph]
+### 13. Images: image-component > [image > inline-image, caption > caption-paragraph]
 
-image-component 는 흐름 그릇이고, 그 줄에 image 블록과 caption-paragraph 블록이 이어진다.
+An image-component is a flow container. Its sequence contains an image block followed by caption-paragraph blocks.
 
-- image 블록은 글자를 받지 않고(`text: false`) inline-image 하나를 담는다. inline-image 는 `src`·`width`·`height` 속성을 가진 inline 노드다
-- 캡션은 목록과 같은 방식이다 — caption-paragraph 는 평평한 text 블록이고, 모델에서 이어진 것끼리 `caption` 하나로 묶는다
-  (`group`, `by: []`). 캡션 끝 Enter 는 캡션 줄을 하나 더 만든다
-- 글자를 받지 않는 블록에는 합치지 않는다: 캡션 맨 앞 Backspace, 그림 끝 Delete, 그림부터 캡션까지 지우기 모두 캡션 블록을 남긴다
-- 문단 안에도 inline-image 를 넣을 수 있다 (글자 한 자리, 서식은 건너뛴다). 그림 크기를 동시에 바꾸면 나중 이름표 쪽으로 모인다
+- An image block rejects text (`text: false`) and contains one inline-image. inline-image is an inline node with `src`, `width`, and `height` attributes.
+- Captions use the list pattern. caption-paragraph is a flat text block. Consecutive blocks form one `caption` in the model
+  (`group`, `by: []`). Enter at the caption's end adds a caption line.
+- Blocks do not merge into a block that rejects text. Backspace at the caption start, Delete at the image end, and deletion from image through caption all preserve a caption block.
+- Paragraphs can also contain inline-image nodes. They occupy one character position and are skipped by formatting. Concurrent image resizing converges on the later ID.
 
-### 14. 편집 API — 모델 연산 다섯 가지 (`docs/edit-api.md`)
+### 14. Editing API: five model operations (`docs/edit-api.md`)
 
-편집기는 모델 경로(`toJSON` 트리의 자식 번호, 스키마 기반 문서 에디터의 트리 경로(숫자 배열)와 같은 꼴)와 모델 노드로 말한다. CRDT 의 줄·토큰은 몰라도 된다.
+An editor uses model paths (child indices in the `toJSON` tree, the same numeric-array form as the schema-based editor's paths) and model nodes. It does not need to know CRDT sequences or tokens.
 
 ```ts
 doc.edit([
-    {op: "delete", at: [0], count: 1},                                  // 문서 내용 통째로 바꾸기 꼴
+    {op: "delete", at: [0], count: 1},                                  // Whole-document replacement form
     {op: "insert", at: [0], content: [{type: "paragraph", runs: [{text: "after", marks: {}}]}]},
 ]);
-doc.edit([0, 1, 2].map(r => ({op: "insert", at: [1, r, 1], content: [{type: "table-cell"}]})));   // 행마다 칸 = 열 하나
+doc.edit([0, 1, 2].map(r => ({op: "insert", at: [1, r, 1], content: [{type: "table-cell"}]})));   // One cell per row = one column
 doc.edit([{op: "update", at: [1, 0, 0], attrs: {colspan: 2, backgroundColor: "#dcfce7"}}]);
 ```
 
-- `insert · delete · update · split · merge` 를 스키마 **모양**별로 전선 연산에 옮긴다 (`edit.ts`). 종류 이름은 보지 않는다
-- 한 묶음 안에서 흐름의 첫 블록을 지우면 줄 머리는 "비운 자리"가 된다 — 다음 경로는 그 자리를 세지 않고, 맨 앞에 글 블록이 오면 채운다
-- 행마다 같은 번호의 칸 넣기·지우기는 열 하나로 접는다. 한 행에만 와도 열 하나로 바로잡는다
-- 편집기 명령(글자·Enter·Backspace·표 행/열·칸 합치기 …)은 `commands.ts` 가 편집 연산으로 만든다. 옛 편집 함수 18개를 옮긴 것이고,
-  같은 상태에서 옛 함수와 나란히 34,001걸음을 돌려 모델 차이 0 을 확인한 뒤 옛 함수를 지웠다
-- `edit()` 은 **normalize** 도 돌려준다 — 편집기가 이 묶음을 자기 모델에 그대로 적용했을 때와 CRDT 모델이 다르면 그 차이 (흐름은 글 블록으로 시작, 들쭉날쭉한 열, 합친 칸 사이의 열 …)
+- Compile `insert · delete · update · split · merge` to wire operations by schema **shape** (`edit.ts`). Type names are not inspected.
+- Deleting the first block of a flow in a batch leaves a vacant head. Later paths do not count it. An inserted leading text block fills it.
+- Insertion or deletion of same-index cells across rows folds into one column operation. An operation in only one row is also corrected to one column.
+- `commands.ts` converts editor commands (text, Enter, Backspace, table rows/columns, cell merging, and so on) to edit operations. It replaces 18 old editing functions.
+  Before removal, the old and new functions ran side by side for 34,001 steps from the same states, with 0 model differences.
+- `edit()` also returns **normalize**: the difference between direct application of the batch to the editor model and the CRDT model. Examples include a leading text block, uneven columns, and columns within merged cells.
 
-### 15. 받는 쪽 이벤트
+### 15. Receive-side events
 
-`client.onModelEvents = (events, info) => …` — 남의 변경·되돌리기·스냅숏으로 모델이 바뀌면 앞 모델을 뒤 모델로 바꾸는 편집 연산을 준다.
-편집기는 이것을 자기 모델에 적용하면 된다.
+`client.onModelEvents = (events, info) => …` supplies edit operations that transform the previous model into the next model after remote changes, undo, or snapshots.
+The editor applies them to its own model.
 
-- 받기 전·후 모델을 비교해 만든다 (`model.ts` 의 diffModels). 글자 하나면 글자 하나 넣기, 열 하나면 행마다 칸 넣기
-- 흐름은 펼친 항목 줄에서 비교하고, 연산마다 작업 사본에 적용해 다음 경로를 그 사본에서 구한다 — 목록이 붙었다 떨어져도 경로가 안 어긋난다
-- 내보내기 전에 앞 모델에 적용해 **검산**하고, 틀리면 문서 통째 바꾸기로 **물러선다** (`info.fallback`)
+- Events come from a before/after model comparison (`diffModels` in `model.ts`). One character produces one character insertion. One column produces one cell insertion per row.
+- Flow comparison uses a flat item sequence. Each operation is applied to a working copy, which supplies the next path. Paths stay correct when lists join or split.
+- Before emission, events are applied to the old model for **verification**. On failure, the system **falls back** to whole-document replacement (`info.fallback`).
 
-### 16. 링크 — 값 서식
+### 16. Links: value formatting
 
-링크 주소는 글자마다의 값 서식 `link`(LWW)로 저장한다. 모델에서는 같은 주소로 이어진 글자를 `inline-hyperlink {url}` 하나로 묶어 보인다
-(스키마의 `span` 모양 — 목록과 같은 "저장은 평평, 보이기는 묶음"). 새로 친 글자는 링크를 물려받지 않는다(`inherit` 없음). 주소 꼴은
-스키마의 `pattern` 으로 검사한다 (`javascript:` 같은 것은 서버가 거절).
+Link URLs are stored as a per-character LWW format value, `link`. The model groups consecutive characters with the same URL into one `inline-hyperlink {url}`.
+This is the schema's `span` shape: flat storage with grouped display, like lists. New input does not inherit links (no `inherit`).
+The schema `pattern` validates URLs. The server rejects values such as `javascript:` URLs.
 
-### 17. 커서와 선택
+### 17. Carets and selections
 
-위치는 모델 경로(편집기)와 토큰 키(CRDT) 두 가지로 말한다. 경로는 남의 편집에 흔들리고 토큰 키는 흔들리지 않는다. 그래서 커서·선택의
-시작·끝은 토큰 키로 들고 있다가 그릴 때 경로로 바꾼다 — `anchorAt(doc, path)` → 키, `pathAt(doc, key)` → 지금 경로.
-남의 커서(presence)도 토큰 키로 주고받는다. 자세한 것은 `docs/edit-api.md` §11.
+Positions have two forms: model paths for the editor, and token keys for the CRDT. Remote edits can change paths, while token keys remain stable. Store selection endpoints as token keys,
+then convert them to paths when drawing: `anchorAt(doc, path)` → key; `pathAt(doc, key)` → current path.
+Presence also sends remote carets as token keys. See `docs/edit-api.md` §11.
 
-### 18. ProseMirror 연동 (`packages/doc-sync/src/pm/`, `/pm`)
+### 18. ProseMirror integration (`packages/doc-sync/src/pm/`, `/pm`)
 
-편집 API 가 편집기를 모르므로 ProseMirror 도 같은 길로 붙는다. `/pm?doc=이름` 에서 데모 편집기(A)와 ProseMirror(P)가 같은 문서를 함께 편집한다.
+The editing API is editor-independent. ProseMirror uses the same API. At `/pm?doc=name`, demo editor A and ProseMirror P edit the same document.
 
-- **스키마** (`pm/schema.ts`): 우리 스키마에서 ProseMirror 스키마를 뽑는다. 목록은 평평하다 — list_item 은 listType·level 속성을 가진 textblock
-  (prosemirror-schema-list 의 그릇 목록을 쓰면 항목이 들고 날 때 노드 옮기기가 된다). 표는 prosemirror-tables 꼴(table·table_row·table_cell + colspan·rowspan), 링크는 값 하나짜리 mark
-- **변환** (`pm/convert.ts`): 모델 ↔ ProseMirror 문서, 모델 경로 ↔ ProseMirror 위치. 우리 표는 full grid(가려진 칸 있음), ProseMirror 표는 가려진 칸이 없다 — 변환이 넣고 뺀다. 가려진 칸의 숨은 글은 바꾸기 전 모델에서 가져와 잃지 않는다
-- **보내는 쪽** (`pm/binding.ts`): Step 을 하나씩 모델 연산으로. 한 블록 안 글(insert·delete), Enter(splitBlock → **split**), 블록 맨 앞 Backspace(join → **merge**), 블록 걸친 지우기, 서식(Add/RemoveMarkStep → update)은 뜻을 살려 옮기고, 나머지(종류 바꾸기·표 행/열·붙여 넣기)는 Step 앞·뒤 모델 비교로 옮긴다 — prosemirror-tables 의 열 넣기는 그러면 행마다 칸 넣기가 되어 CRDT 가 열 하나로 접는다. 옮긴 뒤 두 문서를 맞춰 보고, 다르면 우리 쪽을, 그래도 다르면(CRDT 규칙) ProseMirror 를 맞춘다
-- **받는 쪽**: 남의 변경·되돌리기 → 새 문서와의 차이 구간만 바꾸는 transaction 하나 (`findDiffStart/End`). 내 커서는 ProseMirror 가 그 Step 을 따라 옮긴다. 남의 커서는 토큰 키 → 경로 → 위치로 장식(decoration)을 그린다
-- **되돌리기**: ProseMirror history 대신 CRDT 의 참여자별 되돌리기 (`binding.undo()`)
-- **y-prosemirror 와 다른 점**: Enter 를 문서 차이(앞 문단 줄이기 + 뒷글 다시 넣기)가 아니라 split 하나로 보낸다. 그래서 A 가 나누는 사이 B 가 뒷부분에 친 글자가 그대로 남고, 같은 자리 동시 Enter 는 새 줄 하나다 (시험 있음)
-- 브라우저에서 번들러 없이 돌리려고 서버가 `node_modules` 의 ESM 을 내주고, `pm.html` 의 import map 이 이름을 잇는다
+- **Schema** (`pm/schema.ts`): Derives a ProseMirror schema from the injected schema. Lists are flat: list_item is a textblock with listType and level attributes.
+  Container lists from prosemirror-schema-list would require node moves when items enter or leave. Tables use the prosemirror-tables form (table, table_row, table_cell, colspan, rowspan). A link is a mark with one value.
+- **Conversion** (`pm/convert.ts`): Model ↔ ProseMirror document and model path ↔ ProseMirror position. Our table is a full grid with covered cells. ProseMirror omits covered cells, so conversion adds or removes them. Hidden text is preserved from the previous model.
+- **Send side** (`pm/binding.ts`): Converts each Step to model operations. It preserves the meaning of text insertion/deletion within a block, Enter (splitBlock → **split**), Backspace at block start (join → **merge**), cross-block deletion, and formatting (Add/RemoveMarkStep → update). Other Steps (type changes, table rows/columns, paste) use before/after model comparison. prosemirror-tables column insertion therefore becomes cell insertion in every row, which the CRDT folds into one column. The converted documents are compared. If needed, the local model is corrected, then ProseMirror is corrected if CRDT rules still require it.
+- **Receive side**: Remote edits and undo produce one transaction that replaces only the changed range (`findDiffStart/End`). ProseMirror maps the local caret through that Step. Remote caret decorations use token key → path → position.
+- **Undo**: Uses CRDT participant-specific undo (`binding.undo()`), instead of ProseMirror history.
+- **Difference from y-prosemirror**: Enter is sent as one split. It is not a document diff that shortens the first paragraph and reinserts trailing text. Text typed by B into the trailing portion remains when A splits it. Concurrent Enter at the same position creates one new line (covered by tests).
+- To run in the browser without a bundler, the server serves ESM from `node_modules`, and the import map in `pm.html` resolves package names.
 
-시험 (`packages/doc-sync/test/pm.test.ts`, `packages/doc-sync/test/pm-fuzz.ts`): 진짜 ProseMirror 상태·명령(splitBlock · joinBackward · deleteSelection · toggleMark · setBlockType · replaceSelectionWith(표) · addColumnAfter · addRowAfter · deleteColumn · deleteRow · mergeCells · splitCell)으로 무작위 편집 —
-300 대본 × 참여자 2, 200 대본 × 참여자 3 모두 같은 문서 (편집기·CRDT·서버). Step 의 82% 가 뜻을 살려 옮겨졌고(글 4,324 · Enter 1,480 · 합치기 92 · 서식 489 · 범위 지우기 96), 18% 가 모델 비교(1,402). 문서 통째 바꾸기 0.
+Tests (`packages/doc-sync/test/pm.test.ts`, `packages/doc-sync/test/pm-fuzz.ts`) use real ProseMirror state and commands (splitBlock · joinBackward · deleteSelection · toggleMark · setBlockType · replaceSelectionWith(table) · addColumnAfter · addRowAfter · deleteColumn · deleteRow · mergeCells · splitCell) for random editing.
+All 300 traces with 2 participants and 200 traces with 3 participants reached the same document in editor, CRDT, and server. 82% of Steps preserved intent directly (text 4,324 · Enter 1,480 · merge 92 · formatting 489 · range deletion 96). Model comparison handled 18% (1,402). Whole-document replacements: 0.
 
-루트 명령은 각 워크스페이스로 작업을 전달한다. `npm run typecheck`는 라이브러리·시험·데모·벤치마크·공유 스키마를 함께 검사한다. `npm test`는 라이브러리와 데모 HTTP 통합 시험을 실행한다.
+Root commands delegate to workspaces. `npm run typecheck` checks the library, tests, demo, benchmarks, and shared schema. `npm test` runs the library and demo HTTP integration tests.
 
 ```text
-packages/doc-sync/  라이브러리 src/와 test/
-apps/demo/          데모 서버·UI·HTTP 통합 시험
-benchmarks/         비교 엔진·대본·측정·results/
-fixtures/           데모·시험 공유 스키마
-docs/               설계·보고서·로드맵
-data/               기존 데모 로그 (위치 유지)
+packages/doc-sync/  Library src/ and test/
+apps/demo/          Demo server, UI, and HTTP integration tests
+benchmarks/         Comparison engines, traces, measurements, and results/
+fixtures/           Shared demo and test schema
+docs/               Design, reports, and roadmap
+data/               Existing demo logs (same location)
 ```
 
-`DATA_DIR=/절대/경로 PORT=5411 npm run dev`로 별도 로그 폴더와 포트를 사용할 수 있다. 기본 로그는 루트 `data/`다. 워크스페이스 명령의 상대 출력 경로는 해당 워크스페이스를 기준으로 한다. 예: `npm run bench -- --out-dir results/새이름`, `npm run bench:client -- --out results/새이름.json`.
+Use `DATA_DIR=/absolute/path PORT=5411 npm run dev` for a separate log folder and port. Default logs stay in root `data/`. Relative output paths in workspace commands are relative to that workspace. Examples: `npm run bench -- --out-dir results/new-name`, `npm run bench:client -- --out results/new-name.json`.
 
-## 파일
+## Files
 
-| 파일 | 하는 일 |
+| File | Purpose |
 |---|---|
-| `packages/doc-sync/src/crdt/ticket.ts` | 이름표와 Lamport 시계 |
-| `packages/doc-sync/src/crdt/schema.ts` | 스키마 타입(모양·children·속성)과 스키마 자체 검사 |
-| `packages/doc-sync/src/index.ts` | 핵심 입구 — `Doc`, `commands`, `History`, 스키마·모델 타입 (`sync/index.ts`·`server/index.ts`·`pm/index.ts` 도 입구) |
-| `packages/doc-sync/src/crdt/doc.ts` | Doc — 줄과 자리, 연산 검사(스키마)·적용, 모델 계산(블록·표·합치기), 압축, `edit()` |
-| `packages/doc-sync/src/crdt/model.ts` | 모델 쪽 순수 함수 — 모양 정리, 편집 연산 적용, 모델 비교 |
-| `packages/doc-sync/src/crdt/edit.ts` | 편집 연산 → 전선 연산 컴파일, 경로 ↔ 위치 ↔ 토큰 키 |
-| `packages/doc-sync/src/crdt/commands.ts` | 편집기 명령 → 편집 연산 |
-| `packages/doc-sync/src/crdt/history.ts` | 참여자별 되돌리기·다시하기 (이어 치기 묶기, 커서, 속성은 내 값일 때만, 핀) |
-| `fixtures/demo-schema.ts` | 데모 편집기의 스키마 — 블록 종류는 여기에만 있다 (시험도 쓴다) |
-| `packages/doc-sync/src/sync/protocol.ts` | Change·Envelope(변경 또는 GC)·Ack·이벤트·Transport |
-| `packages/doc-sync/src/sync/client.ts` | SyncClient — 문서·되돌리기·연결, 끊김 동안 쌓기, ack·핀을 변경과 같은 줄로 |
-| `packages/doc-sync/src/sync/http-transport.ts` | 브라우저 전송 (SSE + fetch) |
-| `packages/doc-sync/src/server/hub.ts` | DocHub — 순서 매기기·한 덩어리 적용·퍼뜨리기, 참여자별 받은 곳·핀, 기준점·GC (전송과 무관) |
-| `apps/demo/server.ts` | 데모 서버 — Node http, JSONL 영속, `.ts` 를 타입만 벗겨 브라우저에 내줌 |
-| `apps/demo/ui/*` | 데모: 스키마를 읽는 작은 편집기(한글 IME, 표·이미지·목록), 줄별 토큰 들여다보기, 시나리오, 자동 입력, 여러 창 시험(`multi.html`) |
-| `docs/edit-api.md` | 설계 메모 — 편집 함수를 모델 연산 다섯 가지(insert·delete·update·split·merge)로, 스키마 기반 문서 에디터 연결까지 |
-| `docs/report.html` | 지금까지의 보고서 |
-| `docs/roadmap.html` | "쓸 만한 것" 로드맵 — 단계 0~7, 결정 지점, 위험 |
-| `benchmarks/*` | 단계 0 측정 — 편집 대본(trace), 엔진 감싸기(이 라이브러리·Yjs), 측정(run), CPU 프로파일용(profile). 결과는 `benchmarks/results/` |
-| `packages/doc-sync/test/harness.ts` | 메모리 안 네트워크 — 오르내림을 손으로 흘려 "누가 언제 무엇을 보았나"를 만든다 |
-| `packages/doc-sync/test/scenarios.test.ts` | S1~S9 + 끊김·늦은 참여자·문단 종류 |
-| `packages/doc-sync/test/features.test.ts` | 서식·목록·되돌리기 다듬기·GC·서버 원자성 |
-| `packages/doc-sync/test/tables.test.ts` | 표·빈 자리·구분선·이미지·스키마 검사·다른 스키마 주입·스키마 없는 서버 |
-| `packages/doc-sync/test/edit.test.ts` | 편집 API — 경로 왕복, 스키마 기반 문서 에디터의 모델 연산 묶음 꼴, 열 접기, 링크, 받는 쪽 이벤트, 선택 |
-| `packages/doc-sync/src/pm/*` | ProseMirror 연동 — 스키마 뽑기, 모델 ↔ 문서·경로 ↔ 위치 변환, Step ↔ 모델 연산 (binding) |
-| `apps/demo/ui/pm.html`, `pm-app.ts` | 데모 편집기 × ProseMirror 데모 (`/pm`) |
-| `packages/doc-sync/test/pm.test.ts`, `packages/doc-sync/test/pm-fuzz.ts` | ProseMirror 연동 시험 — 같은 자리 Enter, Enter 의도 보존, 열 접기, 되돌리기, 서식·링크, 무작위 |
-| `packages/doc-sync/test/fuzz-core.ts`, `packages/doc-sync/test/fuzz.test.ts` | 무작위 동시편집 — 본문·칸·상자 안에서 편집, 표·행·열·이미지·구분선 넣고 지우기, 끊고 잇기, 일부만 흘리기, 아무 때나 GC |
+| `packages/doc-sync/src/crdt/ticket.ts` | IDs and Lamport clock |
+| `packages/doc-sync/src/crdt/schema.ts` | Schema types (shapes, children, attributes) and schema validation |
+| `packages/doc-sync/src/index.ts` | Core entry: `Doc`, `commands`, `History`, schema and model types; `sync/index.ts`, `server/index.ts`, and `pm/index.ts` are also entry points |
+| `packages/doc-sync/src/crdt/doc.ts` | Doc: sequences and slots, schema validation and operation application, model calculation (blocks, tables, spans), compaction, and `edit()` |
+| `packages/doc-sync/src/crdt/model.ts` | Pure model functions: normalization, edit application, and model comparison |
+| `packages/doc-sync/src/crdt/edit.ts` | Edit-to-wire compilation; path ↔ position ↔ token key |
+| `packages/doc-sync/src/crdt/commands.ts` | Editor commands → edit operations |
+| `packages/doc-sync/src/crdt/history.ts` | Participant-specific undo/redo: input grouping, carets, conditional attribute restoration, and pins |
+| `fixtures/demo-schema.ts` | Demo editor schema; block types are defined only here; tests also use it |
+| `packages/doc-sync/src/sync/protocol.ts` | Change, Envelope (change or GC), Ack, events, and Transport |
+| `packages/doc-sync/src/sync/client.ts` | SyncClient: document, undo, connection, offline queue; acks and pins use the Change queue |
+| `packages/doc-sync/src/sync/http-transport.ts` | Browser transport (SSE + fetch) |
+| `packages/doc-sync/src/server/hub.ts` | DocHub: ordering, atomic application, broadcast, participant acks and pins, watermark and GC; transport-independent |
+| `apps/demo/server.ts` | Demo server: Node http, JSONL persistence, `.ts` served to browsers after type stripping |
+| `apps/demo/ui/*` | Demo: small schema-aware editor (Korean IME, tables, images, lists), per-sequence token inspector, scenarios, automatic input, and multi-window tests (`multi.html`) |
+| `docs/edit-api.md` | Design notes: five model operations (insert, delete, update, split, merge), through schema-based editor integration |
+| `docs/report.html` | Report of work to date |
+| `docs/roadmap.html` | Roadmap to a usable library: stages 0–7, decision gates, and risks |
+| `benchmarks/*` | Stage 0: edit traces (trace), engine wrappers (this library and Yjs), measurements (run), CPU profiling (profile); results in `benchmarks/results/` |
+| `packages/doc-sync/test/harness.ts` | In-memory network; controlled delivery defines who saw what and when |
+| `packages/doc-sync/test/scenarios.test.ts` | S1–S9, disconnection, late participants, and paragraph types |
+| `packages/doc-sync/test/features.test.ts` | Formatting, lists, undo behavior, GC, and server atomicity |
+| `packages/doc-sync/test/tables.test.ts` | Tables, virtual blocks, dividers, images, schema validation, alternate schema injection, and schema-free server |
+| `packages/doc-sync/test/edit.test.ts` | Editing API: path round trips, schema-based editor operation batches, column folding, links, receive-side events, and selections |
+| `packages/doc-sync/src/pm/*` | ProseMirror: schema generation, model ↔ document, path ↔ position, Step ↔ model operations (binding) |
+| `apps/demo/ui/pm.html`, `pm-app.ts` | Demo editor × ProseMirror demo (`/pm`) |
+| `packages/doc-sync/test/pm.test.ts`, `packages/doc-sync/test/pm-fuzz.ts` | ProseMirror tests: same-position Enter, Enter intent, column folding, undo, formatting, links, and random traces |
+| `packages/doc-sync/test/fuzz-core.ts`, `packages/doc-sync/test/fuzz.test.ts` | Random concurrent editing in the body, cells, and containers; table, row, column, image, and divider insertion/deletion; disconnection, partial delivery, and arbitrary GC |
 
-## 시험 결과
+## Test results
 
-- 2026-10-23 구조 변경의 문단 재계산 개선(측정 기준 `10dfd86`, 측정 당시 미커밋): 구조 변경의 영향 줄만 갱신하고 같은 문단 모델을 재사용한다. 새 회귀 13개와 확장 코어 246 + 데모 10, compat 31, Stage0 Ours·Yjs 6개와 타입 검사를 통과했다. 10만 자 구조 6사례의 수신 p95는 160.939~292.377→46.512~115.216ms다. Chrome 구조 입력의 중앙값은 줄었지만 첫 수정본의 한 방향 p95 악화도 남아 있다. 전체 화면 지연 해소나 SLO 통과를 뜻하지 않는다. [전후 측정·한계](benchmarks/results/structural-cache-2026-10-23/report.md), [HANDOFF §5.16](HANDOFF.md#516-구조-변경-뒤-문단-재계산-개선-2026-10-23)을 본다.
+- 2026-10-23 structural paragraph recalculation improvement (measurement baseline `10dfd86`; uncommitted at measurement time): Update only affected sequences after structural changes and reuse unchanged paragraph models. Passed 13 new regressions, expanded core 246 + demo 10, compat 31, Stage0 Ours/Yjs 6, and type checks. At 100,000 characters, receive p95 for six structural cases changed from 160.939–292.377 to 46.512–115.216ms. Chrome structural input medians fell, but the first modified run had a p95 regression in one direction. This does not establish complete screen-latency resolution or an SLO pass. See [before/after measurements and limits](benchmarks/results/structural-cache-2026-10-23/report.md) and [HANDOFF §5.16](HANDOFF.md#516-improving-paragraph-recalculation-after-structural-changes-2026-10-23).
 
-- 2026-10-23 로드맵 후속 통합(변경 전 `6f15291`): 안전한 최대 8개 글 블록의 원격 비교를 좁혔다. 확장 시험은 코어 233 + 데모 10, compat 31, 타입 검사 통과다. Chrome 기본 30 + 새 10단계와 compat 회귀 104개도 확인했다. 10만 자 2블록 수신 p95는 31.330~46.928→1.653~1.739ms, 8블록은 36.132~44.818→3.917~6.410ms다. 화면 지연 수치와 다르며 9개 이상·구조·undo/redo는 기존 경로다. [측정 보고서](benchmarks/results/remote-multiblock-2026-10-23/report.md), [HANDOFF §5.14](HANDOFF.md#514-로드맵-우선-작업-여러-글-블록의-원격-비교-2026-10-23)에 있다. 최종 재시험과 main 통합은 [§5.15](HANDOFF.md#515-여러-글-블록-원격-비교-최종-확인과-main-통합-2026-10-23)를 따른다.
+- 2026-10-23 roadmap follow-up integration (previous baseline `6f15291`): Narrowed remote comparison for up to 8 safe text blocks. Expanded tests passed: core 233 + demo 10, compat 31, and type checks. Chrome basic 30 + new 10 steps and 104 compat regressions were checked. At 100,000 characters, 2-block receive p95 changed from 31.330–46.928 to 1.653–1.739ms; 8-block p95 changed from 36.132–44.818 to 3.917–6.410ms. These are not screen-latency figures. Nine or more blocks, structure, and undo/redo retain the full path. See the [measurement report](benchmarks/results/remote-multiblock-2026-10-23/report.md) and [HANDOFF §5.14](HANDOFF.md#514-roadmap-priority-remote-comparison-of-multiple-text-blocks-2026-10-23). Final retests and main integration follow [§5.15](HANDOFF.md#515-final-checks-and-main-integration-of-multi-text-block-remote-comparison-2026-10-23).
 
-- 2026-10-23 최종 통합(`6f15291`): 문단 모델 재사용, 데모 Paint 개선, 의도 보존 명세·41개 회귀, 연속 서식 undo·redo 수정과 19개 회귀를 포함한다. 확장 시험은 코어 204 + 데모 10, compat 31, 타입 검사 통과다. 당시 소스와 같은 해시의 Chrome 기본 30개·집중 26단계·compat 104개 회귀 및 연산 기록 30개도 확인했다. 최종 확인과 검증 범위는 [HANDOFF §5.13](HANDOFF.md#513-전체-변경-최종-확인과-main-통합-2026-10-23)에 있다. 아래 성능 수치는 각 보고서의 당시 소스에서 측정한 값이다.
+- 2026-10-23 final integration (`6f15291`): Includes paragraph model reuse, demo Paint improvements, intent specifications and 41 regressions, consecutive formatting undo/redo fixes and 19 regressions. Expanded tests passed: core 204 + demo 10, compat 31, and type checks. Source-hash-matched evidence also confirmed Chrome basic 30, focused 26 steps, compat 104 regressions, and 30 operation traces. See [HANDOFF §5.13](HANDOFF.md#513-final-checks-and-main-integration-of-all-changes-2026-10-23) for final checks and evidence limits. Performance figures below were measured from each report's source at that time.
 
-- 2026-10-23 화면 Paint 개선: 최상위 일반 문단의 격리 범위를 좁혔다. 조합 중 문단과 제목·목록·인용·중첩 구조는 기존 표시 방식을 유지한다. 최종 10만 자 Chrome p95는 111.7/120.4→69.5/68.5ms, 변경 전 소스 재실행은 108.1/121.9ms다. 외부 부하와 측정 범위는 [보고서](benchmarks/results/screen-paint-2026-10-23/report.md), 인수인계는 [HANDOFF §5.10](HANDOFF.md#510-화면-paintprepaint-비용-개선-2026-10-23)에 있다. 측정 당시 미커밋 소스이며, 최종 통합은 §5.13을 따른다.
+- 2026-10-23 screen Paint improvement: Narrowed isolation to top-level ordinary paragraphs. Composing paragraphs, headings, lists, quotes, and nested structures retain their previous display behavior. Final 100,000-character Chrome p95 changed from 111.7/120.4 to 69.5/68.5ms; a baseline source rerun gave 108.1/121.9ms. External load and measurement scope are in the [report](benchmarks/results/screen-paint-2026-10-23/report.md); handoff is in [HANDOFF §5.10](HANDOFF.md#510-improving-screen-paintprepaint-cost-2026-10-23). Source was uncommitted during measurement. Final integration follows §5.13.
 
-- 2026-10-23 화면 지연 개선(측정 당시 기준 `f9370df` 위 소스): 바뀌지 않은 문단 모델을 재사용한다. 10만 자 Chrome 대본에서 화면 지연 p95는 데모→PM 246.5→124.1ms, PM→데모 260.4→120.2ms였다. 당시 확장 시험은 코어 144 + 데모 10, 실패 0이었다. [측정 조건·범위](benchmarks/results/screen-latency-2026-10-23/report.md), [HANDOFF §5.9](HANDOFF.md#59-화면-지연의-문단-모델-재계산-개선-2026-10-23)를 본다.
+- 2026-10-23 screen latency improvement (source above baseline `f9370df` at measurement time): Reuses unchanged paragraph models. In a 100,000-character Chrome trace, screen p95 changed from 246.5 to 124.1ms for demo→PM and from 260.4 to 120.2ms for PM→demo. Expanded tests at that point passed core 144 + demo 10, with 0 failures. See [measurement conditions and scope](benchmarks/results/screen-latency-2026-10-23/report.md) and [HANDOFF §5.9](HANDOFF.md#59-improving-paragraph-model-recalculation-in-screen-latency-2026-10-23).
 
-- 2026-10-23 main 통합 변경: 단일 블록 수신 비교, 큰 붙여넣기 캐시 처리, Unicode undo, PM 내부 변환 재사용, 명세·성질 시험·장기 CI 기반을 추가했다. 통합 전 확장 시험(`FUZZ_SEEDS=3000 PM_SEEDS=300`)은 코어 138개 + 데모 10개 통과다. 로컬 8 shard·각 8복제본에서 총 1,000,021 wire Op를 검증했다. bounded 문서 묶음 시험이며 실제 CI 2주 관측과 다르다. [실행 현황](docs/roadmap-status.md), [HANDOFF §5.8](HANDOFF.md#58-main-통합-전-최종-확인-2026-10-23), [새 기준 측정](benchmarks/results/roadmap-2026-10-23/report.md)을 본다. 실제 화면 성능과 G0/G1은 별도 판정이다.
+- 2026-10-23 main integration: Added single-block receive comparison, large-paste cache handling, Unicode undo, internal PM conversion reuse, specifications, property tests, and a long-run CI foundation. Expanded pre-integration tests (`FUZZ_SEEDS=3000 PM_SEEDS=300`) passed core 138 + demo 10. Eight local shards with 8 replicas each verified 1,000,021 wire Ops in total. This is a bounded document-batch test, separate from two weeks of actual CI observation. See [execution status](docs/roadmap-status.md), [HANDOFF §5.8](HANDOFF.md#58-final-checks-before-main-integration-2026-10-23), and [new baseline measurements](benchmarks/results/roadmap-2026-10-23/report.md). Actual screen performance and G0/G1 require separate decisions.
 
-- 입력 수정 통합 검증(2026-10-22): `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test` **113/113**, `npm test --prefix apps/demo/compat` **31/31**, 타입 검사·빌드 통과. Chrome 입력 84개 항목과 일반 회귀 20개, 연산 기록 30개를 확인했다. 실행 방법·지원 범위는 [`HANDOFF.md`](HANDOFF.md) §5.6, 최종 기록은 로컬 `output/validation/ime-cursor-fix-20261022/validation.json`에 있다. 이전 모노레포·Presence 검증 기록은 §5.4~5.5에 보존했다.
-- 시나리오 14개: 같은 자리 동시 Enter, 그 뒤 글자, 혼자 끝에서 두 번, 끝에서 동시, 넷이 동시(동기화 순서 세 가지), Enter 대 뒷부분 입력, 걸친 범위 삭제, Enter 되돌리기 대 남의 글자, 되돌리기 대 동시 삭제, 문단 종류 동시 변경, 끊긴 동안 편집, 늦게 들어온 참여자
-- 기능 15개: 서식 3 · 목록 4 · 되돌리기 3 · GC 4 · 서버 원자성 1
-- 표·스키마 30개: 표 9 · 칸 합치기 6 · 칸 배경색 3 · 빈 자리·구분선 2 · 이미지 3 · 캡션 3 · 스키마 검사 1 · 다른 스키마(할 일 목록) 주입 1 · 스키마 없는 서버 1 · 표 GC 1
-- ProseMirror 7개: 같은 자리 동시 Enter, Enter 의도 보존, addColumnAfter → 열 하나, 되돌리기, 서식·링크, 무작위 100 대본 × 참여자 2·3 (`PM_SEEDS` 로 바꿀 수 있다)
-- 편집 API 13개: 경로 왕복, 스키마 기반 문서 에디터의 문서 내용 통째로 바꾸기·표 넣기 꼴, 열 접기(모든 행·한 행만), 열 지우기, update·merge, 링크 2, 받는 쪽 이벤트, 선택
-- 무작위 3000 대본 × 참여자 2·4 × GC 끄고·켜고: 모든 참여자와 서버가 같은 문서 (갈림·오류 0). **거울 검사** — 참여자마다 편집 연산과 받는 쪽 이벤트로만 바뀌는 "편집기 쪽 모델"을 두고 매번 비교: 받는 쪽 이벤트 판마다 8만~21만 개, 어긋남 0, 검산 실패 0, normalize 가 붙은 내 편집 판마다 8~9번. 대본의 반은 표가 있는 문서에서 시작하고, 편집은 칸·상자 안에서도 한다 (300 대본 중 128 은 끝까지 표가 남는다). 칸 합치기·나누기도 섞는다 (600 대본 중 33 은 끝까지 합친 칸이 남는다)
-  - 클라이언트가 만든 연산을 서버 검사가 거절한 일도 0 — 거절되면 하네스에서 오류로 잡힌다
-  - GC 를 켠 대본에서 실제로 압축이 일어난다: 참여자 2 — GC 1500번·글자 5899자리, 참여자 4 — 1091번·4027자리
-- 대조군 (시험이 고장을 잡는지, 스키마 이전 판에서 잼):
+- Input fix integration validation (2026-10-22): `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test` **113/113**; `npm test --prefix apps/demo/compat` **31/31**; type checks and build passed. Checked 84 Chrome input cases, 20 general regressions, and 30 operation traces. See [`HANDOFF.md`](HANDOFF.md) §5.6 for execution and supported scope. The final record is local `output/validation/ime-cursor-fix-20261022/validation.json`. Earlier monorepo and Presence records remain in §5.4–5.5.
+- 14 scenarios: concurrent Enter at one position, subsequent text, two sequential Enter presses at the end, concurrent Enter at the end, four-way concurrency (three delivery orders), Enter versus trailing input, cross-boundary deletion, Enter undo versus remote text, undo versus concurrent deletion, concurrent paragraph type changes, offline edits, and late participants.
+- 15 feature tests: formatting 3 · lists 4 · undo 3 · GC 4 · server atomicity 1.
+- 30 table/schema tests: tables 9 · cell merging 6 · cell background color 3 · virtual blocks/dividers 2 · images 3 · captions 3 · schema validation 1 · alternate schema (task list) injection 1 · schema-free server 1 · table GC 1.
+- 7 ProseMirror tests: same-position concurrent Enter, Enter intent preservation, addColumnAfter → one column, undo, formatting/links, and 100 random traces × 2 and 3 participants (set through `PM_SEEDS`).
+- 13 editing API tests: path round trips, schema-based editor whole-document replacement/table insertion forms, column folding (all rows/one row), column deletion, update/merge, links 2, receive-side events, and selection.
+- 3000 random traces × 2 and 4 participants × GC off/on: all participants and the server matched (0 divergence/errors). **Mirror check**: Each participant has an editor-side model changed only by edit operations and receive-side events. Every step compares it. Each run had 80,000–210,000 receive-side events, 0 mismatches, 0 verification failures, and 8–9 local edits with normalize. Half the traces start with a table. Edits also occur in cells and containers (128 of 300 traces retain a table to the end). Traces include cell merge/split (33 of 600 retain merged cells to the end).
+  - Server rejection of client-generated operations: 0. The harness treats rejection as an error.
+  - GC-enabled traces perform real compaction: 2 participants — 1500 GC runs, 5899 character positions; 4 participants — 1091 runs, 4027 positions.
+- Negative controls (whether tests detect faults; measured before schema support):
 
-  | 일부러 망가뜨린 것 | 갈린 대본 (1000 중, 참여자 2 / 4) |
+  | Deliberate fault | Divergent traces (of 1000; 2 / 4 participants) |
   |---|---|
-  | RGA 규칙 | 300 중 175 |
-  | GC 기준점에서 되돌리기 핀 빼기 | 28 / 41 |
-  | GC 기준점에서 받은 곳(ack) 빼기 | 124 / 165 |
+  | RGA rule | 175 of 300 |
+  | Remove undo pins from the GC watermark | 28 / 41 |
+  | Remove received acks from the GC watermark | 124 / 165 |
 
-- 브라우저 (세 참여자, 실제 SSE): 시나리오 넷, 직접 입력, 끊고 잇기, 한글 입력, 서버 재시작 뒤 복구, 굵게와 물려받기, 리스트 들여쓰기·내어쓰기, 단어 단위 되돌리기·다시하기, GC 시나리오(토큰 12 → 7, `▒×6`)
-- 브라우저 (스키마 판): 표 시나리오 둘 — 행·열 동시 추가 뒤 교차 칸에 쓰기(3×3), 열 지우기 대 칸 입력 뒤 되돌리기('!!' 와 함께 복원). 칸 합치기(→·↓ 로 2×2, 세 참여자 모두 rowSpan·colSpan 2), 칸 배경색, 이미지 넣기(커서가 캡션으로 가고, 빈 캡션엔 안내 글), 캡션 쓰기, 글 안 그림, 번호 목록 + 수준. 세 참여자 모두 같은 문서
+- Browser (three participants, real SSE): four scenarios, direct input, disconnection/reconnection, Korean input, recovery after server restart, bold and inheritance, list indent/outdent, word-level undo/redo, and GC (12 → 7 tokens, `▒×6`).
+- Browser (schema version): two table scenarios — concurrent row/column insertion followed by input at the intersection (3×3), and column deletion versus cell input followed by undo (restored with '!!'). Cell merging (→ and ↓ to 2×2; rowSpan and colSpan 2 on all three participants), cell background color, image insertion (caret moves to caption, placeholder in empty caption), caption input, inline images, and numbered lists with levels. All three participants matched.
 
-## 아직 없는 것
+## Missing features
 
-| 없는 것 | 왜 / 어떻게 |
+| Missing feature | Reason / approach |
 |---|---|
-| 행·열 속성 | 행 높이·열 너비는 행·열 노드의 속성으로 얹으면 된다 (아직 안 함) |
-| 합칠 때 글 모으기 | 지금은 가려진 칸의 글을 숨기기만 한다. 왼쪽 위 칸으로 모으려면 글을 복사해야 하는데, 그 사이 남이 그 칸에 친 글이 갈린다 |
-| "하나만, 꼭 있는" 자식 | image 하나·caption 하나를 스키마로 적지 못한다 (`min`·`max`). 지금은 편집 함수가 지킨다 — image 에서 Enter 를 막고, 캡션이 그림에 합쳐지지 않게 한다. 손으로 만든 연산이면 두 번째 image 나 캡션 없는 그림이 생길 수 있다 |
-| 검사의 정밀도 | 검사는 줄 단위다 — "이 줄의 어느 text 종류든 받으면 통과". 그래서 캡션이 있는 이미지 그릇 줄은 글자를 받고, image 블록에 글자를 넣는 손으로 만든 연산을 서버가 거르지 못한다 (편집 함수는 막는다). 블록 단위로 거르려면 "그 토큰이 어느 블록 안인가"가 복제본마다 같아야 하는데, 그건 지금 상태라 갈린다 (§10) |
-| 스키마 기반 문서 에디터 연결 | 지금은 데모 편집기. 모델 출력이 그 에디터의 문서 JSON 꼴이니, 에디터의 모델 연산 ↔ 이 연산 변환기를 붙이면 된다 |
-| 인증·권한·여러 서버 | 데모 수준. 문서 단위로 한 서버에 붙이는 라우팅이면 수평 확장이 된다 |
-| 성능 | 자리 색인·블록 캐시와 SyncClient 로컬 검산 비용을 줄였다. 원격 모델 비교와 PM 전체 변환 비용은 남아 있다. 수정 전후 원자료와 모노레포 비교는 `HANDOFF.md` §5.1~5.4에 있다 |
-| 오래 끊긴 참여자 | lease(2분)가 지나면 기준점에서 빠진다. 그 뒤 돌아와 끊긴 동안의 되돌리기로 이미 압축된 묘비를 살리려 하면 갈릴 수 있다. 그런 참여자에게 스냅숏부터 다시 받게 하는 처리가 아직 없다 |
-| 링크·글자 색 같은 값 서식 | 지금 서식은 켜기/끄기뿐. 같은 글자별 LWW 로 값 서식도 얹을 수 있다 |
+| Row and column attributes | Add row height and column width as row/column node attributes; not implemented yet. |
+| Collect text when merging cells | Covered-cell text is currently hidden. Collecting it in the top-left cell requires copying. Concurrent input into those cells can then diverge. |
+| Exactly one required child | The schema cannot express exactly one image and one caption (`min`/`max`). Editing functions enforce this by blocking Enter in image and preventing caption-to-image merges. Hand-built operations can create a second image or an image without a caption. |
+| Validation precision | Validation is per sequence: acceptance by any text type in the sequence is enough. An image container with a caption accepts text, so the server cannot reject a hand-built operation that inserts text into an image block. Editing functions prevent it. Block-level checks need stable block membership across replicas, but membership is current state and can differ (§10). |
+| Schema-based document editor binding | The current editor is a demo. Model output already matches that editor's document JSON form. Add a converter between its model operations and these operations. |
+| Authentication, authorization, multiple servers | Demo-level implementation. Per-document server routing can support horizontal scaling. |
+| Performance | Position indexes, block caches, and SyncClient local verification costs were reduced. Remote model comparison and full PM conversion costs remain. Before/after raw data and monorepo comparisons are in `HANDOFF.md` §5.1–5.4. |
+| Long-disconnected participants | After the 2-minute lease, participants leave the watermark calculation. If they reconnect and undo an offline edit that needs an already compacted tombstone, divergence is possible. No forced snapshot recovery exists yet. |
+| Value formatting such as links and text color | Formatting is currently on/off only. The same per-character LWW mechanism can support values. |

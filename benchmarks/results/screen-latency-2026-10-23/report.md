@@ -1,70 +1,70 @@
-# 화면 지연 개선 — 2026-10-23
+# Screen latency improvement — 2026-10-23
 
-같은 10만 자 대본의 Chrome 화면 지연 p95는 데모→PM에서 **246.5 → 124.1ms**, PM→데모에서 **260.4 → 120.2ms**로 줄었다. 관측 감소율은 각각 49.7%, 53.8%다. 제품 성능 목표 통과나 모든 편집 경로의 개선을 뜻하지 않는다.
+Chrome screen-latency p95 for the same 100,000-character script decreased **246.5 → 124.1ms** for demo→PM and **260.4 → 120.2ms** for PM→demo. Observed decreases were 49.7% and 53.8%. This does not establish product performance targets or improvements across all editing paths.
 
-## 원인과 변경
+## Cause and change
 
-변경 전 기준은 `f9370df85d93a69902254bbba5d6c90f95dc4559`다. 기존 캐시는 같은 Doc version의 재읽기를 줄였지만, 글자 하나만 바뀌어도 다음 `toJSON()`에서 모든 문단의 글자·서식과 run을 다시 계산했다. 데모 상태 표시와 PM 문서 확인이 각각 이 비용을 냈다.
+The baseline was `f9370df85d93a69902254bbba5d6c90f95dc4559`. Existing caching reduced repeated reads at the same Doc version. But even a one-character change made the next `toJSON()` recompute characters, formatting, and runs for every paragraph. Demo status and PM document checks each incurred this cost.
 
-`doc.ts`는 TextBlock 객체별 raw 모델을, `model.ts`의 내부 경로는 raw 모델별 정규화한 글 모델을 WeakMap으로 재사용한다. 글자 삽입·삭제로 Block이 교체되면 그 문단을 새로 읽는다. 같은 Block 객체의 글자 서식은 실제 LWW 쓰기가 성공할 때 캐시를 비운다. 구조 변경·되살리기·GC는 전체 캐시를 비운다. 목록 묶음과 표·흐름의 정규화는 매번 수행한다.
+`doc.ts` reuses raw models by TextBlock object. The internal path in `model.ts` reuses normalized text models by raw model through WeakMap. Replacing a Block after insertion/deletion rereads that paragraph. A successful LWW character-format write on the same Block clears its cache. Structure changes, revival, and GC clear the full cache. List grouping and table/flow normalization still run each time.
 
-공개 `canonical()`은 캐시를 사용하지 않는다. `toJSON()`은 기존처럼 모델 컨테이너를 복사해서 반환한다. 소비자가 반환 모델을 수정할 수 있는 계약을 유지했다. RGA·같은 자리 동시 Enter·참여자별 undo·wire·GC 정책과 공개 export는 바꾸지 않았다. 화면의 글자 수, 문단 수, polling, 상태 표시와 편집기 기능도 줄이지 않았다.
+Public `canonical()` does not use the cache. `toJSON()` still returns copied model containers, preserving the contract that consumers can modify returned models. RGA, same-position concurrent Enter, per-actor undo, wire, GC policy, and public exports were unchanged. Screen characters, paragraphs, polling, status, and editor features were retained.
 
-새 회귀 시험에서, 삽입 후 모델을 읽을 때의 글자·서식 조회는 변경 전 **100,001회**, 변경 후 **161회**다. 같은 시험은 기준 소스에서 1개 실패/5개 통과, 개선 소스에서 6개 통과다. 초기 시험의 계수에 명령 자체의 서식 조회 1회가 섞여 있어, 최종 시험은 삽입 후 카운터를 초기화한다. 비교에는 `model-before-final.log`와 `model-after-focused-final.log`의 최종 기록을 쓴다.
+In the new regression test, character/format lookups while reading after insertion changed from **100,001** to **161**. The same tests gave 1 failure/5 passes on baseline and 6 passes on improved source. Initial counts included 1 format lookup by the command itself, so the final test resets the counter after insertion. Comparison uses final records `model-before-final.log` and `model-after-focused-final.log`.
 
-## Chrome 전후 측정
+## Chrome before/after measurement
 
-초기 100,000자·625문단·문단당 160자다. 같은 첫 문단 offset 50에서 같은 ASCII 키를 입력했다. 각 실행·방향마다 준비 5회와 본 측정 30회다. 세 실행을 **변경 전 → 개선 → 변경 전 사본 재실행** 순서로 수행했다. 각 실행은 새 임시 데이터 폴더와 별도 Chrome 세션을 사용했다.
+The initial document had 100,000 characters, 625 paragraphs, and 160 characters per paragraph. The same ASCII keys were inserted at offset 50 in the first paragraph. Each run/direction had 5 warmups and 30 measured inputs. Three runs followed **before → improvement → frozen baseline repeat**. Each used a new temporary data folder and separate Chrome session.
 
-시작은 trusted 키 이벤트의 생성 시각이다. 종료는 상대 DOM의 예상 문자열을 확인한 뒤 두 번째 requestAnimationFrame 콜백이다. 물리 화면 표시 시각과 다르다. 실제 로컬 HTTP POST·SSE와 JSONL 저장을 사용했다. 두 편집기는 같은 렌더러 스레드를 공유했다. Chrome 156.0.8078.47, Node 22.19.0, headed 모드, 1440×1000, DPR 1 조건이다.
+Timing started at trusted key-event creation and ended at the second requestAnimationFrame callback after expected remote DOM confirmation. This differs from physical display timing. Real local HTTP POST/SSE and JSONL persistence were used. Both editors shared one renderer thread. Conditions: Chrome 156.0.8078.47, Node 22.19.0, headed, 1440×1000, DPR 1.
 
-| 방향 | 소스 | p50 ms | p95 ms | 최대 ms |
+| Direction | Source | p50 ms | p95 ms | Maximum ms |
 |---|---|---:|---:|---:|
-| 데모→PM | 변경 전 | 216.7 | 246.5 | 251.2 |
-| 데모→PM | 개선 | 88.9 | 124.1 | 157.5 |
-| 데모→PM | 변경 전 재실행 | 216.2 | 248.9 | 269.1 |
-| PM→데모 | 변경 전 | 226.9 | 260.4 | 276.0 |
-| PM→데모 | 개선 | 96.7 | 120.2 | 123.9 |
-| PM→데모 | 변경 전 재실행 | 219.1 | 276.5 | 301.8 |
+| Demo→PM | Before | 216.7 | 246.5 | 251.2 |
+| Demo→PM | Improvement | 88.9 | 124.1 | 157.5 |
+| Demo→PM | Baseline repeat | 216.2 | 248.9 | 269.1 |
+| PM→demo | Before | 226.9 | 260.4 | 276.0 |
+| PM→demo | Improvement | 96.7 | 120.2 | 123.9 |
+| PM→demo | Baseline repeat | 219.1 | 276.5 | 301.8 |
 
-상대 DOM 확인까지만 본 p95는 데모→PM에서 226.4 → 100.1ms, PM→데모에서 195.2 → 64.6ms다. 프레임 종료 수치와 합치거나 직접 같은 지표로 표시하지 않는다.
+p95 to remote DOM confirmation alone changed 226.4 → 100.1ms for demo→PM and 195.2 → 64.6ms for PM→demo. Do not combine those endpoints with frame timings or present them as the same metric.
 
-세 실행의 준비 포함 **210개 입력**에서 예상 문자열을 확인했다. 각 실행의 최종 두 클라이언트·서버 모델이 같고, pending과 fallback은 모두 0이었다. 원자료의 전후 소스 해시 차이는 `doc.ts`, `model.ts` 두 파일이다. 변경 전 재실행은 최초 기준과 같은 소스다.
+All **210 inputs**, including warmups across three runs, displayed expected strings. Final models for both clients and the server matched in every run. Pending and fallback were 0. Before/after source hashes differed only for `doc.ts` and `model.ts`. Baseline repeat used the same source as the first baseline.
 
-## 계산 비용
+## Computation costs
 
-한 입력의 관찰 구간에서 메서드 포함 시간을 합한 뒤 구한 중앙값이다. 포함 관계가 있으므로 행을 더하지 않는다. 단위는 ms다.
+These are medians after summing inclusive method time within each input observation window, in ms. Methods contain other measured methods; do not add rows.
 
-| 방향 | 메서드 | 변경 전 | 개선 |
+| Direction | Method | Before | Improvement |
 |---|---|---:|---:|
-| 데모→PM | Doc.toJSON | 118.45 | 0.85 |
-| 데모→PM | PmBinding.pull | 68.00 | 5.50 |
-| 데모→PM | Editor.render | 5.75 | 6.05 |
-| PM→데모 | Doc.toJSON | 119.55 | 0.90 |
-| PM→데모 | PmBinding.reconcile | 64.15 | 0.60 |
-| PM→데모 | Editor.render | 6.35 | 6.10 |
+| Demo→PM | Doc.toJSON | 118.45 | 0.85 |
+| Demo→PM | PmBinding.pull | 68.00 | 5.50 |
+| Demo→PM | Editor.render | 5.75 | 6.05 |
+| PM→demo | Doc.toJSON | 119.55 | 0.90 |
+| PM→demo | PmBinding.reconcile | 64.15 | 0.60 |
+| PM→demo | Editor.render | 6.35 | 6.10 |
 
-문단 모델 계산이 줄어든 반면 데모 DOM 처리 자체는 비슷하다. 개선 소스의 입력 처리 시작→상대 이벤트 수신 중앙값은 62.0/26.55ms, 상대 DOM 확인은 68.5/38.95ms였다. 요청 대기, 브라우저 작업과 프레임 대기가 섞인 구간이다. 네트워크 전송만의 시간이나 Paint만의 비용으로 해석하지 않는다.
+Paragraph model computation decreased while demo DOM processing stayed similar. In improved source, input-processing-start→remote-event-receipt median was 62.0/26.55ms, and remote DOM confirmation was 68.5/38.95ms. These spans mix request waits, browser work, and frame waits. They are not pure network time or Paint cost.
 
-측정 중 자체 회귀 시험·다른 벤치마크를 실행하지 않았다. 외부 앱은 종료하지 않았다. 1분 load average의 시작→종료 값은 변경 전 18.23→26.35, 개선 33.92→30.75, 기준 재실행 22.61→23.10이었다. 정확한 시작·종료 값과 배치별 부하는 `run.json`과 `measurement.log`에 있다. 재실행과 토큰 조회 수가 개선 근거를 보강하지만, 외부 부하를 통제한 통계적 실험은 아니다.
+No own regressions or other benchmarks ran during timing. External apps kept running. Starting→ending 1-minute load averages were before 18.23→26.35, improvement 33.92→30.75, and baseline repeat 22.61→23.10. Exact conditions and batch loads are in `run.json` and `measurement.log`. The repeat and token lookup counts support the improvement, but this was not a statistical experiment with controlled external load.
 
-## 시험
+## Tests
 
-- 현재 소스 `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test`: 코어 144 + 데모 10 통과, 실패 0.
-- 집중 회귀 24개, compat 단위 31개, 타입 검사 통과.
-- 8복제본 추가 하네스: 10,007 wire Op 통과. bounded 문서 묶음이며 단일 장기 문서나 디스크 장애 복구 시험이 아니다.
-- Chrome 데모 DOM·표·상자·서식·undo/redo·Presence 회귀 30개 통과.
-- 비교 데모 Chrome CDP 입력 84개와 일반 회귀 20개 통과, 연산 기록 30개 확인. 최종 `validation.json`에 집계했다.
+- Current-source `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test`: core 144 + demo 10 passed, failures 0.
+- Focused regressions 24, compatibility unit tests 31, and type checks passed.
+- Additional 8-replica harness: 10,007 wire Ops passed. These were bounded document batches, not one long-lived document or disk-failure recovery tests.
+- Chrome demo DOM, table, box, formatting, undo/redo, and Presence regressions: 30 passed.
+- Comparison demo Chrome CDP: 84 inputs and 20 general regressions passed; 30 operation records checked. Final totals are in `validation.json`.
 
-## 범위와 남은 비용
+## Scope and remaining costs
 
-초기 모델 생성, 구조 변경, 되살리기와 GC 뒤에는 전체 계산이 남는다. 반환 모델 복사, 목록·표 정규화, 편집기 변환·DOM 처리도 남는다. WeakMap으로 문단 계산값을 추가 보관하지만, 메모리 목표를 새로 검증한 작업은 아니다. ASCII 순차 삽입의 지연 결과를 큰 표·IME·여러 사용자 경합·연속 타이핑 처리량으로 확대하지 않는다. Chrome CDP 조합 회귀는 OS 한글 입력기 검증과 다르다.
+Full computation remains for initial model creation and after structure changes, revival, and GC. Returned-model copying, list/table normalization, editor conversion, and DOM processing remain. WeakMap retains additional paragraph results, but this work did not revalidate memory targets. Sequential ASCII insertion latency does not establish large-table, IME, multi-user contention, or continuous typing throughput. Chrome CDP composition regressions differ from OS Korean IME validation.
 
-G0/G1, 30분 1800 round·1Hz 대본, lease 만료 복구와 실제 CI 2주 관측은 이 작업으로 완료되지 않는다. 기존 100만 연산 결과는 이전 소스의 기록이며 이번 결과로 재사용하지 않는다. 이번 변경은 `f9370df` 위의 미커밋 상태다.
+This work does not complete G0/G1, the 30-minute/1800-round/1Hz script, lease-expiry recovery, or two weeks of actual CI. The earlier one-million-operation result belongs to previous source and is not reused as this result. These changes were uncommitted on `f9370df`.
 
-## 자료와 재현
+## Artifacts and reproduction
 
-- [수치와 메서드 분석](comparison.json), [최종 검증 집계](validation.json), [소스 diff](after-source.diff).
-- `before/`, `after/`, `before-repeat/`에 원자료·소스 해시·실행 조건·서버 처리 기록과 실행한 JS/Python 하네스를 보존했다. 하네스의 절대 경로는 이 컴퓨터의 실행 기록이다. 다른 경로에서는 source root, output과 server import 경로를 새 위치로 맞춘다.
-- 같은 컴퓨터의 실제 실행 폴더는 `output/playwright/screen-latency-20261023/`다. `measure.py`는 `DOCSYNC_SOURCE_ROOT`, `DOCSYNC_MEASURE_OUT`, `DOCSYNC_SESSION`을 읽는다. 새 출력 폴더에 템플릿과 source manifest를 준비하고 실행한다. 기존 결과 폴더는 다시 쓰지 않는다.
-- 제품 회귀의 명령은 `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test`, `npm test --prefix apps/demo/compat`, `npm run typecheck`다. 비교 데모 Chrome 명령은 `apps/demo/compat/README.md`, 메인 데모의 실제 회귀 스크립트와 로그는 `output/playwright/screen-regression-20261023/`에 있다.
+- [Values and method analysis](comparison.json), [final validation totals](validation.json), [source diff](after-source.diff).
+- `before/`, `after/`, and `before-repeat/` preserve raw data, source hashes, conditions, server records, and executed JS/Python harnesses. Harness absolute paths record this computer's runs. Elsewhere, adjust source root, output, and server import paths.
+- Actual local run folder: `output/playwright/screen-latency-20261023/`. `measure.py` reads `DOCSYNC_SOURCE_ROOT`, `DOCSYNC_MEASURE_OUT`, and `DOCSYNC_SESSION`. Prepare templates and a source manifest in a new output folder before execution. Preserve existing result folders.
+- Product regressions: `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test`, `npm test --prefix apps/demo/compat`, `npm run typecheck`. Comparison demo Chrome commands are in `apps/demo/compat/README.md`. Main demo regression scripts and logs are in `output/playwright/screen-regression-20261023/`.

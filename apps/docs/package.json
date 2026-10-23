@@ -1,0 +1,20 @@
+{
+  "name": "@doc-sync/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "prepare:content": "node scripts/prepare-content.mjs",
+    "dev": "npm run prepare:content && vitepress dev --host 127.0.0.1",
+    "build": "npm run prepare:content && vitepress build",
+    "preview": "vite preview --outDir dist --base /doc-sync/ --host 127.0.0.1",
+    "test": "node --test test/*.test.mjs",
+    "check:build": "node scripts/check-build.mjs"
+  },
+  "devDependencies": {
+    "vitepress": "2.0.0-alpha.20"
+  }
+}

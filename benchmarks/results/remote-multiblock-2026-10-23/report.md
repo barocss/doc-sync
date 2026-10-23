@@ -1,22 +1,22 @@
-# 여러 글 블록의 원격 모델 이벤트 비교 — 2026-10-23
+# Remote model-event comparison across multiple text blocks — 2026-10-23
 
-기준은 main `6f15291156bf41521850cfe5b4b4ea2abeec24fa`다. 최종 제품 변경은 `sync/model-events.ts`와 `sync/client.ts`다. 기존 한 TextBlock의 원격 비교를 최대 8개 독립 TextBlock으로 확장했다. 구조 변경과 9개 이상 블록은 기존 전체 경로를 유지한다. CRDT 적용·History·토큰 ID·LWW·같은 자리 Enter·삭제 장부·GC·전송·공개 export는 바꾸지 않았다. 이번 변경은 미커밋 상태다.
+The baseline was main `6f15291156bf41521850cfe5b4b4ea2abeec24fa`. Final product changes were `sync/model-events.ts` and `sync/client.ts`. Remote comparison expanded from one TextBlock to at most 8 independent TextBlocks. Structure changes and 9 or more blocks keep the existing full path. CRDT application, History, token IDs, LWW, same-position Enter, deletion ledger, GC, transport, and public exports were unchanged. These changes were uncommitted.
 
-## 측정 구간과 대본
+## Measurement span and script
 
-Node 22.19.0에서 이벤트를 동기로 수신한 시점부터 모델 이벤트 콜백 종료까지 잰다. 콜백은 이벤트를 저장하는 함수다. PM 변환·실제 거울 적용·네트워크·서버·DOM·물리 화면 표시는 포함하지 않는다. UI 성능이나 제품 G0/G1 판정으로 확대하지 않는다.
+On Node 22.19.0, timing ran from synchronous event receipt to completion of the model-event callback. The callback stored the event. PM conversion, actual mirror application, network, server, DOM, and physical display were excluded. This does not establish UI performance or product G0/G1 status.
 
-문서는 1만/10만 자, 문단당 160자다. 각 Change가 서로 다른 1개·2개·8개 문단을 바꾼다. 전체 문서 크기는 같은 크기 내에서 고정하며 변경 블록 수만 다르다. 삽입은 각 문단의 `50+i` 위치에 ASCII 1자, 삭제는 위치 50의 1자, 서식은 위치 50부터 4자의 Bold 값을 번갈아 바꾼다. 8블록 서식은 총 32개 대상이며 문서 전체 서식과 다르다.
+Documents had 10,000/100,000 characters and 160 characters per paragraph. Each Change affected 1, 2, or 8 distinct paragraphs. Document size stayed fixed within each size group; only changed-block count varied. Insertions added one ASCII character at `50+i` in each paragraph. Deletions removed one character at position 50. Formatting alternated Bold on 4 characters from position 50. Eight-block formatting targeted 32 characters, not the whole document.
 
-각 크기·블록 수·연산 조합은 준비 5회와 본 측정 30회다. **변경 전 → 최종 개선 → 변경 전 사본 재실행** 순서이며 실행당 18개 사례다. 채택한 3실행은 준비 포함 1890개 Change, 본 측정 1620개다. 모든 입력에서 독립 고정 기대 모델, 이벤트를 적용한 거울, 실제 수신 모델과 송신 모델을 측정 밖에서 비교했다. 콜백은 Change당 1회, fallback은 0이었다. 자체 시험과 다른 벤치마크는 타이밍 중 실행하지 않았다. 외부 앱과 기존 사용자 자원은 유지했다.
+Each size/block-count/operation case had 5 warmups and 30 measured samples. Run order was **before → final improvement → frozen baseline repeat**, with 18 cases per run. The 3 accepted runs had 1890 Changes including warmups and 1620 measured Changes. Outside timing, every input compared an independent fixed expected model, event-applied mirror, actual receiving model, and sending model. Each Change had one callback, with fallback 0. No own tests or other benchmarks ran during timing. External apps and existing user resources were retained.
 
-기준 source archive를 만들고 baseline의 bare 패키지 import를 사본의 상대 경로로 바꿨다. 하네스 본문과 기대값 계산은 같다. import 경로 기록도 같은 치환을 적용했다. 각 결과의 `productImports`는 실제 해석한 경로다. 기준·재실행은 frozen 사본, 개선은 현재 저장소를 가리킨다. `sourceHashes`와 `baseline-manifest.json`이 소스를 묶는다. 기준 사본을 실행하면서 현재 workspace 패키지를 참조하지 않았다.
+A baseline source archive was made. Bare package imports in the baseline harness were replaced with relative paths into the copy. Harness body and expected-value computation stayed the same. Import-path records used the same replacement. Each result's `productImports` records actual resolved paths. Baseline and repeat used frozen copies; the improvement used the current repository. `sourceHashes` and `baseline-manifest.json` bind the source. The baseline copy did not import current workspace packages.
 
-## p95 결과
+## p95 results
 
-단위는 ms다. p50·최댓값·각 표본·전체 모델 읽기 수는 원자료와 `comparison.json`에 있다. p95는 정렬한 30개 표본의 `floor(0.95 * 30)` 위치다.
+Units are ms. Raw data and `comparison.json` contain p50, maximums, every sample, and full-model read counts. p95 is position `floor(0.95 * 30)` in 30 sorted samples.
 
-| 글자 수 | 변경 블록 | 연산 | 변경 전 | 최종 개선 | 기준 재실행 |
+| Characters | Changed blocks | Operation | Before | Final improvement | Baseline repeat |
 |---:|---:|---|---:|---:|---:|
 | 10,000 | 1 | insert | 0.672 | 0.796 | 0.680 |
 | 10,000 | 1 | delete | 0.287 | 0.514 | 0.787 |
@@ -37,43 +37,43 @@ Node 22.19.0에서 이벤트를 동기로 수신한 시점부터 모델 이벤�
 | 100,000 | 8 | delete | 44.818 | 6.410 | 61.063 |
 | 100,000 | 8 | format | 40.954 | 3.917 | 33.578 |
 
-안전한 2/8블록 Change의 전체 모델 읽기는 표본마다 **2→0**, 한 블록은 **0→0**이다. 10만 자 2블록의 p95는 31.330~46.928→1.653~1.739ms, 8블록은 36.132~44.818→3.917~6.410ms였다. 모든 1블록·1만 자 조합에서 시간이 감소한 것은 아니다. 외부 부하와 짧은 표본의 변동을 원자료에 남겼다. 1분 load average의 시작→종료는 변경 전 19.08→19.68; 개선 15.66→15.48; 기준 재실행 17.51→19.81다. 통제된 통계적 인과 실험이 아니다.
+For safe 2/8-block Changes, full-model reads per sample changed **2→0**; one block stayed **0→0**. At 100,000 characters, 2-block p95 changed 31.330~46.928→1.653~1.739ms, and 8-block p95 changed 36.132~44.818→3.917~6.410ms. Not every one-block or 10,000-character case became faster. Raw data preserves external load and small-sample variation. Starting→ending 1-minute load averages were before 19.08→19.68; improvement 15.66→15.48; baseline repeat 17.51→19.81. This was not a controlled statistical causal experiment.
 
-## 범위를 제한한 이유와 실패 후보
+## Why scope was limited, and rejected candidates
 
-첫 무제한 후보는 각 target에서 블록 prefix를 다시 검색했다. 10만 자·625문단 전체 Bold의 단일 진단은 기준 264.440ms에서 1819.905ms로 나빠졌다. 이 후보는 채택하지 않았다. 블록별 membership 캐시로 반복 탐색을 줄인 다음에도 625개 scope의 before 모델 재생성이 기존 whole 모델 캐시보다 비쌌다. 새 프로세스를 번갈아 실행한 진단에서 기준은 264.440/249.838/251.998ms, 무제한 membership 후보는 324.966/344.256/362.380ms였다. 이 후보도 채택하지 않았다.
+The first unlimited candidate searched the block prefix again for each target. One whole-document Bold diagnostic at 100,000 characters/625 paragraphs regressed from baseline 264.440ms to 1819.905ms. It was rejected. A per-block membership cache reduced repeated searches, but rebuilding before models for 625 scopes still cost more than the existing whole-model cache. Alternating fresh processes gave baseline 264.440/249.838/251.998ms and unlimited membership candidate 324.966/344.256/362.380ms. That candidate was also rejected.
 
-최종 구현은 실측한 1·2·8블록 범위를 채택한다. 9번째 새 블록을 발견하면 그 블록의 선택·membership 등록·경로·before 생성 전에 즉시 기존 전체 경로로 돌아간다. 8은 전역 최적 임계값이나 모든 8블록 이하 문서의 무퇴행 보장이 아니다. 같은 블록의 반복 target은 블록 수를 늘리지 않는다.
+The final implementation uses the measured 1, 2, and 8-block range. At the ninth new block, it immediately returns to the existing full path before selection, membership registration, path resolution, or before-model creation for that block. Eight is not a globally optimal threshold or a guarantee against regressions for every document with at most 8 blocks. Repeated targets in one block do not increase block count.
 
-최종 전체 Bold 진단은 240.945ms, 전체 읽기 2회였다. 10만 자가 하나의 긴 문단인 한 글자 삽입 진단은 기준→개선→기준 재실행 239.811/239.511/236.898ms, 전체 읽기 0회였다. 첫 블록에서는 membership을 채우지 않는다. **이 값들은 각각 단일 표본 진단이며 p95 분포나 SLO 근거가 아니다.** 진단 대본은 수신 함수를 직접 호출하며 네트워크와 서버 검사를 포함하지 않는다.
+The final whole-document Bold diagnostic was 240.945ms with 2 full reads. A one-character insertion diagnostic in one 100,000-character paragraph gave before→improvement→baseline repeat 239.811/239.511/236.898ms, with 0 full reads. Membership is not populated for the first block. **Each value is a single-sample diagnostic, not a p95 distribution or SLO result.** The diagnostic calls the receive function directly and excludes network and server validation.
 
-`after.json`은 무제한 membership 후보 자료다. **최종 자료는 `after-bounded.json`이다.** 후보 코드와 해시, 진단은 `diagnostics/`와 `source-stages.json`에 구분했다. 타입 검사에 제품으로 포함되지 않도록 코드 사본은 `.ts.txt`로 보존했으며 내용 해시는 원래 `.ts`와 같다.
+`after.json` contains the unlimited membership candidate. **Final data is `after-bounded.json`.** `diagnostics/` and `source-stages.json` separate candidate code, hashes, and diagnostics. Code copies use `.ts.txt` to avoid inclusion in product type checking. Their content hashes match the original `.ts` files.
 
-## 동작과 비용
+## Behavior and costs
 
-전 연산의 대상과 경로가 안전해야 좁힌다. 각 scope의 before를 먼저 얻은 뒤 CRDT 적용은 한 번이다. scope별 diff를 적용해 검산하고 원래 말단 경로로 바꿔 콜백을 한 번 호출한다. 전체 no-op은 콜백·통계를 늘리지 않는다. 뒤 scope의 검산이 실패해도 앞 scope의 부분 이벤트를 버리고 전체 교체 fallback 한 번을 낸다.
+Narrowing requires safe targets and paths for all operations. It captures each scope's before model, then applies the CRDT Change once. It applies and validates scope diffs, restores original leaf paths, and calls back once. A full no-op adds no callback or statistics. If a later scope fails validation, earlier partial events are discarded and one full-replacement fallback is emitted.
 
-오래된 삽입, 같은 묶음에서 새 토큰을 참조하는 연산, node·undel·블록 표지/inline 대상 변경, 가상 블록, 숨은 줄, 죽은/없는 대상·origin, 빈 대상과 불명확한 경로의 기존 배제 조건을 유지한다. undo·redo·snapshot·reset도 전체 경로다. membership은 preflight 호출 안의 실제 marker·chars만 담고 aliases는 담지 않는다. 생존·가시성·종류 검사는 캐시 조회 전에 수행한다.
+Existing exclusions remain for old insertions, operations referencing new tokens in the same batch, node/undel/block-marker/inline target changes, virtual blocks, hidden lines, dead or missing targets/origins, empty targets, and ambiguous paths. Undo, redo, snapshot, and reset keep the full path. Membership contains only real markers/chars within preflight, not aliases. Liveness, visibility, and type checks precede cache lookup.
 
-최초 블록 탐색과 `blockPath()`에는 문서 크기 비용이 남는다. 모델 생성·diff·검산 범위만 줄인 것이다. membership의 임시 메모리는 선택 블록의 글자 수에 비례한다. 블록 수 8이 글자 수나 전체 제품 heap의 상한은 아니다. 전체 수신 비용이 문서 크기와 무관해졌다고 주장하지 않는다.
+Initial block search and `blockPath()` still depend on document size. Only model creation, diff, and validation scope was narrowed. Temporary membership memory is proportional to selected-block character counts. Eight blocks does not bound characters or total product heap. Total receive cost is not independent of document size.
 
-## 회귀와 검증 범위
+## Regression and validation scope
 
-- 새 `remote-multiblock.test.ts` 29개 + 기존 원격 9개 = 집중 38개 통과. 고정 모델·전체 diff 적용·이벤트 거울·송수신 Doc·snapshot·콜백·통계를 확인했다.
-- 8/9블록 경계, 교차 IDs, 겹친 범위·다른 키, 목록·상자·표 다른 칸·inline·Unicode, 부분/전체 LWW no-op, 마지막 연산의 배제 조건, 흡수 alias, 실제 서버 수락 AB/BA와 타 사용자 Ticket·undo/redo 보존을 포함한다.
-- 32문단·5120대상 서식은 전체 경로이며, 블록 소속 검색 204회가 상한 10240회 이하임을 확인했다. 시간 assert는 없다. 기준 소스에서는 첫 2블록 삽입 시험이 전체 읽기 actual 2와 기대 0으로 실패했다.
-- `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test`: 코어 233 + 데모 10 통과, 실패·skip·todo 0. compat 31, 타입 검사와 별도 compat 번들 빌드 통과.
-- Stage0 하네스는 현재 Ours/Yjs 구성의 6개 통과다. 이번 실행에 Yorkie는 포함하지 않았다. 과거 3엔진 8개 결과를 새 결과로 표시하지 않는다.
-- 현재 소스의 Chrome 기본 회귀 30개 + 여러 문단 집중 10단계 통과. 실제 HTTP/SSE 원격 삽입·삭제·서식, PM 범위 서식·undo/redo, 관측한 원격 같은 값 쓰기 보존과 no-op 콜백을 확인했다. 기본 데모는 모델 이벤트 구독자가 아니며 PM만 구독한다. 최초 하네스가 둘 다 구독한다고 가정한 오류는 v2에서 바로잡고 별도 결과로 보존했다.
-- compat Chrome 입력·커서 84개, 일반 회귀 20개를 확인하고 연산 기록 30개를 수집했다. CDP 조합 입력이며 실제 OS IME 시험과 다르다.
-- 뒤 scope의 검산 실패를 강제하는 분기는 실행하지 않았다. 부분 결과 폐기의 정적 코드 검토, 정상 fallback 0, 배제 조건의 전체 경로 시험과 구분한다.
+- New `remote-multiblock.test.ts` 29 tests + existing remote 9 = 38 focused passes. Checks covered fixed models, full-diff application, event mirrors, sending/receiving Docs, snapshots, callbacks, and statistics.
+- Coverage included the 8/9-block boundary, cross IDs, overlapping ranges/different keys, lists, boxes, distinct table cells, inline content, Unicode, partial/full LWW no-ops, final-operation exclusions, absorbed aliases, actual server-accepted AB/BA order, and preservation of other-user Tickets and undo/redo.
+- Formatting across 32 paragraphs/5120 targets used the full path. Block membership searches were 204, below the bound 10240. No timing assertion was used. On baseline source, the first two-block insertion test failed with actual 2 full reads against expected 0.
+- `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test`: core 233 + demo 10 passed; failures, skips, and todos 0. Compatibility 31, type checks, and separate compatibility bundle build passed.
+- Stage0 passed 6 tests with the current Ours/Yjs setup. Yorkie was excluded from this run. Historical 3-engine/8-test results are not presented as new results.
+- Current-source Chrome passed 30 default regressions + 10 focused multi-paragraph steps. Checks covered actual HTTP/SSE remote insert/delete/format, PM range formatting and undo/redo, observed remote same-value write preservation, and no-op callbacks. The basic demo is not a model-event subscriber; PM is. An initial harness assumption that both subscribed was corrected in v2 and preserved as separate results.
+- Compatibility Chrome verified 84 input/cursor cases and 20 general regressions, and captured 30 operation records. CDP composition input differs from actual OS IME testing.
+- The branch forcing later-scope validation failure was not executed. Static review of partial-result discard, normal fallback 0, and excluded-case full-path tests are separate evidence.
 
-새 결과를 제품 G0/G1, 실제 화면 지연, 큰 표·경합 처리량, 메모리 목표 또는 모든 전달 스케줄의 증명으로 확대하지 않는다. 구조 변경·9개 이상 블록·undo/redo 비용, lease 복구, 실제 CI 2주 관측과 30분 1800 round·1Hz 종료 조건은 남는다.
+These results do not establish product G0/G1, actual display latency, large-table/contention throughput, memory targets, or all delivery schedules. Structure changes, 9 or more blocks, undo/redo costs, lease recovery, two weeks of actual CI, and 30-minute/1800-round/1Hz completion criteria remain.
 
-## 자료와 재현
+## Artifacts and reproduction
 
-- 채택한 결과: [변경 전](before.json), [최종 개선](after-bounded.json), [기준 재실행](before-repeat.json), [비교](comparison.json), [검증](validation.json).
-- [소스 단계](source-stages.json), [기준 manifest](baseline-manifest.json), [기준 source archive](baseline-source.tar.gz), [동일 하네스](harness.ts.txt). 원자료를 덮어쓰지 않는다.
-- 현재 소스 측정: Node 22를 PATH에 두고 `npm run remote --workspace @doc-sync/benchmarks -- --chars 10000,100000 --blocks 1,2,8 --operations insert,delete,format --samples 30 --out <새 절대 경로>`.
-- 기준 재현은 archive를 새 디렉터리에 풀고 설치된 root node_modules를 연결한다. 보존 하네스의 bare import와 import.meta.resolve 문자열을 `../packages/doc-sync/src/index.ts`, `../packages/doc-sync/src/sync/index.ts`로 같은 방식으로 치환해 복사본의 `benchmarks/remote.ts`에 둔다. 실제 실행 경로는 raw의 productImports와 manifest에 있다. 다른 위치에서는 새 실제 경로를 기록한다.
-- 로컬 시험·Chrome 전체 원본은 `output/validation/roadmap-next-20261023-65yw9nr4/`, `output/playwright/roadmap-multiblock-main-v2-20261023/`, `output/playwright/roadmap-multiblock-compat-20261023/`에 있다. `output/`은 Git에서 제외된다.
+- Accepted results: [before](before.json), [final improvement](after-bounded.json), [baseline repeat](before-repeat.json), [comparison](comparison.json), [validation](validation.json).
+- [Source stages](source-stages.json), [baseline manifest](baseline-manifest.json), [baseline source archive](baseline-source.tar.gz), [same harness](harness.ts.txt). Preserve existing raw data.
+- Current-source measurement: put Node 22 on PATH, then use `npm run remote --workspace @doc-sync/benchmarks -- --chars 10000,100000 --blocks 1,2,8 --operations insert,delete,format --samples 30 --out <new absolute path>`.
+- To reproduce baseline, extract the archive into a new directory and link installed root node_modules. Replace preserved harness bare imports and import.meta.resolve strings with `../packages/doc-sync/src/index.ts` and `../packages/doc-sync/src/sync/index.ts` in the same way. Save it as the copy's `benchmarks/remote.ts`. Actual run paths are in raw productImports and the manifest. Record new actual paths when running elsewhere.
+- Full local test and Chrome originals are in `output/validation/roadmap-next-20261023-65yw9nr4/`, `output/playwright/roadmap-multiblock-main-v2-20261023/`, and `output/playwright/roadmap-multiblock-compat-20261023/`. Git excludes `output/`.

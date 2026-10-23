@@ -1,38 +1,36 @@
-# 범용 편집 API 설계 메모 (2026-10-22, 구현함)
+# Generic Edit API Design Note (2026-10-22, Implemented)
 
-편집 함수 20여 개를 **모델 연산 다섯 가지**(`insert · delete · update · split · merge`)로 바꾸고, 스키마의 모양이
-그것을 전선 연산으로 옮기게 하자는 제안이다. 이름과 뜻은 스키마 기반 문서 에디터의 모델 연산과 같게 둔다 — 에디터 연결이
-거의 1:1 대응이 되도록.
+This proposal replaces about 20 edit functions with **five model operations** (`insert · delete · update · split · merge`). Schema shapes compile them to wire operations. Names and semantics match the model operations of a schema-based document editor, to make editor integration nearly 1:1.
 
-**구현했다** — §10 에 무엇을 어떻게 했고 처음 제안과 무엇이 다른지 적었다. §9 의 결정은 모두 제안대로 했다.
+**Implemented.** Section 10 records the implementation and differences from the initial proposal. All decisions in §9 followed the proposal.
 
 ---
 
-## 1. 지금 구조와 문제
+## 1. Current Structure and Problems
 
-| 층 | 지금 | 문제 |
+| Layer | Current State | Problem |
 |---|---|---|
-| 전선 연산 | `text · node · del · undel · set` 다섯 가지. 종류와 무관 | 없음 — 그대로 둔다 |
-| **편집 함수** | `insertText`, `splitBlock`, `insertBlock`, `insertInline`, `appendBlock`, `insertAxis`, `deleteAxis`, `deleteBlock`, `setAttr`, `setItemAttr`, `setCellAttr`, `setSpan`, `setMark`, `setBlockType`, `setNumberAttr`, `deleteRange`, `backspace`, `deleteForward` … | 기능마다 함수가 는다. 주소도 제각각이다(`Pos`, `GridBlock + r, c`, `Item`). 스키마 기반 문서 에디터를 붙이려면 그 에디터의 연산 → 이 함수들 변환을 또 만들어야 한다 |
-| 모델 | 토큰에서 계산한 에디터 꼴 트리 (`toJSON`) | 없음 |
+| Wire operations | Five type-independent operations: `text · node · del · undel · set` | None; retain them |
+| **Edit functions** | `insertText`, `splitBlock`, `insertBlock`, `insertInline`, `appendBlock`, `insertAxis`, `deleteAxis`, `deleteBlock`, `setAttr`, `setItemAttr`, `setCellAttr`, `setSpan`, `setMark`, `setBlockType`, `setNumberAttr`, `deleteRange`, `backspace`, `deleteForward` … | Each feature adds functions. Address types differ (`Pos`, `GridBlock + r, c`, `Item`). Integrating a schema-based document editor requires another conversion from its operations to these functions. |
+| Model | Editor-shaped tree calculated from tokens (`toJSON`) | None |
 
-편집 함수가 하는 일을 뜯어 보면 결국 셋이다.
+Edit functions perform three tasks:
 
-1. **주소 해석** — "어느 줄의 어느 토큰 뒤인가"를 찾는다
-2. **모양별 펼치기** — 표를 넣으면 표 노드 + 뒤 블록 표지 + 행들 + 열들, 목록 항목이면 표지 + 묶음 속성 …
-3. **의도 보존** — Enter 의 경계 키, 합치기 금지 규칙(글자 안 받는 블록), 서식 물려받기
+1. **Resolve addresses**: find the token and line after which to edit.
+2. **Expand by shape**: a table becomes a table node + following block marker + rows + columns; a list item becomes a marker + group attributes, and so on.
+3. **Preserve intent**: Enter boundary keys, merge restrictions for blocks that cannot receive text, and mark inheritance.
 
-이 셋은 함수 이름이 아니라 **스키마 모양**에 달려 있다. 그러니 모양별로 한 번씩만 적으면 된다.
+These tasks depend on **schema shapes**, not function names. Define them once per shape.
 
-## 2. 목표
+## 2. Goals
 
-- 편집기는 **모델 경로와 모델 노드**로 말한다. CRDT 의 줄·토큰·자리는 몰라도 된다.
-- 연산은 다섯 가지: `insert · delete · update · split · merge`.
-- **모양별 컴파일러**가 전선 연산으로 바꾼다. 새 블록 종류는 스키마만 고친다 (지금과 같은 약속을 편집 쪽까지 넓힌다).
-- 되돌리기·커서 기록·서버 검사·GC 는 그대로다. 컴파일 결과가 지금과 같은 전선 연산이기 때문이다.
+- Editors use **model paths and model nodes**. They need no knowledge of CRDT lines, tokens, or slots.
+- Five operations: `insert · delete · update · split · merge`.
+- A **compiler for each shape** converts them to wire operations. New block types need only schema changes. This extends the current contract to editing.
+- Undo, cursor history, server validation, and GC remain unchanged because the compiler produces the same wire operations.
 
 ```ts
-/** 모델 트리(toJSON) 안의 위치 — 에디터의 트리 경로(숫자 배열)와 같은 꼴. text 블록 안은 마지막 수가 글자 자리 */
+/** Position in the model tree (toJSON), shaped like an editor tree path (number array). The final number inside a text block is a character position. */
 type ModelPath = number[];
 
 type EditOp =
@@ -42,205 +40,194 @@ type EditOp =
     | {op: "split"; at: ModelPath}
     | {op: "merge"; at: ModelPath};
 
-/** 차례로 컴파일해 바로 적용하고, 만든 전선 연산과 그 뒤 커서를 돌려준다 */
+/** Compile and apply in order, then return the generated wire operations and resulting caret. */
 doc.edit(ops: EditOp[]): {ops: Op[]; caret: string};
 ```
 
-지금 함수들은 `edit()` 위의 얇은 포장으로 남기거나 지운다.
+Existing functions can remain as thin wrappers over `edit()` or be removed.
 
-## 3. 주소 — 모델 경로
+## 3. Addresses: Model Paths
 
-경로는 `toJSON()` 트리의 자식 번호다.
+Paths are child indexes in the `toJSON()` tree.
 
 ```
-[1]                  본문 둘째 블록 (표)
-[1, 0]               그 표의 첫 행            (table-row)
-[1, 0, 2]            그 행의 셋째 칸          (table-cell)
-[1, 0, 2, 0]         그 칸의 몸               (table-cell-body)
-[1, 0, 2, 0, 1, 4]   몸 안 둘째 블록의 다섯째 글자 자리
-[3, 0, 2]            목록 [3] 의 첫 항목, 셋째 글자 자리
+[1]                  Second body block (table)
+[1, 0]               First row of that table           (table-row)
+[1, 0, 2]            Third cell of that row             (table-cell)
+[1, 0, 2, 0]         Body of that cell                  (table-cell-body)
+[1, 0, 2, 0, 1, 4]   Fifth character position in the second body block
+[3, 0, 2]            First item of list [3], third character position
 ```
 
-경로 → 저장 위치 해석은 모양마다 한 줄씩이다.
+Each shape has one path-to-storage rule.
 
-| 경로가 지나가는 노드의 모양 | 다음 수의 뜻 | 저장에서 |
+| Shape of the Node on the Path | Meaning of the Next Number | Storage Mapping |
 |---|---|---|
-| `flow` | 자식 번호 | 흐름 줄의 블록. **group 은 펼쳐 센다** — `[3, 1]` 은 목록 [3] 의 둘째 항목 = 저장 블록 (목록 첫 블록 번호 + 1) |
-| `group` | 항목 번호 | 위와 같다 |
-| `grid` | 행 번호 | rows 줄의 살아 있는 행 |
-| `row` | 칸 번호 (가려진 칸 포함, full grid) | cols 줄의 살아 있는 열 → `cell:행,열` 줄 |
-| `cell` | 0 하나뿐 | 칸 몸 = 그 칸 줄 |
-| `text` | 글자 자리 | 블록의 `chars` (inline 노드도 한 자리) |
+| `flow` | Child index | Block in the flow line. **Count groups after flattening**: `[3, 1]` is the second item of list [3] = stored block (first list block index + 1). |
+| `group` | Item index | As above |
+| `grid` | Row index | Live row in the rows line |
+| `row` | Cell index, including hidden cells (full grid) | Live column in the cols line → `cell:row,col` line |
+| `cell` | Only 0 | Cell body = its cell line |
+| `text` | Character position | Block `chars`; an inline node also occupies one position |
 
-- 경로는 **지금 상태의 것**이다. 컴파일은 로컬에서 바로 하고 전선에는 토큰 이름표만 나간다 — 지금 편집 함수와 같다. 그래서 경로가 복제본마다 다른 것은 문제가 아니다.
-- 한 번에 여러 연산이면 앞 연산을 적용한 뒤 상태로 다음 경로를 읽는다 (스키마 기반 문서 에디터의 연산 묶음과 같은 뜻).
-- 반대 방향(토큰 키 → 경로)도 만든다. 받는 쪽 이벤트(§6)와 커서에 쓴다.
+- Paths refer to the **current state**. Compilation happens immediately and locally. Only token IDs go over the wire, as in current edit functions. Different paths on different replicas are therefore acceptable.
+- In a batch, each subsequent path is interpreted after applying earlier operations, as in a schema-based document editor's operation batch.
+- Also implement the reverse mapping, token key → path, for receiving events (§6) and cursors.
 
-## 4. 연산별·모양별 컴파일
+## 4. Compilation by Operation and Shape
 
 ### insert(at, content)
 
-| 넣는 곳 → 넣는 것 | 전선 연산 |
+| Destination → Content | Wire Operations |
 |---|---|
-| text 블록 안 → 글 (`string`) | `text` (서식은 왼쪽 물려받기, 지금과 같다) |
-| text 블록 안 → inline 노드 (`{type: "inline-image", attrs}`) | `node` |
-| flow 의 자식 자리 → text 블록 | 앞 블록 끝 뒤에 `node`(표지, 경계 = 왼쪽 토큰 \| 오른쪽 토큰) + 그 글 `text` |
-| flow 의 자식 자리 → group (`list`) | 항목마다 표지 하나, 묶음 속성(`listType`)을 **각 항목에** 적는다 |
-| flow 의 자식 자리 → grid (`table`) | 표 `node` + 행 `node` n 개 + 열 `node` m 개 (m = 행들의 칸 수 가운데 최댓값) + 칸마다 몸 내용을 칸 줄에 재귀로 + `colspan·rowspan` → `$span`, 그 밖 칸 속성 → `$cell` |
-| flow 의 자식 자리 → flow (`callout`, `image-component`) | 그릇 `node` + 몸 자식들을 body 줄에 재귀로 (첫 자식이 그 그릇의 default 종류면 줄 머리를 그대로 쓴다) |
-| flow 의 자식 자리 → atom | `node` |
-| grid 의 행 자리 → `table-row` | 행 `node` + 그 행 칸들의 몸 내용 |
-| 모든 행의 같은 칸 자리 → `table-cell` | **열 하나** (§5.1) |
+| Inside text block → text (`string`) | `text`, inheriting marks from the left as today |
+| Inside text block → inline node (`{type: "inline-image", attrs}`) | `node` |
+| Flow child position → text block | `node` marker after the preceding block's end, boundary = left token \| right token, then its `text` |
+| Flow child position → group (`list`) | One marker per item; write group attributes (`listType`) **on every item** |
+| Flow child position → grid (`table`) | Table `node` + n row `node`s + m column `node`s (m = maximum cell count among rows) + recursively write each cell's body to its cell line + `colspan·rowspan` → `$span`, other cell attributes → `$cell` |
+| Flow child position → flow (`callout`, `image-component`) | Container `node` + recursively write body children to its body line; reuse the line head when the first child has the container's default type |
+| Flow child position → atom | `node` |
+| Grid row position → `table-row` | Row `node` + bodies of its cells |
+| Same cell position in every row → `table-cell` | **One column** (§5.1) |
 
-flow 의 자식 자리에 넣을 때 그 자리가 블록 **중간**이면, 지금 `insertBlock` 처럼 먼저 나누고(뒷글은 같은 종류의 새 블록) 그 사이에 넣는다.
-스키마 기반 문서 에디터는 이때 `split` 다음 `insert` 로 보낸다 — 연산 묶음을 순서대로 컴파일하면 같은 결과다.
+If a flow child insertion is in the **middle** of a block, split first as current `insertBlock` does. Trailing text goes into a new block of the same type, and content is inserted between them. A schema-based document editor sends `split` then `insert`; sequential compilation produces the same result.
 
 ### delete(at, count)
 
-| 지우는 것 | 전선 연산 |
+| Target | Wire Operations |
 |---|---|
-| text 안 글자·inline | `del` |
-| flow 의 블록 범위 | `del` — text 블록은 표지(+흡수된 표지), 표·그릇·atom 은 그 노드 하나 (안은 함께 안 보인다) |
-| grid 의 행 | 행 `del` |
-| 모든 행의 같은 칸 | 열 `del` (§5.1) |
-| 마지막 행·열 | 표 `del` (지금과 같다) |
+| Characters or inline nodes in text | `del` |
+| Flow block range | `del`: marker and absorbed markers for text blocks; only the node for tables, containers, and atoms, whose contents also become hidden |
+| Grid row | Row `del` |
+| Same cell in every row | Column `del` (§5.1) |
+| Last row or column | Table `del`, as today |
 
 ### update(at, attrs, length?)
 
-| 대상 | 전선 연산 |
+| Target | Wire Operations |
 |---|---|
-| text 블록·노드의 속성 | 키마다 `set` (부분 병합 — 스키마 기반 문서 에디터의 data 일부만 바꾸기와 같은 뜻) |
-| 블록 종류 (`attrs.type`) | `set $type` (text 모양끼리만). 빈 자리면 표지를 새로 넣는다 |
-| text 안 범위 (`length`) + 서식 | `set` (글자마다, inline 은 건너뛴다) |
-| table-cell 의 `backgroundColor` 등 | `set $cell:행,열\|이름` (표 노드에) |
-| table-cell 의 `colspan·rowspan` | 끝 행·열 이름표를 구해 `set $span:행,열` |
-| inline 노드 (`inline-image` 크기) | `set` |
+| Text-block or node attributes | `set` for each key; partial merge, equivalent to updating part of a schema-based document editor's data |
+| Block type (`attrs.type`) | `set $type`, only between text shapes. Insert a new marker for a virtual position. |
+| Text range (`length`) + marks | `set` per character, skipping inline nodes |
+| `backgroundColor` and similar table-cell attributes | `set $cell:row,col\|name` on the table node |
+| Table-cell `colspan·rowspan` | Find end-row/column IDs and write `set $span:row,col` |
+| Inline node (`inline-image` dimensions) | `set` |
 
 ### split(at)
 
-text 블록 안 자리 → 표지 `node` 하나 (경계 키, `next`, `inherit` — 지금 `splitBlock`).
-**inline 층의 split 은 버린다.** 이 모델에는 inline-text 노드가 없다 — 서식이 다른 구간은 계산으로 나뉜다.
+A position inside a text block becomes one marker `node`, using the boundary key, `next`, and `inherit`, as current `splitBlock` does.
+**Discard inline-level split.** This model has no inline-text nodes. Different mark ranges are calculated views.
 
 ### merge(at)
 
-블록 [i] 를 [i-1] 에 합치기 → 블록 [i] 의 표지 `del`. 앞 블록이 글자를 받지 않으면(image) 아무것도 하지 않는다 (지금 규칙).
+Merge block [i] into [i-1] by deleting block [i]'s marker. If the preceding block cannot receive text (image), do nothing, as in the current rule.
 
-## 5. 어려운 곳
+## 5. Difficult Cases
 
-### 5.1 열
+### 5.1 Columns
 
-스키마 기반 문서 에디터의 트리에는 열 노드가 없다. 열 넣기는 `insert [표, r, c] table-cell` 이 **행마다 하나씩** 온다. 이 모델은 칸을 (행, 열) 이름표로
-가리키므로, 이것을 열 노드 하나로 바꿔야 한다.
+A schema-based document editor's tree has no column nodes. Column insertion arrives as `insert [table, r, c] table-cell` **once per row**. This model addresses cells with (row, column) IDs, so it must fold that pattern into one column node.
 
-- 한 묶음 안의 연산들을 먼저 훑어 "같은 표의 **모든 살아 있는 행**에 같은 번호 c 로 칸 넣기"를 찾는다 → 열 `node` 하나 + 각 행 칸의 몸 내용
-- 모든 행이 아니면(들쭉날쭉) 이 표현으로 나타낼 수 없다. **제안: 열 하나로 바로잡고** 나머지 행의 새 칸은 빈 칸으로 둔다. 거절은 에디터 쪽 화면과 갈라지게 한다
-- 열 지우기도 같은 패턴 (`delete [표, r, c] 1` 이 행마다)
-- full grid 라 가려진 칸(`spanned`)도 번호에 들어 있다 — 패턴 찾기가 쉬워진다
+- First scan the batch for insertion at the same index c in **every live row** of the same table → one column `node` + each new cell's body.
+- A subset of rows (ragged columns) cannot be represented directly. **Proposal: normalize to one column**, leaving empty cells in other rows. Rejection would diverge from the editor display.
+- Use the same pattern for column deletion: `delete [table, r, c] 1` for every row.
+- Full-grid indexes include hidden (`spanned`) cells, which simplifies pattern detection.
 
-### 5.2 의도 — Enter 와 구조 나누기
+### 5.2 Intent: Enter and Structural Split
 
-같은 자리라도 사람이 친 Enter 와 "넣기 전에 자리를 만드는 나누기"는 같다(둘 다 표지 하나). 다른 것은 **경계 키를 언제 잡느냐**다 —
-컴파일할 때 그 순간의 왼쪽·오른쪽 토큰으로 잡는다. 그래서 "상대의 Enter 를 보고 친 Enter 는 따로 줄"이 그대로 지켜진다.
+At the same position, user Enter and a split that makes room before insertion both create one marker. The difference is **when the boundary key is captured**. Capture the current left and right tokens at compilation. This preserves the rule that Enter after observing another Enter creates a separate line.
 
-스키마 기반 문서 에디터의 Enter 는 `split [0,0,5]`·`split [0,1]` 두 단계로 온다. 앞의 것(inline 층)은 버리고 뒤의 것만 표지로 만든다 —
-기존 Yorkie 동시편집 플러그인에서 "Enter 를 한 번의 2단계 edit 으로" 접던 것과 같은 일인데, 여기서는 inline 층이 아예 없어서 더 단순하다.
+A schema-based document editor's Enter arrives as `split [0,0,5]` and `split [0,1]`. Discard the first, inline-level split and create a marker only for the second. The earlier Yorkie collaboration plugin similarly folded Enter into one two-stage edit. This model is simpler because it has no inline layer.
 
-### 5.3 링크 (inline-hyperlink)
+### 5.3 Links (inline-hyperlink)
 
-스키마 기반 문서 에디터의 링크는 inline 묶음(`inline-hyperlink > inline-text`)이다. 이 모델에는 그 모양이 없다. 둘 중 하나가 필요하다.
+A schema-based document editor represents links as inline groups (`inline-hyperlink > inline-text`). This model has no such shape. One of two approaches is needed.
 
-- **값 서식**: 글자마다 `link = url` LWW. 단순하고 지금 서식과 같은 길. 대신 "링크 하나"의 정체성이 없다 — 이어진 같은 url 이 한 링크
-- **inline 묶음 모양**: 시작·끝 표지. 정체성은 있지만 동시 편집 규칙(표지 사이에 넣은 글자는 링크 안인가)을 새로 정해야 한다 (Peritext 의 문제)
+- **Value mark**: `link = url` LWW per character. Simple and consistent with current marks, but without a distinct link identity: consecutive identical URLs form one link.
+- **Inline group shape**: start/end markers. Preserves identity, but requires new concurrent-edit rules, such as whether text inserted between markers belongs to the link (the Peritext problem).
 
-제안은 값 서식이다. 모델 출력에서 이어진 같은 url 을 `inline-hyperlink` 하나로 묶으면 에디터 꼴이 된다 (목록과 같은 "저장은 평평, 보이기는 묶음").
+The proposal uses value marks. Group consecutive identical URLs into one `inline-hyperlink` in model output to match the editor shape. As with lists, storage is flat and the view is grouped.
 
-### 5.4 되돌리기
+### 5.4 Undo
 
-동시편집 중에는 CRDT 의 참여자별 되돌리기를 쓰고 스키마 기반 문서 에디터의 history 는 끈다 (지금 Yorkie 동시편집 플러그인과 같다). `edit()` 이 만든 연산도
-지금처럼 기록된다.
+During collaboration, use CRDT undo per participant and disable the schema-based document editor's history, as the current Yorkie collaboration plugin does. Operations produced by `edit()` are recorded as before.
 
-## 6. 받는 쪽 — CRDT 변경 → 편집기 연산
+## 6. Receiving: CRDT Changes → Editor Operations
 
-남의 전선 연산이 오면 편집기에 무엇을 알려야 하나. 둘이 있다.
+Two approaches can notify the editor about received wire operations.
 
-| 방식 | 어떻게 | 장단 |
+| Method | Mechanism | Tradeoffs |
 |---|---|---|
-| A. 모델 비교 | 받기 전·후 `toJSON` 을 블록 단위로 비교해 바뀐 블록을 교체 | 단순·언제나 맞다. 대신 커서·조합 중 입력이 블록째 바뀐다 |
-| B. 연산 번역 | 전선 연산 하나하나를 그 순간 상태에서 모델 연산으로 (`text` → 글 insert, 표지 → split, 표지 `del` → merge, 행 `node` → row insert …) | 세밀하다. 대신 흡수된 표지·빈 자리·가려진 칸처럼 "보이는 변화가 없는" 경우를 다 다뤄야 한다 |
+| A. Model comparison | Compare `toJSON` before and after receipt by block and replace changed blocks. | Simple and correct, but replaces entire blocks containing cursors or composition input. |
+| B. Operation translation | Translate each wire operation at its current state to a model operation: `text` → text insert, marker → split, marker `del` → merge, row `node` → row insert, and so on. | Precise, but must handle all cases with no visible change, including absorbed markers, virtual positions, and hidden cells. |
 
-제안: **B 를 쓰고, 적용 뒤 모델 지문을 비교해 다르면 A 로 물러선다** — 앞선 트리 CRDT 시제품에서 쓴 "컴파일러 + 검산 + 블록 교체" 와 같은 짜임.
+Proposal: **use B, compare model fingerprints after application, and fall back to A on mismatch**. This follows the compiler + verification + block replacement structure used by the earlier tree CRDT prototype.
 
-## 7. 옮겨 가는 길
+## 7. Migration Path
 
-1. **경로 해석기** — 모델 경로 ↔ (줄, 블록, 자리) ↔ 토큰 키. 시험: 무작위 문서에서 모든 경로가 왕복하는지
-2. **`edit()` 1단계** — text · inline · flow · group · atom 의 insert/delete/update/split/merge
-3. **`edit()` 2단계** — grid: 행 넣기·지우기, 칸 속성, 칸 합치기, 열 패턴(§5.1)
-4. **동치 시험** — 지금 편집 함수들을 `edit()` 위로 옮기고, 무작위 대본을 "함수판"과 "edit 판"으로 돌려 모델이 같은지 본다. 같으면 함수들을 지운다
-5. **에디터 어댑터** — 스키마 기반 문서 에디터의 연산 → `EditOp` (inline 경로를 글자 자리로 접기, split 연쇄 접기, 열 패턴), CRDT 변경 → 에디터 연산 (§6). 실제 에디터(jsdom) 하네스로 3000 대본
+1. **Path resolver**: model path ↔ (line, block, position) ↔ token key. Test round trips for every path in random documents.
+2. **`edit()` stage 1**: insert/delete/update/split/merge for text, inline, flow, group, and atom.
+3. **`edit()` stage 2**: grid row insertion/deletion, cell attributes, cell merging, and column patterns (§5.1).
+4. **Equivalence tests**: move current edit functions onto `edit()`. Run random scripts through the function version and edit version and compare models. Remove functions after equivalence passes.
+5. **Editor adapter**: schema-based document editor operations → `EditOp` (fold inline paths to character positions, split chains, and column patterns); CRDT changes → editor operations (§6). Run 3000 scripts with a real-editor jsdom harness.
 
-## 8. 바뀌지 않는 것
+## 8. Unchanged Components
 
-- 전선 연산 다섯 가지, 서버 검사, GC, 스냅숏 — 그대로
-- 되돌리기·커서 기록 — 컴파일 결과가 같은 전선 연산이므로 그대로
-- 스키마 — 그대로 (모양별 컴파일러가 이미 있는 모양만 읽는다)
+- Five wire operations, server validation, GC, and snapshots.
+- Undo and cursor history, because compiled operations use the same wire format.
+- Schema: compilers read only existing shapes.
 
-## 9. 정할 것
+## 9. Decisions to Make
 
-1. 열 들쭉날쭉: **바로잡기**(제안) 또는 거절
-2. 링크: **값 서식 + 묶어 보이기**(제안) 또는 inline 묶음 모양
-3. 받는 쪽: **B + 검산 + A 물러서기**(제안) 또는 A 만
-4. 지금 편집 함수: `edit()` 위 포장으로 남길지, 지울지
-5. 이 API 를 먼저 이 저장소의 데모 편집기로 검증할지, 바로 스키마 기반 문서 에디터 어댑터로 갈지
+1. Ragged columns: **normalize** (proposed) or reject.
+2. Links: **value marks + grouped view** (proposed) or inline group shape.
+3. Receiving: **B + verification + A fallback** (proposed) or A only.
+4. Current edit functions: retain as `edit()` wrappers or remove.
+5. Validate this API with the repository demo editor first, or proceed directly to a schema-based document editor adapter.
 
 ---
 
-## 10. 구현 결과 (2026-10-22)
+## 10. Implementation Results (2026-10-22)
 
-| 파일 | 하는 일 |
+| File | Responsibility |
 |---|---|
-| `packages/doc-sync/src/crdt/model.ts` | 모델 쪽 순수 함수 — 모양 정리(canonical), 편집 연산 적용(applyEdits), 모델 비교(diffModels). CRDT 를 모른다 |
-| `packages/doc-sync/src/crdt/edit.ts` | 모델 경로 풀기, 편집 연산 → 전선 연산 컴파일 (비운 머리·열 접기), 경로 ↔ 위치 ↔ 토큰 키 |
-| `packages/doc-sync/src/crdt/commands.ts` | 편집기 명령(글자·Enter·Backspace·표 행/열 …)을 편집 연산으로. 옛 Doc 편집 함수 18개를 옮긴 것 |
-| `Doc.edit(ops)` | 편집 연산 묶음 → 전선 연산 + normalize |
-| `SyncClient.onModelEvents` | 받는 쪽 이벤트 (+ 검산, 물러서기) |
+| `packages/doc-sync/src/crdt/model.ts` | Pure model functions: canonical shape normalization (canonical), edit application (applyEdits), model comparison (diffModels). No CRDT knowledge. |
+| `packages/doc-sync/src/crdt/edit.ts` | Model path resolution, edit-to-wire compilation (virtual heads and column folding), path ↔ position ↔ token key |
+| `packages/doc-sync/src/crdt/commands.ts` | Editor commands (characters, Enter, Backspace, table rows/columns, and so on) → edit operations. Migrated 18 former Doc edit functions. |
+| `Doc.edit(ops)` | Edit batch → wire operations + normalize |
+| `SyncClient.onModelEvents` | Receiving events, verification, and fallback |
 
-### 처음 제안과 다른 점
+### Differences from the Initial Proposal
 
-- **받는 쪽은 "연산 번역" 대신 "모델 비교"로 했다.** 남의 변경을 받기 전·후 모델을 비교해 편집 연산을 만든다. 세밀함은 같다 —
-  글자 하나면 글자 하나 넣기, 열 하나면 행마다 칸 넣기(스키마 기반 문서 에디터 꼴). 흡수된 표지·빈 자리·가려진 칸처럼 "보이는 변화가 없는" 경우를
-  따로 다룰 필요가 없어서 언제나 맞다. 검산(앞 모델에 적용하면 뒤 모델이 되는가)과 물러서기(문서 통째 바꾸기)는 제안대로 했다.
-- **비교는 펼친 항목 줄에서 한다.** 목록 묶음 단위로 비교하면, 넣은 목록이 옆 목록과 바로 붙어 다음 경로가 어긋난다
-  (실제로 거울 시험에서 잡혔다). 그래서 흐름은 펼쳐서 비교하고, 연산마다 작업 사본에 적용해 다음 경로를 그 사본에서 구한다.
-- **모델에서 빈 자리(표 뒤 virtual, 글 없음)를 뺐다.** 스키마 기반 문서 에디터처럼 표가 흐름의 마지막 자식일 수 있다. 커서용으로는 편집기 안에 남아 있다.
-- **항목 속성이 묶음 속성을 이긴다.** 번호 목록 가운데에 글머리 항목을 끼워 넣거나 항목의 listType 을 바꾸면 묶음이 나뉜다.
+- **Receiving uses model comparison instead of operation translation.** It compares models before and after a remote change and generates edits with the same precision: one character becomes one character insertion; one column becomes one cell insertion per row, as in a schema-based document editor. Absorbed markers, virtual positions, and hidden cells need no special handling for invisible changes. Verification (does application to the before model produce the after model?) and fallback (replace the whole document) follow the proposal.
+- **Comparison uses flattened item sequences.** Comparing grouped lists caused an inserted list to join its neighbor immediately and shift subsequent paths. Mirror tests found this defect. Flows are therefore flattened for comparison. Each operation is applied to a working copy, and the next path is resolved from that copy.
+- **Empty virtual positions after tables are omitted from the model.** A table can be the last child of a flow, as in a schema-based document editor. The editor retains virtual positions for cursors.
+- **Item attributes override group attributes.** Inserting a bulleted item inside a numbered list or changing an item's listType splits the group.
 
-### normalize 가 생기는 경우 (편집기가 그대로 적용한 결과와 CRDT 모델이 다른 경우)
+### When Normalize Occurs (Editor Application Differs from the CRDT Model)
 
-| 경우 | 왜 |
+| Case | Reason |
 |---|---|
-| 흐름이 표·그릇으로 시작하게 만든 편집 | CRDT 의 줄 머리는 언제나 글 블록 — 맨 앞에 빈 문단이 남는다. 모델 정리 규칙에도 넣었으므로 이 저장소의 편집기 모델과는 같다. 스키마 기반 문서 에디터 어댑터는 맞춰야 한다 |
-| 한 행에만 칸 넣기 (들쭉날쭉한 열) | 열 하나로 바로잡는다 — 나머지 행에 빈 칸 |
-| 합친 칸 사이에 열·행 넣기 | 합치기 끝을 이름표로 적으므로 새 열도 덮인다 (편집기는 colspan 을 그대로 둔다) |
-| 겹치는 칸 합치기 | 나중 것 하나만 받는다 |
-| 글자가 있는 빈 자리 앞의 표 지우기 | 빈 자리 글이 앞 블록에 붙는다 (드묾 — 동시편집에서만 생긴다) |
+| An edit makes a flow start with a table or container. | A CRDT line head is always a text block, leaving an empty leading paragraph. Canonical model rules include this, so the repository editor agrees. A schema-based document editor adapter must account for it. |
+| Insert a cell into only one row (ragged columns). | Normalize to one column, with empty cells in other rows. |
+| Insert a column or row inside merged cells. | Merge endpoints use IDs, so the new column is also covered; the editor leaves colspan unchanged. |
+| Overlapping cell merges | Accept only the later merge. |
+| Delete a table before a virtual position that contains text. | Virtual text joins the preceding block. Rare; occurs only during collaboration. |
 
-무작위 3000 대본 판마다 normalize 가 붙은 내 편집은 8~9번이었다 (받는 쪽 이벤트는 판마다 8만~21만 개, 거울 어긋남·검산 실패 0).
+Each run of 3000 random scripts produced 8–9 local edits with normalize (80,000–210,000 receiving events per run, 0 mirror mismatches or verification failures).
 
-### 동치 시험
+### Equivalence Tests
 
-옛 편집 함수(Doc 메서드)와 새 명령(commands → edit)을 같은 상태에서 한 걸음씩 돌려 모델을 비교했다 — 1000 대본 × 40걸음,
-**34,001걸음에서 차이 0** (처음 한 번 나온 차이는 setSpan 의 "이미 같은 값" 판정이었고 고쳤다). 그 뒤 옛 함수를 지웠다.
-표 뒤 빈 자리(글 없음)에서의 편집은 뜻을 일부 바꿨다 — 표를 끝에 넣으면 뒤에 빈 문단을 만들지 않는다.
+The former edit functions (Doc methods) and new commands (commands → edit) ran one step at a time from identical state: 1000 scripts × 40 steps. There were **0 differences across 34,001 steps**. The first run found one difference in setSpan's already-equal-value check; it was fixed. The old functions were then removed.
+Editing an empty virtual position after a table changed slightly: inserting a table at the end no longer creates a trailing empty paragraph.
 
-## 11. 커서와 선택
+## 11. Cursors and Selection
 
-- 위치는 두 가지로 말한다. **모델 경로**(편집기·스키마 기반 문서 에디터가 쓰는 것, `[블록, …, 글자 자리]`)와 **토큰 키**(CRDT 가 쓰는 것 — "이 토큰 바로 뒤").
-- 경로는 남의 편집에 흔들린다. 토큰 키는 흔들리지 않는다. 그래서 커서·선택의 시작·끝은 **토큰 키로 들고 있다가** 화면에 그릴 때 경로로 바꾼다.
-  - `anchorAt(doc, path)` → 토큰 키 (그 자리 바로 왼쪽 토큰)
-  - `pathAt(doc, key)` → 지금 경로. 토큰이 지워졌으면 왼쪽으로 가장 가까운 살아 있는 자리, 그 칸이 안 보이게 됐으면 옆 칸
-- 편집기 어댑터의 순서: 선택이 바뀔 때마다(또는 남의 변경을 받기 직전에) `anchorAt` 으로 키를 잡아 두고 → 받는 쪽 이벤트를 적용한 뒤 → `pathAt` 으로 선택을 되돌린다.
-- 남의 커서(presence)는 처음부터 토큰 키로 주고받는다 — 받는 쪽이 자기 문서에서 경로로 바꾼다.
-- 둘 다 "왼쪽 토큰"에 붙이므로, 내 커서 자리에 남이 글을 넣으면 그 글은 내 커서 오른쪽에 생긴다 (커서가 밀리지 않는다).
-  선택의 시작 자리에 넣은 글은 선택 안으로, 끝 자리에 넣은 글은 선택 밖으로 들어간다.
-- 선택은 한 줄 안에서만 된다 (표 칸 여러 개를 걸친 선택은 아직 없다).
-
+- There are two position forms: **model paths**, used by editors and schema-based document editors (`[block, …, character position]`), and **token keys**, used by the CRDT (immediately after this token).
+- Other users' edits can shift paths. Token keys are stable. Store cursor and selection endpoints **as token keys**, then convert them to paths for display.
+  - `anchorAt(doc, path)` → token key of the token immediately left of that position.
+  - `pathAt(doc, key)` → current path. For a deleted token, use the nearest live position to its left. If its cell is hidden, use an adjacent cell.
+- Editor adapter order: capture keys with `anchorAt` whenever selection changes, or immediately before a remote change; apply receiving events; then restore selection through `pathAt`.
+- Remote cursors (presence) use token keys in transmission. Receivers resolve them to paths in their own document.
+- Both endpoints attach to the left token. If someone inserts at my cursor, the new text appears to its right and the cursor does not move. Text inserted at a selection's start enters the selection; text inserted at its end stays outside.
+- Selection is limited to one line. Selection across multiple table cells is not yet supported.

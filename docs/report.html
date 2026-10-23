@@ -1,10 +1,10 @@
-<title>doc-sync 보고서</title>
+<title>doc-sync Report</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* 레이아웃: 왼쪽 목차 + 가운데 본문(약 70자 폭). 그림은 본문 폭 안에서 가로로 넘치면 자체 스크롤 */
+/* Layout: left contents and centered body (about 70 characters wide). Wide figures scroll inside the body. */
 :root {
     --bg: #f7f8fa;
     --paper: #ffffff;
@@ -214,7 +214,7 @@ svg { display: block; max-width: 100%; height: auto; }
 svg text { font-family: var(--font-body); }
 svg .mono { font-family: var(--font-mono); }
 
-/* 토큰 줄 (데모의 들여다보기와 같은 꼴) */
+/* Token line, matching the demo inspector. */
 .strip { display: flex; flex-wrap: wrap; gap: 4px; }
 .tok {
     display: inline-flex;
@@ -290,91 +290,91 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 </style>
 
 <div class="shell">
-    <nav class="toc" aria-label="목차">
-        <div class="toc-title">목차</div>
+    <nav class="toc" aria-label="Contents">
+        <div class="toc-title">Contents</div>
         <ol>
-            <li><a href="#summary">요약</a></li>
-            <li><a href="#why">왜 만들었나</a></li>
-            <li><a href="#line">문서는 토큰 줄</a></li>
-            <li><a href="#rga">순서와 같은 자리 Enter</a></li>
-            <li><a href="#undo">지우기 장부와 되돌리기</a></li>
-            <li><a href="#slots">줄과 자리</a></li>
-            <li><a href="#ops">전선 연산 다섯 가지</a></li>
-            <li><a href="#sync">동기화와 서버</a></li>
+            <li><a href="#summary">Summary</a></li>
+            <li><a href="#why">Why It Was Built</a></li>
+            <li><a href="#line">Documents as Token Lines</a></li>
+            <li><a href="#rga">Order and Same-Position Enter</a></li>
+            <li><a href="#undo">Deletion Records and Undo</a></li>
+            <li><a href="#slots">Lines and Slots</a></li>
+            <li><a href="#ops">Five Wire Operations</a></li>
+            <li><a href="#sync">Synchronization and Server</a></li>
             <li><a href="#gc">GC</a></li>
-            <li><a href="#schema">스키마 주입</a></li>
-            <li><a href="#blocks">블록별 동작</a></li>
-            <li><a href="#tables">표</a></li>
-            <li><a href="#editapi">편집 API</a></li>
-            <li><a href="#events">받는 쪽 이벤트</a></li>
-            <li><a href="#cursor">커서와 선택</a></li>
-            <li><a href="#prosemirror">ProseMirror 연동</a></li>
-            <li><a href="#verify">어디까지 동작하나</a></li>
-            <li><a href="#limits">한계</a></li>
-            <li><a href="#use">쓰는 법</a></li>
-            <li><a href="#files">파일 지도</a></li>
-            <li><a href="#next">다음 단계</a></li>
+            <li><a href="#schema">Schema Injection</a></li>
+            <li><a href="#blocks">Block Behavior</a></li>
+            <li><a href="#tables">Tables</a></li>
+            <li><a href="#editapi">Edit API</a></li>
+            <li><a href="#events">Receiving Events</a></li>
+            <li><a href="#cursor">Cursors and Selection</a></li>
+            <li><a href="#prosemirror">ProseMirror Integration</a></li>
+            <li><a href="#verify">Verified Scope</a></li>
+            <li><a href="#limits">Limits</a></li>
+            <li><a href="#use">Usage</a></li>
+            <li><a href="#files">File Map</a></li>
+            <li><a href="#next">Next Steps</a></li>
         </ol>
     </nav>
 
     <main>
         <article>
             <header class="hero">
-                <div class="eyebrow">동시편집 연구 · 2026-10-22</div>
-                <h1>@barocss/doc-sync 보고서</h1>
+                <div class="eyebrow">Collaboration research · 2026-10-22</div>
+                <h1>@barocss/doc-sync Report</h1>
                 <p class="lede">
-                    Yorkie 없이, 의존성 없는 TypeScript 로 만든 동시편집 CRDT·동기화 서버·브라우저 데모의 정리.
-                    문서를 트리가 아니라 토큰 줄로 들고, 블록 종류는 바깥에서 주입한 스키마가 정한다.
+                    A report on a collaboration CRDT, synchronization server, and browser demo built in dependency-free TypeScript without Yorkie.
+                    The document is stored as token lines. An externally supplied schema defines block types.
                 </p>
-                <div class="facts" aria-label="한눈에">
-                    <span class="fact">시험 <b>83</b>개 통과</span>
-                    <span class="fact">무작위 <b>3000</b> 대본 × 참여자 2·4 × GC 끔·켬 — 갈림 <b>0</b> · 편집기 거울 어긋남 <b>0</b></span>
-                    <span class="fact">브라우저 창 <b>10</b>개 동시 — 같은 문서</span>
-                    <span class="fact">CRDT·서버 의존성 <b>0</b> (ProseMirror 연동만 prosemirror)</span>
-                    <span class="fact">ProseMirror 무작위 <b>500</b> 대본 — 같은 문서</span>
-                    <span class="fact">코드 <b>11,519</b>줄 (시험 포함)</span>
-                    <span class="fact">위치 이 저장소 · 커밋 안 함</span>
+                <div class="facts" aria-label="At a glance">
+                    <span class="fact"><b>83</b> tests passed</span>
+                    <span class="fact"><b>3000</b> random scripts × 2/4 participants × GC off/on — <b>0</b> divergences · <b>0</b> editor mirror mismatches</span>
+                    <span class="fact"><b>10</b> concurrent browser windows — identical document</span>
+                    <span class="fact"><b>0</b> CRDT/server dependencies (only ProseMirror integration uses prosemirror)</span>
+                    <span class="fact"><b>500</b> random ProseMirror scripts — identical document</span>
+                    <span class="fact"><b>11,519</b> code lines, including tests</span>
+                    <span class="fact">Location: this repository · uncommitted</span>
                 </div>
             </header>
 
             <section id="summary" class="summary" aria-labelledby="summary-title">
-                <h3 id="summary-title">요약</h3>
+                <h3 id="summary-title">Summary</h3>
                 <ul>
-                    <li>문서는 <b>토큰 줄</b>이다. Enter 는 블록 표지 하나 넣기, 문단 합치기는 표지 하나 지우기다. 트리를 자르거나 노드를 옮기는 연산이 없다.</li>
-                    <li>순서는 RGA(이름표 비교) 하나로 정한다. 같은 자리 동시 Enter 는 <b>경계 키</b>로 한 줄로 모인다.</li>
-                    <li>되돌리기는 참여자별이고, 지운 것을 되돌리면 <b>내가 한 그 지우기만</b> 취소한다 (yorkie#2237 꼴이 생기지 않는다).</li>
-                    <li>서버는 받은 순서가 곧 인과 순서다. 변경은 한 덩어리로 검사·적용된다. GC 는 로그의 한 줄이고, ack 와 되돌리기 핀으로 정한 기준점까지만 묘비를 압축한다.</li>
-                    <li>CRDT 는 블록 종류를 모른다. <b>스키마를 주입</b>하고, CRDT 는 모양 9가지(text·inline·flow·group·grid·row·cell·atom·span)만 안다. 전선 연산은 종류와 무관한 5가지다.</li>
-                    <li>표는 행 줄 × 열 줄이고 칸은 이름표로 가리킨다. 행·열 동시 추가, 열 지우기 대 칸 입력, 칸 합치기(colspan·rowspan), 칸 배경색까지 수렴한다.</li>
-                    <li>목록·캡션은 <b>평평하게 저장하고 묶어서 보인다</b>. 항목이 목록에 들고 나는 것이 블록 옮기기 없이 종류 바꾸기 하나로 끝난다.</li>
-                    <li>모델 출력은 스키마 기반 문서 에디터의 문서 JSON 과 같은 꼴의 트리다 (<code>table &gt; table-row &gt; table-cell &gt; table-cell-body</code>, <code>image-component &gt; image &gt; inline-image</code> …).</li>
-                    <li>편집기는 <b>모델 연산 다섯 가지</b>(insert · delete · update · split · merge)를 모델 경로로 보낸다 — 스키마 기반 문서 에디터의 문서 조작 엔진과 같은 이름·뜻. 그 에디터에서처럼 행마다 오는 칸 넣기는 열 하나로 접는다.</li>
-                    <li>받는 쪽은 바뀐 곳만 같은 다섯 가지 연산으로 받는다. 내보내기 전에 검산하고, 틀리면 통째 바꾸기로 물러선다. 무작위 3000 대본에서 이벤트 수십만 개, 어긋남 0.</li>
-                    <li>커서·선택은 토큰 키로 들고 있다가 경로로 바꾼다 — 남의 편집에 밀리지 않는다.</li>
-                    <li><b>ProseMirror 도 붙었다.</b> Step 을 모델 연산으로(Enter 는 split 하나), 남의 변경은 최소 교체 하나로. 진짜 ProseMirror 명령으로 돌린 무작위 500 대본에서 모든 편집기·CRDT·서버가 같은 문서.</li>
+                    <li>A document is a <b>token line</b>. Enter inserts one block marker; paragraph merge deletes one marker. There is no tree-cut or node-move operation.</li>
+                    <li>RGA ID comparison determines order. Concurrent Enter at the same position forms <b>one line through a boundary key</b>.</li>
+                    <li>Undo is per participant. Undoing a deletion cancels <b>only that participant's specific deletion</b>, preventing the yorkie#2237 pattern.</li>
+                    <li>Server receipt order is causal order. Changes are validated and applied atomically. GC is a log entry and compacts tombstones only through the frontier determined by acks and undo pins.</li>
+                    <li>The CRDT has no block-type knowledge. It receives an <b>injected schema</b> and knows only 9 shapes: text, inline, flow, group, grid, row, cell, atom, and span. The 5 wire operations are type-independent.</li>
+                    <li>Tables use row lines × column lines; IDs address cells. Concurrent row/column insertion, column deletion versus cell input, merged cells (colspan/rowspan), and cell backgrounds converge.</li>
+                    <li>Lists and captions are <b>stored flat and displayed as groups</b>. An item enters or leaves a list through one type change, without moving blocks.</li>
+                    <li>Model output is a tree shaped like a schema-based document editor's JSON (<code>table &gt; table-row &gt; table-cell &gt; table-cell-body</code>, <code>image-component &gt; image &gt; inline-image</code>, and so on).</li>
+                    <li>Editors send <b>five model operations</b> (insert · delete · update · split · merge) using model paths. Names and semantics match a schema-based document editor's manipulation engine. Per-row cell insertions fold into one column.</li>
+                    <li>Receivers get only changed regions through the same five operations. Events are verified before emission and fall back to full replacement on failure. Across 3000 random scripts, hundreds of thousands of events had 0 mismatches.</li>
+                    <li>Cursors and selections are stored as token keys and converted to paths, so other users' edits do not shift their anchors.</li>
+                    <li><b>ProseMirror is integrated.</b> Steps become model operations (one split for Enter), and remote changes use one minimal replacement. Across 500 random scripts using real ProseMirror commands, all editors, CRDTs, and the server had identical documents.</li>
                 </ul>
             </section>
 
             <section aria-labelledby="why">
-                <h2 id="why">왜 만들었나</h2>
-                <p>앞선 Yorkie 실험의 동시편집 플러그인은 스키마 기반 문서 에디터의 문서를 Yorkie Tree 에 그대로 옮겼다. 연구하면서 드러난 문제는 대부분 <b>트리를 자르는 연산</b>에서 나왔다.</p>
+                <h2 id="why">Why It Was Built</h2>
+                <p>The earlier Yorkie collaboration-plugin experiment copied a schema-based document editor's document directly into Yorkie Tree. Most issues found during research came from <b>tree-cut operations</b>.</p>
                 <ul>
-                    <li><b>같은 경계를 동시에 자르면 복제본마다 다른 노드를 옮긴다</b> (§7.4, yorkie#2240). 둘이 같은 자리에서 Enter 를 치면 글이 사라지거나 문서가 갈린다.</li>
-                    <li><b>되돌리기가 보지 못한 남의 삭제까지 되살린다</b> (yorkie#2237).</li>
-                    <li>Yorkie 이벤트에는 나누기 깊이(splitLevel)가 실려 오지 않아, 받는 쪽이 짐작해야 한다.</li>
-                    <li>"판단을 연산에 실어 보내는" 설계 셋을 시험했지만 모두 기준보다 나빴다.</li>
+                    <li><b>Concurrent cuts at the same boundary move different nodes on different replicas</b> (§7.4, yorkie#2240). Two users pressing Enter at the same position can lose text or diverge.</li>
+                    <li><b>Undo restores another user's deletion that it never observed</b> (yorkie#2237).</li>
+                    <li>Yorkie events omit split depth (splitLevel), forcing receivers to infer it.</li>
+                    <li>Three designs that carried decisions in operations were tested. All performed worse than the baseline.</li>
                 </ul>
-                <p>같은 연구에서 인라인 요소 층을 없앤 평평한 구조가 갈림을 크게 줄였고(172 → 51), Yjs 비교에서도 차이를 만든 것은 CRDT 가 아니라 <b>표현</b>이었다. 그래서 질문을 바꿨다 — 트리를 자르지 않는 표현으로 처음부터 만들면 어떻게 동작하나. 이 저장소가 그 답이다.</p>
+                <p>In the same research, removing the inline layer and using a flat structure greatly reduced divergences (172 → 51). The Yjs comparison also showed that <b>representation</b>, rather than the CRDT, made the difference. The question became: how would an implementation built from a representation without tree cuts behave? This repository answers that question.</p>
             </section>
 
             <section aria-labelledby="line">
-                <h2 id="line">문서는 토큰 줄</h2>
-                <p>토큰은 셋이다. <b>글자 토큰</b>(한 글자), <b>노드 토큰</b>(블록을 여는 표지 ¶, 표, 행, 그림 …), <b>머리 토큰</b>(줄 맨 앞). 블록 목록은 저장하지 않는다. 살아 있는 토큰을 앞에서부터 읽으며 그때그때 계산한다.</p>
+                <h2 id="line">Documents as Token Lines</h2>
+                <p>There are three token kinds: <b>character tokens</b> (one character), <b>node tokens</b> (block marker ¶, table, row, image, and so on), and <b>head tokens</b> (line start). Block lists are not stored. They are calculated by reading live tokens in order.</p>
                 <figure>
                     <div class="frame">
-                        <div class="line-label">본문 줄 — "abcdefgh" 의 abcd|efgh 에서 A·B 가 서로 모르고 Enter 를 친 뒤 각자 자기 이름을 치고, g 는 지운 상태</div>
-                        <div class="strip" role="img" aria-label="토큰 줄: 머리, a, b, c, d, 블록을 여는 표지 9B, 흡수된 표지 9A, 글자 B, A, 그 뒤 e f g h">
-                            <span class="tok primary">¶<i>머리</i></span>
+                        <div class="line-label">Body line: A/B independently press Enter at abcd|efgh in "abcdefgh", then each types their name; g is deleted.</div>
+                        <div class="strip" role="img" aria-label="Token line: head, a, b, c, d, opening marker 9B, absorbed marker 9A, characters B and A, then e f g h">
+                            <span class="tok primary">¶<i>head</i></span>
                             <span class="tok">a<i>1A</i></span><span class="tok">b<i>2A</i></span><span class="tok">c<i>3A</i></span><span class="tok">d<i>4A</i></span>
                             <span class="tok primary">¶<i>9B</i></span>
                             <span class="tok">B<i>10B</i></span>
@@ -385,57 +385,57 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
                             <span class="tok">h<i>8A</i></span>
                         </div>
                     </div>
-                    <figcaption>파랑 ¶ = 블록을 여는 표지, 주황 ¶ = 같은 경계의 동시 Enter 라 앞 표지에 흡수된 표지, 취소선 = 묘비. 계산 결과는 <code>abcd | BAefh</code> 두 블록이다. 이름표는 <code>lamport + 참여자</code>.</figcaption>
+                    <figcaption>Blue ¶ = opening block marker; orange ¶ = concurrent Enter at the same boundary, absorbed into the preceding marker; strikethrough = tombstone. The result is two blocks, <code>abcd | BAefh</code>. IDs use <code>lamport + participant</code>.</figcaption>
                 </figure>
                 <ul>
-                    <li><b>Enter</b> = text 표지 하나 넣기. <b>Backspace 로 합치기</b> = 표지 하나 지우기.</li>
-                    <li><b>블록 종류</b>(제목·인용·목록 항목)는 표지의 속성 <code>$type</code> 이다.</li>
-                    <li>모델은 <b>살아 있는 토큰만의 함수</b>다. 묘비를 읽지 않으므로 GC 시점과 무관하다.</li>
+                    <li><b>Enter</b> = insert one text marker. <b>Backspace merge</b> = delete one marker.</li>
+                    <li><b>Block type</b> (heading, quote, list item) is the marker attribute <code>$type</code>.</li>
+                    <li>The model is <b>a function of live tokens only</b>. It does not read tombstones, so it is independent of GC timing.</li>
                 </ul>
             </section>
 
             <section aria-labelledby="rga">
-                <h2 id="rga">순서와 같은 자리 Enter</h2>
-                <h3>RGA — 이름표만으로 순서를 정한다</h3>
-                <p>모든 토큰에는 바뀌지 않는 이름표 <code>lamport@참여자</code> 가 붙는다. 새 토큰은 "왼쪽 기준 토큰" 바로 뒤에 들어가되, 같은 기준 뒤에 동시에 들어간 토큰끼리는 이름표가 큰 쪽이 앞에 선다. 판단에 쓰는 값이 이름표뿐이라, 받는 순서가 달라도 모든 복제본에서 같은 줄이 나온다.</p>
-                <h3>경계 키 — 같은 자리 동시 Enter 는 새 줄 하나</h3>
-                <p>text 표지에는 만든 쪽이 본 경계(왼쪽 토큰 | 오른쪽 토큰)가 적힌다. 같은 경계를 가진 살아 있는 표지가 여럿이면 순서상 첫 것만 블록을 열고 나머지는 흡수된다.</p>
+                <h2 id="rga">Order and Same-Position Enter</h2>
+                <h3>RGA: Order from IDs Alone</h3>
+                <p>Every token has an immutable ID, <code>lamport@participant</code>. New tokens are inserted after a left reference token. Among concurrent insertions at the same reference, the larger ID comes first. Decisions depend only on IDs, so all replicas produce the same line despite different receipt orders.</p>
+                <h3>Boundary Keys: One New Line for Concurrent Enter at One Position</h3>
+                <p>A text marker records the creator's observed boundary (left token | right token). If several live markers share a boundary, only the first in order opens a block; the others are absorbed.</p>
                 <div class="grid2">
                     <div class="card">
-                        <h4>서로 모르고 같은 자리에서 Enter</h4>
-                        <p>경계가 같다 → <b>한 줄</b>. 각자 그 줄에 친 글자는 모두 그 줄에 남는다. (넷이 동시에 쳐도 한 줄에 넷)</p>
+                        <h4>Independent Enter at the Same Position</h4>
+                        <p>Same boundary → <b>one line</b>. Text typed by each participant remains in that line. Four concurrent participants also produce one line containing all four inputs.</p>
                     </div>
                     <div class="card">
-                        <h4>상대의 Enter 를 보고 다시 Enter</h4>
-                        <p>왼쪽 토큰이 달라 경계가 다르다 → <b>따로 줄</b>. 혼자 Enter 두 번이면 빈 줄 둘.</p>
+                        <h4>Enter After Observing Another Enter</h4>
+                        <p>Different left token and boundary → <b>separate lines</b>. Two consecutive Enters by one user produce two empty lines.</p>
                     </div>
                 </div>
             </section>
 
             <section aria-labelledby="undo">
-                <h2 id="undo">지우기 장부와 되돌리기</h2>
-                <p>토큰은 지워도 없애지 않는다. "나를 지운 연산들"과 "취소된 지우기들"을 기록하고, 취소되지 않은 지우기가 하나라도 남아 있으면 묘비로 친다.</p>
-                <p>되돌리기는 <b>참여자마다 따로</b> 있고, 과거로 돌아가는 것이 아니라 반대 연산을 새로 보낸다.</p>
+                <h2 id="undo">Deletion Records and Undo</h2>
+                <p>Deleted tokens are retained. Each token records the operations that deleted it and cancelled deletions. It is a tombstone while any uncancelled deletion remains.</p>
+                <p>Undo is <b>separate per participant</b>. It sends new inverse operations rather than returning to an earlier document.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>되돌리는 것</th><th>보내는 연산</th><th>지키는 약속</th></tr></thead>
+                        <thead><tr><th>Undo Target</th><th>Sent Operation</th><th>Contract</th></tr></thead>
                         <tbody>
-                            <tr><td>넣기</td><td>새 지우기</td><td>그 사이 남이 친 글자는 그대로</td></tr>
-                            <tr><td>지우기</td><td>그 지우기만 취소 (<code>undel</code>)</td><td>남이 동시에 같은 글자를 지웠으면 계속 죽어 있다 — yorkie#2237 이 구조적으로 안 생긴다</td></tr>
-                            <tr><td>종류·속성·서식·칸 색·칸 합치기</td><td>직전 값으로 <code>set</code></td><td>지금 값이 아직 내가 쓴 값일 때만. 남의 나중 변경을 덮지 않는다</td></tr>
-                            <tr><td>표·행·열 넣기·지우기</td><td>살리기·죽이기</td><td>지운 열을 되돌리면 그 열 칸의 글(남이 쓴 것 포함)과 색까지 돌아온다</td></tr>
+                            <tr><td>Insertion</td><td>New deletion</td><td>Preserve text typed by others in between</td></tr>
+                            <tr><td>Deletion</td><td>Cancel only that deletion (<code>undel</code>)</td><td>If another user concurrently deleted the same character, it stays deleted. This structurally prevents yorkie#2237.</td></tr>
+                            <tr><td>Type, attributes, marks, cell color, cell merge</td><td><code>set</code> to the previous value</td><td>Only while the current write is still mine. Do not overwrite another user's later change.</td></tr>
+                            <tr><td>Table/row/column insertion or deletion</td><td>Restore/delete</td><td>Undoing column deletion restores its cell text, including others' input, and colors.</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p>편집기 쪽: 이어 친 글자는 한 단위(1.5초 안, 커서가 이어질 때), 되돌린 뒤 커서는 편집 전 자리(토큰 이름표로 기억), 선택을 덮어 치기는 한 단위, 최근 100단위.</p>
+                <p>Editor behavior: consecutive typing forms one unit within 1.5 seconds while the cursor remains contiguous. Undo restores the pre-edit cursor, stored as token IDs. Replacing a selection is one unit. Retain the latest 100 units.</p>
             </section>
 
             <section aria-labelledby="slots">
-                <h2 id="slots">줄과 자리 (slot)</h2>
-                <p>줄은 본문 하나만 있는 것이 아니다. 노드마다 이름 붙은 <b>자리 줄</b>이 있다. 자리 줄 머리의 이름표는 주인 노드 이름표와 자리 이름에서 정해지므로(<code>0@주인/자리</code>), 줄을 만드는 연산이 따로 없다. 모든 복제본이 처음 필요할 때 같은 머리를 만든다.</p>
+                <h2 id="slots">Lines and Slots</h2>
+                <p>The document has more than one body line. Each node has named <b>slot lines</b>. A slot head ID derives from its owner node ID and slot name (<code>0@owner/slot</code>), so no operation creates the line. Every replica creates the same head when first needed.</p>
                 <figure>
                     <div class="frame">
-                        <svg viewBox="0 0 720 300" role="img" aria-label="본문 줄 안의 표 노드가 행 줄, 열 줄, 그리고 행과 열이 만나는 칸 줄들을 가진다. 이미지 그릇 노드는 body 줄을 가진다.">
+                        <svg viewBox="0 0 720 300" role="img" aria-label="A table node in the body owns row, column, and cell lines. An image container owns a body line.">
                             <defs>
                                 <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                                     <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
@@ -444,7 +444,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
                             <g fill="none" stroke="currentColor" stroke-width="1.2">
                                 <rect x="10" y="14" width="700" height="40" rx="6" style="fill:var(--soft)"></rect>
                             </g>
-                            <text x="22" y="39" font-size="13" style="fill:var(--ink)">본문 줄</text>
+                            <text x="22" y="39" font-size="13" style="fill:var(--ink)">Body line</text>
                             <g font-size="12" class="mono" style="fill:var(--ink)">
                                 <text x="96" y="39">¶ a b c d</text>
                                 <rect x="186" y="22" width="82" height="24" rx="4" style="fill:var(--accent-soft);stroke:var(--accent)"></rect>
@@ -462,62 +462,62 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
                             </g>
                             <g font-size="12" style="fill:var(--ink)">
                                 <rect x="20" y="112" width="120" height="66" rx="6" style="fill:var(--paper);stroke:var(--line)"></rect>
-                                <text x="30" y="132" font-weight="600">rows 줄</text>
+                                <text x="30" y="132" font-weight="600">rows line</text>
                                 <text x="30" y="152" class="mono">▸ ↧r1 ↧r2</text>
-                                <text x="30" y="170" style="fill:var(--muted)">table-row 노드</text>
+                                <text x="30" y="170" style="fill:var(--muted)">table-row nodes</text>
 
                                 <rect x="160" y="112" width="134" height="66" rx="6" style="fill:var(--paper);stroke:var(--line)"></rect>
-                                <text x="170" y="132" font-weight="600">cols 줄</text>
+                                <text x="170" y="132" font-weight="600">cols line</text>
                                 <text x="170" y="152" class="mono">▸ ↦c1 ↦c2 ↦c3</text>
-                                <text x="170" y="170" style="fill:var(--muted)">열 노드</text>
+                                <text x="170" y="170" style="fill:var(--muted)">Column nodes</text>
 
                                 <rect x="314" y="112" width="200" height="66" rx="6" style="fill:var(--paper);stroke:var(--line)"></rect>
-                                <text x="324" y="132" font-weight="600">cell:r1,c2 줄 (칸마다)</text>
+                                <text x="324" y="132" font-weight="600">cell:r1,c2 line (per cell)</text>
                                 <text x="324" y="152" class="mono">¶ 2 ¶ x y</text>
-                                <text x="324" y="170" style="fill:var(--muted)">= table-cell-body (흐름 줄)</text>
+                                <text x="324" y="170" style="fill:var(--muted)">= table-cell-body (flow line)</text>
 
                                 <rect x="534" y="112" width="170" height="66" rx="6" style="fill:var(--paper);stroke:var(--line)"></rect>
-                                <text x="544" y="132" font-weight="600">body 줄</text>
+                                <text x="544" y="132" font-weight="600">body line</text>
                                 <text x="544" y="152" class="mono">¶image 🖼 ¶caption …</text>
-                                <text x="544" y="170" style="fill:var(--muted)">이미지 그릇 안</text>
+                                <text x="544" y="170" style="fill:var(--muted)">Inside image container</text>
                             </g>
                             <g font-size="12" style="fill:var(--muted)">
-                                <text x="20" y="214">칸은 따로 만들지 않는다 — (행, 열) 이름표 쌍이 칸 줄의 주소다.</text>
-                                <text x="20" y="234">행·열 노드는 각자 RGA 줄에 있어, 동시에 더하고 지워도 순서가 모든 복제본에서 같다.</text>
-                                <text x="20" y="254">칸 속성(배경색)·칸 합치기는 칸에 토큰이 없으므로 표 노드의 속성으로 칸마다 적는다.</text>
-                                <text x="20" y="274">상자(callout)·이미지 그릇 같은 그릇은 body 줄 하나를 가진다.</text>
+                                <text x="20" y="214">Cells are implicit: (row, column) IDs address each cell line.</text>
+                                <text x="20" y="234">Rows and columns have separate RGA lines, preserving order under concurrent edits.</text>
+                                <text x="20" y="254">Cell attributes and merges are stored on the table node; cells have no tokens.</text>
+                                <text x="20" y="274">Containers such as callouts and image components have one body line.</text>
                             </g>
                         </svg>
                     </div>
-                    <figcaption>표 노드 하나가 rows·cols 줄과 칸 줄들을, 그릇 노드가 body 줄을 가진다. 모든 줄이 같은 RGA 규칙을 따른다.</figcaption>
+                    <figcaption>A table node owns rows/cols and cell lines; a container owns a body line. Every line follows the same RGA rules.</figcaption>
                 </figure>
-                <h3>빈 자리 (virtual)</h3>
-                <p>표·이미지 그릇·구분선 바로 뒤에 자기 표지를 가진 text 블록이 없으면, 모델이 빈 자리 블록을 하나 둔다. 그래서 표 앞뒤에는 언제나 커서를 둘 곳이 있고, 표 바로 뒤로 동시에 들어온 글자도 갈 곳이 있다. 빈 자리의 종류를 바꾸면 그때 표지가 새로 생긴다.</p>
+                <h3>Virtual Positions</h3>
+                <p>If no text block with its own marker follows a table, image container, or divider, the model provides a virtual block. This gives cursors a position around tables and receives concurrently inserted text immediately after a table. Changing the virtual block's type creates a marker then.</p>
             </section>
 
             <section aria-labelledby="ops">
-                <h2 id="ops">전선 연산 다섯 가지</h2>
-                <p>무엇을 넣든 "어느 토큰 뒤"만 말한다. 블록 종류와 무관하다.</p>
+                <h2 id="ops">Five Wire Operations</h2>
+                <p>Every insertion identifies the token after which to insert. This is independent of block type.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>연산</th><th>모양</th><th>쓰는 곳</th></tr></thead>
+                        <thead><tr><th>Operation</th><th>Shape</th><th>Use</th></tr></thead>
                         <tbody>
-                            <tr><td><code>text</code></td><td><code>{id, origin, text, marks?}</code></td><td>글자 n 개 (이름표 연속)</td></tr>
-                            <tr><td><code>node</code></td><td><code>{id, origin, type, boundary?, attrs?}</code></td><td>블록 표지(Enter), 표·행·열, 그릇, 구분선, 글 안 그림</td></tr>
-                            <tr><td><code>del</code></td><td><code>{at, ids}</code></td><td>지우기 (같은 <code>at</code> 으로 나중에 취소 가능)</td></tr>
-                            <tr><td><code>undel</code></td><td><code>{at, cancels, ids}</code></td><td>지정한 지우기만 취소 — 되돌리기</td></tr>
-                            <tr><td><code>set</code></td><td><code>{at, ids, key, value}</code></td><td>LWW 쓰기: 블록 종류 <code>$type</code>, 블록·그림 속성, 글자 서식, 칸 속성 <code>$cell:행,열|이름</code>, 칸 합치기 <code>$span:행,열</code></td></tr>
+                            <tr><td><code>text</code></td><td><code>{id, origin, text, marks?}</code></td><td>n characters with consecutive IDs</td></tr>
+                            <tr><td><code>node</code></td><td><code>{id, origin, type, boundary?, attrs?}</code></td><td>Block marker (Enter), table/row/column, container, divider, inline image</td></tr>
+                            <tr><td><code>del</code></td><td><code>{at, ids}</code></td><td>Deletion, cancellable later using the same <code>at</code></td></tr>
+                            <tr><td><code>undel</code></td><td><code>{at, cancels, ids}</code></td><td>Cancel only the specified deletion: undo</td></tr>
+                            <tr><td><code>set</code></td><td><code>{at, ids, key, value}</code></td><td>LWW writes: block type <code>$type</code>, block/image attributes, character marks, cell attributes <code>$cell:row,col|name</code>, cell merge <code>$span:row,col</code></td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p>같은 연산을 두 번 받아도 결과가 같다(멱등). 압축됐거나 없는 토큰을 가리키는 지우기·속성은 조용히 지나간다.</p>
+                <p>Receiving the same operation twice gives the same result (idempotence). Deletion and attribute operations targeting compacted or absent tokens are silently skipped.</p>
             </section>
 
             <section aria-labelledby="sync">
-                <h2 id="sync">동기화와 서버</h2>
+                <h2 id="sync">Synchronization and Server</h2>
                 <figure>
                     <div class="frame">
-                        <svg viewBox="0 0 720 190" role="img" aria-label="편집기의 연산이 SyncClient 를 거쳐 Change 로 서버에 올라가고, 서버가 serverSeq 를 붙여 로그에 쌓은 뒤 SSE 로 모두에게 퍼뜨린다.">
+                        <svg viewBox="0 0 720 190" role="img" aria-label="Editor operations pass through SyncClient as Changes to the server, which assigns serverSeq, logs them, and broadcasts through SSE.">
                             <defs>
                                 <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                                     <path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"></path>
@@ -525,15 +525,15 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
                             </defs>
                             <g font-size="13" style="fill:var(--ink)">
                                 <rect x="10" y="30" width="120" height="50" rx="8" style="fill:var(--paper);stroke:var(--line)"></rect>
-                                <text x="70" y="60" text-anchor="middle">편집기</text>
+                                <text x="70" y="60" text-anchor="middle">Editor</text>
                                 <rect x="190" y="30" width="140" height="50" rx="8" style="fill:var(--paper);stroke:var(--line)"></rect>
                                 <text x="260" y="52" text-anchor="middle">SyncClient</text>
-                                <text x="260" y="70" text-anchor="middle" font-size="11" style="fill:var(--muted)">바로 적용 · 끊김 동안 쌓기</text>
+                                <text x="260" y="70" text-anchor="middle" font-size="11" style="fill:var(--muted)">Apply now · queue offline</text>
                                 <rect x="420" y="30" width="140" height="50" rx="8" style="fill:var(--accent-soft);stroke:var(--accent)"></rect>
                                 <text x="490" y="52" text-anchor="middle">DocHub</text>
-                                <text x="490" y="70" text-anchor="middle" font-size="11" style="fill:var(--muted)">검사 · 순서 · GC</text>
+                                <text x="490" y="70" text-anchor="middle" font-size="11" style="fill:var(--muted)">Validate · order · GC</text>
                                 <rect x="610" y="30" width="100" height="50" rx="8" style="fill:var(--paper);stroke:var(--line)"></rect>
-                                <text x="660" y="60" text-anchor="middle">JSONL 로그</text>
+                                <text x="660" y="60" text-anchor="middle">JSONL log</text>
                             </g>
                             <g style="stroke:var(--muted)" stroke-width="1.3" fill="none">
                                 <path d="M130 55 H186" marker-end="url(#arr2)"></path>
@@ -542,64 +542,64 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
                                 <path d="M490 80 V130 H260 V84" marker-end="url(#arr2)"></path>
                             </g>
                             <g font-size="11" style="fill:var(--muted)">
-                                <text x="158" y="47" text-anchor="middle">연산</text>
+                                <text x="158" y="47" text-anchor="middle">Operations</text>
                                 <text x="374" y="40" text-anchor="middle">Change{actor, seq, ops}</text>
-                                <text x="374" y="70" text-anchor="middle">ack{받은 곳, 핀}</text>
-                                <text x="375" y="148" text-anchor="middle">SSE: serverSeq 를 붙여 모두에게 (GC 줄 포함)</text>
-                                <text x="260" y="176" text-anchor="middle">내 것은 확인으로만, 남의 것은 적용</text>
+                                <text x="374" y="70" text-anchor="middle">ack{received, pin}</text>
+                                <text x="375" y="148" text-anchor="middle">SSE: serverSeq to all (including GC entries)</text>
+                                <text x="260" y="176" text-anchor="middle">Own: acknowledge; remote: apply</text>
                             </g>
                         </svg>
                     </div>
-                    <figcaption>올라가는 길은 fetch POST, 내려오는 길은 SSE. 서버는 같은 CRDT 코드로 문서를 들고 있어 새 참여자에게 스냅숏을 준다.</figcaption>
+                    <figcaption>Upload uses fetch POST; download uses SSE. The server holds the document through the same CRDT code and supplies snapshots to new participants.</figcaption>
                 </figure>
                 <ul>
-                    <li><b>서버 순서 = 인과 순서.</b> 누가 어떤 토큰을 기준으로 삼았다면 그 토큰은 이미 앞 번호로 로그에 있다. 참여자는 버전 벡터 없이 "마지막으로 받은 serverSeq" 하나만 기억한다.</li>
-                    <li>내 편집은 서버를 기다리지 않고 바로 적용한다. 되감기(rebase)가 필요 없다.</li>
-                    <li>끊긴 동안 친 것은 쌓아 두었다가 다시 보낸다. 서버가 <code>(actor, seq)</code> 로 중복을 거른다.</li>
-                    <li><b>한 덩어리 적용:</b> 서버는 적용 전에 변경 안의 모든 연산을 검사한다(같은 변경 안에서 앞 연산이 만든 토큰도 셈에 넣는다). 하나라도 틀리면 409 로 통째로 거절하고 문서는 그대로다.</li>
-                    <li>서버를 다시 켜면 로그를 되풀이해 이어 간다. 스키마 이전 판(v2)의 로그도 읽어 들인다.</li>
+                    <li><b>Server order = causal order.</b> If an operation references a token, that token is already in the log with an earlier sequence. Participants store only the last received serverSeq, without a version vector.</li>
+                    <li>Local edits apply immediately without waiting for the server. No rebase is needed.</li>
+                    <li>Offline edits are queued and retransmitted. The server deduplicates by <code>(actor, seq)</code>.</li>
+                    <li><b>Atomic application:</b> before application, the server validates every operation in a change, including tokens created by earlier operations in that change. Any invalid operation rejects the entire change with 409 and leaves the document unchanged.</li>
+                    <li>Server restart replays the log to continue. Logs from the pre-schema version (v2) can also be read.</li>
                 </ul>
             </section>
 
             <section aria-labelledby="gc">
-                <h2 id="gc">GC — 묘비 압축</h2>
-                <p>묘비를 줄에서 빼지 않는다. 빼면 RGA 의 "같은 기준 뒤 이름표 비교"가 달라져 늦게 온 연산이 다른 자리에 들어간다. 대신 <b>안정된 묘비를 압축</b>한다 — 내용·기록을 버리고 자리만 남기고, 한 사람이 연달아 친 글자의 묘비는 토큰 하나(<span class="tok compact">▒×N<i>6A</i></span>)로 합친다. 묶음은 자리 판단에서 원래 글자들과 똑같이 행동한다.</p>
-                <pre>기준점 = min over 참여자 ( 받은 곳 ack ,  되돌리기 핀 − 1 )</pre>
+                <h2 id="gc">GC: Tombstone Compaction</h2>
+                <p>Tombstones stay in their lines. Removing them would change RGA comparisons among tokens with the same origin and misplace late operations. Instead, <b>compact stable tombstones</b>: discard content and records but retain positions. Consecutive tombstones from one participant merge into one token (<span class="tok compact">▒×N<i>6A</i></span>). This span behaves like the original characters for ordering.</p>
+                <pre>frontier = min over participants ( received ack , undo pin − 1 )</pre>
                 <ul>
-                    <li><b>받은 곳(ack)</b>: 그 뒤에 그 참여자가 보낼 연산은 그 지우기를 이미 본 상태라, 압축된 토큰을 기준으로 삼지 않는다.</li>
-                    <li><b>되돌리기 핀</b>: 내 되돌리기가 취소할 수 있는 지우기 가운데 가장 이른 것. 그 앞까지만 압축한다.</li>
-                    <li>끊긴 참여자도 2분 동안은 기다린다. 창을 닫으면 바로 빠진다.</li>
-                    <li>ack 는 Change 와 <b>같은 줄</b>로 차례로 나간다. 앞질러 가면 아직 안 보낸 연산이 기댄 토큰이 압축될 수 있다.</li>
-                    <li>GC 자체도 로그의 한 줄 <code>{serverSeq, gc: 기준점}</code> 이다. 모든 복제본이 같은 자리에서 같은 압축을 한다. 서버는 압축할 묘비가 12개 넘게 모이면 스스로 GC 한다.</li>
+                    <li><b>Received sequence (ack)</b>: later operations from that participant already observed the deletion, so they do not reference the compacted token.</li>
+                    <li><b>Undo pin</b>: the earliest deletion that my undo can cancel. Compact only before it.</li>
+                    <li>Disconnected participants are awaited for 2 minutes. Closing a window removes it immediately.</li>
+                    <li>Acks travel in order through the <b>same channel</b> as Changes. Overtaking could compact a reference token needed by an unsent operation.</li>
+                    <li>GC is itself a log entry, <code>{serverSeq, gc: frontier}</code>. Every replica performs the same compaction at the same log position. The server automatically runs GC when more than 12 compactable tombstones accumulate.</li>
                 </ul>
-                <h3>대조군 — 규칙을 일부러 빼면 시험이 잡는다</h3>
+                <h3>Negative Controls: Tests Detect Deliberately Removed Rules</h3>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>일부러 망가뜨린 것</th><th class="num">갈린 대본 (참여자 2 / 4)</th></tr></thead>
+                        <thead><tr><th>Deliberate Defect</th><th class="num">Divergent Scripts (2 / 4 participants)</th></tr></thead>
                         <tbody>
-                            <tr><td>RGA 규칙</td><td class="num">300 중 175</td></tr>
-                            <tr><td>기준점에서 되돌리기 핀 빼기</td><td class="num">1000 중 28 / 41</td></tr>
-                            <tr><td>기준점에서 받은 곳(ack) 빼기</td><td class="num">1000 중 124 / 165</td></tr>
+                            <tr><td>RGA rule</td><td class="num">175 of 300</td></tr>
+                            <tr><td>Remove undo pin from frontier</td><td class="num">28 / 41 of 1000</td></tr>
+                            <tr><td>Remove received ack from frontier</td><td class="num">124 / 165 of 1000</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p class="mono" style="font-size:13px;color:var(--muted)">대조군은 스키마 이전 판에서 쟀다.</p>
+                <p class="mono" style="font-size:13px;color:var(--muted)">Controls were measured with the pre-schema version.</p>
             </section>
 
             <section aria-labelledby="schema">
-                <h2 id="schema">스키마 주입</h2>
-                <p>CRDT 는 블록 종류를 모른다. 스키마는 <code>SyncClient</code> 를 만들 때 넣는다. 스키마 기반 문서 에디터의 스키마처럼 노드 종류마다 <code>children</code> 으로 트리를 적고, 종류마다 <b>모양</b> 하나와 속성·서식을 정한다. 새 블록 종류를 더할 때 CRDT 코드는 바뀌지 않는다.</p>
+                <h2 id="schema">Schema Injection</h2>
+                <p>The CRDT has no block-type knowledge. Supply the schema when creating <code>SyncClient</code>. Like a schema-based document editor, each node type defines its tree through <code>children</code>, one <b>shape</b>, attributes, and marks. Adding block types does not change CRDT code.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>모양</th><th>뜻</th><th>데모 스키마의 종류</th></tr></thead>
+                        <thead><tr><th>Shape</th><th>Meaning</th><th>Demo Schema Types</th></tr></thead>
                         <tbody>
-                            <tr><td><code>text</code></td><td>글을 담는 블록. 흐름 줄에서 표지가 열고 다음 표지까지가 안. <code>children</code> 에 올 수 있는 inline, <code>text:false</code> 면 글자를 받지 않는다</td><td>paragraph · heading1·2 · quote · list-item · image · caption-paragraph</td></tr>
-                            <tr><td><code>inline</code></td><td>text 블록 안에서 글자 한 자리를 차지</td><td>inline-image</td></tr>
-                            <tr><td><code>flow</code></td><td>블록이 흐르는 줄 하나를 가진 그릇 — Enter 로 나누고 Backspace 로 합치는 곳</td><td>content · table-cell-body · image-component · callout</td></tr>
-                            <tr><td><code>group</code></td><td>이어진 항목 블록을 묶어 <b>보이는</b> 그릇. 저장하지 않는다</td><td>list · caption</td></tr>
-                            <tr><td><code>grid</code> · <code>row</code> · <code>cell</code></td><td>표 · 표 행 · 표 칸. 칸의 <code>children</code> 은 칸 안 흐름 그릇 하나. 행·열 수는 정하지 않는다</td><td>table · table-row · table-cell</td></tr>
-                            <tr><td><code>atom</code></td><td>안이 없는 블록</td><td>divider</td></tr>
-                            <tr><td><code>span</code></td><td>값 서식이 같은 이어진 글자를 묶어 <b>보이는</b> 것. 저장은 글자마다의 서식</td><td>inline-hyperlink (서식 <code>link</code> → 속성 <code>url</code>)</td></tr>
+                            <tr><td><code>text</code></td><td>Text block. A marker opens it in a flow line; it extends to the next marker. <code>children</code> specifies allowed inline types; <code>text:false</code> rejects characters.</td><td>paragraph · heading1·2 · quote · list-item · image · caption-paragraph</td></tr>
+                            <tr><td><code>inline</code></td><td>Occupies one character position inside a text block.</td><td>inline-image</td></tr>
+                            <tr><td><code>flow</code></td><td>Container with one block-flow line: Enter splits and Backspace merges.</td><td>content · table-cell-body · image-component · callout</td></tr>
+                            <tr><td><code>group</code></td><td>A <b>displayed</b> container grouping consecutive item blocks. Not stored.</td><td>list · caption</td></tr>
+                            <tr><td><code>grid</code> · <code>row</code> · <code>cell</code></td><td>Table, row, and cell. Cell <code>children</code> contains one inner flow container. Row/column counts are not fixed.</td><td>table · table-row · table-cell</td></tr>
+                            <tr><td><code>atom</code></td><td>Block with no interior.</td><td>divider</td></tr>
+                            <tr><td><code>span</code></td><td>A <b>displayed</b> group of consecutive characters with the same value mark. Storage keeps per-character marks.</td><td>inline-hyperlink (mark <code>link</code> → attribute <code>url</code>)</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -610,24 +610,24 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
                           ─ caption ─ caption-paragraph
         ─ callout ─ paragraph · heading2 · list · table · image-component
         ─ divider</pre>
-                <p>글자 서식은 둘이다 — 켜기/끄기 서식(<code>marks</code>: bold·italic·underline·strike)과 값 서식(<code>markValues</code>: link 주소, 꼴은 <code>pattern</code> 으로 검사). 새로 친 글자는 켜기/끄기 서식만 물려받는다.</p>
-                <p>속성 명세: <code>default</code>, <code>values</code>(허용 값), <code>min</code>·<code>max</code>, <code>pattern</code>(정규식, 색 같은), <code>inherit</code>(Enter 로 나눈 블록이 물려받음), <code>computed</code>(CRDT 가 계산해 내보내는 값 — colspan·rowspan·spanned). 편집기 표시는 <code>ui</code>(<code>label</code>, <code>list</code>, <code>variants</code>, <code>placeholder</code>).</p>
+                <p>Character marks have two forms: boolean marks (<code>marks</code>: bold/italic/underline/strike) and value marks (<code>markValues</code>: link URL, validated by <code>pattern</code>). New characters inherit only boolean marks.</p>
+                <p>Attribute specifications include <code>default</code>, <code>values</code> (allowed values), <code>min</code>/<code>max</code>, <code>pattern</code> (regular expression, for example colors), <code>inherit</code> (inherit on Enter), and <code>computed</code> (CRDT-generated colspan/rowspan/spanned). Editor display uses <code>ui</code> (<code>label</code>, <code>list</code>, <code>variants</code>, <code>placeholder</code>).</p>
 
-                <h3>검사는 바뀌지 않는 사실만 본다</h3>
+                <h3>Validation Uses Only Immutable Facts</h3>
                 <div class="note">
-                    서버는 스키마로 "이 줄에 이 종류가 올 수 있나", "이 속성 값이 맞나"를 검사한다. 이때 쓰는 것은 <b>토큰이 어느 줄에 있는지</b>와 <b>노드가 태어날 때 무슨 종류였는지</b>뿐이다.
-                    지금 종류·살았나는 복제본마다 다를 수 있다. 그것으로 거절하면 이미 자기 화면에 적용한 참여자와 서버가 갈라진다.
+                    The schema lets the server validate whether a type is allowed in a line and whether an attribute value is valid. It uses only <b>the token's owning line</b> and <b>the node's original type at creation</b>.
+                    Current type and liveness can differ among replicas. Rejecting based on them would separate the server from a participant that already applied its edit locally.
                 </div>
                 <ul>
-                    <li>그래서 검사는 <b>줄 단위</b>다 — "이 줄의 어느 text 종류든 이 inline 을 받으면 통과".</li>
-                    <li>서버가 <b>스키마 없이</b> 돌아도 된다. 순서 매기기·적용·GC 는 똑같고, 검사만 덜 할 뿐이다. 시험으로 확인했다.</li>
-                    <li>무작위 12,000 판(3000 대본 × 참여자 2·4 × GC 끔·켬)에서, 클라이언트가 만든 연산을 서버 검사가 거절한 일은 0 이다 — 거절되면 시험 하네스에서 오류로 잡힌다.</li>
+                    <li>Validation is therefore <b>line-level</b>: accept an inline node if any text type allowed in that line accepts it.</li>
+                    <li>The server can run <b>without a schema</b>. Ordering, application, and GC stay the same; only validation is reduced. Tests confirm this.</li>
+                    <li>Across 12,000 random runs (3000 scripts × 2/4 participants × GC off/on), server validation rejected 0 client-generated operations. Rejection is an error in the harness.</li>
                 </ul>
-                <h3>모델 출력</h3>
-                <p><code>toJSON()</code> 은 스키마의 종류 이름으로 된 트리다. 스키마 기반 문서 에디터의 문서 JSON 과 같은 꼴이라, 나중에 그 에디터와 이을 때 그대로 비교할 수 있다. 저장에서 날것의 트리를 만들고 <b>모양 정리</b>(model.ts 의 canonical — 목록 묶기·속성 기본값·글 조각 합치기·표 칸 맞추기)를 거쳐 나온다. 편집기 쪽 모델도 같은 규칙으로 정리하므로 두 쪽이 같은 꼴이 된다. 표 뒤 빈 자리(글 없는 virtual)는 모델에 없다.</p>
+                <h3>Model Output</h3>
+                <p><code>toJSON()</code> returns a tree with schema type names, shaped like a schema-based document editor's JSON for direct comparison during later integration. It builds a raw tree from storage, then applies <b>canonical normalization</b> (model.ts canonical: list grouping, attribute defaults, text-run merging, and table-cell alignment). The editor model uses the same rules, so both have the same shape. Empty virtual positions after tables are absent from the model.</p>
 <pre>{"type": "content", "children": [
   {"type": "paragraph", "runs": [{"text": "pic ", "marks": {}}, {"type": "inline-image", "attrs": {…}},
-    {"type": "inline-hyperlink", "attrs": {"url": "https://example.com"}, "runs": [{"text": "링크", "marks": {}}]}]},
+    {"type": "inline-hyperlink", "attrs": {"url": "https://example.com"}, "runs": [{"text": "link", "marks": {}}]}]},
   {"type": "list", "attrs": {"listType": "numbered"}, "children": [
     {"type": "list-item", "attrs": {"level": 0}, "runs": […]}]},
   {"type": "table", "attrs": {"header": false}, "children": [
@@ -641,79 +641,79 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
             </section>
 
             <section aria-labelledby="blocks">
-                <h2 id="blocks">블록별 동작</h2>
+                <h2 id="blocks">Block Behavior</h2>
                 <div class="grid2">
                     <div class="card">
-                        <h4>글자 서식</h4>
+                        <h4>Character Marks</h4>
                         <ul>
-                            <li>범위가 아니라 글자마다 LWW. 서식 연산은 "내가 본 글자들의 이름표 목록"이라, 그 사이 남이 범위 안에 넣은 글자는 바뀌지 않는다</li>
-                            <li>새 글자는 왼쪽 글자의 서식을 물려받는다 (링크는 빼고)</li>
-                            <li>링크: 글자마다 <code>link</code> 주소(LWW). 모델에서 같은 주소로 이어진 글자를 <code>inline-hyperlink</code> 하나로 묶는다. 동시에 다른 주소를 걸면 나중 쪽</li>
-                            <li>글 안 그림은 건너뛴다</li>
+                            <li>LWW applies per character, not per range. A mark operation targets the IDs observed by its creator. Characters inserted into that range by others remain unchanged.</li>
+                            <li>New characters inherit marks from the left character, excluding links.</li>
+                            <li>Links use a per-character <code>link</code> URL (LWW). The model groups consecutive identical URLs into one <code>inline-hyperlink</code>. Concurrent different URLs use the later write.</li>
+                            <li>Inline images are skipped.</li>
                         </ul>
                     </div>
                     <div class="card">
-                        <h4>목록 — 평평하게 저장</h4>
+                        <h4>Lists: Flat Storage</h4>
                         <ul>
-                            <li>list-item 은 흐름 줄의 text 블록 (<code>listType</code>·<code>level</code>). 모델에서 이어진 것끼리 <code>list</code> 로 묶는다</li>
-                            <li>진짜 그릇으로 저장하면 항목이 들고 날 때마다 <b>블록 옮기기</b>가 된다. 평평하면 종류 바꾸기 하나 — 항목을 빼는 사이 남이 친 글이 그대로 남는다</li>
-                            <li>번호는 화면에서 센다. 스키마 기반 문서 에디터도 목록을 속성으로 든다</li>
+                            <li>A list-item is a text block in a flow line (<code>listType</code>/<code>level</code>). The model groups consecutive items into a <code>list</code>.</li>
+                            <li>Storing real containers would require a <b>block move</b> whenever an item entered or left. Flat storage needs only a type change, preserving text typed concurrently while an item leaves.</li>
+                            <li>Numbering is calculated in the view. The schema-based document editor also stores lists through attributes.</li>
                         </ul>
                     </div>
                     <div class="card">
-                        <h4>이미지 · 캡션</h4>
+                        <h4>Images and Captions</h4>
                         <ul>
-                            <li><code>image-component</code> 그릇 줄에 image 블록(글자 안 받음, inline-image 하나)과 caption-paragraph 가 이어진다. 캡션도 목록처럼 묶어서 보인다</li>
-                            <li>캡션은 그림 블록에 합쳐지지 않는다 (Backspace·Delete·범위 지우기)</li>
-                            <li>그림 크기 동시 변경은 나중 쪽</li>
+                            <li>An <code>image-component</code> container line holds an image block (no text, one inline-image) followed by caption-paragraph blocks. Captions display as groups, like lists.</li>
+                            <li>Captions do not merge into image blocks through Backspace, Delete, or range deletion.</li>
+                            <li>Concurrent image-size changes use the later write.</li>
                         </ul>
                     </div>
                     <div class="card">
-                        <h4>상자 · 구분선</h4>
+                        <h4>Callouts and Dividers</h4>
                         <ul>
-                            <li>상자(callout)는 body 줄 하나를 가진 그릇. 안에 목록·표·이미지</li>
-                            <li>구분선은 atom. 그 뒤 블록 맨 앞 Backspace 로 지운다</li>
-                            <li>상자 색(<code>tone</code>)은 LWW 속성</li>
+                            <li>A callout is a container with one body line containing lists, tables, and images.</li>
+                            <li>A divider is an atom. Backspace at the start of the following block deletes it.</li>
+                            <li>Callout color (<code>tone</code>) is an LWW attribute.</li>
                         </ul>
                     </div>
                 </div>
             </section>
 
             <section aria-labelledby="tables">
-                <h2 id="tables">표</h2>
-                <p>표 노드는 rows 줄(table-row 노드)과 cols 줄(열 노드)을 가진다. 칸은 (행, 열) <b>이름표 쌍</b>으로 가리키는 자리 줄이고, 그 줄이 table-cell-body 다. 행·열의 수는 스키마가 정하지 않는다 — 넣을 때 고르고 나중에 더하고 뺀다.</p>
+                <h2 id="tables">Tables</h2>
+                <p>A table node owns a rows line (table-row nodes) and a cols line (column nodes). Cells are slot lines addressed by <b>(row, column) ID pairs</b>; each line is a table-cell-body. The schema does not fix row/column counts. Choose them on insertion, then add or remove them later.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>동시에 일어난 일</th><th>결과 (모든 복제본 같음)</th></tr></thead>
+                        <thead><tr><th>Concurrent Actions</th><th>Result (Identical on All Replicas)</th></tr></thead>
                         <tbody>
-                            <tr><td>A 는 행을, B 는 열을 더함</td><td>3×3. 서로 모르고 만든 행과 열이 만나는 칸에도 바로 쓸 수 있다</td></tr>
-                            <tr><td>A 는 열을 지우고, B 는 그 열의 칸에 씀</td><td>열이 사라진다. B 의 글은 안 보이는 칸에 살아 있고, A 가 되돌리면 함께 돌아온다</td></tr>
-                            <tr><td>A 는 표를 지우고, B 는 칸에 씀</td><td>표가 사라진다. 되돌리면 B 의 글까지 돌아온다</td></tr>
-                            <tr><td>남은 두 행을 둘이 하나씩 지움</td><td>행이 없는 표는 통째로 안 보인다</td></tr>
-                            <tr><td>칸 안 같은 자리 동시 Enter</td><td>새 줄 하나 (본문과 같은 규칙)</td></tr>
-                            <tr><td>같은 자리에 표 둘을 넣음</td><td>둘 다 남고 같은 순서</td></tr>
-                            <tr><td>내가 있던 열을 남이 지움</td><td>커서는 옆 칸으로</td></tr>
+                            <tr><td>A adds a row; B adds a column.</td><td>3×3. The intersection of independently created row and column is immediately writable.</td></tr>
+                            <tr><td>A deletes a column; B writes into one of its cells.</td><td>Column disappears. B's text remains live in the hidden cell and returns when A undoes.</td></tr>
+                            <tr><td>A deletes the table; B writes into a cell.</td><td>Table disappears. Undo restores B's text too.</td></tr>
+                            <tr><td>Two users each delete one of the two remaining rows.</td><td>A table without rows is entirely hidden.</td></tr>
+                            <tr><td>Concurrent Enter at the same cell position.</td><td>One new line, as in the body.</td></tr>
+                            <tr><td>Insert two tables at the same position.</td><td>Both remain in identical order.</td></tr>
+                            <tr><td>Another user deletes my current column.</td><td>Cursor moves to an adjacent cell.</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <h3>칸 합치기 (colspan · rowspan)</h3>
-                <p>칸에는 토큰이 없으므로 합치기는 표 노드의 속성 <code>$span:왼쪽위행,왼쪽위열 = {끝 행, 끝 열}</code>(이름표, LWW)로 적는다. 모델은 스키마 기반 문서 에디터처럼 <b>full grid</b> 다 — 모든 행에 모든 칸이 있고, 왼쪽 위 칸에 <code>colspan</code>·<code>rowspan</code>, 가려진 칸에 <code>spanned: true</code>.</p>
+                <h3>Cell Merging (colspan · rowspan)</h3>
+                <p>Cells have no tokens, so merges are stored as table-node attributes, <code>$span:topLeftRow,topLeftCol = {endRow, endCol}</code> (IDs, LWW). Like a schema-based document editor, the model is a <b>full grid</b>: every row has every cell; the top-left cell has <code>colspan</code>/<code>rowspan</code>, and hidden cells have <code>spanned: true</code>.</p>
                 <ul>
-                    <li>크기를 개수가 아니라 <b>끝 이름표</b>로 적으므로, 합치는 사이 남이 그 사이에 넣은 열도 함께 덮인다. 끝 열을 지우면 줄어든다.</li>
-                    <li>왼쪽 위 칸의 행·열이 지워지면 합치기는 없어지고 가렸던 칸이 다시 보인다.</li>
-                    <li>겹치는 합치기를 동시에 하면 나중 이름표 것 하나만 받는다.</li>
-                    <li>가려진 칸의 글은 숨을 뿐이고 나누면 다시 보인다. 합칠 때 글을 모으면 복사가 되어, 그 사이 남이 그 칸에 친 글이 갈린다.</li>
+                    <li>Dimensions use <b>endpoint IDs</b> instead of counts, so columns concurrently inserted inside a merged region are covered too. Deleting the endpoint column shrinks it.</li>
+                    <li>Deleting the top-left cell's row or column removes the merge and exposes its hidden cells.</li>
+                    <li>Concurrent overlapping merges retain only the one with the later ID.</li>
+                    <li>Hidden cell text remains stored and reappears on unmerge. Collecting text during merge would copy it and separate text concurrently typed into that cell.</li>
                 </ul>
-                <h3>칸 배경색</h3>
-                <p>같은 방식으로 표 노드에 <code>$cell:행,열|backgroundColor</code> 로 적는다. 스키마 table-cell 속성 가운데 <code>computed</code> 가 아닌 것만 쓸 수 있고, 색은 <code>#rrggbb</code> 꼴(<code>pattern</code>)만 받는다. 색은 행·열 이름표에 붙어 있어 앞에 행·열이 들어와도 같은 칸에 남고, 열을 지웠다 되돌리면 색도 돌아온다.</p>
+                <h3>Cell Backgrounds</h3>
+                <p>Similarly, table-node <code>$cell:row,col|backgroundColor</code> stores backgrounds. Only non-<code>computed</code> table-cell schema attributes are writable; colors must match <code>#rrggbb</code> (<code>pattern</code>). Colors attach to row/column IDs, so preceding insertions do not change the target cell. Undoing column deletion restores its color too.</p>
             </section>
 
             <section aria-labelledby="editapi">
-                <h2 id="editapi">편집 API — 모델 연산 다섯 가지</h2>
-                <p>편집기는 CRDT 의 줄·토큰을 모른다. <b>모델 경로</b>(<code>toJSON</code> 트리의 자식 번호, 스키마 기반 문서 에디터의 숫자 배열 트리 경로와 같은 꼴)와 <b>모델 노드</b>로 말한다. 연산은 그 에디터의 문서 조작 엔진과 같은 이름·뜻의 다섯 가지다.</p>
+                <h2 id="editapi">Edit API: Five Model Operations</h2>
+                <p>Editors need no CRDT line/token knowledge. They use <b>model paths</b> (child indexes in <code>toJSON</code>, shaped like a schema-based document editor's numeric tree paths) and <b>model nodes</b>. Five operations share names and semantics with that editor's manipulation engine.</p>
                 <figure>
                     <div class="frame">
-                        <svg viewBox="0 0 720 230" role="img" aria-label="편집기의 모델 연산이 컴파일러를 거쳐 전선 연산이 되어 CRDT 문서에 적용되고, 받는 쪽에서는 모델 비교로 다시 모델 연산이 되어 편집기에 적용된다.">
+                        <svg viewBox="0 0 720 230" role="img" aria-label="Editor model operations compile to wire operations and apply to the CRDT. Model comparison converts received changes back to model operations for the editor.">
                             <defs>
                                 <marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                                     <path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"></path>
@@ -721,17 +721,17 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
                             </defs>
                             <g font-size="13" style="fill:var(--ink)">
                                 <rect x="10" y="30" width="150" height="56" rx="8" style="fill:var(--paper);stroke:var(--line)"></rect>
-                                <text x="85" y="54" text-anchor="middle">편집기</text>
-                                <text x="85" y="72" text-anchor="middle" font-size="11" style="fill:var(--muted)">에디터 · 데모 · (ProseMirror)</text>
+                                <text x="85" y="54" text-anchor="middle">Editor</text>
+                                <text x="85" y="72" text-anchor="middle" font-size="11" style="fill:var(--muted)">Editor · demo · (ProseMirror)</text>
                                 <rect x="250" y="30" width="190" height="56" rx="8" style="fill:var(--accent-soft);stroke:var(--accent)"></rect>
-                                <text x="345" y="54" text-anchor="middle">edit.ts — 모양별 컴파일</text>
-                                <text x="345" y="72" text-anchor="middle" font-size="11" style="fill:var(--muted)">경로 풀기 · 비운 머리 · 열 접기</text>
+                                <text x="345" y="54" text-anchor="middle">edit.ts — compile by shape</text>
+                                <text x="345" y="72" text-anchor="middle" font-size="11" style="fill:var(--muted)">Paths · empty heads · columns</text>
                                 <rect x="530" y="30" width="180" height="56" rx="8" style="fill:var(--paper);stroke:var(--line)"></rect>
                                 <text x="620" y="54" text-anchor="middle">Doc (CRDT)</text>
-                                <text x="620" y="72" text-anchor="middle" font-size="11" style="fill:var(--muted)">토큰 줄 · 전선 연산 5가지</text>
+                                <text x="620" y="72" text-anchor="middle" font-size="11" style="fill:var(--muted)">Token lines · 5 wire operations</text>
                                 <rect x="250" y="140" width="190" height="56" rx="8" style="fill:var(--accent-soft);stroke:var(--accent)"></rect>
-                                <text x="345" y="164" text-anchor="middle">model.ts — 모델 비교</text>
-                                <text x="345" y="182" text-anchor="middle" font-size="11" style="fill:var(--muted)">검산 · 틀리면 통째 바꾸기</text>
+                                <text x="345" y="164" text-anchor="middle">model.ts — model comparison</text>
+                                <text x="345" y="182" text-anchor="middle" font-size="11" style="fill:var(--muted)">Verify · full-replace on failure</text>
                             </g>
                             <g style="stroke:var(--muted)" stroke-width="1.3" fill="none">
                                 <path d="M160 52 H246" marker-end="url(#arr3)"></path>
@@ -744,210 +744,210 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
                                 <text x="203" y="66" text-anchor="middle">update·split·merge</text>
                                 <text x="483" y="44" text-anchor="middle">text·node·del·</text>
                                 <text x="483" y="66" text-anchor="middle">undel·set</text>
-                                <text x="632" y="128">남의 변경</text>
-                                <text x="168" y="160" text-anchor="middle">받는 쪽 이벤트</text>
-                                <text x="168" y="214" text-anchor="middle">(같은 다섯 가지 연산)</text>
+                                <text x="632" y="128">Remote change</text>
+                                <text x="168" y="160" text-anchor="middle">Receiving events</text>
+                                <text x="168" y="214" text-anchor="middle">(same five operations)</text>
                             </g>
                         </svg>
                     </div>
-                    <figcaption>보내는 쪽은 모델 연산 → 전선 연산, 받는 쪽은 모델 비교 → 모델 연산. 편집기는 두 방향 모두 같은 다섯 가지 연산만 다룬다.</figcaption>
+                    <figcaption>Sending: model operations → wire operations. Receiving: model comparison → model operations. Editors handle the same five operations in both directions.</figcaption>
                 </figure>
 <pre>doc.edit([
-    {op: "delete", at: [0], count: 1},                                       // 에디터의 내용 통째 바꾸기 꼴
+    {op: "delete", at: [0], count: 1},                                       // Editor full-content replacement pattern
     {op: "insert", at: [0], content: [{type: "paragraph", runs: [{text: "after", marks: {}}]}]},
 ]);
-doc.edit([0, 1, 2].map(r => ({op: "insert", at: [1, r, 1], content: [{type: "table-cell"}]})));   // 행마다 칸 = 열 하나
+doc.edit([0, 1, 2].map(r => ({op: "insert", at: [1, r, 1], content: [{type: "table-cell"}]})));   // One cell per row = one column
 doc.edit([{op: "update", at: [1, 0, 0], attrs: {colspan: 2, backgroundColor: "#dcfce7"}}]);
 doc.edit([{op: "split", at: [2, 4]}]);                                       // Enter</pre>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>연산</th><th>모양에 따라</th></tr></thead>
+                        <thead><tr><th>Operation</th><th>By Shape</th></tr></thead>
                         <tbody>
-                            <tr><td><code>insert</code></td><td>글 안 → 글자·inline · 글 안에 블록 → 그 자리에서 나누고 사이에 · 흐름·목록 → 블록(표면 행·열·칸까지, 칸 합치기·칸 속성 포함) · 표 → 행 · 행 → <b>열</b></td></tr>
-                            <tr><td><code>delete</code></td><td>글자 · 블록(통째) · 행 · <b>열</b> · 마지막 행·열이면 표째로</td></tr>
-                            <tr><td><code>update</code></td><td>블록 종류(<code>type</code>)·속성 · 목록 노드면 그 항목 모두 · 글 범위(<code>length</code>)면 서식 · 칸이면 칸 속성·<code>colspan</code>·<code>rowspan</code></td></tr>
-                            <tr><td><code>split</code></td><td>Enter — 경계 키는 컴파일하는 순간의 왼쪽·오른쪽 토큰. 스키마의 <code>next</code>·<code>inherit</code></td></tr>
-                            <tr><td><code>merge</code></td><td>앞 글 블록에 합치기 = 표지 지우기. 앞이 글자를 받지 않는 블록이면 하지 않는다</td></tr>
+                            <tr><td><code>insert</code></td><td>Inside text → characters/inline; block inside text → split there and insert between; flow/list → blocks (tables include rows, columns, cells, merges, and cell attributes); table → row; row → <b>column</b>.</td></tr>
+                            <tr><td><code>delete</code></td><td>Characters, whole blocks, rows, <b>columns</b>; deleting the last row/column deletes the table.</td></tr>
+                            <tr><td><code>update</code></td><td>Block type (<code>type</code>)/attributes; list node → every item; text range (<code>length</code>) → marks; cell → cell attributes/<code>colspan</code>/<code>rowspan</code>.</td></tr>
+                            <tr><td><code>split</code></td><td>Enter. Boundary keys use left/right tokens at compilation. Schema <code>next</code>/<code>inherit</code> apply.</td></tr>
+                            <tr><td><code>merge</code></td><td>Merge into the preceding text block by deleting the marker. Skip if the preceding block cannot receive text.</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <h3>묶음 안의 기억 두 가지</h3>
+                <h3>Two Forms of Batch State</h3>
                 <ul>
-                    <li><b>비운 머리</b> — 흐름의 첫 블록을 지우면 줄 머리(언제나 첫 블록)는 남지만 빈 자리가 된다. 같은 묶음의 다음 경로는 그 자리를 세지 않고, 맨 앞에 글 블록이 오면 채운다. 끝까지 비어 있으면 다음 글 블록을 당겨 온다. 그래서 스키마 기반 문서 에디터의 "지우고 다시 넣기"가 그대로 맞는다.</li>
-                    <li><b>열 접기</b> — 스키마 기반 문서 에디터의 트리에는 열이 없어서 열 넣기·지우기가 "행마다 같은 번호의 칸"으로 온다. 같은 표·같은 칸 번호로 이어지는 것을 열 노드 하나로 접는다. 한 행에만 와도 열 하나로 바로잡는다.</li>
+                    <li><b>Empty head</b>: deleting a flow's first block retains its line head (always the first block) as an empty position. Later paths in the same batch do not count it; a leading text block fills it. If it remains empty, the next text block is pulled into it. This preserves a schema-based document editor's delete-and-reinsert pattern.</li>
+                    <li><b>Column folding</b>: a schema-based document editor's tree has no columns, so column insertion/deletion arrives as the same cell index in every row. Consecutive operations on the same table and cell index fold into one column node. An operation on only one row also normalizes to one column.</li>
                 </ul>
-                <h3>normalize — 편집기에 알릴 차이</h3>
-                <p><code>edit()</code> 은 만든 전선 연산과 함께 <b>normalize</b> 를 돌려준다. 편집기가 이 묶음을 자기 모델에 그대로 적용한 결과와 CRDT 모델이 다르면, 그 차이를 메우는 연산이다. 보통은 비어 있다.</p>
+                <h3>Normalize: Differences to Send Back to the Editor</h3>
+                <p><code>edit()</code> returns generated wire operations plus <b>normalize</b>. These edits reconcile the CRDT model with the result of applying the original batch directly to the editor model. They are usually empty.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>생기는 경우</th><th>왜</th></tr></thead>
+                        <thead><tr><th>Case</th><th>Reason</th></tr></thead>
                         <tbody>
-                            <tr><td>한 행에만 칸 넣기</td><td>열 하나로 바로잡는다 — 다른 행에 빈 칸</td></tr>
-                            <tr><td>합친 칸 사이에 열·행 넣기</td><td>합치기 끝을 이름표로 적으므로 새 열도 덮인다 (편집기는 colspan 을 그대로 둔다)</td></tr>
-                            <tr><td>겹치는 칸 합치기</td><td>나중 것 하나만 받는다</td></tr>
-                            <tr><td>글자가 있는 빈 자리 앞의 표 지우기</td><td>빈 자리 글이 앞 블록에 붙는다 (동시편집에서만 생긴다)</td></tr>
+                            <tr><td>Insert a cell in only one row.</td><td>Normalize to one column, with empty cells in other rows.</td></tr>
+                            <tr><td>Insert a column/row inside merged cells.</td><td>Merge endpoints use IDs, so the new column is covered too. The editor leaves colspan unchanged.</td></tr>
+                            <tr><td>Overlapping cell merges.</td><td>Retain only the later merge.</td></tr>
+                            <tr><td>Delete a table before a virtual position containing text.</td><td>Virtual text joins the preceding block; occurs only during collaboration.</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p>무작위 3000 대본 판마다 normalize 가 붙은 내 편집은 8~9번이었고, 모두 위의 경우였다.</p>
-                <h3>옛 편집 함수에서 옮기기</h3>
-                <p>편집 함수 18개(<code>insertText</code>, <code>splitBlock</code>, <code>insertAxis</code>, <code>setSpan</code> …)를 <code>commands.ts</code> 의 명령으로 옮겼다. 명령은 사람의 행위를 모델 연산으로 바꿀 뿐이다. 같은 상태에서 옛 함수와 새 명령을 나란히 돌려 모델을 비교했고(1000 대본 × 40걸음), <b>34,001걸음에서 차이 0</b> 을 확인한 뒤 옛 함수를 지웠다. 한 번 나온 차이(칸 합치기의 "이미 같은 값" 판정)는 고쳤다.</p>
+                <p>Each run of 3000 random scripts produced 8–9 local edits with normalize, all from the cases above.</p>
+                <h3>Migration from Former Edit Functions</h3>
+                <p>Moved 18 edit functions (<code>insertText</code>, <code>splitBlock</code>, <code>insertAxis</code>, <code>setSpan</code>, and so on) into <code>commands.ts</code>. Commands only translate human actions to model operations. Old functions and new commands ran in parallel from identical state (1000 scripts × 40 steps). After confirming <b>0 differences across 34,001 steps</b>, the old functions were removed. One initial difference in the cell-merge already-equal-value check was fixed.</p>
             </section>
 
             <section aria-labelledby="events">
-                <h2 id="events">받는 쪽 이벤트</h2>
-                <p><code>client.onModelEvents = (events, info) =&gt; …</code> — 남의 변경·되돌리기·스냅숏으로 모델이 바뀌면, 앞 모델을 뒤 모델로 바꾸는 모델 연산을 준다. 편집기는 이것을 자기 모델에 적용하면 된다.</p>
+                <h2 id="events">Receiving Events</h2>
+                <p><code>client.onModelEvents = (events, info) =&gt; …</code> returns model operations that convert the previous model to the next when remote changes, undo, or snapshots change the model. Editors apply them to their own models.</p>
                 <ul>
-                    <li><b>받기 전·후 모델을 비교</b>해 만든다. 바뀐 곳만 — 글자 하나면 글자 하나 넣기, 열 하나면 행마다 칸 넣기(스키마 기반 문서 에디터의 연산 꼴), 칸 색이면 칸 update.</li>
-                    <li>흐름은 <b>펼친 항목 줄</b>에서 비교하고, 연산을 하나 만들 때마다 작업 사본에 적용해 다음 경로를 그 사본에서 구한다. 처음엔 목록 묶음 단위로 비교했다가, 넣은 목록이 옆 목록과 바로 붙어 다음 경로가 어긋나는 것을 거울 시험이 잡았다.</li>
-                    <li>내보내기 전에 앞 모델에 적용해 <b>검산</b>하고, 틀리면 문서 통째 바꾸기로 <b>물러선다</b> (<code>info.fallback</code>). 무작위 3000 대본에서 물러선 일은 0.</li>
-                    <li>처음 제안은 "전선 연산을 하나씩 번역"이었다. 모델 비교로 바꾼 까닭: 세밀함은 같고, 흡수된 표지·빈 자리·가려진 칸처럼 보이는 변화가 없는 경우를 따로 다룰 필요가 없어 언제나 맞는다.</li>
+                    <li>Events come from <b>comparing models before and after receipt</b>. Only changed regions are emitted: one character insertion, one cell per row for a column (the schema-based document editor's operation shape), or a cell update for a background color.</li>
+                    <li>Flows are compared as <b>flattened item sequences</b>. Each generated operation is applied to a working copy, which supplies the next path. Initial grouped-list comparison failed when an inserted list immediately joined its neighbor and shifted subsequent paths. Mirror tests found this.</li>
+                    <li>Before emission, apply events to the previous model for <b>verification</b>. On failure, <b>fall back</b> to full-document replacement (<code>info.fallback</code>). There were 0 fallbacks across 3000 random scripts.</li>
+                    <li>The initial proposal translated wire operations one by one. Model comparison provides the same precision and handles invisible changes, such as absorbed markers, virtual positions, and hidden cells, without separate cases.</li>
                 </ul>
-                <h3>거울 시험</h3>
-                <p>무작위 시험에서 참여자마다 "편집기 쪽 모델"(스키마 기반 문서 에디터 자리)을 따로 둔다. 이 거울은 내 편집 연산 + normalize, 그리고 받는 쪽 이벤트로만 바뀐다. 매번 CRDT 모델과 같은지 본다.</p>
+                <h3>Mirror Tests</h3>
+                <p>Each participant in random tests has a separate editor model, standing in for a schema-based document editor. This mirror changes only through local edit operations + normalize and receiving events. It is compared with the CRDT model every time.</p>
             </section>
 
             <section aria-labelledby="cursor">
-                <h2 id="cursor">커서와 선택</h2>
+                <h2 id="cursor">Cursors and Selection</h2>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th></th><th>모델 경로</th><th>토큰 키</th></tr></thead>
+                        <thead><tr><th></th><th>Model Path</th><th>Token Key</th></tr></thead>
                         <tbody>
-                            <tr><td>꼴</td><td><code>[블록, …, 글자 자리]</code> — 스키마 기반 문서 에디터의 selection start·end 와 같은 꼴</td><td>"이 토큰 바로 뒤" — <code>12@A-x8f2</code></td></tr>
-                            <tr><td>쓰는 쪽</td><td>편집기</td><td>CRDT</td></tr>
-                            <tr><td>남이 편집하면</td><td>흔들린다 — 앞에 글이 들어오면 번호가 바뀐다</td><td>안 흔들린다</td></tr>
+                            <tr><td>Form</td><td><code>[block, …, character position]</code>, shaped like selection start/end in a schema-based document editor</td><td>Immediately after this token: <code>12@A-x8f2</code></td></tr>
+                            <tr><td>Consumer</td><td>Editor</td><td>CRDT</td></tr>
+                            <tr><td>After others edit</td><td>Can shift: preceding input changes indexes.</td><td>Stable</td></tr>
                         </tbody>
                     </table>
                 </div>
                 <ul>
-                    <li>커서·선택의 시작·끝은 <b>토큰 키로 들고 있다가</b> 그릴 때 경로로 바꾼다 — <code>anchorAt(doc, 경로)</code> → 키, <code>pathAt(doc, 키)</code> → 지금 경로.</li>
-                    <li>편집기 쪽 순서: 선택이 바뀔 때(또는 받기 직전에) 키를 잡아 둔다 → 받는 쪽 이벤트를 적용한다 → 키로 선택을 되돌린다.</li>
-                    <li>그 글자가 지워졌으면 왼쪽으로 가장 가까운 자리, 그 칸이 안 보이게 됐으면 옆 칸, 합친 칸에 가려졌으면 왼쪽 위 칸으로 나온다.</li>
-                    <li>둘 다 왼쪽 토큰에 붙이므로, 내 커서 자리에 남이 친 글은 커서 오른쪽에 생긴다. 선택의 시작 자리에 들어온 글은 선택 안으로, 끝 자리에 들어온 글은 선택 밖으로 간다.</li>
-                    <li>남의 커서(presence)는 처음부터 토큰 키로 주고받는다.</li>
-                    <li>시험: "cdef" 를 선택해 둔 사이 남이 앞에 글을 넣고 블록을 나눠도, 되돌린 선택이 그대로 "cdef" 를 감싼다.</li>
+                    <li>Store cursor/selection endpoints <b>as token keys</b> and convert to paths for rendering: <code>anchorAt(doc, path)</code> → key; <code>pathAt(doc, key)</code> → current path.</li>
+                    <li>Editor order: capture keys on selection changes or immediately before receipt → apply receiving events → restore selection from keys.</li>
+                    <li>For a deleted character, resolve to the nearest position on its left. If its cell is hidden, use an adjacent cell; for a merged-cell region, use the top-left cell.</li>
+                    <li>Both endpoints attach to the left token. Text inserted at my cursor appears to its right. Text inserted at selection start enters the selection; text inserted at selection end stays outside.</li>
+                    <li>Presence transmits remote cursor positions as token keys from the start.</li>
+                    <li>Test: after selecting "cdef", another user inserts before it and splits the block. The restored selection still encloses "cdef".</li>
                 </ul>
             </section>
 
             <section aria-labelledby="prosemirror">
-                <h2 id="prosemirror">ProseMirror 연동</h2>
-                <p>편집 API 가 편집기를 모르므로 ProseMirror 도 같은 길로 붙는다. <code>/pm</code> 에서 데모 편집기(A)와 ProseMirror(P)가 같은 문서를 함께 편집한다.</p>
+                <h2 id="prosemirror">ProseMirror Integration</h2>
+                <p>The editor-independent edit API also supports ProseMirror. At <code>/pm</code>, the demo editor (A) and ProseMirror (P) edit the same document together.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>부분</th><th>하는 일</th></tr></thead>
+                        <thead><tr><th>Part</th><th>Responsibility</th></tr></thead>
                         <tbody>
-                            <tr><td>스키마 (<code>pm/schema.ts</code>)</td><td>우리 스키마에서 ProseMirror 스키마를 뽑는다. 목록은 평평하다 — <code>list_item</code> 은 listType·level 속성을 가진 textblock (prosemirror-schema-list 의 그릇 목록이면 항목이 들고 날 때 노드 옮기기가 된다). 표는 prosemirror-tables 꼴, 링크는 값 하나짜리 mark</td></tr>
-                            <tr><td>변환 (<code>pm/convert.ts</code>)</td><td>모델 ↔ ProseMirror 문서, 모델 경로 ↔ ProseMirror 위치. 우리 표는 full grid, ProseMirror 표는 가려진 칸이 없다 — 변환이 넣고 뺀다. 가려진 칸의 숨은 글은 바꾸기 전 모델에서 가져와 잃지 않는다</td></tr>
-                            <tr><td>보내는 쪽 (<code>pm/binding.ts</code>)</td><td>Step 을 하나씩 모델 연산으로. 한 블록 안 글 → insert·delete, Enter(splitBlock) → <b>split</b>, 블록 맨 앞 Backspace(join) → <b>merge</b>, 블록 걸친 지우기, 서식 → update. 나머지(종류 바꾸기·표 행/열·붙여 넣기)는 Step 앞·뒤 모델 비교로 — prosemirror-tables 의 열 넣기는 행마다 칸 넣기가 되어 CRDT 가 열 하나로 접는다</td></tr>
-                            <tr><td>받는 쪽</td><td>남의 변경·되돌리기 → 새 문서와의 차이 구간만 바꾸는 transaction 하나. 내 커서는 ProseMirror 가 그 Step 을 따라 옮기고, 남의 커서는 토큰 키 → 경로 → 위치로 장식을 그린다</td></tr>
-                            <tr><td>되돌리기</td><td>ProseMirror history 대신 CRDT 의 참여자별 되돌리기</td></tr>
+                            <tr><td>Schema (<code>pm/schema.ts</code>)</td><td>Derive a ProseMirror schema from ours. Lists are flat: <code>list_item</code> is a textblock with listType/level attributes. prosemirror-schema-list containers would require node moves when items enter/leave. Tables follow prosemirror-tables; links are single-value marks.</td></tr>
+                            <tr><td>Conversion (<code>pm/convert.ts</code>)</td><td>Model ↔ ProseMirror document; model path ↔ ProseMirror position. Our tables use full grids; ProseMirror omits hidden cells. Conversion adds/removes them and preserves hidden text from the prior model.</td></tr>
+                            <tr><td>Sending (<code>pm/binding.ts</code>)</td><td>Translate Steps individually to model operations. Text in one block → insert/delete; Enter (splitBlock) → <b>split</b>; block-start Backspace (join) → <b>merge</b>; cross-block deletion; marks → update. Remaining changes (type, table rows/columns, paste) use before/after model comparison. prosemirror-tables column insertion becomes one cell per row, folded into one CRDT column.</td></tr>
+                            <tr><td>Receiving</td><td>Remote changes/undo → one transaction replacing only the difference against the new document. ProseMirror maps my cursor through that Step. Remote cursor decorations use token key → path → position.</td></tr>
+                            <tr><td>Undo</td><td>CRDT per-participant undo replaces ProseMirror history.</td></tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="note">
-                    <b>y-prosemirror 와 다른 점</b> — Enter 를 문서 차이(앞 문단 줄이기 + 뒷글 다시 넣기)가 아니라 split 하나로 보낸다. 그래서 A 가 나누는 사이 B 가 뒷부분에 친 글자가 그대로 남고, 같은 자리 동시 Enter 는 새 줄 하나다. 둘 다 시험이 있다.
+                    <b>Difference from y-prosemirror</b>: Enter sends one split rather than a document diff (shorten the preceding paragraph + reinsert trailing text). Text B types into the trailing region while A splits remains. Concurrent Enter at one position creates one new line. Both behaviors have tests.
                 </div>
-                <h3>무작위 시험 — 진짜 ProseMirror 명령으로</h3>
-                <p>참여자마다 ProseMirror 상태를 두고 splitBlock · joinBackward · deleteSelection · toggleMark · setBlockType · 표 넣기 · addColumnAfter · addRowAfter · deleteColumn · deleteRow · mergeCells · splitCell · 되돌리기로 편집한다. 끝에 모든 편집기의 ProseMirror 문서, 모든 CRDT 문서, 서버 문서가 같은지 본다.</p>
+                <h3>Random Tests with Real ProseMirror Commands</h3>
+                <p>Each participant has a ProseMirror state and edits using splitBlock, joinBackward, deleteSelection, toggleMark, setBlockType, table insertion, addColumnAfter, addRowAfter, deleteColumn, deleteRow, mergeCells, splitCell, and undo. At the end, compare all editor ProseMirror documents, CRDT documents, and the server document.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>판</th><th class="num">같은 문서</th><th class="num">뜻을 살려 옮긴 Step</th><th class="num">모델 비교로 옮긴 Step</th><th class="num">통째 바꾸기</th></tr></thead>
+                        <thead><tr><th>Run</th><th class="num">Identical Documents</th><th class="num">Semantically Translated Steps</th><th class="num">Model-Comparison Steps</th><th class="num">Full Replacement</th></tr></thead>
                         <tbody>
-                            <tr><td>300 대본 · 참여자 2</td><td class="num"><span class="pill ok">300 / 300</span></td><td class="num">3,894</td><td class="num">865</td><td class="num">0</td></tr>
-                            <tr><td>200 대본 · 참여자 3</td><td class="num"><span class="pill ok">200 / 200</span></td><td class="num">2,587</td><td class="num">537</td><td class="num">0</td></tr>
+                            <tr><td>300 scripts · 2 participants</td><td class="num"><span class="pill ok">300 / 300</span></td><td class="num">3,894</td><td class="num">865</td><td class="num">0</td></tr>
+                            <tr><td>200 scripts · 3 participants</td><td class="num"><span class="pill ok">200 / 200</span></td><td class="num">2,587</td><td class="num">537</td><td class="num">0</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p>뜻을 살려 옮긴 것: 글 4,324 · Enter 1,480 · 합치기 92 · 서식 489 · 범위 지우기 96. 브라우저(<code>/pm</code>)에서도 ProseMirror 입력·Enter·한글, 데모 편집기 입력, ProseMirror 에서 넣은 표와 열 넣기가 양쪽에 같게 보이고, A 의 커서가 ProseMirror 에 그려졌다.</p>
-                <p>남은 것: 한글 조합 중에 남이 <i>같은 문단</i>을 고치는 경우(최소 교체가 조합 중인 글과 겹칠 때)는 실제 브라우저에서 더 봐야 한다. prosemirror-tables 의 합치기는 칸 글을 모으는데 우리는 숨기므로, 그 차이는 모델 비교로 옮겨진다.</p>
+                <p>Semantic translations: text 4,324 · Enter 1,480 · merge 92 · formatting 489 · range deletion 96. In the browser (<code>/pm</code>), ProseMirror text/Enter/Korean input, demo-editor input, and ProseMirror table/column insertion appeared identically on both sides. A's cursor appeared in ProseMirror.</p>
+                <p>Remaining: more real-browser checks are needed when another user edits the <i>same paragraph</i> during Korean composition and the minimal replacement overlaps composing text. prosemirror-tables merges collect cell text; this model hides it, so model comparison translates that difference.</p>
             </section>
 
             <section aria-labelledby="verify">
-                <h2 id="verify">어디까지 동작하나</h2>
-                <h3>시험 83개</h3>
+                <h2 id="verify">Verified Scope</h2>
+                <h3>83 Tests</h3>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>묶음</th><th class="num">개수</th><th>내용</th></tr></thead>
+                        <thead><tr><th>Group</th><th class="num">Count</th><th>Coverage</th></tr></thead>
                         <tbody>
-                            <tr><td>시나리오</td><td class="num">14</td><td>같은 자리 동시 Enter(둘·넷, 동기화 순서 셋), 그 뒤 글자, 끝에서 두 번·동시, Enter 대 뒷부분 입력, 걸친 범위 삭제, Enter 되돌리기 대 남의 글자, 되돌리기 대 동시 삭제, 종류 동시 변경, 끊긴 동안 편집, 늦게 온 참여자</td></tr>
-                            <tr><td>기능</td><td class="num">15</td><td>서식 3 · 목록 4 · 되돌리기 3 · GC 4 · 서버 원자성 1</td></tr>
-                            <tr><td>표·스키마</td><td class="num">30</td><td>표 9 · 칸 합치기 6 · 칸 배경색 3 · 빈 자리·구분선 2 · 이미지 3 · 캡션 3 · 스키마 검사 1 · 다른 스키마(할 일 목록) 주입 1 · 스키마 없는 서버 1 · 표 GC 1</td></tr>
-                            <tr><td>ProseMirror</td><td class="num">7</td><td>같은 자리 동시 Enter · Enter 의도 보존 · addColumnAfter → 열 하나 · 되돌리기 · 서식·링크 · 무작위 100 대본 × 참여자 2·3</td></tr>
-                            <tr><td>편집 API</td><td class="num">13</td><td>경로 왕복 · 스키마 기반 문서 에디터의 내용 통째 바꾸기·표 넣기 꼴 3 · 열 접기(모든 행·한 행만) 2 · 열 지우기 · update · merge · 링크 2 · 받는 쪽 이벤트 · 선택</td></tr>
-                            <tr><td>무작위 (기본 500 대본)</td><td class="num">4</td><td>참여자 2·4 × GC 끔·켬, 거울 시험 포함</td></tr>
+                            <tr><td>Scenarios</td><td class="num">14</td><td>Concurrent same-position Enter (2/4 participants, 3 sync orders), following text, repeated/concurrent Enter at end, Enter versus trailing input, cross-block deletion, Enter undo versus others' text, undo versus concurrent deletion, concurrent type changes, offline edits, late joiners.</td></tr>
+                            <tr><td>Features</td><td class="num">15</td><td>Marks 3 · lists 4 · undo 3 · GC 4 · server atomicity 1</td></tr>
+                            <tr><td>Tables/schema</td><td class="num">30</td><td>Tables 9 · cell merges 6 · cell backgrounds 3 · virtual positions/dividers 2 · images 3 · captions 3 · schema validation 1 · injected alternative todo-list schema 1 · schema-free server 1 · table GC 1</td></tr>
+                            <tr><td>ProseMirror</td><td class="num">7</td><td>Concurrent same-position Enter · Enter intent preservation · addColumnAfter → one column · undo · marks/links · 100 random scripts × 2/3 participants</td></tr>
+                            <tr><td>Edit API</td><td class="num">13</td><td>Path round trips · schema-based document editor full-content replacement/table insertion patterns 3 · column folding (all rows/one row) 2 · column deletion · update · merge · links 2 · receiving events · selection</td></tr>
+                            <tr><td>Random (default 500 scripts)</td><td class="num">4</td><td>2/4 participants × GC off/on, including mirror tests</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <h3>무작위 3000 대본</h3>
-                <p>참여자마다 무작위 편집을 하고, 네트워크는 무작위로 일부만 흘리고, 끊고 잇기와 서버 GC 를 아무 때나 섞는다. 편집은 본문뿐 아니라 표 칸·상자·이미지 그릇 안에서도 한다 — 글자·Enter·Backspace·Delete·범위 지우기·서식·종류·수준, 표·행·열·이미지·구분선·상자 넣고 지우기, 칸 합치기·나누기, 칸 색, 글 안 그림, 그림 크기, 되돌리기·다시하기. 모든 편집은 명령 → 모델 연산 → 컴파일 길을 탄다. 끝에 모두 이어 흘린 뒤 모든 참여자와 서버의 모델을 비교하고, 도중에는 거울을 매번 비교한다.</p>
+                <h3>3000 Random Scripts</h3>
+                <p>Each participant makes random edits. The network delivers random subsets, with arbitrary disconnection/reconnection and server GC. Edits occur in the body, table cells, callouts, and image containers: characters, Enter, Backspace, Delete, range deletion, marks, type/level changes; table/row/column/image/divider/callout insertion and deletion; cell merge/unmerge/backgrounds; inline images and image dimensions; undo/redo. Every edit follows commands → model operations → compilation. After final reconnection and delivery, all participant and server models are compared. Mirrors are checked throughout.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>판</th><th class="num">갈림·오류</th><th class="num">받는 쪽 이벤트</th><th class="num">거울 어긋남</th><th class="num">검산 실패</th><th class="num">normalize</th><th class="num">GC · 압축된 글자 자리</th></tr></thead>
+                        <thead><tr><th>Run</th><th class="num">Divergences/Errors</th><th class="num">Receiving Events</th><th class="num">Mirror Mismatches</th><th class="num">Verification Failures</th><th class="num">normalize</th><th class="num">GC Runs · Compacted Character Positions</th></tr></thead>
                         <tbody>
-                            <tr><td>참여자 2</td><td class="num"><span class="pill ok">0 / 3000</span></td><td class="num">81,099</td><td class="num">0</td><td class="num">0</td><td class="num">9</td><td class="num">—</td></tr>
-                            <tr><td>참여자 4</td><td class="num"><span class="pill ok">0 / 3000</span></td><td class="num">211,582</td><td class="num">0</td><td class="num">0</td><td class="num">8</td><td class="num">—</td></tr>
-                            <tr><td>참여자 2 · GC 섞음</td><td class="num"><span class="pill ok">0 / 3000</span></td><td class="num">81,099</td><td class="num">0</td><td class="num">0</td><td class="num">9</td><td class="num">1,500 · 5,899</td></tr>
-                            <tr><td>참여자 4 · GC 섞음</td><td class="num"><span class="pill ok">0 / 3000</span></td><td class="num">211,582</td><td class="num">0</td><td class="num">0</td><td class="num">8</td><td class="num">1,091 · 4,027</td></tr>
+                            <tr><td>2 participants</td><td class="num"><span class="pill ok">0 / 3000</span></td><td class="num">81,099</td><td class="num">0</td><td class="num">0</td><td class="num">9</td><td class="num">—</td></tr>
+                            <tr><td>4 participants</td><td class="num"><span class="pill ok">0 / 3000</span></td><td class="num">211,582</td><td class="num">0</td><td class="num">0</td><td class="num">8</td><td class="num">—</td></tr>
+                            <tr><td>2 participants · GC mixed in</td><td class="num"><span class="pill ok">0 / 3000</span></td><td class="num">81,099</td><td class="num">0</td><td class="num">0</td><td class="num">9</td><td class="num">1,500 · 5,899</td></tr>
+                            <tr><td>4 participants · GC mixed in</td><td class="num"><span class="pill ok">0 / 3000</span></td><td class="num">211,582</td><td class="num">0</td><td class="num">0</td><td class="num">8</td><td class="num">1,091 · 4,027</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p>GC 숫자(1,500번 · 5,899자리)는 편집 API 로 옮기기 전과 똑같다 — 같은 씨앗에서 새 명령이 옛 함수와 같은 문서를 만들었다는 뜻이다. 무작위 대본이 실제로 표를 거치는지도 쟀다 — 300 대본 중 128 은 끝까지 표가 남고, 600 대본 중 33 은 끝까지 합친 칸이 남는다.</p>
-                <h3>브라우저 열 개 동시 시험</h3>
-                <p>브라우저는 같은 호스트로 HTTP/1.1 연결을 6개까지만 연다 (탭을 모두 합쳐서). 그래서 <code>/multi?n=10</code> 은 편집기 창 10개를 창마다 다른 호스트(<code>a.localhost</code> … <code>j.localhost</code>)로 띄우고, 창마다 연결 하나만 쓴다. 창들은 자기 문서의 지문을 부모 창에 알리고, 부모 창이 서버 문서의 지문과 비교한다.</p>
+                <p>GC counts (1,500 runs · 5,899 positions) exactly match the pre-edit-API version: the same seeds produced the same documents through new commands and old functions. Table coverage was also measured: 128 of 300 scripts retained a table to the end, and 33 of 600 retained merged cells.</p>
+                <h3>Ten Concurrent Browser Windows</h3>
+                <p>Browsers allow only 6 HTTP/1.1 connections to one host across tabs. Thus <code>/multi?n=10</code> opens 10 editor windows on different hosts (<code>a.localhost</code> … <code>j.localhost</code>), one connection per window. Each reports its document fingerprint to the parent window, which compares it with the server fingerprint.</p>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>시험 (내장 브라우저)</th><th>결과</th></tr></thead>
+                        <thead><tr><th>Test (In-App Browser)</th><th>Result</th></tr></thead>
                         <tbody>
-                            <tr><td>열 창 동시 자동 입력 20초</td><td>변경 373건 — 열 창 + 서버 같은 문서</td></tr>
-                            <tr><td>모두 끊고 10초 입력 → 잇기</td><td>끊긴 동안 문서 11가지, 창마다 보낼 것 7~24건 → 6초 안에 514건으로 같은 문서</td></tr>
-                            <tr><td>편집 API 로 옮긴 뒤 다시 자동 입력 10초</td><td>변경 206건 — 같은 문서</td></tr>
+                            <tr><td>Automatic input in 10 windows for 20 seconds</td><td>373 changes; all 10 windows and the server matched.</td></tr>
+                            <tr><td>Disconnect all, type for 10 seconds, reconnect</td><td>11 documents while disconnected, 7–24 pending changes per window → converged at 514 changes within 6 seconds.</td></tr>
+                            <tr><td>Repeat automatic input for 10 seconds after edit-API migration</td><td>206 changes; identical document.</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <h3>브라우저 (세 참여자, 실제 서버·SSE)</h3>
+                <h3>Browser: Three Participants, Real Server and SSE</h3>
                 <ul>
-                    <li>시나리오: 같은 자리 동시 Enter, 보고 친 Enter, 되돌리기 대 동시 삭제, GC(토큰 12 → 7, <span class="tok compact">▒×6<i></i></span>), 표 행·열 동시 추가(3×3 뒤 교차 칸에 쓰기), 열 지우기 대 칸 입력 뒤 되돌리기</li>
-                    <li>직접 편집: 입력, 끊고 잇기, 한글 IME, 서버 재시작 뒤 복구, 굵게와 물려받기, 목록 수준, 단어 단위 되돌리기·다시하기</li>
-                    <li>스키마 판: 이미지 넣기(커서가 캡션으로, 빈 캡션엔 안내 글), 캡션, 글 안 그림, 번호 목록, 칸 합치기 2×2, 칸 배경색, 링크 — 모두 "모두 같은 문서 ✓"</li>
+                    <li>Scenarios: concurrent same-position Enter, Enter after observation, undo versus concurrent deletion, GC (tokens 12 → 7, <span class="tok compact">▒×6<i></i></span>), concurrent table row/column insertion (3×3, then input in the intersection cell), column deletion versus cell input followed by undo.</li>
+                    <li>Direct editing: input, disconnection/reconnection, Korean IME, recovery after server restart, Bold and inheritance, list levels, word-level undo/redo.</li>
+                    <li>Schema version: image insertion (cursor to caption, placeholder for empty caption), captions, inline images, numbered lists, 2×2 cell merge, cell backgrounds, links. All showed "All documents match ✓".</li>
                 </ul>
             </section>
 
             <section aria-labelledby="limits">
-                <h2 id="limits">한계 · 아직 없는 것</h2>
+                <h2 id="limits">Limits and Missing Features</h2>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>없는 것</th><th>왜 / 어떻게</th></tr></thead>
+                        <thead><tr><th>Missing Feature</th><th>Reason / Approach</th></tr></thead>
                         <tbody>
-                            <tr><td>에디터 어댑터</td><td>편집 API 가 스키마 기반 문서 에디터의 연산과 같은 꼴이라 남은 것은 변환이다 — 그 에디터의 inline-text 경로를 글자 자리로 바꾸기, 두 단계로 오는 Enter(<code>split [0,0,5]</code>·<code>split [0,1]</code>)를 하나로 접기, 목록(에디터는 문단 + listGroupId 속성) 맞추기</td></tr>
-                            <tr><td>흐름은 글 블록으로 시작</td><td>CRDT 의 줄 머리는 언제나 글 블록이다. 그 에디터의 문서가 표로 시작하면 이 모델에는 맨 앞 빈 문단이 있다 — 어댑터가 맞춰야 한다</td></tr>
-                            <tr><td>칸 여러 개에 걸친 선택</td><td>선택은 한 줄(본문·칸 하나·상자 하나) 안에서만 된다</td></tr>
-                            <tr><td>"하나만, 꼭 있는" 자식</td><td>image 하나·caption 하나를 스키마로 적지 못한다(<code>min</code>·<code>max</code>). 지금은 편집 명령이 지킨다. 손으로 만든 연산이면 두 번째 image 나 캡션 없는 그림이 생길 수 있다</td></tr>
-                            <tr><td>검사의 정밀도</td><td>검사는 줄 단위라, 캡션이 있는 이미지 그릇 줄은 글자를 받는다 — image 블록에 글자를 넣는 손으로 만든 연산을 서버가 거르지 못한다. 블록 단위로 거르려면 "그 토큰이 어느 블록 안인가"가 복제본마다 같아야 하는데, 그건 지금 상태라 갈린다</td></tr>
-                            <tr><td>합칠 때 글 모으기</td><td>가려진 칸의 글은 숨기기만 한다. 모으면 복사가 되어 그 사이 남이 친 글이 갈린다</td></tr>
-                            <tr><td>행·열 속성</td><td>행 높이·열 너비는 행·열 노드의 속성으로 얹으면 된다</td></tr>
-                            <tr><td>성능</td><td>글자마다 토큰 하나, 모델은 편집마다 처음부터 다시 계산하고, 받는 쪽 이벤트는 받을 때마다 모델 둘을 비교한다. 연속 글자 묶기·증분 계산이 필요하다</td></tr>
-                            <tr><td>오래 끊긴 참여자</td><td>2분이 지나면 GC 기준점에서 빠진다. 그 뒤 돌아와 이미 압축된 묘비를 되돌리기로 살리려 하면 갈릴 수 있다. 스냅숏부터 다시 받게 하는 처리가 필요하다</td></tr>
-                            <tr><td>인증·권한·여러 서버</td><td>데모 수준. 문서 단위로 한 서버에 붙이는 라우팅이면 수평 확장된다. 내려오는 길은 SSE 라 실제로 쓰려면 WebSocket 이 낫다</td></tr>
+                            <tr><td>Editor adapter</td><td>The edit API matches a schema-based document editor's operations. Remaining conversion: inline-text paths to character positions, fold two-stage Enter (<code>split [0,0,5]</code>/<code>split [0,1]</code>), and align list representation (paragraph + listGroupId in that editor).</td></tr>
+                            <tr><td>Flows start with text blocks</td><td>A CRDT line head is always a text block. If the other editor starts with a table, this model has an empty leading paragraph. The adapter must align them.</td></tr>
+                            <tr><td>Multi-cell selection</td><td>Selection stays within one line: body, one cell, or one callout.</td></tr>
+                            <tr><td>Exactly one required child</td><td>The schema cannot express one image and one caption (<code>min</code>/<code>max</code>). Commands enforce this today. Handcrafted operations could create a second image or an image without a caption.</td></tr>
+                            <tr><td>Validation precision</td><td>Validation is line-level. An image-container line containing captions accepts characters, so the server cannot reject handcrafted input into an image block. Block-level validation requires identical block membership on all replicas, but that depends on current state and can differ.</td></tr>
+                            <tr><td>Collecting text during merge</td><td>Text in covered cells is only hidden. Collecting would copy text and separate concurrent input.</td></tr>
+                            <tr><td>Row/column attributes</td><td>Row height and column width can be added as row/column-node attributes.</td></tr>
+                            <tr><td>Performance</td><td>One token per character; models recompute from scratch per edit, and receiving events compare two models per receipt. Consecutive-character grouping and incremental calculation are needed.</td></tr>
+                            <tr><td>Long-disconnected participants</td><td>After 2 minutes they leave the GC frontier. Returning and undoing a compacted tombstone could diverge. Reconnection from a snapshot needs implementation.</td></tr>
+                            <tr><td>Authentication, authorization, multiple servers</td><td>Demo level. Per-document routing to one server enables horizontal scaling. Download uses SSE; WebSocket is preferable for production use.</td></tr>
                         </tbody>
                     </table>
                 </div>
             </section>
 
             <section aria-labelledby="use">
-                <h2 id="use">쓰는 법</h2>
-                <h3>실행</h3>
-<pre># 이 저장소 뿌리에서
-npm run dev                  # http://localhost:5410  (Node 22.18+, 설치할 것 없음)
-npm test                     # 시나리오 + 기능 + 표·스키마 + 편집 API + 무작위 500 대본
-FUZZ_SEEDS=3000 npm test     # 무작위 3000 대본 × 참여자 2·4 × GC 끔·켬
-NO_SCHEMA=1 npm run dev      # 스키마 없는 서버로 띄우기</pre>
+                <h2 id="use">Usage</h2>
+                <h3>Run</h3>
+<pre># From the repository root
+npm run dev                  # http://localhost:5410  (Node 22.18+, no installation needed)
+npm test                     # Scenarios + features + tables/schema + edit API + 500 random scripts
+FUZZ_SEEDS=3000 npm test     # 3000 random scripts × 2/4 participants × GC off/on
+NO_SCHEMA=1 npm run dev      # Start a server without a schema</pre>
                 <ul>
-                    <li>데모: <code>?doc=이름</code>(문서), <code>?peers=1..4</code>(이 창의 참여자 수), <code>?observer=0</code>(서버 관찰자 없이), <code>?auto=1</code>(자동 입력)</li>
-                    <li>여러 창 시험: <code>/multi?n=10&amp;doc=이름</code> — "자동 입력 시작", "끊기 → 잇기"</li>
-                    <li>아래 "토큰 줄들"에서 본문·행 줄·열 줄·칸 줄을 그대로 볼 수 있고, 토큰에 마우스를 올리면 기준 토큰·경계·지우기 기록이 보인다</li>
+                    <li>Demo: <code>?doc=name</code> (document), <code>?peers=1..4</code> (participants in this window), <code>?observer=0</code> (no server observer), <code>?auto=1</code> (automatic input).</li>
+                    <li>Multi-window test: <code>/multi?n=10&amp;doc=name</code> — "Start automatic input", "Disconnect → reconnect".</li>
+                    <li>The "Token lines" panel shows body, row, column, and cell lines. Hover a token to see its origin, boundary, and deletion records.</li>
                 </ul>
 
-                <h3>스키마를 주입하고 편집하기</h3>
+                <h3>Inject a Schema and Edit</h3>
 <pre>import {anchorAt, commands as cmd, pathAt} from "@barocss/doc-sync";
 import {HttpTransport, SyncClient} from "@barocss/doc-sync/sync";
 import {DEMO_SCHEMA} from "./fixtures/demo-schema.ts";
@@ -959,32 +959,32 @@ client.connect();
 
 const doc = client.doc;
 
-// 1) 편집기 명령 — 사람의 행위를 모델 연산으로 만들어 바로 적용하고, 전선 연산을 돌려준다
+// 1) Editor commands: convert human actions to model edits, apply immediately, and return wire operations
 client.commit(cmd.insertText(doc, {b: 0, o: 0}, "hello"), {caretBefore: "", caretAfter: ""});
 client.commit(cmd.insertBlock(doc, {b: 0, o: 5}, "table", {rows: 2, cols: 3}));
 
 const table = doc.blocks()[1] as GridBlock;
 
-client.commit(cmd.setSpan(doc, table, 0, 0, 1, 2));                    // 1×2 합치기
+client.commit(cmd.setSpan(doc, table, 0, 0, 1, 2));                    // Merge 1×2
 client.commit(cmd.setCellAttr(doc, table, 1, 2, "backgroundColor", "#dcfce7"));
 client.commit(cmd.setLink(doc, {b: 0, o: 0}, {b: 0, o: 5}, "https://example.com"));
 
-// 2) 또는 모델 연산을 바로 — 스키마 기반 문서 에디터의 연산과 같은 꼴
-const {ops, normalize} = doc.edit([{op: "insert", at: [1, 1, 0, 0, 0, 0], content: "칸 글"}]);
+// 2) Or use model operations directly, matching a schema-based document editor
+const {ops, normalize} = doc.edit([{op: "insert", at: [1, 1, 0, 0, 0, 0], content: "cell text"}]);
 
-client.commit(ops);                     // normalize 가 비어 있지 않으면 편집기 모델에도 적용한다
+client.commit(ops);                     // Apply nonempty normalize to the editor model too
 
-// 3) 받는 쪽 — 남의 변경을 편집기 모델에
+// 3) Receiving: remote changes to the editor model
 client.onModelEvents = (events, info) =&gt; editorModel.apply(events);
 
-// 4) 선택 — 토큰 키로 들고 있다가 경로로
-const key = anchorAt(doc, [0, 3]);      // ... 남의 변경을 받은 뒤
+// 4) Selection: store token keys, then convert to paths
+const key = anchorAt(doc, [0, 3]);      // ... after receiving remote changes
 const path = pathAt(doc, key);
 
-client.undo();                           // 내 마지막 편집만 되돌린다
-console.log(JSON.stringify(doc.toJSON()));   // 에디터 문서 꼴의 트리</pre>
+client.undo();                           // Undo only my last edit
+console.log(JSON.stringify(doc.toJSON()));   // Tree shaped like an editor document</pre>
 
-                <h3>다른 스키마 — CRDT 코드는 그대로</h3>
+                <h3>Another Schema, Same CRDT Code</h3>
 <pre>const TODO_SCHEMA = {
     root: "list",
     marks: ["bold"],
@@ -994,65 +994,65 @@ console.log(JSON.stringify(doc.toJSON()));   // 에디터 문서 꼴의 트리</
         todo: {shape: "text", attrs: {done: {default: false, values: [true, false]}, due: {default: ""}}},
     },
 };
-// 제목 끝 Enter → todo, done·due 는 LWW 속성. 이 스키마에는 표가 없으니 cmd.insertBlock(…, "table") 은 [] — 시험 있음</pre>
+// Enter at title end → todo; done/due are LWW attributes. No table in this schema, so cmd.insertBlock(…, "table") returns [] (tested).</pre>
 
-                <h3>API 한눈에</h3>
+                <h3>API Overview</h3>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>층</th><th>함수</th><th>하는 일</th></tr></thead>
+                        <thead><tr><th>Layer</th><th>Function</th><th>Responsibility</th></tr></thead>
                         <tbody>
-                            <tr><td>모델 연산</td><td><code>doc.edit(ops, {normalize?})</code></td><td>insert · delete · update · split · merge 묶음 → 전선 연산 + normalize</td></tr>
-                            <tr><td>편집기 명령</td><td><code>cmd.insertText</code> · <code>splitBlock</code> · <code>backspace</code> · <code>deleteForward</code> · <code>deleteRange</code></td><td>글자·Enter·지우기·블록 합치기</td></tr>
-                            <tr><td></td><td><code>cmd.setBlockType</code> · <code>setAttr</code> · <code>setNumberAttr</code> · <code>setMark</code> · <code>setLink</code></td><td>종류(문단 → 번호 목록 = <code>list-item</code> + <code>{listType}</code>)·속성·서식·링크</td></tr>
-                            <tr><td></td><td><code>cmd.insertBlock</code> · <code>insertInline</code> · <code>appendBlock</code> · <code>deleteBlock</code> · <code>setItemAttr</code></td><td>표·그릇·구분선 · 글 안 그림 · 캡션 · 그림 크기</td></tr>
-                            <tr><td></td><td><code>cmd.insertAxis</code> · <code>deleteAxis</code> · <code>setSpan</code> · <code>setCellAttr</code></td><td>행·열(행마다 칸 꼴로 보낸다) · 칸 합치기 · 칸 속성</td></tr>
-                            <tr><td>받는 쪽</td><td><code>client.onModelEvents</code> · <code>client.onLocalEdits</code></td><td>남의 변경·되돌리기·스냅숏 → 모델 연산 · 내 편집과 normalize</td></tr>
-                            <tr><td>위치</td><td><code>pathOfPos</code> · <code>posOfPath</code> · <code>anchorAt</code> · <code>pathAt</code></td><td>위치 ↔ 모델 경로 ↔ 토큰 키</td></tr>
-                            <tr><td>읽기</td><td><code>doc.toJSON()</code> · <code>doc.blocks(line?)</code></td><td>모델 트리 · 편집기용 블록 목록</td></tr>
+                            <tr><td>Model operations</td><td><code>doc.edit(ops, {normalize?})</code></td><td>insert/delete/update/split/merge batch → wire operations + normalize</td></tr>
+                            <tr><td>Editor commands</td><td><code>cmd.insertText</code> · <code>splitBlock</code> · <code>backspace</code> · <code>deleteForward</code> · <code>deleteRange</code></td><td>Characters, Enter, deletion, block merge</td></tr>
+                            <tr><td></td><td><code>cmd.setBlockType</code> · <code>setAttr</code> · <code>setNumberAttr</code> · <code>setMark</code> · <code>setLink</code></td><td>Type (paragraph → numbered list = <code>list-item</code> + <code>{listType}</code>), attributes, marks, links</td></tr>
+                            <tr><td></td><td><code>cmd.insertBlock</code> · <code>insertInline</code> · <code>appendBlock</code> · <code>deleteBlock</code> · <code>setItemAttr</code></td><td>Tables, containers, dividers, inline images, captions, image dimensions</td></tr>
+                            <tr><td></td><td><code>cmd.insertAxis</code> · <code>deleteAxis</code> · <code>setSpan</code> · <code>setCellAttr</code></td><td>Rows/columns (sent as per-row cells), cell merges, cell attributes</td></tr>
+                            <tr><td>Receiving</td><td><code>client.onModelEvents</code> · <code>client.onLocalEdits</code></td><td>Remote changes/undo/snapshots → model operations; local edits and normalize</td></tr>
+                            <tr><td>Positions</td><td><code>pathOfPos</code> · <code>posOfPath</code> · <code>anchorAt</code> · <code>pathAt</code></td><td>Position ↔ model path ↔ token key</td></tr>
+                            <tr><td>Reading</td><td><code>doc.toJSON()</code> · <code>doc.blocks(line?)</code></td><td>Model tree; editor block list</td></tr>
                         </tbody>
                     </table>
                 </div>
             </section>
 
             <section aria-labelledby="files">
-                <h2 id="files">파일 지도</h2>
+                <h2 id="files">File Map</h2>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>파일</th><th class="num">줄</th><th>하는 일</th></tr></thead>
+                        <thead><tr><th>File</th><th class="num">Lines</th><th>Responsibility</th></tr></thead>
                         <tbody>
-                            <tr><td><code>packages/doc-sync/src/crdt/ticket.ts</code></td><td class="num">46</td><td>이름표와 Lamport 시계</td></tr>
-                            <tr><td><code>packages/doc-sync/src/crdt/schema.ts</code></td><td class="num">250</td><td>스키마 타입(모양·children·속성·값 서식)과 스키마 자체 검사</td></tr>
-                            <tr><td><code>packages/doc-sync/src/crdt/doc.ts</code></td><td class="num">1,472</td><td>Doc — 줄과 자리, 연산 검사·적용, 모델 계산(블록·표·합치기), 압축, <code>edit()</code></td></tr>
-                            <tr><td><code>packages/doc-sync/src/crdt/model.ts</code></td><td class="num">919</td><td>모델 쪽 순수 함수 — 모양 정리, 모델 연산 적용, 모델 비교</td></tr>
-                            <tr><td><code>packages/doc-sync/src/crdt/edit.ts</code></td><td class="num">1,054</td><td>모델 연산 → 전선 연산 컴파일 (비운 머리·열 접기), 경로 ↔ 위치 ↔ 토큰 키</td></tr>
-                            <tr><td><code>packages/doc-sync/src/crdt/commands.ts</code></td><td class="num">391</td><td>편집기 명령 → 모델 연산</td></tr>
-                            <tr><td><code>packages/doc-sync/src/crdt/history.ts</code></td><td class="num">254</td><td>참여자별 되돌리기·다시하기, 핀</td></tr>
-                            <tr><td><code>fixtures/demo-schema.ts</code></td><td class="num">82</td><td>데모 스키마 — 블록 종류는 여기에만 있다</td></tr>
-                            <tr><td><code>packages/doc-sync/src/sync/*</code></td><td class="num">451</td><td>프로토콜, SyncClient(스키마 주입·끊김 동안 쌓기·ack 순서·받는 쪽 이벤트), 브라우저 전송</td></tr>
-                            <tr><td><code>packages/doc-sync/src/server/*</code></td><td class="num">488</td><td>DocHub(검사·순서·GC, 전송과 무관). 데모 서버는 <code>apps/demo/server.ts</code> — Node http 서버·JSONL·<code>.ts</code> 타입 벗겨 내주기</td></tr>
-                            <tr><td><code>apps/demo/ui/*</code></td><td class="num">2,389</td><td>데모 편집기(스키마를 읽음, IME, 표·이미지·목록·링크), 줄별 토큰 보기, 시나리오, 자동 입력, 여러 창 시험</td></tr>
-                            <tr><td><code>packages/doc-sync/src/pm/*</code></td><td class="num">988</td><td>ProseMirror 연동 — 스키마 뽑기, 모델 ↔ 문서·경로 ↔ 위치, Step ↔ 모델 연산</td></tr>
-                            <tr><td><code>packages/doc-sync/test/*</code></td><td class="num">2,305</td><td>메모리 네트워크 하네스, 시나리오·기능·표·편집 API·무작위(거울 시험)</td></tr>
-                            <tr><td><code>docs/edit-api.md</code></td><td class="num"></td><td>편집 API 설계 메모와 구현 결과</td></tr>
+                            <tr><td><code>packages/doc-sync/src/crdt/ticket.ts</code></td><td class="num">46</td><td>IDs and Lamport clock</td></tr>
+                            <tr><td><code>packages/doc-sync/src/crdt/schema.ts</code></td><td class="num">250</td><td>Schema types (shapes, children, attributes, value marks) and schema validation</td></tr>
+                            <tr><td><code>packages/doc-sync/src/crdt/doc.ts</code></td><td class="num">1,472</td><td>Doc: lines/slots, operation validation/application, model calculation (blocks/tables/merges), compaction, <code>edit()</code></td></tr>
+                            <tr><td><code>packages/doc-sync/src/crdt/model.ts</code></td><td class="num">919</td><td>Pure model functions: canonical normalization, model-operation application, model comparison</td></tr>
+                            <tr><td><code>packages/doc-sync/src/crdt/edit.ts</code></td><td class="num">1,054</td><td>Model-to-wire compilation (empty heads/column folding), path ↔ position ↔ token key</td></tr>
+                            <tr><td><code>packages/doc-sync/src/crdt/commands.ts</code></td><td class="num">391</td><td>Editor commands → model operations</td></tr>
+                            <tr><td><code>packages/doc-sync/src/crdt/history.ts</code></td><td class="num">254</td><td>Per-participant undo/redo and pins</td></tr>
+                            <tr><td><code>fixtures/demo-schema.ts</code></td><td class="num">82</td><td>Demo schema; block types live only here</td></tr>
+                            <tr><td><code>packages/doc-sync/src/sync/*</code></td><td class="num">451</td><td>Protocol, SyncClient (schema injection, offline queue, ack order, receiving events), browser transport</td></tr>
+                            <tr><td><code>packages/doc-sync/src/server/*</code></td><td class="num">488</td><td>Transport-independent DocHub (validation/order/GC). Demo server <code>apps/demo/server.ts</code>: Node HTTP, JSONL, serving type-stripped <code>.ts</code>.</td></tr>
+                            <tr><td><code>apps/demo/ui/*</code></td><td class="num">2,389</td><td>Schema-driven demo editor (IME, tables/images/lists/links), per-line token view, scenarios, automatic input, multi-window tests</td></tr>
+                            <tr><td><code>packages/doc-sync/src/pm/*</code></td><td class="num">988</td><td>ProseMirror integration: schema generation, model ↔ document, path ↔ position, Step ↔ model operations</td></tr>
+                            <tr><td><code>packages/doc-sync/test/*</code></td><td class="num">2,305</td><td>Memory-network harness, scenarios/features/tables/edit API/random tests (mirrors)</td></tr>
+                            <tr><td><code>docs/edit-api.md</code></td><td class="num"></td><td>Edit API design note and implementation results</td></tr>
                         </tbody>
                     </table>
                 </div>
             </section>
 
             <section aria-labelledby="next">
-                <h2 id="next">다음 단계로 생각해 볼 것</h2>
+                <h2 id="next">Possible Next Steps</h2>
                 <ol>
-                    <li><b>에디터 어댑터.</b> 스키마 기반 문서 에디터의 연산 ↔ 모델 연산 변환 — inline-text 경로를 글자 자리로, 두 단계 Enter 를 하나로, 목록 표현 맞추기. 실제 그 에디터(jsdom) 하네스로 3000 대본 거울 시험.</li>
-                    <li><b>ProseMirror 다듬기.</b> 한글 조합 중 같은 문단 동시 편집을 실제 브라우저에서 더 보기, 합치기·붙여 넣기도 뜻을 살려 옮기기, 칸 여러 개 선택.</li>
-                    <li><b>칸 여러 개 선택</b>과 <b>스키마의 <code>min</code>·<code>max</code></b>.</li>
-                    <li><b>성능.</b> 연속 글자 묶기(RGA split 노드), 모델 증분 계산, 받는 쪽 비교를 바뀐 블록만으로 좁히기.</li>
-                    <li><b>오래 끊긴 참여자.</b> lease 가 지난 참여자는 되돌리기 기록을 버리고 스냅숏부터 다시 받게.</li>
+                    <li><b>Editor adapter.</b> Translate schema-based document editor operations ↔ model operations: inline-text paths to character positions, two-stage Enter to one split, and list representation. Run 3000 mirror-test scripts using that real editor in jsdom.</li>
+                    <li><b>Refine ProseMirror.</b> More real-browser checks for same-paragraph edits during Korean composition, semantic translation for merges/paste, and multi-cell selection.</li>
+                    <li><b>Multi-cell selection</b> and schema <b><code>min</code>/<code>max</code></b>.</li>
+                    <li><b>Performance.</b> Consecutive character grouping (RGA split nodes), incremental model calculation, and receiving comparisons restricted to changed blocks.</li>
+                    <li><b>Long-disconnected participants.</b> After lease expiry, discard undo records and reconnect from a snapshot.</li>
                 </ol>
-                <p>Yorkie 에 올리는 일(올려 둔 트리 자료형 PR)은 별도로 협의 중이다. 이 저장소는 커밋하지 않은 상태이고, 스키마 이전 판은 따로 묶어 두었다.</p>
+                <p>Yorkie integration (the submitted tree-data-type PR) remains under separate discussion. This repository is uncommitted, and the pre-schema version was archived separately.</p>
             </section>
 
             <footer>
-                @barocss/doc-sync · 2026-10-22 기준 · 숫자는 이 날 돌린 시험에서 나온 값이다.
+                @barocss/doc-sync · As of 2026-10-22 · Figures come from tests run on that date.
             </footer>
         </article>
     </main>

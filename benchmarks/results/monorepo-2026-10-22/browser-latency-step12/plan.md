@@ -3,16 +3,16 @@ work_id: editor-latency-step12-20261022
 artifact_type: implementation-plan
 status: done
 owner_role: executor
-source_request: 문서 모델 재사용과 데모 문단 DOM 갱신을 순서대로 적용하고 각 단계에서 10만 자 양방향 30회 재측정
+source_request: Apply document model reuse and demo paragraph DOM updates in order, then remeasure 100,000 characters in both directions with 30 inputs per stage
 last_updated: 2026-10-22
 ---
 
-# 범위와 검증
+# Scope and validation
 
-1. 문서가 바뀌지 않으면 모델 계산을 재사용한다. 공개 toJSON 결과의 독립성은 유지한다. 모델 변경·원격 변경·undo/redo·GC·스냅숏에서 결과가 새 문서와 같아야 한다.
-2. 1번만 적용한 소스와 변경 내역을 보존한다. 타입 검사와 관련 회귀 검사를 실행한다. 실제 /pm의 초기 100,000자·625문단에서 방향별 준비 5회와 본 측정 30회를 실행한다.
-3. 데모가 바뀐 문단과 선택·커서의 영향을 받은 문단만 다시 그리도록 한다. 구조 변경은 정확한 전체 갱신을 유지한다. 모델을 숨기거나 줄이지 않는다.
-4. 2번까지 적용한 뒤 같은 시험과 같은 브라우저 조건으로 다시 측정한다. 실제 선택·Presence·표·undo/redo를 확인한다.
-5. 키 이벤트 생성→상대 DOM, 상대 렌더링 프레임의 p50/p95/max를 기준·1번·1+2번으로 비교한다. 각 단계의 원자료·소스·부하·정확성·한계를 따로 남긴다.
+1. Reuse model computation when the document is unchanged. Keep public toJSON results independent. Results must match the new document after model changes, remote changes, undo/redo, GC, and snapshots.
+2. Preserve source and diff with only optimization 1. Run type checks and related regressions. On the actual /pm page, use initially 100,000 characters and 625 paragraphs, with 5 warmups and 30 measured inputs per direction.
+3. Redraw only changed demo paragraphs and paragraphs affected by selections or cursors. Keep exact full updates for structure changes. Do not hide or shorten the model.
+4. After optimization 2, repeat the same tests and browser conditions. Check real selection, Presence, tables, and undo/redo.
+5. Compare p50/p95/max for key-event creation → remote DOM and remote rendering frame across baseline, optimization 1, and optimizations 1+2. Keep raw data, source, load, correctness, and limits for each stage.
 
-apps/demo/compat의 진행 중인 변경은 수정하지 않는다. 기존 원자료와 HANDOFF를 덮어쓰지 않는다. 커밋·push는 이 요청의 범위가 아니다.
+Do not edit ongoing apps/demo/compat changes. Preserve existing raw data and HANDOFF. Commit and push are outside this request.

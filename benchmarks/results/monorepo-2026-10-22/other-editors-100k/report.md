@@ -3,19 +3,19 @@ work_id: other-editors-100k-20261022
 artifact_type: performance-report
 status: done
 owner_role: executor
-source_request: 다른 편집기 비교 및 연속 문자열 CRDT 저장 설계 검토
+source_request: Compare other editors and review continuous string CRDT storage design
 last_updated: 2026-10-22 22:54 KST
 ---
 
-# Slate · Lexical · ProseMirror 비교
+# Slate · Lexical · ProseMirror comparison
 
-현재 doc-sync 연결에서 입력→상대 표시 기회의 p95는 **257.9~544.3ms**다. 3개 조합에서 방향마다 30회, 총 180회를 측정했다. 전부 실제 키 입력을 사용했다. 모든 입력 표시와 최종 문서 일치 검사를 통과했다.
+Input-to-remote-display-opportunity p95 through the doc-sync integrations was **257.9~544.3ms**. Three pairs measured 30 inputs per direction, 180 total. All used actual key inputs. Every input display and final document equality check passed.
 
-이 결과는 **현재 어댑터와 doc-sync를 포함한 결과**다. 편집기 제품 자체의 속도 순위를 뜻하지 않는다. 저장 구조는 아직 문자 항목 방식이다. 연속 문자열 저장은 [설계 검토](../../../../docs/design/continuous-text-storage.md)에 정리했다.
+These results **include the current adapters and doc-sync**. They do not rank editor products by speed. Storage still used character Items. The [design review](../../../../docs/design/continuous-text-storage.md) covers continuous string storage.
 
-## 측정 결과
+## Measurement results
 
-| 방향 | p50 (ms) | p95 (ms) | 최대 (ms) |
+| Direction | p50 (ms) | p95 (ms) | Maximum (ms) |
 | --- | --- | --- | --- |
 | Slate → Lexical | 254.8 | 366.6 | 379.6 |
 | Lexical → Slate | 329.1 | 544.3 | 650.6 |
@@ -24,36 +24,36 @@ last_updated: 2026-10-22 22:54 KST
 | Lexical → ProseMirror | 209.2 | 257.9 | 297.6 |
 | ProseMirror → Lexical | 253.0 | 272.7 | 306.6 |
 
-시작은 브라우저 키 이벤트의 `timeStamp`다. 핸들러 실행 전 대기를 포함한다. 종료는 상대 첫 문단의 문자열이 예상값과 같아진 뒤 두 번째 `requestAnimationFrame` 콜백이다. 이는 표시 기회 추정값이다. 물리 화면의 표시 시각은 아니다. 별도 진단 6개 모두 상대 DOM 확인 후 종료점 전의 브라우저 `Paint` 이벤트를 확인했다.
+The start was the browser key event's `timeStamp`, including waiting before the handler. The endpoint was the second `requestAnimationFrame` callback after the receiver's first-paragraph string matched expectation. This estimates a display opportunity, not physical display timing. All 6 separate diagnostics confirmed browser `Paint` after remote DOM confirmation and before the endpoint.
 
-p50은 정렬한 30개 값의 16번째 값이다. p95는 기존 시험과 같은 `floor(n × 0.95)` 인덱스를 사용한다. n=30에서는 정렬한 29번째 값이다. 표의 값만 소수점 한 자리로 반올림했다.
+p50 is the 16th of 30 sorted values. p95 uses the existing test's `floor(n × 0.95)` index. For n=30, this is the 29th sorted value. Only table displays are rounded to one decimal place.
 
-## 조건과 비교 범위
+## Conditions and comparison scope
 
-| 항목 | 조건 |
+| Item | Condition |
 | --- | --- |
-| 초기 문서 | 100000자, 625문단, 문단당 ASCII 160자. 이전 실제 브라우저 시험과 seed 해시 일치 |
-| 현재 소스 | Git HEAD `8d0f887ae5fbd9fdd5e92c30dd942bb39bb2f83b` + 기존 Doc 모델 재사용 WIP. 소스 전체 해시와 diff 보존 |
-| 편집기 | Slate 0.146.0, slate-react 0.147.3, Lexical 0.52.0, ProseMirror view 1.42.6 |
-| 실행 환경 | Node v22.19.0, macOS arm64, 논리 CPU 14개. Chrome 156.0.8078.47, headed, DPR 1 |
-| 화면 | 1440×1000. 각 편집기의 스크롤 영역 높이 460px. 전체 문서 모델과 625문단 DOM 유지 |
-| 참여자 | 조합당 2명. 같은 페이지, 같은 renderer. 조합마다 새 문서와 브라우저 세션 |
-| 조합 순서 | Slate↔Lexical, Slate↔ProseMirror, Lexical↔ProseMirror. 각 조합에서 표의 정방향 다음 역방향 |
-| 입력 | 첫 문단, 각 방향의 초기 offset 50. 준비 5회 + 측정 30회 + 별도 진단 1회. `keyboard.press`의 ASCII 한 글자 삽입 |
-| 전송과 저장 | 실제 로컬 HTTP POST / SSE, 원래 데모 서버의 JSONL 저장. 별도 임시 데이터 폴더 |
-| 빌드 | 기존 호환성 앱과 같은 development 번들. operation trace 끔. 300ms 상태 확인 polling 유지 |
-| 측정 도구 | 현재 호환성 entry point 복사본. 두 peer 선택, 네이티브 객체 노출, 메서드 시간·DOM 변경 관찰만 추가 |
-| 변경 범위 | 이번 비교에서 제품의 어댑터·저장 코드는 수정하지 않음. 기존 최적화 WIP 유지 |
+| Initial document | 100000 characters, 625 paragraphs, 160 ASCII characters per paragraph. Seed hash matched the prior actual-browser test |
+| Source | Git HEAD `8d0f887ae5fbd9fdd5e92c30dd942bb39bb2f83b` + existing Doc model-reuse WIP. Full source hashes and diff preserved |
+| Editors | Slate 0.146.0, slate-react 0.147.3, Lexical 0.52.0, ProseMirror view 1.42.6 |
+| Runtime | Node v22.19.0, macOS arm64, 14 logical CPUs. Chrome 156.0.8078.47, headed, DPR 1 |
+| Viewport | 1440×1000. Each editor had a 460px-high scroll area. Full document model and 625-paragraph DOM retained |
+| Peers | 2 per pair, on the same page and renderer. New document and browser session per pair |
+| Pair order | Slate↔Lexical, Slate↔ProseMirror, Lexical↔ProseMirror. Forward direction in the table, then reverse |
+| Input | First paragraph, initial offset 50 per direction. 5 warmups + 30 measured + 1 separate diagnostic. One ASCII character through `keyboard.press` |
+| Transport and persistence | Real local HTTP POST / SSE and original demo server JSONL persistence. Separate temporary data folder |
+| Build | Same development bundle as the compatibility app. Operation trace off. Existing 300ms status polling retained |
+| Tools | Copy of the current compatibility entry point, adding only two-peer selection, native-object exposure, method timing, and DOM-change observation |
+| Change scope | No product adapter or storage changes for this comparison. Existing optimization WIP retained |
 
-이전 `/pm` 시험과 초기 문서, 입력 수, 종료점은 같다. 그러나 앱의 wrapper, 스크롤 화면과 상태 확인 경로가 다르다. 이전 수치에 대한 개선율은 계산하지 않는다. 이 앱의 원본 상태 문구에는 참여자 5명의 고정 문자열이 남아 있다. 실제 연결 수 2명은 peer snapshot과 서버 상태로 검증했다.
+Initial document, input counts, and endpoint matched the prior `/pm` test. App wrappers, scroll viewports, and status paths differed. No gain against prior figures is calculated. The app's original status text still contained a fixed five-peer string. Peer snapshots and server state confirmed 2 actual connections.
 
-외부 앱을 중지하지 않았다. 시작 load average는 [20.7041015625, 20.70849609375, 20.302734375]이고 종료 값은 [24.44921875, 27.07958984375, 24.58740234375]다. 조합 순서와 외부 부하의 영향을 배제할 수 없다. 한 번의 고정 순서 비교로 작은 차이의 원인을 단정하지 않는다.
+External apps kept running. Starting load averages were [20.7041015625, 20.70849609375, 20.302734375]; ending values were [24.44921875, 27.07958984375, 24.58740234375]. Pair order and external load effects cannot be excluded. One fixed-order comparison cannot establish causes of small differences.
 
-## 병목
+## Bottlenecks
 
-다음은 각 구간의 p50이다. 단위는 ms다. 각 열은 독립된 분포의 p50이다. 열을 더해 전체 p50을 계산하면 안 된다.
+Each column gives an independent span distribution's p50, in ms. Do not add columns to derive total p50.
 
-| 방향 | 입력 핸들러→전송 | 전송→상대 수신 | 상대 수신→DOM | DOM→표시 기회 | 서버 submit |
+| Direction | Input handler→transport | Transport→remote receive | Remote receive→DOM | DOM→display opportunity | Server submit |
 | --- | --- | --- | --- | --- | --- |
 | Slate → Lexical | 37.7 | 75.7 | 130.4 | 9.8 | 1.2 |
 | Lexical → Slate | 40.7 | 62.8 | 175.2 | 14.8 | 1.5 |
@@ -62,11 +62,11 @@ p50은 정렬한 30개 값의 16번째 값이다. p95는 기존 시험과 같은
 | Lexical → ProseMirror | 38.6 | 63.5 | 98.4 | 3.2 | 1.1 |
 | ProseMirror → Lexical | 64.7 | 49.1 | 131.0 | 9.9 | 1.6 |
 
-`전송→상대 수신`에는 로컬 JavaScript 실행과 이벤트 대기도 포함된다. 순수 네트워크 시간으로 해석하지 않는다. 서버 submit p50은 약 1.1~1.6ms다. 이번 경로에서는 브라우저의 모델 변환과 원격 화면 처리 비용이 더 크다.
+`Transport→remote receive` includes local JavaScript execution and event waiting. It is not pure network time. Server submit p50 was about 1.1~1.6ms. Browser model conversion and remote screen processing cost more on this path.
 
-다음 메서드 값은 한 입력 관찰 구간의 해당 메서드 호출 시간을 합한 뒤 구한 p50이다. 호출 수와 DOM 변경 수도 p50이다. 메서드의 포함 시간은 서로 겹친다. `자체` 시간은 계측한 직접 자식 호출만 뺀 값이다.
+Method values are p50 after summing calls within one input observation window. Call counts and DOM mutation counts are also p50. Inclusive method times overlap. `Self` time subtracts only instrumented direct child calls.
 
-| 방향 | Doc.toJSON 합계 | 호출 수 | withEvents 자체 | 대상 pull 포함 시간 | DOM 제거 / 추가 | 끝 문단 DOM 유지 |
+| Direction | Doc.toJSON total | Calls | withEvents self | Target pull inclusive | DOM removed / added | Final paragraph DOM retained |
 | --- | --- | --- | --- | --- | --- | --- |
 | Slate → Lexical | 116.4 | 5 | 39.9 | 32.5 | 625 / 625 | 0 / 30 |
 | Lexical → Slate | 117.0 | 6 | 38.8 | 31.6 | 625 / 625 | 0 / 30 |
@@ -75,53 +75,53 @@ p50은 정렬한 30개 값의 16번째 값이다. p95는 기존 시험과 같은
 | Lexical → ProseMirror | 116.5 | 7 | 38.6 | 0.8 | 0 / 0 | 30 / 30 |
 | ProseMirror → Lexical | 116.0 | 13 | 38.8 | 33.4 | 625 / 625 | 0 / 30 |
 
-확인한 병목은 다음과 같다.
+The observed bottlenecks follow.
 
-1. **모델 변환이 공통 비용이다.** 모델 재사용을 적용해도 문서가 바뀌면 다시 계산한다. `Doc.toJSON()` 호출 합계 p50은 116.0~118.8ms다. 별도 CPU profile에서도 `unitsToRuns`, `rawBlock`, 서식 정규화가 관찰된다. 현재 메모리의 글자 항목을 모델 문자열로 다시 읽는 경로가 남아 있다.
-2. **원격 이벤트 계산이 남아 있다.** `SyncClient.withEvents` 자체 시간 p50은 약 38.6~40.6ms다. 이 경로는 변경 전후 모델 비교, `diffModels`, `applyEdits` 검산을 수행한다. 각 하위 함수의 본 측정 시간은 따로 계측하지 않았다. CPU profile은 진단 근거로만 사용한다.
-3. **Slate와 Lexical의 원격 어댑터는 전체 네이티브 문서를 다시 만든다.** 두 수신 편집기에서 문단 DOM 제거 625개와 추가 625개를 관찰했다. 끝 문단 DOM도 매회 바뀌었다. Slate 수신 시 `Slate.apply` 호출 수 p50은 1250회다. ProseMirror 수신은 첫·끝 문단 DOM 모두 30/30회 유지했다. 이 차이는 현재 연결 코드의 차이다.
-4. **비동기 화면 처리도 구분해야 한다.** Slate의 `pull` 반환 뒤 React 처리 등은 해당 메서드 포함 시간만으로 설명할 수 없다. 이를 포함한 상대 수신→DOM p50은 Slate 약 172~175ms, Lexical 약 130~131ms, ProseMirror 약 98~101ms다. 상대 수신 직후의 doc-sync 모델 처리도 이 구간에 포함된다.
+1. **Model conversion is shared cost.** Reuse still recomputes when the document changes. Cumulative `Doc.toJSON()` p50 was 116.0~118.8ms. Separate CPU profiles showed `unitsToRuns`, `rawBlock`, and format normalization. The path still rereads in-memory character Items into model strings.
+2. **Remote event computation remains.** `SyncClient.withEvents` self-time p50 was about 38.6~40.6ms. This path compares before/after models, runs `diffModels`, and validates with `applyEdits`. Subfunction timings were not measured separately in the main run. CPU profiles are diagnostic evidence only.
+3. **Slate and Lexical remote adapters rebuild full native documents.** Each receiver removed 625 paragraph DOM nodes and added 625. The last paragraph DOM changed every time. Slate receiver `Slate.apply` call-count p50 was 1250. ProseMirror retained first and last paragraph DOM in 30/30 inputs. This reflects current integration code.
+4. **Asynchronous screen processing is separate.** Inclusive `pull` timing cannot explain React work after Slate returns. Including that work, remote-receive→DOM p50 was about 172~175ms for Slate, 130~131ms for Lexical, and 98~101ms for ProseMirror. This span also includes doc-sync model work immediately after receipt.
 
-우선 작업 후보는 연속 문자열 저장과 구간 기반 모델 변환, 변경된 블록의 이벤트 계산, Slate/Lexical의 부분 원격 적용이다. 각 작업의 개선량은 아직 측정하지 않았다. 독립된 단계로 적용하고 다시 측정해야 한다.
+Next candidates were continuous string storage with range-based model conversion, changed-block event computation, and partial remote application for Slate/Lexical. Gains from these changes were not measured. Each requires a separate implementation stage and repeat measurement.
 
-## 연속 문자열 저장 검토
+## Continuous string storage review
 
-구조 확인 결과는 `storage-baseline.json`에 기록했다. 시간 측정 종료 후 별도로 확인했다.
+Structural checks were recorded in `storage-baseline.json` separately after timing ended.
 
-| 항목 | 초기 10만 자의 수 |
+| Item | Count at initial 100,000 characters |
 | --- | --- |
-| text 전송 연산 | 625개. 각 연산 160자 |
-| 모델 text run | 625개 |
-| 살아 있는 문자 Item | 100,000개 |
-| 전체 저장 Item / ID Map 항목 | 100,625 / 100,625 |
+| Wire text operations | 625, with 160 characters per operation |
+| Model text runs | 625 |
+| Live character Items | 100,000 |
+| Total stored Items / ID Map entries | 100,625 / 100,625 |
 
-**문자열 전송은 이미 지원하지만, 살아 있는 내용을 메모리에 적용할 때 문자 항목으로 나눈다.** 따라서 입력 묶음 시험만 추가하면 저장 구조의 문제를 충분히 다루지 못한다.
+**String transport is supported, but application to live memory splits content into character Items.** Adding batch-input tests alone does not address the storage structure.
 
-제안은 논리 문자 ID와 기존 연산을 유지하고, 물리 저장을 연속 문자열 묶음으로 바꾸는 것이다. 중간 삽입·부분 삭제·서식 경계에서만 묶음을 나눈다. 연속 타이핑의 작은 연산들도 ID·origin·서식·삭제 상태가 맞으면 합친다. ID 인덱스, 블록 캐시, 위치 조회, 모델 변환도 구간을 사용해야 한다.
+The proposal keeps logical character IDs and existing operations while storing consecutive strings in physical batches. Batches split at interior insertions, partial deletions, and formatting boundaries. Small continuous-typing operations can merge when IDs, origins, formatting, and deletion states agree. ID indexes, block caches, position lookup, and model conversion must also use ranges.
 
-[설계 문서](../../../../docs/design/continuous-text-storage.md)는 RGA 순서, 중복 전송, Unicode, selection, undo, GC와 API 호환성을 다룬다. 먼저 기존 wire와 스냅숏을 유지하는 저장 변경을 제안한다. 구간 스냅숏과 대량 del/set 전송은 별도 단계다. 저장 변경은 아직 구현하지 않았다. 메모리 감소량과 지연 개선량도 아직 없다.
+The [design document](../../../../docs/design/continuous-text-storage.md) covers RGA order, duplicate delivery, Unicode, selection, undo, GC, and API compatibility. It first proposes storage changes that retain existing wire and snapshots. Range snapshots and bulk del/set transport are separate stages. Storage changes were not implemented. Memory reduction and latency gains were not available.
 
-새 구현의 시험에는 1/10/100/1000자 입력, 연속 키 입력, IME 확정, 붙여넣기, 단일 긴 문단, 서식이 많은 문서, 중간 편집을 포함한다. 각 경우의 문자·묶음 수, 힙, 스냅숏, 로컬·원격 지연을 별도로 비교한다. 현재 180회 결과를 이 시나리오의 증거로 사용하지 않는다.
+Tests for a new implementation must include 1/10/100/1000-character inputs, continuous key input, IME commit, paste, one long paragraph, heavily formatted documents, and interior edits. Compare character/batch counts, heap, snapshots, and local/remote latency separately. These 180 inputs are not evidence for those scenarios.
 
-## 검증과 제한
+## Validation and limits
 
-- 현재 최적화 코어에서 호환성 단위 검사 31/31 통과.
-- 측정 180/180회에서 양쪽 첫 문단의 예상 문자열과 trusted 입력 확인.
-- 준비·진단을 포함한 216회 입력 완료. 조합별 최종 100072자 / 625문단.
-- 모든 조합에서 두 네이티브 모델, 두 클라이언트 모델과 서버 모델 일치.
-- pending 0, fallback 0. 브라우저 오류·경고 0. 원래 React 개발 안내 로그만 관찰.
-- 6방향 진단 모두 상대 DOM 변경 후 종료점 전 `Paint` 확인.
-- 고정한 제품 소스 해시 전후 일치. 기존 앱 데이터 대신 격리된 임시 JSONL 데이터를 사용.
-- 이번 시험은 순차 ASCII 입력만 다룬다. 선택 범위 지연, 동시 입력, 표, 대량 붙여넣기와 실제 OS IME는 이번 성능 결과의 범위 밖이다.
-- 브라우저와 서버는 같은 컴퓨터에서 실행했다. 독립 기기나 실제 인터넷 환경의 지연을 증명하지 않는다.
+- Compatibility unit tests passed 31/31 on the optimized core.
+- All 180/180 measured inputs were trusted and matched expected first-paragraph strings on both sides.
+- 216 inputs completed including warmups and diagnostics. Each pair ended with 100072 characters / 625 paragraphs.
+- Both native models, both client models, and the server model matched for every pair.
+- Pending 0, fallback 0, browser errors/warnings 0. Only the original React development notice appeared.
+- All 6 direction diagnostics confirmed `Paint` after remote DOM changes and before the endpoint.
+- Frozen product source hashes matched before/after. Isolated temporary JSONL data replaced existing app data.
+- This test covered sequential ASCII input only. Selection-range latency, concurrent input, tables, bulk paste, and actual OS IME are outside these performance results.
+- Browser and server ran on one computer. This does not establish latency across independent devices or the public internet.
 
-## 증거 파일
+## Evidence files
 
-- `summary.json`: 모든 지연 분포, 메서드 시간, DOM 유지 횟수와 검산 결과.
-- 조합별 `browser-raw.json`: 72개 표본과 네이티브·클라이언트·서버 모델.
-- 조합별 `*.trace.json`, `*.cpuprofile`: 본 분포와 분리한 1회씩의 진단.
-- `server-events.jsonl`: 실제 submit 및 서버 Doc 메서드 시간.
-- `source-manifest.json`, `source.tar.gz`, `source.diff`: 제품 소스와 측정 harness 고정본.
-- `environment.json`, `run.json`, `compat-tests.log`, `storage-baseline.json`: 실행 환경, 부하, 검사와 구조 확인.
-- `analysis.py`, `storage-count.mjs`: 결과 검산과 저장 항목 수 확인 스크립트.
-- 화면 캡처와 CLI 로그는 `output/playwright/other-editors-100k/`에 보존.
+- `summary.json`: all latency distributions, method times, DOM retention counts, and validation results.
+- Per-pair `browser-raw.json`: 72 samples and native/client/server models.
+- Per-pair `*.trace.json`, `*.cpuprofile`: one diagnostic per direction, separate from the main distribution.
+- `server-events.jsonl`: actual submit and server Doc method times.
+- `source-manifest.json`, `source.tar.gz`, `source.diff`: frozen product source and measurement harness.
+- `environment.json`, `run.json`, `compat-tests.log`, `storage-baseline.json`: environment, load, checks, and structural inspection.
+- `analysis.py`, `storage-count.mjs`: result validation and storage count scripts.
+- Screenshots and CLI logs remain in `output/playwright/other-editors-100k/`.

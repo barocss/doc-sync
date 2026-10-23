@@ -3,104 +3,104 @@ work_id: editor-latency-step12-20261022
 artifact_type: performance-report
 status: done
 owner_role: executor
-source_request: 모델 재사용과 문단 DOM 재사용을 단계별 적용하고 같은 10만 자 조건으로 재측정
+source_request: Apply model reuse and paragraph DOM reuse in stages, then remeasure with the same 100,000-character conditions
 last_updated: 2026-10-22 22:20 KST
 ---
 
-# 모델·DOM 재사용 적용 결과
+# Results of model and DOM reuse
 
-입력→상대 렌더링 프레임 p95는 데모 → ProseMirror에서 2,236.9ms → 288.1ms, 역방향에서 2,642.4ms → 238.7ms로 줄었다. 기존 대비 감소율은 각각 87.1%, 91.0%다. 준비 입력을 제외한 본 측정은 단계마다 양방향 각 30회다. 모든 입력과 최종 문서 일치 검사를 통과했다.
+Input-to-remote-rendering-frame p95 decreased from 2,236.9ms → 288.1ms for demo → ProseMirror, and 2,642.4ms → 238.7ms in reverse. Decreases from baseline were 87.1% and 91.0%. Each stage measured 30 inputs per direction, excluding warmups. Every input and final document equality check passed.
 
-## 단계별 결과
+## Results by stage
 
-단위는 ms다. 시작은 키 이벤트 생성 시각이다. 핸들러 실행 전의 대기를 포함한다. 종료는 상대 DOM 문자열 확인 후 두 번째 requestAnimationFrame 콜백이다. 물리 디스플레이의 표시 시각은 측정하지 않았다.
+Units are ms. Time starts at key-event creation, including waiting before handler execution. It ends at the second requestAnimationFrame callback after confirmation of the remote DOM string. Physical display timing was not measured.
 
-| 방향 | 상태 | p50 | p95 | 최대 | 기준 대비 p95 감소 |
+| Direction | Status | p50 | p95 | Maximum | p95 decrease from baseline |
 | --- | --- | --- | --- | --- | --- |
-| 데모 → ProseMirror | 최적화 전 | 1,722.4 | 2,236.9 | 2,251.9 | — |
-| 데모 → ProseMirror | 1번: 모델 재사용 | 1,241.8 | 1,626.9 | 2,101.7 | 27.3% |
-| 데모 → ProseMirror | 1+2번: 문단 DOM 재사용 추가 | 234.0 | 288.1 | 312.2 | 87.1% |
-| ProseMirror → 데모 | 최적화 전 | 2,050.6 | 2,642.4 | 3,004.4 | — |
-| ProseMirror → 데모 | 1번: 모델 재사용 | 1,253.6 | 1,593.9 | 1,959.6 | 39.7% |
-| ProseMirror → 데모 | 1+2번: 문단 DOM 재사용 추가 | 207.1 | 238.7 | 239.3 | 91.0% |
+| Demo → ProseMirror | Before optimization | 1,722.4 | 2,236.9 | 2,251.9 | — |
+| Demo → ProseMirror | 1: model reuse | 1,241.8 | 1,626.9 | 2,101.7 | 27.3% |
+| Demo → ProseMirror | 1+2: add paragraph DOM reuse | 234.0 | 288.1 | 312.2 | 87.1% |
+| ProseMirror → demo | Before optimization | 2,050.6 | 2,642.4 | 3,004.4 | — |
+| ProseMirror → demo | 1: model reuse | 1,253.6 | 1,593.9 | 1,959.6 | 39.7% |
+| ProseMirror → demo | 1+2: add paragraph DOM reuse | 207.1 | 238.7 | 239.3 | 91.0% |
 
-| 방향 | 1번 p95 | 1+2번 p95 | 2번 추가 적용의 p95 감소 |
+| Direction | Optimization 1 p95 | Optimizations 1+2 p95 | p95 decrease from adding optimization 2 |
 | --- | --- | --- | --- |
-| 데모 → ProseMirror | 1,626.9 | 288.1 | 82.3% |
-| ProseMirror → 데모 | 1,593.9 | 238.7 | 85.0% |
+| Demo → ProseMirror | 1,626.9 | 288.1 | 82.3% |
+| ProseMirror → demo | 1,593.9 | 238.7 | 85.0% |
 
-상대 DOM 반영까지만 본 p95는 최종 상태에서 데모 → ProseMirror 264.0ms, 역방향 188.1ms다. 종료점이 다르므로 위 프레임 수치와 구분한다.
+In the final state, p95 to remote DOM update alone was 264.0ms for demo → ProseMirror and 188.1ms in reverse. These endpoints differ from the frame figures above.
 
-## 1번: 모델 계산 재사용
+## Optimization 1: reuse model computation
 
-`Doc.toJSON()`의 canonical 모델 계산을 문서별로 재사용한다. `apply()`와 `compact()`가 캐시를 비우고 version을 갱신한다. 문서가 바뀌지 않은 커서·Presence·상태 조회는 토큰과 서식을 다시 읽지 않는다.
+Canonical model computation in `Doc.toJSON()` is reused per document. `apply()` and `compact()` clear the cache and update the version. Cursor, Presence, and status reads do not reread tokens and formatting if the document is unchanged.
 
-반환하는 NodeJSON·run·attrs·marks 컨테이너는 별도로 복사한다. 호출자가 반환 모델의 구조를 고쳐도 다음 읽기와 내부 모델이 바뀌지 않도록 했다. 변경 전 읽기 결과도 이후 편집에 따라 바뀌지 않는다. CRDT 연산·순서·되돌리기·GC·스냅숏 형식은 변경하지 않았다.
+Returned NodeJSON, run, attrs, and marks containers are copied separately. A caller changing a returned model cannot affect later reads or the internal model. Later edits also do not change earlier read results. CRDT operations, order, undo, GC, and snapshot formats were unchanged.
 
-1번만 적용한 소스와 원자료를 먼저 고정했다. 그 측정을 끝낸 뒤에만 2번을 적용했다.
+Source and raw data with only optimization 1 were frozen first. Optimization 2 was applied only after that measurement ended.
 
-## 2번: 문단 DOM 재사용
+## Optimization 2: reuse paragraph DOM
 
-문단별 Block·서식 LWW 값·커서와 선택 표시를 비교한다. 같은 문단은 기존 DOM을 유지한다. 바뀐 문단과 선택 표시의 영향을 받은 문단만 다시 만든다. 표·상자 안의 문단도 같은 방식으로 갱신한다. 같은 문서·표시 상태의 중복 render 호출은 건너뛴다.
+Each paragraph compares Block, formatting LWW values, cursor, and selection display. Unchanged paragraphs retain DOM. Only changed paragraphs and those affected by selection display are rebuilt. Paragraphs inside tables and boxes follow the same rule. Duplicate renders with the same document/display state are skipped.
 
-변경 없는 노드를 떼었다 붙이지 않도록 자식 순서만 조정한다. 입력 textarea는 유지한다. 전체 문서를 숨기거나 글자 수를 줄이지 않았다. 구조 변경 등 Block 캐시 전체가 무효화되는 경로에는 더 큰 범위의 재생성이 남을 수 있다.
+Child order is adjusted without detaching unchanged nodes. The input textarea is retained. The full document stays visible and keeps its character count. Paths that invalidate the whole Block cache, such as structure changes, can still rebuild broader areas.
 
-## 병목 시간 변화
+## Changes in bottleneck timing
 
-다음은 한 입력 관찰 구간의 메서드 포함 시간을 합한 뒤 구한 p50이다. 단위는 ms다. 메서드 사이에 포함 관계가 있으므로 행을 합치지 않는다.
+These values are p50 after summing method inclusive times in each input observation window, in ms. Methods contain other measured methods. Do not add rows.
 
-| 방향 | 메서드 | 최적화 전 | 1번 | 1+2번 |
+| Direction | Method | Before optimization | 1 | 1+2 |
 | --- | --- | --- | --- | --- |
-| 데모 → ProseMirror | Doc.toJSON | 569.4 | 119.4 | 115.0 |
-| 데모 → ProseMirror | Editor.render | 379.0 | 369.5 | 5.2 |
-| ProseMirror → 데모 | Doc.toJSON | 866.0 | 120.3 | 115.2 |
-| ProseMirror → 데모 | Editor.render | 372.2 | 354.9 | 5.2 |
+| Demo → ProseMirror | Doc.toJSON | 569.4 | 119.4 | 115.0 |
+| Demo → ProseMirror | Editor.render | 379.0 | 369.5 | 5.2 |
+| ProseMirror → demo | Doc.toJSON | 866.0 | 120.3 | 115.2 |
+| ProseMirror → demo | Editor.render | 372.2 | 354.9 | 5.2 |
 
-`toJSON()` 호출 자체는 남는다. 비싼 전체 모델 재계산을 재사용한 것이며, 호출 횟수가 모두 사라진 것은 아니다. 데모 render의 누적 p50은 약 355~379ms에서 약 5.2ms로 줄었다.
+`toJSON()` calls remain. Expensive full-model computation is reused; the calls did not all disappear. Cumulative demo render p50 fell from about 355~379ms to about 5.2ms.
 
-아직 변경마다 한 번의 전체 canonical 모델 생성과 원격 전후 모델 비교·검산, ProseMirror 변환이 남는다. 이번에는 요청한 1번과 2번까지만 적용했다. 최종 p95가 239~288ms이므로 한 프레임 이내 입력 지연을 검증한 결과는 아니다.
+One full canonical model build per change, remote before/after model comparison and validation, and ProseMirror conversion remain. This work applied only requested optimizations 1 and 2. Final p95 of 239~288ms does not establish input latency within one frame.
 
-## 조건과 검산
+## Conditions and validation
 
-| 항목 | 조건 또는 결과 |
+| Item | Condition or result |
 | --- | --- |
-| 초기 문서 | 100,000자·625문단·문단당 160자. 초기 JSONL seed가 기존 자료와 바이트 동일 |
-| 입력 | 같은 ASCII 키 순서. 첫 문단 초기 offset 50. 실제 trusted 키 이벤트 |
-| 횟수 | 각 단계·방향별 준비 5회, 본 측정 30회, 별도 진단 1회 |
-| 환경 | Node 22.19.0, Chrome 156, 1440×1000, devicePixelRatio 1 |
-| 전송 | 실제 로컬 HTTP POST·SSE와 서버 JSONL 저장 |
-| 1번 소스 검증 | 타입 검사 통과. FUZZ_SEEDS=3000 PM_SEEDS=300 npm test: 라이브러리 106 + 데모 10 통과 |
-| 2번 소스 검증 | 타입 검사 통과. npm test: 라이브러리 106 + 데모 10 통과 |
-| UI 검증 | 30개 항목 통과: 문단 DOM 유지, polling, 서식, undo/redo, 구조 분리, Presence·역방향·겹침·연결 종료, 표·상자·행/열·셀 합치기/나누기·새로 열기 |
-| 문서 일치 | 각 단계 본 측정 60회 전부 통과. 최종 클라이언트 두 모델과 서버 모델 일치. 보낼 변경 0개. fallback 0 |
-| 최종 크기 | 준비·진단을 합친 72회 입력 뒤 각 단계 100,072자·625문단 |
-| 소스 분리 | 1번→1+2번의 소스 차이는 apps/demo/ui/editor.ts 하나. 각 단계의 소스 archive와 해시 보존 |
-| Paint | 본 측정과 분리한 방향별 진단에서 DOM 반영 뒤 Paint 종료 확인 |
+| Initial document | 100,000 characters, 625 paragraphs, 160 characters per paragraph. Initial JSONL seed was byte-identical to existing data |
+| Input | Same ASCII key sequence. Initial offset 50 in the first paragraph. Real trusted key events |
+| Samples | 5 warmups, 30 measured inputs, and 1 separate diagnostic per stage and direction |
+| Environment | Node 22.19.0, Chrome 156, 1440×1000, devicePixelRatio 1 |
+| Transport | Real local HTTP POST/SSE and server JSONL persistence |
+| Optimization 1 source checks | Type check passed. FUZZ_SEEDS=3000 PM_SEEDS=300 npm test: library 106 + demo 10 passed |
+| Optimization 2 source checks | Type check passed. npm test: library 106 + demo 10 passed |
+| UI checks | 30 items passed: paragraph DOM retention, polling, formatting, undo/redo, structural separation, Presence, reverse selections, overlap, disconnect, tables, boxes, rows/columns, cell merge/split, and reopen |
+| Document equality | All 60 measured inputs per stage passed. Both final client models matched the server. Pending changes 0. Fallback 0 |
+| Final size | 100,072 characters and 625 paragraphs per stage after 72 inputs including warmups and diagnostics |
+| Source separation | Only apps/demo/ui/editor.ts differed between optimization 1 and 1+2. Each stage preserved a source archive and hashes |
+| Paint | Separate diagnostics per direction confirmed Paint completion after remote DOM updates |
 
-## 외부 부하와 중단 실행
+## External load and interrupted run
 
-| 상태 | 시작 전 load average | 종료 후 load average |
+| Status | Starting load average | Ending load average |
 | --- | --- | --- |
-| 1번: 모델 재사용 | 26.80 / 20.62 / 14.04 | 21.88 / 22.38 / 17.28 |
-| 1+2번: 문단 DOM 재사용 추가 | 23.37 / 23.14 / 20.61 | 20.53 / 21.79 / 20.53 |
+| 1: model reuse | 26.80 / 20.62 / 14.04 | 21.88 / 22.38 / 17.28 |
+| 1+2: add paragraph DOM reuse | 23.37 / 23.14 / 20.61 | 20.53 / 21.79 / 20.53 |
 
-순서는 1분 / 5분 / 15분이다. 논리 CPU는 14개다. 외부 데스크톱 부하가 있었고 1번 초반에는 다른 채팅의 추가 호환성 검증이 겹쳤을 수 있다. 종료 통보와 각 실행의 부하 기록을 보존했다. 모든 시간 차이를 코드만의 효과로 단정하지 않는다. 모델 계산과 DOM 생성의 호출별 비용 감소도 함께 확인했다.
+The order is 1-minute / 5-minute / 15-minute load averages. There were 14 logical CPUs. External desktop load was present. Early optimization 1 timing might overlap extra compatibility validation in another chat. Completion notices and per-run load records were preserved. Timing differences are not attributed solely to code. Per-call model computation and DOM creation cost reductions were also checked.
 
-2번의 첫 실행은 디스크 ENOSPC로 후반부 저장이 중단됐다. 61개 표본을 보존하고 최종 비교에서 제외했다. 공간을 재확인한 뒤 같은 소스와 초기 seed로 전체를 한 번 다시 측정했다. 사용자 파일은 삭제하지 않았다. 최종 수치는 `step2-repeat`의 완주한 결과다.
+The first optimization 2 run stopped saving near the end due to disk ENOSPC. Its 61 samples were preserved and excluded from final comparison. After checking free space, the full measurement was repeated once with the same source and initial seed. No user files were deleted. Final figures use completed `step2-repeat` results.
 
-측정 도구의 console 출력 파서도 텍스트 응답을 받도록 고쳤다. 이는 수집 후 출력 처리 수정이다. 키 입력, 대본, 프레임 종료점과 본 측정 30회 조건은 바꾸지 않았다.
+The tool's console-output parser was also changed to accept text responses. This was post-collection output processing. Keys, script, frame endpoint, and 30 measured inputs were unchanged.
 
-## 해석 범위
+## Interpretation limits
 
-한 페이지의 두 실제 편집기가 같은 렌더러 스레드를 공유한다. 다른 컴퓨터의 네트워크·표시 성능으로 확대하지 않는다. 물리 화면의 scanout은 측정하지 않았다. 각 단계의 단일 30회 실행은 통계적 동등성을 증명하지 않는다.
+Both actual editors shared one page and renderer thread. Results do not extend to network/display performance on other computers. Physical scanout was not measured. A single 30-sample run per stage does not establish statistical equivalence.
 
-순차 ASCII 삽입 지연만 측정했다. IME·연속 타이핑 처리량·여러 사용자 경합·큰 표의 지연은 측정하지 않았다. 구조 변경·GC·되살리기처럼 Block 캐시를 전체 무효화하는 경로에는 전체 DOM 재생성이 남을 수 있다. UI 회귀 통과를 이 경로의 지연 통과로 해석하지 않는다.
+Only sequential ASCII insertion latency was measured. IME, continuous typing throughput, multi-user contention, and large-table latency were excluded. Structure changes, GC, and revival can invalidate the full Block cache and still reconstruct full DOM. Passing UI regressions does not establish latency passes on those paths.
 
-## 파일
+## Files
 
-- [기준 원자료](../browser-latency-100k/browser-raw.json) · [전체 전후 수치·비율](comparison.json)
-- 1번: [원자료](step1/browser-raw.json), [분석](step1/summary.json), [소스 archive](step1/source.tar.gz), [실행·부하](step1/run.json)
-- 1+2번 최종: [원자료](step2-repeat/browser-raw.json), [분석](step2-repeat/summary.json), [소스 archive](step2-repeat/source.tar.gz), [실행·부하](step2-repeat/run.json)
-- 중단 실행: [기록](step2/interrupted.json), [부분 원자료](step2/partial-browser-raw.json)
-- 검증: [1번 확장 시험](step1-tests.log), [2번 기본 시험](step2-tests.log), [타입 검사](step2-typecheck.log), [UI 검증](step2-browser-validation.json), [표·상자·새로 열기](step2-browser-validation-nested.json)
-- 변경 파일: [Doc](/Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts), [데모 렌더러](/Users/user/github/doc-sync/apps/demo/ui/editor.ts), [모델 재사용 시험](/Users/user/github/doc-sync/packages/doc-sync/test/model-cache.test.ts)
+- [Baseline raw data](../browser-latency-100k/browser-raw.json) · [All before/after values and ratios](comparison.json)
+- Optimization 1: [raw data](step1/browser-raw.json), [analysis](step1/summary.json), [source archive](step1/source.tar.gz), [run and load](step1/run.json)
+- Final optimizations 1+2: [raw data](step2-repeat/browser-raw.json), [analysis](step2-repeat/summary.json), [source archive](step2-repeat/source.tar.gz), [run and load](step2-repeat/run.json)
+- Interrupted run: [record](step2/interrupted.json), [partial raw data](step2/partial-browser-raw.json)
+- Checks: [optimization 1 extended tests](step1-tests.log), [optimization 2 default tests](step2-tests.log), [type check](step2-typecheck.log), [UI checks](step2-browser-validation.json), [tables, boxes, and reopen](step2-browser-validation-nested.json)
+- Changed files: [Doc](/Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts), [demo renderer](/Users/user/github/doc-sync/apps/demo/ui/editor.ts), [model reuse tests](/Users/user/github/doc-sync/packages/doc-sync/test/model-cache.test.ts)

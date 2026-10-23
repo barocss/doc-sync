@@ -1,101 +1,101 @@
-# Doc Sync 상태 및 동기화 명세
+# Doc Sync State and Synchronization Specification
 
-상태: 2026-10-23 구현 기준 초안. 이 문서는 현재 계약과 알려진 제한을 기록한다. 독립 검토 완료, 제품 연동 승인, 배포 승인 또는 2주 연속 운영 성공을 뜻하지 않는다. 공개 패키지는 `@barocss/doc-sync` 하나다. 데모와 벤치마크는 비공개 작업 공간이다.
+Status: draft based on the implementation on 2026-10-23. This document records the current contract and known limits. It does not establish independent review, product integration approval, release approval, or two consecutive weeks of successful operation. `@barocss/doc-sync` is the only public package. The demo and benchmarks are private workspaces.
 
-## 1. 범위와 용어
+## 1. Scope and Terms
 
-- `Doc`: 토큰 줄과 시계를 가진 복제본이다.
-- `Item`: 글자, 노드 또는 줄 머리 토큰이다. 삭제된 토큰도 순서 기준으로 남는다.
-- `Ticket`: `{lamport: number, actor: string}`이다. Lamport 번호를 먼저 비교하고, 같으면 actor 문자열을 비교한다. 키는 `lamport@actor`다.
-- `Change`: 한 actor가 보낸 wire 연산 묶음이다. `seq`는 actor별 1부터 증가한다.
-- `Envelope`: 서버 로그의 항목이다. `serverSeq`는 문서별 1부터 증가한다. 편집 또는 GC 기준점을 담는다.
-- 모델: 스키마로 저장 상태를 해석한 `NodeJSON`이다. 저장 토큰 목록과 다르다.
+- `Doc`: a replica with token lines and a clock.
+- `Item`: a character, node, or line-head token. Deleted tokens remain as ordering references.
+- `Ticket`: `{lamport: number, actor: string}`. Compare the Lamport number first, then the actor string if the numbers match. Its key is `lamport@actor`.
+- `Change`: a batch of wire operations from one actor. `seq` increases from 1 for each actor.
+- `Envelope`: an entry in the server log. `serverSeq` increases from 1 for each document. It contains an edit or a GC frontier.
+- Model: `NodeJSON` that interprets stored state through a schema. It is distinct from the stored token list.
 
-구현 근거는 `packages/doc-sync/src/crdt/{doc,ticket,history,model}.ts`, `src/sync/{protocol,client}.ts`, `src/server/hub.ts`다. 스키마는 소비자가 주입한다. 코어는 데모의 구체적인 문단·표 종류를 내장하지 않는다.
+Implementation references are `packages/doc-sync/src/crdt/{doc,ticket,history,model}.ts`, `src/sync/{protocol,client}.ts`, and `src/server/hub.ts`. Consumers supply the schema. The core does not embed the demo's specific paragraph or table types.
 
-## 2. 상태와 순서
+## 2. State and Order
 
-각 줄은 머리 토큰과 RGA 순서의 토큰 목록을 가진다. 본문 머리는 `0@~root`다. 노드의 `body`, `rows`, `cols`, `cell:행키,열키` 자리는 주인 ID와 자리 이름으로 머리 ID를 결정한다. 별도의 자리 생성 연산은 없다.
+Each line has a head token and a token list in RGA order. The document body head is `0@~root`. A node's `body`, `rows`, `cols`, and `cell:rowKey,colKey` slots derive their head IDs from the owner ID and slot name. There is no separate operation to create a slot.
 
-각 토큰은 ID, 삽입 기준 `origin`, 종류, 태어난 노드 종류 `born`, 경계, LWW 속성, 삭제 ID 집합과 취소 ID 집합을 가진다. 같은 기준 뒤에 동시에 삽입한 토큰은 큰 Ticket 쪽을 먼저 둔다. 인과 의존 연산은 기준 토큰보다 나중에 적용해야 한다. `Doc.apply`는 임의 순서의 의존 연산을 보관하는 네트워크 버퍼가 아니다.
+Each token has an ID, insertion reference `origin`, kind, original node type `born`, boundary, LWW attributes, a deletion ID set, and a cancellation ID set. Concurrent insertions after the same reference put the larger Ticket first. Causally dependent operations must be applied after their reference token. `Doc.apply` is not a network buffer for dependent operations in arbitrary order.
 
-토큰이 압축되지 않았고 취소되지 않은 삭제가 하나도 없을 때만 살아 있다. 같은 글자에 A와 B의 삭제가 있으면 A의 삭제만 취소해도 글자는 살아나지 않는다. 속성은 토큰과 키별로 가장 큰 쓰기 Ticket의 값이 이긴다.
+A token is live only if it is not compacted and has no uncancelled deletion. If A and B both deleted the same character, cancelling only A's deletion does not restore it. For each token and attribute key, the value with the largest write Ticket wins.
 
-## 3. Wire 연산 다섯 가지
+## 3. Five Wire Operations
 
-| `t` | 필드 | 효과 |
+| `t` | Fields | Effect |
 |---|---|---|
-| `text` | `id`, `origin`, `text`, 선택 `marks` | 문자열의 각 UTF-16 code unit을 연속 ID로 삽입한다. 첫 토큰 뒤의 각 토큰은 바로 앞 토큰을 기준으로 삼는다. |
-| `node` | `id`, `origin`, `type`, 선택 `boundary`, `attrs` | 노드 표지를 삽입한다. text 모양 노드는 경계를 가져야 한다. |
-| `del` | `at`, `ids` | 대상마다 삭제 ID `at`를 추가한다. |
-| `undel` | `at`, `cancels`, `ids` | 대상마다 지정한 삭제 ID만 취소한다. |
-| `set` | `at`, `ids`, `key`, `value` | 대상 속성에 LWW 값을 쓴다. 글자 서식과 노드 속성, `$type`, 표 내부 키도 이 연산을 쓴다. |
+| `text` | `id`, `origin`, `text`, optional `marks` | Insert each UTF-16 code unit with consecutive IDs. Each token after the first uses the preceding token as its reference. |
+| `node` | `id`, `origin`, `type`, optional `boundary`, `attrs` | Insert a node marker. Nodes with the text shape must have a boundary. |
+| `del` | `at`, `ids` | Add deletion ID `at` to each target. |
+| `undel` | `at`, `cancels`, `ids` | Cancel only the specified deletion ID on each target. |
+| `set` | `at`, `ids`, `key`, `value` | Write an LWW value to the target attribute. Character marks, node attributes, `$type`, and internal table keys use this operation. |
 
-이미 저장된 삽입 ID와 중복 삭제·취소·속성 쓰기는 다시 전달되어도 같은 상태를 유지해야 한다. 이 성질은 유효하고 동일한 연산의 재전송에 대한 것이다. 같은 ID에 다른 내용을 담은 악성 요청을 허용한다는 뜻은 아니다.
+Repeated delivery of stored insertion IDs and duplicate deletions, cancellations, or attribute writes must leave the state unchanged. This property covers retransmission of valid, identical operations. It does not authorize malicious requests that reuse an ID with different content.
 
-노드 이동과 트리 절단 연산은 없다. 연속 글자를 하나의 실제 저장 항목으로 바꾸거나 wire를 이진 형식으로 바꾸는 변경도 이 명세에 포함하지 않는다.
+There are no node move or tree cut operations. This specification also excludes replacing consecutive live characters with one physical storage item or changing the wire format to binary.
 
-## 4. 모델과 편집 계약
+## 4. Model and Edit Contract
 
-`Doc.toJSON()`은 살아 있는 저장 상태와 스키마를 읽는다. text·flow·grid·atom 모양을 해석하고 목록 묶음, 기본 속성, 인접 run, 표 칸과 span을 정규화한다. 모델에 삭제 장부나 압축 묘비를 노출하지 않는다. 표의 합친 칸 아래 내용은 저장에 남지만 가려진다. 합치기가 내용을 수집하거나 이동하지 않는다.
+`Doc.toJSON()` reads live stored state and the schema. It interprets text, flow, grid, and atom shapes, then normalizes list groups, default attributes, adjacent runs, table cells, and spans. It exposes neither deletion records nor compacted tombstones in the model. Content under merged table cells remains stored but hidden. Merging does not collect or move content.
 
-Enter는 text 노드 표지를 삽입한다. 같은 왼쪽·오른쪽 경계를 본 동시 Enter 표지는 한 보이는 블록으로 흡수한다. 앞선 Enter를 본 뒤 다시 Enter를 하면 경계가 달라지므로 별도 블록이다. 문단 합치기는 표지를 지운다. 가상 빈 블록과 full-grid 해석은 모델 정규화의 일부다.
+Enter inserts a text-node marker. Concurrent Enter markers that saw the same left and right boundaries are absorbed into one visible block. Enter after observing an earlier Enter has a different boundary and creates a separate block. Paragraph merge deletes the marker. Virtual empty blocks and full-grid interpretation are part of model normalization.
 
-모델 편집은 `insert`, `delete`, `update`, `split`, `merge`를 사용한다. 경로는 모델 자식 번호와 text 안의 자리다. 내 편집은 wire 연산과 필요할 때 정규화 편집을 낸다. 원격 변경·undo·redo·snapshot·reset은 `onModelEvents` 구독자가 있을 때 모델 편집 이벤트를 낸다. 이벤트를 이전 모델에 적용한 결과는 이후 모델과 같아야 한다. 검산에 실패하면 전체 자식을 교체하는 fallback을 사용한다. 계산 비용 최적화는 이 계약을 바꾸지 않는다. 원격 변경이 구조와 경로가 고정된 최대 8개 독립 글 블록의 안전한 text/del/set만 포함하면 그 블록들의 모델만 읽고 비교한다. 모든 대상·경로와 before를 먼저 확보한 뒤 실제 적용은 한 번이며, 블록별 이벤트를 검산하고 합쳐 콜백을 한 번 호출한다. 모델 변화가 없으면 콜백을 내지 않는다. 아홉 번째 블록이나 기존 배제 조건이 있으면 before 생성 전에 전체 경로를 사용한다. 오래된 삽입·새 토큰 의존·node/undel·표지/inline 대상 변경·숨은/가상 블록의 기존 배제 조건과 undo/redo·snapshot·reset의 전체 경로도 유지한다. 어느 블록의 검산이 실패해도 부분 이벤트를 버리고 전체 교체 fallback을 낸다. 8은 측정·회귀로 확인한 채택 범위이며 전역 최적 임계값이나 문자 수 상한이 아니다.
+Model editing uses `insert`, `delete`, `update`, `split`, and `merge`. Paths contain model child indexes and positions within text. Local edits produce wire operations and normalization edits when needed. Remote changes, undo, redo, snapshot, and reset emit model edit events when an `onModelEvents` subscriber exists. Applying the events to the previous model must produce the next model. If verification fails, a fallback replaces all children. Cost optimizations do not change this contract. If a remote change contains only safe text/del/set operations in at most 8 independent text blocks with fixed structure and paths, only those blocks are read and compared. All targets, paths, and before states are obtained first. The change is applied once, block events are verified and combined, and the callback runs once. No model change means no callback. A ninth block or an existing exclusion selects the full path before the before model is built. Existing exclusions remain for old insertions, dependencies on new tokens, node/undel, marker/inline targets, hidden/virtual blocks, and the full paths for undo/redo, snapshot, and reset. If verification fails for any block, partial events are discarded and the full-replacement fallback is emitted. The value 8 is the adopted range supported by measurements and regressions. It is neither a globally optimal threshold nor a character-count limit.
 
-`Doc.toJSON()`은 불변 TextBlock과 내부 raw 모델을 기준으로 문단 계산을 재사용한다. 글자 서식의 실제 LWW 쓰기는 해당 문단의 raw 모델을 무효화한다. 실제 구조 변경·되살리기는 영향이 있는 줄의 블록·위치 캐시를 무효화한다. 표의 행·열 변경은 표가 있는 부모 줄에 영향을 준다. 가시성 캐시는 자손과 숨은 칸도 고려해 전체 무효화한다. 줄을 다시 읽을 때 비가상 문단의 표지·종류·속성·글자 순서·흡수 표지가 모두 같으면 기존 TextBlock과 모델을 재사용한다. 재계산 대기 중 서식·inline 속성 쓰기도 직전 캐시의 해당 raw 모델을 무효화한다. 같은 줄의 블록 경계는 전체 스캔으로 다시 계산하며, GC는 전체 캐시를 무효화한다. 목록 묶음과 표·흐름 정규화는 유지한다. 반환 모델 컨테이너는 복사하므로 소비자가 수정해도 내부 캐시를 바꾸지 않는다. 공개 `canonical()`은 이 캐시를 사용하지 않는다.
+`Doc.toJSON()` reuses paragraph computation through immutable TextBlocks and internal raw models. An actual LWW character-mark write invalidates that paragraph's raw model. Actual structural changes and restoration invalidate block and position caches on affected lines. Table row and column changes affect the parent line containing the table. Visibility caches are fully invalidated to account for descendants and hidden cells. When a line is read again, its existing TextBlock and model are reused if a nonvirtual paragraph has the same marker, type, attributes, character order, and absorbed markers. Mark and inline-attribute writes during pending recomputation also invalidate the corresponding raw model in the previous cache. Block boundaries are recomputed by scanning the entire affected line. GC invalidates all caches. List grouping and table/flow normalization remain in place. Returned model containers are copied, so consumer mutations cannot change internal caches. Public `canonical()` does not use this cache.
 
-### 문자 단위의 알려진 제한
+### Known Character-Unit Limits
 
-저장과 `Pos.o`는 UTF-16 토큰 단위다. `model.ts`의 `runsToUnits`는 문자열 순회로 code point 단위를 만든다. 예를 들어 `가😀`는 저장 글자 토큰 3개이며 모델 Unit은 2개다. 사용자에게 보이는 grapheme 하나와도 같지 않다. 어댑터는 이 차이를 명시적으로 변환해야 한다.
+Storage and `Pos.o` use UTF-16 token units. `runsToUnits` in `model.ts` iterates strings into code points. For example, `가😀` has 3 stored character tokens and 2 model Units. Neither is equivalent to a user-visible grapheme. Adapters must convert these units explicitly.
 
-`History.idsOf(text)`는 저장과 같은 UTF-16 길이로 모든 삽입 ID를 기록한다. 보조 평면 문자를 포함한 입력을 undo할 때 surrogate pair 일부나 뒤 글자가 남던 결함을 고쳤다. `history-unicode.test.ts`는 혼합 문자열·여러 보조 평면 문자·결합 문자열의 삽입 undo/redo와 다른 actor의 입력·삭제 보존을 확인한다. 이 수정은 모델 Unit의 code point 좌표를 바꾸지 않는다. BMP 한글과 ASCII로 수행한 장기 시험을 모든 Unicode 편집의 증거로 확대하지 않는다.
+`History.idsOf(text)` records all insertion IDs using the same UTF-16 length as storage. A defect left part of a surrogate pair or following characters when undoing input with supplementary-plane characters. This is fixed. `history-unicode.test.ts` checks insertion undo/redo for mixed strings, multiple supplementary-plane characters, and combining strings, while preserving another actor's input and deletions. This fix does not change the model Unit's code-point coordinates. Long tests with BMP Korean and ASCII do not establish correctness for all Unicode edits.
 
-## 5. Undo와 redo
+## 5. Undo and Redo
 
-`History`는 actor의 로컬 편집을 기록한다. undo는 과거 모델을 덮어쓰지 않고 새 반대 연산을 만든다. 삽입 undo는 해당 ID를 지우고, 삭제 undo는 그 기록이 만든 삭제 ID만 취소한다. 다른 actor의 입력과 삭제는 유지한다. 속성 undo는 현재 쓰기 ID가 해당 기록의 편집 후 상태 ID일 때만 이전 값을 쓴다. redo는 실제 undo한 대상에서 현재 ID가 편집 전 상태 ID와 같을 때만 적용한다. 같은 History에서 정확한 이전 Ticket으로 이어진 상태 참조를 공유하고, 성공한 undo·redo가 만든 새 Ticket을 그 참조에 기록한다. 따라서 연속 서식 변경도 차례로 취소·복원할 수 있다. 이미 관측한 다른 actor의 쓰기로 현재 Ticket이 달라졌다면 그 대상을 건너뛴다. 아직 받지 못한 쓰기와 undo가 경쟁하면 일반 LWW 규칙을 따른다.
+`History` records an actor's local edits. Undo creates new inverse operations instead of overwriting an earlier model. Insertion undo deletes its IDs. Deletion undo cancels only the deletion ID created by that record. Other actors' input and deletions remain. Attribute undo writes the previous value only if the current write ID equals the record's post-edit state ID. Redo applies only to targets actually undone and only if the current ID equals the pre-edit state ID. Within one History, consecutive states linked by the exact previous Ticket share a state reference. New Tickets from successful undo and redo update that reference. Consecutive mark changes can therefore be undone and redone in order. If an observed write from another actor changed the current Ticket, that target is skipped. A write not yet received competes with undo under ordinary LWW rules.
 
-연속 타이핑은 커서와 시간 창 조건에 따라 한 기록으로 묶인다. 기록 깊이는 현재 100이며 타이핑 창은 1500ms다. undo와 redo가 되살릴 수 있는 삭제의 가장 이른 서버 번호를 GC pin으로 보낸다. `clear()`는 이 기록과 pin을 해제한다.
+Consecutive typing is grouped into one record according to cursor and time-window conditions. The current history depth is 100 and the typing window is 1500ms. History sends the earliest server sequence of a deletion that undo or redo can restore as a GC pin. `clear()` releases these records and the pin.
 
-### 5.1 동시편집 의도 보존 사례
+### 5.1 Collaborative Intent Preservation Cases
 
-삭제·서식·삽입·undo의 대상 ID, 관측 관계와 단계별 기대 결과는 [동시편집 의도 보존 규칙](collaboration-intent.md)에 정리한다. `intent-preservation.test.ts`는 각 사례 ID에 연결된 고정 기대 모델을 검사한다. 수렴만으로 사람의 모든 의도가 만족된다고 판정하지 않는다.
+[Collaborative intent preservation rules](collaboration-intent.md) define target IDs, observation relationships, and expected intermediate results for deletion, formatting, insertion, and undo. `intent-preservation.test.ts` checks fixed expected models tied to each case ID. Convergence alone does not establish that every human intention is satisfied.
 
-서식 undo의 보호 조건은 **현재 로컬 쓰기 Ticket과 해당 History Step의 편집 후 상태 Ticket이 정확히 같음**이다. 이미 받은 다른 쓰기는 건너뛴다. 값이나 actor만 같은 쓰기는 연결하지 않으며 같은 actor의 미기록 쓰기와 독립 History도 구분한다. 미수신 쓰기와 undo가 경쟁하면 일반 LWW를 따른다. 승자 undo는 기록 전에 본 값을 새로 쓸 뿐 패자 쓰기를 재선출하지 않는다. `history-format.test.ts`는 연속 서식 undo·redo, 분기, 부분 범위와 원격 쓰기 보존의 고정 회귀 19개를 확인한다.
+The formatting undo guard requires **an exact match between the current local write Ticket and the post-edit state Ticket of the History Step**. Already received competing writes are skipped. Equal values or actors alone do not link writes. Unrecorded writes by the same actor and separate History instances remain distinct. Unreceived writes compete with undo through ordinary LWW. Undo by the winner writes the value observed before the record; it does not elect a losing write again. `history-format.test.ts` covers 19 fixed regressions for consecutive formatting undo/redo, branches, partial ranges, and preservation of remote writes.
 
-## 6. 검사와 원자성
+## 6. Validation and Atomicity
 
-`Doc.check(ops)`는 현재 생존 여부나 현재 변경 가능한 노드 종류보다 불변 사실을 사용한다. 기준·대상 ID, 소속 줄, 태어난 종류, 자리와 스키마 호환성을 확인한다. 같은 Change 안의 앞선 생성도 뒤 연산의 기준이 될 수 있다. 삭제된 대상이라는 이유만으로 인과적으로 유효한 편집을 거절하지 않는다.
+`Doc.check(ops)` uses immutable facts rather than current liveness or the currently mutable node type. It checks reference and target IDs, owning lines, original types, slots, and schema compatibility. An earlier creation in the same Change can be a reference for a later operation. A causally valid edit is not rejected solely because its target was deleted.
 
-`DocHub.submit`은 actor별 다음 `seq`를 요구한다. 이미 받은 `seq`는 중복으로 무시한다. 빠진 `seq`나 검사 실패는 적용 전에 거절한다. 검사에 실패한 Change는 부분 적용하지 않는다. 데모 HTTP 계층은 거절을 409로 전한다.
+`DocHub.submit` requires the next `seq` for each actor. An already received `seq` is ignored as a duplicate. A missing `seq` or failed validation is rejected before application. An invalid Change is never partially applied. The demo HTTP layer returns rejection as 409.
 
-이 검사는 인증·권한·요청 크기 제한·rate limit을 대신하지 않는다. 악성 JSON 전체 형태와 숫자 범위 검사의 완전성, actor 권한 검증과 운영 보안 승인은 별도 단계다.
+These checks do not replace authentication, authorization, request-size limits, or rate limits. Complete validation of hostile JSON shapes and numeric ranges, actor authorization, and operational security approval are separate work.
 
-## 7. 동기화와 재접속
+## 7. Synchronization and Reconnection
 
-전송 계층은 actor가 보낸 `Change`와 `Ack`를 같은 FIFO 순서로 서버에 전해야 한다. 서버는 수락 순서대로 `serverSeq`를 붙인다. 클라이언트는 이미 받은 서버 번호를 무시한다. 연결 뒤 확인되지 않은 pending Change를 재전송하고 서버 중복 제거로 정리한다.
+The transport must deliver an actor's `Change` and `Ack` messages to the server in the same FIFO order. The server assigns `serverSeq` in acceptance order. Clients ignore server sequences already received. On connection, unacknowledged pending Changes are retransmitted and resolved by server deduplication.
 
-`hello(0)`은 snapshot, 삭제 ID별 서버 번호, presence, 선택적인 actor별 마지막 수락 번호를 준다. 클라이언트는 수락된 pending을 제거한 뒤 아직 수락되지 않은 변경만 snapshot 위에 얹는다. `hello(since > 0)`은 snapshot 없이 이후 로그 전달을 사용한다. presence는 문서 편집 로그와 별도이며 anchor와 focus 토큰 키를 가진다.
+`hello(0)` returns a snapshot, server sequences for deletion IDs, presence, and optionally each actor's last accepted sequence. Clients remove accepted pending changes, then apply only unaccepted changes over the snapshot. `hello(since > 0)` delivers subsequent log entries without a snapshot. Presence is separate from the document edit log and contains anchor and focus token keys.
 
-현재 서버는 전체 로그를 보관한다. 로그 prefix 제거 뒤의 복구 계약은 없다. 데모의 JSONL replay는 기존 Envelope를 순서대로 재생한다. 새 장기 하네스는 JSON 왕복한 전체 로그로 새 메모리 hub를 만들고 fresh peer가 snapshot으로 이어지는지 확인한다. 디스크 쓰기 실패나 실제 프로세스 crash 원자성 시험은 아니다.
+The server currently retains the entire log. There is no recovery contract after removing a log prefix. Demo JSONL replay applies existing Envelopes in order. The new long-run harness creates a fresh in-memory hub from a JSON-round-tripped full log and checks that a fresh peer can continue through a snapshot. This does not test disk-write failure or atomicity under an actual process crash.
 
-## 8. GC와 lease
+## 8. GC and Leases
 
-기다려야 할 peer의 ack 번호와 `pin - 1` 중 최소값이 frontier다. offline peer는 설정한 lease가 지나면 frontier 계산에서 제외한다. 기본 lease는 무한대다. 서버는 안정된 삭제를 압축하고 같은 frontier를 GC Envelope로 로그에 넣는다. 클라이언트도 같은 로그 위치에서 압축한다.
+The frontier is the minimum of the ack sequences and `pin - 1` values of peers that must still be awaited. An offline peer is excluded from frontier calculation after its configured lease expires. The default lease is infinite. The server compacts stable deletions and appends a GC Envelope with that frontier. Clients compact at the same log position.
 
-압축은 글자 내용과 장부를 버리고 순서 기준을 남긴다. 연속 묘비는 span으로 합칠 수 있으며 옛 ID 조회는 해당 span으로 이어진다. 압축은 모델을 바꾸지 않아야 한다. pin이 있는 삭제는 frontier를 넘기 전까지 압축하면 안 된다.
+Compaction discards character content and bookkeeping while retaining ordering references. Consecutive tombstones can merge into spans, and old ID lookup resolves to the corresponding span. Compaction must not change the model. A pinned deletion must not be compacted until the frontier passes its pin.
 
-**미구현 종료 조건:** lease가 만료된 옛 클라이언트의 undo 기록과 pending을 버리고 snapshot에서 새 세션을 만드는 프로토콜은 없다. lease 계산 존재만으로 만료 복구가 안전하다고 판정하지 않는다. 새 CI는 이 항목을 합격 처리하지 않는다.
+**Unimplemented exit condition:** no protocol discards an expired client's old undo records and pending changes and creates a fresh session from a snapshot. Lease calculation alone does not establish safe expiry recovery. The new CI does not mark this item as passed.
 
-## 9. 검증과 장기 관측
+## 9. Verification and Long-Term Observation
 
-`packages/doc-sync/test/properties.test.ts`는 독립 연산 교환, 다섯 연산 중복, 인과 의존 지연, GC 모델 불변, 묘비 비노출, 문자 단위 경계를 확인한다. 기존 fuzz·시나리오·PM 시험은 더 넓은 편집 동작과 거울 모델을 검사한다. 유한한 시험은 모든 실행에 대한 수학적 증명을 뜻하지 않는다.
+`packages/doc-sync/test/properties.test.ts` checks commutation of independent operations, duplication of all five operations, delayed causal dependencies, model invariance under GC, hidden tombstones, and character-unit boundaries. Existing fuzz, scenario, and PM tests cover wider editing behavior and mirror models. Finite tests are not a mathematical proof for all executions.
 
-새 `.github/workflows/long-fuzz.yml`은 매일 UTC 18:23과 수동 실행을 지원한다. 8개 shard 각각 8 peer와 최소 125,000개 수락된 wire Op를 실행한다. 합계는 최소 1,000,000개다. 한 Change나 문자 수를 Op 수로 대신 세지 않는다. 메모리 증가를 제한하려고 약 512 Op의 문서 묶음을 새로 시작한다. 따라서 단일 문서에 100만 연산을 계속 쌓은 시험과 다르다.
+The new `.github/workflows/long-fuzz.yml` supports daily runs at 18:23 UTC and manual dispatch. Each of 8 shards uses 8 peers and at least 125,000 accepted wire Ops, for at least 1,000,000 total. Neither Change count nor character count substitutes for Op count. To limit memory growth, the test starts fresh document batches after about 512 Ops. This differs from accumulating one million operations in a single document.
 
-각 shard는 지연된 FIFO 전달, 중복 제출, GC, 전체 로그 replay로 hub 교체, 새 peer snapshot 연결을 확인한다. seed, 실행 시각, 실제 횟수, 제외 범위, 소스 SHA와 Node 버전을 artifact로 남긴다. 최소 권한은 `contents: read`이며 외부 secret을 사용하지 않는다. CI 추가 자체는 GitHub에서 실행 성공한 증거가 아니다. 2주 연속 성공은 실제 실행 artifact 14일치를 별도로 확인해야 한다.
+Each shard checks delayed FIFO delivery, duplicate submission, GC, hub replacement by full-log replay, and snapshot connection by a fresh peer. Artifacts record the seed, run time, actual counts, exclusions, source SHA, and Node version. The minimum permission is `contents: read`; no external secret is used. Adding CI does not prove a successful GitHub run. Two consecutive weeks of success require separate inspection of 14 days of actual run artifacts.
 
-로컬 집중 시험:
+Focused local tests:
 
 ```sh
 node --test packages/doc-sync/test/intent-preservation.test.ts
@@ -103,10 +103,10 @@ node --test packages/doc-sync/test/properties.test.ts
 node packages/doc-sync/test/long-fuzz.ts --ops 1000 --peers 8 --seed 23 --out output/long-fuzz/smoke.json
 ```
 
-CI와 같은 shard 실행:
+Run a shard with the CI workload:
 
 ```sh
 node packages/doc-sync/test/long-fuzz.ts --ops 125000 --peers 8 --seed 1 --out output/long-fuzz/seed-1.json
 ```
 
-Node 22.19.0을 사용한다. 장기 하네스는 `.test.ts`가 아니므로 기본 `npm test`가 100만 연산을 자동 실행하지 않는다. 실제 OS 한글 IME, 인증·운영 보안, 스키마 migration, 로그 압축·장애 복구, 목적 제품 통합과 배포는 이 단계의 완료 범위 밖이다.
+Use Node 22.19.0. The long-run harness is not a `.test.ts` file, so default `npm test` does not automatically run one million operations. Actual Korean OS IME, authentication and operational security, schema migration, log compaction and failure recovery, target-product integration, and release remain outside this stage's completion scope.

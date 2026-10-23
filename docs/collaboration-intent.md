@@ -1,102 +1,102 @@
-# 동시편집 의도 보존 규칙
+# Collaborative Intent Preservation Rules
 
-2026-10-23 현재 구현 기준이다. 기존 동시편집 정책을 설명하고, 삭제·서식·삽입·undo가 겹치는 사례의 기대 결과를 정한다. 이 문서는 새 병합 정책을 도입하지 않는다.
+This document describes the implementation on 2026-10-23. It explains the existing collaboration policy and defines expected results when deletion, formatting, insertion, and undo overlap. It introduces no new merge policy.
 
-**수렴**은 같은 유효 연산을 받은 복제본들이 같은 모델을 만드는 성질이다. **의도 보존**은 정해 둔 편집 의미를 병합 결과가 유지하는 성질이다. 수렴만으로 글의 의미나 모든 사용자의 희망을 만족시키지는 못한다. 아래 사례는 사람이 합의한 문서 의미 전체를 검증하는 시험이 아니다.
+**Convergence** means that replicas receiving the same valid operations produce the same model. **Intent preservation** means that the merge result retains the defined editing semantics. Convergence alone cannot satisfy the meaning of the text or every user's wishes. The cases below do not validate all document semantics agreed by people.
 
-## 1. 읽는 방법과 전제
+## 1. Reading Guide and Assumptions
 
-예시는 처음에 일반 글자인 ASCII `abc` 또는 `abcd`에서 시작한다. `X`와 `Y`는 새 글자다. 굵기가 없다는 뜻은 모델의 `marks`에 `bold: true`가 없다는 뜻이다.
+Examples start with plain ASCII `abc` or `abcd`. `X` and `Y` are new characters. Plain text means that the model's `marks` do not contain `bold: true`.
 
-- **동시**: 각 사용자가 상대 변경을 받기 전에 같은 기준 상태에서 연산을 만든다. 벽시계의 같은 밀리초를 뜻하지 않는다.
-- **관측 후**: 앞 변경을 해당 복제본이 적용한 뒤 다음 연산을 만든다. 이 인과 순서는 전달 순서 시험에서도 유지한다.
-- 숫자 위치는 연산을 만드는 시점의 모델 경로다. 생성된 삭제·서식은 그때 지정한 토큰 ID를 대상으로 한다. 수신 시 바뀐 숫자 위치의 글자를 다시 고르지 않는다.
-- undo는 각 actor의 해당 편집 기록을 취소한다. 기준 문서의 입력과 시험할 행동을 같은 기록으로 묶지 않는다.
-- history 기록과 대상 토큰이 유지되는 범위다. 기록을 비운 뒤의 GC, lease 만료 복구와 세션 간 undo 복원은 이 표의 보장이 아니다.
+- **Concurrent**: each user creates an operation from the same baseline before receiving the other's change. This does not mean the same wall-clock millisecond.
+- **After observation**: the replica applies the earlier change before creating the next operation. Delivery-order tests preserve this causal order.
+- Numeric positions are model paths at operation creation. Generated deletion and formatting operations target the token IDs selected then. They do not select characters again at shifted numeric positions on receipt.
+- Undo cancels the relevant edit record for each actor. Baseline input and the action under test are not grouped into one record.
+- Guarantees apply while history records and target tokens remain available. They do not cover GC after clearing history, lease-expiry recovery, or undo restoration across sessions.
 
-저장 위치 `Pos.o`는 UTF-16 토큰 단위다. 아래 고정 사례는 ASCII를 쓴다. 이 결과를 grapheme 단위 편집이나 실제 OS IME 결과로 확대하지 않는다. 문자 단위의 한계는 [상태 명세](spec.md#문자-단위의-알려진-제한)에 있다.
+Stored position `Pos.o` uses UTF-16 token units. The fixed cases below use ASCII. These results do not establish grapheme-level editing or actual OS IME behavior. See the [state specification](spec.md#known-character-unit-limits) for character-unit limits.
 
-## 2. 기존 규칙
+## 2. Existing Rules
 
-### 2.1 삭제와 서식은 별도 상태다
+### 2.1 Deletion and Formatting Are Separate States
 
-삭제는 토큰에 삭제 ID를 추가한다. 서식은 토큰의 속성에 쓰기 Ticket을 기록한다. 삭제된 미압축 토큰에도 유효한 서식 쓰기를 적용할 수 있다. 숨겨진 글자에 Bold를 적용해도 글자가 살아나지는 않는다. 해당 삭제를 취소하면 그때의 서식으로 다시 보인다.
+Deletion adds a deletion ID to a token. Formatting records a write Ticket on a token attribute. A valid formatting write can apply to a deleted, uncompacted token. Applying Bold to a hidden character does not restore it. Cancelling the deletion makes it visible with its current formatting.
 
-다른 actor도 같은 글자를 지웠다면 한쪽 삭제만 취소해도 숨김 상태가 유지된다. 삭제 undo는 자기 기록의 삭제 ID만 취소한다.
+If another actor also deleted the character, cancelling only one deletion leaves it hidden. Deletion undo cancels only the deletion ID in its own record.
 
-### 2.2 범위는 생성 시 지정한 ID 집합이다
+### 2.2 A Range Is the ID Set Selected at Creation
 
-삭제·서식 범위는 연산 생성 시 해당 Doc에서 본 대상이다. 범위 안에 다른 사용자가 동시에 넣은 새 ID를 소급해서 삭제하거나 서식 지정하지 않는다. 삽입 undo도 자신의 삽입 ID만 지운다. 그 ID를 기준으로 다른 사람이 넣은 글자는 유지한다.
+Deletion and formatting ranges contain the targets observed in that Doc when the operation was created. They do not retroactively delete or format new IDs concurrently inserted into that range by another user. Insertion undo also deletes only its own insertion IDs. Characters inserted by others using those IDs as references remain.
 
-서식은 일반적인 “앞으로 이 구간에 들어올 모든 글자”라는 지속 규칙이 아니다. 이 선택은 기존 `features.test.ts`의 동시 서식·삽입 계약을 유지한다.
+Formatting is not a persistent rule for all future characters inserted in a region. This choice preserves the concurrent formatting/insertion contract in `features.test.ts`.
 
-### 2.3 새 입력의 서식은 생성 시 정한다
+### 2.3 New Input Receives Formatting at Creation
 
-기본 문자열 입력은 **그 연산을 생성하는 Doc에서 당시 본 왼쪽 글자**의 상속 가능한 서식을 읽어 삽입 연산에 담는다. 수신 시 왼쪽 글자의 최신 서식을 다시 읽지 않는다. 블록 맨 앞에는 같은 블록의 왼쪽 글자가 없으므로 이 상속을 하지 않는다. 명시한 marks는 기본 상속보다 우선한다.
+Default text input reads inheritable marks from **the left character observed in the Doc that creates the operation** and includes them in the insertion operation. It does not reread the left character's latest marks on receipt. At the start of a block there is no left character in that block, so this inheritance does not apply. Explicit marks override default inheritance.
 
-데모 스키마의 Bold·Italic 등은 상속한다. 링크는 기본 상속 대상이 아니다. 스키마가 다른 소비자는 그 스키마의 `inherit` 계약을 따라야 한다. 근거는 `commands.ts`의 `insertText`, `edit.ts`의 `insertUnits`, `model.ts`의 `inheritedMarks`, `doc.ts`의 `text` 적용이다.
+The demo schema inherits Bold, Italic, and similar marks. Links are not inherited by default. Consumers with other schemas must follow their schema's `inherit` contract. References are `insertText` in `commands.ts`, `insertUnits` in `edit.ts`, `inheritedMarks` in `model.ts`, and `text` application in `doc.ts`.
 
-따라서 동시 삽입과 서식을 관측한 뒤의 삽입은 결과가 다를 수 있다. 이미 새 ID가 갖게 된 서식은 원래 글자에 대한 다른 actor의 서식 undo 대상에 포함되지 않는다.
+Concurrent insertion can therefore differ from insertion after observing formatting. Marks already assigned to a new ID are not targets of another actor's formatting undo on the original characters.
 
-### 2.4 같은 속성은 Ticket으로 결정한다
+### 2.4 Tickets Decide Writes to the Same Attribute
 
-서식 키가 다르면 함께 적용할 수 있다. 같은 글자에 Bold와 Italic을 쓰면 둘 다 남는다. 같은 키의 다른 값은 큰 Ticket의 쓰기가 이긴다. Lamport 번호를 먼저, 같으면 actor 문자열을 비교한다. 도착 속도나 실제 시각을 비교하는 규칙이 아니다.
+Different mark keys can coexist. Applying Bold and Italic to the same character retains both. For different values of the same key, the larger write Ticket wins. Compare the Lamport number first, then the actor string. Arrival speed and physical time are not compared.
 
-같은 값의 독립 쓰기도 다른 쓰기 ID다. 화면이 그대로여도 현재 쓰기의 소유권은 바뀔 수 있다.
+Independent writes of the same value still have different write IDs. Ownership of the current write can change even when the display does not.
 
-### 2.5 서식 undo·redo는 현재 알고 있는 쓰기를 검사한다
+### 2.5 Formatting Undo and Redo Check Currently Known Writes
 
-`History.SetStep`은 대상 토큰과 속성 키마다 편집 전·후의 상태를 기록한다. 각 상태에는 값과 쓰기 Ticket이 있다. 현재 Ticket이 undo의 편집 후 상태 또는 redo의 편집 전 상태와 정확히 같을 때만 값을 쓴다. redo는 해당 대상의 undo가 실제 적용된 경우에만 가능하다.
+`History.SetStep` records pre-edit and post-edit state for each target token and attribute key. Each state contains a value and write Ticket. A value is written only when the current Ticket exactly matches the post-edit state for undo or the pre-edit state for redo. Redo is possible only if undo actually applied to that target.
 
-같은 `History` 안에서 실제 이전 Ticket이 일치한 연속 쓰기는 상태 참조를 공유한다. 성공한 undo·redo는 복원한 상태의 Ticket을 새 연산 ID로 갱신한다. 이 연결로 켜기→끄기→undo→undo와 그 반대 redo를 순서대로 수행한다. 상태의 값은 바꾸지 않는다.
+Consecutive writes in the same `History` share state references when their actual previous Tickets match. Successful undo and redo update the restored state's Ticket to the new operation ID. This link allows on→off→undo→undo and the reverse redo sequence. State values do not change.
 
-- 다른 쓰기를 **이미 받은 뒤** 앞선 서식을 undo하면 현재 Ticket이 달라 그 대상을 건너뛴다. 같은 값의 새 쓰기도 보호한다. 범위 일부만 달라졌다면 나머지 대상만 취소한다.
-- 새 기록의 실제 이전 Ticket이 다르면 상태 연결을 끊는다. actor 이름이나 값만 같다는 이유로 연결하지 않는다. 같은 actor의 미기록 쓰기와 독립 `History`의 쓰기도 구분한다.
-- undo는 그 행동 전에 관측한 값을, redo는 그 행동의 값을 **새 Ticket으로** 쓴다. 과거 모델을 덮어쓰거나 과거의 경쟁 쓰기 중에서 승자를 다시 뽑지 않는다.
-- 아직 받지 못한 원격 쓰기와 undo가 경쟁하면 로컬 검사만으로 그 쓰기를 보호할 수 없다. 둘은 일반 LWW 규칙으로 합쳐진다.
-- 이 조건은 모든 사람의 서식 의도를 계속 누적해서 보존한다는 보장이 아니다. 아래 I04의 승자 undo 규칙도 유지한다.
+- If another write was **already received** before undoing earlier formatting, the current Ticket differs and the target is skipped. New writes of the same value are also protected. If only part of a range changed, only the remaining targets are undone.
+- If a new record has a different actual previous Ticket, the state link is broken. Equal actor names or values do not create a link. Unrecorded writes by the same actor and writes in separate `History` instances remain distinct.
+- Undo writes the value observed before the action, and redo writes the action's value, **with a new Ticket**. They do not overwrite an old model or elect a winner again among historical competing writes.
+- If an unreceived remote write competes with undo, a local check cannot protect it. Ordinary LWW merges the two writes.
+- These conditions do not guarantee continued accumulation of everyone's formatting intent. The winner-undo rule in I04 also remains in effect.
 
-## 3. 회귀 사례 행렬
+## 3. Regression Case Matrix
 
-각 행은 `packages/doc-sync/test/intent-preservation.test.ts`의 같은 ID와 연결된다. 중간 상태도 시험한다. 아래 문단에서 강조한 글자와 실제 시험의 전체 `NodeJSON`·marks가 일치해야 한다.
+Each row maps to the same ID in `packages/doc-sync/test/intent-preservation.test.ts`. Intermediate states are also tested. The highlighted characters described below must agree with the complete `NodeJSON` and marks in the actual tests.
 
-| ID | 초기 상태와 행동 | 병합 및 취소의 기대 결과 |
+| ID | Initial State and Actions | Expected Merge and Undo Results |
 |---|---|---|
-| I01 | `abc`. A가 `c` 삭제, B가 `c` 또는 `bc`를 Bold, C가 `b/c` 사이에 일반 `X`를 동시 삽입 | `c`는 숨겨지고 `X`는 일반 글자로 남는다. B가 `bc`를 고른 경우 살아 있는 `b`는 굵다. A undo 후 `c`는 B의 서식으로 복원된다. B를 먼저 undo하면 삭제는 유지된다. A/B 둘 다 undo하면 일반 `abXc`다. 각 기록의 redo로 처음 병합 결과를 복원한다. |
-| I02 | `abcd`. A가 `bc` 삭제, B가 `c` 삭제, C가 `b/c` 사이에 `X` 삽입 | 처음 `aXd`. A만 undo하면 `abXd`, B만 undo하면 `aXd`. 두 삭제를 모두 취소하면 `abXcd`. 새 `X`는 다른 actor의 삭제·undo 대상이 아니다. |
-| I03 | I01의 `bc` 서식 사례를 병합한 뒤, C가 살아 있는 `b`의 Bold를 true 또는 false로 다시 쓰고 A/B가 이를 받음 | A/B의 undo·redo는 C의 값과 쓰기 Ticket을 덮어쓰지 않는다. 둘 다 undo한 뒤 true이면 `b`만 굵은 `abXc`, false이면 일반 `abXc`다. 같은 값의 새 쓰기와 C의 `X`도 유지한다. |
-| I04 | A/B가 같은 일반 글자들에 독립적으로 `bold=true` 쓰기 | 같은 Lamport의 actor B가 승자다. 패자 A의 undo는 건너뛴다. 승자 B의 undo는 B가 본 일반 상태를 새로 쓴다. A의 패자 Bold를 재선출하지 않는다. 두 undo 순서 모두 일반 글자가 된다. |
-| I05 | `abc`. A가 `bc`를 Bold. B가 이를 받은 뒤 `b/c` 사이에 `X` 삽입 | `bXc`가 굵다. A 서식 undo 후 원래 `b/c`는 일반 글자지만 B가 태어날 때 상속한 `X`는 굵게 남는다. B 삽입 undo는 `X`만 지운다. 둘 다 undo하면 일반 `abc`다. |
-| I06 | `abcd`. A가 `bc`를 Bold, B가 `cd`를 Italic | `b`는 Bold, `c`는 Bold+Italic, `d`는 Italic이다. 한쪽 undo는 자기 키만 취소한다. 둘 다 undo하면 일반 `abcd`, redo하면 두 서식을 복원한다. |
-| I07 | `ab`. A가 사이에 `X` 삽입. B가 이를 받은 뒤 `X` 뒤에 `Y` 삽입하고 `X`를 Bold | 병합은 `X`만 굵은 `aXYb`다. A undo는 `aYb`, A redo는 `X`만 굵은 `aXYb`다. B의 `Y`와 X에 쓴 서식 Ticket은 유지한다. |
-| I08 | `abc`. A가 `bc`의 Bold=true, B가 같은 대상의 Bold=false를 독립 쓰기 | 같은 Lamport에서는 actor B의 false가 이겨 일반 `abc`다. 서버 수락 순서를 바꿔도 B의 값과 쓰기 Ticket으로 모인다. |
-| I09 | 다른 사용자의 쓰기를 받기 전에 서식 undo를 생성 | undo도 새 속성 쓰기다. 미수신 쓰기와의 경쟁은 Ticket LWW를 따른다. “원격 쓰기면 무조건 보호”를 기대하지 않는다. |
-| I10 | `abcd`. 같은 `b/c` 경계를 본 A/B가 동시 Enter | `ab│cd` 한 번의 분할로 보인다. 한쪽 표지 undo 후에도 분할이 남고, 둘 다 undo하면 `abcd`다. 한쪽 또는 양쪽 redo 뒤에도 `ab│cd`다. 관측한 뒤 새 Enter는 별도 분할이라는 기존 규칙을 유지한다. |
+| I01 | `abc`. A deletes `c`; B makes `c` or `bc` Bold; C concurrently inserts plain `X` between `b/c`. | `c` is hidden and `X` remains plain. If B selected `bc`, live `b` is bold. A undo restores `c` with B's marks. Undoing B first leaves the deletion in place. Undoing both A/B gives plain `abXc`. Redo of each record restores the initial merge result. |
+| I02 | `abcd`. A deletes `bc`; B deletes `c`; C inserts `X` between `b/c`. | Initially `aXd`. A undo alone gives `abXd`; B undo alone gives `aXd`. Cancelling both deletions gives `abXcd`. New `X` is not a target of another actor's deletion or undo. |
+| I03 | After merging the `bc` formatting case in I01, C writes Bold true or false again on live `b`, and A/B receive it. | A/B undo and redo do not overwrite C's value or write Ticket. After undoing both, true gives `abXc` with only `b` bold; false gives plain `abXc`. C's new same-value write and `X` remain. |
+| I04 | A/B independently write `bold=true` to the same plain characters. | With equal Lamport numbers, actor B wins. Losing A's undo is skipped. Winning B's undo writes the plain state B observed. It does not elect A's losing Bold again. Both undo orders produce plain characters. |
+| I05 | `abc`. A makes `bc` Bold. B receives it, then inserts `X` between `b/c`. | `bXc` is bold. After A's formatting undo, original `b/c` are plain, but `X` retains the bold marks inherited at creation. B's insertion undo deletes only `X`. Undoing both gives plain `abc`. |
+| I06 | `abcd`. A makes `bc` Bold; B makes `cd` Italic. | `b` is Bold, `c` Bold+Italic, and `d` Italic. Each undo cancels only its own key. Undoing both gives plain `abcd`; redo restores both marks. |
+| I07 | `ab`. A inserts `X` between them. B receives it, inserts `Y` after `X`, and makes `X` Bold. | Merge gives `aXYb` with only `X` bold. A undo gives `aYb`; A redo gives `aXYb` with only `X` bold. B's `Y` and formatting Ticket on X remain. |
+| I08 | `abc`. A independently writes Bold=true on `bc`; B writes Bold=false on the same targets. | With equal Lamport numbers, actor B's false wins, giving plain `abc`. Both server acceptance orders converge to B's value and write Ticket. |
+| I09 | Generate formatting undo before receiving another user's write. | Undo is also a new attribute write. Competition with an unreceived write follows Ticket LWW. Remote writes are not unconditionally protected. |
+| I10 | `abcd`. A/B concurrently press Enter after seeing the same `b/c` boundary. | It appears as one split, `ab│cd`. Undoing one marker retains the split; undoing both gives `abcd`. Redoing either or both still gives `ab│cd`. The existing rule remains: a new Enter after observation creates a separate split. |
 
-I04는 사람의 모든 의도를 만족시키는 결과라는 뜻이 아니다. 현재 LWW와 조건부 undo가 정한 결과를 명시한다. 반대로 I05의 `X` 서식을 A undo로 지우면 B가 실제로 만든 삽입 속성을 덮어쓰게 된다. 이 두 사례를 구분한다.
+I04 does not claim to satisfy every person's intent. It specifies the result defined by current LWW and conditional undo. In I05, removing `X`'s marks through A undo would overwrite the insertion attributes B actually created. These cases are distinct.
 
-### 3.1 I09의 구체적인 링크 경쟁
+### 3.1 A Concrete Link Conflict for I09
 
-일반 글자 `b`에 URL0을 적용하고 모두 받는다. 취소할 사용자 U가 URL1로 바꾼 뒤 모두 받는다. 그다음 상대가 URL2 쓰기를 만들고, U는 그 쓰기를 받기 전에 undo를 만들어 URL0을 쓴다. 이 단계의 두 쓰기는 실제 같은 Lamport 번호다.
+Apply URL0 to plain `b` and deliver it to everyone. User U changes it to URL1 and everyone receives that change. The other user then creates a URL2 write. Before receiving it, U creates undo that writes URL0. These two writes have the same actual Lamport number.
 
-- U가 actor `Z`, 상대가 `A`이면 undo의 Ticket이 커서 URL0이 남는다. U redo는 URL1을 쓴다.
-- U가 actor `A`, 상대가 `Z`이면 상대 URL2가 남는다. U redo는 현재 소유권이 달라 건너뛰며 URL2를 유지한다.
+- If U is actor `Z` and the other user is `A`, the undo Ticket is larger, so URL0 remains. U redo writes URL1.
+- If U is actor `A` and the other user is `Z`, URL2 remains. U redo sees different current ownership, skips the write, and retains URL2.
 
-각 경우 두 서버 수락 순서를 검사한다. URL0/1/2는 시험의 `https://zero.example`, `https://one.example`, `https://two.example`다. 이 사례는 “서식 undo가 미수신 원격 변경도 항상 보존한다”는 보장이 없음을 명시한다.
+Both server acceptance orders are checked for each case. URL0/1/2 are `https://zero.example`, `https://one.example`, and `https://two.example` in the tests. This case makes explicit that formatting undo does not always preserve unreceived remote changes.
 
-## 4. 시험의 관측 관계와 판정
+## 4. Test Observation Relationships and Criteria
 
-독립 사례는 기준 문서를 모두 받은 뒤 각 로컬 Doc에서 연산을 먼저 생성한다. 그다음 `commit` 호출 순서만 바꿔 서버 수락 순서를 바꾼다. 같은 actor의 FIFO나 기준 토큰 생성보다 앞선 의존 연산 적용을 허용하지 않는다. 관측 후 입력 사례에서는 앞 변경을 먼저 전달한다.
+Independent cases deliver the baseline document to everyone, then create operations in each local Doc first. Only the `commit` call order changes server acceptance order. Tests do not violate actor FIFO or apply a dependent operation before creation of its reference token. In cases with input after observation, the earlier change is delivered first.
 
-시험은 다음을 함께 검사한다.
+The tests check all of the following:
 
-1. 최초 삭제·서식 대상이 기준 상태의 의도한 ID인지 확인한다.
-2. 실제 서버 수락 순서가 해당 실행의 계획과 같은지 확인한다.
-3. 병합·각 undo·각 redo 뒤에 고정한 전체 모델과 marks를 비교한다.
-4. 모든 클라이언트와 hub 모델, pending 0, snapshot의 새 해석 결과를 확인한다.
-5. 서식 소유권 사례에서는 값만 비교하지 않고 쓰기 Ticket도 확인한다.
+1. Initial deletion and formatting targets are the intended IDs in the baseline state.
+2. Actual server acceptance order matches the plan for that run.
+3. The complete fixed model and marks match after merge, each undo, and each redo.
+4. All client and hub models match, pending is 0, and a fresh snapshot interpretation matches.
+5. Formatting ownership cases check write Tickets as well as values.
 
-두 복제본이 같은 잘못된 모델을 만드는 것만으로 통과하지 않는다. 허용된 연산 순열의 유한한 사례이며 모든 스케줄에 대한 증명은 아니다.
+Two replicas producing the same incorrect model is insufficient to pass. These are finite cases of permitted operation permutations, not proof for every schedule.
 
 ```sh
 node --test packages/doc-sync/test/intent-preservation.test.ts packages/doc-sync/test/history-format.test.ts
@@ -105,27 +105,27 @@ npm test --prefix apps/demo/compat
 npm run typecheck
 ```
 
-Node 22.19.0을 사용한다. 기본 `npm test`도 새 `.test.ts`를 포함한다. 추가된 사례 수와 최신 실행 기록은 [HANDOFF §5.12](../HANDOFF.md#512-연속-서식-undoredo-수정-2026-10-23)에 있다.
+Use Node 22.19.0. Default `npm test` also includes the new `.test.ts` files. Added case counts and the latest execution record are in [HANDOFF §5.12](../HANDOFF.md#512-fixing-consecutive-formatting-undoredo-2026-10-23).
 
-## 5. 연속 서식 undo·redo 회귀
+## 5. Consecutive Formatting Undo and Redo Regressions
 
-일반 `ab`에서 A가 `a`의 Bold를 켜고, 끄고, 두 번 undo하면 일반 `ab`로 돌아온다. 이어 두 번 redo하면 굵은 `a`를 거쳐 다시 일반 `ab`가 된다. 이전 구현에서는 첫 undo가 만든 새 Ticket을 오래된 기록이 인식하지 못해 두 번째 undo를 건너뛰었다. 이 결함을 수정했다. 수정 전 기본 3개 실패와 수정 후 실행 자료는 HANDOFF §5.12에 있다.
+Starting from plain `ab`, A turns Bold on for `a`, turns it off, and undoes twice to return to plain `ab`. Two subsequent redos pass through bold `a` and return to plain `ab`. In the previous implementation, an older record did not recognize the new Ticket from the first undo and skipped the second undo. This defect is fixed. HANDOFF §5.12 records the 3 baseline failures and post-fix runs.
 
-`packages/doc-sync/test/history-format.test.ts`는 다음 19개 실행을 검사한다. HF07은 true/false 두 경우다.
+`packages/doc-sync/test/history-format.test.ts` checks the following 19 executions. HF07 has both true and false cases.
 
-| ID | 고정 회귀 범위 |
+| ID | Fixed Regression Scope |
 |---|---|
-| HF01–HF03 | 켜기·끄기 반복 undo/redo, 한 commit 안의 연속 쓰기, 겹친 범위의 서로 다른 이전 값 |
-| HF04–HF06 | 서로 다른 서식 키, 링크 값·제거, 블록 종류의 연속 변경 |
-| HF07–HF09 | 관측한 원격 같은 키의 부분 쓰기, undo 사이 같은 값 쓰기, 다른 키 보존 |
-| HF10–HF11 | 같은 actor의 미기록 쓰기와 독립 History를 자기 기록으로 취급하지 않음 |
-| HF12–HF14 | 새 분기의 redo 폐기, clearHistory, 깊이 100의 오래된 기록 폐기 |
-| HF15–HF16 | 그룹 내부의 부분 겹침, 원격 이전 값을 복원한 뒤 오래된 로컬 소유권을 되살리지 않음 |
-| HF17–HF18 | 같은 키의 undo 후 새 분기, 성공한 undo 뒤 원격 부분 쓰기를 보존하는 redo/undo 반복 |
+| HF01–HF03 | Repeated undo/redo of on/off, consecutive writes within one commit, different previous values in overlapping ranges |
+| HF04–HF06 | Different mark keys, link values/removal, consecutive block-type changes |
+| HF07–HF09 | Observed remote partial writes to the same key, same-value writes between undos, preservation of another key |
+| HF10–HF11 | Unrecorded writes by the same actor and separate History instances are not treated as owned records |
+| HF12–HF14 | Discarding redo on a new branch, clearHistory, discarding old records at depth 100 |
+| HF15–HF16 | Partial overlaps inside a group, no restoration of stale local ownership after restoring a remote previous value |
+| HF17–HF18 | New branch after undo of the same key, repeated redo/undo preserving remote partial writes after successful undo |
 
-각 단계의 고정 전체 모델을 모든 client와 hub에서 비교하고 pending 0과 snapshot 재해석을 확인한다. 원격 쓰기 보존 사례는 값과 실제 Ticket을 함께 검사한다. 상태 참조 캐시는 해당 History에만 있으며 wire·snapshot에 넣지 않는다. 기록 폐기 시 참조를 해제하고 clear는 스택과 캐시를 비운다. 그룹 수 100이 모든 문서의 절대 메모리 상한이라는 뜻은 아니다.
+At each step, all clients and the hub are compared with fixed complete models. Pending 0 and snapshot reinterpretation are checked. Remote-write preservation cases check values and actual Tickets. The state-reference cache belongs only to that History and is not included in wire or snapshot data. Discarding records releases references; clear empties the stacks and cache. A limit of 100 groups is not an absolute memory bound for every document.
 
-저장소 루트에서 재현할 수 있다. 마지막 출력은 일반 `ab`이며 `bold: true`가 남지 않아야 한다.
+Reproduce from the repository root. The final output must be plain `ab` with no remaining `bold: true`.
 
 ```sh
 node --input-type=module <<'JS'
@@ -150,9 +150,9 @@ try {
 JS
 ```
 
-## 6. 이 명세로 완료 처리하지 않는 범위
+## 6. Scope Not Completed by This Specification
 
-- 선택 없는 Bold는 데모의 로컬 `typingMarks`다. 코어의 빈 범위 `setMark`는 기존 글자를 바꾸지 않는다. 다음 입력·커서 이동·IME에서의 UI 상태는 이 코어 시험의 증거가 아니다.
-- 링크의 기본 비상속, Unicode undo, 구조/표/숨은 칸, 같은 자리 Enter와 GC pin에는 기존 별도 시험이 있다. 새 행렬이 그 전체 범위를 대신하지 않는다.
-- 수정한 History의 Chrome 회귀 범위는 HANDOFF §5.12에 기록한다. CDP 조합 입력을 실제 OS IME 시험으로 확대하지 않는다. 화면 성능은 이번 수정에서 재측정하지 않았으며 이전 측정은 해당 소스의 과거 근거다.
-- 의미가 반대인 편집을 모두 만족시키는 자동 병합, 충돌 검토 UI·제안 모드, 기록의 장기 보존, lease 만료 복구와 전체 제품 의도 보존 승인은 포함하지 않는다.
+- Bold without a selection uses local demo `typingMarks`. An empty-range core `setMark` does not change existing characters. These core tests do not establish UI state during subsequent input, cursor movement, or IME.
+- Existing separate tests cover default link noninheritance, Unicode undo, structure/tables/hidden cells, same-position Enter, and GC pins. The new matrix does not replace that entire scope.
+- HANDOFF §5.12 records the Chrome regression scope for the fixed History. CDP composition input does not establish actual OS IME behavior. Screen performance was not remeasured for this fix; previous measurements remain historical evidence for their source version.
+- This scope excludes automatic merge satisfying contradictory edits, conflict-review UI and suggestion mode, long-term history retention, lease-expiry recovery, and approval of intent preservation for the complete product.

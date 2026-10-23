@@ -1,70 +1,70 @@
-# 로드맵 실행 현황 — 2026-10-23
+# Roadmap Execution Status — 2026-10-23
 
-이전 통합은 main `6f15291`이며 [HANDOFF §5.13](../HANDOFF.md#513-전체-변경-최종-확인과-main-통합-2026-10-23)에 있다. 그 위에서 여러 글 블록의 원격 모델 이벤트 비교를 확장했다. 최종 재시험과 main 통합은 [§5.15](../HANDOFF.md#515-여러-글-블록-원격-비교-최종-확인과-main-통합-2026-10-23), 구현·측정 결과와 범위는 [§5.14](../HANDOFF.md#514-로드맵-우선-작업-여러-글-블록의-원격-비교-2026-10-23)를 따른다. 이전 화면 지연 개선은 §5.9·§5.10, 의도 보존과 History 수정은 §5.11·§5.12에 보존한다. 단일 라이브러리 패키지와 비공개 데모·벤치마크 구성을 유지한다.
+The previous integration is main `6f15291`, recorded in [HANDOFF §5.13](../HANDOFF.md#513-final-checks-and-main-integration-of-all-changes-2026-10-23). Remote model-event comparison for multiple text blocks was extended on top of it. Final retesting and main integration follow [§5.15](../HANDOFF.md#515-final-checks-and-main-integration-of-multi-text-block-remote-comparison-2026-10-23). Implementation, measurements, and scope follow [§5.14](../HANDOFF.md#514-roadmap-priority-remote-comparison-of-multiple-text-blocks-2026-10-23). Earlier screen-latency improvements remain in §5.9–§5.10; intent preservation and History fixes remain in §5.11–§5.12. The single library package and private demo/benchmark structure remain.
 
-구조 변경 뒤 문단 캐시 재사용은 [HANDOFF §5.16](../HANDOFF.md#516-구조-변경-뒤-문단-재계산-개선-2026-10-23)에 추가했다. 측정 기준 main은 `10dfd86`이며 당시에는 미커밋 상태였다. 후속 최종 통합 확인은 HANDOFF §5.17을 따른다.
+Paragraph-cache reuse after structural changes was added in [HANDOFF §5.16](../HANDOFF.md#516-improving-paragraph-recalculation-after-structural-changes-2026-10-23). The measurement baseline was main `10dfd86`; changes were uncommitted at that time. Subsequent final integration checks follow HANDOFF §5.17.
 
-## 이번 실행
+## This Execution
 
-1. 현재 소스와 미커밋 변경을 사본·해시·diff로 고정했다.
-2. 단계 0의 공통 대본을 확장했다. 4개 복제본의 자동 입력을 30분 실시간으로 실행하는 하네스, 고정 50×10 표의 글자 편집, 1만 번 편집 뒤 snapshot 열기, 단일 10만 자 붙여넣기, 공개 Yorkie Tree SDK 비교를 추가했다. 벽시계 1,800,060ms를 관측했다. 마지막 영속 수렴 checkpoint는 1320 round다. 목표한 1800 round와 cadence는 미달이며, 중단 시점의 정확한 메모리 내 round는 모른다. 엔진별 의미 차이와 시간 초과도 결과에서 구분한다.
-3. §5.7 당시 SyncClient의 원격 이벤트에서 안전한 한 글 블록만 생성·비교·검산하도록 했다. 현재 확장 범위는 아래 11번을 따른다. 구조 변경, 오래된 동시 삽입, 여러 블록, 새 토큰 의존 묶음, 숨은 칸과 가상 블록, undo/redo는 기존 전체 경로를 사용한다.
-4. 큰 문자열을 적용할 때 해당 줄의 캐시를 한 번 무효화했다. 글자마다 커지는 블록 배열을 복사하지 않는다. ID·RGA·wire·GC 규칙은 그대로다.
-5. 문자열 삽입 undo가 UTF-16 토큰 전부를 기록하도록 고쳤다. 이모지와 ZWJ 조합, 다른 사용자의 입력·삭제 보존 시험을 추가했다. 모델 경로의 code point와 저장 UTF-16의 차이 자체는 바꾸지 않았다.
-6. [상태·동기화 명세](spec.md), 성질 시험, 8명 장기 시험 하네스와 nightly CI를 추가했다.
-7. PmBinding의 내부 모델과 PM 변환 결과도 Doc 객체와 version이 같으면 재사용한다. 선택·presence 계산과 콜백은 유지한다. snapshot·reset·IME 초안의 Doc 교체는 별도로 감지한다.
+1. Fixed the current source and uncommitted changes through copies, hashes, and diffs.
+2. Extended stage 0's common scripts: a harness for 30 minutes of real-time automated input on 4 replicas, character editing in a fixed 50×10 table, snapshot opening after 10,000 edits, one 100,000-character paste, and comparison with the public Yorkie Tree SDK. Observed wall-clock time was 1,800,060ms. The last persisted convergence checkpoint was round 1320. The target of 1800 rounds and cadence was not met. The exact in-memory round at interruption is unknown. Results distinguish engine semantic differences and timeouts.
+3. At §5.7, SyncClient remote events generated, compared, and verified only one safe text block. Item 11 below defines the current extension. Structural changes, old concurrent insertions, multiple blocks, batches depending on new tokens, hidden cells and virtual blocks, and undo/redo used the existing full path.
+4. Invalidated the affected line's cache once for a large string application, avoiding copies of a growing block array for each character. ID, RGA, wire, and GC rules remain unchanged.
+5. Fixed string-insertion undo to record all UTF-16 tokens. Added emoji/ZWJ and preservation tests for another user's input/deletions. The difference between model code points and stored UTF-16 remains.
+6. Added the [state and synchronization specification](spec.md), property tests, an 8-peer long-run harness, and nightly CI.
+7. PmBinding also reuses its internal model and PM conversion when the Doc object and version are unchanged. Selection/presence calculations and callbacks remain. Doc replacement for snapshot, reset, and IME drafts is detected separately.
 
-8. 다음 문장은 §5.9 당시의 검증 범위다. 구조·되살리기의 후속 캐시 개선은 아래 12번을 따른다. 문서가 바뀌어도 바뀌지 않은 글 블록의 모델과 run 정규화를 재사용한다. 같은 Block의 서식 쓰기, 구조·되살리기·GC의 캐시 해제를 확인했다. 새 10만 자 Chrome p95는 246.5/260.4→124.1/120.2ms다. [측정 보고서](../benchmarks/results/screen-latency-2026-10-23/report.md)를 따른다.
+8. The following scope describes validation at §5.9. See item 12 for later structural/restoration cache improvements. Unchanged text-block models and run normalization are reused across document changes. Checks covered mark writes to the same Block and cache invalidation for structure, restoration, and GC. Fresh 100,000-character Chrome p95 changed from 246.5/260.4→124.1/120.2ms. See the [measurement report](../benchmarks/results/screen-latency-2026-10-23/report.md).
 
-9. 최상위 일반 문단에만 CSS isolation을 적용해 Paint·PrePaint 비용을 줄였다. 조합 중 문단과 제목·목록·인용·중첩 구조는 제외한다. 최종 Chrome p95는 111.7/120.4→69.5/68.5ms이며, 변경 전 소스 재실행은 108.1/121.9ms다. 넓은 후보에서 찾은 IME 칠 순서 회귀와 최종 검증 범위도 [추가 보고서](../benchmarks/results/screen-paint-2026-10-23/report.md)에 보존한다. 제품 SLO나 전체 로드맵 완료를 뜻하지 않는다.
+9. Applied CSS isolation only to top-level plain paragraphs to reduce Paint/PrePaint cost. Composing paragraphs, headings, lists, quotes, and nested structures are excluded. Final Chrome p95 changed from 111.7/120.4→69.5/68.5ms; rerunning pre-change source gave 108.1/121.9ms. The [additional report](../benchmarks/results/screen-paint-2026-10-23/report.md) preserves the IME paint-order regression found in a broader candidate and the final validation scope. This does not establish a product SLO or complete the roadmap.
 
-10. 삭제·서식·삽입·undo의 의도 보존 규칙과 고정 회귀 41개를 추가했다. 연속 서식 undo 결함을 수정하고 원격 같은 값·부분 범위·undo/redo 분기 등을 확인하는 회귀 19개도 추가했다. 최종 확장 시험은 코어 204 + 데모 10, compat 31, 타입 검사 통과다. 해당 통합 당시 소스와 같은 해시의 Chrome 결과를 포함한 근거는 HANDOFF §5.12·§5.13을 따른다.
+10. Added deletion/formatting/insertion/undo intent rules and 41 fixed regressions. Fixed consecutive formatting undo and added 19 regressions covering remote same-value writes, partial ranges, and undo/redo branches. Final expanded checks passed: core 204 + demo 10, compat 31, and type checking. HANDOFF §5.12–§5.13 contain evidence, including Chrome results whose source hashes match that integration.
 
-11. 안전한 원격 text/del/set의 모델 비교를 최대 8개 독립 TextBlock으로 확장했다. 9번째 블록·구조 변경·오래된 삽입·새 토큰 의존·숨은/가상 블록·undo/redo의 기존 전체 경로를 유지한다. 10만 자 2블록 p95는 31.330~46.928→1.653~1.739ms, 8블록은 36.132~44.818→3.917~6.410ms다. 모델 이벤트 콜백까지의 동기 처리이며 화면 지연이 아니다. 원격 집중 38개, 확장 코어 233 + 데모 10, compat 31, 타입 검사와 Chrome 기본 30 + 새 10단계·compat 104개 회귀를 확인했다. 넓은 범위에서 느려진 무제한 후보를 제외한 근거는 [측정 보고서](../benchmarks/results/remote-multiblock-2026-10-23/report.md)에 있다.
+11. Extended safe remote text/del/set model comparison to at most 8 independent TextBlocks. The existing full path remains for a ninth block, structure, old insertion, dependencies on new tokens, hidden/virtual blocks, and undo/redo. At 100,000 characters, 2-block p95 changed from 31.330–46.928→1.653–1.739ms; 8-block p95 changed from 36.132–44.818→3.917–6.410ms. This measures synchronous handling through the model-event callback, not screen latency. Checks covered 38 focused remote cases, expanded core 233 + demo 10, compat 31, type checking, and Chrome baseline 30 + new 10-step/compat 104 regressions. The [measurement report](../benchmarks/results/remote-multiblock-2026-10-23/report.md) records rejection of an unbounded candidate that slowed broader workloads.
 
-12. 구조 변경 때 모든 문단을 다시 읽던 캐시 무효화를 영향 줄로 제한했다. 행·열은 표가 있는 부모 줄을 갱신하고 가시성은 자손까지 무효화한다. 같은 줄의 경계 스캔 뒤 일치하는 문단 모델을 재사용한다. wire·RGA·삭제·서식·undo 규칙과 전체 구조 이벤트 검산은 유지한다. [전후 측정·검증 보고서](../benchmarks/results/structural-cache-2026-10-23/report.md)를 따른다.
+12. Limited structural cache invalidation to affected lines instead of rereading every paragraph. Rows/columns refresh the table's parent line; visibility invalidates descendants too. After scanning boundaries in the same line, matching paragraph models are reused. Wire, RGA, deletion, formatting, undo rules, and full structural-event verification remain. See the [before/after measurement and validation report](../benchmarks/results/structural-cache-2026-10-23/report.md).
 
-## 남은 작업의 실행 우선순위
+## Execution Priorities for Remaining Work
 
-1. **lease 만료 후 snapshot 재접속 계약**. 오래된 undo·pending 처리와 actor/session 전환을 별도 명세·회귀로 구현한다. 현재는 미구현이다.
-2. **구조 입력의 화면 꼬리 지연 원인 분리**. 문단 재계산은 개선했다. 첫 수정본의 데모→PM p95 악화와 반복 측정의 감소를 함께 보존했다. 구조 줄의 스캔·전체 diff·복사·변환·DOM 비용과 구분해 후속 검증한다. 전체 화면 성능 통과 판정은 하지 않았다.
-3. **단계 0의 남은 종료 근거**. Yorkie timeout, 실제 편집 대본, 30분 1800 round·1Hz, 비교 가능한 메모리·GC·wire 지표와 제품 목표를 확인한다. 이번에는 기존 빈틈을 검토했으며 새 30분·외부 대본·Yorkie 재측정을 하지 않았다.
-4. **실제 CI 관측과 다음 단계**. nightly 실행·2주 관측, 운영·스키마 진화·목적 제품 연결·배포 조건은 계속 별도다. 8블록 개선으로 G0/G1이나 전체 로드맵을 완료 처리하지 않는다.
+1. **Snapshot reconnection contract after lease expiry.** Specify and test disposal of old undo/pending state and actor/session transitions. Unimplemented.
+2. **Separate causes of screen tail latency for structural input.** Paragraph recomputation improved. Both the demo→PM p95 regression in the first revision and the reduction in repeated measurements are preserved. Follow-up checks must separate structural-line scanning, full diff, copying, conversion, and DOM cost. Overall screen performance has not passed.
+3. **Remaining stage 0 exit evidence.** Resolve Yorkie timeouts, actual editing scripts, 30 minutes at 1800 rounds/1Hz, comparable memory/GC/wire metrics, and product targets. This run reviewed existing gaps; it did not rerun 30-minute, external-editor, or Yorkie measurements.
+4. **Actual CI observation and later stages.** Nightly execution/two-week observation, operations, schema evolution, target-product integration, and release conditions remain separate. The 8-block improvement does not complete G0/G1 or the full roadmap.
 
-## 단계와 종료 조건
+## Stages and Exit Conditions
 
-| 단계 | 현재 판정 | 남은 조건 |
+| Stage | Current Assessment | Remaining Conditions |
 |---|---|---|
-| 0 기준 측정 | 대본·비교 범위 확대 | 전체 결과와 시간 초과·의미 차이를 검토한 G0, 목표 확정 |
-| 1 성능 | 최대 8개 글 블록 수신·큰 붙여넣기·구조 변경의 문단 모델 재사용·Paint 개선 | 구조 줄 스캔·전체 비교·복사·정규화, 9개 이상 블록·undo/redo 비용, 실제 제품 성능 기준, G1 |
-| 2 정합성 | 명세·성질·의도 보존 회귀, 연속 서식 undo 수정·장기 CI 기반 구현 | lease 만료 복구, 실제 CI 실행, 2주 관측, 장기 단일 문서 요구 범위 |
-| 3 저장·운영 | 기존 데모 구현 | 영속 snapshot·로그 절단, 인증·권한·크기·속도 제한, 장애·다중 서버 검증 |
-| 4 스키마 진화 | 미구현 | 스키마 판·지문 협상, 이전 함수와 구버전 차단 |
-| 5 목적 제품 연결 | 공개 PM 연결·비교 데모 | 실제 목적 에디터의 연산·의도·성능·OS IME 검증 |
-| 6 기능 채우기 | 일부 기반 있음 | 자식 수 min/max, 서식별 경계 정책, 댓글·시점 조회·통합 선택·행열 크기 |
-| 7 배포 | 단일 패키지 구조 완료 | 배포 빌드·API/버전 정책·보안 검증·이전 도구·시범 운영·G4 |
+| 0 Baseline measurement | Expanded scripts and comparison scope | G0 after reviewing complete results, timeouts, and semantic differences; confirmed targets |
+| 1 Performance | Up to 8 text blocks on receipt, large paste, paragraph-model reuse after structure, Paint improvements | Structural-line scan, full comparison/copying/normalization, costs for 9+ blocks and undo/redo, actual product criteria, G1 |
+| 2 Correctness | Specification, property/intent regressions, consecutive formatting undo fix, long-run CI foundation | Lease-expiry recovery, actual CI runs, two-week observation, long-lived single-document scope |
+| 3 Storage/operations | Existing demo implementation | Durable snapshots/log truncation, authentication/authorization/size/rate limits, failure and multi-server validation |
+| 4 Schema evolution | Unimplemented | Schema version/fingerprint negotiation, migration functions, rejection of old versions |
+| 5 Target-product integration | Public PM integration and comparison demo | Actual target-editor operations, intent, performance, and OS IME validation |
+| 6 Feature completion | Some foundations exist | Child-count min/max, per-mark boundary policies, comments, historical lookup, integrated selection, row/column sizing |
+| 7 Release | Single-package structure complete | Release build, API/version policy, security verification, migration tools, pilot operation, G4 |
 
-단계 7의 옛 다중 공개 패키지 분리안은 최신 단일 패키지 결정으로 대체됐다. 연속 문자열 저장은 설계 검토이며 구현 제외 결정을 자동으로 바꾸지 않는다. 이진 인코딩은 결정 대기다. 이동·절단 연산과 합친 칸의 글 모으기는 이번 작업에 추가하지 않았다.
+The latest single-package decision replaces stage 7's former multiple-public-package proposal. Continuous-string storage remains a design review and does not automatically reverse the decision to exclude implementation. Binary encoding awaits a decision. Move/cut operations and collection of text from merged cells were not added in this work.
 
-## 측정 구간과 목표
+## Measurement Boundaries and Targets
 
-로드맵의 로컬 p95 2ms, 원격 적용 p95 5ms, Yjs 대비 메모리 2배, 글자 편집 100B, 열기 300ms는 아직 제안값이다. 이번 구현으로 제품 SLO 승인을 대신하지 않는다.
+The roadmap's local p95 2ms, remote application p95 5ms, memory at 2× Yjs, 100B per character edit, and 300ms opening remain proposed values. This implementation does not substitute for approval of product SLOs.
 
-| 지표 | 포함 | 제외 |
+| Metric | Includes | Excludes |
 |---|---|---|
-| 코어/비교 local | 모델 편집과 CRDT 적용, 엔진 wrapper의 payload 준비 | 네트워크·편집기·DOM |
-| 코어/비교 remote | wrapper의 decode와 CRDT 적용 | SyncClient 모델 이벤트·네트워크·DOM |
-| SyncClient remote | 이벤트 수신부터 모델 이벤트 구독 콜백 종료 | 거울 모델 적용·네트워크·DOM |
-| 실제 편집기 | 키 이벤트 생성부터 상대 DOM 확인 뒤 두 번째 rAF | 물리 디스플레이 표시 시각 |
-| snapshot 열기 | 저장 상태 복원과 첫 모델 읽기 | 원격 다운로드·실제 편집기 초기 렌더링 |
+| Core/comparison local | Model edits, CRDT application, engine-wrapper payload preparation | Network, editor, DOM |
+| Core/comparison remote | Wrapper decode and CRDT application | SyncClient model events, network, DOM |
+| SyncClient remote | Event receipt through completion of model-event subscriber callbacks | Mirror-model application, network, DOM |
+| Actual editor | Key-event generation through the second rAF after remote DOM verification | Physical display presentation time |
+| Snapshot opening | Stored-state restoration and first model read | Remote download and actual-editor initial rendering |
 
-단일 10만 자 붙여넣기 한 번의 시간은 p95 분포가 아니다. 서로 다른 측정 구간의 수치를 직접 비교하지 않는다. 시간 초과는 완주 시간이 아니므로 개선 배수 계산에 쓰지 않는다. 외부 CPU 부하와 같은 페이지의 렌더러 공유도 한계다.
+One 100,000-character paste is not a p95 distribution. Do not directly compare different measurement boundaries. A timeout is not a completion time and cannot be used to calculate speedup. External CPU load and shared page renderers are additional limits.
 
-G0 기술 판단의 근거와 누락은 `benchmarks/results/roadmap-2026-10-23/`에 둔다. 측정에 없는 제품 조건까지 통과 처리하지 않는다. 확인한 병목의 최적화는 기존 동시편집 정책 안에서 진행했다.
+Evidence and gaps for the G0 technical decision are in `benchmarks/results/roadmap-2026-10-23/`. Unmeasured product conditions are not marked passed. Identified bottlenecks were optimized within the existing collaboration policy.
 
-## 실행 방법
+## How to Run
 
-Node 22.19 이상을 사용한다. 모든 명령은 저장소 루트 기준이다. 새 결과 경로를 사용해야 한다.
+Use Node 22.19 or later. All commands run from the repository root. Use a fresh result path.
 
 ```sh
 npm test
@@ -76,6 +76,6 @@ npm run stage0:freeze --workspace @doc-sync/benchmarks -- /tmp/new-stage0-receip
 node packages/doc-sync/test/long-fuzz.ts --ops 1000 --peers 8 --seed 23 --out output/long-fuzz/new-smoke.json
 ```
 
-기준 측정의 설치·동결·Yorkie·장기 실행 방법은 [측정 안내](../benchmarks/stage0/README.md)에 있다. CI는 8개 shard 각각 최소 125,000 wire Op를 실행한다. 약 512 Op의 문서 묶음을 새로 시작하는 시험이다. 단일 문서에 100만 연산이 계속 누적되는 시험, 디스크 장애 시험, lease 만료 복구 시험과 다르다.
+The [measurement guide](../benchmarks/stage0/README.md) describes baseline installation, freezing, Yorkie, and long runs. CI executes at least 125,000 wire Ops in each of 8 shards. It starts fresh document batches after about 512 Ops. This differs from accumulating one million operations in one document, disk-failure tests, and lease-expiry recovery tests.
 
-로컬에서는 8 shard 합계 1,000,021 wire Op가 통과했다. 각 shard는 8개 복제본을 사용한다. 이 결과는 로컬 실행이다. GitHub scheduled workflow 실행이나 2주 연속 성공을 뜻하지 않는다. 로컬 실행 기록과 최종 검토 결과는 `output/validation/roadmap-execution-20261023/`에 둔다. `output/`은 Git에서 제외된다.
+Locally, all 8 shards passed with a total of 1,000,021 wire Ops. Each shard uses 8 replicas. These are local runs. They do not establish a GitHub scheduled-workflow run or two consecutive weeks of success. Local records and final review results are in `output/validation/roadmap-execution-20261023/`. Git excludes `output/`.
