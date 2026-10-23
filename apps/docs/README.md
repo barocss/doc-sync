@@ -22,6 +22,7 @@ Preview uses Vite's static preview command because the current VitePress preview
 - `docs/spec.md`, `docs/collaboration-intent.md`, and `docs/edit-api.md` are the authoritative contract sources. `prepare:content` copies them to ignored reference pages before development and build.
 - `scripts/check-build.mjs` checks the rendered language, local paths, internal assets, links, and fragment targets.
 - `test/content.test.mjs` executes the quick-start example against the actual workspace package and checks reference preparation. `test/blocks.test.mjs` executes the 11 schema-driven block examples, including hidden-cell preservation and fixed concurrent-Enter outcomes.
+- `scripts/prepare-diagrams.mjs` executes model edits and generates SVG diagrams and model traces under ignored `src/public/diagrams/`. The diagrams show all five edit operations and table-cell merging/restoration. Tests verify fixed expected models and retained hidden-cell text.
 
 Do not edit generated reference pages or publish HANDOFF/local validation logs as site pages. Keep real Unicode/IME sample data unchanged when translating prose. Historical benchmark JSON, archives, source snapshots, measurements, and original manifests remain evidence; a documentation translation is not a new measurement.
 

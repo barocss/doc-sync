@@ -27,3 +27,14 @@
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {scroll-behavior: auto !important; transition-duration: 0s !important;}
 }
+
+.operation-figure {
+    overflow-x: auto;
+    margin: 24px 0;
+}
+.operation-figure img {
+    display: block;
+    width: 100%;
+    min-width: 640px;
+    margin: 0;
+}

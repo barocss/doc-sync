@@ -324,6 +324,14 @@ Deleting all rows or all columns removes the table from the model. Surrounding p
 
 Update the top-left cell's `rowspan` and `colspan`. Set both to 1 to split its merge. `spanned` is an output flag for covered cells; do not set it directly. The full-grid model keeps every cell and its text while a cell is covered.
 
+The diagram below is generated from actual `doc.edit()` results. Cell A spans the grid after the update at `[1, 0, 0]`. B, C, and D become hidden; their text stays in their own cells. Updating the span back to 1×1 shows all four cells again.
+
+<div class="operation-figure" tabindex="0" role="region" aria-label="Table merge and restoration diagram">
+
+![A two-by-two table before merging, while three cells are hidden, and after restoring the original span.](/diagrams/table-span.svg)
+
+</div>
+
 <!-- executable-example: table-merge-split -->
 ```ts
 const doc = fresh();
