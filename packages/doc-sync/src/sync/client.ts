@@ -3,7 +3,7 @@ import {Doc} from "../crdt/doc.ts";
 import {History} from "../crdt/history.ts";
 import {applyEdits, diffModels} from "../crdt/model.ts";
 import {checkSchema} from "../crdt/schema.ts";
-import {textEventScope} from "./model-events.ts";
+import {textEventScopes} from "./model-events.ts";
 import type {Op} from "../crdt/doc.ts";
 import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, NodeJSON} from "../crdt/model.ts";
@@ -108,33 +108,52 @@ export class SyncClient {
             return fn();
         }
 
-        const scope = ops ? textEventScope(this.doc, ops) : null;
-        const before = scope?.before ?? this.doc.toJSON();
+        const scopes = ops ? textEventScopes(this.doc, ops) : null;
+        const before = scopes ? null : this.doc.toJSON();
         const result = fn();
-        const after = scope ? scope.read() : this.doc.toJSON();
-
-        if (JSON.stringify(before) === JSON.stringify(after)) {
-            return result;
-        }
-
-        const schema = scope?.schema ?? this.schema;
-        let events = diffModels(schema, before, after);
+        let events: EditOp[] = [];
         let fallback = false;
 
-        if (JSON.stringify(applyEdits(schema, before, events)) !== JSON.stringify(after)) {
-            // 검산이 틀리면 통째로 바꾼다
-            if (scope) {
-                const wholeAfter = this.doc.toJSON();
+        if (scopes) {
+            for (const scope of scopes) {
+                const after = scope.read();
 
-                // 글자만 바꾸므로 루트 자식 수는 그대로다. replaceAll은 이전 내용 대신 그 수만 쓴다.
-                events = replaceAll(wholeAfter, wholeAfter);
-            } else {
-                events = replaceAll(before, after);
+                if (JSON.stringify(scope.before) === JSON.stringify(after)) {
+                    continue;
+                }
+
+                const next = diffModels(scope.schema, scope.before, after);
+
+                if (JSON.stringify(applyEdits(scope.schema, scope.before, next)) !== JSON.stringify(after)) {
+                    const wholeAfter = this.doc.toJSON();
+
+                    // 부분 결과는 모두 버린다. 글자만 바뀌어 루트 자식 수는 이전과 같다.
+                    events = replaceAll(wholeAfter, wholeAfter);
+                    fallback = true;
+                    break;
+                }
+
+                for (const event of next) {
+                    events.push({...event, at: [...scope.path, ...event.at.slice(1)]});
+                }
+            }
+        } else {
+            const after = this.doc.toJSON();
+
+            if (JSON.stringify(before) === JSON.stringify(after)) {
+                return result;
             }
 
-            fallback = true;
-        } else if (scope) {
-            events = events.map(event => ({...event, at: [...scope.path, ...event.at.slice(1)]}));
+            events = diffModels(this.schema, before!, after);
+
+            if (JSON.stringify(applyEdits(this.schema, before!, events)) !== JSON.stringify(after)) {
+                events = replaceAll(before!, after);
+                fallback = true;
+            }
+        }
+
+        if (!events.length) {
+            return result;
         }
 
         this.eventStats.changes += 1;

@@ -1,0 +1,35 @@
+{
+  "baseline": {
+    "head": "6f15291156bf41521850cfe5b4b4ea2abeec24fa",
+    "source": "baseline-source.tar.gz"
+  },
+  "initialUnbounded": {
+    "helper": "a93e323f95b98172651f4a3ca42e126d951eaa1029e29c00bb87af1cbba8934e",
+    "client": "43f672abe8c607f0f5fbafc7bc0679069783a572089d703f858fb84a1e3567c5",
+    "measurements": [
+      "diagnostics/wide-candidate.json"
+    ],
+    "source": "diagnostics/rejected-candidate"
+  },
+  "unboundedMembership": {
+    "helper": "d0386f019ac8f8dc90f6ec29bf4316bc126866dcc07b4f19e6516addbdb4609f",
+    "client": "43f672abe8c607f0f5fbafc7bc0679069783a572089d703f858fb84a1e3567c5",
+    "measurements": [
+      "after.json",
+      "diagnostics/wide-final.json",
+      "diagnostics/wide-final-2.json",
+      "diagnostics/wide-final-3.json"
+    ],
+    "source": "diagnostics/membership-candidate"
+  },
+  "boundedFinal": {
+    "helper": "6643ed85d6b731e7f0ec3e648c520ac2e0e62d6f027257704b879cd93e1b6e9e",
+    "client": "43f672abe8c607f0f5fbafc7bc0679069783a572089d703f858fb84a1e3567c5",
+    "measurements": [
+      "after-bounded.json",
+      "diagnostics/bounded-final.json",
+      "diagnostics/single-after.json"
+    ],
+    "limit": 8
+  }
+}

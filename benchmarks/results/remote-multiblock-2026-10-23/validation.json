@@ -1,0 +1,168 @@
+{
+  "completedUtc": "2026-10-23T10:46:46.944094+00:00",
+  "head": "6f15291156bf41521850cfe5b4b4ea2abeec24fa",
+  "workingTree": "uncommitted; no commit/push in this request",
+  "node": "22.19.0",
+  "chrome": "156.0.8078.47",
+  "sources": [
+    {
+      "path": "HANDOFF.md",
+      "sha256": "be0e55b4ba6ccdedbbe544447bce9876a8713d26c1cc80899140d04102aa126a"
+    },
+    {
+      "path": "README.md",
+      "sha256": "7846abc992d7c9cef95e14c4f2a18afcab45133ff418705175a46ff084340911"
+    },
+    {
+      "path": "benchmarks/remote.ts",
+      "sha256": "d2fe24ec2d6dd48a1536f69bb315f4e27774366314a0464ac55e90cc35d25993"
+    },
+    {
+      "path": "docs/roadmap-status.md",
+      "sha256": "1c10ea2f52ce3dcad54b2cda2793856195de34e9bf700a552387417dee26e910"
+    },
+    {
+      "path": "docs/roadmap.html",
+      "sha256": "a84930401efd2d5a450743e208fe7d88e31c4a52e29bbd1eaf7325083eeb3044"
+    },
+    {
+      "path": "docs/spec.md",
+      "sha256": "371d298f4888cf261021af7c2876891b59f383817c468a76d698e56789ba9e3d"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/client.ts",
+      "sha256": "43f672abe8c607f0f5fbafc7bc0679069783a572089d703f858fb84a1e3567c5"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/model-events.ts",
+      "sha256": "6643ed85d6b731e7f0ec3e648c520ac2e0e62d6f027257704b879cd93e1b6e9e"
+    },
+    {
+      "path": "packages/doc-sync/test/remote-events.test.ts",
+      "sha256": "972d2a80294c74629c1e8a21165fb6f5240bd60c3555aed2bb92a6193abeb668"
+    },
+    {
+      "path": "packages/doc-sync/test/remote-multiblock.test.ts",
+      "sha256": "a029b33f19f310e19ec5889619c564350e0242c31b44288911e44ad96f7a9249"
+    }
+  ],
+  "preservedPriorFiles": 1066,
+  "tests": {
+    "remoteFocused": 38,
+    "newRegression": 29,
+    "full": {
+      "command": "FUZZ_SEEDS=3000 PM_SEEDS=300 npm test",
+      "corePassed": 233,
+      "demoPassed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "exitCode": 0
+    },
+    "compatUnitPassed": 31,
+    "stage0Passed": 6,
+    "stage0Engines": [
+      "ours",
+      "yjs"
+    ],
+    "stage0YorkieIncluded": false,
+    "typecheckExitCode": 0,
+    "isolatedCompatBundleExitCode": 0,
+    "diffCheckExitCode": 0
+  },
+  "benchmarks": {
+    "before": "before.json",
+    "after": "after-bounded.json",
+    "repeat": "before-repeat.json",
+    "casesPerRun": 18,
+    "samplesPerCase": 30,
+    "warmupsPerCase": 5,
+    "changesIncludingWarmups": 1890,
+    "measuredSamples": 1620,
+    "allIndependentExpectedModelsMatch": true,
+    "allFallbacks": 0,
+    "fullReads": {
+      "single": "0->0",
+      "twoAndEight": "2->0"
+    },
+    "harnessCanonicalHash": "d2fe24ec2d6dd48a1536f69bb315f4e27774366314a0464ac55e90cc35d25993",
+    "actualProductPathsInRaw": true,
+    "wholeSourceNotCurrentWorkspaceForBaseline": true
+  },
+  "browser": {
+    "mainPassed": 40,
+    "mainDetails": {
+      "passed": true,
+      "data": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-screen-regression-t6zgmzog",
+      "serverPid": 84497,
+      "checks": [
+        {
+          "name": "render",
+          "passed": 7
+        },
+        {
+          "name": "nested",
+          "passed": 9
+        },
+        {
+          "name": "presence",
+          "passed": 6
+        },
+        {
+          "name": "presence-edits",
+          "passed": 2
+        },
+        {
+          "name": "presence-disconnect",
+          "passed": 1
+        },
+        {
+          "name": "presence-advanced",
+          "passed": 5
+        },
+        {
+          "name": "multiblock",
+          "passed": 10
+        }
+      ],
+      "origin": "http://localhost:51383",
+      "total": 40,
+      "browserClosed": true,
+      "serverStopped": true
+    },
+    "compat": {
+      "passed": true,
+      "inputPassed": 84,
+      "ordinaryConvergedSnapshots": 18,
+      "observabilityProbes": 2,
+      "operationTracesCaptured": 30,
+      "chrome": "156.0.8078.47"
+    },
+    "ownPortsClosed": [
+      51383,
+      50411,
+      50463,
+      50462
+    ],
+    "userResources": "untouched",
+    "firstMainHarnessFailure": "expected demo listener although only PM subscribes; corrected in v2; failed output retained"
+  },
+  "review": {
+    "architecture": "APPROVE; independent static review",
+    "securityBoundary": "APPROVE; independent read-only review",
+    "productAndBenchmarkQuality": "APPROVE; independent read-only review; excludes self-authored test approval",
+    "testQuality": "root checked fixed models, whole-diff result, snapshots, callback/stats, actual FIFO acceptance and ownership assertions",
+    "finalDocumentation": "APPROVE; independent read-only review after requested historical-source wording corrections"
+  },
+  "boundaries": {
+    "maximumTextBlocks": 8,
+    "ninthBlockUsesOriginalWholePath": true,
+    "forcedScopedVerificationFailureExecuted": false,
+    "forcedFailureCoveredBy": "static review only; not inferred from fallback0 or full-path barriers",
+    "screenPerformanceMeasured": false,
+    "osImeTested": false,
+    "G0G1Approved": false,
+    "thirtyMinuteRunRepeated": false,
+    "allRoadmapComplete": false
+  }
+}

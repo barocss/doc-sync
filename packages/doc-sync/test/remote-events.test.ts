@@ -5,7 +5,7 @@ import {insertText, setSpan} from "../src/crdt/commands.ts";
 import {applyEdits, diffModels} from "../src/crdt/model.ts";
 import {keyOf} from "../src/crdt/ticket.ts";
 import {SyncClient} from "../src/sync/client.ts";
-import {textEventScope} from "../src/sync/model-events.ts";
+import {textEventScopes} from "../src/sync/model-events.ts";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import type {EditOp, NodeJSON} from "../src/crdt/model.ts";
 import type {Op} from "../src/crdt/doc.ts";
@@ -97,11 +97,11 @@ test("수신 범위: 목록 항목·표 칸·상자 안에서도 원래 모델 �
     }
 });
 
-test("수신 범위: 구조·여러 블록·새 토큰 의존 묶음은 전체 경로를 유지한다", () => {
+test("수신 범위: 여러 블록은 좁히고 구조·새 토큰 의존 묶음은 전체 경로를 유지한다", () => {
     const {sender, deliver} = setup([paragraph("abcdef"), paragraph("other")]);
 
     deliver(sender.edit([{op: "split", at: [0, 3]}]).ops, false);
-    deliver(sender.edit([{op: "insert", at: [0, 1], content: "x"}, {op: "insert", at: [2, 1], content: "y"}]).ops, false);
+    deliver(sender.edit([{op: "insert", at: [0, 1], content: "x"}, {op: "insert", at: [2, 1], content: "y"}]).ops, true);
     deliver(sender.edit([{op: "insert", at: [0, 1], content: "x"}, {op: "insert", at: [0, 2], content: "y"}]).ops, false);
     deliver(sender.edit([{op: "update", at: [0], attrs: {type: "quote"}}]).ops, false);
 });
@@ -146,7 +146,7 @@ test("수신 범위: 표 뒤 빈 가상 블록은 좁히지 않는다", () => {
     const marker = client.doc.blocks(MAIN)[0].marker;
     const structural: Op = {t: "set", at: client.doc.clock.next(), ids: [marker.id], key: "$type", value: "quote"};
 
-    assert.equal(textEventScope(client.doc, [structural]), null);
+    assert.equal(textEventScopes(client.doc, [structural]), null);
 });
 
 test("수신 범위: 합친 표의 숨은 칸 편집은 전체 경로로 기존 full-grid 이벤트를 유지한다", () => {
