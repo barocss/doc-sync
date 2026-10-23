@@ -1,0 +1,30 @@
+async page => {
+  await page.setViewportSize({width:1440,height:1000});
+  await page.waitForFunction(()=>document.querySelectorAll('.ProseMirror > p').length===625);
+  await page.evaluate(async()=>{
+    const [{Editor},{SyncClient},{PmBinding},{EditorView},{TextSelection}]=await Promise.all([import('/apps/demo/ui/editor.ts'),import('@barocss/doc-sync/sync'),import('/packages/doc-sync/src/pm/binding.ts'),import('prosemirror-view'),import('prosemirror-state')]);
+    const B=window.__structure={samples:[],active:null,clients:{},TextSelection};
+    const capture=(prototype,name,save)=>{const original=prototype[name];prototype[name]=function(...args){save(this);return original.apply(this,args);};};
+    for(const name of ['receive','commit'])capture(SyncClient.prototype,name,client=>B.clients[client.actor]=client);
+    for(const name of ['render','moveTo'])capture(Editor.prototype,name,editor=>B.editor=editor);
+    for(const name of ['anchorOfPm','afterChange'])capture(PmBinding.prototype,name,binding=>B.binding=binding);
+    capture(EditorView.prototype,'updateState',view=>B.view=view);
+    document.addEventListener('keydown',e=>{const s=B.active;if(s&&e.key===s.key){s.eventTime=e.timeStamp;s.trusted=e.isTrusted;}},true);
+    const raf=requestAnimationFrame.bind(window);
+    const correct=s=>{
+      const a=[...document.querySelectorAll('#pane-a .surface > .blk')],p=[...document.querySelectorAll('.ProseMirror > p')];
+      return a.length===s.count&&p.length===s.count&&a[0].textContent==='x'.repeat(s.firstLength)&&p[0].textContent===a[0].textContent&&
+        (s.key!=='Enter'||a[1].textContent==='x'.repeat(80)&&p[1].textContent===a[1].textContent);
+    };
+    new MutationObserver(()=>{const s=B.active;if(!s||!s.eventTime||s.observed||!correct(s))return;s.observed=true;s.dom=performance.now();raf(()=>raf(()=>{
+      s.end=performance.now();s.ms=s.end-s.eventTime;s.correct=correct(s);B.samples.push(s);B.active=null;
+    }));}).observe(document.querySelector('main'),{childList:true,subtree:true,characterData:true});
+    B.prepare=direction=>{if(direction==='demo-to-pm'){B.editor.moveTo({b:0,o:80});B.editor.focusInput();}else{B.binding.dispatch(B.view.state.tr.setSelection(TextSelection.create(B.view.state.doc,81)));B.view.focus();}window.scrollTo(0,0);};
+    B.begin=(direction,key,phase,index)=>{if(B.active)throw Error('pending sample');B.active={direction,key,phase,index,count:key==='Enter'?626:625,firstLength:key==='Enter'?80:160};};
+  });
+  await page.locator('#pane-a .surface > .blk').first().locator('.ch[data-o=\"1\"]').click({position:{x:1,y:5}});
+  await page.locator('.ProseMirror > p').first().click({position:{x:15,y:8}});
+  await page.keyboard.press('ArrowRight');
+  await page.waitForFunction(()=>__structure.editor&&__structure.binding&&__structure.view,null,{timeout:10000});
+  return {ready:true};
+}

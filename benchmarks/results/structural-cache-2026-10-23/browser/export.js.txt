@@ -1,0 +1,11 @@
+async page => {
+  const result=await page.evaluate(async()=>{
+    const server=await(await fetch('/api/docs/structure100k/state')).json();
+    const clients=Object.values(__structure.clients).map(c=>({actor:c.actor,model:c.doc.toJSON(),pending:c.pending.length,stats:c.eventStats}));
+    return {samples:__structure.samples,clients,server,browser:navigator.userAgent};
+  });
+  if(result.clients.length!==2||result.clients.some(c=>c.pending||JSON.stringify(c.model)!==JSON.stringify(result.server.model)||c.stats.fallbacks))throw Error('model convergence failed');
+  if(result.server.model.children.length!==625||result.server.model.children.some(n=>n.type!=='paragraph'||n.runs.length!==1||n.runs[0].text!=='x'.repeat(160)))throw Error('fixed final model failed');
+  await page.screenshot({path:SCREENSHOT,fullPage:false});
+  return {browserVersion:page.context().browser().version(),browser:result.browser,samples:result.samples,modelsEqual:true,fixedFinal:true,serverSeq:result.server.serverSeq,clients:result.clients.map(({model,...client})=>client)};
+}

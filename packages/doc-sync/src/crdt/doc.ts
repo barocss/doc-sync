@@ -283,6 +283,8 @@ export class Doc {
     /** 이름표 → 토큰. 압축으로 합쳐진 글자의 이름표는 그것을 대신하는 묶음 토큰을 가리킨다 */
     private readonly byKey = new Map<string, Item>();
     private blockCache = new Map<string, BlockCache>();
+    /** 구조를 다시 읽을 때 같은 문단을 재사용한다. 줄마다 마지막 캐시 하나만 보관한다. */
+    private previousBlocks = new Map<string, BlockCache>();
     /** 시험용 — 켜면 블록 목록 캐시를 쓸 때마다 처음부터 다시 계산해 맞춰 본다 (느리다) */
     static verifyBlocks = false;
     private posCache = new Map<string, Map<Item, {b: number; o: number}>>();
@@ -585,8 +587,6 @@ export class Doc {
     apply(op: Op): void {
         this.modelCache = null;
         this.revision += 1;
-        // 글자 넣기·지우기·서식은 그 줄의 블록 목록만 고쳐 쓴다. 나머지(표지·노드·되살리기·노드 속성)는 모든 줄을 다시 계산한다
-        op.t === "text" || op.t === "del" || (op.t === "set" && op.ids.every(id => this.get(keyOf(id))?.kind === "char")) || this.dirty();
 
         switch (op.t) {
             case "text": {
@@ -626,13 +626,13 @@ export class Doc {
                 attrsFor(item).set("$type", {value: op.type, at: op.id});
                 Object.entries(op.attrs ?? {}).forEach(([k, v]) => attrsFor(item).set(k, {value: v, at: op.id}));
                 this.integrate(item, -1);
+                item.line && this.structureChanged(item);
                 this.clock.observe(op.id);
 
                 return;
             }
             case "del": {
                 const at = keyOf(op.at);
-                let structural = false;
 
                 op.ids.forEach(id => {
                     const item = this.live(id);
@@ -646,10 +646,9 @@ export class Doc {
                     delsFor(item).add(at);
 
                     if (was && !isAlive(item)) {
-                        item.kind === "char" || this.isInline(item) ? this.charRemoved(item) : (structural = true);
+                        item.kind === "char" || this.isInline(item) ? this.charRemoved(item) : this.structureChanged(item);
                     }
                 });
-                structural && this.dirty();
                 this.clock.observe(op.at);
 
                 return;
@@ -660,7 +659,12 @@ export class Doc {
                 op.ids.forEach(id => {
                     const item = this.live(id);
 
-                    item && cancels.forEach(c => cancelsFor(item).add(c));
+                    if (item) {
+                        const was = isAlive(item);
+
+                        cancels.forEach(c => cancelsFor(item).add(c));
+                        !was && isAlive(item) && this.structureChanged(item);
+                    }
                 });
                 this.clock.observe(op.at);
 
@@ -673,10 +677,11 @@ export class Doc {
 
                     if (item && (!current || compareTicket(op.at, current.at) > 0)) {
                         // 글자 서식은 Block 객체를 바꾸지 않는다. 실제 LWW 쓰기일 때 그 문단의 모델만 비운다.
-                        const block = this.blockCache.get(item.line.key)?.of.get(item);
+                        const block = (this.blockCache.get(item.line.key) ?? this.previousBlocks.get(item.line.key))?.of.get(item);
 
                         block && this.textModels.delete(block);
                         attrsFor(item).set(op.key, {value: op.value, at: op.at});
+                        item.kind !== "char" && this.structureChanged(item);
                     }
                 });
                 this.clock.observe(op.at);
@@ -686,8 +691,22 @@ export class Doc {
         }
     }
 
+    /** 표의 행·열은 표가 있는 줄에 영향을 준다. 다른 구조 변경은 그 줄만 다시 계산한다. */
+    private structureChanged(item: Item): void {
+        const line = item.line;
+        const key = (line.slot === "rows" || line.slot === "cols") && line.owner ? line.owner.line.key : line.key;
+        const cache = this.blockCache.get(key);
+
+        cache && this.previousBlocks.set(key, cache);
+        this.blockCache.delete(key);
+        this.posCache.delete(key);
+        // 부모 삭제·복원, 행·열·합치기 변경은 자손과 숨은 줄의 가시성에도 영향을 준다.
+        this.visibleCache.clear();
+    }
+
     private dirty(): void {
         this.blockCache.clear();
+        this.previousBlocks.clear();
         this.posCache.clear();
         this.visibleCache.clear();
         this.textModels = new WeakMap();
@@ -1106,6 +1125,9 @@ export class Doc {
             return cached.blocks;
         }
 
+        const previous = this.previousBlocks.get(lineKey);
+
+        this.previousBlocks.delete(lineKey);
         const head = this.get(lineKey);
         const line = head?.line;
         const flow = line && line.key === lineKey ? this.flowSpecOf(line) : undefined;
@@ -1180,9 +1202,20 @@ export class Doc {
         const of = new Map<Item, TextBlock>();
         const byMarker = new Map<Item, TextBlock>();
 
-        blocks.forEach(b => {
-            if (b.kind === "text") {
-                b.text = b.chars.map(charOf).join("");
+        blocks.forEach((block, i) => {
+            if (block.kind === "text") {
+                let b: TextBlock = block;
+                const prior = !b.virtual && previous?.byMarker.get(b.marker);
+
+                if (prior && prior.type === b.type && JSON.stringify(prior.attrs) === JSON.stringify(b.attrs) &&
+                    prior.chars.length === b.chars.length && prior.chars.every((c, j) => c === b.chars[j]) &&
+                    prior.aliases.length === b.aliases.length && prior.aliases.every((a, j) => a === b.aliases[j])) {
+                    // 토큰·종류·속성·흡수 표지가 모두 같을 때만 예전 불변 문단과 모델을 쓴다.
+                    b = prior;
+                    blocks[i] = prior;
+                } else {
+                    b.text = b.chars.map(charOf).join("");
+                }
                 b.chars.forEach(c => of.set(c, b));
                 b.virtual || byMarker.set(b.marker, b);
             }

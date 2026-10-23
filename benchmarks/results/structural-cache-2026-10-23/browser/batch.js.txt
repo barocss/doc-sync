@@ -1,0 +1,15 @@
+async page => {
+  const {direction,start}=CONFIG;
+  if(start===0){await page.evaluate(direction=>__structure.prepare(direction),direction);await page.waitForTimeout(500);}
+  const rows=[];
+  for(let i=start;i<start+6;i++){
+    const key=i%2===0?'Enter':'Backspace',phase=i<6?'warmup':'measured';
+    await page.evaluate(({direction,key,phase,index})=>__structure.begin(direction,key,phase,index),{direction,key,phase,index:i});
+    await page.keyboard.press(key);
+    await page.waitForFunction(()=>!__structure.active,null,{timeout:60000});
+    const row=await page.evaluate(()=>__structure.samples.at(-1));
+    if(!row.correct||!row.trusted)throw Error(JSON.stringify(row));
+    rows.push(row);await page.waitForTimeout(100);
+  }
+  return rows;
+}

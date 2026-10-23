@@ -1,0 +1,54 @@
+from pathlib import Path
+import os,sys,subprocess,json,tempfile,re,time,hashlib,datetime,socket
+source=Path(sys.argv[1]);out=Path(sys.argv[2]);label=sys.argv[3];out.mkdir(parents=True,exist_ok=False)
+env={**os.environ,'PATH':'/Users/user/.nvm/versions/node/v22.19.0/bin:'+os.environ['PATH']}
+cli='/Users/user/.codex/skills/playwright/scripts/playwright_cli.sh';session='structural-cache-'+label+'-20261023'
+data=Path(tempfile.mkdtemp(prefix='doc-sync-structure-screen-'))
+seed="""import {Doc} from './packages/doc-sync/src/index.ts';import {DEMO_SCHEMA} from './fixtures/demo-schema.ts';import {writeFileSync} from 'node:fs';const doc=new Doc('seed',DEMO_SCHEMA);const {ops}=doc.edit([{op:'delete',at:[0],count:1},{op:'insert',at:[0],content:Array.from({length:625},()=>({type:'paragraph',runs:[{text:'x'.repeat(160),marks:{}}]}))}]);writeFileSync(SEED,JSON.stringify({change:{actor:'seed',seq:1,ops}})+'\\n',{flag:'wx'});""".replace('SEED',json.dumps(str(data/'structure100k.jsonl')))
+subprocess.run(['node','--input-type=module','-'],input=seed,text=True,cwd=source,env=env,check=True)
+files=['packages/doc-sync/src/crdt/doc.ts','packages/doc-sync/src/crdt/model.ts','packages/doc-sync/src/sync/client.ts','packages/doc-sync/src/sync/model-events.ts','packages/doc-sync/src/pm/binding.ts','apps/demo/ui/editor.ts','apps/demo/server.ts']
+manifest=[{'path':p,'sha256':hashlib.sha256((source/p).read_bytes()).hexdigest()} for p in files]
+(out/'sources.json').write_text(json.dumps(manifest,indent=2)+'\n')
+log=(out/'server.log').open('x');server=subprocess.Popen(['node','apps/demo/server.ts'],cwd=source,env={**env,'PORT':'0','DATA_DIR':str(data)},stdout=log,stderr=subprocess.STDOUT)
+result={'status':'running','source':str(source),'data':str(data),'pid':server.pid,'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'loadBefore':os.getloadavg()}
+def run(name,*args):
+ p=subprocess.run([cli,'--session',session,*args],cwd=Path.cwd(),env=env,text=True,capture_output=True);(out/(name+'.log')).write_text(p.stdout+p.stderr)
+ if p.returncode or '### Error' in p.stdout:raise RuntimeError(name+': '+p.stdout[-1500:]+p.stderr[-500:])
+ if '### Result\n' in p.stdout:
+  value=json.JSONDecoder().raw_decode(p.stdout.split('### Result\n',1)[1])[0];(out/(name+'.json')).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n');return value
+try:
+ for _ in range(200):
+  found=re.search(r'http://localhost:(\d+)',(out/'server.log').read_text())
+  if found:break
+  if server.poll() is not None:raise RuntimeError('server exited')
+  time.sleep(.05)
+ assert found
+ origin=found[0];result['origin']=origin
+ run('open','open',origin+'/pm?doc=structure100k','--browser','chrome','--headed')
+ def code(name,template,**replacements):
+  script=Path('output/playwright/structural-cache-20261023/'+template+'.js.txt').read_text()
+  for key,value in replacements.items():script=script.replace(key,json.dumps(value))
+  path=out/(name+'.js');path.write_text(script);return run(name,'run-code','--filename',str(path))
+ code('install','install')
+ for direction in ['demo-to-pm','pm-to-demo']:
+  for start in range(0,36,6):
+   rows=code(direction+'-'+str(start),'batch',CONFIG={'direction':direction,'start':start});assert len(rows)==6
+   print(json.dumps({'label':label,'direction':direction,'completed':start+6}),flush=True)
+ raw=code('raw','export',SCREENSHOT=str(out/'screen.png'))
+ assert len(raw['samples'])==72 and all(s['correct'] and s['trusted'] for s in raw['samples'])
+ result['rows']=[]
+ for direction in ['demo-to-pm','pm-to-demo']:
+  values=sorted(s['ms'] for s in raw['samples'] if s['direction']==direction and s['phase']=='measured');assert len(values)==30
+  result['rows'].append({'direction':direction,'samples':30,'p50':values[15],'p95':values[28],'max':values[-1]})
+ assert all(hashlib.sha256((source/x['path']).read_bytes()).hexdigest()==x['sha256'] for x in manifest)
+ result.update({'status':'passed','browserVersion':raw['browserVersion'],'metric':'trusted key event timestamp to both editor DOMs and second rAF; alternating root split/merge; excludes physical display','unit':'ms'})
+ print(json.dumps(result),flush=True)
+except Exception as error:
+ result['status']='failed';result['error']=str(error);raise
+finally:
+ try:run('close','close');result['browserClosed']=True
+ finally:
+  server.terminate();server.wait(timeout=10);log.close();result['serverStopped']=server.poll() is not None
+  if result.get('origin'):
+   sock=socket.socket();result['portClosed']=sock.connect_ex(('127.0.0.1',int(found[1])))!=0;sock.close()
+  result['loadAfter']=os.getloadavg();result['endedAt']=datetime.datetime.now(datetime.timezone.utc).isoformat();(out/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
