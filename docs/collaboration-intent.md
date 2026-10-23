@@ -1,6 +1,6 @@
 # Collaborative Intent Preservation Rules
 
-This document describes the implementation on 2026-10-23. It explains the existing collaboration policy and defines expected results when deletion, formatting, insertion, and undo overlap. It introduces no new merge policy.
+This document defines expected results when deletion, formatting, insertion, movement, nested fields, annotations, and undo overlap. The fixed regression matrices below retain their original test scope.
 
 **Convergence** means that replicas receiving the same valid operations produce the same model. **Intent preservation** means that the merge result retains the defined editing semantics. Convergence alone cannot satisfy the meaning of the text or every user's wishes. The cases below do not validate all document semantics agreed by people.
 
@@ -55,6 +55,32 @@ Consecutive writes in the same `History` share state references when their actua
 - Undo writes the value observed before the action, and redo writes the action's value, **with a new Ticket**. They do not overwrite an old model or elect a winner again among historical competing writes.
 - If an unreceived remote write competes with undo, a local check cannot protect it. Ordinary LWW merges the two writes.
 - These conditions do not guarantee continued accumulation of everyone's formatting intent. The winner-undo rule in I04 also remains in effect.
+
+### 2.6 Movement Preserves Content Identity
+
+A move changes placement while retaining node and text identities. Concurrent typing and formatting continue to address that content. Placement records resolve in total Ticket order; projection suppresses a move that would create an ancestry cycle. This decision is recomputed from the retained records, so arrival order does not permanently choose a different cycle outcome.
+
+A move can reorder a block or group in a flow or move it into a compatible nested flow. It does not define arbitrary text-range, inline-node, row, or column movement. Logical paragraph joins retain physical fragments after movement, so merge, later split, and concurrent edits do not require copying the text into new identities. Move undo checks current placement ownership and skips a later observed move by another writer.
+
+Post-move split undo checks both its join state and the tail's placement. If another writer has moved the tail and that move was received, undo does not pull it back into the original paragraph. An unrecorded same-actor move also breaks ownership. If a later move was recorded in the same history, undoing that move restores the shared placement Ticket; the earlier split can then be undone. Split/merge chains share restored join Tickets and retain their original text identities through undo and redo.
+
+### 2.7 Nested Fields Have Independent Ownership
+
+An attribute is atomic unless its schema declares `fields`. Declared leaves then have separate LWW keys. A width change and a theme change can both survive; two changes to width compete by Ticket. Omitted patch leaves keep their values, while null resets a declared leaf or branch to defaults. An explicit write of the current value still claims ownership with a new Ticket. Editor model diffs emit only changed leaves to avoid claiming unrelated values.
+
+Undo checks each leaf's actual write Ticket. A received same-value write by another actor can therefore prevent an earlier undo even when the visible value did not change. Legacy object attributes keep their atomic behavior. Fields are not arbitrary object-path mutation: the schema fixes the safe JSON structure and rejects unknown paths.
+
+Fields apply to text, inline, grid, atom, and cell attributes, and to stored flow containers whose type is neither the root nor a cell-body flow type. Declare list fields on the text item type. Schema validation rejects fields on the root, rows, cell-body flow types, groups, spans, and value marks. These restrictions prevent accepting field data at positions that cannot store it independently.
+
+### 2.8 Child Counts Are a Projection Rule
+
+A flow's `childRules` selects visible candidates deterministically. A maximum hides excess candidates without deleting their identities or content; deletion or undo can expose them later. A minimum supplies a deterministic editable required slot instead of having every replica insert a different replacement. A required type stays fixed. These rules preserve convergence under concurrent insertion; they do not promise that every author's preferred candidate remains visible.
+
+### 2.9 Annotations Retain Boundaries and Report Unresolved Ranges
+
+Annotation endpoints retain left and right token identities plus affinity. Expansion policy controls insertion at the start or end boundary. Annotation data keys have independent LWW ownership; create/update/delete operations use shared history. A move can change an endpoint's logical location while retaining its token identity.
+
+Deleted, hidden, cross-slot, missing, or compacted references must follow the annotation resolver's explicit status. An unresolved annotation has no resolved range and is not moved to an unrelated visible cell. Live annotations pin their endpoint identities against GC. The storage contract does not supply conflict review, suggestions, or a comment UI.
 
 ## 3. Regression Case Matrix
 
@@ -156,3 +182,9 @@ JS
 - Existing separate tests cover default link noninheritance, Unicode undo, structure/tables/hidden cells, same-position Enter, and GC pins. The new matrix does not replace that entire scope.
 - HANDOFF §5.12 records the Chrome regression scope for the fixed History. CDP composition input does not establish actual OS IME behavior. Screen performance was not remeasured for this fix; previous measurements remain historical evidence for their source version.
 - This scope excludes automatic merge satisfying contradictory edits, conflict-review UI and suggestion mode, long-term history retention, lease-expiry recovery, and approval of intent preservation for the complete product.
+
+## 7. Extended Capability Evidence and Epoch Boundaries
+
+`move.test.ts`, `nested-fields.test.ts`, `cardinality.test.ts`, and `annotations.test.ts` check the extended contracts with fixed models and relevant identities. Their results are separate from the historical I01–I10 and HF matrices. A passing baseline matrix alone does not certify the added capabilities through every native editor.
+
+Protocol 2 requires the declared document capabilities and an epoch. A reconnect across epochs with unconfirmed changes stops with an explicit error and preserves local data. A clean reconnect loads the new snapshot, clears old history, and cancels composition drafts through reset hooks. The demo creates a new epoch even after restarting from an equivalent persisted log, so pending edits also stop in that case. This policy avoids replaying old-generation edits into a replacement document; it does not automatically recover or discard them. See the [synchronization contract](spec.md#7-synchronization-and-reconnection).

@@ -1,3 +1,4 @@
+import {PROTOCOL_VERSION} from "@barocss/doc-sync/sync";
 import {appendFileSync, existsSync, mkdirSync, readFileSync, rmSync} from "node:fs";
 import {createServer} from "node:http";
 import {stripTypeScriptTypes} from "node:module";
@@ -155,6 +156,9 @@ const serveStatic = (res: ServerResponse, urlPath: string) => {
 
 /** SSE: 첫 인사 + 밀린 변경을 보내고, 이후 이벤트를 흘린다 */
 const stream = (req: IncomingMessage, res: ServerResponse, hub: DocHub, url: URL) => {
+    if (url.searchParams.get("protocol") !== String(PROTOCOL_VERSION)) {
+        return send(res, 426, JSON.stringify({error: "Unsupported doc-sync protocol", protocol: PROTOCOL_VERSION}));
+    }
     const since = Number(url.searchParams.get("since") ?? 0);
     const actor = url.searchParams.get("actor") ?? "";
     const write = (event: ServerEvent) => res.write(`data: ${JSON.stringify(event)}\n\n`);
@@ -164,10 +168,12 @@ const stream = (req: IncomingMessage, res: ServerResponse, hub: DocHub, url: URL
         "cache-control": "no-store",
         connection: "keep-alive",
     });
-    write(hub.hello(since));
+    const epoch = url.searchParams.get("epoch") ?? undefined;
+    const hello = hub.hello(since, epoch);
+    write(hello);
     // 처음 붙는 참여자(since=0)는 스냅숏이 전부를 담고 있다. 다시 이어진 참여자에게만 밀린 변경을 보낸다
-    since > 0 && hub.since(since).forEach(envelope => write({type: "change", envelope}));
-    actor && hub.connect(actor, since > 0 ? since : hub.serverSeq);
+    hello.type === "hello" && !hello.snapshot && since > 0 && hub.since(since).forEach(envelope => write({type: "change", envelope}));
+    actor && hub.connect(actor, hello.type === "hello" && hello.snapshot ? hub.serverSeq : since);
 
     const stop = hub.listen(write);
     const heartbeat = setInterval(() => res.write(": ping\n\n"), 15_000);
@@ -185,6 +191,7 @@ const stream = (req: IncomingMessage, res: ServerResponse, hub: DocHub, url: URL
 
 /** 서버가 들고 있는 문서 — 토큰까지 (확인·시각화용) */
 const state = (hub: DocHub) => ({
+    epoch: hub.epoch,
     serverSeq: hub.serverSeq,
     frontier: hub.frontier(),
     lastGc: hub.lastFrontier,
@@ -224,8 +231,16 @@ const server = createServer(async (req, res) => {
 
         const body = await readBody(req);
 
+        if (["changes", "ack", "presence", "leave"].includes(action)) {
+            const epoch = action === "leave" ? url.searchParams.get("epoch") ?? req.headers["x-doc-sync-epoch"] : req.headers["x-doc-sync-epoch"];
+            if (epoch !== hub.epoch) return send(res, 409, JSON.stringify({error: "Document epoch changed", epoch: hub.epoch}));
+        }
+
         switch (action) {
             case "changes": {
+                if (req.headers["x-doc-sync-protocol"] !== String(PROTOCOL_VERSION)) {
+                    return send(res, 426, JSON.stringify({error: "Unsupported doc-sync protocol", protocol: PROTOCOL_VERSION}));
+                }
                 try {
                     const envelope = hub.submit(JSON.parse(body) as Change);
 

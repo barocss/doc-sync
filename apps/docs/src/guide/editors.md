@@ -1,19 +1,27 @@
-# Editor integration paths
+# Editor integration
 
-The repository verifies four editor implementations. They share the same document engine and collaboration rules. Their integration APIs have different maturity levels.
+Choose an editor binding, give it a `SyncClient`, and keep `doc.edit()` as the shared document interface. All bindings use the same document engine and collaboration history.
 
-## Choose a starting point
+| Editor | Public entry point | Guide |
+| --- | --- | --- |
+| ProseMirror | `@barocss/doc-sync/prosemirror`: `PmBinding`, schema builder, conversion helpers | [ProseMirror](./prosemirror) |
+| Slate | `@barocss/doc-sync/slate`: `SlateBinding`, schema codec, selection helpers | [Slate](./slate) |
+| Lexical | `@barocss/doc-sync/lexical`: `LexicalBinding`, schema builder, codecs, selection helpers | [Lexical](./lexical) |
+| Custom editor | `@barocss/doc-sync`: `doc.edit()` and model operations | [Editing](./editing) and [blocks](./blocks) |
 
-| Editor | Implementation | Example |
-|---|---|---|
-| ProseMirror | Public `PmBinding`, schema builder, and conversion helpers in `@barocss/doc-sync/prosemirror`. | [ProseMirror guide](./prosemirror) |
-| Slate | Prototype adapter in the compatibility demo. It maps native operations, model state, selections, and composition drafts. | [Slate guide](./slate) |
-| Lexical | Prototype adapter in the compatibility demo. It maps editor updates, model state, selections, and composition drafts. | [Lexical guide](./lexical) |
-| Custom demo editor | Repository editor built directly on document commands and token positions. | [Model operations](./editing) and [demo source](https://github.com/barocss/doc-sync/tree/main/apps/demo/ui) |
+These are subpaths of one library, not separate packages. Editor dependencies are optional peers. Install only the peers needed by the entry points you use. The core CRDT, synchronization client, and server do not depend on native editors.
 
-Slate and Lexical adapters are working test/demo implementations. They are not additional public package entry points. The package does not export `SlateBinding` or `LexicalBinding`.
+## What the bindings handle
 
-## Run the three-editor comparison
+The bindings convert native changes into model edits, apply them locally once, and commit the resulting operations. Remote changes update native state without creating another local edit. Selection is restored through stable document identities rather than old native paths or node keys.
+
+Slate and Lexical include composition drafts. Native input edits the draft while the live client keeps receiving remote changes. Completion commits the original draft operations and displays the combined model. Both use CRDT undo/redo and provide explicit disposal. Read each guide for its composition wiring and history policy.
+
+The application still supplies its schema, native rendering, toolbar, editor plugins, transport, and lifecycle. A codec's ability to retain data does not supply every native editing gesture for that data.
+
+## Compare the editors
+
+The comparison app uses the public Slate and Lexical entry points. It opens two Slate editors, two Lexical editors, and one ProseMirror editor on one document, with a separate client identity for each.
 
 ```sh
 npm install --prefix apps/demo/compat --workspaces=false --package-lock=false --cache /tmp/doc-sync-compat-npm-cache
@@ -21,21 +29,14 @@ npm run build --prefix apps/demo/compat
 npm start --prefix apps/demo/compat
 ```
 
-Open the URL printed by the compatibility server (port 5412 by default). Two Slate editors, two Lexical editors, and one ProseMirror editor join the same CRDT document. A separate backend is started with the comparison demo. Keep this development server separate from production deployment.
+Open the URL printed by the server; its default port is 5412. Use a new `doc` query value for an isolated document. The app starts a separate backend and temporary data directory. It does not use the original demo `data/` directory.
 
-## What the tests establish
+## Read the evidence at its tested scope
 
-The latest core integration verified 31 compatibility unit tests, 84 Chrome input cases, and 20 ordinary cases (18 native/model/server convergence checks and 2 probes). Another 30 operation traces were captured across the three editor implementations.
+Library tests cover schema conversion, native edits, remote updates without echo, selection mapping, history, composition, reset, reconnect, and disposal. They use real headless Slate and Lexical editors.
 
-These checks cover tested text/table edits, remote changes, cursor restoration, reset, reconnect, undo/redo, and simulated composition paths. They do not establish universal support for every native editor command, real OS IME acceptance, or production readiness.
+The comparison app's browser scripts check native/client/server equality and input behavior. Historical browser results belong to their source versions; they do not automatically certify a later binding change. Inspect each result status and browser error, not only a script's exit code.
 
-## Adapter responsibilities
+CDP composition is simulated browser input. Actual OS IME acceptance, product performance targets, production authorization, and separate document capability work require their own evidence. See [status and limits](../status).
 
-1. Convert native editor state and operations into `NodeJSON` and model edits.
-2. Apply local changes once and commit their wire operations.
-3. Apply remote model events without feeding them back as new local edits.
-4. Restore selections through stable token identities after remote updates.
-5. Keep active composition drafts separate where required by the native editor.
-6. Use collaboration history for shared undo/redo, and verify native/model/server convergence.
-
-[Read the shared editing contract →](./editing)
+[Start with one editing API →](./editing)

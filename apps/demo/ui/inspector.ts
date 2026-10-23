@@ -211,6 +211,8 @@ export const describeEnvelope = (envelope: Envelope): string => {
                 return `지우기 ${op.ids.length}개`;
             case "undel":
                 return `지우기 취소 ${op.ids.length}개`;
+            case "move":
+                return `이동 ${shortOf(op.target)} → ${shortOf(op.parent)}`;
             case "set":
                 return `${op.key === "$type" ? "종류" : op.key} → ${JSON.stringify(op.value)} (${op.ids.length})`;
         }

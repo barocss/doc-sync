@@ -1,3 +1,6 @@
+import {childRuleProblems} from "./cardinality.ts";
+import type {ChildRule} from "./cardinality.ts";
+import {fieldValueOk, fieldsSchemaProblems, isFieldSpec} from "./fields.ts";
 /**
  * 문서 스키마 — 바깥에서 주입한다. CRDT 는 노드 종류(문단·제목·표 …)를 모른다. 아는 것은 "모양"뿐이다.
  * 노드 종류마다 모양 하나와 children(올 수 있는 자식 종류)·속성·서식을 적는다 — 스키마 기반 문서 에디터의 스키마처럼 트리로 읽힌다.
@@ -19,6 +22,7 @@
 export type Shape = "text" | "inline" | "flow" | "group" | "grid" | "row" | "cell" | "atom" | "span";
 
 export type AttrSpec = {
+    fields?: Record<string, AttrSpec>;
     default: unknown;
     /** 허용 값 목록 (없으면 아무 값) */
     values?: readonly unknown[];
@@ -59,6 +63,7 @@ export type TextSpec = Common & {
 export type InlineSpec = Common & {shape: "inline"};
 
 export type FlowSpec = Common & {
+    childRules?: Record<string, ChildRule>;
     shape: "flow";
     /** 이 그릇의 줄에 올 수 있는 블록 종류 (group 이면 그 children 이 온다) */
     children: readonly string[];
@@ -135,13 +140,19 @@ export const checkSchema = (schema: Schema): string[] => {
 
     shapeOf(schema.root) !== "flow" && problems.push(`root "${schema.root}" 는 flow 모양이어야 한다`);
 
+    for (const [key, spec] of Object.entries(schema.markValues ?? {})) if (isFieldSpec(spec)) problems.push(`markValues.${key}.fields is not supported`);
+    const cellBodies = new Set(Object.keys(schema.nodes).map(type => gridParts(schema, type)?.body).filter((type): type is string => !!type));
     for (const [type, spec] of Object.entries(schema.nodes)) {
+        if ((type === schema.root || ["row", "group", "span"].includes(spec.shape) || cellBodies.has(type)) && Object.values(spec.attrs ?? {}).some(isFieldSpec)) problems.push(`${type}.attrs.fields is not supported at this model-only position`);
+        problems.push(...fieldsSchemaProblems(spec.attrs ?? {}, `${type}.attrs`));
+        for (const key of Object.keys(spec.attrs ?? {})) if (key.startsWith("$field:")) problems.push(`Reserved attribute name: ${key}`);
         if (/^\$/.test(type) || type === "col") {
             problems.push(`"${type}" 는 예약된 이름이다`);
         }
 
         switch (spec.shape) {
             case "flow":
+                problems.push(...childRuleProblems(schema, type, spec));
                 missing(type, spec.children);
                 shapeOf(spec.default) !== "text" && problems.push(`${type}.default "${spec.default}" 는 text 모양이어야 한다`);
                 storedTypes(schema, spec).includes(spec.default) || problems.push(`${type}.default 는 children 에 있어야 한다`);
@@ -150,6 +161,7 @@ export const checkSchema = (schema: Schema): string[] => {
                     .forEach(c => problems.push(`${type}.children 에 ${shapeOf(c)} 모양 "${c}" 는 올 수 없다`));
                 break;
             case "group":
+                if (!spec.children.length) problems.push(`${type}.children must contain a text type`);
                 missing(type, spec.children);
                 spec.children.forEach(c => {
                     shapeOf(c) !== "text" && problems.push(`${type}.children 의 "${c}" 는 text 모양이어야 한다`);
@@ -181,6 +193,20 @@ export const checkSchema = (schema: Schema): string[] => {
         }
     }
 
+    const visiting = new Set<string>(), checked = new Set<string>();
+    const visit = (type: string): void => {
+        if (visiting.has(type)) { problems.push(`Required child cycle at ${type}`); return; }
+        if (checked.has(type)) return;
+        visiting.add(type);
+        const spec = schema.nodes[type];
+        if (spec?.shape === "flow") for (const [child, rule] of Object.entries(spec.childRules ?? {})) if (rule && !Array.isArray(rule) && (rule.min ?? 0) > 0) {
+            const target = schema.nodes[child];
+            if (target?.shape === "flow") visit(child);
+            else if (target?.shape === "grid") { const parts = gridParts(schema, child); if (parts) visit(parts.body); }
+        }
+        visiting.delete(type); checked.add(type);
+    };
+    Object.keys(schema.nodes).forEach(visit);
     return problems;
 };
 
@@ -226,6 +252,7 @@ export const groupOf = (schema: Schema, flow: FlowSpec, type: string): {type: st
 
 /** 값이 속성 명세에 맞는가 */
 export const attrValueOk = (spec: AttrSpec, value: unknown): boolean => {
+    if (isFieldSpec(spec)) return fieldValueOk(spec, value);
     if (value === null) {
         return true;
     }

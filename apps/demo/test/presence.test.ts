@@ -72,3 +72,19 @@ test("데모 presence: 다른 칸과 숨은 칸의 범위를 옆 칸에 칠하�
     assert.equal(resolvePresence(doc, hidden), null);
     assert.equal(resolvePresence(doc, p)!.range, null);
 });
+
+test("demo presence follows moved paragraph tokens after the birth container is hidden", () => {
+    const doc = create();
+    doc.edit([{op: "insert", at: [1], content: [{type: "callout", children: [{type: "paragraph", runs: [{text: "inside", marks: {}}]}]}]}]);
+    const flow = doc.blocks().find(block => block.kind === "flow")!;
+    assert.equal(flow.kind, "flow");
+    if (flow.kind !== "flow") throw new Error("flow expected");
+    const remote = presence(doc, {line: flow.body, b: 0, o: 5}, {line: flow.body, b: 0, o: 1});
+    doc.edit([{op: "move", from: [1, 0], at: [1]}]);
+    const oldContainer = doc.toJSON().children!.findIndex(node => node.type === "callout");
+    doc.edit([{op: "delete", at: [oldContainer], count: 1}]);
+    assert.equal(doc.visible(flow.body), false);
+    const resolved = resolvePresence(doc, remote)!;
+    assert.ok(resolved);
+    assert.deepEqual(resolved.range!.map(point => [point.line ?? "0@~root", point.b, point.o]), [["0@~root", 1, 1], ["0@~root", 1, 5]]);
+});

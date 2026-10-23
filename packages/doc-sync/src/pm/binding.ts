@@ -423,7 +423,9 @@ export class PmBinding {
                     const endpoint = (key: string | null): number | null => {
                         const item = key ? this.client.doc.get(key) : null;
 
-                        if (!key || !item || !this.client.doc.visible(item.line.key)) {
+                        const doc = this.client.doc;
+                        const visible = doc.hasMoves || doc.hasCardinality ? key && doc.tokenLocation(key)?.visible : item && doc.visible(item.line.key);
+                        if (!key || !item || !visible) {
                             return null;
                         }
 

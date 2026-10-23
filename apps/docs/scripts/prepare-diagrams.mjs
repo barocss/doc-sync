@@ -122,6 +122,7 @@ export function generateDiagrams(targetDirectory = fileURLToPath(new URL("../src
         delete: applyCase("delete", ["Hello", "New", "World"], {op: "delete", at: [1], count: 1}),
         update: applyCase("update", ["Hello"], {op: "update", at: [0, 0], length: 5, attrs: {bold: true}}),
         split: applyCase("split", ["HelloWorld"], {op: "split", at: [0, 5]}),
+        move: applyCase("move", ["Hello", "World", "Again"], {op: "move", from: [1], at: [0]}),
         merge: applyCase("merge", ["Hello", "World"], {op: "merge", at: [1]}),
     };
     const doc = new Doc("diagram-table-span", schema);
@@ -150,5 +151,5 @@ export function generateDiagrams(targetDirectory = fileURLToPath(new URL("../src
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
     generateDiagrams();
-    console.log("Prepared 6 operation diagrams and their actual model trace.");
+    console.log("Prepared 7 operation diagrams and their actual model trace.");
 }

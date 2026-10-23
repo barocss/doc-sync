@@ -2,7 +2,7 @@
   "name": "@barocss/doc-sync",
   "version": "0.0.0",
   "private": true,
-  "description": "스키마를 주입받는 문서 전용 CRDT — 표지+글자 토큰 줄, 동기화 서버, ProseMirror 연결",
+  "description": "Schema-defined document CRDT with sync, server, and editor bindings",
   "type": "module",
   "engines": {
     "node": ">=22.18"
@@ -11,7 +11,9 @@
     ".": "./src/index.ts",
     "./sync": "./src/sync/index.ts",
     "./server": "./src/server/index.ts",
-    "./prosemirror": "./src/pm/index.ts"
+    "./prosemirror": "./src/pm/index.ts",
+    "./slate": "./src/slate/index.ts",
+    "./lexical": "./src/lexical/index.ts"
   },
   "scripts": {
     "test": "node --test test/*.test.ts",
@@ -21,7 +23,11 @@
     "prosemirror-model": "^1.25.0",
     "prosemirror-state": "^1.4.0",
     "prosemirror-transform": "^1.12.0",
-    "prosemirror-view": "^1.42.0"
+    "prosemirror-view": "^1.42.0",
+    "slate": "^0.146.0",
+    "lexical": "^0.52.0",
+    "@lexical/rich-text": "^0.52.0",
+    "@lexical/table": "^0.52.0"
   },
   "peerDependenciesMeta": {
     "prosemirror-model": {
@@ -35,6 +41,18 @@
     },
     "prosemirror-view": {
       "optional": true
+    },
+    "slate": {
+      "optional": true
+    },
+    "lexical": {
+      "optional": true
+    },
+    "@lexical/rich-text": {
+      "optional": true
+    },
+    "@lexical/table": {
+      "optional": true
     }
   },
   "devDependencies": {
@@ -43,7 +61,11 @@
     "prosemirror-state": "^1.4.4",
     "prosemirror-tables": "^1.8.5",
     "prosemirror-transform": "^1.12.2",
-    "prosemirror-view": "^1.42.6"
+    "prosemirror-view": "^1.42.6",
+    "slate": "0.146.0",
+    "lexical": "0.52.0",
+    "@lexical/rich-text": "0.52.0",
+    "@lexical/table": "0.52.0"
   },
   "files": [
     "src"

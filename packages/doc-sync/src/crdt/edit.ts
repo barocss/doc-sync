@@ -1,3 +1,4 @@
+import {decodeFieldKey, encodeFieldKey, fieldSpecAt, fieldValueOk, flattenFieldPatch, isFieldSpec, materializeFields} from "./fields.ts";
 import {MAIN, cellSlot, slotKey, slotTicket} from "./doc.ts";
 import {canonMarks, inheritedMarks, runsToUnits} from "./model.ts";
 import {attrValueOk, gridParts} from "./schema.ts";
@@ -55,7 +56,7 @@ const entriesOf = (doc: Doc, line: string, vacant?: Set<string>): Array<{group: 
     visible.forEach((b, flat) => {
         const block = blocks[b];
         const owner = block.kind === "text" ? doc.groupOf(line, block.type) : null;
-        const key = owner ? `${owner.type}|${JSON.stringify(owner.spec.by.map(k => block.attrs[k]))}` : "";
+        const key = owner ? `${owner.type}|${JSON.stringify(owner.spec.by.map(k => block.attrs[k]))}|${doc.groupBoundary(block)}` : "";
         const last = entries.at(-1);
 
         owner && last?.group === owner.type && last.key === key ? last.flats.push(flat) : entries.push({group: owner?.type ?? null, key, flats: [flat]});
@@ -174,6 +175,15 @@ export const flowPath = (doc: Doc, line: string): ModelPath => {
 
 /** 블록의 모델 경로. 모델에 없는 블록(비어 있는 빈 자리)이면 null */
 export const blockPath = (doc: Doc, line: string, b: number): ModelPath | null => {
+    if (doc.hasMoves || doc.hasCardinality) {
+        const physical = doc.blocks(line)[b];
+        const location = physical && doc.tokenLocation(physical.marker.key);
+        if (location?.visible && location.line !== line) {
+            const blocks = doc.blocks(location.line);
+            const logical = blocks.findIndex(block => block.marker === physical.marker || block.kind === "text" && block.parts?.some(part => part.marker === physical.marker));
+            if (logical >= 0) return blockPath(doc, location.line, logical);
+        }
+    }
     const flat = visibleBlocks(doc, line).indexOf(b);
 
     if (flat < 0) {
@@ -250,9 +260,40 @@ class Compiler {
     }
 
     private emit(ops: Op[]): Op[] {
-        this.out.push(...this.doc.emit(ops));
-
-        return ops;
+        const expanded: Op[] = [];
+        const writeFields = (ids: Ticket[], attr: string, value: unknown, spec: import("./schema.ts").AttrSpec, prefix = "") => {
+            if (!fieldValueOk(spec, value)) throw new Error(`Invalid nested field patch: ${attr}`);
+            for (const field of flattenFieldPatch(spec, value)) expanded.push({t: "set", at: this.next(), ids, key: prefix + encodeFieldKey(attr, field.path), value: field.value});
+        };
+        for (const original of ops) {
+            if (original.t === "node") {
+                const op: Extract<Op, {t: "node"}> = {...original, attrs: {...original.attrs}};
+                const fields: Array<[string, unknown, import("./schema.ts").AttrSpec]> = [];
+                for (const [key, value] of Object.entries(op.attrs!)) {
+                    const spec = this.doc.specOf(op.type)?.attrs?.[key];
+                    if (spec && isFieldSpec(spec)) { fields.push([key, value, spec]); delete op.attrs![key]; }
+                }
+                if (!Object.keys(op.attrs!).length) delete op.attrs;
+                expanded.push(op);
+                for (const [key, value, spec] of fields) writeFields([op.id], key, value, spec);
+            } else if (original.t === "set" && !original.key.startsWith("$field:")) {
+                const cell = /^(\$cell:[^|]+\|)(.+)$/.exec(original.key);
+                let handled = false;
+                const scalar: Ticket[] = [];
+                for (const id of original.ids) {
+                    const item = this.doc.get(keyOf(id));
+                    const type = cell && item ? gridParts(this.schema, item.born)?.cell : item && this.doc.typeOf(item);
+                    const attr = cell?.[2] ?? original.key;
+                    const spec = type ? this.doc.specOf(type)?.attrs?.[attr] : undefined;
+                    if (spec && isFieldSpec(spec)) { writeFields([id], attr, original.value, spec, cell?.[1]); handled = true; }
+                    else scalar.push(id);
+                }
+                if (!handled) expanded.push(original);
+                else if (scalar.length) expanded.push({...original, ids: scalar});
+            } else expanded.push(original);
+        }
+        this.out.push(...this.doc.emit(expanded));
+        return expanded;
     }
 
     private next(): Ticket {
@@ -263,10 +304,19 @@ class Compiler {
         return this.doc.schema!;
     }
 
+    private promoted = false;
     compile(op: EditOp): void {
+        if (!this.promoted && (this.doc.hasMoves || op.op === "move")) {
+            this.promoted = true;
+            for (const line of this.doc.lines()) for (const block of this.doc.sourceBlocks(line.key)) {
+                if (block.kind === "text" && block.virtual && block.chars.length) this.emit([{t: "node", id: this.next(), origin: block.marker.id, type: block.type, boundary: `virtual:${block.marker.key}|${block.chars[0].key}`}]);
+            }
+        }
         op.op !== "insert" && op.op !== "delete" && (this.batch.column = null);
 
         switch (op.op) {
+            case "move":
+                return this.move(op.from, op.at);
             case "insert":
                 return this.insert(op.at, op.content);
             case "delete":
@@ -297,6 +347,29 @@ class Compiler {
     }
 
     // ── 위치 ────────────────────────────────────────────────────────────
+
+    private move(from: ModelPath, at: ModelPath): void {
+        const source = this.ref(from);
+        if (source.kind !== "block" && source.kind !== "group") throw new Error("Move requires one block or group");
+        const moving = source.kind === "group" ? source.flats.map(flat => this.doc.blocks(source.line)[visibleBlocks(this.doc, source.line)[flat]]) : [this.doc.blocks(source.line)[source.b]];
+        const destination = this.ref(at.slice(0, -1));
+        const line = innerLine(destination, this.doc);
+        if (!line) throw new Error("Move destination must be a flow");
+        const entries = entriesOf(this.doc, line);
+        const children = entries.map(entry => entry.flats.map(flat => this.doc.blocks(line)[visibleBlocks(this.doc, line)[flat]]))
+            .filter(entry => !entry.some(block => moving.includes(block)));
+        const index = at.at(-1)!;
+        if (index < 0 || index > children.length) throw new Error("Move destination index is out of range");
+        const previous = children[index - 1]?.at(-1);
+        let after = previous ? this.doc.placementOf(this.doc.movementTarget(previous, line).id)?.at ?? this.doc.movementTarget(previous, line).id : null;
+        for (const block of moving) {
+            const target = this.doc.movementTarget(block, source.line);
+            const op: Op = {t: "move", at: this.next(), target: target.id, parent: this.doc.get(line)!.id, after};
+            const error = this.doc.check([op]);
+            if (error) throw new Error(error);
+            this.emit([op]); after = op.at;
+        }
+    }
 
     private ref(path: ModelPath): Ref {
         return resolvePath(this.doc, path, this.batch.vacant);
@@ -477,12 +550,23 @@ class Compiler {
     private validAttrs(type: string, attrs: Record<string, unknown> = {}): Record<string, unknown> {
         const spec = this.doc.specOf(type)?.attrs ?? {};
 
-        return Object.fromEntries(Object.entries(attrs).filter(([k, v]) => spec[k] && !spec[k].computed && v !== null && v !== spec[k].default && attrValueOk(spec[k], v)));
+        return Object.fromEntries(Object.entries(attrs).filter(([k, v]) => spec[k] && !spec[k].computed && (isFieldSpec(spec[k]) || v !== null && v !== spec[k].default) && attrValueOk(spec[k], v)));
     }
 
     /** 글 블록 안 자리에서 나누고 그 사이에 블록들 — 뒷글은 같은 종류·속성의 새 블록 */
     private splitInsert(line: string, b: number, o: number, nodes: NodeJSON[]): void {
         const block = this.doc.blocks(line)[b] as TextBlock;
+        if (this.doc.hasMoves) {
+            const path = blockPath(this.doc, line, b)!;
+            const start = this.out.length;
+            this.split([...path, o]);
+            const birth = this.out.slice(start).find((op): op is Extract<Op, {t: "node"}> => op.t === "node" && !!op.boundary?.startsWith("split:"));
+            const tail = birth && this.doc.blocks(line).find(candidate => candidate.marker.key === keyOf(birth.id));
+            if (tail?.kind === "text") this.retype(tail, block.type, block.attrs);
+            const flat = visibleBlocks(this.doc, line).findIndex(index => this.doc.blocks(line)[index].marker === block.marker);
+            this.insertBlocksAt(line, flat + 1, this.flattenContent(nodes));
+            return;
+        }
         const left = this.doc.leftOf({line, b, o});
         const right = this.doc.rightKeyOf({line, b, o});
         const last = this.chainBlocks(line, left.id, right, this.flattenContent(nodes));
@@ -500,6 +584,15 @@ class Compiler {
         }
 
         const blocks = this.doc.blocks(line);
+        if (this.doc.hasMoves && flat === 0) {
+            const storage = this.doc.fragmentStorage(line, this.next());
+            this.chainBlocks(line, storage.id, "end", nodes);
+            return;
+        }
+        if (!blocks.length) {
+            this.chainBlocks(line, this.doc.get(line)!.id, "end", nodes);
+            return;
+        }
 
         if (flat === 0 && this.batch.vacant.has(line)) {
             // 비운 머리를 채운다 — 첫 블록이 글이면 머리가 그 블록이 된다
@@ -578,11 +671,19 @@ class Compiler {
     /** 블록들을 origin 뒤에 차례로. @returns 마지막으로 넣은 토큰 (이 줄 안) */
     private chainBlocks(line: string, origin: Ticket, right: string, nodes: NodeJSON[]): Ticket {
         let last = origin;
-
+        const owner = this.doc.blocks(line).find(block => block.marker.id === origin || block.marker.key === keyOf(origin) || block.kind === "text" && block.chars.some(char => char.key === keyOf(origin)));
+        let after = owner ? this.doc.placementOf(this.doc.movementTarget(owner, line).id)?.at ?? this.doc.movementTarget(owner, line).id : null;
         for (const node of nodes) {
+            const start = this.out.length, previous = last;
             last = this.block(line, last, right, node);
+            if (this.doc.hasMoves) {
+                const birth = this.out.slice(start).find((op): op is Extract<Op, {t: "node"}> => op.t === "node" && keyOf(op.origin) === keyOf(previous) && op.type === node.type);
+                if (birth) {
+                    const movement: Op = {t: "move", at: this.next(), target: birth.id, parent: this.doc.get(line)!.id, after};
+                    this.emit([movement]); after = movement.at;
+                }
+            }
         }
-
         return last;
     }
 
@@ -598,7 +699,7 @@ class Compiler {
         const id = this.next();
 
         if (spec?.shape === "text") {
-            const op: Op = {t: "node", id, origin, type: node.type, boundary: `${keyOf(origin)}|${right}`};
+            const op: Op = {t: "node", id, origin, type: node.type, boundary: `${keyOf(origin)}|${right}${this.doc.constrainedChild(line, node.type) ? `|child:${keyOf(id)}` : ""}`};
             const attrs = this.validAttrs(node.type, node.attrs);
 
             Object.keys(attrs).length && (op.attrs = attrs);
@@ -708,7 +809,7 @@ class Compiler {
         const spec = parts ? (this.doc.specOf(parts.cell)?.attrs ?? {}) : {};
 
         Object.entries(attrs).forEach(([k, v]) => {
-            spec[k] && !spec[k].computed && v !== null && v !== spec[k].default && attrValueOk(spec[k], v) &&
+            spec[k] && !spec[k].computed && (isFieldSpec(spec[k]) || v !== null && v !== spec[k].default) && attrValueOk(spec[k], v) &&
                 ops.push({t: "set", at: this.next(), ids: [grid], key: `$cell:${keyOf(row)},${keyOf(col)}|${k}`, value: v});
         });
         ops.length && this.emit(ops);
@@ -841,6 +942,25 @@ class Compiler {
             const b = visible[f];
             const block = blocks[b];
 
+            if (this.doc.requiredSlotType(block.marker) && block.kind !== "text") {
+                const clear = (contentLine: string): void => {
+                    for (const child of this.doc.blocks(contentLine)) {
+                        if (child.kind === "text") ids.push(...child.chars.map(char => char.id));
+                        else if (child.kind === "flow") clear(child.body);
+                        else if (child.kind === "grid") for (const row of child.rows) for (const col of child.cols) clear(this.doc.cellKey(child.marker, row, col));
+                        if (child.marker.boundary !== "root" && !this.doc.requiredSlotType(child.marker)) ids.push(child.marker.id);
+                    }
+                };
+                if (block.kind === "flow") clear(block.body);
+                if (block.kind === "grid") for (const row of block.rows) for (const col of block.cols) clear(this.doc.cellKey(block.marker, row, col));
+                return;
+            }
+            if (this.doc.hasMoves && block.kind === "text" && !this.doc.requiredSlotType(block.marker)) {
+                for (const part of block.parts ?? [block]) {
+                    ids.push(part.marker.id, ...part.aliases.map(alias => alias.id), ...part.chars.map(char => char.id));
+                }
+                return;
+            }
             if (b === 0) {
                 head = true;
                 (block as TextBlock).chars.forEach(c => ids.push(c.id));
@@ -849,7 +969,7 @@ class Compiler {
             }
 
             if (block.kind === "text") {
-                block.virtual || ids.push(block.marker.id, ...block.aliases.map(a => a.id));
+                block.virtual || block.marker.boundary === "root" || ids.push(block.marker.id, ...block.aliases.map(a => a.id));
                 block.chars.forEach(c => ids.push(c.id));
             } else {
                 ids.push(block.marker.id);
@@ -960,6 +1080,7 @@ class Compiler {
         if (block.kind === "text") {
             const {type, ...rest} = attrs;
 
+            if (type !== undefined && type !== block.type && this.doc.requiredSlotType(block.marker)) throw new Error("Required child type is fixed");
             type !== undefined && type !== block.type && this.emit([{t: "set", at: this.next(), ids: [block.marker.id], key: "$type", value: type}]);
             Object.entries(rest).forEach(([key, value]) => this.emit([{t: "set", at: this.next(), ids: [block.marker.id], key, value}]));
 
@@ -976,8 +1097,8 @@ class Compiler {
         const span = grid.spans.get(`${r},${c}`) ?? [1, 1];
 
         if ("colspan" in attrs || "rowspan" in attrs) {
-            const rs = Math.max(1, Number(attrs.rowspan ?? span[0]) || 1);
-            const cs = Math.max(1, Number(attrs.colspan ?? span[1]) || 1);
+            const rs = Math.max(1, Number(attrs.rowspan === null ? 1 : attrs.rowspan ?? span[0]) || 1);
+            const cs = Math.max(1, Number(attrs.colspan === null ? 1 : attrs.colspan ?? span[1]) || 1);
             const endRow = grid.rows[Math.min(grid.rows.length, r + rs) - 1];
             const endCol = grid.cols[Math.min(grid.cols.length, c + cs) - 1];
             const value = endRow === row && endCol === col ? null : {row: endRow.key, col: endCol.key};
@@ -1008,7 +1129,17 @@ class Compiler {
 
         const pos = {line: text.line, b: text.b, o: at.at(-1)!};
         const block = text.block;
-        const left = this.doc.leftOf(pos);
+        let left = this.doc.leftOf(pos);
+        if (this.doc.hasMoves && block.parts) {
+            let offset = 0;
+            for (const part of block.parts) {
+                if (pos.o >= offset && pos.o <= offset + part.chars.length) {
+                    left = pos.o === offset ? part.marker : part.chars[pos.o - offset - 1];
+                    break;
+                }
+                offset += part.chars.length;
+            }
+        }
         const spec = this.doc.specOf(block.type) as TextSpec;
         const type = pos.o === block.chars.length && spec.next ? spec.next : block.type;
         const attrs: Record<string, unknown> = {};
@@ -1017,10 +1148,24 @@ class Compiler {
             ([k, s]) => s.inherit && block.attrs[k] !== undefined && block.attrs[k] !== s.default && (attrs[k] = block.attrs[k]),
         );
 
-        const op: Op = {t: "node", id: this.next(), origin: left.id, type, boundary: `${left.key}|${this.doc.rightKeyOf(pos)}`};
+        const boundary = this.doc.hasMoves ? `split:${JSON.stringify({into: block.marker.key, after: block.marker.key, left: left.key, right: this.doc.rightKeyOf(pos)})}` : `${left.key}|${this.doc.rightKeyOf(pos)}`;
+        const op: Op = {t: "node", id: this.next(), origin: left.id, type, boundary};
 
         Object.keys(attrs).length && (op.attrs = attrs);
         this.emit([op]);
+        if (this.doc.hasMoves) {
+            const placement = this.doc.placementOf(block.marker.id)!;
+            this.emit([{t: "move", at: this.next(), target: op.id, parent: this.doc.get(text.line)!.id, after: placement.at}]);
+            let offset = 0, after = keyOf(op.id);
+            for (const part of block.parts ?? [block]) {
+                const end = offset + part.chars.length;
+                if (offset >= pos.o && part.marker !== block.marker && part.marker.id !== left.id) {
+                    this.emit([{t: "set", at: this.next(), ids: [part.marker.id], key: "$join", value: {into: keyOf(op.id), after}}]);
+                    after = part.marker.key;
+                }
+                offset = end;
+            }
+        }
     }
 
     /** 블록을 앞 글 블록에 합친다 = 그 블록의 표지를 지운다. 앞이 글자를 받지 않는 블록이면 하지 않는다 */
@@ -1039,7 +1184,13 @@ class Compiler {
             return;
         }
 
-        this.emit([{t: "del", at: this.next(), ids: [block.marker.id, ...block.aliases.map(a => a.id)]}]);
+        if (this.doc.hasMoves) {
+            let after = (prev.parts?.at(-1) ?? prev).marker.key;
+            for (const part of block.parts ?? [block]) {
+                this.emit([{t: "set", at: this.next(), ids: [part.marker.id], key: "$join", value: {into: prev.marker.key, after}}]);
+                after = part.marker.key;
+            }
+        } else this.emit([{t: "del", at: this.next(), ids: [block.marker.id, ...block.aliases.map(a => a.id)]}]);
     }
 }
 

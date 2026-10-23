@@ -9,7 +9,8 @@ export const resolvePresence = (doc: Doc, presence: Presence): {pos: Pos; range:
     const endpoint = (key: string | null): Pos | null => {
         const item = key ? doc.get(key) : null;
 
-        return item && doc.visible(item.line.key) ? doc.posAfter(key!) : null;
+        const visible = doc.hasMoves || doc.hasCardinality ? key && doc.tokenLocation(key)?.visible : item && doc.visible(item.line.key);
+        return item && visible ? doc.posAfter(key!) : null;
     };
     const pos = endpoint(presence.anchor);
 

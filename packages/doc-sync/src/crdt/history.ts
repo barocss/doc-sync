@@ -1,3 +1,4 @@
+import {parseSplitBoundary} from "./text-storage.ts";
 import {compareTicket, keyOf} from "./ticket.ts";
 import type {Ticket} from "./ticket.ts";
 import type {Op, Doc} from "./doc.ts";
@@ -67,11 +68,74 @@ class ExistenceStep implements Step {
     }
 }
 
+/** A split owns a logical break, while the original tail tokens remain stored. */
+class SplitStep implements Step {
+    private readonly before: SetState;
+    private readonly after: SetState;
+    private undone = false;
+    private readonly id: Ticket;
+    private readonly states: SetStates;
+    private readonly slot: string;
+    private readonly placement: MoveState;
+    constructor(id: Ticket, into: string, after: string, states: SetStates, placement: MoveState) {
+        this.placement = placement;
+        this.id = id; this.states = states; this.slot = JSON.stringify([keyOf(id), "$join"]);
+        this.after = states.initial(this.slot, null);
+        this.before = {value: {into, after}, users: 1};
+    }
+    pinned(): Ticket | null { return null; }
+    undo(doc: Doc): Op[] { return this.write(doc, true); }
+    redo(doc: Doc): Op[] { return this.write(doc, false); }
+    private write(doc: Doc, undo: boolean): Op[] {
+        if (this.undone === undo) return [];
+        const currentPlacement = doc.placementOf(this.id);
+        if (!currentPlacement || compareTicket(currentPlacement.at, this.placement.at) !== 0) return [];
+        const current = doc.setTicket(this.id, "$join"), source = undo ? this.after : this.before;
+        if (current ? !source.at || compareTicket(current, source.at) !== 0 : !!source.at) return [];
+        const target = undo ? this.before : this.after;
+        const op: Op = {t: "set", at: doc.clock.next(), ids: [this.id], key: "$join", value: target.value};
+        doc.apply(op); this.states.restore(this.slot, target, op.at); this.undone = undo; return [op];
+    }
+}
+
+type MoveState = {parent: Ticket; after: Ticket | null; at: Ticket};
+class MoveStep implements Step {
+    private readonly before: MoveState;
+    private readonly after: MoveState;
+    private undone = false;
+    private readonly target: Ticket;
+    constructor(target: Ticket, op: Extract<Op, {t: "move"}>, before: MoveState, states: Map<string, MoveState>) {
+        this.target = target;
+        const cached = states.get(keyOf(target));
+        this.before = cached && compareTicket(cached.at, before.at) === 0 ? cached : {...before};
+        this.after = {parent: op.parent, after: op.after, at: op.at}; states.set(keyOf(target), this.after);
+    }
+    pinned(): Ticket | null { return null; }
+    undo(doc: Doc): Op[] { return this.write(doc, true); }
+    redo(doc: Doc): Op[] { return this.write(doc, false); }
+    private write(doc: Doc, undo: boolean): Op[] {
+        if (this.undone === undo) return [];
+        const current = doc.placementOf(this.target), source = undo ? this.after : this.before;
+        if (!current || compareTicket(current.at, source.at) !== 0) return [];
+        const location = undo ? this.before : this.after;
+        const op: Op = {t: "move", at: doc.clock.next(), target: this.target, parent: location.parent, after: location.after};
+        doc.apply(op);
+        // Suppressed movement records must still be replicated. Only a winning
+        // inverse acquires ownership of the restored state.
+        if (compareTicket(doc.placementOf(this.target)!.at, op.at) === 0) { location.at = op.at; this.undone = undo; }
+        return [op];
+    }
+}
+
 type SetState = {readonly value: unknown; at?: Ticket; users: number};
 
 /** 같은 History 안에서 실제로 이어진 속성 상태만 공유한다. 값이나 actor의 일치로 연결하지 않는다. */
 class SetStates {
     private readonly current = new Map<string, SetState>();
+
+    initial(slot: string, value: unknown): SetState {
+        const state = {value, users: 1}; this.current.set(slot, state); return state;
+    }
 
     capture(slot: string, prior: {value: unknown; at?: Ticket}, op: Extract<Op, {t: "set"}>): {before: SetState; after: SetState} {
         const cached = this.current.get(slot);
@@ -205,6 +269,7 @@ export class History {
     private readonly undoStack: Group[] = [];
     private readonly redoStack: Group[] = [];
     private readonly setStates = new SetStates();
+    private readonly moveStates = new Map<string, MoveState>();
 
     private release(group: Group): void {
         group.steps.forEach(step => step instanceof SetStep && step.release());
@@ -216,9 +281,22 @@ export class History {
 
         for (const op of ops) {
             if (op.t === "text" || op.t === "node") {
+                if (op.t === "node" && op.boundary?.startsWith("virtual:")) continue;
+                const split = op.t === "node" && parseSplitBoundary(op.boundary ?? "");
+                if (split) {
+                    const movement = ops.find((candidate): candidate is Extract<Op, {t: "move"}> => candidate.t === "move" && keyOf(candidate.target) === keyOf(op.id));
+                    const placement = movement ? {parent: movement.parent, after: movement.after, at: movement.at} : doc.placementOf(op.id)!;
+                    this.moveStates.set(keyOf(op.id), placement);
+                    steps.push(new SplitStep(op.id, split.into, split.after, this.setStates, placement)); continue;
+                }
                 steps.push(new ExistenceStep(idsOf(op), null));
             } else if (op.t === "del") {
                 steps.push(new ExistenceStep(op.ids, op.at));
+            } else if (op.t === "move") {
+                const prior = doc.priorPlacementOf(op);
+                const splitBirth = ops.find(candidate => candidate.t === "node" && keyOf(candidate.id) === keyOf(op.target) && parseSplitBoundary(candidate.boundary ?? ""));
+                const firstSplitMove = splitBirth && ops.find(candidate => candidate.t === "move" && keyOf(candidate.target) === keyOf(op.target));
+                if (prior && firstSplitMove !== op) steps.push(new MoveStep(op.target, op, prior, this.moveStates));
             } else if (op.t === "set") {
                 steps.push(new SetStep(op, doc.priorOf(op), this.setStates));
             }
@@ -260,6 +338,7 @@ export class History {
         this.undoStack.length = 0;
         this.redoStack.length = 0;
         this.setStates.clear();
+        this.moveStates.clear();
     }
 
     get canUndo(): boolean {

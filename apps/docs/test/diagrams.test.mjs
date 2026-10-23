@@ -33,6 +33,11 @@ const expectations = {
         before: model(p("HelloWorld")),
         after: model(p("Hello"), p("World")),
     },
+    move: {
+        operation: {op: "move", from: [1], at: [0]},
+        before: model(p("Hello"), p("World"), p("Again")),
+        after: model(p("World"), p("Hello"), p("Again")),
+    },
     merge: {
         operation: {op: "merge", at: [1]},
         before: model(p("Hello"), p("World")),
@@ -65,9 +70,9 @@ test("table span retains hidden-cell text and restores the full grid", () => {
     assert.deepEqual(trace.after, trace.before);
 });
 
-test("generation writes exactly six SVGs and one model trace", () => {
+test("generation writes exactly seven SVGs and one model trace", () => {
     assert.deepEqual(readdirSync(directory).sort(), [
-        "delete.svg", "insert.svg", "merge.svg", "models.json", "split.svg", "table-span.svg", "update.svg",
+        "delete.svg", "insert.svg", "merge.svg", "models.json", "move.svg", "split.svg", "table-span.svg", "update.svg",
     ]);
 });
 

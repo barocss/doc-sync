@@ -23,8 +23,7 @@ const setup = (content?: NodeJSON[]) => {
     }, {schema: DEMO_SCHEMA});
 
     client.connect();
-    receive({type: "hello", serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
-    client.disconnect();
+    receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
 
     const sender = Doc.fromSnapshot("sender", seed.snapshot(), DEMO_SCHEMA);
     const read = client.doc.toJSON.bind(client.doc);

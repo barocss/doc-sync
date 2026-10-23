@@ -23,7 +23,7 @@ const WARMUPS = 5;
 const makeClient = (snapshot: Snapshot): SyncClient => {
     const transport: Transport = {
         subscribe: (_since, receive) => {
-            receive({type: "hello", serverSeq: 1, snapshot, delSeqs: [], presence: []} satisfies ServerEvent);
+            receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot, delSeqs: [], presence: []} satisfies ServerEvent);
 
             return () => undefined;
         },
@@ -33,7 +33,6 @@ const makeClient = (snapshot: Snapshot): SyncClient => {
     const client = new SyncClient("edit", transport, {schema: BENCH_SCHEMA});
 
     client.connect();
-    client.disconnect();
 
     return client;
 };

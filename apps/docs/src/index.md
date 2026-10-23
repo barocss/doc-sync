@@ -7,7 +7,7 @@ title: Schema-defined collaborative documents
 <p class="lead">Define your document schema. Edit locally. Merge changes by stable token identity.</p>
 <p class="package-name">@barocss/doc-sync · TypeScript · Development release</p>
 
-doc-sync is a document CRDT with a synchronization client, a transport-independent server, and a ProseMirror binding. The application provides the schema. The core works with document shapes rather than built-in paragraph or table names.
+doc-sync is a document CRDT with a synchronization client, a transport-independent server, and ProseMirror, Slate and Lexical bindings. The application provides the schema. The core works with document shapes rather than built-in paragraph or table names.
 
 ## Start with a small document
 

@@ -65,8 +65,7 @@ const rows = sizes.flatMap(chars => blockCounts.flatMap(changedBlocks => operati
     }, {schema});
 
     client.connect();
-    receive({type: "hello", serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
-    client.disconnect();
+    receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
 
     const sender = Doc.fromSnapshot("sender", seed.snapshot(), schema);
     let events: EditOp[] = [];

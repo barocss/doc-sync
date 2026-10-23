@@ -8,6 +8,7 @@ import type {Op} from "../crdt/doc.ts";
 import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, NodeJSON} from "../crdt/model.ts";
 import type {Schema} from "../crdt/schema.ts";
+import {DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "./protocol.ts";
 import type {Change, Envelope, Outbound, Presence, ServerEvent, Transport} from "./protocol.ts";
 
 /**
@@ -38,6 +39,12 @@ export class SyncClient {
     history = new History();
     readonly actor: string;
     online = false;
+    /** Set when the server cannot safely process this client version. Pending edits are retained. */
+    connectionError: Error | null = null;
+    /** Identifies the server document generation. Restart/reset changes it. */
+    epoch: string | undefined;
+    private ready = false;
+    private connection = 0;
     serverSeq = 0;
     /** 아직 서버에서 돌아오지 않은 내 변경 (다시 이어지면 다시 보낸다) */
     pending: Change[] = [];
@@ -173,10 +180,27 @@ export class SyncClient {
             return;
         }
 
+        this.connectionError = null;
+        this.ready = false;
         this.online = true;
         // 다시 이어질 때는 확인 안 된 변경을 모두 다시 보낸다 (서버가 중복을 거른다)
         this.outbox = this.pending.map(change => ({kind: "change", change}));
-        this.unsubscribe = this.transport.subscribe(this.serverSeq, event => this.receive(event));
+        const connection = ++this.connection;
+        try {
+            const stop = this.transport.subscribe(this.serverSeq, event => {
+                if (this.online && this.connection === connection && (this.ready || event.type === "hello")) this.receive(event, connection);
+            }, this.epoch);
+            // Synchronous callbacks can disconnect or start another connection.
+            // A stale subscription must never replace the current cleanup handle.
+            if (this.online && this.connection === connection) this.unsubscribe = stop;
+            else stop();
+        } catch (error) {
+            if (this.connection !== connection) return;
+            this.connectionError = error instanceof Error ? error : new Error(String(error));
+            this.disconnect();
+            return;
+        }
+        if (!this.online || this.connection !== connection) return;
         this.flush();
         this.onUpdate?.();
     }
@@ -187,6 +211,8 @@ export class SyncClient {
         }
 
         this.online = false;
+        this.ready = false;
+        this.connection += 1;
         this.unsubscribe?.();
         this.unsubscribe = null;
         this.onUpdate?.();
@@ -238,7 +264,7 @@ export class SyncClient {
     }
 
     setPresence(presence: Omit<Presence, "actor">): void {
-        this.online && this.transport.sendPresence({...presence, actor: this.actor});
+        this.online && this.ready && this.transport.sendPresence({...presence, actor: this.actor});
     }
 
     /** 줄에 선 것을 차례로 하나씩 보낸다. 끊기면 멈추고, 다시 이어질 때 확인 안 된 변경부터 다시 보낸다 */
@@ -250,7 +276,7 @@ export class SyncClient {
         this.sending = true;
 
         try {
-            while (this.online && this.outbox.length) {
+            while (this.online && this.ready && this.outbox.length) {
                 const message = this.outbox[0];
 
                 await this.transport.send(message);
@@ -296,28 +322,99 @@ export class SyncClient {
 
     // ── 서버에서 온 것 ────────────────────────────────────────────────────
 
-    private receive(event: ServerEvent): void {
+    private receive(event: ServerEvent, connection: number): void {
+        let helloDoc: Doc | null = null;
+        if (event.type === "hello") {
+            if (event.protocol !== PROTOCOL_VERSION || !Array.isArray(event.capabilities) ||
+                !event.capabilities.every(capability => typeof capability === "string") ||
+                DOCUMENT_CAPABILITIES.some(capability => !event.capabilities!.includes(capability)) ||
+                typeof event.epoch !== "string" || !event.epoch.length) {
+                this.connectionError = new Error("Incompatible doc-sync protocol, document capabilities, or epoch");
+                this.disconnect();
+                return;
+            }
+            if (this.epoch !== undefined && event.epoch !== this.epoch && this.pending.length) {
+                this.connectionError = new Error("Document epoch changed with unconfirmed edits; local document and pending edits are preserved");
+                this.disconnect();
+                return;
+            }
+            if (this.epoch !== event.epoch && !event.snapshot) {
+                this.connectionError = new Error("Document epoch changed without a complete snapshot");
+                this.disconnect();
+                return;
+            }
+            const counters = (value: unknown): boolean => Array.isArray(value) && value.every(entry =>
+                Array.isArray(entry) && entry.length === 2 && typeof entry[0] === "string" && Number.isSafeInteger(entry[1]) && entry[1] >= 0);
+            const presenceValid = Array.isArray(event.presence) && event.presence.every(peer => peer &&
+                typeof peer.actor === "string" && typeof peer.name === "string" && typeof peer.color === "string" &&
+                (peer.anchor === null || typeof peer.anchor === "string") && (peer.focus === null || typeof peer.focus === "string"));
+            if (!Number.isSafeInteger(event.serverSeq) || event.serverSeq < 0 || !counters(event.delSeqs) ||
+                (event.clientSeqs !== undefined && !counters(event.clientSeqs)) || !presenceValid) {
+                this.connectionError = new Error("Invalid doc-sync hello metadata");
+                this.disconnect();
+                return;
+            }
+            // Prepare untrusted stored state before acknowledging or discarding any pending edit.
+            // A failed snapshot must also leave native composition/reset hooks untouched.
+            if (event.snapshot) {
+                try { helloDoc = Doc.fromSnapshot(this.actor, event.snapshot, this.schema); }
+                catch (error) {
+                    this.connectionError = error instanceof Error ? error : new Error(String(error));
+                    this.disconnect();
+                    return;
+                }
+            }
+        }
+        if (event.type === "hello" && this.epoch !== undefined && event.epoch !== this.epoch) {
+            // Native composition drafts are outside pending until committed.
+            this.onEvent?.({type: "reset", epoch: event.epoch});
+            if (!this.online || this.connection !== connection) return;
+        }
         this.onEvent?.(event);
+        if (!this.online || this.connection !== connection) return;
+        if (event.type === "hello" && this.epoch !== undefined && event.epoch !== this.epoch && this.pending.length) {
+            this.connectionError = new Error("Document epoch changed with unconfirmed edits; local document and pending edits are preserved");
+            this.disconnect();
+            return;
+        }
 
         switch (event.type) {
             case "hello": {
-                if (event.snapshot) {
-                    // 처음 붙을 때: 서버 문서를 통째로 받고, 그 위에 내가 먼저 한 편집이 있으면 다시 얹는다
-                    const accepted = event.clientSeqs?.find(([actor]) => actor === this.actor)?.[1] ?? 0;
-                    this.pending = this.pending.filter(change => change.seq > accepted);
+                const accepted = event.snapshot ? event.clientSeqs?.find(([actor]) => actor === this.actor)?.[1] ?? 0 : 0;
+                const pending = event.snapshot ? this.pending.filter(change => change.seq > accepted) : this.pending;
+                if (helloDoc) {
+                    const mine = pending.flatMap(change => change.ops);
+                    try {
+                        const problem = helloDoc.check(mine);
+                        if (problem) throw new Error(`Cannot reapply pending edits: ${problem}`);
+                        mine.forEach(op => helloDoc!.apply(op));
+                    } catch (error) {
+                        this.connectionError = error instanceof Error ? error : new Error(String(error));
+                        this.disconnect();
+                        return;
+                    }
+                }
+                if (this.epoch !== undefined && event.epoch !== this.epoch) {
+                    this.history = new History();
+                    this.seq = 0;
+                    this.delSeq.clear();
+                    this.gcFrontier = 0;
+                    this.serverSeq = 0;
+                    this.outbox = [];
+                }
+                this.epoch = event.epoch;
+                if (helloDoc) {
+                    this.seq = Math.max(this.seq, accepted);
+                    this.pending = pending;
                     this.outbox = this.outbox.filter(message => message.kind !== "change" || message.change.seq > accepted);
-                    const mine = this.pending.flatMap(c => c.ops);
-                    const snapshot = event.snapshot;
-
-                    this.withEvents("snapshot", () => {
-                        this.doc = this.attach(Doc.fromSnapshot(this.actor, snapshot, this.schema));
-                        mine.forEach(op => this.doc.apply(op));
-                    });
-                    event.delSeqs.forEach(([k, s]) => this.delSeq.set(k, s));
-                    // 스냅숏이 거기까지를 담고 있다. 스냅숏 없이 다시 이어진 경우는 뒤따라 오는 밀린 변경들이 번호를 올린다
+                    const replacement = helloDoc;
+                    this.withEvents("snapshot", () => { this.doc = this.attach(replacement); });
+                    event.delSeqs.forEach(([key, seq]) => this.delSeq.set(key, seq));
                     this.serverSeq = event.serverSeq;
                 }
 
+                this.ready = true;
+                this.flush();
                 this.scheduleAck();
                 this.others = new Map(event.presence.filter(p => p.actor !== this.actor).map(p => [p.actor, p]));
                 break;
@@ -332,6 +429,7 @@ export class SyncClient {
                 this.others.delete(event.actor);
                 break;
             case "reset":
+                if (event.epoch) this.epoch = event.epoch;
                 this.withEvents("reset", () => (this.doc = this.attach(new Doc(this.actor, this.schema))));
                 this.history = new History();
                 this.pending = [];

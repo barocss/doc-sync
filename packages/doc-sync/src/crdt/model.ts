@@ -1,5 +1,14 @@
-import {attrValueOk, groupOf, gridParts} from "./schema.ts";
+import {requiredType} from "./cardinality.ts";
+import {diffFields, isFieldSpec, patchFields} from "./fields.ts";
+import {attrValueOk, groupOf, gridParts, checkSchema} from "./schema.ts";
 import type {FlowSpec, GroupSpec, Schema, SpanSpec} from "./schema.ts";
+
+const groupBoundary = Symbol("doc-sync.group-boundary");
+export const withGroupBoundary = (node: NodeJSON, boundary: string): NodeJSON => {
+    Object.defineProperty(node, groupBoundary, {value: boundary, configurable: true});
+    return node;
+};
+const boundaryOf = (node: NodeJSON): string => (node as NodeJSON & {[groupBoundary]?: string})[groupBoundary] ?? "";
 
 /**
  * 모델 — 편집기가 보는 문서 트리 (스키마 기반 문서 에디터의 문서 JSON 과 같은 꼴). 순수 함수만 있다. CRDT 를 모른다.
@@ -27,6 +36,7 @@ export type NodeJSON = {type: string; attrs?: Record<string, unknown>; runs?: Ru
 export type ModelPath = number[];
 
 export type EditOp =
+    | {op: "move"; from: ModelPath; at: ModelPath}
     /** 넣기. text 안이면 글(문자열)·조각(Run)·inline 노드, 블록이면 그 자리에서 나누고 사이에. 흐름·묶음·표·행이면 자식으로 */
     | {op: "insert"; at: ModelPath; content: string | Array<NodeJSON | Run>}
     | {op: "delete"; at: ModelPath; count: number}
@@ -95,7 +105,7 @@ const fullAttrs = (schema: Schema, type: string, attrs: Record<string, unknown> 
 
         const v = attrs[k];
 
-        out[k] = v === undefined || v === null || !attrValueOk(s, v) ? s.default : v;
+        out[k] = isFieldSpec(s) ? patchFields(s, s.default, v ?? null) : v === undefined || v === null || !attrValueOk(s, v) ? s.default : v;
     });
 
     return Object.keys(out).length ? out : undefined;
@@ -220,7 +230,7 @@ const regroup = (schema: Schema, flow: FlowSpec, items: NodeJSON[]): NodeJSON[] 
         }
 
         const attrs = item.attrs ?? {};
-        const key = `${owner.type}|${JSON.stringify(owner.spec.by.map(k => attrs[k]))}`;
+        const key = `${owner.type}|${JSON.stringify(owner.spec.by.map(k => attrs[k]))}|${boundaryOf(item)}`;
 
         if (!group || group.key !== key) {
             const by = Object.fromEntries(owner.spec.by.map(k => [k, attrs[k]]));
@@ -255,6 +265,7 @@ const canonText = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, Nod
     }
 
     const out: NodeJSON = {type: node.type};
+    if (boundaryOf(node)) withGroupBoundary(out, boundaryOf(node));
     const attrs = fullAttrs(schema, node.type, node.attrs);
 
     attrs && (out.attrs = attrs);
@@ -270,13 +281,38 @@ const canonText = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, Nod
  */
 const canonFlow = (schema: Schema, flowType: string, children: NodeJSON[] = [], cache?: WeakMap<NodeJSON, NodeJSON>): NodeJSON[] => {
     const flow = schema.nodes[flowType] as FlowSpec;
-    const items = flatten(schema, children)
+    const separated = children.flatMap((child, index) => {
+        const items = flatten(schema, [child]);
+        return schema.nodes[child.type]?.shape === "group" && flow.childRules?.[child.type]
+            ? items.map(item => withGroupBoundary(item, `explicit:${index}`)) : items;
+    });
+    const items = separated
         .map(child => canonBlock(schema, child, cache))
         .filter((child): child is NodeJSON => child !== null);
 
-    (!items.length || !isTextNode(schema, items[0])) && items.unshift(defaultBlock(schema, flow));
-
-    return regroup(schema, flow, items);
+    if ((!items.length || !isTextNode(schema, items[0])) && flow.childRules?.[flow.default]?.max !== 0) items.unshift(defaultBlock(schema, flow));
+    const grouped = regroup(schema, flow, items);
+    if (!flow.childRules) return grouped;
+    const counts = new Map<string, number>();
+    const visible = grouped.filter(child => {
+        const count = counts.get(child.type) ?? 0;
+        if (count >= (flow.childRules![child.type]?.max ?? Infinity)) return false;
+        counts.set(child.type, count + 1); return true;
+    });
+    for (const [type, rule] of Object.entries(flow.childRules)) for (let i = counts.get(type) ?? 0; i < (rule.min ?? 0); i++) {
+        const concrete = requiredType(schema, type);
+        const node: NodeJSON = {type: concrete};
+        const spec = schema.nodes[concrete];
+        if (spec.shape === "text") node.runs = [];
+        else if (spec.shape === "flow") node.children = [];
+        else if (spec.shape === "grid") {
+            const parts = gridParts(schema, concrete)!;
+            node.children = [{type: parts.row, children: [{type: parts.cell, children: [{type: parts.body, children: []}]}]}];
+        }
+        const normalized = canonBlock(schema, node, cache)!;
+        visible.push(schema.nodes[type]?.shape === "group" ? {type, children: [normalized]} : normalized);
+    }
+    return visible;
 };
 
 const canonBlock = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, NodeJSON>): NodeJSON | null => {
@@ -371,11 +407,22 @@ const canonGrid = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, Nod
 };
 
 /** 문서 전체를 정리한 꼴로 */
-export const canonical = (schema: Schema, doc: NodeJSON): NodeJSON => ({type: schema.root, children: canonFlow(schema, schema.root, doc.children)});
+const validateRules = (schema: Schema): void => {
+    if (Object.values(schema.nodes).some(spec => spec.shape === "flow" && spec.childRules !== undefined)) {
+        const problems = checkSchema(schema);
+        if (problems.length) throw new Error(`Invalid cardinality schema: ${problems.join("; ")}`);
+    }
+};
+export const canonical = (schema: Schema, doc: NodeJSON): NodeJSON => {
+    validateRules(schema);
+    return {type: schema.root, children: canonFlow(schema, schema.root, doc.children)};
+};
 
 /** Doc 내부의 불변 글 블록만 재사용한다. 목록 묶음과 표·흐름의 정규화는 매번 수행한다. */
-export const canonicalWithTextCache = (schema: Schema, doc: NodeJSON, cache: WeakMap<NodeJSON, NodeJSON>): NodeJSON =>
-    ({type: schema.root, children: canonFlow(schema, schema.root, doc.children, cache)});
+export const canonicalWithTextCache = (schema: Schema, doc: NodeJSON, cache: WeakMap<NodeJSON, NodeJSON>): NodeJSON => {
+    validateRules(schema);
+    return {type: schema.root, children: canonFlow(schema, schema.root, doc.children, cache)};
+};
 
 // ── 편집 연산 적용 ──────────────────────────────────────────────────────
 
@@ -456,6 +503,17 @@ const isBlockContent = (schema: Schema, item: NodeJSON | Run): item is NodeJSON 
 
 /** 연산 하나를 모델에 적용한다 (제자리에서). 묶음은 바로 다시 묶고, 표 칸 수는 묶음 끝(applyEdits)에서 맞춘다 */
 export const applyEdit = (schema: Schema, root: NodeJSON, op: EditOp): void => {
+    if (op.op === "move") {
+        const parentPath = op.at.slice(0, -1);
+        if (op.from.length <= parentPath.length && op.from.every((value, index) => value === parentPath[index])) return;
+        const source = walk(root, op.from.slice(0, -1)).at(-1)!.node;
+        const destination = walk(root, parentPath).at(-1)!.node;
+        if (!destination.children) throw new Error("Move destination has no children");
+        const item = source.children?.splice(op.from.at(-1)!, 1)[0];
+        if (!item) throw new Error("Move source does not exist");
+        destination.children.splice(op.at.at(-1)!, 0, item);
+        return;
+    }
     const parentPath = op.at.slice(0, -1);
     const index = op.at.at(-1) ?? 0;
 
@@ -583,7 +641,10 @@ export const applyEdit = (schema: Schema, root: NodeJSON, op: EditOp): void => {
         } else {
             const u = units[index];
 
-            u && "inline" in u && Object.entries(op.attrs).forEach(([k, v]) => (v === null ? delete u.attrs[k] : (u.attrs[k] = v)));
+            u && "inline" in u && Object.entries(op.attrs).forEach(([k, v]) => {
+                const spec = schema.nodes[u.inline]?.attrs?.[k];
+                spec && isFieldSpec(spec) ? u.attrs[k] = patchFields(spec, u.attrs[k], v) : v === null ? delete u.attrs[k] : u.attrs[k] = v;
+            });
         }
 
         holder.runs = unitsToRuns(schema, units);
@@ -601,7 +662,12 @@ export const applyEdit = (schema: Schema, root: NodeJSON, op: EditOp): void => {
         const count = (target.children ?? []).length;
 
         for (let i = at; i < at + count; i += 1) {
-            items[i] = {...items[i], attrs: {...(items[i].attrs ?? {}), ...op.attrs}};
+            const attrs = {...items[i].attrs};
+            for (const [key, value] of Object.entries(op.attrs)) {
+                const spec = schema.nodes[items[i].type]?.attrs?.[key];
+                attrs[key] = spec && isFieldSpec(spec) ? patchFields(spec, attrs[key], value) : value;
+            }
+            items[i] = {...items[i], attrs};
         }
 
         setFlow(schema, flow, items);
@@ -615,7 +681,8 @@ export const applyEdit = (schema: Schema, root: NodeJSON, op: EditOp): void => {
         if (k === "type") {
             target.type = String(v);
         } else {
-            v === null ? delete attrs[k] : (attrs[k] = v);
+            const spec = schema.nodes[target.type]?.attrs?.[k];
+            spec && isFieldSpec(spec) ? attrs[k] = patchFields(spec, attrs[k], v) : v === null ? delete attrs[k] : attrs[k] = v;
         }
     });
     target.attrs = attrs;
@@ -674,10 +741,17 @@ const lcs = (a: string[], b: string[]): Array<[number, number]> => {
     return pairs;
 };
 
-const attrsDelta = (a: Record<string, unknown> = {}, b: Record<string, unknown> = {}): Record<string, unknown> | null => {
+const attrsDelta = (a: Record<string, unknown> = {}, b: Record<string, unknown> = {}, specs: Record<string, import("./schema.ts").AttrSpec> = {}): Record<string, unknown> | null => {
     const delta: Record<string, unknown> = {};
 
-    Object.keys({...a, ...b}).forEach(k => !same(a[k], b[k]) && (delta[k] = b[k] === undefined ? null : b[k]));
+    Object.keys({...a, ...b}).forEach(k => {
+        if (same(a[k], b[k])) return;
+        const spec = specs[k];
+        if (spec && isFieldSpec(spec)) {
+            const fields = diffFields(spec, a[k] ?? spec.default, b[k] ?? spec.default);
+            if (fields) delta[k] = fields;
+        } else delta[k] = b[k] === undefined ? null : b[k];
+    });
 
     return Object.keys(delta).length ? delta : null;
 };
@@ -780,7 +854,7 @@ const diffItem = (schema: Schema, work: NodeJSON, flowPath: ModelPath, f: number
     if (shapeA === "text" && shapeB === "text") {
         diffText(schema, at, a, b, emit);
 
-        const delta = attrsDelta(a.attrs, b.attrs);
+        const delta = attrsDelta(a.attrs, b.attrs, schema.nodes[b.type]?.attrs);
         const attrs = a.type !== b.type ? {...(delta ?? {}), type: b.type} : delta;
 
         attrs && emit({op: "update", at: flatPath(schema, work, flowPath, f), attrs});
@@ -800,7 +874,7 @@ const diffItem = (schema: Schema, work: NodeJSON, flowPath: ModelPath, f: number
 
 /** 표·그릇·구분선 — 속성, 그리고 안 */
 const diffBox = (schema: Schema, work: NodeJSON, path: ModelPath, a: NodeJSON, b: NodeJSON, emit: Emit): void => {
-    const delta = attrsDelta(a.attrs, b.attrs);
+    const delta = attrsDelta(a.attrs, b.attrs, schema.nodes[b.type]?.attrs);
 
     delta && emit({op: "update", at: path, attrs: delta});
 
@@ -811,7 +885,7 @@ const diffBox = (schema: Schema, work: NodeJSON, path: ModelPath, a: NodeJSON, b
     } else if (shape === "grid") {
         diffList(schema, work, path, a.children ?? [], b.children ?? [], emit, (rowPath, ra, rb) =>
             diffList(schema, work, rowPath, ra.children ?? [], rb.children ?? [], emit, (cellPath, ca, cb) => {
-                const cellDelta = attrsDelta(ca.attrs, cb.attrs);
+                const cellDelta = attrsDelta(ca.attrs, cb.attrs, schema.nodes[cb.type]?.attrs);
 
                 cellDelta && emit({op: "update", at: cellPath, attrs: cellDelta});
                 diffFlow(schema, work, [...cellPath, 0], cb.children?.[0]?.children ?? [], emit);
@@ -891,7 +965,7 @@ const diffText = (schema: Schema, path: ModelPath, a: NodeJSON, b: NodeJSON, emi
 
             delta && fixes.push({op: "update", at: [...path, j], attrs: delta, length: 1});
         } else if ("inline" in x && "inline" in y) {
-            const delta = attrsDelta(fullAttrs(schema, x.inline, x.attrs), fullAttrs(schema, y.inline, y.attrs));
+            const delta = attrsDelta(fullAttrs(schema, x.inline, x.attrs), fullAttrs(schema, y.inline, y.attrs), schema.nodes[y.inline]?.attrs);
 
             delta && fixes.push({op: "update", at: [...path, j], attrs: delta});
         }

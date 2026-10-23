@@ -48,8 +48,8 @@ if (problems.length) throw new Error(problems.join("; "));
 
 New text inherits boolean marks from the left character observed by the author. Value marks require `inherit: true`; the demo's link value mark does not inherit by default. The insertion operation stores its marks; the receiver does not recompute them from its current neighbor.
 
-A flow starts with an editable default block. Adjacent list items can form a model group. Table cells retain a full-grid model even when a span hides a cell. These rules are part of the shared document contract.
+A flow starts with a text-shaped default block. That type can set `text: false`, as the demo image block does. Adjacent list items can form a model group. Table cells retain a full-grid model even when a span hides a cell. These rules are part of the shared document contract.
 
-See the repository's [demo schema](https://github.com/barocss/doc-sync/blob/main/fixtures/demo-schema.ts) for lists, links, tables, images, and nested flows.
+Read the [full demo schema](./full-schema) for every type, child rule, default, attribute, and UI field used by the actual `DEMO_SCHEMA`. Its generated code preserves all runtime rules and translates UI display strings only. The separate [block operations guide](./blocks) uses a reduced teaching schema with an added paragraph alignment attribute.
 
 [Run schema-driven block operations →](./blocks)

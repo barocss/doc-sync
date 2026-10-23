@@ -16,14 +16,14 @@ const withBackend=async(handler,check)=>{
     await new Promise(resolve=>server.close(resolve));
   }
 };
-const hello=doc=>JSON.stringify({type:'hello',serverSeq:7,snapshot:doc.snapshot(),delSeqs:[],presence:[]});
+const hello=doc=>JSON.stringify({type:'hello',epoch:'test-epoch',protocol:2,serverSeq:7,snapshot:doc.snapshot(),delSeqs:[],presence:[]});
 
 test('remote edit reads SSE comments and unrelated frames, then submits a separate actor',async()=>{
   const doc=new Doc('seed',schema);
   doc.edit([{op:'insert',at:[0,0],content:'base'}]);
   let submitted;
   await withBackend(async(req,res)=>{
-    if(req.url.endsWith('/stream?since=0')){
+    if(req.url.endsWith('/stream?since=0&protocol=2')){
       res.writeHead(200,{'content-type':'text/event-stream'});
       res.write(': keepalive\r\n\r\ndata: {"type":"presence"}\r\n\r\n');
       const frame=`data: ${hello(doc)}\r\n\r\n`;
@@ -31,6 +31,8 @@ test('remote edit reads SSE comments and unrelated frames, then submits a separa
       res.end(frame.slice(15));
     }else{
       let body='';for await(const chunk of req)body+=chunk;
+      assert.equal(req.headers['x-doc-sync-protocol'],'2');
+      assert.equal(req.headers['x-doc-sync-epoch'],'test-epoch');
       submitted=JSON.parse(body);
       submitted.ops.forEach(op=>doc.apply(op));
       res.writeHead(200,{'content-type':'application/json'});
@@ -83,7 +85,7 @@ test('remote edit rejects HTTP errors, missing hello and malformed SSE data',asy
 test('remote edit reports rejected change submission',async()=>{
   const doc=new Doc('seed',schema);
   await withBackend((req,res)=>{
-    if(req.url.endsWith('/stream?since=0'))res.end(`data: ${hello(doc)}\n\n`);
+    if(req.url.endsWith('/stream?since=0&protocol=2'))res.end(`data: ${hello(doc)}\n\n`);
     else{res.writeHead(409);res.end('rejected');}
   },backend=>assert.rejects(remoteEdit(backend,{doc:'probe-test',edits:[{op:'insert',at:[0,0],content:'X'}]}),/remote edit HTTP 409: rejected/));
 });

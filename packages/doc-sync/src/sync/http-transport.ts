@@ -1,3 +1,4 @@
+import {PROTOCOL_VERSION} from "./protocol.ts";
 import type {Outbound, Presence, ServerEvent, Transport} from "./protocol.ts";
 
 /**
@@ -7,25 +8,35 @@ import type {Outbound, Presence, ServerEvent, Transport} from "./protocol.ts";
 export class HttpTransport implements Transport {
     private readonly base: string;
     private readonly actor: string;
+    private epoch: string | undefined;
+    private subscription = 0;
 
     constructor(doc: string, actor: string, origin = "") {
         this.base = `${origin}/api/docs/${encodeURIComponent(doc)}`;
         this.actor = actor;
     }
 
-    subscribe(since: number, onEvent: (event: ServerEvent) => void): () => void {
-        const source = new EventSource(`${this.base}/stream?since=${since}&actor=${encodeURIComponent(this.actor)}`);
+    subscribe(since: number, onEvent: (event: ServerEvent) => void, epoch?: string): () => void {
+        const subscription = ++this.subscription;
+        this.epoch = epoch;
+        const source = new EventSource(`${this.base}/stream?protocol=${PROTOCOL_VERSION}&since=${since}&actor=${encodeURIComponent(this.actor)}${epoch ? `&epoch=${encodeURIComponent(epoch)}` : ""}`);
 
-        source.onmessage = message => onEvent(JSON.parse(message.data) as ServerEvent);
+        let active = true;
+        source.onmessage = message => {
+            if (!active || this.subscription !== subscription) return;
+            const event = JSON.parse(message.data) as ServerEvent;
+            if ((event.type === "hello" || event.type === "reset") && typeof event.epoch === "string") this.epoch = event.epoch;
+            onEvent(event);
+        };
 
-        return () => source.close();
+        return () => { active = false; source.onmessage = null; source.close(); };
     }
 
     async send(message: Outbound): Promise<void> {
         const [path, body] = message.kind === "change" ? ["changes", message.change] : ["ack", message.ack];
         const response = await fetch(`${this.base}/${path}`, {
             method: "POST",
-            headers: {"content-type": "application/json"},
+            headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION), ...(this.epoch ? {"x-doc-sync-epoch": this.epoch} : {})},
             body: JSON.stringify(body),
         });
 
@@ -36,13 +47,13 @@ export class HttpTransport implements Transport {
 
     /** 창을 닫을 때 — 서버가 더 기다리지 않도록 */
     leave(): void {
-        navigator.sendBeacon(`${this.base}/leave`, JSON.stringify({actor: this.actor}));
+        navigator.sendBeacon(`${this.base}/leave${this.epoch ? `?epoch=${encodeURIComponent(this.epoch)}` : ""}`, JSON.stringify({actor: this.actor}));
     }
 
     sendPresence(presence: Presence): void {
         fetch(`${this.base}/presence`, {
             method: "POST",
-            headers: {"content-type": "application/json"},
+            headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION), ...(this.epoch ? {"x-doc-sync-epoch": this.epoch} : {})},
             body: JSON.stringify(presence),
             keepalive: true,
         }).catch(() => undefined);

@@ -1,15 +1,17 @@
 # Public API
 
-The library has one package and four entry points. The demo, documentation, and benchmark workspaces are private npm packages.
+The library has one package and six entry points. The demo, documentation, and benchmark workspaces are private npm packages.
 
 ## Entry points
 
 | Import | Main exports |
 |---|---|
 | `@barocss/doc-sync` | `Doc`, `History`, `commands`, model/schema/position helpers, and shared types. |
-| `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, and protocol types. |
+| `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `PROTOCOL_VERSION`, `DOCUMENT_CAPABILITIES`, and protocol types. |
 | `@barocss/doc-sync/server` | `DocHub`, `HubOptions`. |
 | `@barocss/doc-sync/prosemirror` | `PmBinding`, `buildPmSchema`, model/position conversion. |
+| `@barocss/doc-sync/slate` | `SlateBinding`, schema codecs and selection conversion. |
+| `@barocss/doc-sync/lexical` | `LexicalBinding`, `buildLexicalSchema`, schema nodes and selection conversion. |
 
 The current exports point to TypeScript source. A published npm release still needs a distribution build and API/version policy.
 
@@ -48,3 +50,6 @@ The [schema-driven block operations guide](../guide/blocks) includes executable 
 - [Client and protocol](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/sync)
 - [Server](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/server)
 - [ProseMirror binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/pm)
+
+- [Slate binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/slate)
+- [Lexical binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/lexical)

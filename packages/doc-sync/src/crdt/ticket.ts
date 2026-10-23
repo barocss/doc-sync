@@ -41,6 +41,9 @@ export class Clock {
     }
 
     next(): Ticket {
+        if (!Number.isSafeInteger(this.lamport) || this.lamport < 0 || this.lamport >= Number.MAX_SAFE_INTEGER) {
+            throw new Error("Lamport clock exhausted its safe integer range");
+        }
         this.lamport += 1;
 
         return {lamport: this.lamport, actor: this.actor};

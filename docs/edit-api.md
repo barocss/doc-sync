@@ -1,233 +1,236 @@
-# Generic Edit API Design Note (2026-10-22, Implemented)
+# Editing API
 
-This proposal replaces about 20 edit functions with **five model operations** (`insert · delete · update · split · merge`). Schema shapes compile them to wire operations. Names and semantics match the model operations of a schema-based document editor, to make editor integration nearly 1:1.
+`Doc.edit()` applies six model operations: `insert`, `delete`, `update`, `split`, `merge`, and `move`. The application supplies a schema. The compiler resolves current model paths and uses schema shapes to produce stable CRDT wire operations.
 
-**Implemented.** Section 10 records the implementation and differences from the initial proposal. All decisions in §9 followed the proposal.
+Use this reference with the [state and synchronization specification](spec.md) and [collaboration intent rules](collaboration-intent.md). The library's exported types and implementation are authoritative.
 
----
-
-## 1. Current Structure and Problems
-
-| Layer | Current State | Problem |
-|---|---|---|
-| Wire operations | Five type-independent operations: `text · node · del · undel · set` | None; retain them |
-| **Edit functions** | `insertText`, `splitBlock`, `insertBlock`, `insertInline`, `appendBlock`, `insertAxis`, `deleteAxis`, `deleteBlock`, `setAttr`, `setItemAttr`, `setCellAttr`, `setSpan`, `setMark`, `setBlockType`, `setNumberAttr`, `deleteRange`, `backspace`, `deleteForward` … | Each feature adds functions. Address types differ (`Pos`, `GridBlock + r, c`, `Item`). Integrating a schema-based document editor requires another conversion from its operations to these functions. |
-| Model | Editor-shaped tree calculated from tokens (`toJSON`) | None |
-
-Edit functions perform three tasks:
-
-1. **Resolve addresses**: find the token and line after which to edit.
-2. **Expand by shape**: a table becomes a table node + following block marker + rows + columns; a list item becomes a marker + group attributes, and so on.
-3. **Preserve intent**: Enter boundary keys, merge restrictions for blocks that cannot receive text, and mark inheritance.
-
-These tasks depend on **schema shapes**, not function names. Define them once per shape.
-
-## 2. Goals
-
-- Editors use **model paths and model nodes**. They need no knowledge of CRDT lines, tokens, or slots.
-- Five operations: `insert · delete · update · split · merge`.
-- A **compiler for each shape** converts them to wire operations. New block types need only schema changes. This extends the current contract to editing.
-- Undo, cursor history, server validation, and GC remain unchanged because the compiler produces the same wire operations.
+## Operation and result types
 
 ```ts
-/** Position in the model tree (toJSON), shaped like an editor tree path (number array). The final number inside a text block is a character position. */
-type ModelPath = number[];
+import type {EditOp, ModelPath, NodeJSON, Op, Run} from "@barocss/doc-sync";
 
-type EditOp =
-    | {op: "insert"; at: ModelPath; content: string | NodeJSON[]}
+// ModelPath = number[]
+// EditOp contains these six cases:
+type EditingOperation =
+    | {op: "insert"; at: ModelPath; content: string | Array<NodeJSON | Run>}
     | {op: "delete"; at: ModelPath; count: number}
     | {op: "update"; at: ModelPath; attrs: Record<string, unknown>; length?: number}
     | {op: "split"; at: ModelPath}
-    | {op: "merge"; at: ModelPath};
+    | {op: "merge"; at: ModelPath}
+    | {op: "move"; from: ModelPath; at: ModelPath};
 
-/** Compile and apply in order, then return the generated wire operations and resulting caret. */
-doc.edit(ops: EditOp[]): {ops: Op[]; caret: string};
+type EditingResult = {ops: Op[]; normalize: EditOp[]};
 ```
 
-Existing functions can remain as thin wrappers over `edit()` or be removed.
+The method signature is `doc.edit(edits: EditOp[], options?: {normalize?: boolean}): EditingResult`. It does not return a caret. The operations in `ops` have already been applied to the local document. If the document belongs to a `SyncClient`, pass them to `client.commit(ops)` to record and send the change. Do not apply them a second time as a local edit.
 
-## 3. Addresses: Model Paths
-
-Paths are child indexes in the `toJSON()` tree.
-
-```
-[1]                  Second body block (table)
-[1, 0]               First row of that table           (table-row)
-[1, 0, 2]            Third cell of that row             (table-cell)
-[1, 0, 2, 0]         Body of that cell                  (table-cell-body)
-[1, 0, 2, 0, 1, 4]   Fifth character position in the second body block
-[3, 0, 2]            First item of list [3], third character position
+```ts
+const {ops, normalize} = client.doc.edit([
+    {op: "insert", at: [0, 0], content: "shared"},
+    {op: "split", at: [0, 3]},
+], {normalize: true});
+client.commit(ops);
+// Apply normalize to the editor's proposed model, if needed.
 ```
 
-Each shape has one path-to-storage rule.
+The example assumes a schema whose first block accepts text. It uses ASCII so storage and model text offsets agree. A standalone `Doc` needs no client commit for the local model to change.
 
-| Shape of the Node on the Path | Meaning of the Next Number | Storage Mapping |
-|---|---|---|
-| `flow` | Child index | Block in the flow line. **Count groups after flattening**: `[3, 1]` is the second item of list [3] = stored block (first list block index + 1). |
-| `group` | Item index | As above |
-| `grid` | Row index | Live row in the rows line |
-| `row` | Cell index, including hidden cells (full grid) | Live column in the cols line → `cell:row,col` line |
-| `cell` | Only 0 | Cell body = its cell line |
-| `text` | Character position | Block `chars`; an inline node also occupies one position |
+Each operation is compiled and applied in order. Later paths address the result of earlier operations in the same batch. `Doc.edit()` is not an atomic validation boundary for arbitrary untrusted edits. Invalid paths can throw, and earlier operations may already have changed the local document. Supply schema-valid edits from a validated editor model.
 
-- Paths refer to the **current state**. Compilation happens immediately and locally. Only token IDs go over the wire, as in current edit functions. Different paths on different replicas are therefore acceptable.
-- In a batch, each subsequent path is interpreted after applying earlier operations, as in a schema-based document editor's operation batch.
-- Also implement the reverse mapping, token key → path, for receiving events (§6) and cursors.
+## Paths and coordinate units
 
-## 4. Compilation by Operation and Shape
+Paths index the current `toJSON()` tree. They do not persist as CRDT identities or travel over the wire.
 
-### insert(at, content)
-
-| Destination → Content | Wire Operations |
+| Path | Meaning |
 |---|---|
-| Inside text block → text (`string`) | `text`, inheriting marks from the left as today |
-| Inside text block → inline node (`{type: "inline-image", attrs}`) | `node` |
-| Flow child position → text block | `node` marker after the preceding block's end, boundary = left token \| right token, then its `text` |
-| Flow child position → group (`list`) | One marker per item; write group attributes (`listType`) **on every item** |
-| Flow child position → grid (`table`) | Table `node` + n row `node`s + m column `node`s (m = maximum cell count among rows) + recursively write each cell's body to its cell line + `colspan·rowspan` → `$span`, other cell attributes → `$cell` |
-| Flow child position → flow (`callout`, `image-component`) | Container `node` + recursively write body children to its body line; reuse the line head when the first child has the container's default type |
-| Flow child position → atom | `node` |
-| Grid row position → `table-row` | Row `node` + bodies of its cells |
-| Same cell position in every row → `table-cell` | **One column** (§5.1) |
+| `[1]` | Second root child, such as a table. |
+| `[1, 0]` | First row of that table. |
+| `[1, 0, 2]` | Third cell of that row. |
+| `[1, 0, 2, 0]` | The cell's body flow. |
+| `[1, 0, 2, 0, 1, 4]` | Offset 4 in the body's second text block. |
+| `[3, 0, 2]` | Offset 2 in the first item of a list at root child 3. |
 
-If a flow child insertion is in the **middle** of a block, split first as current `insertBlock` does. Trailing text goes into a new block of the same type, and content is inserted between them. A schema-based document editor sends `split` then `insert`; sequential compilation produces the same result.
+Flow and group indexes count model children. Internally, list and caption groups flatten to text blocks in their owning CRDT sequence. Row indexes count live rows. Cell indexes count the full grid, including covered cells. A cell's body is child 0.
 
-### delete(at, count)
+Text coordinates need an explicit boundary:
 
-| Target | Wire Operations |
+- The text offsets, deletion counts, and formatting lengths consumed by the CRDT compiler index stored tokens. Each UTF-16 code unit occupies one token. An inline node occupies one position.
+- `Pos.o` and token-to-path helpers also use stored-token offsets.
+- Pure model helpers such as `runsToUnits`, `applyEdits`, and `diffModels` iterate text by Unicode code point. A supplementary-plane character occupies one model Unit but two stored tokens.
+- A user-visible grapheme can contain multiple code points. Neither unit is a general grapheme index.
+
+For example, `A😀B` contains four UTF-16 units and three code points. Inserting immediately after the emoji uses compiler text offset 3. An adapter receiving a code-point path from a model diff must convert its offset and range length before passing it to `Doc.edit()`. Do not pass native offsets, pure-model offsets, and stored-token offsets interchangeably. Use ASCII-only examples only as evidence for those examples.
+
+`normalize` and received model events are model edit operations. When applying them to a native editor, convert their model coordinates at that boundary. Requesting normalization does not remove the current distinction between model code points and stored UTF-16 tokens.
+
+## Insert
+
+`insert` adds text, runs, inline nodes, or child nodes, according to the destination shape.
+
+| Destination and content | Behavior |
 |---|---|
-| Characters or inline nodes in text | `del` |
-| Flow block range | `del`: marker and absorbed markers for text blocks; only the node for tables, containers, and atoms, whose contents also become hidden |
-| Grid row | Row `del` |
-| Same cell in every row | Column `del` (§5.1) |
-| Last row or column | Table `del`, as today |
+| Text position + string | Insert characters. Read inheritable marks from the left character observed by the author. At block start there is no same-block left character to inherit from. |
+| Text position + text runs | Insert the supplied text and explicit marks. |
+| Text position + permitted inline node | Insert one inline token. |
+| Text position + block nodes | Split the surrounding text as needed and insert the blocks between the retained text parts. |
+| Flow child position + text block | Insert a block marker and its text. The first default block can reuse a flow's head. |
+| Flow child position + group | Insert flat item blocks. Group attributes are copied to the items; explicit item attributes take precedence. |
+| Flow child position + nested flow | Insert a container node, then recursively insert its body into the container's body sequence. |
+| Flow child position + grid | Insert the table, row and column nodes, and cell-body content. The widest row determines the column count. |
+| Flow child position + atom | Insert one block node with no body. |
+| Grid row position + row nodes | Insert rows and their cell-body content. |
+| Row cell position + cell nodes | Insert columns using the batch's column-folding rule. |
 
-### update(at, attrs, length?)
+Use only node types permitted at the destination. A declared type is not automatically permitted in every flow or text block. For example, the demo allows tables in callouts but not nested tables in table-cell bodies. An inline node must be permitted by the destination text type. A `span` such as a link is a model representation of value marks, not a separate stored inline token.
 
-| Target | Wire Operations |
+## Delete
+
+`delete` removes `count` entries from the addressed position.
+
+| Target | Behavior |
 |---|---|
-| Text-block or node attributes | `set` for each key; partial merge, equivalent to updating part of a schema-based document editor's data |
-| Block type (`attrs.type`) | `set $type`, only between text shapes. Insert a new marker for a virtual position. |
-| Text range (`length`) + marks | `set` per character, skipping inline nodes |
-| `backgroundColor` and similar table-cell attributes | `set $cell:row,col\|name` on the table node |
-| Table-cell `colspan·rowspan` | Find end-row/column IDs and write `set $span:row,col` |
-| Inline node (`inline-image` dimensions) | `set` |
+| Text range | Delete the selected character or inline token IDs. |
+| Flow block range | Delete block markers and text for selected text blocks. Delete the node marker for a grid, container, or atom; its descendants become hidden. |
+| Group item range | Delete the selected flat items. Deleting a whole group through its parent deletes all its items. |
+| Table row range | Delete row nodes. |
+| Row cell range | Delete columns using column folding. |
+| Last remaining row or column | Remove the table from the visible model. |
 
-### split(at)
+Deleting the first flow block cannot remove the sequence head. The compiler tracks that head as vacant inside the batch so delete-and-reinsert operations use the expected child positions. If it remains vacant at batch end, the next text block can fill it. Canonical flow rules still require a leading text-shaped block.
 
-A position inside a text block becomes one marker `node`, using the boundary key, `next`, and `inherit`, as current `splitBlock` does.
-**Discard inline-level split.** This model has no inline-text nodes. Different mark ranges are calculated views.
+Deletion targets IDs observed when the operation is created. A later concurrent insertion is not added to that target set. Undo cancels only its own deletion ID; another actor's deletion can keep the token hidden.
 
-### merge(at)
+## Update
 
-Merge block [i] into [i-1] by deleting block [i]'s marker. If the preceding block cannot receive text (image), do nothing, as in the current rule.
+`update` writes attributes or formatting. It merges the supplied keys into the addressed state rather than replacing every attribute.
 
-## 5. Difficult Cases
-
-### 5.1 Columns
-
-A schema-based document editor's tree has no column nodes. Column insertion arrives as `insert [table, r, c] table-cell` **once per row**. This model addresses cells with (row, column) IDs, so it must fold that pattern into one column node.
-
-- First scan the batch for insertion at the same index c in **every live row** of the same table → one column `node` + each new cell's body.
-- A subset of rows (ragged columns) cannot be represented directly. **Proposal: normalize to one column**, leaving empty cells in other rows. Rejection would diverge from the editor display.
-- Use the same pattern for column deletion: `delete [table, r, c] 1` for every row.
-- Full-grid indexes include hidden (`spanned`) cells, which simplifies pattern detection.
-
-### 5.2 Intent: Enter and Structural Split
-
-At the same position, user Enter and a split that makes room before insertion both create one marker. The difference is **when the boundary key is captured**. Capture the current left and right tokens at compilation. This preserves the rule that Enter after observing another Enter creates a separate line.
-
-A schema-based document editor's Enter arrives as `split [0,0,5]` and `split [0,1]`. Discard the first, inline-level split and create a marker only for the second. The earlier Yorkie collaboration plugin similarly folded Enter into one two-stage edit. This model is simpler because it has no inline layer.
-
-### 5.3 Links (inline-hyperlink)
-
-A schema-based document editor represents links as inline groups (`inline-hyperlink > inline-text`). This model has no such shape. One of two approaches is needed.
-
-- **Value mark**: `link = url` LWW per character. Simple and consistent with current marks, but without a distinct link identity: consecutive identical URLs form one link.
-- **Inline group shape**: start/end markers. Preserves identity, but requires new concurrent-edit rules, such as whether text inserted between markers belongs to the link (the Peritext problem).
-
-The proposal uses value marks. Group consecutive identical URLs into one `inline-hyperlink` in model output to match the editor shape. As with lists, storage is flat and the view is grouped.
-
-### 5.4 Undo
-
-During collaboration, use CRDT undo per participant and disable the schema-based document editor's history, as the current Yorkie collaboration plugin does. Operations produced by `edit()` are recorded as before.
-
-## 6. Receiving: CRDT Changes → Editor Operations
-
-Two approaches can notify the editor about received wire operations.
-
-| Method | Mechanism | Tradeoffs |
-|---|---|---|
-| A. Model comparison | Compare `toJSON` before and after receipt by block and replace changed blocks. | Simple and correct, but replaces entire blocks containing cursors or composition input. |
-| B. Operation translation | Translate each wire operation at its current state to a model operation: `text` → text insert, marker → split, marker `del` → merge, row `node` → row insert, and so on. | Precise, but must handle all cases with no visible change, including absorbed markers, virtual positions, and hidden cells. |
-
-Proposal: **use B, compare model fingerprints after application, and fall back to A on mismatch**. This follows the compiler + verification + block replacement structure used by the earlier tree CRDT prototype.
-
-## 7. Migration Path
-
-1. **Path resolver**: model path ↔ (line, block, position) ↔ token key. Test round trips for every path in random documents.
-2. **`edit()` stage 1**: insert/delete/update/split/merge for text, inline, flow, group, and atom.
-3. **`edit()` stage 2**: grid row insertion/deletion, cell attributes, cell merging, and column patterns (§5.1).
-4. **Equivalence tests**: move current edit functions onto `edit()`. Run random scripts through the function version and edit version and compare models. Remove functions after equivalence passes.
-5. **Editor adapter**: schema-based document editor operations → `EditOp` (fold inline paths to character positions, split chains, and column patterns); CRDT changes → editor operations (§6). Run 3000 scripts with a real-editor jsdom harness.
-
-## 8. Unchanged Components
-
-- Five wire operations, server validation, GC, and snapshots.
-- Undo and cursor history, because compiled operations use the same wire format.
-- Schema: compilers read only existing shapes.
-
-## 9. Decisions to Make
-
-1. Ragged columns: **normalize** (proposed) or reject.
-2. Links: **value marks + grouped view** (proposed) or inline group shape.
-3. Receiving: **B + verification + A fallback** (proposed) or A only.
-4. Current edit functions: retain as `edit()` wrappers or remove.
-5. Validate this API with the repository demo editor first, or proceed directly to a schema-based document editor adapter.
-
----
-
-## 10. Implementation Results (2026-10-22)
-
-| File | Responsibility |
+| Address | Behavior |
 |---|---|
-| `packages/doc-sync/src/crdt/model.ts` | Pure model functions: canonical shape normalization (canonical), edit application (applyEdits), model comparison (diffModels). No CRDT knowledge. |
-| `packages/doc-sync/src/crdt/edit.ts` | Model path resolution, edit-to-wire compilation (virtual heads and column folding), path ↔ position ↔ token key |
-| `packages/doc-sync/src/crdt/commands.ts` | Editor commands (characters, Enter, Backspace, table rows/columns, and so on) → edit operations. Migrated 18 former Doc edit functions. |
-| `Doc.edit(ops)` | Edit batch → wire operations + normalize |
-| `SyncClient.onModelEvents` | Receiving events, verification, and fallback |
+| Text-block path | Set declared block attributes. `attrs.type` changes a text-shaped block to an allowed text type. |
+| Group path | Apply the supplied attribute keys to its item markers. |
+| Text position + `length` | Write character marks over the selected token range. Inline nodes are skipped. |
+| Text position without `length` | Update the inline node at that position, if present. |
+| Grid, container, or atom path | Update its declared node attributes. This does not change its shape or reparent it. |
+| Cell path | Write cell attributes on the table, addressed by row/column IDs. `colspan` and `rowspan` update merge endpoints. |
 
-### Differences from the Initial Proposal
+Clients must use keys and values permitted by the schema. General block and mark updates are not a complete local schema filter. Some compiler paths filter attributes; that does not make every unsupported update safe or guarantee server acceptance. Attribute defaults and canonical omission are also distinct from validation.
 
-- **Receiving uses model comparison instead of operation translation.** It compares models before and after a remote change and generates edits with the same precision: one character becomes one character insertion; one column becomes one cell insertion per row, as in a schema-based document editor. Absorbed markers, virtual positions, and hidden cells need no special handling for invisible changes. Verification (does application to the before model produce the after model?) and fallback (replace the whole document) follow the proposal.
-- **Comparison uses flattened item sequences.** Comparing grouped lists caused an inserted list to join its neighbor immediately and shift subsequent paths. Mirror tests found this defect. Flows are therefore flattened for comparison. Each operation is applied to a working copy, and the next path is resolved from that copy.
-- **Empty virtual positions after tables are omitted from the model.** A table can be the last child of a flow, as in a schema-based document editor. The editor retains virtual positions for cursors.
-- **Item attributes override group attributes.** Inserting a bulleted item inside a numbered list or changing an item's listType splits the group.
+Cell spans use end-row and end-column IDs. Updating a top-left cell to `colspan: 1, rowspan: 1` removes its merge. Covered cells remain in the full-grid model. Their content stays stored and is hidden until exposed again. Merging does not collect or copy that content. `spanned` is computed output, not a writable cell flag.
 
-### When Normalize Occurs (Editor Application Differs from the CRDT Model)
+Formatting uses per-token LWW writes. Two different mark keys can coexist. For one key, the largest write Ticket wins. Formatting undo checks exact write ownership. See [collaboration intent](collaboration-intent.md) for concurrent writes, partial ranges, and undo/redo rules.
 
-| Case | Reason |
-|---|---|
-| An edit makes a flow start with a table or container. | A CRDT line head is always a text block, leaving an empty leading paragraph. Canonical model rules include this, so the repository editor agrees. A schema-based document editor adapter must account for it. |
-| Insert a cell into only one row (ragged columns). | Normalize to one column, with empty cells in other rows. |
-| Insert a column or row inside merged cells. | Merge endpoints use IDs, so the new column is also covered; the editor leaves colspan unchanged. |
-| Overlapping cell merges | Accept only the later merge. |
-| Delete a table before a virtual position that contains text. | Virtual text joins the preceding block. Rare; occurs only during collaboration. |
+### Nested attribute fields
 
-Each run of 3000 random scripts produced 8–9 local edits with normalize (80,000–210,000 receiving events per run, 0 mirror mismatches or verification failures).
+Attributes remain atomic LWW values unless their `AttrSpec` declares `fields`. A field schema declares a fixed recursive object. Each declared leaf has its own register and history slot. For example:
 
-### Equivalence Tests
+```ts
+const settings = {
+    default: {width: 10, appearance: {theme: "light"}},
+    fields: {
+        width: {default: 10, min: 0},
+        appearance: {
+            default: {theme: "light"},
+            fields: {theme: {default: "light", values: ["light", "dark"]}},
+        },
+    },
+};
+// Declare settings in the node's attrs, then update one leaf:
+const result = client.doc.edit([
+    {op: "update", at: [0], attrs: {settings: {appearance: {theme: "dark"}}}},
+]);
+client.commit(result.ops);
+```
 
-The former edit functions (Doc methods) and new commands (commands → edit) ran one step at a time from identical state: 1000 scripts × 40 steps. There were **0 differences across 34,001 steps**. The first run found one difference in setSpan's already-equal-value check; it was fixed. The old functions were then removed.
-Editing an empty virtual position after a table changed slightly: inserting a table at the end no longer creates a trailing empty paragraph.
+Omitted fields keep their current values. `null` resets a leaf or every declared leaf of a branch to its default. Arrays and objects without their own `fields` declaration remain atomic leaves. Fields are supported on text blocks, inline nodes, grids, atoms, cells, and stored flow containers whose type is neither the root nor a cell-body flow type. For a list, declare fields on its text item type.
 
-## 11. Cursors and Selection
+`checkSchema()` rejects field declarations on the root, rows, cell-body flow types, groups, and spans, because these positions have no independent attribute storage for fields. It also rejects `markValues.fields`. Unknown paths, unsafe names, accessors, cycles, and non-JSON values are rejected for this capability. Attributes without `fields` keep their existing atomic behavior.
 
-- There are two position forms: **model paths**, used by editors and schema-based document editors (`[block, …, character position]`), and **token keys**, used by the CRDT (immediately after this token).
-- Other users' edits can shift paths. Token keys are stable. Store cursor and selection endpoints **as token keys**, then convert them to paths for display.
-  - `anchorAt(doc, path)` → token key of the token immediately left of that position.
-  - `pathAt(doc, key)` → current path. For a deleted token, use the nearest live position to its left. If its cell is hidden, use an adjacent cell.
-- Editor adapter order: capture keys with `anchorAt` whenever selection changes, or immediately before a remote change; apply receiving events; then restore selection through `pathAt`.
-- Remote cursors (presence) use token keys in transmission. Receivers resolve them to paths in their own document.
-- Both endpoints attach to the left token. If someone inserts at my cursor, the new text appears to its right and the cursor does not move. Text inserted at a selection's start enters the selection; text inserted at its end stays outside.
-- Selection is limited to one line. Selection across multiple table cells is not yet supported.
+An explicit same-value leaf update still writes a new Ticket. This preserves write ownership. In contrast, `diffModels()` emits only changed leaves so an editor's unrelated changes do not claim every field. Wire leaf keys use `$field:` followed by a canonical JSON path; cell keys retain their `$cell:row,col|` prefix. Applications use nested `attrs` patches rather than constructing these reserved keys.
+
+## Split and merge
+
+`split` takes a text position and creates a block marker with the left/right token boundary observed at compilation. A split inside a text block keeps its type. At block end, the schema's `next` type applies if present. Only attributes marked `inherit: true` carry into the new block.
+
+Concurrent splits created from the same observed boundary produce one visible split. A split created after observing an earlier split has a different boundary and can create another block. Adapters must preserve this operation meaning instead of rebuilding a trailing paragraph through delete-and-insert.
+
+The model has no inline-text node layer. An adapter whose editor emits separate inline and block splits must convert that native sequence into the appropriate single model split.
+
+`merge` takes the path of the text block to merge into its preceding text block. Without retained movement state, it deletes that block's marker and absorbed marker aliases. With movement state, logical joins retain the physical fragments and their identities. It does nothing for the first block, a virtual block without a marker, a non-text block, or a predecessor that cannot receive characters. It does not merge across different flow sequences.
+
+With movement state, split undo restores the logical join while retaining the tail's original tokens. The history step checks ownership of both the join state and the tail placement. A later observed foreign move, or an unrecorded move by the same actor, makes it skip that inverse. Undoing a later move recorded in the same history restores the shared placement ownership, so the earlier split can then be undone. Redo follows the restored ownership. This prevents split undo from reclaiming a tail that another writer has moved elsewhere.
+
+## Move
+
+`{op: "move", from, at}` moves one block or group into a flow. `from` selects the current source. The destination parent path is resolved before the move. Its final child index excludes the source when counting children in that same flow. For three paragraphs `[A, B, C]`, moving `from: [0]` to `at: [2]` produces `[B, C, A]`.
+
+```ts
+const {ops} = client.doc.edit([{op: "move", from: [0], at: [2]}]);
+client.commit(ops);
+```
+
+The example assumes three existing paragraphs. A nested destination can be a callout body or a table-cell body when its schema accepts the source. A group move moves its flat items. Moving retains node and text identities, so concurrent input and formatting stay attached to their targets. It does not copy content through delete-and-insert.
+
+The wire operation records a target identity, destination flow head, and preceding placement identity. Placement records are retained and resolved in Ticket order. A concurrent cycle is suppressed deterministically during projection. The compiler rejects unsupported destinations and schema-incompatible moves. Text ranges, inline nodes, spans, table rows, and table columns are not general move targets. Required children cannot move or change their fixed type.
+
+## Column folding
+
+The model has table rows and cells but no column node. A native editor can represent one column insertion as one cell insertion per row at the same column index. Within one edit batch, the compiler folds the matching sequence into one CRDT column insertion. Cell deletions use the corresponding rule.
+
+A cell insertion in only one row still inserts a whole column. Other rows receive empty cell bodies. This maintains a rectangular grid. Full-grid cell indexes include covered cells, so adapters must not substitute a visible-cell-only index without converting it.
+
+A `GridBlock` is an internal view of current rows, columns, and spans. Command helpers that consume it need a fresh view after structural edits. Model-path editing resolves current structures during compilation.
+
+## Canonical models and normalization
+
+`canonical()` returns a consistent model shape. `Doc.toJSON()` uses the same model rules. They include:
+
+- A flow starts with a text-shaped block. If needed, an empty block of its schema default type is inserted. A text shape can set `text: false`, as the demo image block does.
+- Flat items regroup into adjacent lists or captions. Group attributes follow the schema's `by` keys. Explicit item values can split a group.
+- Declared attribute defaults are filled where model rules require them. Adjacent text with equal marks becomes a run. Value marks can become span wrappers.
+- Tables are rectangular. Missing cells are supplied up to the widest row. Tables without rows or columns are omitted. Cell bodies use the declared body flow type.
+- Merge spans are recomputed into top-left `colspan`/`rowspan` and covered-cell `spanned` output. Ordinary computed defaults need not appear on every cell.
+- Empty virtual positions following non-text blocks are omitted from the model. A table can be the final model child even though the editor can expose a virtual cursor position after it.
+
+### Child counts
+
+A flow can declare `childRules: {heading: {min: 1, max: 1}}` for one of its allowed child types. Bounds are integers from 0 through 1000, and `min` cannot exceed `max`. Omitted bounds mean minimum zero and no maximum. Rules count groups as model groups, rather than counting each flattened item. Required cycles through nested flows or table bodies are invalid schema definitions.
+
+Limits use deterministic projection. Concurrent excess children remain stored and are available through `doc.overflow(lineKey?)`; they can become visible after deletion or undo. A missing minimum creates a deterministic required child with a stable, editable identity. This avoids each replica independently inserting a replacement. Required types stay fixed. Deleting a required child clears its content while retaining its identity and attributes. Required groups keep separate stable boundaries. These rules do not reject a concurrent operation merely because the current visible count reached its maximum.
+
+Canonical normalization is not a complete schema validator for arbitrary trees. It does not prove that every supplied child is allowed at its current destination. Schema-valid clients must honor `children`, `text`, attribute rules, and shape constraints before producing edits.
+
+Pass `{normalize: true}` when an adapter needs the difference between its proposed model result and the actual CRDT result. A registered `editListener` also requests that computation. Without either request, the method still returns a `normalize` array, but does not compute the comparison. An empty array in that mode is not evidence that no normalization was needed.
+
+When requested, the document compares the expected model result with the actual model and returns edits that reconcile them. Apply those edits to the editor after its local operations. Typical differences involve leading default blocks, partial-row column edits, merges that cover newly inserted axes, and overlapping spans. Normalization describes the final model; it does not authorize invalid operations or provide rollback for a failed local batch.
+
+## Received model events
+
+`SyncClient.onModelEvents` supplies model edits for remote changes, undo, redo, snapshot, and reset when the model changes. Applying those edits to the prior model must produce the next model. The client computes model differences, verifies the result, and falls back to replacement if verification fails. No visible model change means no model-event callback.
+
+Flows are compared as flattened item sequences so list regrouping does not invalidate subsequent paths. An adapter applies received edits without committing them again as new local changes. It also handles reset and snapshot lifecycle events when its input or selection state needs work even if model content is equal.
+
+The current safe remote path can compare up to eight independent text blocks. Structural changes, excluded token dependencies, larger block sets, and undo/redo use the broader path described in the [state specification](spec.md). This optimization does not alter event meaning or establish native-editor performance.
+
+## Server validation
+
+`Doc.check(ops)` checks wire operations against immutable facts: token IDs, original node types, sequence membership, slot ownership, and schema compatibility. It recognizes references created earlier in the same change. Deleted targets can still receive causally valid operations.
+
+Current block types, liveness, and visible block membership can differ between replicas while changes are in flight. Server validation therefore cannot treat every current editor constraint as an immutable rejection rule. For example, accepting characters in a sequence containing captions does not establish that a handcrafted insertion belongs in a current text-accepting block. Clients still enforce destination-specific edit rules.
+
+`DocHub.submit()` validates a whole change before applying it and requires actor sequence order. Invalid changes do not partially update the server document. This server contract is distinct from the immediate local compilation performed by `Doc.edit()`. Neither boundary supplies authentication, authorization, request-size limits, or rate limits. Schema child counts use deterministic projection; see the document rules guide.
+
+## History and positions
+
+`commands` remains an exported set of editor-action helpers built on the editing layer. Model operations are the common interface for adapters; token-level helpers are available when an editor needs them.
+
+`anchorAt(doc, path)` captures a token-key position. `pathAt(doc, key)` resolves a current path after edits. Deleted-token fallback and hidden-cell handling follow the position contract. Store token identities for selections that must survive remote edits; convert their coordinates when restoring native selection. Presence uses the library's active-end `anchor` convention.
+
+Use collaboration history for shared undo and redo. Local `Doc.edit()` by itself does not record a networked edit history; `SyncClient.commit()` supplies the client history and transport boundary. The ownership rules are specified in [collaboration intent](collaboration-intent.md).
+
+## Persistent annotations
+
+Annotations are stored outside `NodeJSON` in a reserved slot. `createAnnotation(doc, range, data?, options?)` returns `{id, ops}`. `updateAnnotation(doc, id, patch)` and `deleteAnnotation(doc, id)` return operations. These helpers already apply their operations locally; pass them once to `client.commit()` for shared history and delivery. `getAnnotations(doc)` reads live records.
+
+A range has `{anchor: ModelPath, focus: ModelPath}` in UTF-16 token positions. `options.expand` is `"none"` (default), `"start"`, `"end"`, or `"both"`. Endpoints retain the left and right token identities plus affinity. Data keys are independent atomic LWW fields. An update can supply `range`, `expand`, `data`, or `removeData`; assigning JSON `null` is distinct from removing a data key.
+
+Each record reports its stored endpoints, data, `status`, resolved `range`, and `backward`. Status is `resolved`, `missing`, `hidden`, `cross-slot`, or `compacted`. An unresolved record has no resolved range and is not redirected to another cell. Live annotations pin their endpoint identities against GC. These records provide storage and range resolution; the application supplies comment, review, or highlight UI.

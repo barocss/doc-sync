@@ -7,7 +7,7 @@
     "node": ">=22.18"
   },
   "scripts": {
-    "prepare:content": "node scripts/prepare-content.mjs && node scripts/prepare-diagrams.mjs",
+    "prepare:content": "node scripts/prepare-content.mjs && node scripts/prepare-diagrams.mjs && node scripts/prepare-full-schema.mjs",
     "dev": "npm run prepare:content && vitepress dev --host 127.0.0.1",
     "build": "npm run prepare:content && vitepress build",
     "preview": "vite preview --outDir dist --base /doc-sync/ --host 127.0.0.1",

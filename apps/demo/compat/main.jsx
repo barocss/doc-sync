@@ -7,6 +7,7 @@ import {Slate, Editable, withReact} from 'slate-react';
 import {createEditor as createLexicalEditor, $getRoot, $getSelection, $isRangeSelection, $createRangeSelection, $setSelection, $createParagraphNode, $createTextNode, UNDO_COMMAND, REDO_COMMAND, COMMAND_PRIORITY_HIGH, SKIP_DOM_SELECTION_TAG} from 'lexical';
 import {registerRichText, HeadingNode, QuoteNode, $createHeadingNode, $createQuoteNode} from '@lexical/rich-text';
 import {TableNode, TableRowNode, TableCellNode, $createTableNode, $createTableRowNode, $createTableCellNode, $createTableNodeWithDimensions, $insertTableColumnAtNode, $insertTableRowAtNode, registerTablePlugin, registerTableSelectionObserver} from '@lexical/table';
+import {createAnnotation, updateAnnotation, deleteAnnotation, getAnnotations} from '@barocss/doc-sync';
 import {SyncClient, HttpTransport} from '@barocss/doc-sync/sync';
 import {PmBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@barocss/doc-sync/prosemirror';
 import {TextSelection} from 'prosemirror-state';
@@ -17,6 +18,8 @@ import {addColumnAfter, addRowAfter, tableEditing} from 'prosemirror-tables';
 import {resetAndWait, createActionGuard} from '../ui/reset.ts';
 import {schema, canon, fromSlate, toSlate, fromLexical, editsFor, commitModelEdits} from './model.mjs';
 import {InputSession, slateModelPoint, slateNativePoint, lexicalBlocks, lexicalModelPoint, lexicalNativePoint} from './input-session.mjs';
+import {SlateBinding, fromSlate as readBoundSlate} from '@barocss/doc-sync/slate';
+import {LexicalBinding, buildLexicalSchema, readLexicalModel} from '@barocss/doc-sync/lexical';
 
 const DOC=new URLSearchParams(location.search).get('doc') ?? 'editor-compat-chrome';
 const peers=[], failures=[];
@@ -101,11 +104,19 @@ function makePeer(name,kind) {
 
 const slateLeaf=({attributes,children,leaf})=><span {...attributes} style={{fontWeight:leaf.bold?'bold':undefined,fontStyle:leaf.italic?'italic':undefined,textDecoration:[leaf.underline?'underline':'',leaf.strike?'line-through':''].filter(Boolean).join(' ')}}>{children}</span>;
 const slateElement=({attributes,children,element})=>{
-  const tag=({'heading1':'h1','heading2':'h2','quote':'blockquote','table':'table','table-row':'tr','table-cell':'td','table-cell-body':'div'})[element.type]??'p';
-  return tag==='table'?<table {...attributes}><tbody>{children}</tbody></table>:React.createElement(tag,attributes,children);
+  const spec=schema.nodes[element.type],shape=spec?.shape,attrs=element.attrs??{};
+  if(shape==='grid')return <table {...attributes}><tbody>{children}</tbody></table>;
+  if(shape==='row')return <tr {...attributes}>{children}</tr>;
+  if(shape==='cell')return <td {...attributes} colSpan={attrs.colspan??1} rowSpan={attrs.rowspan??1} style={{display:attrs.spanned?'none':undefined,backgroundColor:attrs.backgroundColor||undefined}}>{children}</td>;
+  if(shape==='inline')return <span {...attributes} contentEditable={false} style={{display:'inline-block',border:'1px solid #94a3b8',padding:'0 4px'}}>{children}<span aria-label={element.type}>Image</span></span>;
+  if(shape==='span')return <span {...attributes} style={{textDecoration:'underline'}}>{children}</span>;
+  if(shape==='atom')return <div {...attributes} contentEditable={false}>{children}<hr/></div>;
+  const list=shape==='group'&&spec.children.some(type=>schema.nodes[type]?.ui?.list);
+  const tag=list?(attrs.listType==='numbered'?'ol':'ul'):shape==='group'?'div':shape==='flow'?'section':spec?.ui?.list?'li':spec?.text===false?'div':({'heading1':'h1','heading2':'h2','quote':'blockquote'})[element.type]??'p';
+  return React.createElement(tag,{...attributes,'data-node-type':element.type},children);
 };
 
-function mountSlate(name) {
+function mountSlateLegacy(name) {
   const peer=makePeer(name,'Slate');
   const editor=withReact(createSlateEditor());
   let remote=false;
@@ -160,7 +171,7 @@ function mountSlate(name) {
   peer.action('굵게',()=>Editor.addMark(editor,'bold',!Editor.marks(editor)?.bold));
 }
 
-function mountLexical(name) {
+function mountLexicalLegacy(name) {
   const peer=makePeer(name,'Lexical');
   const element=document.createElement('div');
   element.className='editor';element.contentEditable='true';element.setAttribute('role','textbox');element.setAttribute('aria-label',name);
@@ -223,6 +234,96 @@ function mountLexical(name) {
   },{discrete:true}));
 }
 
+
+// The default consumers use package exports. ?legacy=1 retains the previous
+// compatibility adapters for bounded before/after checks.
+function makeBoundPeer(name, kind) {
+  const actor=`${name}-${crypto.randomUUID().slice(0,8)}`;
+  const transport=new HttpTransport(DOC,actor);
+  const client=new SyncClient(actor,transport,{schema,ackDelay:50});
+  const section=document.createElement('section');
+  section.id=name;
+  section.innerHTML=`<h2>${kind} · ${name}</h2><div class="meta"></div><nav></nav><div class="mount"></div>`;
+  document.querySelector('#panes').append(section);
+  const peer={name,kind,client,transport,section,local:0,remote:0,ready:Promise.resolve(),pull:()=>{},read:()=>client.doc.toJSON(),captureSelection:()=>{}};
+  peer.action=(label,run)=>{
+    const button=document.createElement('button');button.textContent=label;
+    button.addEventListener('mousedown',event=>event.preventDefault());
+    button.addEventListener('click',()=>{try{run();}catch(error){report(error);}});
+    section.querySelector('nav').append(button);
+  };
+  client.onModelEvents=(events,info)=>{
+    peer.remote++;
+    if(tracingEnabled)recordOperation({name,kind,phase:'remote',cause:info.cause,events,model:client.doc.toJSON()});
+  };
+  peer.action('되돌리기',()=>peer.binding.undo());
+  peer.action('다시하기',()=>peer.binding.redo());
+  peer.action('연결 전환',()=>client.online?client.disconnect():client.connect());
+  peers.push(peer);return peer;
+}
+
+function mountSlate(name) {
+  const peer=makeBoundPeer(name,'Slate');
+  const editor=withReact(createSlateEditor());
+  const binding=new SlateBinding(peer.client,editor,{groupTyping:false,element:peer.section,onError:report});
+  peer.binding=binding;peer.pull=()=>binding.sync();
+  peer.read=()=>readBoundSlate(schema,editor.children);
+  let ready;
+  peer.ready=new Promise(resolve=>{ready=resolve;});
+  const EditorApp=()=>{
+    useEffect(()=>{ready();return()=>binding.dispose();},[]);
+    return <Slate editor={editor} initialValue={binding.initialValue} onChange={()=>{
+      if(!editor.operations.some(op=>op.type!=='set_selection'))return;
+      peer.local++;
+      if(tracingEnabled)recordOperation({name,kind:'Slate',phase:'local',native:{operations:structuredClone(editor.operations),after:structuredClone(editor.children)},modelAfter:peer.client.doc.toJSON(),deferred:binding.composing,wireOps:peer.client.pending.at(-1)?.ops??[]});
+    }}>
+      <Editable className="editor" aria-label={name} renderElement={slateElement} renderLeaf={slateLeaf}
+        onKeyDown={event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.shiftKey?binding.redo():binding.undo();}}}/>
+    </Slate>;
+  };
+  const root=createRoot(peer.section.querySelector('.mount'));root.render(<EditorApp/>);
+  peer.dispose=()=>{binding.dispose();root.unmount();};
+  const paragraph=()=>({type:'paragraph',children:[{text:''}]});
+  const cell=()=>({type:'table-cell',children:[{type:'table-cell-body',children:[paragraph()]}]});
+  peer.action('표 2×3',()=>Transforms.insertNodes(editor,{type:'table',attrs:{header:false},children:Array.from({length:2},()=>({type:'table-row',children:Array.from({length:3},cell)}))},{at:[editor.children.length]}));
+  peer.action('열 추가',()=>{
+    const i=editor.children.findIndex(node=>node.type==='table');if(i<0)throw new Error('먼저 표를 넣으십시오');
+    Editor.withoutNormalizing(editor,()=>editor.children[i].children.forEach((row,r)=>Transforms.insertNodes(editor,cell(),{at:[i,r,row.children.length]})));
+  });
+  peer.action('행 추가',()=>{
+    const i=editor.children.findIndex(node=>node.type==='table'),table=editor.children[i];if(!table)throw new Error('먼저 표를 넣으십시오');
+    Transforms.insertNodes(editor,{type:'table-row',children:Array.from({length:table.children[0].children.length},cell)},{at:[i,table.children.length]});
+  });
+  peer.action('굵게',()=>Editor.addMark(editor,'bold',!Editor.marks(editor)?.bold));
+}
+
+function mountLexical(name) {
+  const peer=makeBoundPeer(name,'Lexical');
+  const element=document.createElement('div');element.className='editor';element.contentEditable='true';
+  element.setAttribute('role','textbox');element.setAttribute('aria-label',name);peer.section.querySelector('.mount').append(element);
+  const info=buildLexicalSchema(schema);
+  const editor=createLexicalEditor({namespace:name,nodes:info.nodes,onError:report});
+  editor.setRootElement(element);
+  const removeRichText=registerRichText(editor),removeTable=registerTablePlugin(editor),removeSelection=registerTableSelectionObserver(editor,true);
+  const binding=new LexicalBinding(peer.client,editor,{groupTyping:false,info,onError:report});
+  const commit=peer.client.commit;let localOps=[];
+  const captureCommit=function(ops,record){if(record!==null&&ops.length)localOps.push(...ops);return commit.call(this,ops,record);};
+  peer.client.commit=captureCommit;
+  peer.binding=binding;peer.pull=()=>binding.pull();peer.read=()=>readLexicalModel(editor,info);
+  const keydown=event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.stopPropagation();event.shiftKey?binding.redo():binding.undo();}};
+  element.addEventListener('keydown',keydown,true);
+  const removeUpdate=editor.registerUpdateListener(({editorState,prevEditorState,tags,dirtyElements,dirtyLeaves})=>{
+    if((tags.has('doc-sync-remote')&&!localOps.length)||(!dirtyElements.size&&!dirtyLeaves.size))return;
+    const wireOps=localOps;localOps=[];peer.local++;
+    if(tracingEnabled)recordOperation({name,kind:'Lexical',phase:'local',native:{before:prevEditorState.toJSON(),after:editorState.toJSON(),tags:[...tags]},modelAfter:peer.client.doc.toJSON(),deferred:binding.input.active,wireOps});
+  });
+  peer.dispose=()=>{if(peer.client.commit===captureCommit)peer.client.commit=commit;binding.dispose();removeUpdate();removeRichText();removeTable();removeSelection();element.removeEventListener('keydown',keydown,true);editor.setRootElement(null);};
+  peer.action('표 2×3',()=>editor.update(()=>{$getRoot().append($createTableNodeWithDimensions(2,3,false));},{discrete:true}));
+  const table=()=>$getRoot().getChildren().find(node=>node.getType()==='table');
+  peer.action('열 추가',()=>editor.update(()=>{const node=table();if(!node)throw new Error('먼저 표를 넣으십시오');$insertTableColumnAtNode(node.getFirstChild().getLastChild(),true,false);},{discrete:true}));
+  peer.action('행 추가',()=>editor.update(()=>{const node=table();if(!node)throw new Error('먼저 표를 넣으십시오');$insertTableRowAtNode(node.getLastChild().getFirstChild(),true);},{discrete:true}));
+}
+
 function mountProseMirror(name) {
   const peer=makePeer(name,'ProseMirror');
   const info=buildPmSchema(schema,{
@@ -278,7 +379,9 @@ function mountProseMirror(name) {
   peer.action('행 추가',()=>run(addRowAfter));
 }
 
-mountSlate('slate-a');mountSlate('slate-b');mountLexical('lexical-a');mountLexical('lexical-b');mountProseMirror('pm-a');
+const legacy=new URLSearchParams(location.search).get('legacy')==='1';
+(legacy?mountSlateLegacy:mountSlate)('slate-a');(legacy?mountSlateLegacy:mountSlate)('slate-b');
+(legacy?mountLexicalLegacy:mountLexical)('lexical-a');(legacy?mountLexicalLegacy:mountLexical)('lexical-b');mountProseMirror('pm-a');
 const snapshot=()=>({doc:DOC,server,failures:[...failures],peers:peers.map(p=>({name:p.name,kind:p.kind,online:p.client.online,pending:p.client.pending.length,seq:p.client.serverSeq,local:p.local,remote:p.remote,fallbacks:p.client.eventStats.fallbacks,model:p.client.doc.toJSON(),nativeModel:p.read()}))});
 const guard=createActionGuard();
 document.querySelector('#reset').onclick=()=>guard(async()=>{
@@ -290,8 +393,14 @@ document.querySelector('#disconnect').onclick=()=>peers.forEach(p=>p.client.disc
 document.querySelector('#connect').onclick=()=>peers.forEach(p=>p.client.connect());
 await Promise.all(peers.map(p=>p.ready));
 peers.forEach(p=>p.client.connect());
-window.addEventListener('pagehide',()=>peers.forEach(p=>{p.client.disconnect();p.transport.leave();}));
-window.compat={snapshot,trace:readOperations,clearTrace:clearOperations};
+window.addEventListener('pagehide',()=>peers.forEach(p=>{p.dispose?.();p.client.disconnect();p.transport.leave();}));
+window.compat={snapshot,trace:readOperations,clearTrace:clearOperations,
+  edit:(name,edits)=>{const peer=peers.find(p=>p.name===name);if(!peer)throw new Error('Unknown peer');peer.client.commit(peer.client.doc.edit(edits).ops);},
+  annotations:()=>peers.map(peer=>({name:peer.name,records:getAnnotations(peer.client.doc)})),
+  annotate:(name,range,data,options)=>{const peer=peers.find(p=>p.name===name);if(!peer)throw new Error('Unknown peer');const result=createAnnotation(peer.client.doc,range,data,options);peer.client.commit(result.ops);return result.id;},
+  updateAnnotation:(name,id,patch)=>{const peer=peers.find(p=>p.name===name);if(!peer)throw new Error('Unknown peer');peer.client.commit(updateAnnotation(peer.client.doc,id,patch));},
+  deleteAnnotation:(name,id)=>{const peer=peers.find(p=>p.name===name);if(!peer)throw new Error('Unknown peer');peer.client.commit(deleteAnnotation(peer.client.doc,id));},
+};
 setInterval(async()=>{
   try {
     const state=await(await fetch(`/api/docs/${DOC}/state`)).json();

@@ -1,6 +1,7 @@
 import {keyOf} from "../crdt/ticket.ts";
 import {Doc} from "../crdt/doc.ts";
 import type {Schema} from "../crdt/schema.ts";
+import {DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../sync/protocol.ts";
 import type {Ack, Change, Envelope, Presence, ServerEvent} from "../sync/protocol.ts";
 
 /**
@@ -28,6 +29,8 @@ export type HubOptions = {
 };
 
 export class DocHub {
+    /** A restart gets a new epoch; clients with unconfirmed edits must stop safely. */
+    epoch = crypto.randomUUID();
     doc: Doc;
     log: Envelope[] = [];
     private readonly lastSeq = new Map<string, number>();
@@ -78,6 +81,11 @@ export class DocHub {
             throw new Error(problem);
         }
 
+        // Validate reserved payload descriptors before cloning: cloning invokes getters.
+        // Own the validated payload and recheck that retained copy before application.
+        change = structuredClone(change);
+        const retainedProblem = this.doc.check(change.ops);
+        if (retainedProblem) throw new Error(retainedProblem);
         change.ops.forEach(op => this.doc.apply(op));
 
         const envelope: Envelope = {serverSeq: this.log.length + 1, change};
@@ -156,23 +164,27 @@ export class DocHub {
     // ── 그 밖 ─────────────────────────────────────────────────────────────
 
     since(serverSeq: number): Envelope[] {
-        return this.log.slice(serverSeq);
+        return structuredClone(this.log.slice(serverSeq));
     }
 
-    /** 새 참여자에게 줄 첫 이벤트. since 가 0 이면 스냅숏을 싣는다 */
-    hello(since: number): ServerEvent {
+    /** Include a full snapshot for new clients or a different document generation. */
+    hello(since: number, epoch?: string): ServerEvent {
+        const snapshot = since === 0 || epoch !== this.epoch;
         return {
             type: "hello",
+            protocol: PROTOCOL_VERSION,
+            capabilities: [...DOCUMENT_CAPABILITIES],
+            epoch: this.epoch,
             serverSeq: this.serverSeq,
-            snapshot: since === 0 ? this.doc.snapshot() : null,
-            delSeqs: since === 0 ? [...this.delSeq] : [],
-            clientSeqs: since === 0 ? [...this.lastSeq] : [],
-            presence: [...this.presence.values()],
+            snapshot: snapshot ? this.doc.snapshot() : null,
+            delSeqs: snapshot ? [...this.delSeq] : [],
+            clientSeqs: snapshot ? [...this.lastSeq] : [],
+            presence: [...this.presence.values()].map(presence => ({...presence})),
         };
     }
 
     setPresence(presence: Presence): void {
-        this.presence.set(presence.actor, presence);
+        this.presence.set(presence.actor, {...presence});
         this.emit({type: "presence", presence});
     }
 
@@ -204,22 +216,24 @@ export class DocHub {
 
     /** 데모용: 문서를 비운다 */
     reset(): void {
+        this.epoch = crypto.randomUUID();
         this.doc = new Doc("~server", this.schema);
         this.log = [];
         this.lastSeq.clear();
         this.delSeq.clear();
         this.lastGc = 0;
         this.peers.forEach(p => Object.assign(p, {seq: 0, pin: null}));
-        this.emit({type: "reset"});
+        this.emit({type: "reset", epoch: this.epoch});
     }
 
     private append(envelope: Envelope, persist = true): void {
-        this.log.push(envelope);
-        persist && this.onAppend?.(envelope);
-        this.emit({type: "change", envelope});
+        const stored = structuredClone(envelope);
+        this.log.push(stored);
+        persist && this.onAppend?.(structuredClone(stored));
+        this.emit({type: "change", envelope: stored});
     }
 
     private emit(event: ServerEvent): void {
-        this.listeners.forEach(listener => listener(event));
+        this.listeners.forEach(listener => listener(structuredClone(event)));
     }
 }

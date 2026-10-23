@@ -1,0 +1,72 @@
+{
+  "work_id": "sync-client-local-edit-20261022",
+  "label": "before-1",
+  "node": "v22.19.0",
+  "samples": 30,
+  "warmups": 5,
+  "unit": "ms",
+  "rows": [
+    {
+      "chars": 10000,
+      "paragraphs": 63,
+      "correct": true,
+      "cases": [
+        {
+          "path": "doc",
+          "p50": 0.05724999999998204,
+          "p95": 0.13895800000000236,
+          "max": 0.14708400000000665,
+          "notices": 0,
+          "normalizations": 0
+        },
+        {
+          "path": "client",
+          "p50": 0.029541999999992186,
+          "p95": 0.030499999999989313,
+          "max": 0.04487500000001887,
+          "notices": 0,
+          "normalizations": 0
+        },
+        {
+          "path": "client-observed",
+          "p50": 0.21095900000000256,
+          "p95": 0.39554200000000606,
+          "max": 0.7629589999999951,
+          "notices": 35,
+          "normalizations": 0
+        }
+      ]
+    },
+    {
+      "chars": 100000,
+      "paragraphs": 625,
+      "correct": true,
+      "cases": [
+        {
+          "path": "doc",
+          "p50": 0.09583299999997053,
+          "p95": 0.23349999999999227,
+          "max": 2.4917500000000246,
+          "notices": 0,
+          "normalizations": 0
+        },
+        {
+          "path": "client",
+          "p50": 0.10049999999995407,
+          "p95": 0.26600000000001955,
+          "max": 2.516750000000002,
+          "notices": 0,
+          "normalizations": 0
+        },
+        {
+          "path": "client-observed",
+          "p50": 0.31970800000010513,
+          "p95": 2.8246669999999767,
+          "max": 3.7876249999999345,
+          "notices": 35,
+          "normalizations": 0
+        }
+      ]
+    }
+  ]
+}

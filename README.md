@@ -1,12 +1,12 @@
 # @barocss/doc-sync
 
-A document CRDT library with an injected schema. It is written in TypeScript. The CRDT, sync client, and server have **no dependencies**. Only the ProseMirror integration uses prosemirror packages as peers. The repository contains the CRDT, a sync client, a server (DocHub), a ProseMirror binding, and browser demos.
+A document CRDT library with an injected schema. It is written in TypeScript. The CRDT, sync client, and server have **no dependencies**. ProseMirror, Slate and Lexical integrations use optional editor peers. The repository contains the CRDT, a sync client, a server (DocHub), three editor bindings, and browser demos.
 It started with an idea tested in an earlier Yorkie experiment repository: "a document as one token sequence." It is now a standalone library, separate from Yorkie and the schema-based document editor. Its name is `@barocss/doc-sync` (user decision, 2026-10-22).
 **Read [`HANDOFF.md`](HANDOFF.md) first in a new session.**
 
-**Monorepo structure**: `packages/doc-sync` is the only library that provides the public API. `apps/demo`, `apps/docs`, and `benchmarks` are separate private npm workspaces. The shared example schema is in `fixtures/demo-schema.ts`. The existing package name and four entry points remain. The library also keeps its existing `private: true` setting until release preparation.
+**Monorepo structure**: `packages/doc-sync` is the only library that provides the public API. `apps/demo`, `apps/docs`, and `benchmarks` are separate private npm workspaces. The shared example schema is in `fixtures/demo-schema.ts`. The existing package name remains. Six entry points expose the core, sync, server, and three editor bindings. The library also keeps its existing `private: true` setting until release preparation.
 
-**Documentation**: Read the [public documentation site](https://barocss.github.io/doc-sync/) for schema-driven block operations, ProseMirror, Slate, and Lexical integration examples, collaboration rules, and verification limits. The site is built from `apps/docs` and deployed to GitHub Pages. Slate and Lexical examples use private compatibility-test adapters; no additional binding package export exists.
+**Documentation**: Read the [public documentation site](https://barocss.github.io/doc-sync/) for schema-driven block operations, ProseMirror, Slate, and Lexical integration examples, collaboration rules, and verification limits. The site is built from `apps/docs` and deployed to GitHub Pages. Slate and Lexical have public binding subpaths in the same package. The complete example schema has its own guide.
 
 **Remote user display**: The demo and ProseMirror show user-colored selection ranges and named carets. They support forward, backward, and multi-paragraph selections, position tracking after edits, and overlapping participants. Demo ranges stay within one CRDT sequence (slot). See [`HANDOFF.md` §5.5](HANDOFF.md#55-remote-user-selection-ranges-2026-10-22) for the rules and browser results.
 
@@ -20,7 +20,7 @@ import {PmBinding, buildPmSchema} from "@barocss/doc-sync/prosemirror";
 ```
 
 The CRDT does not know block types. **Inject the schema from outside**, with a tree defined through `children`, as in a schema-based document editor. The CRDT knows only a few schema
-"shapes." It has only five operations, independent of type. To add a block type, change the schema.
+"shapes." It has six operations, independent of type. To add a block type, change the schema.
 
 ```bash
 npm install                  # Dev dependencies (prosemirror-*, typescript, yjs; yjs is for benchmarks)
@@ -57,17 +57,17 @@ Add these parameters to a demo URL: `?doc=name` (document), `?peers=1..4` (parti
 There are **character tokens** and **node tokens** (the block-opening marker ¶, tables, rows, images, and so on). The block list is not stored. It is calculated as needed by reading live tokens in order.
 
 - Enter = insert one marker.
-- Join paragraphs with Backspace = delete one marker.
+- Join paragraphs with Backspace = delete one marker on the original path; moved fragments use a retained join relation.
 - Block type (heading, quote, list item) = the marker's `$type` attribute.
 
 There is one main sequence and named **slot** sequences for nodes: table `rows`, `cols`, and `cell:row,col`; container and image `body` slots.
 A slot's head ID is derived from its owner node ID and slot name. No separate operation creates the sequence.
 
-There is no tree-split or node-move operation. This removes the cause of the Yorkie Tree problem where concurrent splits at the same boundary move different nodes on different replicas (§7.4, yorkie#2240).
+Text split uses boundary markers. Block move uses a separate, cycle-safe placement projection. It preserves token IDs and immutable physical origins. A text split does not split an arbitrary subtree.
 
 ### 2. IDs alone define order (RGA)
 
-Every token has an immutable ID, `lamport@actor`. A new token is inserted immediately after its left origin token. Concurrent tokens with the same origin are ordered with the larger ID first. Only IDs determine the result. All replicas produce the same sequence regardless of delivery order. No tree lookup is needed.
+Every token has an immutable ID, `lamport@actor`. A new token is inserted immediately after its left origin token. Concurrent tokens with the same origin are ordered with the larger ID first. IDs determine the physical sequence order. Valid causally ordered deliveries produce the same sequence. Logical block placement is projected separately when movement is used.
 
 ### 3. Concurrent Enter at the same position creates one new line
 
@@ -171,7 +171,7 @@ content ─ paragraph(─ inline-image) · heading1 · heading2 · quote
         ─ divider
 ```
 
-The five type-independent operations are character insertion `text`, node insertion `node`, deletion `del`, deletion cancellation `undel`, and attribute assignment `set`.
+The six type-independent wire operations are character insertion `text`, node insertion `node`, deletion `del`, deletion cancellation `undel`, attribute assignment `set`, and identity-preserving placement `move`.
 Block type `$type`, block and image attributes, and character formatting all use `set`.
 
 **Validation uses immutable facts only.** The server checks whether a type is allowed in a sequence and whether an attribute value is valid. It uses only the token's sequence membership
@@ -226,7 +226,7 @@ An image-component is a flow container. Its sequence contains an image block fol
 - Blocks do not merge into a block that rejects text. Backspace at the caption start, Delete at the image end, and deletion from image through caption all preserve a caption block.
 - Paragraphs can also contain inline-image nodes. They occupy one character position and are skipped by formatting. Concurrent image resizing converges on the later ID.
 
-### 14. Editing API: five model operations (`docs/edit-api.md`)
+### 14. Editing API: six model operations (`docs/edit-api.md`)
 
 An editor uses model paths (child indices in the `toJSON` tree, the same numeric-array form as the schema-based editor's paths) and model nodes. It does not need to know CRDT sequences or tokens.
 
@@ -239,7 +239,7 @@ doc.edit([0, 1, 2].map(r => ({op: "insert", at: [1, r, 1], content: [{type: "tab
 doc.edit([{op: "update", at: [1, 0, 0], attrs: {colspan: 2, backgroundColor: "#dcfce7"}}]);
 ```
 
-- Compile `insert · delete · update · split · merge` to wire operations by schema **shape** (`edit.ts`). Type names are not inspected.
+- Compile `insert · delete · update · split · merge · move` to wire operations by schema **shape** (`edit.ts`). Type names are not inspected.
 - Deleting the first block of a flow in a batch leaves a vacant head. Later paths do not count it. An inserted leading text block fills it.
 - Insertion or deletion of same-index cells across rows folds into one column operation. An operation in only one row is also corrected to one column.
 - `commands.ts` converts editor commands (text, Enter, Backspace, table rows/columns, cell merging, and so on) to edit operations. It replaces 18 old editing functions.
@@ -315,7 +315,7 @@ Use `DATA_DIR=/absolute/path PORT=5411 npm run dev` for a separate log folder an
 | `packages/doc-sync/src/server/hub.ts` | DocHub: ordering, atomic application, broadcast, participant acks and pins, watermark and GC; transport-independent |
 | `apps/demo/server.ts` | Demo server: Node http, JSONL persistence, `.ts` served to browsers after type stripping |
 | `apps/demo/ui/*` | Demo: small schema-aware editor (Korean IME, tables, images, lists), per-sequence token inspector, scenarios, automatic input, and multi-window tests (`multi.html`) |
-| `docs/edit-api.md` | Design notes: five model operations (insert, delete, update, split, merge), through schema-based editor integration |
+| `docs/edit-api.md` | Editing API: six model operations (insert, delete, update, split, merge, move), through schema-based editor integration |
 | `docs/report.html` | Report of work to date |
 | `docs/roadmap.html` | Roadmap to a usable library: stages 0–7, decision gates, and risks |
 | `benchmarks/*` | Stage 0: edit traces (trace), engine wrappers (this library and Yjs), measurements (run), CPU profiling (profile); results in `benchmarks/results/` |

@@ -15,7 +15,7 @@ const MAX_TEXT_SCOPES = 8;
  * undo/redo·되살리기·노드 변경·가상 블록·새 토큰을 다시 참조하는 묶음은 대상이 아니다.
  */
 export const textEventScopes = (doc: Doc, ops: Op[]) => {
-    if (!doc.schema || !ops.length) {
+    if (!doc.schema || !ops.length || doc.hasMoves || doc.hasCardinality) {
         return null;
     }
 

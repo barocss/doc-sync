@@ -1,149 +1,134 @@
-# Slate adapter example
+# Slate binding
 
-The repository includes a working Slate adapter in the compatibility demo. It opens two Slate editors, two Lexical editors, and one ProseMirror editor on the same document. Each editor has its own `SyncClient` and actor identity.
+Use `SlateBinding` from **`@barocss/doc-sync/slate`**. It connects a Slate editor to a `SyncClient`. The binding handles local edits, remote updates, selection restoration, composition drafts, and collaboration history.
 
-This adapter is demo code. The public package does not export a `SlateBinding`. The reusable ProseMirror entry point has a different API: [PmBinding](./prosemirror).
+This is a subpath of the same library. It is not a separate adapter package. The library is still unpublished; the examples resolve through the repository workspace.
 
-## Run the example
+## Dependencies
 
-From the repository root, use Node.js 22.18 or later and an installed Chrome:
+The binding requires the optional peer `slate` (`^0.146.0`). Importing the core library does not require Slate. The repository tests use Slate `0.146.0`.
 
 ```sh
-npm install --prefix apps/demo/compat --workspaces=false --package-lock=false --cache /tmp/doc-sync-compat-npm-cache
-npm run build --prefix apps/demo/compat
-npm test --prefix apps/demo/compat
-npm start --prefix apps/demo/compat
+npm install slate@0.146.0
 ```
 
-Open `http://127.0.0.1:5412/?doc=slate-example`. Choose a new `doc` value to isolate a document. `COMPAT_PORT` changes the server port. The compatibility server starts a separate demo backend with temporary data. It does not use the original `data/` directory. Stopping it stops that backend; temporary data is retained.
+For a React UI, also install your compatible React, React DOM, and `slate-react` dependencies. The binding itself does not depend on React.
 
-The install command keeps these test-editor dependencies outside the root lockfile. It does not publish another library package.
+## Create the binding
 
-## Conversion and event flow
+Start with a schema and one client per editor. This example creates an editor without mounting a UI. `HttpTransport` connects only after `client.connect()` is called.
 
-The adapter uses helpers from two repository files:
+```ts
+import {createEditor} from "slate";
+import {type Schema} from "@barocss/doc-sync";
+import {HttpTransport, SyncClient} from "@barocss/doc-sync/sync";
+import {SlateBinding} from "@barocss/doc-sync/slate";
 
-```jsx
-// Import paths are relative to apps/demo/compat/main.jsx.
-import {
-    schema, fromSlate, toSlate, editsFor, commitModelEdits,
-} from './model.mjs';
-import {
-    InputSession, slateModelPoint, slateNativePoint,
-} from './input-session.mjs';
-```
-
-These helpers are not public npm entry points. `model.mjs` uses the shared demo schema and converts between Slate nodes and canonical `NodeJSON`.
-
-The send path is:
-
-1. Slate calls `onChange` after a native edit.
-2. `fromSlate(editor.children)` produces the common model.
-3. `editsFor(before, next)` recognizes supported paragraph split/join intent, then falls back to `diffModels`.
-4. `commitModelEdits` converts model code-point offsets to CRDT UTF-16 offsets and calls `doc.edit()`.
-5. `InputSession.commit()` sends those operations through the real `SyncClient`, or stages them during composition.
-
-The shared `makePeer` function in `main.jsx` creates the `HttpTransport`, `SyncClient`, and `InputSession`. It installs this send function. The following excerpt omits operation tracing and counters:
-
-```jsx
-peer.send = next => {
-    const doc = peer.input.doc;
-    const before = doc.toJSON();
-    if (equal(before, next)) return;
-
-    const edits = editsFor(before, next);
-    const ops = commitModelEdits(doc, before, edits);
-    peer.input.commit(ops);
-
-    if (!peer.input.active && !equal(peer.client.doc.toJSON(), next)) {
-        peer.captureSelection();
-        peer.pull();
-    }
+const schema: Schema = {
+    root: "content",
+    marks: ["bold", "italic"],
+    nodes: {
+        content: {shape: "flow", children: ["paragraph"], default: "paragraph"},
+        paragraph: {shape: "text"},
+    },
 };
+const actor = crypto.randomUUID();
+const client = new SyncClient(actor, new HttpTransport("slate-example", actor), {schema});
+const editor = createEditor();
+const binding = new SlateBinding(client, editor, {
+    onError: error => console.error(error),
+    onChange: model => console.log(model),
+});
 ```
 
-`doc.edit()` has already applied the returned operations. The adapter commits them without applying them again. The receive path reads the live client model and replaces the native Slate document. It does not apply received model events as individual Slate operations.
+The constructor initializes `editor.children` from the current client document. `binding.initialValue` provides that initial value for a Slate React provider. Local edits are applied once and committed automatically. Do not add another model-diff/commit handler to the same editor.
 
-## Create and wire the native editor
+The binding wraps `editor.onChange`, `isInline`, and `isVoid`. It preserves the previous change callback. Configure editor plugins before creating the binding, and allow the binding to retain these hooks until disposal.
 
-This focused excerpt belongs inside the demo's existing `mountSlate` function. It uses `makePeer`, `equal`, `slateLeaf`, and `slateElement` from `main.jsx`. Those local definitions, composition listeners, error handling, and mount-readiness handling are required in the complete application.
+## Mount a React editor
 
-```jsx
-import React from 'react';
-import {createRoot} from 'react-dom/client';
-import {createEditor as createSlateEditor, Editor, Transforms} from 'slate';
-import {Slate, Editable, withReact} from 'slate-react';
+Use `withReact(createEditor())` when creating the editor above. Mount the provider with the binding's initial value. This UI excerpt uses the `editor` and `binding` created for that React editor:
 
-const peer = makePeer(name, 'Slate');
-const editor = withReact(createSlateEditor());
-let remote = false;
-const initialValue = toSlate(peer.client.doc.toJSON());
-const read = () => fromSlate(editor.children);
+```tsx
+import {Slate, Editable} from "slate-react";
 
-peer.read = read;
-peer.readRange = () => editor.selection ? {
-    anchor: slateModelPoint(editor.children, editor.selection.anchor),
-    focus: slateModelPoint(editor.children, editor.selection.focus),
-} : null;
-peer.flushInput = () => peer.send(read());
-
-peer.pull = () => {
-    if (peer.input.active) return;
-    const model = peer.client.doc.toJSON();
-    if (equal(read(), model)) return;
-
-    remote = true;
-    const next = toSlate(model);
-    const saved = peer.input.resolve(peer.savedRange);
-    Editor.withoutNormalizing(editor, () => {
-        Transforms.deselect(editor);
-        for (let i = editor.children.length - 1; i >= 0; i--) {
-            Transforms.removeNodes(editor, {at: [i]});
-        }
-        Transforms.insertNodes(editor, next, {at: [0]});
-        const anchor = slateNativePoint(editor.children, saved?.anchor);
-        const focus = slateNativePoint(editor.children, saved?.focus);
-        if (anchor && focus) Transforms.select(editor, {anchor, focus});
-    });
-    queueMicrotask(() => { remote = false; });
-};
-
-createRoot(peer.section.querySelector('.mount')).render(
-    <Slate editor={editor} initialValue={initialValue}
-        onChange={() => { if (!remote) peer.send(read()); }}>
-        <Editable className="editor" aria-label={name}
-            renderElement={slateElement} renderLeaf={slateLeaf}
-            onKeyDown={event => {
-                if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
-                    event.preventDefault();
-                    peer.captureSelection();
-                    event.shiftKey ? peer.client.redo() : peer.client.undo();
-                }
-            }}/>
-    </Slate>
-);
+<Slate editor={editor} initialValue={binding.initialValue}>
+    <Editable
+        onCompositionStart={() => binding.beginComposition()}
+        onCompositionEnd={() => queueMicrotask(() => binding.endComposition())}
+        onKeyDown={event => {
+            if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z") {
+                event.preventDefault();
+                event.shiftKey ? binding.redo() : binding.undo();
+            }
+        }}
+    />
+</Slate>
 ```
 
-The `remote` guard prevents replacement operations from becoming another local edit. The full application waits for React mounts before connecting clients. `makePeer` routes `client.onModelEvents` to `peer.pull()` and handles reset events separately.
+After the native editor is mounted, call `client.connect()`. Provide `renderElement` and `renderLeaf` implementations for the types and marks your UI supports. The binding preserves schema data; it does not supply the application's toolbar or renderers.
 
-The demo uses CRDT history for undo and redo. Do not add an independent Slate history as the authority for shared edits without defining how the histories interact.
+Instead of composition props, pass an existing editable container as `options.element` when constructing the binding. It installs removable `compositionstart` and `compositionend` listeners there. Use one composition wiring method for an editor.
 
-## Selection and composition
+## Schema and conversion
 
-Before a server event changes the document, the focused editor captures both selection ends. `slateModelPoint` combines offsets across formatting leaves. `InputSession.capture()` then stores CRDT token identities. After replacement, `InputSession.resolve()` finds current paths, and `slateNativePoint` converts them back into Slate leaf paths and UTF-16 offsets. A fixed numeric path alone would not survive a paragraph split or format-leaf replacement.
+`toSlate(schema, model)` and `fromSlate(schema, children)` convert without a binding. For example:
 
-At composition start, `InputSession.begin()` clones the CRDT state. Local input edits this draft while the real client continues to receive remote changes. `peer.pull()` defers native replacement while the draft is active. After composition ends, the shared handler lets Slate flush its last update, captures selection, commits the draft's operations as one history group, and pulls the live model.
+```ts
+import {fromSlate, toSlate} from "@barocss/doc-sync/slate";
 
-Draft operations retain their token IDs and origins. They are not reconstructed by diffing a stale native document against the live remote state. `reserveClock()` prevents draft/live operation-number collisions, including after reconnect snapshots. Reset cancels the draft and clears stale display state, even when the document model was already empty.
+const children = toSlate(schema, client.doc.toJSON());
+const model = fromSlate(schema, children);
+```
 
-## Test scope and limits
+The codec supports the model tree for all nine shapes: `text`, `inline`, `span`, `flow`, `group`, `grid`, `row`, `cell`, and `atom`. It retains schema type names and attributes represented by the core model. It supports arbitrary schema type names, not only the demo names.
 
-The demo supports paragraphs, `heading1`, `heading2`, quotes, basic marks, and simple tables within its conversion rules. Slate tables use nodes and `Transforms` defined in `main.jsx`; they are not a separate public table binding. The converter rejects unsupported inline content.
+| Model data | Slate representation |
+| --- | --- |
+| Node type and attributes | `element.type` and `element.attrs` |
+| Character marks and values | Text-leaf properties |
+| Link or other value-mark span | Editable inline element with child text |
+| Inline node | Void inline element with an empty text child |
+| Atom | Void block element with an empty text child |
+| Lists and nested flows | Nested elements matching the model tree |
+| Tables | Full rows/cells/body tree, including covered-cell text |
 
-The compatibility tests cover conversion and input-session behavior. Chrome scripts cover native/client/server equality, reconnect, caret mapping, composition with remote edits, formatting, split/join, table input, and composition reset. The historical post-fix report records 84/84 aggregate input checks across Slate, Lexical, and ProseMirror, plus 20 general regressions and 30 captured operation traces. Those are different evidence types.
+The binding installs schema-based inline/void behavior and the codec adds the empty text boundaries Slate requires. It rejects unknown types, unsupported marks or attributes, invalid children, and content inside atoms. It does not silently discard unsupported content.
 
-IME diagnostics use Chrome CDP composition commands. They do not establish actual OS Korean IME acceptance. Paste, links, lists, images, cell merge/split, and general production-editor acceptance are outside that input-test pass. Inspect individual result statuses and browser errors; a script exit code alone is insufficient.
+Nested `AttrSpec.fields` are supported on text, inline, grid, atom, and cell types, and on stored flow containers whose type is neither the root nor a cell-body flow type. List fields belong to their text item type. Schema validation rejects fields on the root, rows, cell-body flow types, groups, spans, and value marks. See [nested attribute fields](../reference/edit-api#nested-attribute-fields) for patch and reset rules.
 
-Remote application rebuilds the full native document. This has a cost for large documents and requires careful selection and composition handling. These samples do not approve performance targets, arbitrary delivery schedules, production authorization, or lease-expiry recovery. See [status and limits](../status).
+Your table renderer must hide cells whose `attrs.spanned` is true while retaining their data. Render links and images with application-approved URL policies. Schema data is not a trusted HTML fragment.
 
-The complete [adapter source](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/main.jsx), [model conversion](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/model.mjs), [input helpers](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/input-session.mjs), and [test commands and evidence](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/README.md) remain the source of truth. See also the [Lexical example](./lexical) and [synchronization contract](./sync).
+## Selection, composition, and history
+
+Native selection offsets are UTF-16. The exported point/range helpers combine formatting leaves, flatten spans, and count each inline node as one position:
+
+- `slatePointToModel(schema, children, point)`
+- `modelPointToSlate(schema, children, path)`
+- `slateRangeToModel(schema, children, range)`
+- `modelRangeToSlate(schema, children, range)`
+
+The binding captures selection through stable document identities before remote application and restores it in the new native tree. Missing or hidden endpoints are not redirected to an unrelated cell. It makes no browser focus call.
+
+`beginComposition()` creates a draft. Native input edits that draft while the live client continues receiving remote changes. `endComposition()` commits the original draft operations as one undo group, then displays the combined document. `cancelComposition()` discards the draft and pulls the live state. Reset also cancels a draft when the live model was already empty.
+
+Use `binding.undo()` and `binding.redo()` for shared history. These methods finish an active composition before applying history. Do not add an independent Slate history as another authority for shared changes.
+
+`groupTyping` defaults to `true`. Adjacent typing can therefore share one undo group under CRDT history rules. Pass `{groupTyping: false}` in the binding options when each native change must form a separate history entry. Composition still commits as one group.
+
+After movement, split undo retains the original tail tokens and checks ownership of both the logical join and tail placement. It skips a later observed foreign move or an unrecorded same-actor move. Undoing a later recorded move in the same history restores the ownership needed to undo the split.
+
+## Cleanup and limits
+
+```ts
+binding.dispose(); // Alias of destroy(); repeated disposal is safe.
+client.disconnect();
+```
+
+Disposal removes the binding's listeners and restores its wrapped editor callbacks when they are still installed. It cancels an uncommitted composition draft. The caller owns the network client, React root, and other editor plugins.
+
+Remote changes currently rebuild the native tree. That has a cost for large documents. A native update containing only `move_node` operations and selection changes maps to document `move` edits. The binding verifies the resulting model. Perform moves in a separate native update: mixed moves and other mutations are rejected, and the shared model is restored. The core move restrictions still apply; this does not provide arbitrary text-range or table-axis movement.
+
+The headless tests use real Slate editing operations and cover conversion, UTF-16 selections, remote edits without echo, concurrent Enter, undo/redo, composition, reset, reconnect, and disposal. Browser/CDP input checks and actual OS IME acceptance are separate evidence. These tests do not approve product performance targets or production readiness.
+
+See [editor integration](./editors), [the editing API](./editing), and [binding source](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/slate).

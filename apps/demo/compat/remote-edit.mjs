@@ -1,5 +1,6 @@
 import {randomUUID} from 'node:crypto';
 import {Doc} from '@barocss/doc-sync';
+import {PROTOCOL_VERSION} from '@barocss/doc-sync/sync';
 import {schema} from './model.mjs';
 
 /** A separate CRDT actor, through the real HTTP protocol, without moving browser focus. */
@@ -8,7 +9,7 @@ export async function remoteEdit(backend,{doc,edits}){
   if(!Array.isArray(edits))throw new Error('invalid test edits');
   const signal=AbortSignal.timeout(10000);
   const actor=`remote-${randomUUID().slice(0,8)}`;
-  const response=await fetch(`${backend}/api/docs/${doc}/stream?since=0`,{signal});
+  const response=await fetch(`${backend}/api/docs/${doc}/stream?since=0&protocol=${PROTOCOL_VERSION}`,{signal});
   if(!response.ok)throw new Error(`remote snapshot HTTP ${response.status}`);
   const reader=response.body.getReader();
   const decoder=new TextDecoder();let buffer='',hello;
@@ -29,7 +30,7 @@ export async function remoteEdit(backend,{doc,edits}){
   const replica=Doc.fromSnapshot(actor,hello.snapshot,schema);
   const ops=replica.edit(edits).ops;
   if(!ops.length)return {actor,serverSeq:hello.serverSeq,model:replica.toJSON()};
-  const sent=await fetch(`${backend}/api/docs/${doc}/changes`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({actor,seq:1,ops}),signal});
+  const sent=await fetch(`${backend}/api/docs/${doc}/changes`,{method:'POST',headers:{'content-type':'application/json','x-doc-sync-protocol':String(PROTOCOL_VERSION),'x-doc-sync-epoch':hello.epoch},body:JSON.stringify({actor,seq:1,ops}),signal});
   if(!sent.ok)throw new Error(`remote edit HTTP ${sent.status}: ${await sent.text()}`);
   return {actor,...await sent.json(),model:replica.toJSON()};
 }

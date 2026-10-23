@@ -2,6 +2,24 @@
 
 Measure the layer you need. Core application time, client notification time, and visible editor latency cover different work.
 
+## Cost of extended document features
+
+The current delivery adds bindings and document capabilities. It does not establish a general performance improvement. A sequential before/after/after/before comparison used Node 22.19.0, 5 warmups and 30 samples per case. The baseline was `ce42144`. Some plain-document paths regressed, and structural tails varied under high external desktop load.
+
+A separate current-only remote-receive run measured the following p95 times. Text rows insert one character; the field row updates one declared leaf. Timing ends at the model-event callback and excludes network, native conversion and DOM work.
+
+| 100,000-character workload | p95 ms | Full-model reads per change |
+|---|---:|---:|
+| Plain document, text insert | 0.999 | 0 |
+| Document with a stored annotation, text insert | 1.346 | 0 |
+| Document with minimum child count, text insert | 25.484 | 2 |
+| Document with a prior block move, text insert | 88.828 | 2 |
+| Declared field update | 49.793 | 2 |
+
+All mirror checks passed with zero fallbacks. Moved and required-child documents use full-model comparison to preserve logical placement and projection rules. These synchronous costs can cause visible delay. The annotation row does not measure annotation reads or rendering. Slate and Lexical also scan/rebuild the native tree on receipt. No new browser-latency or product SLO claim is made.
+
+[All comparison runs, raw samples and reproduction commands](https://github.com/barocss/doc-sync/tree/main/benchmarks/results/document-capabilities-2026-10-24) include both improved and regressed results. Narrowing the logical moved/required receive scope is the next performance task.
+
 ## Structural cache measurements
 
 The 2026-10-23 structural workload used a 100,000-character main document and 600 characters in nested content. Each scenario had 5 warmups, 30 timing samples, and 2 separate mark-read diagnostics. Timing ran from remote receipt through the model-event callback; it excluded network and DOM work.

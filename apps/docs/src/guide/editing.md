@@ -96,10 +96,30 @@ Update changes a node's attributes or text type, or formats a text range. The il
 
 These are local model transitions. The compiler sends token operations for replication; it does not send these changing child indices as persistent identities. [See table-cell merging and restoration](./blocks#merge-and-split-cells-while-preserving-hidden-text) for a nested example.
 
-## Five operations
+## Move an existing block
+
+Move uses current model paths, like the other editing operations. It retains the source block's identity and contents. Text edits and annotations remain attached to those identities.
+
+```ts
+// Move the second root block before the first root block.
+client.commit(client.doc.edit([{op: "move", from: [1], at: [0]}]).ops);
+```
+
+The destination parent path refers to the model before removal. The final destination index refers to that parent's children after the source has been removed, when both parents are the same. For example, `from: [0], at: [2]` moves the first block to index 2 of a three-block flow. Each later operation in a batch reads the preceding result. Structural blocks can require empty text input slots before or after them. The canonical model and returned normalization edits include those slots; a structural move to index 0 can therefore produce an empty input paragraph followed by the moved block.
+
+<div class="operation-figure" tabindex="0" role="region" aria-label="Block movement diagram">
+
+![Before and after moving the second paragraph to the first position.](/diagrams/move.svg)
+
+</div>
+
+Paragraphs, nested flows, tables and atomic blocks retain their stored identities. A group such as a list is a view over consecutive text blocks. Moving a group moves its constituent blocks in order. Rows and columns retain their separate table editing contract. See [document rules](./document-rules) for required children, nested fields and persistent annotations.
+
+## Six operations
 
 | Operation | Model example | Result |
 |---|---|---|
+| `move` | `{op: "move", from: [1], at: [0]}` | Move one existing block while retaining its identity. |
 | `insert` | `{op: "insert", at: [0, 2], content: "x"}` | Insert text into the first block. |
 | `delete` | `{op: "delete", at: [0, 2], count: 1}` | Delete the addressed content. |
 | `update` | `{op: "update", at: [0, 0], length: 3, attrs: {bold: true}}` | Format three model units. |
@@ -121,7 +141,7 @@ const {ops, normalize} = doc.edit([
 
 ## Optional command helpers
 
-The `commands` namespace is a convenience layer over `doc.edit()`. It translates actions such as Backspace and inserting a table column into the same five model operations. It is useful when an editor already has command-style positions or needs keyboard-action policy.
+The `commands` namespace is a convenience layer over `doc.edit()`. It translates actions such as Backspace and inserting a table column into the model operations above. It is useful when an editor already has command-style positions or needs keyboard-action policy.
 
 These helpers use different addresses: `{line?, b, o}` for text positions, and a current `GridBlock` plus row/column indices for table helpers. They convert those addresses to model paths internally. They are optional; application code can use `doc.edit()` throughout. Both interfaces apply operations before returning them, so do not apply the returned operations a second time.
 

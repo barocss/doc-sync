@@ -36,13 +36,14 @@ export class MemoryNet {
         this.inbox.set(actor, box);
 
         const transport: Transport = {
-            subscribe: (since, onEvent) => {
+            subscribe: (since, onEvent, epoch) => {
                 box.handler = onEvent;
+                const hello = this.hub.hello(since, epoch);
                 box.events.push(
-                    this.hub.hello(since),
-                    ...(since > 0 ? this.hub.since(since).map(envelope => ({type: "change" as const, envelope})) : []),
+                    hello,
+                    ...(hello.type === "hello" && !hello.snapshot && since > 0 ? this.hub.since(since).map(envelope => ({type: "change" as const, envelope})) : []),
                 );
-                this.hub.connect(actor, since > 0 ? since : this.hub.serverSeq);
+                this.hub.connect(actor, hello.type === "hello" && hello.snapshot ? this.hub.serverSeq : since);
 
                 const stop = this.hub.listen(event => box.events.push(event));
 

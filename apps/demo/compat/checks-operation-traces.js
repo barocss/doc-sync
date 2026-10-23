@@ -29,7 +29,9 @@ async page=>{
     await capture('cell-text',()=>page.keyboard.insertText('칸'));
     // Undo uses SyncClient history; its model event is labelled with cause=undo.
     await page.evaluate(()=>window.compat.clearTrace());await page.locator(`#${name}`).getByRole('button',{name:'되돌리기',exact:true}).click();await wait();
-    results.push({name,operation:'undo',status:'captured',after:await page.evaluate(()=>({snapshot:window.compat.snapshot(),trace:window.compat.trace()}))});
+    const undone=await page.evaluate(()=>({snapshot:window.compat.snapshot(),trace:window.compat.trace()}));
+    const historyTrace=undone.trace.some(record=>record.name===name&&record.phase==='remote'&&record.cause==='undo');
+    results.push({name,operation:'undo',status:historyTrace?'captured':'missing-history-trace',after:undone});
   }
   return{run,browserVersion:page.context().browser().version(),results};
 }

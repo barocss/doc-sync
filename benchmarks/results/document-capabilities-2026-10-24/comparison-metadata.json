@@ -1,0 +1,368 @@
+{
+  "baseline": "ce421449514698fdaa844194c65566200061011c",
+  "startedAt": "2026-10-23T16:32:03.001Z",
+  "endedAt": "2026-10-23T16:38:58.263Z",
+  "node": "v22.19.0",
+  "order": "before/after/after/before; sequential processes",
+  "samples": 30,
+  "warmups": 5,
+  "startedLoad": [
+    22.14794921875,
+    51.7880859375,
+    39.01025390625
+  ],
+  "endedLoad": [
+    16.068359375,
+    26.92724609375,
+    31.3330078125
+  ],
+  "baselineAdaptation": "Benchmark import specifiers point at an isolated git archive of baseline product source. Current benchmark hello fixtures use protocol2 and stay connected; handshake is outside timing. Existing dependency directory is linked.",
+  "runs": [
+    {
+      "label": "before-1",
+      "name": "client",
+      "startedAt": "2026-10-23T16:32:03.002Z",
+      "endedAt": "2026-10-23T16:32:03.936Z",
+      "startedLoad": [
+        22.14794921875,
+        51.7880859375,
+        39.01025390625
+      ],
+      "endedLoad": [
+        22.14794921875,
+        51.7880859375,
+        39.01025390625
+      ]
+    },
+    {
+      "label": "before-1",
+      "name": "remote",
+      "startedAt": "2026-10-23T16:32:03.937Z",
+      "endedAt": "2026-10-23T16:32:08.962Z",
+      "startedLoad": [
+        22.14794921875,
+        51.7880859375,
+        39.01025390625
+      ],
+      "endedLoad": [
+        21.3349609375,
+        51.12744140625,
+        38.8515625
+      ]
+    },
+    {
+      "label": "before-1",
+      "name": "structure",
+      "startedAt": "2026-10-23T16:32:08.962Z",
+      "endedAt": "2026-10-23T16:33:35.385Z",
+      "startedLoad": [
+        21.3349609375,
+        51.12744140625,
+        38.8515625
+      ],
+      "endedLoad": [
+        20.60888671875,
+        43.236328125,
+        37.0380859375
+      ]
+    },
+    {
+      "label": "after-1",
+      "name": "client",
+      "startedAt": "2026-10-23T16:33:35.386Z",
+      "endedAt": "2026-10-23T16:33:36.821Z",
+      "startedLoad": [
+        20.60888671875,
+        43.236328125,
+        37.0380859375
+      ],
+      "endedLoad": [
+        20.60888671875,
+        43.236328125,
+        37.0380859375
+      ]
+    },
+    {
+      "label": "after-1",
+      "name": "remote",
+      "startedAt": "2026-10-23T16:33:36.821Z",
+      "endedAt": "2026-10-23T16:33:45.081Z",
+      "startedLoad": [
+        20.60888671875,
+        43.236328125,
+        37.0380859375
+      ],
+      "endedLoad": [
+        21.44677734375,
+        42.681640625,
+        36.9140625
+      ]
+    },
+    {
+      "label": "after-1",
+      "name": "structure",
+      "startedAt": "2026-10-23T16:33:45.081Z",
+      "endedAt": "2026-10-23T16:35:37.655Z",
+      "startedLoad": [
+        21.44677734375,
+        42.681640625,
+        36.9140625
+      ],
+      "endedLoad": [
+        20.0244140625,
+        35.48876953125,
+        34.76904296875
+      ]
+    },
+    {
+      "label": "after-2",
+      "name": "client",
+      "startedAt": "2026-10-23T16:35:37.655Z",
+      "endedAt": "2026-10-23T16:35:39.020Z",
+      "startedLoad": [
+        20.0244140625,
+        35.48876953125,
+        34.76904296875
+      ],
+      "endedLoad": [
+        20.0244140625,
+        35.48876953125,
+        34.76904296875
+      ]
+    },
+    {
+      "label": "after-2",
+      "name": "remote",
+      "startedAt": "2026-10-23T16:35:39.021Z",
+      "endedAt": "2026-10-23T16:35:46.946Z",
+      "startedLoad": [
+        20.0244140625,
+        35.48876953125,
+        34.76904296875
+      ],
+      "endedLoad": [
+        20.439453125,
+        35.06201171875,
+        34.62548828125
+      ]
+    },
+    {
+      "label": "after-2",
+      "name": "structure",
+      "startedAt": "2026-10-23T16:35:46.946Z",
+      "endedAt": "2026-10-23T16:37:38.435Z",
+      "startedLoad": [
+        20.439453125,
+        35.06201171875,
+        34.62548828125
+      ],
+      "endedLoad": [
+        19.462890625,
+        30.5908203125,
+        32.94287109375
+      ]
+    },
+    {
+      "label": "before-2",
+      "name": "client",
+      "startedAt": "2026-10-23T16:37:38.436Z",
+      "endedAt": "2026-10-23T16:37:39.167Z",
+      "startedLoad": [
+        19.462890625,
+        30.5908203125,
+        32.94287109375
+      ],
+      "endedLoad": [
+        19.462890625,
+        30.5908203125,
+        32.94287109375
+      ]
+    },
+    {
+      "label": "before-2",
+      "name": "remote",
+      "startedAt": "2026-10-23T16:37:39.167Z",
+      "endedAt": "2026-10-23T16:37:45.347Z",
+      "startedLoad": [
+        19.462890625,
+        30.5908203125,
+        32.94287109375
+      ],
+      "endedLoad": [
+        19.4365234375,
+        30.21044921875,
+        32.77978515625
+      ]
+    },
+    {
+      "label": "before-2",
+      "name": "structure",
+      "startedAt": "2026-10-23T16:37:45.347Z",
+      "endedAt": "2026-10-23T16:38:58.162Z",
+      "startedLoad": [
+        19.4365234375,
+        30.21044921875,
+        32.77978515625
+      ],
+      "endedLoad": [
+        16.068359375,
+        26.92724609375,
+        31.3330078125
+      ]
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "benchmarks/structure.ts",
+      "sha256": "ba68422d0ba0b6ea0427cd0831e71b5198f356d5f5e223bcc22cb867cff0e934"
+    },
+    {
+      "path": "benchmarks/client.ts",
+      "sha256": "6abb2d170650e76fe5e2dfd122b06f6543c3619a536e1681e1aa158ea8ef81ea"
+    },
+    {
+      "path": "benchmarks/remote.ts",
+      "sha256": "5be663d59f5eb17f201904fde6ef87a426b30843b185f99d3b99285db1631f05"
+    },
+    {
+      "path": "packages/doc-sync/src/editor/index.ts",
+      "sha256": "16c383f29a3965725fa6c480e7298a88a84d7962e5300e5c1c6c0b4aebe41210"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/index.ts",
+      "sha256": "2a0521485608ececcdc72bf680cd92636c19b1a1bfcc16ce5579014c6f86b357"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/protocol.ts",
+      "sha256": "acbd17da730df0efa36cfda0fbaebb4d2d4ef420ab3be21d0f9667d7d192571b"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/client.ts",
+      "sha256": "02c1494d61fd75f7396f024d9f0961e09b0215e5f0b2a253f7a3bcdb7e8145b9"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/http-transport.ts",
+      "sha256": "0508a339d3635253a7d8ff3e157dffa8b75a98d79d9e9fc11726a53802e9241a"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/model-events.ts",
+      "sha256": "51ca34e3b8d3f925aa71bba8a8067b7c027fe347615ee96f67137516a480a680"
+    },
+    {
+      "path": "packages/doc-sync/src/index.ts",
+      "sha256": "0cf4f3df60b225f8851d1ebf9e19eeea727d6dd447f888d2eb33cb64a739af78"
+    },
+    {
+      "path": "packages/doc-sync/src/slate/index.ts",
+      "sha256": "7a84ac755cfdc4ffee01263b983fc65b72f19dba85ab96375ef7ec135025d1b5"
+    },
+    {
+      "path": "packages/doc-sync/src/slate/codec.ts",
+      "sha256": "ba10d3ff55ddf48f3ebaed59bcff451ca52bca0227e110bbe179233e20468037"
+    },
+    {
+      "path": "packages/doc-sync/src/slate/binding.ts",
+      "sha256": "49c6d2ff86e5f0d2971b2d55818032cb428e329380cd25d6bf82d1f5196d54fc"
+    },
+    {
+      "path": "packages/doc-sync/src/server/index.ts",
+      "sha256": "4e027766d473a4c11c91dcb9f5e86e048d6af2c512f341b9a3c63a0959b24029"
+    },
+    {
+      "path": "packages/doc-sync/src/server/hub.ts",
+      "sha256": "d02d6f9e64a737bc4910185a878a4f12f5f8131f2bdbe8f99c197cacd565ffb4"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/index.ts",
+      "sha256": "ef00a202411e080930cf225bcf5559b810d42b0548df3ada02e104ee363b9322"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/convert.ts",
+      "sha256": "81241a399ff98c28e6842806537e5a02d73d102610c02a7dd28652cb10cb5106"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/movement.ts",
+      "sha256": "a69d445fe5d0df9323ad14769bfeb31ebde96a6d04eb1ec9ff8821424b400841"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/selection.ts",
+      "sha256": "3c30af7b4c47f02c4fe0a837fb0613b88a2e1aa0c8bbc060c43b0b9c0933fbcb"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/nodes.ts",
+      "sha256": "c82b9972be34d8703468620743babdf43a5c87efdf909e2f6289aa6a8312608c"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/binding.ts",
+      "sha256": "2f53663bc6c53b3c36ca226c7d14d4fb9758ea76bed7427f8efb4b2e1080ba79"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/schema.ts",
+      "sha256": "b1313aaf54cb6ed7bae6a03016b32ee6a1adbf456655d18624dfb954818258f9"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/ticket.ts",
+      "sha256": "70f8b71bac19b6f9039056570256ac41890f99fdc46da1675e91bd875aed8298"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/fields.ts",
+      "sha256": "9ba7bd8fe7b23f2513b67460f4a418340cedff8c6939b10b4e8fa91e53e21b2d"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/cardinality.ts",
+      "sha256": "7ec912022c1cb848e6e65494b7d28c39af0b0c0658ccd76649031078cc4e082e"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/text-storage.ts",
+      "sha256": "ff94666e0a3f1e06d89a347e80d9692414abc43445076f036fff6e0d7bfd6b34"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/edit.ts",
+      "sha256": "546f1c8a6e32ce8d485d85f47d631e2f5d7f78eb7850b29ae3d508c11b8eb75d"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/model.ts",
+      "sha256": "5c4d51ea1960fc63063ce1640d9e8103fe93d5dbdfeffe160ff540e58a83a535"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/doc.ts",
+      "sha256": "447ad9726da3ac968b616bde7b603ef357bd71b54cafa75cf41867462aa9bd67"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/placement.ts",
+      "sha256": "5f1f5638b6b937cdd5de77f22b31eb2c5098d7f6e9c995906d7f89232d09c42a"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/annotations.ts",
+      "sha256": "32b06a1977bc191647c663ba50d321313826d37aa974b5390185359839cb3eca"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/commands.ts",
+      "sha256": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/history.ts",
+      "sha256": "4fb8c735b47a2779f09bf3ca93e302b66e89201435c4c70f9ebb9a10060690d1"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/schema.ts",
+      "sha256": "6c7e6ab70dc2e12d3f81ea45122f7782acc7e816137a919162b742d9c9034b63"
+    },
+    {
+      "path": "packages/doc-sync/src/pm/index.ts",
+      "sha256": "2bee5e889b32515e15e7881d8b72843be4ac863b27115507696816e3efa207eb"
+    },
+    {
+      "path": "packages/doc-sync/src/pm/convert.ts",
+      "sha256": "67e952a2120dc635fa2c8c67715aec422d695d160b50040396aa9977608ae49b"
+    },
+    {
+      "path": "packages/doc-sync/src/pm/binding.ts",
+      "sha256": "7b48c69704c04816c7a1faf7d6f49a647b0df4eb04063009b009babdfa54d5dc"
+    },
+    {
+      "path": "packages/doc-sync/src/pm/schema.ts",
+      "sha256": "2a618cc269715f0491586c924134dec4fa544fe4f54207c1a3a2969c105b0bad"
+    }
+  ]
+}

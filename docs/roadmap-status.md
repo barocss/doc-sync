@@ -4,6 +4,12 @@ The previous integration is main `6f15291`, recorded in [HANDOFF §5.13](../HAND
 
 Paragraph-cache reuse after structural changes was added in [HANDOFF §5.16](../HANDOFF.md#516-improving-paragraph-recalculation-after-structural-changes-2026-10-23). The measurement baseline was main `10dfd86`; changes were uncommitted at that time. Subsequent final integration checks follow HANDOFF §5.17.
 
+## Document capabilities and editor bindings
+
+The later capability delivery adds public Slate and Lexical bindings, a complete example-schema page, paragraph/block/group movement, required-child projection, persistent annotations and declared nested attribute fields. Protocol 2 and document epochs gate compatible replay and preserve pending state on incompatible recovery. Independent fixed regressions cover the reported move-history, validation, snapshot and reference-isolation defects. Final integration evidence is recorded in HANDOFF §5.19.
+
+Movement retains its placement log. This is an explicit later change to the earlier no-move decision. It does not implement arbitrary subtree cuts, row/column/inline/span movement, schema migration, bounded movement-log pruning, actual OS IME acceptance or product performance gates. Legacy safe receive comparison remains available; documents with movements or child rules use full comparison. Earlier measurements below keep their original source and scope.
+
 ## This Execution
 
 1. Fixed the current source and uncommitted changes through copies, hashes, and diffs.
@@ -79,3 +85,5 @@ node packages/doc-sync/test/long-fuzz.ts --ops 1000 --peers 8 --seed 23 --out ou
 The [measurement guide](../benchmarks/stage0/README.md) describes baseline installation, freezing, Yorkie, and long runs. CI executes at least 125,000 wire Ops in each of 8 shards. It starts fresh document batches after about 512 Ops. This differs from accumulating one million operations in one document, disk-failure tests, and lease-expiry recovery tests.
 
 Locally, all 8 shards passed with a total of 1,000,021 wire Ops. Each shard uses 8 replicas. These are local runs. They do not establish a GitHub scheduled-workflow run or two consecutive weeks of success. Local records and final review results are in `output/validation/roadmap-execution-20261023/`. Git excludes `output/`.
+
+The source-bound capability comparison is in [document-capabilities-2026-10-24](../benchmarks/results/document-capabilities-2026-10-24/README.md). It records mixed plain-document results and a known full-comparison limit: at 100,000 characters, prior-move text receipt p95 was 88.828 ms and minimum-child text receipt was 25.484 ms. Narrow this path before claiming large-document interactive acceptance.

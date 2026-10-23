@@ -28,11 +28,13 @@ export default defineConfig({
                 {text: "Overview", link: "/"},
                 {text: "Getting started", link: "/guide/getting-started"},
                 {text: "Define a schema", link: "/guide/schema"},
+                {text: "Complete example schema", link: "/guide/full-schema"},
             ]},
             {text: "Build an editor", items: [
                 {text: "Editor integration paths", link: "/guide/editors"},
                 {text: "Model operations", link: "/guide/editing"},
                 {text: "Schema-driven block operations", link: "/guide/blocks"},
+                {text: "Document rules and annotations", link: "/guide/document-rules"},
                 {text: "Synchronization", link: "/guide/sync"},
                 {text: "Cursors and selections", link: "/guide/presence"},
                 {text: "ProseMirror", link: "/guide/prosemirror"},
@@ -41,7 +43,7 @@ export default defineConfig({
             ]},
             {text: "Reference", items: [
                 {text: "Public API", link: "/reference/api"},
-                {text: "Editing API design", link: "/reference/edit-api"},
+                {text: "Editing API", link: "/reference/edit-api"},
                 {text: "State and wire contract", link: "/reference/spec"},
                 {text: "Collaboration intent", link: "/reference/collaboration-intent"},
             ]},

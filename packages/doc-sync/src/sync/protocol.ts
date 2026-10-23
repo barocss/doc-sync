@@ -11,6 +11,10 @@ import type {Op, Snapshot} from "../crdt/doc.ts";
  * 같은 자리에서 같은 압축을 한다.
  */
 
+/** Version 2 requires identity placement, field registers, annotations and child rules. */
+export const PROTOCOL_VERSION = 2 as const;
+export const DOCUMENT_CAPABILITIES = Object.freeze(["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"] as const);
+
 export type Change = {
     actor: string;
     /** 참여자별 1, 2, 3 … — 서버가 중복·누락을 가린다 */
@@ -44,20 +48,21 @@ export type Presence = {
 };
 
 export type ServerEvent =
-    /** 첫 인사. 스냅숏을 줄 때는 GC 기준에 쓸 "지우기 → 서버 번호" 표도 함께 준다 */
-    | {type: "hello"; serverSeq: number; snapshot: Snapshot | null; delSeqs: Array<[string, number]>; presence: Presence[]; clientSeqs?: Array<[string, number]>}
+    /** Protocol 2 requires a nonempty epoch. Optional typing permits rejection of legacy input. */
+    | {type: "hello"; protocol?: number; capabilities?: readonly string[]; epoch?: string; serverSeq: number; snapshot: Snapshot | null; delSeqs: Array<[string, number]>; presence: Presence[]; clientSeqs?: Array<[string, number]>}
     | {type: "change"; envelope: Envelope}
     | {type: "presence"; presence: Presence}
     | {type: "leave"; actor: string}
-    | {type: "reset"};
+    | {type: "reset"; epoch?: string};
 
 /** 참여자 쪽에서 본 전송 계층. 메모리 안 시험용과 HTTP 용이 이것을 구현한다 */
 export interface Transport {
     /**
      * 서버 이벤트를 받기 시작한다. since 이후의 변경만 받는다 (0 이면 스냅숏부터).
+     * Pass the last accepted document epoch. A different epoch requires a full snapshot.
      * @returns 구독 끊기
      */
-    subscribe(since: number, onEvent: (event: ServerEvent) => void): () => void;
+    subscribe(since: number, onEvent: (event: ServerEvent) => void, epoch?: string): () => void;
     /** 보낸 순서대로 서버에 닿아야 한다 */
     send(message: Outbound): Promise<void>;
     sendPresence(presence: Presence): void;

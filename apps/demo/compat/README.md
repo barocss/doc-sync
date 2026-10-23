@@ -1,6 +1,6 @@
 # Chrome editor integration tests
 
-This folder contains test bindings from Slate, Lexical, and ProseMirror to doc-sync. It opens two Slate editors, two Lexical editors, and one ProseMirror editor on the same document. It adds no public library export. Root dependencies and the lockfile remain unchanged.
+This folder exercises the public Slate, Lexical, and ProseMirror bindings. It opens two Slate editors, two Lexical editors, and one ProseMirror editor on the same document. The Slate and Lexical exports belong to the same library package. `?legacy=1` selects the older private adapters for bounded comparisons.
 
 Use Node 22.18 or later and an installed Google Chrome.
 
@@ -23,7 +23,7 @@ bash /Users/user/.codex/skills/playwright/scripts/playwright_cli.sh --session do
 bash /Users/user/.codex/skills/playwright/scripts/playwright_cli.sh --session doc-sync-editors-chrome run-code --filename apps/demo/compat/checks-three.js
 ```
 
-`checks-concurrent.js` includes the empty-document reconnect regression. Core does not reinsert existing character tokens into the cache. The server sends optional `clientSeqs` receive counters with snapshots. The client removes only acknowledged pending changes and reapplies unacknowledged changes over the snapshot. It also accepts the previous hello format.
+`checks-concurrent.js` includes the empty-document reconnect regression. Core does not reinsert existing character tokens into the cache. The server sends optional `clientSeqs` receive counters with snapshots. The client removes only acknowledged pending changes and reapplies unacknowledged changes over the snapshot. Protocol version 2 requires capability and document-generation checks before sending.
 
 Even with CLI exit code 0, inspect output for Error/Timeout and browser errors. Each test checks equality of the editor native model, CRDT model, and server model.
 
@@ -41,7 +41,7 @@ Supported scope: paragraphs, basic formatting, and simple tables. Slate tables u
 
 Slate and Lexical rebuild their documents on remote receipt. Before replacement, both selection ends are stored as CRDT token IDs. Paths and UTF-16 offsets are resolved again in the new document. Slate converts offsets across format leaves. Lexical attaches selection to new node keys. Only the focused editor updates DOM selection. Other editors use `SKIP_DOM_SELECTION_TAG` to prevent focus changes. ProseMirror also restores selection by token to keep the caret in its cell after table structure changes.
 
-`input-session.mjs` preserves IME composition in all three editors. At composition start, it clones the CRDT document and creates local input operations in that draft. The real SyncClient keeps receiving remote changes. Display updates in the composing editor wait until composition ends. It then applies/sends one batch of local operations with original token IDs and origins and displays them with remote changes. It therefore does not delete remote text by comparing a stale display with the live document. One undo covers the whole composition. Draft operation numbers are reserved in the real client clock, including after reconnect snapshots. Identical-content snapshots omit model events, so `onUpdate` also reserves them. Reset discards drafts and clears the display whether or not the model changes. This demo connects ProseMirror through InputSession's client interface. Default PmBinding and `/pm` IME handling remain unchanged.
+The public Slate and Lexical bindings preserve composition through the library input session. `input-session.mjs` supplies the comparison ProseMirror facade and legacy adapters. At composition start, it clones the CRDT document and creates local input operations in that draft. The real SyncClient keeps receiving remote changes. Display updates in the composing editor wait until composition ends. It then applies/sends one batch of local operations with original token IDs and origins and displays them with remote changes. It therefore does not delete remote text by comparing a stale display with the live document. One undo covers the whole composition. Draft operation numbers are reserved in the real client clock, including after reconnect snapshots. Identical-content snapshots omit model events, so `onUpdate` also reserves them. Reset discards drafts and clears the display whether or not the model changes. This demo connects ProseMirror through InputSession's client interface. Default PmBinding and `/pm` IME handling remain unchanged.
 
 OS Korean keyboards, paste, links/lists/images, cell merge/split, and performance are outside the passing scope of this input test.
 

@@ -1,0 +1,9 @@
+# Document capabilities
+
+The user explicitly authorized all four previously discussed gaps with autopilot: child cardinality/required slots, persistent comments/annotation ranges, identity-preserving move, and nested-object field collaboration. The ongoing Slate/Lexical bindings, whole-schema documentation, and user-facing Editing API cleanup remain in scope. This newer instruction supersedes the old no-move decision. All project prose is English; replies are Korean.
+
+Preserve legacy RGA order, same-observed-boundary Enter absorption, per-user deletion cancellation, conditional formatting undo/redo, hidden-cell content and immutable-fact validation. Do not simulate move by copy/delete, silently drop schema data, validate transient replica counts as permanent invalidity, expose unresolved endpoints at document start, or merge untrusted object prototypes.
+
+Cardinality: explicit per-type min/max rules; retained overflow, deterministic visibility, editable stable required identities, snapshot/history/GC behavior. Annotations: stable left/right token endpoints and boundary affinity, persistent metadata with overlapping independent comments, update/delete/undo, snapshot/reset, edits and moves. Move: independent identity and placement, deterministic concurrent-winner/cycle policy, parent moves and deletion, own conditional inverse moves. Structural move phase must be followed by text content-owner/fragment support before claiming arbitrary paragraph move. Nested attrs: opt-in declared field schema; per-leaf LWW and conditional undo; same-value writes retain ownership; scalar attrs unchanged; reject dangerous paths.
+
+Actual OS IME, production authentication, schema evolution and broad release certification remain separate evidence. Every new advertised capability needs fixed expected-case tests and convergence checks, not only a self-derived oracle.

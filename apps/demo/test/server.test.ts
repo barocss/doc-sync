@@ -56,9 +56,10 @@ async function start(data: string) {
 }
 
 async function post(base: string, action: string, body?: unknown) {
+    const state = await fetch(`${base}/api/docs/integration/state`).then(response => response.json()) as {epoch: string};
     return fetch(`${base}/api/docs/integration/${action}`, {
         method: "POST",
-        headers: {"content-type": "application/json"},
+        headers: {"content-type": "application/json", "x-doc-sync-protocol": "2", "x-doc-sync-epoch": state.epoch},
         body: body === undefined ? undefined : JSON.stringify(body),
     });
 }
@@ -66,7 +67,8 @@ async function post(base: string, action: string, body?: unknown) {
 async function events(base: string, since: number, count: number): Promise<ServerEvent[]> {
     const abort = new AbortController();
     const timeout = setTimeout(() => abort.abort(), 5_000);
-    const response = await fetch(`${base}/api/docs/integration/stream?actor=reader&since=${since}`, {signal: abort.signal});
+    const state = await fetch(`${base}/api/docs/integration/state`).then(response => response.json()) as {epoch: string};
+    const response = await fetch(`${base}/api/docs/integration/stream?protocol=2&actor=reader&since=${since}&epoch=${encodeURIComponent(state.epoch)}`, {signal: abort.signal});
     const reader = response.body!.getReader();
     const decoder = new TextDecoder();
     const received: ServerEvent[] = [];
@@ -199,4 +201,24 @@ test("데모 HTTP: 변경 검사·중복·SSE 동기화·GC 로그 복구를 유
         await server.stop();
         await rm(data, {recursive: true, force: true});
     }
+});
+
+test("demo HTTP rejects old stream and change clients before document mutation", async () => {
+    const data = await mkdtemp(join(tmpdir(), "doc-sync-protocol-"));
+    const server = await start(data);
+    try {
+        for (const suffix of ["", "?protocol=1", "?protocol=3"]) {
+            const response = await fetch(`${server.base}/api/docs/integration/stream${suffix}`);
+            assert.equal(response.status, 426);
+            assert.equal((await response.json() as {protocol: number}).protocol, 2);
+        }
+        const current = await fetch(`${server.base}/api/docs/integration/state`).then(response => response.json()) as {epoch: string};
+        const response = await fetch(`${server.base}/api/docs/integration/changes`, {
+            method: "POST", headers: {"content-type": "application/json", "x-doc-sync-epoch": current.epoch},
+            body: JSON.stringify({actor: "old", seq: 1, ops: []}),
+        });
+        assert.equal(response.status, 426);
+        const state = await fetch(`${server.base}/api/docs/integration/state`).then(response => response.json()) as {serverSeq: number};
+        assert.equal(state.serverSeq, 0);
+    } finally { await server.stop(); await rm(data, {recursive: true, force: true}); }
 });

@@ -460,6 +460,6 @@ This checks operation exchange in memory. It does not test network delivery, rec
 
 ## Limits and optional command helpers
 
-There is no move or tree-split operation. Delete/copy reparenting is not a move contract and can change concurrent-edit behavior. Cell merging does not collect hidden text. The schema has no exact required-child counts: attribute `min`/`max` fields are numeric bounds, not child counts. The application must enforce any additional exact-child policy.
+Use `move` for identity-preserving block placement; see [model operations](./editing#move-an-existing-block). A text `split` divides a text block. It does not split an arbitrary subtree. Cell merging retains hidden text. Flow `childRules` provide required-child and maximum-count projection. Attribute `min` and `max` remain numeric value bounds. See [document rules and annotations](./document-rules).
 
 The optional [`commands` helpers](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/crdt/commands.ts) wrap these same edit operations for keyboard actions and add checks such as permitted types and numeric clamping. They are not required to position or edit blocks. These examples do not establish actual OS IME support, product performance targets, or release readiness.

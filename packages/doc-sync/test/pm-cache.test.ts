@@ -137,7 +137,7 @@ test("PM 재사용: snapshot과 reset은 version 0이어도 새 내용을 반영
     client.connect();
     try {
         assert.equal(client.doc.version, 0);
-        receive({type: "hello", serverSeq: 0, snapshot: snapshotDoc("snapshot").snapshot(), delSeqs: [], presence: []});
+        receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 0, snapshot: snapshotDoc("snapshot").snapshot(), delSeqs: [], presence: []});
         assert.equal(client.doc.version, 0);
         assert.equal(binding.state.doc.textContent, "snapshot");
         sameModel(binding);

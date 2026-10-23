@@ -20,3 +20,9 @@ export type {RecordOptions} from "./crdt/history.ts";
 export type {EditOp, Marks, ModelPath, NodeJSON, Run, Unit} from "./crdt/model.ts";
 export type {AtomSpec, AttrSpec, CellSpec, FlowSpec, GridSpec, GroupSpec, InlineSpec, NodeSpec, RowSpec, Schema, Shape, SpanSpec, TextSpec, UiSpec} from "./crdt/schema.ts";
 export type {Ticket} from "./crdt/ticket.ts";
+
+export type {MoveOp} from "./crdt/placement.ts";
+export type {ChildRule} from "./crdt/cardinality.ts";
+
+export {createAnnotation, updateAnnotation, deleteAnnotation, getAnnotations} from "./crdt/annotations.ts";
+export type {AnnotationEndpoint, AnnotationRange, AnnotationExpansion, AnnotationOptions, AnnotationPatch, AnnotationStatus, AnnotationRecord, JSONValue} from "./crdt/annotations.ts";

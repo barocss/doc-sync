@@ -149,3 +149,18 @@ test("PM presence: 겹친 사용자별 범위, leave, 로컬 연결 종료", asy
     receiver.client.disconnect();
     assert.deepEqual(decorations(receiver), []);
 });
+
+test("PM presence follows moved text after its original container is deleted", async () => {
+    const {net, sender, receiver} = await start();
+    const doc = sender.client.doc;
+    sender.client.commit(doc.edit([{op: "insert", at: [1], content: [{type: "callout", children: [{type: "paragraph", runs: [{text: "inside", marks: {}}]}]}]}]).ops);
+    await net.settle();
+    const p: Presence = {actor: "moved", name: "Moved", color: "#2563eb", anchor: anchorAt(doc, [1, 0, 5]), focus: anchorAt(doc, [1, 0, 1])};
+    sender.client.commit(doc.edit([{op: "move", from: [1, 0], at: [1]}]).ops);
+    await net.settle();
+    sender.client.commit(doc.edit([{op: "delete", at: [doc.toJSON().children!.findIndex(node => node.type === "callout")], count: 1}]).ops);
+    await net.settle();
+    net.hub.setPresence(p); net.down();
+    assert.deepEqual(ranges(receiver), [[12, 16, "moved"]]);
+    assert.deepEqual(carets(receiver), [16]);
+});
