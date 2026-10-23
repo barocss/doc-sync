@@ -268,5 +268,126 @@
     "summarySha256": "4ab180552ce1b850523fcad454de76b7cab5d67dc83c4a2e3654507ca17eda67",
     "capabilitySha256": "b6947dcd0088a797fd118e856ac9f3a90602a622c1a9a251ce6be178e01aaa7d"
   },
-  "evidenceBoundary": "output/ contains local originals and is ignored. This tracked receipt binds hashes/counts; it does not embed every local original."
+  "evidenceBoundary": "output/ contains local originals and is ignored. This tracked receipt binds hashes/counts; it does not embed every local original.",
+  "delivery": {
+    "implementationCommit": "bb0a562125c1c0eea1188f1be25bfcbd2ba6e063",
+    "branch": "main",
+    "remote": "https://github.com/barocss/doc-sync.git",
+    "pagesRun": "https://github.com/barocss/doc-sync/actions/runs/39989535020",
+    "pagesStatus": "success",
+    "productionHTTP": {
+      "checkedAt": "2026-10-23T16:49:00.317674+00:00",
+      "base": "https://barocss.github.io/doc-sync/",
+      "authentication": "none",
+      "rows": [
+        {
+          "path": "guide/full-schema.html",
+          "status": 200,
+          "sha256": "ea3d92efd5c494da505f738d0d3d9d1f7286c45992458a75216a82b26f4fd84f",
+          "generatedBytesMatch": false
+        },
+        {
+          "path": "guide/slate.html",
+          "status": 200,
+          "sha256": "a11ac5e4a4528902ee5d922b71556d416bec64cb9750fdd16c48939bea7241ff",
+          "generatedBytesMatch": false
+        },
+        {
+          "path": "guide/lexical.html",
+          "status": 200,
+          "sha256": "53394962b680dd24d9a615189903da486f9391a04fde03b370c62cd090648bbd",
+          "generatedBytesMatch": false
+        },
+        {
+          "path": "guide/document-rules.html",
+          "status": 200,
+          "sha256": "5e28518ee5915b03591d51d4238574efe01b69a026f96a9369ff1f9f7e4a3883",
+          "generatedBytesMatch": false
+        },
+        {
+          "path": "guide/editing.html",
+          "status": 200,
+          "sha256": "22a46e5f1424b8cb90e7dbfe5935c152099c5ee74f85174e8a9c2ae4049fc0d9",
+          "generatedBytesMatch": false
+        },
+        {
+          "path": "reference/edit-api.html",
+          "status": 200,
+          "sha256": "3568e55a35541ff980a00a1358b2572dc4553ea2803f0eb60793423834d8cb5b",
+          "generatedBytesMatch": false
+        },
+        {
+          "path": "reference/collaboration-intent.html",
+          "status": 200,
+          "sha256": "1389c2ea03ff9baa04955e68a22b69b841364b977c02f301212a4ea7ef132c22",
+          "generatedBytesMatch": false
+        },
+        {
+          "path": "performance.html",
+          "status": 200,
+          "sha256": "f331c83b68474c8ea4b3d63b92259b3fbd816f3092faa549c3cdd9181d193752",
+          "generatedBytesMatch": false
+        },
+        {
+          "path": "diagrams/move.svg",
+          "status": 200,
+          "sha256": "fefe8d69c8adc729f0f56d191e558ad370ada1434144151325eac769b5b9756b",
+          "generatedBytesMatch": true
+        },
+        {
+          "path": "diagrams/models.json",
+          "status": 200,
+          "sha256": "fb2e95a744cd63738a9c0d38b37ae4194aa4c591e435d537f46b0e4134ec9f72",
+          "generatedBytesMatch": true
+        }
+      ],
+      "failed": 0
+    },
+    "productionChrome": {
+      "base": "https://barocss.github.io/doc-sync/",
+      "browserVersion": "156.0.8078.47",
+      "checks": [
+        {
+          "path": "guide/full-schema.html",
+          "title": "Full demo schema\n\u200b",
+          "nineShapes": true,
+          "copyButton": true
+        },
+        {
+          "path": "guide/slate.html",
+          "title": "Slate binding\n\u200b"
+        },
+        {
+          "path": "guide/lexical.html",
+          "title": "Lexical binding\n\u200b"
+        },
+        {
+          "path": "guide/document-rules.html",
+          "title": "Document rules and persistent ranges\n\u200b"
+        },
+        {
+          "path": "reference/edit-api.html",
+          "title": "Editing API\n\u200b"
+        },
+        {
+          "path": "performance.html",
+          "title": "Performance evidence\n\u200b"
+        },
+        {
+          "moveDiagram": true
+        },
+        {
+          "mobile": {
+            "document": 390,
+            "viewport": 390
+          }
+        }
+      ],
+      "errors": [],
+      "badResponses": []
+    },
+    "localSearchNavigation": "/doc-sync/guide/document-rules.html#persistent-annotations",
+    "cleanup": "Only owned comparison server ports59940/59941 and named browser are stopped. Existing preview62490 and user tabs/services remain.",
+    "receiptOnlyFollowup": "This receipt adds no runtime or published-page changes."
+  }
 }

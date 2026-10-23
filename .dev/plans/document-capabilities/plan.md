@@ -1,6 +1,6 @@
 # Delivery plan
 
-Phase: validation complete; final documentation and delivery in progress
+Phase: complete
 
 1. Finish existing reusable native bindings and integrate them into real browser consumers; full schema page/current Editing API reference.
 2. Core owner english_design_docs: move/cardinality design then phased core implementation, shared schema/model/compiler/history/snapshot integration. No parent writes to those core files.
@@ -12,4 +12,6 @@ Phase: validation complete; final documentation and delivery in progress
 
 Native OMX state tools are not exposed in ALL_TOOLS despite mode initialization; this tracked plan records progress without altering unrelated mode state. The user requested end-to-end implementation; no extra approval inferred from old planning-only guidance.
 
-All implementation units are integrated. Expanded workspace tests 458+12+27, compat31, Chrome84+20+30 traces+8 capability flows passed. Functional/security/quality APPROVE. Sequential ABBA and current-only feature benchmarks completed; known full-comparison latency is documented. Final build/deployment receipts remain.
+All implementation units are integrated. Expanded workspace tests 458+12+27, compat31, Chrome84+20+30 traces+8 capability flows passed. Functional/security/quality APPROVE. Sequential ABBA and current-only feature benchmarks completed; known full-comparison latency is documented. Final build/deployment receipts passed; see HANDOFF §5.19 and benchmarks/results/document-capabilities-2026-10-24/validation.json.
+
+Delivery: bb0a562 pushed to main. Pages run 39989535020 succeeded; anonymous HTTP10 and production Chrome page/schema/move/mobile checks passed. Full-model feature latency remains an explicit performance limit, not a remaining implementation promise.
