@@ -1,7 +1,7 @@
 ---
 work_id: docs-site-20261023
 artifact_type: implementation-brief
-status: ready_for_build
+status: done
 owner_role: executor
 source_request: Commit existing work, create apps/docs, deploy with GitHub Pages, translate every document to English.
 last_updated: 2026-10-23
@@ -14,3 +14,5 @@ Checks: translated-prose inventory, numeric/provenance review, Markdown/internal
 Completion: core change baead96 already pushed; docs and translated documents committed/pushed; public URL verified; HANDOFF includes final run commands, scope and evidence. No new performance/SLO or actual OS IME claims. Follow-up clarification: make doc.edit and model paths the primary block-editing interface; commands remain optional wrappers.
 
 Follow-up: add diagrams generated from actual Doc.edit execution for insert/delete/update/split/merge and table span restoration. Verify fixed model expectations, SVG XML, readable desktop/mobile rendering, and deployed assets. Derived SVG/model snapshots remain build outputs; the generator and tests are tracked.
+
+Verified outcome: source work baead96, documentation e050aa6, diagrams 094dd36 pushed; GitHub Pages deployments succeeded. Fresh regressions: core246/demo10/docs22, typecheck, npm audit0. Build18HTML/742 links, repository117 local links; production Chrome/HTTP/SVG-byte checks passed. Final receipt commit records the validated deployment and enables full history for correct page dates.
