@@ -1,0 +1,192 @@
+{
+  "work_id": "editor-latency-step12-20261022",
+  "status": "passed",
+  "time": "2026-10-22T13:07:04.977999+00:00",
+  "results": [
+    {
+      "name": "dom-regression",
+      "result": {
+        "checks": [
+          "unchanged paragraph identity after typing",
+          "periodic polling preserves paragraph DOM",
+          "remote formatting visible",
+          "formatting preserves unrelated paragraph",
+          "undo formatting",
+          "redo formatting",
+          "structural split converges"
+        ],
+        "passed": 7
+      }
+    },
+    {
+      "name": "presence-browser",
+      "result": {
+        "results": [
+          {
+            "name": "PM to demo forward",
+            "selected": "cdef",
+            "presence": {
+              "name": "P",
+              "color": "#7c3aed",
+              "anchor": "6@P-rm67",
+              "focus": "2@P-rm67",
+              "actor": "P-rm67"
+            }
+          },
+          {
+            "name": "PM to demo backward",
+            "selected": "cdef",
+            "presence": {
+              "name": "P",
+              "color": "#7c3aed",
+              "anchor": "2@P-rm67",
+              "focus": "6@P-rm67",
+              "actor": "P-rm67"
+            }
+          },
+          {
+            "name": "PM to demo collapsed",
+            "selected": "",
+            "presence": {
+              "name": "P",
+              "color": "#7c3aed",
+              "anchor": "2@P-rm67",
+              "focus": null,
+              "actor": "P-rm67"
+            }
+          },
+          {
+            "name": "demo to PM forward",
+            "selected": "cdef",
+            "presence": {
+              "name": "A",
+              "color": "#2563eb",
+              "anchor": "6@P-rm67",
+              "focus": "2@P-rm67",
+              "actor": "A-10ri"
+            }
+          },
+          {
+            "name": "demo to PM backward",
+            "selected": "cdef",
+            "presence": {
+              "name": "A",
+              "color": "#2563eb",
+              "anchor": "2@P-rm67",
+              "focus": "6@P-rm67",
+              "actor": "A-10ri"
+            }
+          },
+          {
+            "name": "demo to PM collapsed",
+            "selected": "",
+            "presence": {
+              "name": "A",
+              "color": "#2563eb",
+              "anchor": "1@P-rm67",
+              "focus": null,
+              "actor": "A-10ri"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "presence-browser-edits",
+      "result": {
+        "results": [
+          {
+            "name": "existing remote token anchors follow UI insertion",
+            "selected": "cdef"
+          },
+          {
+            "name": "existing remote token anchors follow UI deletion",
+            "selected": "def"
+          }
+        ]
+      }
+    },
+    {
+      "name": "presence-browser-advanced",
+      "result": {
+        "results": [
+          {
+            "name": "PM multiple paragraphs to demo",
+            "selected": "firstparasecondpara"
+          },
+          {
+            "name": "overlapping independent users in PM",
+            "actors": [
+              "A-ixgb",
+              "C-7kn9"
+            ],
+            "nested": true,
+            "colors": [
+              "color(srgb 0.145098 0.388235 0.921569 / 0.2)",
+              "color(srgb 0.0196078 0.588235 0.411765 / 0.2)"
+            ]
+          },
+          {
+            "name": "overlapping independent users in demo",
+            "layered": true
+          },
+          {
+            "name": "independent page close sends leave and removes C",
+            "actors": [
+              "A-ixgb"
+            ]
+          },
+          {
+            "name": "local disconnect hides all remote ranges and carets",
+            "count": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "presence-browser-disconnect",
+      "result": {
+        "results": [
+          {
+            "name": "normal SSE disconnect removes remote selection",
+            "sender": {
+              "at": 1792674422135,
+              "name": "P",
+              "color": "#7c3aed",
+              "anchor": "4@P-rm67",
+              "focus": "8@P-rm67",
+              "actor": "P-oqt5"
+            },
+            "beforeHelloPresence": [
+              {
+                "name": "P",
+                "color": "#7c3aed",
+                "anchor": "4@P-rm67",
+                "focus": "8@P-rm67",
+                "actor": "P-oqt5"
+              }
+            ],
+            "beforeRangeCharacters": 4,
+            "afterHelloPresence": [],
+            "afterRemoteDecorations": 0,
+            "receivedLeave": [
+              {
+                "at": 1792674422427,
+                "type": "leave",
+                "actor": "P-oqt5"
+              }
+            ],
+            "latePresencePosts": [],
+            "serverPeer": {
+              "actor": "P-oqt5",
+              "seq": 10,
+              "pin": null,
+              "online": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "console": "Total messages: 0 (Errors: 0, Warnings: 0)"
+}

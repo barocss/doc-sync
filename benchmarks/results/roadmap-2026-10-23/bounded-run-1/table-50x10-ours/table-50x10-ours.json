@@ -1,0 +1,33 @@
+{
+  "engine": "ours",
+  "workload": "table-50x10",
+  "correct": true,
+  "rows": 50,
+  "cols": 10,
+  "concurrentRounds": 250,
+  "timedEdits": 1000,
+  "localMs": {
+    "count": 1000,
+    "p50": 0.011374999999929969,
+    "p95": 0.059333999999921616,
+    "max": 3.634999999999991,
+    "total": 24.657706000000985
+  },
+  "remoteApplyMs": {
+    "count": 3000,
+    "p50": 0.005041000000005624,
+    "p95": 0.015499999999974534,
+    "max": 1.2632919999999785,
+    "total": 26.287585000003787
+  },
+  "modelReadMs": {
+    "count": 44,
+    "p50": 16.375584000000117,
+    "p95": 35.336791999999946,
+    "max": 50.131250000000136,
+    "total": 817.9181660000011
+  },
+  "sameCellConcurrentInsert": true,
+  "overlappingDelete": true,
+  "structuralPolicyScope": "fixed grid text only; row/column edits and cell merge semantics are not compared"
+}

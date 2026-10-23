@@ -3,6 +3,7 @@ import {Doc} from "../crdt/doc.ts";
 import {History} from "../crdt/history.ts";
 import {applyEdits, diffModels} from "../crdt/model.ts";
 import {checkSchema} from "../crdt/schema.ts";
+import {textEventScope} from "./model-events.ts";
 import type {Op} from "../crdt/doc.ts";
 import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, NodeJSON} from "../crdt/model.ts";
@@ -102,26 +103,38 @@ export class SyncClient {
     }
 
     /** fn 이 모델을 바꾸면 받는 쪽 이벤트를 낸다 (듣는 쪽이 있을 때만 계산한다) */
-    private withEvents<T>(cause: EventCause, fn: () => T): T {
+    private withEvents<T>(cause: EventCause, fn: () => T, ops?: Op[]): T {
         if (!this.onModelEvents) {
             return fn();
         }
 
-        const before = this.doc.toJSON();
+        const scope = ops ? textEventScope(this.doc, ops) : null;
+        const before = scope?.before ?? this.doc.toJSON();
         const result = fn();
-        const after = this.doc.toJSON();
+        const after = scope ? scope.read() : this.doc.toJSON();
 
         if (JSON.stringify(before) === JSON.stringify(after)) {
             return result;
         }
 
-        let events = diffModels(this.schema, before, after);
+        const schema = scope?.schema ?? this.schema;
+        let events = diffModels(schema, before, after);
         let fallback = false;
 
-        if (JSON.stringify(applyEdits(this.schema, before, events)) !== JSON.stringify(after)) {
+        if (JSON.stringify(applyEdits(schema, before, events)) !== JSON.stringify(after)) {
             // 검산이 틀리면 통째로 바꾼다
-            events = replaceAll(before, after);
+            if (scope) {
+                const wholeAfter = this.doc.toJSON();
+
+                // 글자만 바꾸므로 루트 자식 수는 그대로다. replaceAll은 이전 내용 대신 그 수만 쓴다.
+                events = replaceAll(wholeAfter, wholeAfter);
+            } else {
+                events = replaceAll(before, after);
+            }
+
             fallback = true;
+        } else if (scope) {
+            events = events.map(event => ({...event, at: [...scope.path, ...event.at.slice(1)]}));
         }
 
         this.eventStats.changes += 1;
@@ -340,7 +353,7 @@ export class SyncClient {
         change.ops.forEach(op => op.t === "del" && this.delSeq.set(keyOf(op.at), envelope.serverSeq));
 
         if (change.actor !== this.actor) {
-            this.withEvents("remote", () => change.ops.forEach(op => this.doc.apply(op)));
+            this.withEvents("remote", () => change.ops.forEach(op => this.doc.apply(op)), change.ops);
         }
 
         this.scheduleAck();

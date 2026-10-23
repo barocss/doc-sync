@@ -255,6 +255,8 @@ const cancelsFor = (item: Item): Set<string> => (item.cancels === NO_DELS ? (ite
 
 /** 기억한 자리에서 이만큼까지는 오른쪽으로 찾아본다. 더 멀면 줄 전체를 다시 적는다 */
 const MAX_DRIFT = 256;
+/** 큰 문자열은 글자마다 블록 배열을 복사하지 않고, 다음 읽기 때 줄을 한 번 계산한다. */
+const MAX_INCREMENTAL_TEXT = 256;
 
 const newItem = (id: Ticket, origin: string | null, kind: Item["kind"], line: Line): Item => ({
     id,
@@ -285,6 +287,8 @@ export class Doc {
     static verifyBlocks = false;
     private posCache = new Map<string, Map<Item, {b: number; o: number}>>();
     private visibleCache = new Map<string, boolean>();
+    private modelCache: NodeJSON | null = null;
+    private revision = 0;
 
     constructor(actor: string, schema: Schema | null = null) {
         this.clock = new Clock(actor);
@@ -301,6 +305,11 @@ export class Doc {
 
     get actor(): string {
         return this.clock.actor;
+    }
+
+    /** 적용·압축마다 바뀌는 번호. 커서·presence처럼 문서를 바꾸지 않는 갱신과 구분한다. */
+    get version(): number {
+        return this.revision;
     }
 
     /** 본문 줄의 토큰 */
@@ -572,11 +581,22 @@ export class Doc {
      * 대상이 압축된 묘비이거나 없는 토큰이면 조용히 지나간다(지우기·속성은 이미 의미가 없다).
      */
     apply(op: Op): void {
+        this.modelCache = null;
+        this.revision += 1;
         // 글자 넣기·지우기·서식은 그 줄의 블록 목록만 고쳐 쓴다. 나머지(표지·노드·되살리기·노드 속성)는 모든 줄을 다시 계산한다
         op.t === "text" || op.t === "del" || (op.t === "set" && op.ids.every(id => this.get(keyOf(id))?.kind === "char")) || this.dirty();
 
         switch (op.t) {
             case "text": {
+                if (op.text.length > MAX_INCREMENTAL_TEXT) {
+                    const line = this.get(keyOf(op.origin))?.line;
+
+                    if (line) {
+                        this.blockCache.delete(line.key);
+                        this.posCache.delete(line.key);
+                    }
+                }
+
                 // 연달아 친 글자는 바로 앞 글자 뒤에 차례로 들어간다 — 기준 자리를 한 번만 찾는다
                 let at = -1;
 
@@ -862,6 +882,8 @@ export class Doc {
      * @returns 줄어든 토큰 수
      */
     compact(frontier: number, seqOf: (delKey: string) => number | undefined): number {
+        this.modelCache = null;
+        this.revision += 1;
         this.dirty();
 
         let removed = 0;
@@ -1311,7 +1333,10 @@ export class Doc {
      * 비어 있는 빈 자리(표 뒤 virtual)는 모델에 없다.
      */
     toJSON(): NodeJSON {
-        return canonical(this.need(), {type: this.need().root, children: this.rawFlow(MAIN)});
+        this.modelCache ??= canonical(this.need(), {type: this.need().root, children: this.rawFlow(MAIN)});
+
+        // 변하지 않은 문서는 토큰·서식을 다시 읽지 않는다. 호출자는 예전처럼 모델을 자유롭게 고칠 수 있다.
+        return copyModel(this.modelCache);
     }
 
     private rawFlow(lineKey: string): NodeJSON[] {
@@ -1720,6 +1745,17 @@ export class Doc {
         return doc;
     }
 }
+
+const copyRun = (run: Run): Run => "text" in run
+    ? {...run, marks: {...run.marks}}
+    : {...run, ...(run.attrs && {attrs: {...run.attrs}}), ...(run.runs && {runs: run.runs.map(copyRun)})};
+
+const copyModel = (node: NodeJSON): NodeJSON => ({
+    ...node,
+    ...(node.attrs && {attrs: {...node.attrs}}),
+    ...(node.runs && {runs: node.runs.map(copyRun)}),
+    ...(node.children && {children: node.children.map(copyModel)}),
+});
 
 /** 이어 친 글자의 기준 — 같은 참여자의 바로 앞 이름표. 스냅숏은 이때 기준을 적지 않는다 */
 const previousKey = (id: Ticket): string => keyOf({lamport: id.lamport - 1, actor: id.actor});

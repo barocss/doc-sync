@@ -1,0 +1,56 @@
+name: Nightly collaboration properties
+
+on:
+  schedule:
+    - cron: '23 18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  properties:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.19.0'
+          cache: npm
+      - run: npm ci
+      - run: node --test packages/doc-sync/test/properties.test.ts
+      - run: npm run typecheck
+  long-fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [1, 2, 3, 4, 5, 6, 7, 8]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.19.0'
+          cache: npm
+      - run: npm ci
+      # Eight shards total at least 1,000,000 accepted wire Ops; every shard has eight peers.
+      - name: Run bounded collaboration histories
+        run: node packages/doc-sync/test/long-fuzz.ts --ops 125000 --peers 8 --seed ${{ matrix.seed }} --out output/long-fuzz/seed-${{ matrix.seed }}.json
+      - name: Record source revision
+        if: always()
+        run: |
+          mkdir -p output/long-fuzz
+          git rev-parse HEAD > output/long-fuzz/source-sha.txt
+          node --version > output/long-fuzz/node-version.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: long-fuzz-seed-${{ matrix.seed }}
+          path: output/long-fuzz/
+          retention-days: 14

@@ -1,0 +1,270 @@
+{
+  "work_id": "editor-latency-step12-20261022",
+  "status": "complete",
+  "completedAt": "2026-10-22T13:28:17.830593+00:00",
+  "primaryFinalRun": "step2-repeat",
+  "measuredSamplesPerStage": 60,
+  "stage1AndStage2AllCorrect": true,
+  "finalSourceMatchesMeasurement": true,
+  "typecheck": "passed",
+  "stage1ExpandedTests": 116,
+  "stage2DefaultTests": 116,
+  "browserChecks": 30,
+  "reports": [
+    "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-step12/report.md",
+    "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/performance-report.md"
+  ],
+  "sourceChanges": [
+    "packages/doc-sync/src/crdt/doc.ts",
+    "packages/doc-sync/test/model-cache.test.ts",
+    "apps/demo/ui/editor.ts"
+  ],
+  "compatChanges": [],
+  "browserAndServerClosed": true,
+  "remainingWork": [],
+  "interruptedRunExcluded": true,
+  "availableBytes": 2625404928,
+  "artifacts": [
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/baseline-source-check.json",
+      "bytes": 181,
+      "sha256": "1b70892b0c73886b2ff2e7a1e97f28d7ee89eb3f561a8d372773de75b0b96273"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/comparison.json",
+      "bytes": 67768,
+      "sha256": "96c83d0947e7cd1251918375fa4a886fc893feac5eb7464f63eea5a5523acb5c"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/external-work-finished.json",
+      "bytes": 552,
+      "sha256": "bf9e190bb5b59c25b6e56202427da37dbca6c201dd09ef7b762e63e140b347e7"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/plan.md",
+      "bytes": 1499,
+      "sha256": "3ab5cbe168450a794e409dffb88ed3cbbb11fa4b6bf9568ca4bd1b11bdbcdb05"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/report-receipt.json",
+      "bytes": 772,
+      "sha256": "328618a24a0b9db2735ac60eef6fb359f12ecb6c7b4558904d2c73fc669d3244"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/report.md",
+      "bytes": 8831,
+      "sha256": "4548d2501a2061baaa2657b7864d967a4e7add61be193ba0efa4e79031c10dfb"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/browser-raw.json",
+      "bytes": 1554408,
+      "sha256": "fc584377c5c1409db026693d49243ca60fd4fcc5f9d2c9339b06fe605e4abcec"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/demo-to-pm.cpuprofile",
+      "bytes": 35272,
+      "sha256": "f650062370d0eec2d4ab4236889f3c4556a1cadcb6104b76aef887de8cc87ee4"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/demo-to-pm.trace.json",
+      "bytes": 1584955,
+      "sha256": "9347cbadda16f5169ae9906a36549e2f9e4b01943db041b4f98e6a3b0ab024dc"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/measurement-start.json",
+      "bytes": 1984,
+      "sha256": "01951f418c9bb3c133996b62390c011dbef196e031171c847744fa64dba96c2b"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/pm-to-demo.cpuprofile",
+      "bytes": 40890,
+      "sha256": "23363174adf8d52c2f18ac1dc783a91802ffc1de351caf2ea1bd84ecaf173c9c"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/pm-to-demo.trace.json",
+      "bytes": 2173864,
+      "sha256": "a683791cfa86f95943447622d57a09e3e6c21394c4ff4d766fa46d056e2a9ee6"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/run.json",
+      "bytes": 2359,
+      "sha256": "21971705f67762a4a8f5cfb7dbd721884a3f73335b1cc5820c173b0a4e209121"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/server-events.jsonl",
+      "bytes": 17419,
+      "sha256": "cff38a39d06f7d7aebc06fd24a94853850a9b402d25f1f20b1398dbc34acf991"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/server.log",
+      "bytes": 222,
+      "sha256": "b3617728dc76cf4f59c96ff5ae5101fd512823538a52c60ff43571b9df4722c2"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/source-manifest.json",
+      "bytes": 5022,
+      "sha256": "5f09da5aef5436a881438a2564eec50fd79d6246ee7ad2d881a00f3867b2e1be"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/source.diff",
+      "bytes": 3186,
+      "sha256": "73a84ae1f6047324b658c1516baf540ca4c03ab1624b57b5022d1cd4ff0b7564"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/source.tar.gz",
+      "bytes": 112661,
+      "sha256": "fbd38b829337bb891e7e217529be3a16d16b7fa1bd0c7b262cf73c570fcb941c"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/summary.json",
+      "bytes": 237056,
+      "sha256": "58b591c43dedca35be6e29471e37c2c0e41f016a109b99df9eff690b2d318c7c"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1-tests.log",
+      "bytes": 34240,
+      "sha256": "904ce3fd67fe13a899ea2c9ccda21aac3230249a20d76fc1344a0c8112b84688"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/demo-to-pm.cpuprofile",
+      "bytes": 26958,
+      "sha256": "9e7ae7c7cd8ea87bd96bf7c94dfff08746f6aaa0899e0b4895dcc95dac0d0fb9"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/demo-to-pm.trace.json",
+      "bytes": 1026769,
+      "sha256": "4d696bcefce01914826aa0ce186e78ad0c8e5aa29db49e4d0a4cb185779c6c3a"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/interrupted.json",
+      "bytes": 374,
+      "sha256": "ebf54ded871092dd9cc27f0a5cf77c132e09cd84bd0a7e66cc9dd07c0e0683bd"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/measurement-start.json",
+      "bytes": 1799,
+      "sha256": "6bfe588c0b0ca404a35f75e745fc494ae5718c7d49a5e15196f79b592d77c339"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/partial-browser-raw.json",
+      "bytes": 1074969,
+      "sha256": "74d01b286b20b337311c3a2af3b8100b7379c1db2bb62e7d74f045d4a603672a"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/server-events.jsonl",
+      "bytes": 14831,
+      "sha256": "e199f272c5392e672cbbaa4660d1d7fe863298d0339cbc9ba253643b1764bd97"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/server.log",
+      "bytes": 222,
+      "sha256": "40f69cfe71ad5aa3badefd7c31bdfb1e030def327fe3d99f1524bcfb2fc43a3a"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/source-manifest.json",
+      "bytes": 5042,
+      "sha256": "b4c544d8467108212ace90efce361d4b346cae612eabf14218d8106bcfc9c7b5"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/source.diff",
+      "bytes": 13994,
+      "sha256": "3f106730a423bb4f610ad0eccb25859b3b804c74bcd88ae604ea8282ebbe9478"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2/source.tar.gz",
+      "bytes": 113981,
+      "sha256": "1af845d47725f45d7e7cba46bfe1fb7b38adecfe57e57c16704eefecf0f867c0"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-browser-validation-nested.json",
+      "bytes": 573,
+      "sha256": "eaa1319925e9ae83b8ae6709d3d94edd1c60bb27ba3afe6dd778477983bfcc90"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-browser-validation.json",
+      "bytes": 5081,
+      "sha256": "109d7251220a923f689528436a8b285056e2588bc2a45fe373b12e3e2cafc83d"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/browser-raw.json",
+      "bytes": 1432225,
+      "sha256": "0dd3f23b16074ffd2e3b81d23b9f05e993c9fdb023eac41043008f5ec7fb2f2e"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/demo-to-pm.cpuprofile",
+      "bytes": 25163,
+      "sha256": "f00e2cf7c8cc1eaf5835121c5e956b3f620becbaf0eeb93d7d19455ce231477e"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/demo-to-pm.trace.json",
+      "bytes": 1196976,
+      "sha256": "55f12954debd8746a3536faf6a6325928f6122bbdb7c2c3212ba9b3e958f5e50"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/measurement-start.json",
+      "bytes": 1730,
+      "sha256": "e193d3c9898b0eeb7b4b1a6fb0adaf55ec06e73f563478c6f0070e7356f83180"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/pm-to-demo.cpuprofile",
+      "bytes": 28989,
+      "sha256": "0fe2e77522f56398faa2fdd66e598c4a964c4f3a81475db035807c6bea2f6bf2"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/pm-to-demo.trace.json",
+      "bytes": 1528896,
+      "sha256": "f15cb81e532ee65c53b1d4f00104fd2fe21b49376a4e7c1bf833c679bb1201e5"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/run.json",
+      "bytes": 3306,
+      "sha256": "1c9fce4703caf08b9071db350033adabc94646704ae4003431006879bcb02fd9"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/server-events.jsonl",
+      "bytes": 17445,
+      "sha256": "6d2c366e563016f34c2cb1f7daa7b4dcb4258297f202834e796332193525982f"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/server.log",
+      "bytes": 222,
+      "sha256": "89258425d3553e456203ed2f03f9cab4c103b30724b6cd3f54b766ebd3dcd88e"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/source-manifest.json",
+      "bytes": 5042,
+      "sha256": "b4c544d8467108212ace90efce361d4b346cae612eabf14218d8106bcfc9c7b5"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/source.diff",
+      "bytes": 13994,
+      "sha256": "3f106730a423bb4f610ad0eccb25859b3b804c74bcd88ae604ea8282ebbe9478"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/source.tar.gz",
+      "bytes": 113981,
+      "sha256": "1af845d47725f45d7e7cba46bfe1fb7b38adecfe57e57c16704eefecf0f867c0"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/summary.json",
+      "bytes": 234179,
+      "sha256": "b006644257aaba15ee2f93b244c2a24b7f53c16882117fcdff05da73214233d4"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-tests.log",
+      "bytes": 34225,
+      "sha256": "250e4208ee387a36aaef1a6604d72740c9fd016c5e435c93df6d969190f27c49"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-typecheck.log",
+      "bytes": 62,
+      "sha256": "5e1fbff16a52c9a79dfb4303d8f7a262d17c1213b97e9a40eaab3d5d5a76d0d3"
+    },
+    {
+      "path": "benchmarks/results/monorepo-2026-10-22/browser-latency-step12/tooling-notes.json",
+      "bytes": 545,
+      "sha256": "0b79fdb41e923680fa8d42e822babf2ca9a2e6766b1728c3a1f25fa1cdb77c3e"
+    }
+  ],
+  "gitStatus": " M apps/demo/ui/editor.ts\n M benchmarks/results/monorepo-2026-10-22/performance-report.md\n M packages/doc-sync/src/crdt/doc.ts\n?? benchmarks/results/monorepo-2026-10-22/browser-latency-100k/\n?? benchmarks/results/monorepo-2026-10-22/browser-latency-step12/\n?? packages/doc-sync/test/model-cache.test.ts\n"
+}

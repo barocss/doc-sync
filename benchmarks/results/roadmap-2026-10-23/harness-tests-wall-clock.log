@@ -1,0 +1,62 @@
+
+> @doc-sync/benchmarks@0.0.0 stage0:test
+> node --expose-gc --test stage0/workloads.test.mjs
+
+TAP version 13
+# Subtest: opening script has exactly 10000 edits and independently computed final text
+ok 1 - opening script has exactly 10000 edits and independently computed final text
+  ---
+  duration_ms: 17.527667
+  type: 'test'
+  ...
+# Subtest: ours: common Hangul, split, merge, delete, remote and snapshot oracle
+ok 2 - ours: common Hangul, split, merge, delete, remote and snapshot oracle
+  ---
+  duration_ms: 31.375833
+  type: 'test'
+  ...
+# Subtest: yjs: common Hangul, split, merge, delete, remote and snapshot oracle
+ok 3 - yjs: common Hangul, split, merge, delete, remote and snapshot oracle
+  ---
+  duration_ms: 38.009958
+  type: 'test'
+  ...
+# Subtest: yorkie-tree: common Hangul, split, merge, delete, remote and snapshot oracle
+ok 4 - yorkie-tree: common Hangul, split, merge, delete, remote and snapshot oracle
+  ---
+  duration_ms: 36.528833
+  type: 'test'
+  ...
+# Subtest: ours: four peers in table, same-cell insertion, overlapping deletion
+ok 5 - ours: four peers in table, same-cell insertion, overlapping deletion
+  ---
+  duration_ms: 11.463833
+  type: 'test'
+  ...
+# Subtest: yjs: four peers in table, same-cell insertion, overlapping deletion
+ok 6 - yjs: four peers in table, same-cell insertion, overlapping deletion
+  ---
+  duration_ms: 2.629042
+  type: 'test'
+  ...
+# Subtest: yorkie-tree: four peers in table, same-cell insertion, overlapping deletion
+ok 7 - yorkie-tree: four peers in table, same-cell insertion, overlapping deletion
+  ---
+  duration_ms: 24.335375
+  type: 'test'
+  ...
+# Subtest: paced CLI closes the wall-clock window under overload without claiming a full trace pass
+ok 8 - paced CLI closes the wall-clock window under overload without claiming a full trace pass
+  ---
+  duration_ms: 260.991375
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 852.946917

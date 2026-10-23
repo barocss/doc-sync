@@ -1,0 +1,45 @@
+{
+  "startedAt": "2026-10-23T05:29:15.349Z",
+  "node": "v22.19.0",
+  "baseline": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-stage0-baseline-sbgzv0c6",
+  "gcExposed": true,
+  "yorkie": "/tmp/doc-sync-stage0-yorkie-20261023/node_modules/@yorkie-js/sdk/dist/yorkie-js-sdk.js",
+  "scope": "single-process CRDT+wrapper, no browser/network/service/auth; sequential trace semantics checked against independent string model; concurrent ordering checked within each engine",
+  "completedAt": "2026-10-23T05:29:16.492Z",
+  "correct": true,
+  "rows": [
+    {
+      "engine": "ours",
+      "workload": "table-50x10",
+      "correct": true,
+      "rows": 50,
+      "cols": 10,
+      "concurrentRounds": 250,
+      "timedEdits": 1000,
+      "localMs": {
+        "count": 1000,
+        "p50": 0.011374999999929969,
+        "p95": 0.059333999999921616,
+        "max": 3.634999999999991,
+        "total": 24.657706000000985
+      },
+      "remoteApplyMs": {
+        "count": 3000,
+        "p50": 0.005041000000005624,
+        "p95": 0.015499999999974534,
+        "max": 1.2632919999999785,
+        "total": 26.287585000003787
+      },
+      "modelReadMs": {
+        "count": 44,
+        "p50": 16.375584000000117,
+        "p95": 35.336791999999946,
+        "max": 50.131250000000136,
+        "total": 817.9181660000011
+      },
+      "sameCellConcurrentInsert": true,
+      "overlappingDelete": true,
+      "structuralPolicyScope": "fixed grid text only; row/column edits and cell merge semantics are not compared"
+    }
+  ]
+}

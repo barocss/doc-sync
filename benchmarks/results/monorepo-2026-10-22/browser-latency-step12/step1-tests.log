@@ -1,0 +1,736 @@
+
+> doc-sync-workspace@0.0.0 test
+> npm run test --workspaces --if-present
+
+
+> @barocss/doc-sync@0.0.0 test
+> node --test test/*.test.ts
+
+TAP version 13
+# Subtest: 로컬 구독: 구독자 없는 편집은 전체 모델을 만들지 않고, 구독 추가·해제도 즉시 반영한다
+ok 1 - 로컬 구독: 구독자 없는 편집은 전체 모델을 만들지 않고, 구독 추가·해제도 즉시 반영한다
+  ---
+  duration_ms: 10.787916
+  type: 'test'
+  ...
+# Subtest: 로컬 검산: 본문·목록·표 칸·상자 안 글자 편집은 해당 블록만 비교하고 전체 검산과 같다
+ok 2 - 로컬 검산: 본문·목록·표 칸·상자 안 글자 편집은 해당 블록만 비교하고 전체 검산과 같다
+  ---
+  duration_ms: 29.3605
+  type: 'test'
+  ...
+# Subtest: 로컬 검산: 구조 변경·여러 블록 편집은 기존 전체 검산과 같다
+ok 3 - 로컬 검산: 구조 변경·여러 블록 편집은 기존 전체 검산과 같다
+  ---
+  duration_ms: 4.083417
+  type: 'test'
+  ...
+# Subtest: 로컬 검산: 보정이 생겨도 목록 안의 원래 경로로 돌려준다
+ok 4 - 로컬 검산: 보정이 생겨도 목록 안의 원래 경로로 돌려준다
+  ---
+  duration_ms: 7.520375
+  type: 'test'
+  ...
+# Subtest: 로컬 구독: 스냅숏·reset 뒤에도 현재 구독자를 연결하고 normalize 명시 요청을 지킨다
+ok 5 - 로컬 구독: 스냅숏·reset 뒤에도 현재 구독자를 연결하고 normalize 명시 요청을 지킨다
+  ---
+  duration_ms: 6.2265
+  type: 'test'
+  ...
+# Subtest: 경로: 모든 글자 자리가 모델 경로로 갔다가 같은 자리로 돌아온다 (표 칸·목록·이미지 그릇 안 포함)
+ok 6 - 경로: 모든 글자 자리가 모델 경로로 갔다가 같은 자리로 돌아온다 (표 칸·목록·이미지 그릇 안 포함)
+  ---
+  duration_ms: 24.29125
+  type: 'test'
+  ...
+# Subtest: 문서 내용 통째로 바꾸기 꼴: delete [0] 1 → insert [0] [문단 둘] — 문서가 그 둘로 바뀌고 normalize 는 없다
+ok 7 - 문서 내용 통째로 바꾸기 꼴: delete [0] 1 → insert [0] [문단 둘] — 문서가 그 둘로 바뀌고 normalize 는 없다
+  ---
+  duration_ms: 9.411208
+  type: 'test'
+  ...
+# Subtest: 에디터의 표 넣기 꼴: delete [0] 1 → insert [0] [표] → insert [1] [문단] — 흐름은 글 블록으로 시작하므로 맨 앞 빈 문단이 남는다
+ok 8 - 에디터의 표 넣기 꼴: delete [0] 1 → insert [0] [표] → insert [1] [문단] — 흐름은 글 블록으로 시작하므로 맨 앞 빈 문단이 남는다
+  ---
+  duration_ms: 3.736084
+  type: 'test'
+  ...
+# Subtest: 에디터의 표 넣기 꼴(내용 포함): 칸 글·칸 합치기·배경색까지 한 번에 들어간다
+ok 9 - 에디터의 표 넣기 꼴(내용 포함): 칸 글·칸 합치기·배경색까지 한 번에 들어간다
+  ---
+  duration_ms: 5.417791
+  type: 'test'
+  ...
+# Subtest: 열 넣기: 스키마 기반 문서 에디터처럼 행마다 같은 번호로 칸을 넣으면 열 노드 하나로 접힌다
+ok 10 - 열 넣기: 스키마 기반 문서 에디터처럼 행마다 같은 번호로 칸을 넣으면 열 노드 하나로 접힌다
+  ---
+  duration_ms: 5.544708
+  type: 'test'
+  ...
+# Subtest: 열 넣기: 한 행에만 칸을 넣어도 열 하나로 바로잡는다 — 편집기 쪽은 normalize 로 맞춘다
+ok 11 - 열 넣기: 한 행에만 칸을 넣어도 열 하나로 바로잡는다 — 편집기 쪽은 normalize 로 맞춘다
+  ---
+  duration_ms: 12.796542
+  type: 'test'
+  ...
+# Subtest: 열 지우기: 행마다 같은 번호의 칸 지우기는 열 지우기 하나
+ok 12 - 열 지우기: 행마다 같은 번호의 칸 지우기는 열 지우기 하나
+  ---
+  duration_ms: 4.977959
+  type: 'test'
+  ...
+# Subtest: update: 블록 종류·목록 묶음 속성·칸 합치기를 모델 경로로
+ok 13 - update: 블록 종류·목록 묶음 속성·칸 합치기를 모델 경로로
+  ---
+  duration_ms: 5.389541
+  type: 'test'
+  ...
+# Subtest: merge: 앞 글 블록에 합친다 — 앞이 그림 블록이면 합치지 않는다
+ok 14 - merge: 앞 글 블록에 합친다 — 앞이 그림 블록이면 합치지 않는다
+  ---
+  duration_ms: 4.342084
+  type: 'test'
+  ...
+# Subtest: 링크: 글자마다의 값 서식으로 저장하고, 모델에서는 inline-hyperlink 하나로 묶어 보인다. 링크 끝에서 이어 치면 링크가 아니다
+ok 15 - 링크: 글자마다의 값 서식으로 저장하고, 모델에서는 inline-hyperlink 하나로 묶어 보인다. 링크 끝에서 이어 치면 링크가 아니다
+  ---
+  duration_ms: 6.816167
+  type: 'test'
+  ...
+# Subtest: 링크: 같은 글자에 동시에 다른 주소를 걸면 나중 쪽으로 모이고, 주소 꼴이 틀리면 서버가 거절한다
+ok 16 - 링크: 같은 글자에 동시에 다른 주소를 걸면 나중 쪽으로 모이고, 주소 꼴이 틀리면 서버가 거절한다
+  ---
+  duration_ms: 4.911833
+  type: 'test'
+  ...
+# Subtest: 받는 쪽 이벤트: B 의 편집기 거울은 A 의 편집(글·Enter·목록·표·칸 합치기·되돌리기)을 이벤트로만 받아도 늘 같다
+ok 17 - 받는 쪽 이벤트: B 의 편집기 거울은 A 의 편집(글·Enter·목록·표·칸 합치기·되돌리기)을 이벤트로만 받아도 늘 같다
+  ---
+  duration_ms: 8.168709
+  type: 'test'
+  ...
+# Subtest: 선택: 시작·끝을 토큰에 붙여 두면, 남이 앞에 글을 넣고 블록을 나눠도 같은 글자를 감싼다
+ok 18 - 선택: 시작·끝을 토큰에 붙여 두면, 남이 앞에 글을 넣고 블록을 나눠도 같은 글자를 감싼다
+  ---
+  duration_ms: 3.67175
+  type: 'test'
+  ...
+# Subtest: 서식: 굵게 하는 사이 남이 범위 안에 넣은 글자는 굵어지지 않는다 (본 글자만 바뀐다)
+ok 19 - 서식: 굵게 하는 사이 남이 범위 안에 넣은 글자는 굵어지지 않는다 (본 글자만 바뀐다)
+  ---
+  duration_ms: 12.698167
+  type: 'test'
+  ...
+# Subtest: 서식: 굵은 글 끝에서 이어 치면 굵게 이어진다
+ok 20 - 서식: 굵은 글 끝에서 이어 치면 굵게 이어진다
+  ---
+  duration_ms: 4.7625
+  type: 'test'
+  ...
+# Subtest: 서식: 같은 글자를 동시에 켜고 끄면 나중 이름표가 이긴다 — 모두 같은 값으로
+ok 21 - 서식: 같은 글자를 동시에 켜고 끄면 나중 이름표가 이긴다 — 모두 같은 값으로
+  ---
+  duration_ms: 5.903
+  type: 'test'
+  ...
+# Subtest: 목록: 글머리 항목에서 친 Enter 는 같은 수준의 항목으로 이어진다
+ok 22 - 목록: 글머리 항목에서 친 Enter 는 같은 수준의 항목으로 이어진다
+  ---
+  duration_ms: 3.657417
+  type: 'test'
+  ...
+# Subtest: 목록: 같은 항목의 수준을 동시에 바꾸면 한 값으로 모인다
+ok 23 - 목록: 같은 항목의 수준을 동시에 바꾸면 한 값으로 모인다
+  ---
+  duration_ms: 4.265709
+  type: 'test'
+  ...
+# Subtest: 목록: 모델에서는 이어진 항목이 list 하나로 묶이고, 종류가 바뀌는 곳에서 목록이 나뉜다
+ok 24 - 목록: 모델에서는 이어진 항목이 list 하나로 묶이고, 종류가 바뀌는 곳에서 목록이 나뉜다
+  ---
+  duration_ms: 4.110209
+  type: 'test'
+  ...
+# Subtest: 목록: 항목을 목록에서 빼는 것은 종류 바꾸기 하나라, 그 사이 남이 그 항목에 친 글이 그대로 남는다
+ok 25 - 목록: 항목을 목록에서 빼는 것은 종류 바꾸기 하나라, 그 사이 남이 그 항목에 친 글이 그대로 남는다
+  ---
+  duration_ms: 3.910458
+  type: 'test'
+  ...
+# Subtest: 되돌리기: 이어 친 글자는 한 번에 되돌아가고, 커서는 치기 전 자리로
+ok 26 - 되돌리기: 이어 친 글자는 한 번에 되돌아가고, 커서는 치기 전 자리로
+  ---
+  duration_ms: 9.652417
+  type: 'test'
+  ...
+# Subtest: 되돌리기: 문단 종류를 되돌릴 때 그 사이 남이 바꾼 값은 덮어쓰지 않는다
+ok 27 - 되돌리기: 문단 종류를 되돌릴 때 그 사이 남이 바꾼 값은 덮어쓰지 않는다
+  ---
+  duration_ms: 8.068041
+  type: 'test'
+  ...
+# Subtest: 되돌리기: 서식을 되돌릴 때 그 사이 남이 다시 바꾼 글자는 그대로 둔다
+ok 28 - 되돌리기: 서식을 되돌릴 때 그 사이 남이 다시 바꾼 글자는 그대로 둔다
+  ---
+  duration_ms: 3.585958
+  type: 'test'
+  ...
+# Subtest: GC: 되돌릴 수 있는 지우기는 압축하지 않는다 — 되돌리면 그대로 살아난다
+ok 29 - GC: 되돌릴 수 있는 지우기는 압축하지 않는다 — 되돌리면 그대로 살아난다
+  ---
+  duration_ms: 2.500542
+  type: 'test'
+  ...
+# Subtest: GC: 끊긴 참여자가 받을 때까지 기다리고, 받은 뒤에 모두 같은 자리에서 압축한다
+ok 30 - GC: 끊긴 참여자가 받을 때까지 기다리고, 받은 뒤에 모두 같은 자리에서 압축한다
+  ---
+  duration_ms: 5.048208
+  type: 'test'
+  ...
+# Subtest: GC: 연달아 친 글자의 묘비는 토큰 하나로 합쳐진다
+ok 31 - GC: 연달아 친 글자의 묘비는 토큰 하나로 합쳐진다
+  ---
+  duration_ms: 25.149708
+  type: 'test'
+  ...
+# Subtest: GC 뒤에 들어온 참여자도 같은 문서를 받고, 이어서 편집할 수 있다
+ok 32 - GC 뒤에 들어온 참여자도 같은 문서를 받고, 이어서 편집할 수 있다
+  ---
+  duration_ms: 4.388667
+  type: 'test'
+  ...
+# Subtest: 서버: 변경 안의 한 연산이라도 적용할 수 없으면 변경 전체를 거절하고 문서는 그대로다
+ok 33 - 서버: 변경 안의 한 연산이라도 적용할 수 없으면 변경 전체를 거절하고 문서는 그대로다
+  ---
+  duration_ms: 0.274375
+  type: 'test'
+  ...
+# Subtest: 무작위 3000 대본 · 참여자 2 — 모두 같은 문서로 모이고, 편집기 쪽 거울도 늘 같다
+ok 34 - 무작위 3000 대본 · 참여자 2 — 모두 같은 문서로 모이고, 편집기 쪽 거울도 늘 같다
+  ---
+  duration_ms: 23237.813791
+  type: 'test'
+  ...
+# 받는 쪽 이벤트 81099개 · normalize 가 붙은 내 편집 9번
+# Subtest: 무작위 3000 대본 · 참여자 4 — 모두 같은 문서로 모이고, 편집기 쪽 거울도 늘 같다
+ok 35 - 무작위 3000 대본 · 참여자 4 — 모두 같은 문서로 모이고, 편집기 쪽 거울도 늘 같다
+  ---
+  duration_ms: 34417.762584
+  type: 'test'
+  ...
+# 받는 쪽 이벤트 211582개 · normalize 가 붙은 내 편집 8번
+# Subtest: 무작위 3000 대본 · 참여자 2 · 서버 GC 섞음 — 모두 같은 문서로 모이고, 편집기 쪽 거울도 늘 같다
+ok 36 - 무작위 3000 대본 · 참여자 2 · 서버 GC 섞음 — 모두 같은 문서로 모이고, 편집기 쪽 거울도 늘 같다
+  ---
+  duration_ms: 20556.538958
+  type: 'test'
+  ...
+# GC 1500번 · 압축된 글자 묘비 5899개
+# 받는 쪽 이벤트 81099개 · normalize 가 붙은 내 편집 9번
+# Subtest: 무작위 3000 대본 · 참여자 4 · 서버 GC 섞음 — 모두 같은 문서로 모이고, 편집기 쪽 거울도 늘 같다
+ok 37 - 무작위 3000 대본 · 참여자 4 · 서버 GC 섞음 — 모두 같은 문서로 모이고, 편집기 쪽 거울도 늘 같다
+  ---
+  duration_ms: 33708.735209
+  type: 'test'
+  ...
+# GC 1091번 · 압축된 글자 묘비 4027개
+# 받는 쪽 이벤트 211582개 · normalize 가 붙은 내 편집 8번
+# Subtest: 모델 재사용: 읽은 값을 수정해도 다음 읽기와 문서에 영향을 주지 않는다
+ok 38 - 모델 재사용: 읽은 값을 수정해도 다음 읽기와 문서에 영향을 주지 않는다
+  ---
+  duration_ms: 8.267
+  type: 'test'
+  ...
+# Subtest: 모델 재사용: 변경 없는 재읽기에서 토큰과 서식을 다시 읽지 않는다
+ok 39 - 모델 재사용: 변경 없는 재읽기에서 토큰과 서식을 다시 읽지 않는다
+  ---
+  duration_ms: 54.365208
+  type: 'test'
+  ...
+# Subtest: 모델 재사용: 글자·서식·구조·원격 적용·GC 뒤 새로 연 문서와 같다
+ok 40 - 모델 재사용: 글자·서식·구조·원격 적용·GC 뒤 새로 연 문서와 같다
+  ---
+  duration_ms: 4.394959
+  type: 'test'
+  ...
+# Subtest: PM presence: 전방·역방향과 collapsed, presence-only 갱신은 문서를 바꾸지 않는다
+ok 41 - PM presence: 전방·역방향과 collapsed, presence-only 갱신은 문서를 바꾸지 않는다
+  ---
+  duration_ms: 13.95
+  type: 'test'
+  ...
+# Subtest: PM presence: 여러 문단 범위와 보내는 head/focus 방향을 유지한다
+ok 42 - PM presence: 여러 문단 범위와 보내는 head/focus 방향을 유지한다
+  ---
+  duration_ms: 10.889584
+  type: 'test'
+  ...
+# Subtest: PM presence: 기존 토큰 끝점은 삽입과 삭제 뒤 현재 위치로 다시 풀린다
+ok 43 - PM presence: 기존 토큰 끝점은 삽입과 삭제 뒤 현재 위치로 다시 풀린다
+  ---
+  duration_ms: 8.753916
+  type: 'test'
+  ...
+# Subtest: PM presence: 없는 활성 끝은 숨기고 없는 반대 끝은 caret만 남긴다
+ok 44 - PM presence: 없는 활성 끝은 숨기고 없는 반대 끝은 caret만 남긴다
+  ---
+  duration_ms: 2.837334
+  type: 'test'
+  ...
+# Subtest: PM presence: 삭제되거나 합쳐져 숨은 칸의 범위는 이웃 칸으로 옮기지 않는다
+ok 45 - PM presence: 삭제되거나 합쳐져 숨은 칸의 범위는 이웃 칸으로 옮기지 않는다
+  ---
+  duration_ms: 16.456167
+  type: 'test'
+  ...
+# Subtest: PM presence: 겹친 사용자별 범위, leave, 로컬 연결 종료
+ok 46 - PM presence: 겹친 사용자별 범위, leave, 로컬 연결 종료
+  ---
+  duration_ms: 2.655916
+  type: 'test'
+  ...
+# Subtest: ProseMirror: 같은 자리에서 둘이 동시에 Enter(splitBlock) 를 치고 각자 글자를 치면 새 줄은 하나, 두 글자가 그 줄에
+ok 47 - ProseMirror: 같은 자리에서 둘이 동시에 Enter(splitBlock) 를 치고 각자 글자를 치면 새 줄은 하나, 두 글자가 그 줄에
+  ---
+  duration_ms: 18.18425
+  type: 'test'
+  ...
+# Subtest: ProseMirror: Enter 의 뜻이 남는다 — A 가 나누는 사이 B 가 뒷부분에 친 글자가 그대로 남는다 (지웠다 다시 넣지 않는다)
+ok 48 - ProseMirror: Enter 의 뜻이 남는다 — A 가 나누는 사이 B 가 뒷부분에 친 글자가 그대로 남는다 (지웠다 다시 넣지 않는다)
+  ---
+  duration_ms: 9.517042
+  type: 'test'
+  ...
+# Subtest: ProseMirror: prosemirror-tables 의 열 넣기(addColumnAfter)는 행마다 칸 넣기로 오고, CRDT 에서는 열 노드 하나
+ok 49 - ProseMirror: prosemirror-tables 의 열 넣기(addColumnAfter)는 행마다 칸 넣기로 오고, CRDT 에서는 열 노드 하나
+  ---
+  duration_ms: 7.550792
+  type: 'test'
+  ...
+# Subtest: ProseMirror: 되돌리기는 내 편집만 — A 가 되돌려도 B 가 친 글자는 남는다
+ok 50 - ProseMirror: 되돌리기는 내 편집만 — A 가 되돌려도 B 가 친 글자는 남는다
+  ---
+  duration_ms: 6.077291
+  type: 'test'
+  ...
+# Subtest: ProseMirror: 서식·링크 mark 가 CRDT 서식으로 가고, 모델에서는 inline-hyperlink 로 묶인다
+ok 51 - ProseMirror: 서식·링크 mark 가 CRDT 서식으로 가고, 모델에서는 inline-hyperlink 로 묶인다
+  ---
+  duration_ms: 5.177292
+  type: 'test'
+  ...
+# Subtest: ProseMirror 무작위 300 대본 · 참여자 2 — 모든 편집기·CRDT·서버가 같은 문서
+ok 52 - ProseMirror 무작위 300 대본 · 참여자 2 — 모든 편집기·CRDT·서버가 같은 문서
+  ---
+  duration_ms: 2333.407625
+  type: 'test'
+  ...
+# Step 4759개 — text 2596 · split 886 · diff 865 · join 55 · mark 294 · range 63 · CRDT 규칙으로 편집기를 맞춘 것 39번
+# Subtest: ProseMirror 무작위 300 대본 · 참여자 3 — 모든 편집기·CRDT·서버가 같은 문서
+ok 53 - ProseMirror 무작위 300 대본 · 참여자 3 — 모든 편집기·CRDT·서버가 같은 문서
+  ---
+  duration_ms: 2382.17025
+  type: 'test'
+  ...
+# Step 4720개 — text 2596 · split 882 · diff 847 · join 48 · mark 294 · range 53 · CRDT 규칙으로 편집기를 맞춘 것 46번
+# Subtest: 문자 재전송: 스냅숏에 이미 있는 연산은 토큰과 블록 캐시를 바꾸지 않는다
+ok 54 - 문자 재전송: 스냅숏에 이미 있는 연산은 토큰과 블록 캐시를 바꾸지 않는다
+  ---
+  duration_ms: 3.953375
+  type: 'test'
+  ...
+# Subtest: 문자 재전송: 일부만 중복된 문자열은 새 뒷부분만 넣고 사이에 낀 남의 글을 유지한다
+ok 55 - 문자 재전송: 일부만 중복된 문자열은 새 뒷부분만 넣고 사이에 낀 남의 글을 유지한다
+  ---
+  duration_ms: 0.383583
+  type: 'test'
+  ...
+# Subtest: 문자 재전송: GC로 묶은 토큰의 원래 연산을 다시 받아도 압축과 삭제를 유지한다
+ok 56 - 문자 재전송: GC로 묶은 토큰의 원래 연산을 다시 받아도 압축과 삭제를 유지한다
+  ---
+  duration_ms: 0.889042
+  type: 'test'
+  ...
+# Subtest: seq0 재연결: 스냅숏에 포함된 pending 입력을 다시 적용하고 확인받아도 오류 없이 수렴한다
+ok 57 - seq0 재연결: 스냅숏에 포함된 pending 입력을 다시 적용하고 확인받아도 오류 없이 수렴한다
+  ---
+  duration_ms: 1.430084
+  type: 'test'
+  ...
+# Subtest: 스냅숏 수신 확인: 받은 변경만 지우고 아직 안 받은 pending 변경은 다시 얹는다
+ok 58 - 스냅숏 수신 확인: 받은 변경만 지우고 아직 안 받은 pending 변경은 다시 얹는다
+  ---
+  duration_ms: 0.538917
+  type: 'test'
+  ...
+# Subtest: 이전 hello 형식: 수신 번호가 없어도 중복 연산을 허용하고 뒤늦은 내 echo를 확인한다
+ok 59 - 이전 hello 형식: 수신 번호가 없어도 중복 연산을 허용하고 뒤늦은 내 echo를 확인한다
+  ---
+  duration_ms: 0.490583
+  type: 'test'
+  ...
+# Subtest: S1 둘이 같은 자리에서 동시에 Enter → 새 줄은 하나
+ok 60 - S1 둘이 같은 자리에서 동시에 Enter → 새 줄은 하나
+  ---
+  duration_ms: 10.162041
+  type: 'test'
+  ...
+# Subtest: S2 S1 뒤 각자 새 줄 맨 앞에 글자 → 둘 다 같은 새 줄에
+ok 61 - S2 S1 뒤 각자 새 줄 맨 앞에 글자 → 둘 다 같은 새 줄에
+  ---
+  duration_ms: 4.86975
+  type: 'test'
+  ...
+# Subtest: S3 혼자 문단 끝에서 Enter 두 번 → 빈 줄 둘
+ok 62 - S3 혼자 문단 끝에서 Enter 두 번 → 빈 줄 둘
+  ---
+  duration_ms: 2.904375
+  type: 'test'
+  ...
+# Subtest: S4 둘이 문단 끝에서 동시에 Enter → 빈 줄 하나
+ok 63 - S4 둘이 문단 끝에서 동시에 Enter → 빈 줄 하나
+  ---
+  duration_ms: 4.757583
+  type: 'test'
+  ...
+# Subtest: S5a 넷이 같은 자리에서 동시에 Enter 후 각자 글자 (전부 따로) → 한 줄에 넷
+ok 64 - S5a 넷이 같은 자리에서 동시에 Enter 후 각자 글자 (전부 따로) → 한 줄에 넷
+  ---
+  duration_ms: 4.678583
+  type: 'test'
+  ...
+# Subtest: S5b 넷이 동시에 Enter, Enter 만 먼저 퍼진 뒤 각자 글자 → 한 줄에 넷
+ok 65 - S5b 넷이 동시에 Enter, Enter 만 먼저 퍼진 뒤 각자 글자 → 한 줄에 넷
+  ---
+  duration_ms: 5.282625
+  type: 'test'
+  ...
+# Subtest: S5c 한 사람씩 보고 친 Enter 는 각자 따로 줄
+ok 66 - S5c 한 사람씩 보고 친 Enter 는 각자 따로 줄
+  ---
+  duration_ms: 7.0085
+  type: 'test'
+  ...
+# Subtest: S6 A 는 he|llo 에서 Enter, B 는 동시에 뒤쪽에 X
+ok 67 - S6 A 는 he|llo 에서 Enter, B 는 동시에 뒤쪽에 X
+  ---
+  duration_ms: 7.257
+  type: 'test'
+  ...
+# Subtest: S7 S1 뒤 두 문단을 걸치는 범위 삭제, 그 사이 남이 넣은 글자는 남는다
+ok 68 - S7 S1 뒤 두 문단을 걸치는 범위 삭제, 그 사이 남이 넣은 글자는 남는다
+  ---
+  duration_ms: 8.173625
+  type: 'test'
+  ...
+# Subtest: S8 A 가 Enter 후 되돌리기, 그 사이 B 가 그 줄에 친 글자는 남는다
+ok 69 - S8 A 가 Enter 후 되돌리기, 그 사이 B 가 그 줄에 친 글자는 남는다
+  ---
+  duration_ms: 4.201291
+  type: 'test'
+  ...
+# Subtest: S9 내 되돌리기는 내가 한 삭제만 취소한다 (보지 못한 남의 삭제는 남는다)
+ok 70 - S9 내 되돌리기는 내가 한 삭제만 취소한다 (보지 못한 남의 삭제는 남는다)
+  ---
+  duration_ms: 2.272583
+  type: 'test'
+  ...
+# Subtest: 문단 종류는 마지막 쓰기가 이긴다 — 동시에 바꿔도 한 값으로 모인다
+ok 71 - 문단 종류는 마지막 쓰기가 이긴다 — 동시에 바꿔도 한 값으로 모인다
+  ---
+  duration_ms: 2.863875
+  type: 'test'
+  ...
+# Subtest: 끊긴 동안 친 것은 다시 이어질 때 합쳐진다
+ok 72 - 끊긴 동안 친 것은 다시 이어질 때 합쳐진다
+  ---
+  duration_ms: 5.817042
+  type: 'test'
+  ...
+# Subtest: 나중에 들어온 참여자는 스냅숏을 받고 같은 문서를 본다
+ok 73 - 나중에 들어온 참여자는 스냅숏을 받고 같은 문서를 본다
+  ---
+  duration_ms: 5.819084
+  type: 'test'
+  ...
+# Subtest: 스냅숏 → 불러오기 → 스냅숏 — 토큰·모델·다시 쓴 스냅숏이 모두 같다
+ok 74 - 스냅숏 → 불러오기 → 스냅숏 — 토큰·모델·다시 쓴 스냅숏이 모두 같다
+  ---
+  duration_ms: 14.40975
+  type: 'test'
+  ...
+# Subtest: GC 로 묘비가 묶인 뒤에도 스냅숏 왕복이 같다 — 묶인 길이만큼 이름표를 건너뛴다
+ok 75 - GC 로 묘비가 묶인 뒤에도 스냅숏 왕복이 같다 — 묶인 길이만큼 이름표를 건너뛴다
+  ---
+  duration_ms: 7.672792
+  type: 'test'
+  ...
+# Subtest: 스냅숏은 이어 친 글자의 이름표와 기준을 적지 않는다
+ok 76 - 스냅숏은 이어 친 글자의 이름표와 기준을 적지 않는다
+  ---
+  duration_ms: 5.359708
+  type: 'test'
+  ...
+# Subtest: 표 넣기: 커서 자리에서 블록을 나누고 그 사이에 고른 크기의 빈 표가 들어간다 (크기는 스키마가 아니라 넣는 쪽이 정한다)
+ok 77 - 표 넣기: 커서 자리에서 블록을 나누고 그 사이에 고른 크기의 빈 표가 들어간다 (크기는 스키마가 아니라 넣는 쪽이 정한다)
+  ---
+  duration_ms: 13.784208
+  type: 'test'
+  ...
+# Subtest: 표: 한 사람은 행을, 한 사람은 열을 동시에 더하면 새 칸까지 모두 생긴다 (3×3, 엇갈림 없음)
+ok 78 - 표: 한 사람은 행을, 한 사람은 열을 동시에 더하면 새 칸까지 모두 생긴다 (3×3, 엇갈림 없음)
+  ---
+  duration_ms: 14.768084
+  type: 'test'
+  ...
+# Subtest: 표: 열을 지우는 사이 남이 그 열의 칸에 쓰면 열은 사라지고, 열 지우기를 되돌리면 그 글까지 돌아온다
+ok 79 - 표: 열을 지우는 사이 남이 그 열의 칸에 쓰면 열은 사라지고, 열 지우기를 되돌리면 그 글까지 돌아온다
+  ---
+  duration_ms: 7.590958
+  type: 'test'
+  ...
+# Subtest: 표: 표를 지우는 사이 남이 칸에 쓰면 표는 사라지고, 되돌리면 그 글까지 돌아온다
+ok 80 - 표: 표를 지우는 사이 남이 칸에 쓰면 표는 사라지고, 되돌리면 그 글까지 돌아온다
+  ---
+  duration_ms: 14.488333
+  type: 'test'
+  ...
+# Subtest: 표: 두 사람이 남은 두 행을 하나씩 동시에 지우면 표가 통째로 사라진다 — 모두 같은 문서
+ok 81 - 표: 두 사람이 남은 두 행을 하나씩 동시에 지우면 표가 통째로 사라진다 — 모두 같은 문서
+  ---
+  duration_ms: 8.181792
+  type: 'test'
+  ...
+# Subtest: 표: 칸 안에서도 같은 자리 동시 Enter 는 새 줄 하나
+ok 82 - 표: 칸 안에서도 같은 자리 동시 Enter 는 새 줄 하나
+  ---
+  duration_ms: 5.411625
+  type: 'test'
+  ...
+# Subtest: 표: 같은 자리에 동시에 넣은 표 둘은 둘 다 남고, 모두 같은 순서
+ok 83 - 표: 같은 자리에 동시에 넣은 표 둘은 둘 다 남고, 모두 같은 순서
+  ---
+  duration_ms: 4.589333
+  type: 'test'
+  ...
+# Subtest: 표: 내가 있던 열을 남이 지우면 커서는 옆 칸으로 나온다
+ok 84 - 표: 내가 있던 열을 남이 지우면 커서는 옆 칸으로 나온다
+  ---
+  duration_ms: 7.482417
+  type: 'test'
+  ...
+# Subtest: 구분선: 블록 맨 앞 Backspace 는 앞의 구분선을 지운다
+ok 85 - 구분선: 블록 맨 앞 Backspace 는 앞의 구분선을 지운다
+  ---
+  duration_ms: 6.142458
+  type: 'test'
+  ...
+# Subtest: 빈 자리: 표·구분선 뒤의 표지가 없어지면 그 뒤에 빈 자리가 생겨 커서를 둘 곳이 남고, 종류를 바꾸면 표지가 새로 생긴다
+ok 86 - 빈 자리: 표·구분선 뒤의 표지가 없어지면 그 뒤에 빈 자리가 생겨 커서를 둘 곳이 남고, 종류를 바꾸면 표지가 새로 생긴다
+  ---
+  duration_ms: 3.604208
+  type: 'test'
+  ...
+# Subtest: 스키마 검사: 칸 안에는 표를 넣지 못한다 — 편집 함수는 연산을 만들지 않고, 서버는 손으로 만든 연산을 거절한다
+ok 87 - 스키마 검사: 칸 안에는 표를 넣지 못한다 — 편집 함수는 연산을 만들지 않고, 서버는 손으로 만든 연산을 거절한다
+  ---
+  duration_ms: 6.120417
+  type: 'test'
+  ...
+# Subtest: 스키마 주입: 할 일 목록 스키마를 넣으면 같은 CRDT 가 그 문서를 다룬다 (속성 동시 변경은 나중 쪽)
+ok 88 - 스키마 주입: 할 일 목록 스키마를 넣으면 같은 CRDT 가 그 문서를 다룬다 (속성 동시 변경은 나중 쪽)
+  ---
+  duration_ms: 4.965
+  type: 'test'
+  ...
+# Subtest: 스키마 없는 서버: 순서 매기기·적용·GC 만 하는 서버로도 참여자들은 같은 문서로 모이고, 늦게 온 참여자도 같은 것을 받는다
+ok 89 - 스키마 없는 서버: 순서 매기기·적용·GC 만 하는 서버로도 참여자들은 같은 문서로 모이고, 늦게 온 참여자도 같은 것을 받는다
+  ---
+  duration_ms: 10.5565
+  type: 'test'
+  ...
+# Subtest: GC: 지운 열을 압축한 뒤에도 늦게 온 참여자가 같은 표를 받고 이어서 편집한다
+ok 90 - GC: 지운 열을 압축한 뒤에도 늦게 온 참여자가 같은 표를 받고 이어서 편집한다
+  ---
+  duration_ms: 12.98925
+  type: 'test'
+  ...
+# Subtest: 이미지: image-component > image > inline-image 로 들어가고, 그림 크기를 동시에 바꾸면 나중 쪽으로 모인다
+ok 91 - 이미지: image-component > image > inline-image 로 들어가고, 그림 크기를 동시에 바꾸면 나중 쪽으로 모인다
+  ---
+  duration_ms: 5.661917
+  type: 'test'
+  ...
+# Subtest: 이미지: image 블록은 글자를 받지 않는다 (편집 함수가 막는다). 서버 검사는 줄 단위라, 글자를 받는 블록이 하나도 없는 줄(표의 행 줄)에 넣은 글자를 거절한다
+ok 92 - 이미지: image 블록은 글자를 받지 않는다 (편집 함수가 막는다). 서버 검사는 줄 단위라, 글자를 받는 블록이 하나도 없는 줄(표의 행 줄)에 넣은 글자를 거절한다
+  ---
+  duration_ms: 7.912542
+  type: 'test'
+  ...
+# Subtest: 글 안 그림: 문단에 넣은 inline-image 는 글자 한 자리를 차지하고, 서식은 그림을 건너뛴다
+ok 93 - 글 안 그림: 문단에 넣은 inline-image 는 글자 한 자리를 차지하고, 서식은 그림을 건너뛴다
+  ---
+  duration_ms: 5.230709
+  type: 'test'
+  ...
+# Subtest: 표 모델: table > table-row > table-cell > table-cell-body > 블록, 칸 안에 목록·이미지도 들어간다
+ok 94 - 표 모델: table > table-row > table-cell > table-cell-body > 블록, 칸 안에 목록·이미지도 들어간다
+  ---
+  duration_ms: 4.930916
+  type: 'test'
+  ...
+# Subtest: 캡션: image-component > [image > inline-image, caption > caption-paragraph] 로 보이고, 두 사람이 동시에 캡션을 써도 모인다
+ok 95 - 캡션: image-component > [image > inline-image, caption > caption-paragraph] 로 보이고, 두 사람이 동시에 캡션을 써도 모인다
+  ---
+  duration_ms: 3.798875
+  type: 'test'
+  ...
+# Subtest: 캡션: 맨 앞 Backspace·그림부터 캡션까지 지우기·그림 끝 Delete 로도 캡션이 그림 블록에 합쳐지지 않는다
+ok 96 - 캡션: 맨 앞 Backspace·그림부터 캡션까지 지우기·그림 끝 Delete 로도 캡션이 그림 블록에 합쳐지지 않는다
+  ---
+  duration_ms: 10.673833
+  type: 'test'
+  ...
+# Subtest: 캡션: 캡션 끝 Enter 는 캡션 줄을 하나 더 만들고, 둘 다 caption 하나에 묶인다
+ok 97 - 캡션: 캡션 끝 Enter 는 캡션 줄을 하나 더 만들고, 둘 다 caption 하나에 묶인다
+  ---
+  duration_ms: 5.778834
+  type: 'test'
+  ...
+# Subtest: 칸 합치기: 왼쪽 위 칸에 colspan·rowspan, 가려진 칸에 spanned — 모델은 모든 행에 모든 칸이 있다
+ok 98 - 칸 합치기: 왼쪽 위 칸에 colspan·rowspan, 가려진 칸에 spanned — 모델은 모든 행에 모든 칸이 있다
+  ---
+  duration_ms: 3.732792
+  type: 'test'
+  ...
+# Subtest: 칸 합치기: 합치는 사이 남이 그 사이에 열을 넣으면 새 열도 덮인다 (끝을 이름표로 적으므로)
+ok 99 - 칸 합치기: 합치는 사이 남이 그 사이에 열을 넣으면 새 열도 덮인다 (끝을 이름표로 적으므로)
+  ---
+  duration_ms: 4.3515
+  type: 'test'
+  ...
+# Subtest: 칸 합치기: 끝 열을 지우면 줄어들고, 왼쪽 위 칸의 열을 지우면 합치기가 없어져 가렸던 칸이 다시 보인다
+ok 100 - 칸 합치기: 끝 열을 지우면 줄어들고, 왼쪽 위 칸의 열을 지우면 합치기가 없어져 가렸던 칸이 다시 보인다
+  ---
+  duration_ms: 5.792333
+  type: 'test'
+  ...
+# Subtest: 칸 합치기: 겹치는 두 합치기를 동시에 하면 나중 것 하나만 남는다 — 모두 같은 문서
+ok 101 - 칸 합치기: 겹치는 두 합치기를 동시에 하면 나중 것 하나만 남는다 — 모두 같은 문서
+  ---
+  duration_ms: 4.098167
+  type: 'test'
+  ...
+# Subtest: 칸 합치기: 덮인 칸의 글은 지워지지 않고 가려질 뿐이라, 나누면 다시 보인다. 덮인 칸에 있던 커서는 왼쪽 위 칸으로
+ok 102 - 칸 합치기: 덮인 칸의 글은 지워지지 않고 가려질 뿐이라, 나누면 다시 보인다. 덮인 칸에 있던 커서는 왼쪽 위 칸으로
+  ---
+  duration_ms: 5.265208
+  type: 'test'
+  ...
+# Subtest: 칸 합치기 검사: 다른 표의 행을 가리키는 합치기는 서버가 거절한다
+ok 103 - 칸 합치기 검사: 다른 표의 행을 가리키는 합치기는 서버가 거절한다
+  ---
+  duration_ms: 2.538625
+  type: 'test'
+  ...
+# Subtest: 칸 배경색: table-cell 의 backgroundColor 로 나오고, 같은 칸을 동시에 칠하면 나중 쪽으로 모인다
+ok 104 - 칸 배경색: table-cell 의 backgroundColor 로 나오고, 같은 칸을 동시에 칠하면 나중 쪽으로 모인다
+  ---
+  duration_ms: 4.236959
+  type: 'test'
+  ...
+# Subtest: 칸 배경색: 색은 행·열 이름표에 붙어 있어 앞에 행·열을 넣어도 같은 칸에 남고, 열을 지웠다 되돌리면 색도 돌아온다
+ok 105 - 칸 배경색: 색은 행·열 이름표에 붙어 있어 앞에 행·열을 넣어도 같은 칸에 남고, 열을 지웠다 되돌리면 색도 돌아온다
+  ---
+  duration_ms: 3.335833
+  type: 'test'
+  ...
+# Subtest: 칸 배경색 검사: 색 꼴이 틀리거나 계산되는 속성(colspan)을 직접 쓰면 편집 함수는 만들지 않고 서버는 거절한다
+ok 106 - 칸 배경색 검사: 색 꼴이 틀리거나 계산되는 속성(colspan)을 직접 쓰면 편집 함수는 만들지 않고 서버는 거절한다
+  ---
+  duration_ms: 1.796041
+  type: 'test'
+  ...
+1..106
+# tests 106
+# suites 0
+# pass 106
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 112253.328666
+
+> @doc-sync/demo@0.0.0 test
+> node --test test/*.test.ts
+
+TAP version 13
+# Subtest: 데모 presence: 전방·역방향과 collapsed, 문자 범위의 끝은 제외한다
+ok 1 - 데모 presence: 전방·역방향과 collapsed, 문자 범위의 끝은 제외한다
+  ---
+  duration_ms: 2.997459
+  type: 'test'
+  ...
+# Subtest: 데모 presence: 같은 줄의 여러 문단과 삭제된 토큰 위치를 다시 푼다
+ok 2 - 데모 presence: 같은 줄의 여러 문단과 삭제된 토큰 위치를 다시 푼다
+  ---
+  duration_ms: 1.179416
+  type: 'test'
+  ...
+# Subtest: 데모 presence: 없는 끝점은 문서 처음으로 바꾸지 않는다
+ok 3 - 데모 presence: 없는 끝점은 문서 처음으로 바꾸지 않는다
+  ---
+  duration_ms: 0.197541
+  type: 'test'
+  ...
+# Subtest: 데모 presence: 다른 칸과 숨은 칸의 범위를 옆 칸에 칠하지 않는다
+ok 4 - 데모 presence: 다른 칸과 숨은 칸의 범위를 옆 칸에 칠하지 않는다
+  ---
+  duration_ms: 1.313459
+  type: 'test'
+  ...
+# Subtest: 초기화: seq0이어도 모든 reset 이벤트 전에는 끝나지 않고 기존 훅을 복구한다
+ok 5 - 초기화: seq0이어도 모든 reset 이벤트 전에는 끝나지 않고 기존 훅을 복구한다
+  ---
+  duration_ms: 2.472083
+  type: 'test'
+  ...
+# Subtest: 초기화: POST 실패와 이벤트 시간 초과에도 훅을 복구하고 다음 초기화를 허용한다
+ok 6 - 초기화: POST 실패와 이벤트 시간 초과에도 훅을 복구하고 다음 초기화를 허용한다
+  ---
+  duration_ms: 12.179292
+  type: 'test'
+  ...
+# Subtest: 초기화 UI guard: reset 요청·이벤트 대기·seed 처리 전체에서 중복 진입을 막는다
+ok 7 - 초기화 UI guard: reset 요청·이벤트 대기·seed 처리 전체에서 중복 진입을 막는다
+  ---
+  duration_ms: 5.552542
+  type: 'test'
+  ...
+# Subtest: 초기화 UI guard: 실패 후 다음 작업을 허용한다
+ok 8 - 초기화 UI guard: 실패 후 다음 작업을 허용한다
+  ---
+  duration_ms: 1.579667
+  type: 'test'
+  ...
+# Subtest: 데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경로를 제공한다
+ok 9 - 데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경로를 제공한다
+  ---
+  duration_ms: 330.469459
+  type: 'test'
+  ...
+# Subtest: 데모 HTTP: 변경 검사·중복·SSE 동기화·GC 로그 복구를 유지한다
+ok 10 - 데모 HTTP: 변경 검사·중복·SSE 동기화·GC 로그 복구를 유지한다
+  ---
+  duration_ms: 276.5305
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 754.552708

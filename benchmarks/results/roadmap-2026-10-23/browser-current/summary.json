@@ -1,0 +1,37 @@
+{
+  "unit": "ms",
+  "metric": "key event timestamp through remote DOM and second rAF; rendering opportunity, not physical display",
+  "rows": [
+    {
+      "direction": "demo-to-pm",
+      "samples": 30,
+      "p50": 229.89999997615814,
+      "p95": 270,
+      "max": 282.1999999284744
+    },
+    {
+      "direction": "pm-to-demo",
+      "samples": 30,
+      "p50": 245.5,
+      "p95": 271.60000002384186,
+      "max": 298
+    }
+  ],
+  "correctness": {
+    "modelsEqual": true,
+    "pending": [
+      0,
+      0
+    ],
+    "fallbacks": [
+      0,
+      0
+    ],
+    "totalInputs": 70
+  },
+  "limits": [
+    "Same renderer thread and local HTTP/SSE",
+    "Other apps and concurrent paced benchmark remain running",
+    "ASCII sequential inserts only; no OS IME or large-table performance claim"
+  ]
+}

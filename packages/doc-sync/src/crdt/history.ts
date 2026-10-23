@@ -122,7 +122,8 @@ class SetStep implements Step {
 
 const idsOf = (op: Op): Ticket[] => {
     if (op.t === "text") {
-        return [...op.text].map((_, i) => ({lamport: op.id.lamport + i, actor: op.id.actor}));
+        // Doc.apply creates one token per UTF-16 code unit, including both halves of a surrogate pair.
+        return Array.from({length: op.text.length}, (_, i) => ({lamport: op.id.lamport + i, actor: op.id.actor}));
     }
 
     return op.t === "node" ? [op.id] : [];

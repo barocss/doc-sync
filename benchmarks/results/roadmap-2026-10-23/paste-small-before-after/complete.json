@@ -1,0 +1,104 @@
+{
+  "at": "2026-10-23T05:29:04.400Z",
+  "node": "v22.19.0",
+  "beforeBaseline": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-stage0-baseline-sbgzv0c6",
+  "afterBaseline": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-stage0-baseline-3OZB6J",
+  "correct": true,
+  "repeats": 3,
+  "notes": "Fresh documents; alternating before/after; tiny sample count; wrapper includes JSON payload. 100k before timed out in separate harness and has no numeric speedup ratio.",
+  "rows": [
+    {
+      "chars": 1000,
+      "correct": true,
+      "beforeLocalMs": {
+        "count": 3,
+        "p50": 87.91904099999999,
+        "p95": 140.58670800000004,
+        "max": 140.58670800000004,
+        "total": 293.020749
+      },
+      "afterLocalMs": {
+        "count": 3,
+        "p50": 4.064834000000019,
+        "p95": 29.733833000000004,
+        "max": 29.733833000000004,
+        "total": 37.20483300000001
+      },
+      "p50Ratio": 21.62918362717877,
+      "samples": {
+        "before": [
+          140.58670800000004,
+          87.91904099999999,
+          64.51499999999999
+        ],
+        "after": [
+          29.733833000000004,
+          3.4061659999999847,
+          4.064834000000019
+        ]
+      }
+    },
+    {
+      "chars": 5000,
+      "correct": true,
+      "beforeLocalMs": {
+        "count": 3,
+        "p50": 342.4788749999998,
+        "p95": 591.428208,
+        "max": 591.428208,
+        "total": 1266.5126249999998
+      },
+      "afterLocalMs": {
+        "count": 3,
+        "p50": 3.7448329999999714,
+        "p95": 7.160624999999982,
+        "max": 7.160624999999982,
+        "total": 13.553375000000187
+      },
+      "p50Ratio": 91.453711019958,
+      "samples": {
+        "before": [
+          591.428208,
+          332.605542,
+          342.4788749999998
+        ],
+        "after": [
+          7.160624999999982,
+          3.7448329999999714,
+          2.647917000000234
+        ]
+      }
+    },
+    {
+      "chars": 10000,
+      "correct": true,
+      "beforeLocalMs": {
+        "count": 3,
+        "p50": 1539.7471250000008,
+        "p95": 1554.472084,
+        "max": 1554.472084,
+        "total": 4563.6819590000005
+      },
+      "afterLocalMs": {
+        "count": 3,
+        "p50": 12.850749999999607,
+        "p95": 13.096333000000413,
+        "max": 13.096333000000413,
+        "total": 30.867165999999997
+      },
+      "p50Ratio": 119.8176857381902,
+      "samples": {
+        "before": [
+          1554.472084,
+          1469.4627499999997,
+          1539.7471250000008
+        ],
+        "after": [
+          12.850749999999607,
+          4.920082999999977,
+          13.096333000000413
+        ]
+      }
+    }
+  ]
+}

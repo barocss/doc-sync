@@ -1,0 +1,73 @@
+diff --git a/packages/doc-sync/src/crdt/doc.ts b/packages/doc-sync/src/crdt/doc.ts
+index 388a861..34a0883 100644
+--- a/packages/doc-sync/src/crdt/doc.ts
++++ b/packages/doc-sync/src/crdt/doc.ts
+@@ -285,6 +285,8 @@ export class Doc {
+     static verifyBlocks = false;
+     private posCache = new Map<string, Map<Item, {b: number; o: number}>>();
+     private visibleCache = new Map<string, boolean>();
++    private modelCache: NodeJSON | null = null;
++    private revision = 0;
+ 
+     constructor(actor: string, schema: Schema | null = null) {
+         this.clock = new Clock(actor);
+@@ -303,6 +305,11 @@ export class Doc {
+         return this.clock.actor;
+     }
+ 
++    /** 적용·압축마다 바뀌는 번호. 커서·presence처럼 문서를 바꾸지 않는 갱신과 구분한다. */
++    get version(): number {
++        return this.revision;
++    }
++
+     /** 본문 줄의 토큰 */
+     get items(): Item[] {
+         return this.lineMap.get(MAIN)!.items;
+@@ -572,6 +579,8 @@ export class Doc {
+      * 대상이 압축된 묘비이거나 없는 토큰이면 조용히 지나간다(지우기·속성은 이미 의미가 없다).
+      */
+     apply(op: Op): void {
++        this.modelCache = null;
++        this.revision += 1;
+         // 글자 넣기·지우기·서식은 그 줄의 블록 목록만 고쳐 쓴다. 나머지(표지·노드·되살리기·노드 속성)는 모든 줄을 다시 계산한다
+         op.t === "text" || op.t === "del" || (op.t === "set" && op.ids.every(id => this.get(keyOf(id))?.kind === "char")) || this.dirty();
+ 
+@@ -862,6 +871,8 @@ export class Doc {
+      * @returns 줄어든 토큰 수
+      */
+     compact(frontier: number, seqOf: (delKey: string) => number | undefined): number {
++        this.modelCache = null;
++        this.revision += 1;
+         this.dirty();
+ 
+         let removed = 0;
+@@ -1311,7 +1322,10 @@ export class Doc {
+      * 비어 있는 빈 자리(표 뒤 virtual)는 모델에 없다.
+      */
+     toJSON(): NodeJSON {
+-        return canonical(this.need(), {type: this.need().root, children: this.rawFlow(MAIN)});
++        this.modelCache ??= canonical(this.need(), {type: this.need().root, children: this.rawFlow(MAIN)});
++
++        // 변하지 않은 문서는 토큰·서식을 다시 읽지 않는다. 호출자는 예전처럼 모델을 자유롭게 고칠 수 있다.
++        return copyModel(this.modelCache);
+     }
+ 
+     private rawFlow(lineKey: string): NodeJSON[] {
+@@ -1721,6 +1735,17 @@ export class Doc {
+     }
+ }
+ 
++const copyRun = (run: Run): Run => "text" in run
++    ? {...run, marks: {...run.marks}}
++    : {...run, ...(run.attrs && {attrs: {...run.attrs}}), ...(run.runs && {runs: run.runs.map(copyRun)})};
++
++const copyModel = (node: NodeJSON): NodeJSON => ({
++    ...node,
++    ...(node.attrs && {attrs: {...node.attrs}}),
++    ...(node.runs && {runs: node.runs.map(copyRun)}),
++    ...(node.children && {children: node.children.map(copyModel)}),
++});
++
+ /** 이어 친 글자의 기준 — 같은 참여자의 바로 앞 이름표. 스냅숏은 이때 기준을 적지 않는다 */
+ const previousKey = (id: Ticket): string => keyOf({lamport: id.lamport - 1, actor: id.actor});
+ 

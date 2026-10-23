@@ -1,6 +1,6 @@
 # 인수인계 — @barocss/doc-sync
 
-2026-10-22 작성·모노레포 전환·Presence 범위 표시. 새 세션은 이 문서를 읽고 바로 **§6 다음 할 일**부터 시작하면 된다.
+2026-10-22 작성. 2026-10-23 main 통합 기준으로 갱신했다. 구현·측정은 **§5.7**, 통합 전 최종 시험은 **§5.8**, 남은 일은 **§6**에 있다.
 개념의 자세한 설명은 [`README.md`](README.md), 편집 API 설계는 [`docs/edit-api.md`](docs/edit-api.md), 계획은 로드맵에 있다.
 
 ---
@@ -11,8 +11,8 @@
 - **어디까지**: 글·서식·링크·목록·표(칸 합치기·배경색)·이미지(캡션)·상자·구분선을 동시편집한다. 동기화 서버와 ProseMirror 연결까지 동작한다. 무작위 3000 대본에서 갈림 0이다.
 - **최종 구성**: 라이브러리 `packages/doc-sync` 하나, 비공개 데모 `apps/demo`, 비공개 측정 `benchmarks`로 나눴다. 실제 작업 채팅 3개에서 브라우저·성능·Presence를 맡았다. 전환 전후 성능은 §5.4, 원격 선택 범위와 검증 범위는 §5.5에 있다.
 - **입력 보존**: Slate·Lexical·PM 비교 데모 `apps/demo/compat`의 커서·IME 실패 22개를 수정했다. 원인, 조합 초안 처리, Chrome 검증 범위는 §5.6에 있다. 기본 `/pm`의 IME 구현과 구분한다.
-- **지금 단계**: 로드맵 단계 0(기준 측정) 첫 결과에서 병목 둘을 찾았고, 바로 고쳤다 (§5.1). 10만 자 로컬 편집 p50 15ms → 0.043ms (Yjs 0.0037ms), 한 판 33분 → 21초. 지연 목표는 맞췄다. 메모리 85→35MB, 저장 17.5→2.9MB 로 줄였다 (§5.2). 이어 친 글자 묶기는 하지 않기로, 이진 꼴은 사용자가 고민 중이다.
-- **다음**: 단계 0 의 남은 측정을 마치고 결정 G0 를 내린다. 그다음 단계 1(성능)의 두 병목을 고친다. 고칠 곳은 이미 짚어 두었다 (§6).
+- **지금 단계**: 단계 0 측정 범위를 넓히고, 단계 1의 안전한 한 블록 수신 비교와 큰 문자열 캐시 복사를 개선했다. 단계 2 명세·성질 시험·장기 CI 기반도 추가했다 (§5.7). 실제 편집기 지연과 G0/G1, lease 만료 복구, 장기 관측 종료 조건은 남아 있다. 코어 시간만으로 제품 성능 통과를 판단하지 않는다.
+- **다음**: 기준 측정의 시간 초과·대본 속도·엔진 의미 차이를 검토하고 목표와 G0를 정한다. 여러 블록·구조 변경과 편집기 변환·화면 비용을 좁힌다. 연속 저장·이진 형식·이동 정책의 기존 결정은 유지한다 (§6).
 - **이름**: `@barocss/doc-sync` (사용자 결정, 2026-10-22). 옛 이름으로 부르지 않는다. `@barocss` 범위에는 CSS 패키지(browser·kit)와 math-editor-lexical 이 이미 있다
 
 ## 1. 위치와 실행
@@ -21,11 +21,11 @@
 /Users/user/github/doc-sync      ← 2026-10-22 사용자 요청으로 Git 초기화, 기본 브랜치 main
 ```
 
-원격 `origin`: `https://github.com/barocss/doc-sync.git`. README의 기존 내용을 유지하고 프로젝트 소스·설정·문서를 첫 커밋에 포함한다. `data/`, 모든 `node_modules/`, `.playwright-cli/`, `.omx/`, `output/`은 로컬 파일로 유지한다. 이 문서의 `output/` 증거 경로는 검증한 컴퓨터에 있으며 Git에는 포함하지 않는다. `benchmarks/results/`의 측정 원자료는 Git에 포함한다.
+원격 `origin`: `https://github.com/barocss/doc-sync.git`. README의 기존 내용을 유지하고 프로젝트 소스·설정·문서를 첫 커밋에 포함했다. `data/`, 모든 `node_modules/`, `.playwright-cli/`, `.omx/`, `output/`은 로컬 파일로 유지한다. 이 문서의 `output/` 증거 경로는 검증한 컴퓨터에 있으며 Git에는 포함하지 않는다. `benchmarks/results/`의 측정 원자료는 Git에 포함한다.
 
 ```bash
 npm install --cache <쓰기 가능한 임시 폴더>/npm-cache   # ~/.npm 캐시가 EACCES 를 낸다 (sudo 로 고치지 말 것)
-npm test                     # 입력 수정 커밋 기준 라이브러리 103개 + 데모 10개 (기본 무작위 500 대본)
+npm test                     # 현재 라이브러리 138개 + 데모 10개 (기본 무작위 500 대본)
 npm test --prefix apps/demo/compat  # 비교 데모의 변환·입력·관찰 도구 시험 31개
 FUZZ_SEEDS=3000 npm test     # 큰 무작위 (수 분)
 PM_SEEDS=300 npm test        # ProseMirror 무작위 늘리기
@@ -122,6 +122,8 @@ demo ─▶ pm ─▶ sync ─▶ crdt ◀─ server
     - 되돌리기는 CRDT 쪽 것을 쓴다.
 
 ## 4. 지금 상태 — 검증된 것
+
+아래 표는 입력 수정 커밋 `8d0f887`의 기록이다. 2026-10-23의 구현·측정은 §5.7, 통합 전 최종 시험은 §5.8을 본다.
 
 | 무엇 | 결과 |
 |---|---|
@@ -347,25 +349,72 @@ G0 의 어림 기준("10배 이내")으로 보면 처음 격차는 한참 밖이
 
 원인별 기록과 실행 방법은 `apps/demo/compat/README.md`, 원래 브라우저 작업 보고서는 로컬 `output/playwright/editor-compatibility/input-fixed/report.html`에 있다. 추가 통합 시험·소스 해시·기존 실패 22개와의 대조는 로컬 `output/validation/ime-cursor-fix-20261022/validation.json`에 기록한다. 재실행은 비교 데모 README의 설치·빌드·서버·Chrome 스크립트 순서를 따른다.
 
+### 5.7 로드맵 순차 실행 (2026-10-23, 통합 전 측정 기록)
+
+**측정 기준**: 당시 HEAD `8d0f887` 위에 다른 작업의 모델·문단 DOM 재사용 WIP를 포함했다. 시작 diff·해시와 측정 사본을 먼저 고정했다. 기존 `editor.ts`, 성능 보고서, 모델 캐시 시험은 해시가 같고, `doc.ts`도 이번 큰 문자열 처리 추가분을 제외하면 시작 WIP와 같다. Git 작업 트리는 하나다. 측정 당시에는 미커밋 상태였다. 이 변경과 기존 WIP를 함께 포함한 최종 통합 범위는 §5.8에 기록한다.
+
+**구현**:
+
+- `sync/model-events.ts`: 살아 있고 보이는 한 글 블록의 text/del/set만 좁힌다. text ID가 이미 관찰한 시계보다 앞서야 한다. 오래된 동시 삽입은 origin 뒤의 다른 표지를 건너갈 수 있어 전체 경로를 유지한다. 구조·다중 블록·새 토큰 의존·가상 블록·숨은 칸·undo/redo·undel도 기존 전체 경로다. 좁힌 이벤트는 원래 모델 경로로 돌리고 블록 단위로 검산한다. 실패하면 기존 전체 교체 fallback이다.
+- `Doc.apply(text)`: 256 UTF-16 단위를 넘는 문자열은 해당 줄의 block/position 캐시를 한 번 비운다. 글자마다 커지는 배열을 복사하지 않는다. 저장 ID, RGA 순서, 서식, wire, GC는 그대로다.
+- `History.idsOf`: 문자열 길이를 UTF-16 단위로 세어 이모지의 두 토큰도 모두 undo에 기록한다. 다른 actor의 글과 삭제는 유지한다. 모델의 code point 자리와 저장 UTF-16 자리의 차이는 별도 제한으로 남긴다.
+- `PmBinding`: 같은 Doc 객체·version의 내부 모델과 PM 문서를 재사용한다. Doc 교체는 version이 같아도 다시 읽는다. 선택·presence의 계산·콜백은 유지한다. 캐시·다중 Step·재진입·숨은 칸·snapshot/reset·초안 교체와 PM 무작위 300 대본을 포함한 관련 19개 시험이 통과했다. 조합 입력 규칙을 바꾼 작업은 아니다.
+- `docs/spec.md`, 성질 시험 6개, 8명 장기 하네스와 nightly CI를 추가했다. CI는 8 shard 각각 최소 125,000 wire Op다. 약 512 Op 문서 묶음을 새로 시작한다. 단일 문서의 100만 누적 연산, 디스크 장애, lease 만료 복구, 실제 GitHub 실행·2주 관측을 완료한 뜻은 아니다.
+
+**수신 성능**: 같은 1만/10만 자·문단당 160자·준비 5회·본 측정 30회의 단일 문자 대본을 썼다. 구간은 서버 이벤트 수신부터 `onModelEvents` 콜백 종료다. 거울 모델 적용·네트워크·DOM은 제외했다.
+
+| 초기 글자 수 | 변경 전 p95 | 변경 후 p95 | 이벤트당 전체 모델 읽기 |
+|---|---:|---:|---:|
+| 1만 | 20.253ms | 0.781ms | 2 → 0 |
+| 10만 | 186.249ms | 1.174ms | 2 → 0 |
+
+모든 표본에서 이벤트를 이전 거울에 적용한 결과가 송수신 모델과 같았다. fallback은 0이다. 외부 부하가 같다는 보장은 없으며 제품 SLO 승인은 아니다. 원자료와 재현 하네스는 `benchmarks/results/roadmap-2026-10-23/remote-events/`, `benchmarks/remote.ts`에 있다.
+
+**단일 큰 붙여넣기**: 변경 전 10만 자 case는 120초 제한 안에 완료하지 못했다. 변경 후 같은 case의 local 128.358ms, remote 113.309ms, snapshot+첫 모델 열기 p95 235.161ms(5회)로 완료했고 모델이 일치했다. 삽입 한 번의 local/remote는 분포가 아니다. timeout으로 개선 배수를 계산하지 않는다. 작은 크기의 교대 측정과 CPU 근거도 새 결과 폴더에 보존했다.
+
+**시험 시점**: 큰 문자열·PM 캐시를 포함한 기본 시험은 코어 138개 + 데모 10개 통과다. 큰 문자열 추가 직전의 확장 `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test`는 코어 128개 + 데모 10개 통과다. 그 뒤 큰 문자열·캐시·수신 집중 회귀, PM 300 대본, 현재 소스 기본 시험을 검사했다. compat 31개와 타입 검사도 통과했다. 로컬 장기 시험은 8 shard 각각 8개 복제본으로 총 1,000,021 wire Op를 통과했다. 다른 소스 시점의 숫자를 합쳐 한 번의 확장 실행으로 표시하지 않는다.
+
+**Chrome**: PM 캐시 직전과 최종 소스에서 각각 CDP 입력 84개, 일반 회귀 20개, 연산 기록 30개를 확인했다. 최종 소스의 기록은 `output/playwright/roadmap-pm-cache-20261023/summary.json`이다. 빈 문서 reset 원본 시험은 한 번 timeout했으나 HEAD 대조군과 현재 원본 반복은 통과했다. 원인을 제품 회귀로 확정하지 않았다. 시험에는 5개 EventSource의 실제 reset 수신 대기를 추가했고, 기존 최종 Z·네이티브/클라이언트/서버 일치·pending/failures 검사는 유지했다. 실제 OS 한글 키보드 검증과 구분한다.
+
+**실제 화면과 장기 관측**: PM 캐시 전 headless 화면 p95는 270.0/271.6ms, headed는 573.2/361.2ms였다. 두 모드는 직접 비교하지 않는다. PM 캐시 후 headed p95는 데모→PM 291.0ms, PM→데모 259.8ms였다. 준비 포함 70개 입력의 최종 모델·pending 0·fallback 0을 확인했다. before는 외부 부하가 매우 커졌고 우리 장기 시험도 겹쳤다. after는 우리 장기 시험 종료 후지만 외부 앱은 계속 실행됐다. 감소량을 캐시만의 효과로 단정하지 않는다. 원자료는 `output/playwright/roadmap-latency-20261023/`, `output/playwright/roadmap-latency-headed-20261023/`, `output/playwright/roadmap-latency-pm-cache-20261023/`다. 여전히 수백 ms 화면 지연이 남으며 제품 목표 통과가 아니다. stage 0 원본은 벽시계 1,800,060ms를 관측했고 마지막 영속 수렴은 엔진별 4복제본의 1320 round·5280 edits다. 1800 round·1Hz 목표는 미완료다. 중단 시 메모리의 정확한 완료 round와 타이머 지연은 알 수 없다. 이 결과를 장기 대본 통과로 표시하지 않는다. 최종 통합 보고서는 `benchmarks/results/roadmap-2026-10-23/integration-report.md`, 로컬 검증 집계는 `output/validation/roadmap-execution-20261023/`에 둔다. `output/`의 로컬 증거와 Git에 포함되는 측정 요약을 구분한다.
+
+```sh
+npm run remote --workspace @doc-sync/benchmarks -- --out results/new-remote.json
+npm run stage0:freeze --workspace @doc-sync/benchmarks -- /tmp/new-stage0-receipt
+node packages/doc-sync/test/long-fuzz.ts --ops 1000 --peers 8 --seed 23 --out output/long-fuzz/new-smoke.json
+```
+
+전체 단계 판정은 `docs/roadmap-status.md`, 측정 설치·실행은 `benchmarks/stage0/README.md`를 본다. 이번 실행은 로드맵 전체 완료나 운영·배포 승인이 아니다.
+
+### 5.8 main 통합 전 최종 확인 (2026-10-23)
+
+**범위**: 기준 커밋 `8d0f887` 위의 미커밋 변경을 함께 통합한다. 다른 작업에서 남긴 `Doc` 모델 캐시, 데모 문단 DOM 재사용, 모델 캐시 시험, 기존 성능 보고서·원자료도 포함한다. 이번 수신 비교·큰 문자열·Unicode undo·PM 캐시·명세·장기 CI 변경과 함께 시험했다. 기존 동시 Enter·RGA·참여자별 undo·wire·GC 규칙과 공개 진입점은 유지한다. `data/`, `node_modules/`, `output/` 등 무시한 로컬 파일은 커밋에서 제외한다. 측정 원본의 patch·로그 공백은 그대로 보존한다. `.gitattributes`는 `benchmarks/results/` 원자료만 공백 경고에서 제외하며 제품 소스의 공백 검사는 유지한다.
+
+**새 최종 시험**: Node 22.19.0으로 아래 항목을 다시 실행했다. 시험 시작 뒤 제품 소스는 바꾸지 않았다.
+
+| 항목 | 결과 |
+|---|---|
+| `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test` | 코어 138 + 데모 10 통과, 실패 0. 큰 문자열·PM 캐시까지 포함한 현재 소스 |
+| `npm test --prefix apps/demo/compat` | 31 통과, 실패 0 |
+| `npm run typecheck` | 오류 0 |
+| 별도 출력 폴더의 compat 번들 빌드 | 통과. 배포용 라이브러리 빌드와 다름 |
+| stage 0 하네스 시험 | ours/Yjs 6 통과, 공개 Yorkie SDK를 포함하면 8 통과 |
+| Chrome 156.0.8078.47 | CDP 입력 84 + 일반 회귀 20 통과, 연산 기록 30 확인. 실패 0 |
+| 8복제본 장기 하네스 smoke | 수락 wire Op 1,001개 통과 |
+
+기존 로컬 8 shard·1,000,021 wire Op 결과는 관련 소스 해시가 같음을 확인해 재사용했다. 이번 최종 확인에서 100만 Op 전체를 다시 실행한 것은 아니다. §5.7의 실제 화면 측정도 관련 소스 7개 해시가 모두 같다. 새 성능 측정을 한 것으로 표시하지 않는다. 화면 지연 p95 291.0/259.8ms, 30분 대본의 1800 round·1Hz 미달, G0/G1 미승인과 실제 OS IME·운영·2주 CI 미검증은 그대로 남아 있다.
+
+Git에 포함한 최종 집계와 소스 해시는 [`main-validation.json`](benchmarks/results/roadmap-2026-10-23/main-validation.json)에 있다. 로그와 Chrome 원본은 로컬 `output/validation/main-push-20261023/`, `output/playwright/main-push-20261023/`에 보존한다. 커밋은 이 최종 집계와 문서를 함께 포함한다. 정확한 통합 SHA와 원격 반영은 `git log -1` 및 `git fetch origin main && git rev-list --left-right --count HEAD...origin/main`으로 확인한다. 일치하면 출력은 `0 0`이다. 이 통합은 npm 배포나 전체 로드맵 완료를 뜻하지 않는다.
+
 ## 6. 다음 할 일 (순서대로)
 
 ### 6.1 단계 0 마무리 (남은 것)
 
-0. **남은 대본 셋** (로드맵 단계 0 의 다섯 중 지금은 "한 사람 타이핑 + 붙여 넣기" 하나만 했다)
-   - 참여자 4명 동시편집 — `packages/doc-sync/test/fuzz-core.ts` 의 무작위 대본을 실제 속도로
-   - 50×10 표 편집
-   - 편집 1만 번 뒤 문서 열기
-   - `benchmarks/trace.ts` 에 대본을 더하고 `benchmarks/engines.ts` 의 `TraceOp` 를 넓힌다. 표는 Yjs 쪽 꼴(y-prosemirror 의 table > table_row > table_cell)도 맞춰야 한다
-1. **Yorkie 비교 넣기**
-   - `@yorkie-js/sdk` 의 Tree 나 Text 를 서버 없이 Document 만으로 돌릴 수 있는지 본다.
-   - 안 되면 사내 Yorkie 서버를 쓴다 — `yorkie-api.navercorp.com`, API 키 필요, 값은 출력하지 않는다.
-   - **주의**: `/Users/user/github/yorkie-js-sdk` 는 절대 고치지 않는다. npm 에서 받은 SDK 를 쓴다.
-2. **실제 편집 기록 대본**
+0. **새 측정의 빈틈 검토** — 50×10 고정 표, 1만 편집 뒤 열기, 공개 Yorkie Tree 비교는 하네스를 추가했다. Yorkie의 1만 단일 입력과 1만 편집 뒤 열기는 120초 제한으로 미완료다. 4복제본 30분 관측의 목표 속도·round 완주 여부도 검토한다. 표의 동시 행·열·합치기 정책은 엔진 공통 비교로 검증한 것이 아니다.
+1. **실제 편집 기록 대본**
    - 예: automerge-perf 의 논문 편집 기록. 받기 전에 사용자에게 파일·출처·크기를 묻는다.
-3. **클라이언트 경로 측정**
-   - `Doc` 기준 측정 외에 로컬 `SyncClient.doc.edit` 는 §5.3 에서 쟀다. 실제 클라이언트의 원격 수신은 모델 이벤트 구독 시 `toJSON` 두 번과 `diffModels` 를 한다 (`SyncClient.withEvents`).
-   - 10만 자에서 이 비용을 따로 잰다. `read ms` 가 그 단서다.
-4. **결과를 로드맵에 적고 G0 를 사용자에게 묻는다.**
+2. **클라이언트·편집기 경로** — 한 글 블록 수신 비교와 전후 측정은 §5.7에서 했다. 여러 블록·구조 변경은 전체 모델을 읽는다. PM 모델 변환·적용과 화면 갱신도 별도로 좁혀야 한다.
+3. **결과와 미완료 항목을 검토한 뒤 목표와 G0를 정한다.**
    - 로드맵 artifact: https://claude.ai/artifact/ESfhwaZAnzcGjFpUjevafc
    - 고칠 원본 파일: `docs/roadmap.html`
 
@@ -374,19 +423,19 @@ G0 의 어림 기준("10배 이내")으로 보면 처음 격차는 한참 밖이
 1. ~~자리 색인을 버리지 않기~~ — **했다** (§5.1). 남은 것: 줄을 **덩어리(chunk) 목록**이나 B-tree 로 바꿔 `splice` 의 O(n) 복사를 없애기. Yjs 는 연결 리스트 + 마커 캐시, diamond-types 는 B-tree 를 쓴다. 덩어리마다 산 글자 수를 두면 "n 번째 글자" 도 O(log n) 이 된다.
 2. ~~블록 목록 증분 계산 (글자)~~ — **했다** (§5.1). 남은 것:
    - **표지 넣기·지우기도 고쳐 쓰기** — 나누기는 블록 하나를 둘로, 합치기는 둘을 하나로. 같은 자리 동시 Enter 의 흡수 규칙("경계마다 첫 산 표지")을 경계 → 표지들 Map 으로 계속 들고 있어야 한다. 지금 남은 병목의 약 절반
-   - `toJSON` 도 줄 단위·블록 단위로 캐시 (지금 10만 자 56ms)
+   - 문서 버전의 `toJSON` 계산 재사용은 기존 WIP에 있다. 변경 때의 줄·블록 단위 모델 생성과 반환 복사 비용은 남아 있다 (§5.7).
 3. **연속 글자 묶기** — ⛔ **하지 않는다 (2026-10-22 사용자 결정).** 다시 하자고 할 때까지 손대지 말 것. 아래는 기록으로만 남긴다
    - 저장 크기가 1만 자에 1.8MB 다. 한 사람이 이어 친 글자를 토큰 하나(span)로 묶는다.
    - GC 압축이 이미 `span` 을 쓴다 (`Item.span`, `byKey` 에 lamport+i 로 등록). 그 틀을 산 토큰에도 넓힌다.
 4. **전선·저장 꼴**: 스냅숏의 짧은 키·기본값 빼기는 했다 (§5.2). 이진 꼴·actor 번호표·전선 연산 꼴은 ⏸ **사용자가 고민 중** — 먼저 제안하지 말고 물어볼 때 답할 것
-5. **받는 쪽 비교 좁히기**: `diffModels` 를 바뀐 줄·블록에만.
+5. **받는 쪽 비교 좁히기**: 안전한 한 글 블록은 했다 (§5.7). 여러 블록·구조 변경·undo/redo는 전체 경로를 유지한다.
 
 - 끝 조건은 로드맵 단계 1 에 있다 (10만 자 로컬 p95 < 2ms 등 제안값).
 - 바꿀 때마다 `npm test` 와 `FUZZ_SEEDS=3000 npm test` 로 갈림 0 을 지킨다.
 
 ### 6.3 그 뒤
 
-- **단계 2**: 연산 명세와 성질 시험
+- **단계 2**: 명세·성질 시험·장기 CI 기반은 추가했다. lease 만료 복구, 실제 CI·2주 관측과 단일 문서 장기 요구 범위는 남았다.
 - **단계 3**: 저장·운영 — 스냅숏, 로그 압축, WebSocket, 샤딩
 - **단계 4**: 스키마 진화 — Fluid SharedTree 의 저장/보기 스키마와 "넓히기만" 규칙을 참고한다
 - **단계 5**: 스키마 기반 문서 에디터 연동 — 목적지
@@ -412,7 +461,7 @@ G0 의 어림 기준("10배 이내")으로 보면 처음 격차는 한참 밖이
 ## 8. 사용자 약속
 
 - **답은 모두 한글로** 한다. 중간 보고도 한글로, 짧게.
-- 커밋·push·PR은 요청받았을 때만 한다. 2026-10-22 사용자가 Git 초기화, `first commit`, `main` 브랜치, 위 origin 연결 및 최초 push를 요청했다. 후속 커밋·push·PR은 별도 요청에 따른다.
+- 커밋·push·PR은 요청받았을 때만 한다. 2026-10-22 사용자가 Git 초기화, `first commit`, `main` 브랜치, 위 origin 연결 및 최초 push를 요청했다. 2026-10-23에는 현재 미커밋 변경 전체를 최종 확인하고 시험 통과 뒤 main에 커밋·push하도록 요청했다. 이후 커밋·push·PR은 별도 요청에 따른다.
 - `/Users/user/github/yorkie-js-sdk` 는 고치지 않는다. 공개 npm 의 `phup.js` 는 절대 받지 않는다.
 - 사내 artifactory `_authToken` 을 건드리지 않는다. 다른 저장소에서는 공개 레지스트리로 우회하지 않는다 (이 폴더만 예외로 허락받음).
 - API 키·비밀번호는 출력하지 않고 입력하지 않는다.

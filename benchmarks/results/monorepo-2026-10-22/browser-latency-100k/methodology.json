@@ -1,0 +1,31 @@
+{
+  "status": "instrumentation_ready_waiting_for_compatibility_tests",
+  "createdAt": "2026-10-22T10:54:07.431554+00:00",
+  "sourceEdits": [],
+  "dataDirectory": "/tmp/doc-sync-editor-latency-20261022",
+  "server": "http://localhost:51099",
+  "scenario": "Actual /pm application; Demo A and ProseMirror P; real POST/SSE and JSONL persistence",
+  "initialChars": 100000,
+  "paragraphs": 625,
+  "charsPerParagraph": 160,
+  "warmupsPerDirection": 5,
+  "measuredPerDirection": 30,
+  "directions": [
+    "demo-to-pm",
+    "pm-to-demo"
+  ],
+  "sampleInput": "Single trusted ASCII key press, first paragraph offset 50 then consecutive positions",
+  "sampleIntervals": "Sequential: await prior target rendering opportunity, then at least 120ms; not sustained typing throughput",
+  "primaryEndpoint": "Second requestAnimationFrame callback following MutationObserver confirmation of expected remote paragraph text",
+  "paintValidation": "Separate diagnostic edit per direction with DevTools Paint events, screenshots and CPU profile",
+  "interpretation": "Browser rendering opportunity; no physical display scanout, no independent-computer claim",
+  "stages": [
+    "input capture -> transport.send start",
+    "transport.send start -> remote receive callback (includes event-loop queue)",
+    "remote receive callback -> confirmed remote DOM",
+    "confirmed remote DOM -> next rendering opportunity"
+  ],
+  "sourcePreservation": "Runtime wrappers call original methods; server source unchanged. Original benchmark algorithms and seed not changed.",
+  "concurrency": "Parent announced compatibility unit and browser tests. No timed samples until those tests finish.",
+  "reportDestination": "benchmarks/results/monorepo-2026-10-22/performance-report.md, appended section with separate source/version scope"
+}

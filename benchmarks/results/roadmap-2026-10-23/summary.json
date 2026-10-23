@@ -1,0 +1,37 @@
+{
+  "createdAt": "2026-10-23T05:49:04.001708+00:00",
+  "gate": "G0",
+  "gateStatus": "not_approved",
+  "baselineHead": "8d0f887ae5fbd9fdd5e92c30dd942bb39bb2f83b",
+  "baselineContainsPreExistingWip": true,
+  "baselineDocSha256": "9ae7db302f2698eb8325d9312f123d66d4a7d16a5b994b47232d379eb565bc66",
+  "afterDocSha256": "344080c0ba1e8dc620773370b43feaf62427b622be4b5293ad7d4a61693194de",
+  "currentDocSha256AtReport": "344080c0ba1e8dc620773370b43feaf62427b622be4b5293ad7d4a61693194de",
+  "baselineCases": {
+    "total": 15,
+    "completed": 12,
+    "timedOut": 3,
+    "allCasesPassed": false
+  },
+  "afterBulkPasteCorrect": true,
+  "observedWindowMs": 1800060,
+  "full1800RoundsComplete": false,
+  "targetCadenceMet": false,
+  "lastDurableConvergedRound": 1320,
+  "actualCompletedRoundsAtStop": null,
+  "harnessTests": {
+    "initial": 7,
+    "afterBulk": 7,
+    "afterWallClockFix": 8
+  },
+  "limitations": [
+    "3 case timeouts are whole-case censored observations, not latency values",
+    "Original fixed-round harness had no per-tick durable telemetry; only checkpoint lower bound is known at stop",
+    "Shared three-engine scheduling does not attribute cadence failure to one engine",
+    "Yorkie wire bytes unmeasured",
+    "GC policies and heap deltas do not qualify the proposed memory goal",
+    "Sequential split/merge comparison does not qualify equal concurrent intent",
+    "No browser, OS IME, network, service or production SLO qualification",
+    "Product performance targets and gate approval remain pending"
+  ]
+}

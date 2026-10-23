@@ -1,0 +1,15 @@
+{
+  "startedAt": "2026-10-23T05:14:23.361Z",
+  "durationMs": 100,
+  "intervalMs": 20,
+  "rounds": 5,
+  "peers": 4,
+  "accelerated": true,
+  "gc": "disabled; no service/lease/transport",
+  "workload": "four concurrent single-character end inserts each second; same prior view; deliver actor order after all four local edits",
+  "engines": [
+    "ours",
+    "yjs",
+    "yorkie-tree"
+  ]
+}

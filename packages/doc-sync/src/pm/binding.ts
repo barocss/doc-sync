@@ -10,7 +10,7 @@ import type {Mark, Slice} from "prosemirror-model";
 import type {Transaction} from "prosemirror-state";
 import type {Step} from "prosemirror-transform";
 import type {EditorView} from "prosemirror-view";
-import type {Op} from "../crdt/doc.ts";
+import type {Doc, Op} from "../crdt/doc.ts";
 import type {EditOp, NodeJSON, Run} from "../crdt/model.ts";
 import type {SyncClient} from "../sync/client.ts";
 import type {PmSchemaInfo} from "./schema.ts";
@@ -48,6 +48,8 @@ export class PmBinding {
     onChange: (() => void) | null = null;
     /** 내 커서 (presence 로 보낼 것) */
     onSelection: ((anchor: string | null, focus: string | null) => void) | null = null;
+    /** Binding-only snapshots. Conversion and position helpers read these values without mutating them. */
+    private cached: {doc: Doc; version: number; model: NodeJSON; pm: PmNode | null} | null = null;
 
     constructor(client: SyncClient, info: PmSchemaInfo, plugins: Plugin[] = []) {
         this.client = client;
@@ -61,9 +63,26 @@ export class PmBinding {
         return this.client.schema;
     }
 
-    /** CRDT 모델을 ProseMirror 문서로 */
+    private documentCache() {
+        const doc = this.client.doc;
+
+        // Snapshot/reset and the IME facade can replace Doc while retaining the same version number.
+        if (!this.cached || this.cached.doc !== doc || this.cached.version !== doc.version) {
+            this.cached = {doc, version: doc.version, model: doc.toJSON(), pm: null};
+        }
+
+        return this.cached;
+    }
+
+    private model(): NodeJSON {
+        return this.documentCache().model;
+    }
+
+    /** CRDT 모델을 ProseMirror 문서로. PM nodes are persistent values shared by transactions. */
     private crdtDoc(): PmNode {
-        return PmNode.fromJSON(this.info.pm, toPmJSON(this.schema, this.client.doc.toJSON()));
+        const cache = this.documentCache();
+
+        return cache.pm ??= PmNode.fromJSON(this.info.pm, toPmJSON(this.schema, cache.model));
     }
 
     // ── 보내는 쪽 ────────────────────────────────────────────────────────
@@ -92,7 +111,7 @@ export class PmBinding {
 
     /** Step 하나 → 모델 연산 → 전선 연산 */
     private translate(step: Step, before: PmNode, after: PmNode): Op[] {
-        const model = this.client.doc.toJSON();
+        const model = this.model();
         const kind = this.kindOf(step, before);
         const count = (k: string) => (this.stats.steps[k] = (this.stats.steps[k] ?? 0) + 1);
 
@@ -243,7 +262,7 @@ export class PmBinding {
 
         this.stats.reconciled += 1;
 
-        const ops = this.byDiff(this.state.doc, this.client.doc.toJSON());
+        const ops = this.byDiff(this.state.doc, this.model());
 
         if (!this.crdtDoc().eq(this.state.doc)) {
             this.stats.pushedBack += 1;
@@ -361,7 +380,7 @@ export class PmBinding {
             return;
         }
 
-        const pos = pathToPmPos(this.schema, this.state.doc, path, this.client.doc.toJSON());
+        const pos = pathToPmPos(this.schema, this.state.doc, path, this.model());
 
         try {
             this.state = this.state.apply(this.state.tr.setSelection(TextSelection.create(this.state.doc, pos)));
@@ -379,7 +398,7 @@ export class PmBinding {
             const $pos = doc.resolve(pos);
             const target = $pos.parent.inlineContent ? pos : TextSelection.near($pos, pos === doc.content.size ? -1 : 1).head;
 
-            return anchorAt(this.client.doc, pmPosToPath(this.schema, doc, target, this.client.doc.toJSON()));
+            return anchorAt(this.client.doc, pmPosToPath(this.schema, doc, target, this.model()));
         } catch {
             return null;
         }
@@ -399,7 +418,7 @@ export class PmBinding {
         return new Plugin({
             props: {
                 decorations: state => {
-                    const model = this.client.doc.toJSON();
+                    const model = this.model();
                     const decorations: Decoration[] = [];
                     const endpoint = (key: string | null): number | null => {
                         const item = key ? this.client.doc.get(key) : null;

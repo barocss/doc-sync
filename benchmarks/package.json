@@ -9,8 +9,14 @@
   "scripts": {
     "bench": "node --expose-gc run.ts",
     "client": "node client.ts",
+    "remote": "node remote.ts",
     "profile": "node profile.ts",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "stage0": "node --expose-gc stage0/run.mjs",
+    "stage0:paced": "node stage0/paced.mjs",
+    "stage0:test": "node --expose-gc --test stage0/workloads.test.mjs",
+    "stage0:freeze": "node stage0/freeze.mjs",
+    "stage0:bounded": "node stage0/bounded.mjs"
   },
   "dependencies": {
     "@barocss/doc-sync": "0.0.0"

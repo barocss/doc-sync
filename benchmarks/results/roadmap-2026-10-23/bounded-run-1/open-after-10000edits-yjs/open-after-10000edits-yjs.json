@@ -1,0 +1,63 @@
+{
+  "engine": "yjs",
+  "workload": "open-after-10000edits",
+  "correct": true,
+  "edits": 10000,
+  "chars": 6000,
+  "paragraphs": 1,
+  "localMs": {
+    "count": 10000,
+    "p50": 0.004166999999995369,
+    "p95": 0.009167000000019243,
+    "max": 0.6969579999999951,
+    "total": 57.917352999997945
+  },
+  "remoteApplyMs": {
+    "count": 10000,
+    "p50": 0.004291999999992413,
+    "p95": 0.010249999999984993,
+    "max": 0.6399580000000071,
+    "total": 59.84099299999846
+  },
+  "modelReadMs": {
+    "count": 5,
+    "p50": 0.007290999999952419,
+    "p95": 0.07937500000002728,
+    "max": 0.07937500000002728,
+    "total": 0.10395699999997987
+  },
+  "wireBytes": 109616,
+  "snapshot": {
+    "bytes": 6055,
+    "saveMs": 0.4589580000000524
+  },
+  "loadMs": {
+    "count": 5,
+    "p50": 0.40620799999999235,
+    "p95": 0.5408749999999714,
+    "max": 0.5408749999999714,
+    "total": 1.994792000000018
+  },
+  "firstModelMs": {
+    "count": 5,
+    "p50": 0.012499999999988631,
+    "p95": 0.07600000000002183,
+    "max": 0.07600000000002183,
+    "total": 0.12241600000004382
+  },
+  "openIncludingModelMs": {
+    "count": 5,
+    "p50": 0.41241600000000744,
+    "p95": 0.6168749999999932,
+    "max": 0.6168749999999932,
+    "total": 2.117208000000062
+  },
+  "retainedLoadHeapDeltaBytes": {
+    "count": 5,
+    "p50": -5712,
+    "p95": 8,
+    "max": 8,
+    "total": -202672
+  },
+  "heapNote": "Approximate process heap delta; loaded document plus first model; GC retained snapshots/adapters differ; no product RAM claim"
+}

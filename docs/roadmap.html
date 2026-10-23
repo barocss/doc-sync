@@ -345,6 +345,7 @@ h2 .pill { vertical-align: middle; margin-left: 6px; font-size: 12px; }
             </section>
 
             <section aria-labelledby="goal">
+                <p class="note"><b>2026-10-23 실행 현황:</b> 단일 공개 패키지 구성을 유지하며, 기준 측정 확대·한 글 블록 수신 비교·큰 문자열 캐시 처리·Unicode undo·명세와 장기 CI 기반을 추가했다. 아래 계획의 전체 종료 조건이 충족된 것은 아니다. 최신 범위와 남은 조건은 <a href="roadmap-status.md">실행 현황</a>을 본다. 과거 결과와 제안값은 그 시점의 기록이다.</p>
                 <h2 id="goal">"쓸 만하다"의 뜻</h2>
                 <p>목표를 숫자로 정해 둔다. 성능 수치는 <b>제안값</b>이다 — 단계 0 에서 Yjs·Yorkie 를 잰 뒤 확정한다.</p>
                 <div class="table-wrap">
@@ -592,7 +593,7 @@ h2 .pill { vertical-align: middle; margin-left: 6px; font-size: 12px; }
             <section aria-labelledby="p7">
                 <h2 id="p7">단계 7 · 배포 준비 <span class="pill warn">2~3주</span></h2>
                 <ul>
-                    <li>패키지 나누기 — <code>crdt</code>(의존성 0) · <code>sync</code> · <code>server</code> · <code>pm</code> · <code>editor</code>. API 고정과 판 번호 규칙</li>
+                    <li>패키지 구성 — 사용자 결정에 따라 공개 <code>@barocss/doc-sync</code> 하나와 비공개 데모·벤치마크로 구성했다. <code>crdt</code>·<code>sync</code>·<code>server</code>·<code>pm</code>은 내부 계층과 export 경로로 구분한다. API 고정과 판 번호 규칙은 배포 전에 정한다.</li>
                     <li>문서 — 명세, API, 스키마 쓰는 법, 운영 안내</li>
                     <li>보안 검토 — 검사 단단히, 제한 값, 엉터리 연산 퍼징</li>
                     <li>이전 도구 — Yorkie Tree 문서 → 이 모델 (모델이 스키마 기반 문서 에디터 꼴이라 모델 연산 insert 로 옮긴다)</li>

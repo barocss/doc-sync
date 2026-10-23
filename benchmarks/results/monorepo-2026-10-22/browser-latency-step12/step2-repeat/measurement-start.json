@@ -1,0 +1,29 @@
+{
+  "work_id": "editor-latency-step12-20261022",
+  "stage": "step2-repeat",
+  "url": "http://localhost:49321/pm?doc=latency100k",
+  "seedSha256": "a77a2969dafc4884b77b6af4b0784184b36de6433b5e9661d8fca50b77fe5bd1",
+  "seedMatchesBaseline": true,
+  "serverPid": 92861,
+  "dataDirectory": "/tmp/doc-sync-editor-latency-step12-step2-repeat-20261022",
+  "before": {
+    "time": "2026-10-22T13:17:44.877109+00:00",
+    "loadavg": [
+      23.36865234375,
+      23.1357421875,
+      20.6142578125
+    ],
+    "topProcesses": [
+      "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+      "  796     1 139.0  0.2 07-21:40:33 /Users/user/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      " 7604  7551  79.9  1.4       01:05 /usr/bin/log",
+      "  731     1  48.6  0.2 07-21:40:34 /Library/Application Support/ahnlab/EPrM/eprmc",
+      "33014 33008  43.8  1.8 02-04:28:26 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+      "  385     1  39.4  0.2 07-21:41:06 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      " 2496   796  33.4  0.1 07-21:40:23 /Users/user/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/148.0.7778.96/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper",
+      "92861 91693  33.0  0.4       00:01 node",
+      "  945     1  20.4  0.2 07-21:40:29 /usr/local/share/iMonTOP/iMonClientSVC",
+      "  432     1  16.4  0.1 07-21:41:05 /usr/libexec/syspolicyd"
+    ]
+  }
+}

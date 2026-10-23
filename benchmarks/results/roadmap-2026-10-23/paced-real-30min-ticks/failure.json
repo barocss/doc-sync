@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-10-23T05:23:48.093Z",
+  "durationMs": 1800000,
+  "intervalMs": 1000,
+  "rounds": 1800,
+  "peers": 4,
+  "accelerated": false,
+  "gc": "no explicit GC; Yorkie GC disabled; insertion-only workload; no service/lease/transport",
+  "workload": "four concurrent single-character end inserts each second; same prior view; deliver actor order after all four local edits",
+  "engines": [
+    "ours",
+    "yjs",
+    "yorkie-tree"
+  ],
+  "status": "cancelled_duplicate",
+  "cancelledAt": "2026-10-23T05:24:58.499827+00:00",
+  "reason": "Integration requested cancellation to avoid duplicate 30-minute measurement. Original paced-real-30min continues to completion. Tick telemetry is retained for future runs. This partial run is not a 30-minute pass."
+}

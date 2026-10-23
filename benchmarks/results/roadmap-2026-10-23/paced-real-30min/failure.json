@@ -1,0 +1,26 @@
+{
+  "status": "duration window observed; target cadence not met; full1800round incomplete",
+  "observedAt": "2026-10-23T05:44:32.830Z",
+  "observedWallMs": 1800060,
+  "originalStartedAt": "2026-10-23T05:14:32.777Z",
+  "requestedWindowMs": 1800000,
+  "targetRounds": 1800,
+  "targetIntervalMs": 1000,
+  "targetCadenceMet": false,
+  "fullTraceComplete": false,
+  "convergenceThroughLastCheckpoint": true,
+  "lastDurableConvergenceCheckpoint": {
+    "rounds": 1320,
+    "elapsedMs": 1759999.781875,
+    "at": "2026-10-23T05:43:52.777Z",
+    "heapUsed": 49376584
+  },
+  "completedRoundLowerBound": 1320,
+  "actualCompletedRoundsAtStop": null,
+  "lastCheckpointScheduleOverrunMs": 439999.7818750001,
+  "timerLatenessSamplesAvailable": false,
+  "evidenceBoundary": "Original harness persisted progress only every 60 rounds. Exact in-memory final round and timer-lateness samples cannot be recovered. Checkpoint schedule overrun includes round processing and is not pure tick lateness.",
+  "stopReason": "Integration requested a 30-minute wall-clock observation rather than extending the fixed-round trace indefinitely. No additional 30-minute run required.",
+  "stoppedPid": 78810,
+  "ownershipCheckedCommand": "node benchmarks/stage0/paced.mjs --baseline=/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-stage0-baseline-sbgzv0c6 --yorkie=/tmp/doc-sync-stage0-yorkie-20261023/node_modules/@yorkie-js/sdk/dist/yorkie-js-sdk.js --out=benchmarks/results/roadmap-2026-10-23/paced-real-30min"
+}

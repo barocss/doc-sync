@@ -3,7 +3,7 @@ import {inheritedMarks} from "@barocss/doc-sync";
 import {MAIN, comparePos, samePos} from "@barocss/doc-sync";
 import {keyOf} from "@barocss/doc-sync";
 import {rangeContains, resolvePresence} from "./presence.ts";
-import type {Block, GridBlock, Marks, Op, Pos, TextBlock} from "@barocss/doc-sync";
+import type {Block, Doc, GridBlock, Marks, Op, Pos, TextBlock} from "@barocss/doc-sync";
 import type {Schema} from "@barocss/doc-sync";
 import type {SyncClient} from "@barocss/doc-sync/sync";
 
@@ -42,6 +42,8 @@ const CELL_COLORS = ["", "#fef3c7", "#dcfce7", "#dbeafe", "#fce7f3"];
 /** 종류 고르기의 값 — "종류" 또는 "종류:속성값" (목록 항목의 글머리·번호) */
 type TypeChoice = {value: string; label: string; type: string; attrs: Record<string, unknown>};
 
+type BlockView = {block: Block; element: HTMLElement; format: unknown[]; decoration: string};
+
 const lineOf = (pos: Pos): string => pos.line ?? MAIN;
 
 const at = (line: string, b: number, o: number): Pos => (line === MAIN ? {b, o} : {line, b, o});
@@ -72,6 +74,10 @@ export class Editor {
     private readonly sizeButton: HTMLButtonElement;
     private dragging = false;
     private presenceTimer = 0;
+    private views = new Map<string, BlockView>();
+    private renderedDoc: Doc | null = null;
+    private renderedVersion = -1;
+    private renderedState = "";
 
     constructor(container: HTMLElement, client: SyncClient, name: string) {
         this.client = client;
@@ -936,9 +942,20 @@ export class Editor {
 
     render(): void {
         const doc = this.doc;
+        const focused = document.activeElement === this.input;
+        const state = JSON.stringify([doc.version, this.anchor, this.focus, focused, this.composing, this.typingMarks,
+            this.client.online, [...this.client.others.values()], this.client.history.canUndo, this.client.history.canRedo]);
+
+        if (this.renderedDoc === doc && this.renderedState === state) {
+            return;
+        }
+
+        const changed = this.renderedDoc !== doc || this.renderedVersion !== doc.version;
+
+        this.renderedDoc !== doc && this.views.clear();
+        const nextViews = new Map<string, BlockView>();
         const pos = this.pos;
         const selection = this.selection;
-        const focused = document.activeElement === this.input;
         const remote = (this.client.online ? [...this.client.others.values()] : []).flatMap(p => {
             const resolved = resolvePresence(doc, p);
 
@@ -978,14 +995,40 @@ export class Editor {
             comparePos(here, selection[0]) >= 0 &&
             comparePos({...here, o: here.o + 1}, selection[1]) <= 0;
 
+        const sliceRange = (range: [Pos, Pos] | null, line: string, b: number, length: number): [number, number] | null => {
+            if (!range || lineOf(range[0]) !== line || b < range[0].b || b > range[1].b) {
+                return null;
+            }
+
+            const from = b === range[0].b ? range[0].o : 0;
+            const to = b === range[1].b ? range[1].o : length;
+
+            return from < to ? [from, to] : null;
+        };
+
         const renderLine = (line: string, into: HTMLElement): void => {
             // 번호 목록: 같은 수준의 이어진 번호 항목끼리 1, 2, 3 …
             const counters: number[] = [];
+            const children: HTMLElement[] = [];
 
             doc.blocks(line).forEach((block, b) => {
+                const key = `${line}#${b}`;
+                const previous = this.views.get(key);
+                const remember = (element: HTMLElement, format: unknown[] = [], decoration = ""): void => {
+                    nextViews.set(key, {block, element, format, decoration});
+                    children.push(element);
+                };
+
                 if (block.kind === "grid") {
                     counters.length = 0;
-                    into.append(this.renderGrid(block, line, b, renderLine));
+                    const wrap = previous?.block === block ? previous.element : this.renderGrid(block, line, b, renderLine);
+
+                    if (previous?.block === block) {
+                        const table = wrap.firstElementChild as HTMLTableElement;
+
+                        Array.from(table.rows).forEach(row => Array.from(row.cells).forEach(cell => renderLine(cell.dataset.cell!, cell)));
+                    }
+                    remember(wrap);
 
                     return;
                 }
@@ -993,10 +1036,10 @@ export class Editor {
                 if (block.kind === "flow") {
                     counters.length = 0;
 
-                    const box = el("div", `box ${block.type} tone-${String(block.attrs.tone ?? "")}`);
+                    const box = previous?.block === block ? previous.element : el("div", `box ${block.type} tone-${String(block.attrs.tone ?? "")}`);
 
                     renderLine(block.body, box);
-                    into.append(box);
+                    remember(box);
 
                     return;
                 }
@@ -1004,12 +1047,48 @@ export class Editor {
                 if (block.kind === "atom") {
                     counters.length = 0;
 
+                    if (previous?.block === block) {
+                        remember(previous.element);
+
+                        return;
+                    }
+
                     const atom = el("div", `atom ${block.type}`);
 
                     atom.dataset.b = String(b);
                     line !== MAIN && (atom.dataset.line = line);
                     atom.append(el("hr", ""));
-                    into.append(atom);
+                    remember(atom);
+
+                    return;
+                }
+
+                let bullet = "";
+                let level = 0;
+                if (this.isListItem(block)) {
+                    level = Number(block.attrs.level ?? 0);
+                    const numbered = block.attrs.listType === "numbered";
+
+                    counters.length = level + 1;
+                    counters[level] = numbered ? (counters[level] ?? 0) + 1 : 0;
+                    bullet = numbered ? `${counters[level]}.` : ["•", "◦", "▪"][level % 3];
+                } else {
+                    counters.length = 0;
+                }
+
+                const local = lineOf(pos) === line && pos.b === b ? [pos.o, focused, this.composing] : null;
+                const others = remote.flatMap(p => {
+                    const head = lineOf(p.pos) === line && p.pos.b === b ? p.pos.o : null;
+                    const range = sliceRange(p.range, line, b, block.chars.length);
+
+                    return head !== null || range ? [[p.actor, p.name, p.color, head, range, !!p.range]] : [];
+                });
+                const decoration = JSON.stringify([local, sliceRange(selection, line, b, block.chars.length), others, bullet]);
+                // 서식만 바뀌면 Block 객체는 그대로다. LWW 값의 교체도 확인해야 한다.
+                const format = changed || !previous ? formatRefs(block) : previous.format;
+
+                if (previous?.block === block && previous.decoration === decoration && sameRefs(previous.format, format)) {
+                    remember(previous.element, format, decoration);
 
                     return;
                 }
@@ -1018,18 +1097,10 @@ export class Editor {
 
                 div.dataset.b = String(b);
                 line !== MAIN && (div.dataset.line = line);
-
-                if (this.isListItem(block)) {
-                    const level = Number(block.attrs.level ?? 0);
-                    const numbered = block.attrs.listType === "numbered";
-
-                    counters.length = level + 1;
-                    counters[level] = numbered ? (counters[level] ?? 0) + 1 : 0;
-                    div.classList.add(numbered ? "numbered" : "bullet");
+                if (bullet) {
+                    div.classList.add(block.attrs.listType === "numbered" ? "numbered" : "bullet");
                     div.style.setProperty("--indent", String(level));
-                    div.dataset.bullet = numbered ? `${counters[level]}.` : ["•", "◦", "▪"][level % 3];
-                } else {
-                    counters.length = 0;
+                    div.dataset.bullet = bullet;
                 }
 
                 block.chars.forEach((char, o) => {
@@ -1079,12 +1150,13 @@ export class Editor {
                 const placeholder = this.schema.nodes[block.type]?.ui?.placeholder;
 
                 !block.chars.length && placeholder && (div.dataset.placeholder = placeholder);
-                into.append(div);
+                remember(div, format, decoration);
             });
+            reconcileChildren(into, children);
         };
 
-        this.surface.innerHTML = "";
         renderLine(MAIN, this.surface);
+        this.views = nextViews;
 
         // 도구 막대 — 지금 줄에서 고를 수 있는 것만
         const line = lineOf(pos);
@@ -1117,6 +1189,9 @@ export class Editor {
             this.toneButton.hidden = !this.schema.nodes[box.type]?.attrs?.tone;
             this.sizeButton.hidden = box.kind !== "flow" || this.doc.takesText(this.doc.defaultIn(box.body));
         }
+        this.renderedDoc = doc;
+        this.renderedVersion = doc.version;
+        this.renderedState = state;
     }
 
     private renderGrid(block: GridBlock, line: string, b: number, renderLine: (line: string, into: HTMLElement) => void): HTMLElement {
@@ -1153,6 +1228,36 @@ export class Editor {
         return wrap;
     }
 }
+
+const formatRefs = (block: TextBlock): unknown[] => {
+    const refs: unknown[] = [];
+
+    for (const char of block.chars) {
+        if (char.attrs.size) {
+            char.attrs.forEach((value, key) => refs.push(char, key, value));
+        }
+    }
+
+    return refs;
+};
+
+const sameRefs = (a: unknown[], b: unknown[]): boolean => a.length === b.length && a.every((value, i) => value === b[i]);
+
+/** 같은 노드는 떼었다 붙이지 않는다. 바뀐 문단과 구조만 넣거나 뺀다. */
+const reconcileChildren = (parent: HTMLElement, children: HTMLElement[]): void => {
+    const keep = new Set<Node>(children);
+
+    Array.from(parent.childNodes).forEach(child => !keep.has(child) && parent.removeChild(child));
+    let next = parent.firstChild;
+
+    children.forEach(child => {
+        if (child === next) {
+            next = next.nextSibling;
+        } else {
+            parent.insertBefore(child, next);
+        }
+    });
+};
 
 function el(tag: string, className: string): HTMLElement {
     const node = document.createElement(tag);

@@ -1,0 +1,75 @@
+{
+  "startedAt": "2026-10-23T05:27:11.973Z",
+  "node": "v22.19.0",
+  "baseline": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-stage0-baseline-sbgzv0c6",
+  "gcExposed": true,
+  "yorkie": "/tmp/doc-sync-stage0-yorkie-20261023/node_modules/@yorkie-js/sdk/dist/yorkie-js-sdk.js",
+  "scope": "single-process CRDT+wrapper, no browser/network/service/auth; sequential trace semantics checked against independent string model; concurrent ordering checked within each engine",
+  "completedAt": "2026-10-23T05:27:12.854Z",
+  "correct": true,
+  "rows": [
+    {
+      "engine": "yorkie-tree",
+      "workload": "mixed-10000chars",
+      "correct": true,
+      "edits": 4261,
+      "chars": 10147,
+      "paragraphs": 54,
+      "localMs": {
+        "count": 4261,
+        "p50": 0.05916700000000219,
+        "p95": 0.27166700000009314,
+        "max": 1.9764999999999873,
+        "total": 412.3740400000021
+      },
+      "remoteApplyMs": {
+        "count": 4261,
+        "p50": 0.02679200000000037,
+        "p95": 0.06783300000000736,
+        "max": 0.8480829999999742,
+        "total": 153.8606159999987
+      },
+      "modelReadMs": {
+        "count": 5,
+        "p50": 0.8624580000000606,
+        "p95": 0.8912090000000035,
+        "max": 0.8912090000000035,
+        "total": 4.134958000000097
+      },
+      "wireBytes": 0,
+      "snapshot": {
+        "bytes": 197429,
+        "saveMs": 34.25370799999996
+      },
+      "loadMs": {
+        "count": 5,
+        "p50": 20.645083,
+        "p95": 24.748249999999985,
+        "max": 24.748249999999985,
+        "total": 107.78499999999997
+      },
+      "firstModelMs": {
+        "count": 5,
+        "p50": 2.692916999999966,
+        "p95": 3.8118749999999864,
+        "max": 3.8118749999999864,
+        "total": 15.186707999999953
+      },
+      "openIncludingModelMs": {
+        "count": 5,
+        "p50": 23.118000000000052,
+        "p95": 28.56012499999997,
+        "max": 28.56012499999997,
+        "total": 122.97170799999992
+      },
+      "retainedLoadHeapDeltaBytes": {
+        "count": 5,
+        "p50": 42648,
+        "p95": 3567808,
+        "max": 3567808,
+        "total": 3715424
+      },
+      "heapNote": "Approximate process heap delta; loaded document plus first model; GC retained snapshots/adapters differ; no product RAM claim"
+    }
+  ]
+}

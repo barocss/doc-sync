@@ -1,0 +1,114 @@
+{
+  "startedAt": "2026-10-23T05:33:47.294Z",
+  "durationMs": 100,
+  "intervalMs": 20,
+  "rounds": 5,
+  "peers": 4,
+  "accelerated": true,
+  "standardRoadmapCadence": false,
+  "gc": "no explicit GC; Yorkie GC disabled; insertion-only workload; no service/lease/transport",
+  "workload": "four concurrent single-character end inserts each interval; same prior view; deliver actor order after all four local edits",
+  "engines": [
+    "ours",
+    "yjs",
+    "yorkie-tree"
+  ],
+  "completedAt": "2026-10-23T05:33:47.400Z",
+  "elapsedMs": 104.37104099999999,
+  "actualRounds": 5,
+  "missedIntervals": 0,
+  "schedulingLatenessMs": {
+    "count": 5,
+    "p50": 0.6299159999999802,
+    "p95": 1.3000409999999931,
+    "max": 1.3000409999999931,
+    "total": 3.7343719999999507
+  },
+  "correct": true,
+  "rows": [
+    {
+      "engine": "ours",
+      "correct": true,
+      "convergenceChecks": 5,
+      "operations": 20,
+      "finalChars": 20,
+      "localMs": {
+        "count": 20,
+        "p50": 0.03345799999999599,
+        "p95": 0.6579170000000261,
+        "max": 0.6579170000000261,
+        "total": 1.9709169999999858
+      },
+      "remoteApplyMs": {
+        "count": 60,
+        "p50": 0.003958000000011452,
+        "p95": 0.05262499999997772,
+        "max": 0.11874999999997726,
+        "total": 0.656040000000047
+      },
+      "modelReadMs": {
+        "count": 20,
+        "p50": 0.0037499999999965894,
+        "p95": 0.6186250000000086,
+        "max": 0.6186250000000086,
+        "total": 0.9354559999999879
+      }
+    },
+    {
+      "engine": "yjs",
+      "correct": true,
+      "convergenceChecks": 5,
+      "operations": 20,
+      "finalChars": 20,
+      "localMs": {
+        "count": 20,
+        "p50": 0.03641600000000267,
+        "p95": 0.42262499999998226,
+        "max": 0.42262499999998226,
+        "total": 1.5878760000000227
+      },
+      "remoteApplyMs": {
+        "count": 60,
+        "p50": 0.013458999999983234,
+        "p95": 0.10933399999998983,
+        "max": 0.21079199999999787,
+        "total": 1.6765459999998882
+      },
+      "modelReadMs": {
+        "count": 20,
+        "p50": 0.004832999999990761,
+        "p95": 0.23137499999998568,
+        "max": 0.23137499999998568,
+        "total": 0.368083999999925
+      }
+    },
+    {
+      "engine": "yorkie-tree",
+      "correct": true,
+      "convergenceChecks": 5,
+      "operations": 20,
+      "finalChars": 20,
+      "localMs": {
+        "count": 20,
+        "p50": 0.24875000000002956,
+        "p95": 1.7444579999999803,
+        "max": 1.7444579999999803,
+        "total": 7.839668000000074
+      },
+      "remoteApplyMs": {
+        "count": 60,
+        "p50": 0.08095800000000963,
+        "p95": 0.30683399999998073,
+        "max": 0.9012919999999838,
+        "total": 7.373503000000113
+      },
+      "modelReadMs": {
+        "count": 20,
+        "p50": 0.020000000000038654,
+        "p95": 0.171875,
+        "max": 0.171875,
+        "total": 0.6617520000001491
+      }
+    }
+  ]
+}

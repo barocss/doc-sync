@@ -1,0 +1,32 @@
+import {cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, symlinkSync, writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {tmpdir} from 'node:os';
+import {resolve, join} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root = fileURLToPath(new URL('../../', import.meta.url));
+const output = resolve(process.argv[2] ?? '');
+if (!process.argv[2] || existsSync(output)) throw Error('Usage: node freeze.mjs <new receipt directory>');
+mkdirSync(output, {recursive: true});
+const baseline = mkdtempSync(join(tmpdir(), 'doc-sync-stage0-baseline-'));
+mkdirSync(`${baseline}/packages/doc-sync`, {recursive: true});
+cpSync(`${root}/packages/doc-sync/src`, `${baseline}/packages/doc-sync/src`, {recursive: true});
+cpSync(`${root}/fixtures`, `${baseline}/fixtures`, {recursive: true});
+mkdirSync(`${baseline}/benchmarks`);
+for (const name of ['engines.ts', 'trace.ts']) cpSync(`${root}/benchmarks/${name}`, `${baseline}/benchmarks/${name}`);
+for (const path of [`${baseline}/benchmarks/engines.ts`, `${baseline}/fixtures/demo-schema.ts`]) writeFileSync(path, readFileSync(path, 'utf8').replaceAll('"@barocss/doc-sync"', '"../packages/doc-sync/src/index.ts"'));
+writeFileSync(`${baseline}/package.json`, '{"type":"module"}\n');
+symlinkSync(`${root}/node_modules`, `${baseline}/node_modules`, 'dir');
+const files = {};
+function visit(dir, prefix = '') { for (const entry of readdirSync(dir, {withFileTypes: true})) {
+    if (entry.name === 'node_modules') continue;
+    const relative = prefix + entry.name, path = join(dir, entry.name);
+    if (entry.isDirectory()) visit(path, relative + '/');
+    else if (entry.isFile()) files[relative] = createHash('sha256').update(readFileSync(path)).digest('hex');
+} }
+visit(baseline);
+const metadata = {createdAt: new Date().toISOString(), baselinePath: baseline, head: execFileSync('git', ['rev-parse', 'HEAD'], {cwd: root, encoding: 'utf8'}).trim(), files};
+writeFileSync(`${output}/baseline-manifest.json`, JSON.stringify(metadata, null, 2));
+writeFileSync(`${output}/baseline-working-tree.diff`, execFileSync('git', ['diff', 'HEAD'], {cwd: root}));
+execFileSync('tar', ['-czf', `${output}/baseline-source.tar.gz`, '-C', baseline, 'packages', 'fixtures', 'benchmarks', 'package.json']);
+console.log(baseline);

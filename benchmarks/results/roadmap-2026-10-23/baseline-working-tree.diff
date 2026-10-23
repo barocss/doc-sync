@@ -1,0 +1,423 @@
+diff --git a/apps/demo/ui/editor.ts b/apps/demo/ui/editor.ts
+index 30048ed..0c34f85 100644
+--- a/apps/demo/ui/editor.ts
++++ b/apps/demo/ui/editor.ts
+@@ -3,7 +3,7 @@ import {inheritedMarks} from "@barocss/doc-sync";
+ import {MAIN, comparePos, samePos} from "@barocss/doc-sync";
+ import {keyOf} from "@barocss/doc-sync";
+ import {rangeContains, resolvePresence} from "./presence.ts";
+-import type {Block, GridBlock, Marks, Op, Pos, TextBlock} from "@barocss/doc-sync";
++import type {Block, Doc, GridBlock, Marks, Op, Pos, TextBlock} from "@barocss/doc-sync";
+ import type {Schema} from "@barocss/doc-sync";
+ import type {SyncClient} from "@barocss/doc-sync/sync";
+ 
+@@ -42,6 +42,8 @@ const CELL_COLORS = ["", "#fef3c7", "#dcfce7", "#dbeafe", "#fce7f3"];
+ /** 종류 고르기의 값 — "종류" 또는 "종류:속성값" (목록 항목의 글머리·번호) */
+ type TypeChoice = {value: string; label: string; type: string; attrs: Record<string, unknown>};
+ 
++type BlockView = {block: Block; element: HTMLElement; format: unknown[]; decoration: string};
++
+ const lineOf = (pos: Pos): string => pos.line ?? MAIN;
+ 
+ const at = (line: string, b: number, o: number): Pos => (line === MAIN ? {b, o} : {line, b, o});
+@@ -72,6 +74,10 @@ export class Editor {
+     private readonly sizeButton: HTMLButtonElement;
+     private dragging = false;
+     private presenceTimer = 0;
++    private views = new Map<string, BlockView>();
++    private renderedDoc: Doc | null = null;
++    private renderedVersion = -1;
++    private renderedState = "";
+ 
+     constructor(container: HTMLElement, client: SyncClient, name: string) {
+         this.client = client;
+@@ -936,9 +942,20 @@ export class Editor {
+ 
+     render(): void {
+         const doc = this.doc;
++        const focused = document.activeElement === this.input;
++        const state = JSON.stringify([doc.version, this.anchor, this.focus, focused, this.composing, this.typingMarks,
++            this.client.online, [...this.client.others.values()], this.client.history.canUndo, this.client.history.canRedo]);
++
++        if (this.renderedDoc === doc && this.renderedState === state) {
++            return;
++        }
++
++        const changed = this.renderedDoc !== doc || this.renderedVersion !== doc.version;
++
++        this.renderedDoc !== doc && this.views.clear();
++        const nextViews = new Map<string, BlockView>();
+         const pos = this.pos;
+         const selection = this.selection;
+-        const focused = document.activeElement === this.input;
+         const remote = (this.client.online ? [...this.client.others.values()] : []).flatMap(p => {
+             const resolved = resolvePresence(doc, p);
+ 
+@@ -978,14 +995,40 @@ export class Editor {
+             comparePos(here, selection[0]) >= 0 &&
+             comparePos({...here, o: here.o + 1}, selection[1]) <= 0;
+ 
++        const sliceRange = (range: [Pos, Pos] | null, line: string, b: number, length: number): [number, number] | null => {
++            if (!range || lineOf(range[0]) !== line || b < range[0].b || b > range[1].b) {
++                return null;
++            }
++
++            const from = b === range[0].b ? range[0].o : 0;
++            const to = b === range[1].b ? range[1].o : length;
++
++            return from < to ? [from, to] : null;
++        };
++
+         const renderLine = (line: string, into: HTMLElement): void => {
+             // 번호 목록: 같은 수준의 이어진 번호 항목끼리 1, 2, 3 …
+             const counters: number[] = [];
++            const children: HTMLElement[] = [];
+ 
+             doc.blocks(line).forEach((block, b) => {
++                const key = `${line}#${b}`;
++                const previous = this.views.get(key);
++                const remember = (element: HTMLElement, format: unknown[] = [], decoration = ""): void => {
++                    nextViews.set(key, {block, element, format, decoration});
++                    children.push(element);
++                };
++
+                 if (block.kind === "grid") {
+                     counters.length = 0;
+-                    into.append(this.renderGrid(block, line, b, renderLine));
++                    const wrap = previous?.block === block ? previous.element : this.renderGrid(block, line, b, renderLine);
++
++                    if (previous?.block === block) {
++                        const table = wrap.firstElementChild as HTMLTableElement;
++
++                        Array.from(table.rows).forEach(row => Array.from(row.cells).forEach(cell => renderLine(cell.dataset.cell!, cell)));
++                    }
++                    remember(wrap);
+ 
+                     return;
+                 }
+@@ -993,10 +1036,10 @@ export class Editor {
+                 if (block.kind === "flow") {
+                     counters.length = 0;
+ 
+-                    const box = el("div", `box ${block.type} tone-${String(block.attrs.tone ?? "")}`);
++                    const box = previous?.block === block ? previous.element : el("div", `box ${block.type} tone-${String(block.attrs.tone ?? "")}`);
+ 
+                     renderLine(block.body, box);
+-                    into.append(box);
++                    remember(box);
+ 
+                     return;
+                 }
+@@ -1004,34 +1047,62 @@ export class Editor {
+                 if (block.kind === "atom") {
+                     counters.length = 0;
+ 
++                    if (previous?.block === block) {
++                        remember(previous.element);
++
++                        return;
++                    }
++
+                     const atom = el("div", `atom ${block.type}`);
+ 
+                     atom.dataset.b = String(b);
+                     line !== MAIN && (atom.dataset.line = line);
+                     atom.append(el("hr", ""));
+-                    into.append(atom);
++                    remember(atom);
+ 
+                     return;
+                 }
+ 
+-                const div = el("div", `blk ${block.type}`);
+-
+-                div.dataset.b = String(b);
+-                line !== MAIN && (div.dataset.line = line);
+-
++                let bullet = "";
++                let level = 0;
+                 if (this.isListItem(block)) {
+-                    const level = Number(block.attrs.level ?? 0);
++                    level = Number(block.attrs.level ?? 0);
+                     const numbered = block.attrs.listType === "numbered";
+ 
+                     counters.length = level + 1;
+                     counters[level] = numbered ? (counters[level] ?? 0) + 1 : 0;
+-                    div.classList.add(numbered ? "numbered" : "bullet");
+-                    div.style.setProperty("--indent", String(level));
+-                    div.dataset.bullet = numbered ? `${counters[level]}.` : ["•", "◦", "▪"][level % 3];
++                    bullet = numbered ? `${counters[level]}.` : ["•", "◦", "▪"][level % 3];
+                 } else {
+                     counters.length = 0;
+                 }
+ 
++                const local = lineOf(pos) === line && pos.b === b ? [pos.o, focused, this.composing] : null;
++                const others = remote.flatMap(p => {
++                    const head = lineOf(p.pos) === line && p.pos.b === b ? p.pos.o : null;
++                    const range = sliceRange(p.range, line, b, block.chars.length);
++
++                    return head !== null || range ? [[p.actor, p.name, p.color, head, range, !!p.range]] : [];
++                });
++                const decoration = JSON.stringify([local, sliceRange(selection, line, b, block.chars.length), others, bullet]);
++                // 서식만 바뀌면 Block 객체는 그대로다. LWW 값의 교체도 확인해야 한다.
++                const format = changed || !previous ? formatRefs(block) : previous.format;
++
++                if (previous?.block === block && previous.decoration === decoration && sameRefs(previous.format, format)) {
++                    remember(previous.element, format, decoration);
++
++                    return;
++                }
++
++                const div = el("div", `blk ${block.type}`);
++
++                div.dataset.b = String(b);
++                line !== MAIN && (div.dataset.line = line);
++                if (bullet) {
++                    div.classList.add(block.attrs.listType === "numbered" ? "numbered" : "bullet");
++                    div.style.setProperty("--indent", String(level));
++                    div.dataset.bullet = bullet;
++                }
++
+                 block.chars.forEach((char, o) => {
+                     div.append(...caretAt(at(line, b, o)));
+ 
+@@ -1079,12 +1150,13 @@ export class Editor {
+                 const placeholder = this.schema.nodes[block.type]?.ui?.placeholder;
+ 
+                 !block.chars.length && placeholder && (div.dataset.placeholder = placeholder);
+-                into.append(div);
++                remember(div, format, decoration);
+             });
++            reconcileChildren(into, children);
+         };
+ 
+-        this.surface.innerHTML = "";
+         renderLine(MAIN, this.surface);
++        this.views = nextViews;
+ 
+         // 도구 막대 — 지금 줄에서 고를 수 있는 것만
+         const line = lineOf(pos);
+@@ -1117,6 +1189,9 @@ export class Editor {
+             this.toneButton.hidden = !this.schema.nodes[box.type]?.attrs?.tone;
+             this.sizeButton.hidden = box.kind !== "flow" || this.doc.takesText(this.doc.defaultIn(box.body));
+         }
++        this.renderedDoc = doc;
++        this.renderedVersion = doc.version;
++        this.renderedState = state;
+     }
+ 
+     private renderGrid(block: GridBlock, line: string, b: number, renderLine: (line: string, into: HTMLElement) => void): HTMLElement {
+@@ -1154,6 +1229,36 @@ export class Editor {
+     }
+ }
+ 
++const formatRefs = (block: TextBlock): unknown[] => {
++    const refs: unknown[] = [];
++
++    for (const char of block.chars) {
++        if (char.attrs.size) {
++            char.attrs.forEach((value, key) => refs.push(char, key, value));
++        }
++    }
++
++    return refs;
++};
++
++const sameRefs = (a: unknown[], b: unknown[]): boolean => a.length === b.length && a.every((value, i) => value === b[i]);
++
++/** 같은 노드는 떼었다 붙이지 않는다. 바뀐 문단과 구조만 넣거나 뺀다. */
++const reconcileChildren = (parent: HTMLElement, children: HTMLElement[]): void => {
++    const keep = new Set<Node>(children);
++
++    Array.from(parent.childNodes).forEach(child => !keep.has(child) && parent.removeChild(child));
++    let next = parent.firstChild;
++
++    children.forEach(child => {
++        if (child === next) {
++            next = next.nextSibling;
++        } else {
++            parent.insertBefore(child, next);
++        }
++    });
++};
++
+ function el(tag: string, className: string): HTMLElement {
+     const node = document.createElement(tag);
+ 
+diff --git a/benchmarks/results/monorepo-2026-10-22/performance-report.md b/benchmarks/results/monorepo-2026-10-22/performance-report.md
+index c881d0d..0cce593 100644
+--- a/benchmarks/results/monorepo-2026-10-22/performance-report.md
++++ b/benchmarks/results/monorepo-2026-10-22/performance-report.md
+@@ -1,5 +1,11 @@
+ # doc-sync 모노레포 전환 성능 검증 보고서
+ 
++> 다른 편집기 비교: 10만 자·방향별 30회에서 p95는 **257.9~544.3ms**다. §10에 비교 결과, §11에 연속 문자열 저장 검토를 추가했다. 저장 구조 변경은 아직 구현하지 않았다.
++
++> 1·2번 최적화 후: 입력→상대 프레임 p95는 **288.1ms / 238.7ms**다. 기존 대비 **87.1% / 91.0% 감소**했다. 아래 §9와 [단계별 보고서](browser-latency-step12/report.md)를 참고한다.
++
++> 최적화 전 측정 (2026-10-22 20:04 KST): 실제 편집기의 입력→상대 렌더링 프레임 p95는 **2.24~2.64초**다. 주요 병목은 반복적인 전체 문서 변환과 데모 DOM 재생성이다. 아래 §8을 참고한다.
++
+ 측정 완료: 2026-10-22 15:52 KST  
+ 대상: `/Users/user/github/doc-sync`의 모노레포 전환 시점
+ 
+@@ -173,3 +179,87 @@ env PATH=/Users/user/.nvm/versions/node/v22.19.0/bin:$PATH npm run bench:client
+ - [모노레포 전환 소스 확인 기록](migration-source-receipt.json)
+ 
+ 보고서는 고정된 `comparison.json`을 기준으로 작성했다. 이 보고서 작성 과정에서 측정을 다시 실행하지 않았다. 기존 원자료, 소스, HANDOFF는 수정하지 않았다.
++
++## 8. 실제 편집기 10만 자 지연
++
++추가 수집 종료: 2026-10-22 20:04 KST
++
++이 절은 Presence 기능 변경 후의 현재 소스를 측정했다. 앞 절의 모노레포 전환 비교와 소스 시점이 다르다. 실제 `/pm` 화면에서 HTTP POST·SSE와 서버 JSONL 저장을 그대로 사용했다. 시작 문서는 100,000자·625문단이다. 방향별 준비 5회 뒤 실제 키 입력 30회를 측정했다.
++
++| 방향 | 상대 DOM p95 | 상대 프레임 p50 | 상대 프레임 p95 | 상대 프레임 최대 |
++| --- | --- | --- | --- | --- |
++| 데모 → ProseMirror | 1,717.0ms | 1,722.4ms | 2,236.9ms | 2,251.9ms |
++| ProseMirror → 데모 | 1,784.4ms | 2,050.6ms | 2,642.4ms | 3,004.4ms |
++
++시작점은 키 이벤트의 생성 시각이다. 핸들러 실행 대기도 포함한다. 상대 프레임 종료점은 DOM의 정확한 문자열을 확인한 뒤 두 번째 requestAnimationFrame 콜백이다. 이는 브라우저의 렌더링 기회 기준 추정값이다. 별도 진단에서 DOM 이후 Paint가 끝난 것을 확인했다. 물리 디스플레이의 표시 시각은 측정하지 않았다.
++
++주요 병목은 다음과 같다.
++
++- `Doc.toJSON()`이 한 입력의 관찰 구간에서 보통 10~15회 실행됐다. 누적 p50은 569.4~866.0ms였다.
++- `Editor.render()`가 보통 3회 실행됐다. 누적 p50은 372.2~379.0ms였다. 10만 자의 DOM을 통째로 다시 만든다.
++- `/pm`의 700ms 상태 조회와 Presence·커서 갱신도 전체 모델 변환과 공통 화면 갱신을 부른다.
++- 원격 모델 이벤트 경로는 전후 전체 모델 생성·비교·검산·편집기 콜백을 실행한다. 데모 → PM의 포함 시간 p50은 328.8ms였다. 이 값은 다른 항목과 겹치므로 합산하지 않는다.
++
++반면 브라우저 CRDT 적용의 누적 p50은 약 0.3~0.4ms였다. 서버 검사·적용·저장의 p95는 1.89~3.54ms였다. 전송 시작→수신 콜백 구간에는 브라우저 이벤트 대기가 포함된다. 진단 POST에서 헤더 수신 뒤 렌더러 응답 이벤트 실행까지 약 669~712ms가 더 걸렸다. 이를 네트워크 지연으로만 해석하면 안 된다.
++
++본 측정 60회는 모두 양쪽에 기대 문자를 표시했다. 최종 클라이언트·서버 모델은 같았다. 보낼 변경은 0개였다. 준비·진단을 합친 72회 뒤 문서는 100,072자·625문단이었다. 모델 이벤트 fallback은 0이었다.
++
++현재 실제 편집 흐름에는 큰 지연이 남는다. 다음은 전체 모델의 중복 계산과 데모 DOM 전체 재생성을 줄이는 작업이다. 이어 원격 이벤트 계산을 바뀐 블록으로 좁히고 같은 조건으로 다시 측정한다. 이번에는 최적화를 적용하지 않았다.
++
++두 편집기는 한 페이지의 렌더러 스레드를 공유한다. 외부 앱도 계속 실행됐다. 다른 컴퓨터, IME, 연속 입력, 큰 표, 여러 사용자 성능으로 확대할 수 없다.
++
++[상세 보고서·구간별 시간·CPU/Paint 근거](browser-latency-100k/report.md) · [분석 수치](browser-latency-100k/summary.json) · [원자료](browser-latency-100k/browser-raw.json)
++
++## 9. 모델·문단 DOM 재사용 적용
++
++최종 수집 종료: 2026-10-22 22:20 KST
++
++1번 모델 계산 재사용을 적용하고 측정했다. 그 뒤 2번 문단 DOM 재사용을 적용하고 같은 조건으로 다시 측정했다. 초기 100,000자·625문단, 방향별 준비 5회와 본 측정 30회, 같은 키 순서·viewport·HTTP/SSE·JSONL 조건을 유지했다. 초기 seed도 바이트 동일하다.
++
++| 방향 | 상태 | p50 | p95 | 최대 | 기준 대비 p95 감소 |
++| --- | --- | --- | --- | --- | --- |
++| 데모 → ProseMirror | 최적화 전 | 1,722.4ms | 2,236.9ms | 2,251.9ms | — |
++| 데모 → ProseMirror | 1번: 모델 재사용 | 1,241.8ms | 1,626.9ms | 2,101.7ms | 27.3% |
++| 데모 → ProseMirror | 1+2번: 문단 DOM 재사용 추가 | 234.0ms | 288.1ms | 312.2ms | 87.1% |
++| ProseMirror → 데모 | 최적화 전 | 2,050.6ms | 2,642.4ms | 3,004.4ms | — |
++| ProseMirror → 데모 | 1번: 모델 재사용 | 1,253.6ms | 1,593.9ms | 1,959.6ms | 39.7% |
++| ProseMirror → 데모 | 1+2번: 문단 DOM 재사용 추가 | 207.1ms | 238.7ms | 239.3ms | 91.0% |
++
++1번은 모델을 다시 계산하지 않고 반환 컨테이너만 복사한다. 2번은 변경된 문단과 선택·커서 표시의 영향을 받은 문단만 다시 만들고, 같은 노드와 상태는 유지한다. 표·상자 안의 문단에도 적용했다. 모델을 숨기거나 글자 수를 줄이지 않았다.
++
++`toJSON()` 누적 p50은 569.4~866.0ms에서 약 115~120ms로 줄었다. 데모 render의 누적 p50은 355~379ms에서 약 5.2ms로 줄었다. 남아 있는 전체 모델 생성과 원격 비교·검산은 이번 범위에서 좁히지 않았다.
++
++각 단계 60회는 모두 기대 문자를 표시했다. 최종 클라이언트·서버 모델이 같고 pending·fallback은 0이다. 1번의 확장 시험 116개, 2번의 기본 시험 116개, 타입 검사, 브라우저 회귀 30개 항목이 통과했다.
++
++2번 첫 실행은 디스크 저장 실패로 중단됐다. 부분 표본 61개를 보존하고 비교에서 제외했다. 같은 소스로 완주한 `step2-repeat` 결과를 사용했다. 1번 초반에는 다른 채팅의 추가 검증 부하가 겹쳤을 수 있다. 각 실행의 부하를 기록했으며 시간 감소 전부를 코드만의 효과로 단정하지 않는다.
++
++시작점은 키 이벤트 생성 시각이며 종료점은 상대 DOM 확인 뒤 두 번째 rAF다. 같은 페이지·로컬 환경의 렌더링 기회 기준이다. 물리 디스플레이, IME, 큰 표, 다중 사용자 지연 통과로 확대하지 않는다. 구조·GC·되살리기 등의 전체 블록 무효화 경로는 여전히 더 큰 DOM 갱신을 할 수 있다.
++
++[단계별 상세 보고서](browser-latency-step12/report.md) · [전체 수치·비율](browser-latency-step12/comparison.json)
++
++## 10. 다른 편집기 비교 — 10만 자
++
++현재 최적화된 Doc와 Slate/Lexical/ProseMirror 호환성 어댑터를 비교했다. 조합당 두 실제 편집기를 열었다. 방향마다 준비 5회 후 30회, 총 180회를 측정했다. 초기 100000자 / 625문단이다. 별도 진단 6회는 분포에서 제외했다.
++
++| 방향 | p50 (ms) | p95 (ms) | 최대 (ms) |
++| --- | --- | --- | --- |
++| Slate → Lexical | 254.8 | 366.6 | 379.6 |
++| Lexical → Slate | 329.1 | 544.3 | 650.6 |
++| Slate → ProseMirror | 227.1 | 311.8 | 314.5 |
++| ProseMirror → Slate | 285.7 | 332.7 | 333.3 |
++| Lexical → ProseMirror | 209.2 | 257.9 | 297.6 |
++| ProseMirror → Lexical | 253.0 | 272.7 | 306.6 |
++
++입력 키 이벤트 시각부터 상대 DOM 확인 후 두 번째 rAF까지의 시간이다. 물리 화면의 표시 시각은 아니다. 모든 입력 표시와 최종 네이티브·클라이언트·서버 문서 일치를 확인했다. 조합별 최종 100072자 / 625문단, pending 0, fallback 0이다. 현재 코어에서 호환성 단위 검사 31개도 통과했다.
++
++Slate/Lexical 수신 화면은 입력마다 문단 DOM 625개를 제거하고 625개를 추가했다. ProseMirror는 문단 DOM을 유지했다. 공통 경로의 Doc.toJSON 호출 합계 p50은 116.0~118.8ms다. 모델 변환과 전체 문서 원격 적용이 남은 비용이다. 이 결과는 현재 연결 구현의 비교다. 편집기 제품 자체의 순위로 해석하지 않는다. 이전 /pm 시험과 화면·wrapper가 달라 개선율도 계산하지 않는다.
++
++[상세 보고서](other-editors-100k/report.md)와 [검산 결과](other-editors-100k/summary.json)에 조건과 원자료를 기록했다.
++
++## 11. 연속 문자열 CRDT 저장 검토
++
++초기 문서는 이미 160자씩 625개의 text 연산으로 넣는다. 모델도 625개 text run이다. 그러나 메모리에는 문자 Item 100000개와 전체 ID Map 항목 100625개가 있다. 전송 문자열 묶음과 메모리 저장 묶음을 구분해야 한다.
++
++제안은 기존 논리 ID를 유지하고 연속 문자열을 묶어 저장하는 것이다. 중간 편집·부분 삭제·서식 변경 경계에서만 나눈다. ID 조회, 블록·위치 캐시, 모델 변환도 구간으로 바꿔야 한다. selection, undo, GC와 기존 wire 형식의 동작을 유지해야 한다.
++
++[설계 문서](../../../docs/design/continuous-text-storage.md)에 전환 범위, API 호환성과 합격 조건을 적었다. 저장 변경은 아직 구현하지 않았다. 연속 입력·여러 글자 삽입의 새 측정과 저장 변경의 개선량은 아직 없다. 위 단일 문자 기준값과 구분한다.
+diff --git a/packages/doc-sync/src/crdt/doc.ts b/packages/doc-sync/src/crdt/doc.ts
+index 388a861..34a0883 100644
+--- a/packages/doc-sync/src/crdt/doc.ts
++++ b/packages/doc-sync/src/crdt/doc.ts
+@@ -285,6 +285,8 @@ export class Doc {
+     static verifyBlocks = false;
+     private posCache = new Map<string, Map<Item, {b: number; o: number}>>();
+     private visibleCache = new Map<string, boolean>();
++    private modelCache: NodeJSON | null = null;
++    private revision = 0;
+ 
+     constructor(actor: string, schema: Schema | null = null) {
+         this.clock = new Clock(actor);
+@@ -303,6 +305,11 @@ export class Doc {
+         return this.clock.actor;
+     }
+ 
++    /** 적용·압축마다 바뀌는 번호. 커서·presence처럼 문서를 바꾸지 않는 갱신과 구분한다. */
++    get version(): number {
++        return this.revision;
++    }
++
+     /** 본문 줄의 토큰 */
+     get items(): Item[] {
+         return this.lineMap.get(MAIN)!.items;
+@@ -572,6 +579,8 @@ export class Doc {
+      * 대상이 압축된 묘비이거나 없는 토큰이면 조용히 지나간다(지우기·속성은 이미 의미가 없다).
+      */
+     apply(op: Op): void {
++        this.modelCache = null;
++        this.revision += 1;
+         // 글자 넣기·지우기·서식은 그 줄의 블록 목록만 고쳐 쓴다. 나머지(표지·노드·되살리기·노드 속성)는 모든 줄을 다시 계산한다
+         op.t === "text" || op.t === "del" || (op.t === "set" && op.ids.every(id => this.get(keyOf(id))?.kind === "char")) || this.dirty();
+ 
+@@ -862,6 +871,8 @@ export class Doc {
+      * @returns 줄어든 토큰 수
+      */
+     compact(frontier: number, seqOf: (delKey: string) => number | undefined): number {
++        this.modelCache = null;
++        this.revision += 1;
+         this.dirty();
+ 
+         let removed = 0;
+@@ -1311,7 +1322,10 @@ export class Doc {
+      * 비어 있는 빈 자리(표 뒤 virtual)는 모델에 없다.
+      */
+     toJSON(): NodeJSON {
+-        return canonical(this.need(), {type: this.need().root, children: this.rawFlow(MAIN)});
++        this.modelCache ??= canonical(this.need(), {type: this.need().root, children: this.rawFlow(MAIN)});
++
++        // 변하지 않은 문서는 토큰·서식을 다시 읽지 않는다. 호출자는 예전처럼 모델을 자유롭게 고칠 수 있다.
++        return copyModel(this.modelCache);
+     }
+ 
+     private rawFlow(lineKey: string): NodeJSON[] {
+@@ -1721,6 +1735,17 @@ export class Doc {
+     }
+ }
+ 
++const copyRun = (run: Run): Run => "text" in run
++    ? {...run, marks: {...run.marks}}
++    : {...run, ...(run.attrs && {attrs: {...run.attrs}}), ...(run.runs && {runs: run.runs.map(copyRun)})};
++
++const copyModel = (node: NodeJSON): NodeJSON => ({
++    ...node,
++    ...(node.attrs && {attrs: {...node.attrs}}),
++    ...(node.runs && {runs: node.runs.map(copyRun)}),
++    ...(node.children && {children: node.children.map(copyModel)}),
++});
++
+ /** 이어 친 글자의 기준 — 같은 참여자의 바로 앞 이름표. 스냅숏은 이때 기준을 적지 않는다 */
+ const previousKey = (id: Ticket): string => keyOf({lamport: id.lamport - 1, actor: id.actor});
+ 

@@ -1,0 +1,63 @@
+{
+  "startedAt": "2026-10-23T05:47:09.663Z",
+  "durationMs": 300,
+  "intervalMs": 100,
+  "rounds": 3,
+  "peers": 4,
+  "accelerated": true,
+  "standardRoadmapCadence": false,
+  "scheduler": "wall-clock window; first tick at 0ms; do not begin a round at or after deadline; finish an in-flight atomic round",
+  "gc": "no explicit GC; Yorkie GC disabled; insertion-only workload; no service/lease/transport",
+  "workload": "four concurrent single-character end inserts each interval; same prior view; deliver actor order after all four local edits",
+  "engines": [
+    "ours"
+  ],
+  "completedAt": "2026-10-23T05:47:09.966Z",
+  "elapsedMs": 300.885333,
+  "actualRounds": 3,
+  "lastRoundCompletedElapsedMs": 200.97416600000003,
+  "windowOvershootMs": 0.8853330000000028,
+  "missedIntervals": 0,
+  "schedulingLatenessMs": {
+    "count": 3,
+    "p50": 2.2218330000000037,
+    "p95": 4.584041000000013,
+    "max": 4.584041000000013,
+    "total": 7.141998999999998
+  },
+  "durationWindowObserved": true,
+  "fullTraceComplete": true,
+  "targetCadenceMet": true,
+  "converged": true,
+  "passed": true,
+  "rows": [
+    {
+      "engine": "ours",
+      "correct": true,
+      "convergenceChecks": 3,
+      "operations": 12,
+      "finalChars": 12,
+      "localMs": {
+        "count": 12,
+        "p50": 0.05479200000002038,
+        "p95": 0.7731670000000008,
+        "max": 0.7731670000000008,
+        "total": 1.7183740000000114
+      },
+      "remoteApplyMs": {
+        "count": 36,
+        "p50": 0.0030830000000037217,
+        "p95": 0.14420899999998937,
+        "max": 1.3291249999999764,
+        "total": 1.7849579999998184
+      },
+      "modelReadMs": {
+        "count": 12,
+        "p50": 0.011124999999992724,
+        "p95": 1.0512499999999818,
+        "max": 1.0512499999999818,
+        "total": 1.2617520000000582
+      }
+    }
+  ]
+}

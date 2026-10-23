@@ -327,6 +327,8 @@ data/               기존 데모 로그 (위치 유지)
 
 ## 시험 결과
 
+- 2026-10-23 main 통합 변경: 단일 블록 수신 비교, 큰 붙여넣기 캐시 처리, Unicode undo, PM 내부 변환 재사용, 명세·성질 시험·장기 CI 기반을 추가했다. 통합 전 확장 시험(`FUZZ_SEEDS=3000 PM_SEEDS=300`)은 코어 138개 + 데모 10개 통과다. 로컬 8 shard·각 8복제본에서 총 1,000,021 wire Op를 검증했다. bounded 문서 묶음 시험이며 실제 CI 2주 관측과 다르다. [실행 현황](docs/roadmap-status.md), [HANDOFF §5.8](HANDOFF.md#58-main-통합-전-최종-확인-2026-10-23), [새 기준 측정](benchmarks/results/roadmap-2026-10-23/report.md)을 본다. 실제 화면 성능과 G0/G1은 별도 판정이다.
+
 - 입력 수정 통합 검증(2026-10-22): `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test` **113/113**, `npm test --prefix apps/demo/compat` **31/31**, 타입 검사·빌드 통과. Chrome 입력 84개 항목과 일반 회귀 20개, 연산 기록 30개를 확인했다. 실행 방법·지원 범위는 [`HANDOFF.md`](HANDOFF.md) §5.6, 최종 기록은 로컬 `output/validation/ime-cursor-fix-20261022/validation.json`에 있다. 이전 모노레포·Presence 검증 기록은 §5.4~5.5에 보존했다.
 - 시나리오 14개: 같은 자리 동시 Enter, 그 뒤 글자, 혼자 끝에서 두 번, 끝에서 동시, 넷이 동시(동기화 순서 세 가지), Enter 대 뒷부분 입력, 걸친 범위 삭제, Enter 되돌리기 대 남의 글자, 되돌리기 대 동시 삭제, 문단 종류 동시 변경, 끊긴 동안 편집, 늦게 들어온 참여자
 - 기능 15개: 서식 3 · 목록 4 · 되돌리기 3 · GC 4 · 서버 원자성 1

@@ -1,0 +1,1520 @@
+{
+  "work_id": "editor-latency-step12-20261022",
+  "artifact_type": "performance-comparison",
+  "status": "done",
+  "owner_role": "executor",
+  "source_request": "Apply model reuse, measure, then apply paragraph DOM reuse and measure again; update report.",
+  "last_updated": "2026-10-22 22:20 KST",
+  "sourceStages": {
+    "before": {
+      "summary": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-100k/summary.json",
+      "summarySha256": "5aead8186f0f932c229788dd8149f2e5b3748c8ffa6f1ee811a7fe907d395f6a",
+      "raw": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-100k/browser-raw.json",
+      "rawSha256": "3ac2db00537e11a88d611ff2718f29cf344f50cadc675c1c95768261e52729df"
+    },
+    "step1": {
+      "summary": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/summary.json",
+      "summarySha256": "58b591c43dedca35be6e29471e37c2c0e41f016a109b99df9eff690b2d318c7c",
+      "raw": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/browser-raw.json",
+      "rawSha256": "fc584377c5c1409db026693d49243ca60fd4fcc5f9d2c9339b06fe605e4abcec"
+    },
+    "step2": {
+      "summary": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/summary.json",
+      "summarySha256": "b006644257aaba15ee2f93b244c2a24b7f53c16882117fcdff05da73214233d4",
+      "raw": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/browser-raw.json",
+      "rawSha256": "0dd3f23b16074ffd2e3b81d23b9f05e993c9fdb023eac41043008f5ec7fb2f2e"
+    }
+  },
+  "comparisons": [
+    {
+      "direction": "demo-to-pm",
+      "stages": [
+        {
+          "stage": "step1",
+          "metrics": {
+            "inputEventToRemoteDomMs": {
+              "p50": {
+                "before": 1221.7000000476837,
+                "previous": 1221.7000000476837,
+                "after": 892.2000000476837,
+                "ratioToBefore": 0.7302938528385533,
+                "ratioToPrevious": 0.7302938528385533,
+                "reductionPercentFromBefore": 26.97061471614467,
+                "reductionPercentFromPrevious": 26.97061471614467
+              },
+              "p95": {
+                "before": 1717.0,
+                "previous": 1717.0,
+                "after": 1245.8999999761581,
+                "ratioToBefore": 0.7256260920070811,
+                "ratioToPrevious": 0.7256260920070811,
+                "reductionPercentFromBefore": 27.437390799291894,
+                "reductionPercentFromPrevious": 27.437390799291894
+              },
+              "max": {
+                "before": 1730.2000000476837,
+                "previous": 1730.2000000476837,
+                "after": 1724.0,
+                "ratioToBefore": 0.9964165992096216,
+                "ratioToPrevious": 0.9964165992096216,
+                "reductionPercentFromBefore": 0.3583400790378444,
+                "reductionPercentFromPrevious": 0.3583400790378444
+              },
+              "mean": {
+                "before": 1337.0566666801772,
+                "previous": 1337.0566666801772,
+                "after": 972.5733333230019,
+                "ratioToBefore": 0.7273987390062059,
+                "ratioToPrevious": 0.7273987390062059,
+                "reductionPercentFromBefore": 27.260126099379413,
+                "reductionPercentFromPrevious": 27.260126099379413
+              }
+            },
+            "inputEventToRenderOpportunityMs": {
+              "p50": {
+                "before": 1722.3999999761581,
+                "previous": 1722.3999999761581,
+                "after": 1241.7999999523163,
+                "ratioToBefore": 0.7209707384867078,
+                "ratioToPrevious": 0.7209707384867078,
+                "reductionPercentFromBefore": 27.902926151329222,
+                "reductionPercentFromPrevious": 27.902926151329222
+              },
+              "p95": {
+                "before": 2236.899999976158,
+                "previous": 2236.899999976158,
+                "after": 1626.8999999761581,
+                "ratioToBefore": 0.7273011757313685,
+                "ratioToPrevious": 0.7273011757313685,
+                "reductionPercentFromBefore": 27.269882426863145,
+                "reductionPercentFromPrevious": 27.269882426863145
+              },
+              "max": {
+                "before": 2251.899999976158,
+                "previous": 2251.899999976158,
+                "after": 2101.6999999284744,
+                "ratioToBefore": 0.9333007682182717,
+                "ratioToPrevious": 0.9333007682182717,
+                "reductionPercentFromBefore": 6.669923178172832,
+                "reductionPercentFromPrevious": 6.669923178172832
+              },
+              "mean": {
+                "before": 1834.0600000063578,
+                "previous": 1834.0600000063578,
+                "after": 1343.97666665713,
+                "ratioToBefore": 0.7327877314005382,
+                "ratioToPrevious": 0.7327877314005382,
+                "reductionPercentFromBefore": 26.721226859946178,
+                "reductionPercentFromPrevious": 26.721226859946178
+              }
+            },
+            "inputQueueMs": {
+              "p50": {
+                "before": 0.7999999523162842,
+                "previous": 0.7999999523162842,
+                "after": 3.9000000953674316,
+                "ratioToBefore": 4.875000409781958,
+                "ratioToPrevious": 4.875000409781958,
+                "reductionPercentFromBefore": -387.5000409781958,
+                "reductionPercentFromPrevious": -387.5000409781958
+              },
+              "p95": {
+                "before": 486.2000000476837,
+                "previous": 486.2000000476837,
+                "after": 405.89999997615814,
+                "ratioToBefore": 0.8348416288283624,
+                "ratioToPrevious": 0.8348416288283624,
+                "reductionPercentFromBefore": 16.515837117163755,
+                "reductionPercentFromPrevious": 16.515837117163755
+              },
+              "max": {
+                "before": 536.3999999761581,
+                "previous": 536.3999999761581,
+                "after": 634.0,
+                "ratioToBefore": 1.1819537658989188,
+                "ratioToPrevious": 1.1819537658989188,
+                "reductionPercentFromBefore": -18.195376589891875,
+                "reductionPercentFromPrevious": -18.195376589891875
+              },
+              "mean": {
+                "before": 126.90333335399627,
+                "previous": 126.90333335399627,
+                "after": 100.13666666348776,
+                "ratioToBefore": 0.7890783009155242,
+                "ratioToPrevious": 0.7890783009155242,
+                "reductionPercentFromBefore": 21.092169908447577,
+                "reductionPercentFromPrevious": 21.092169908447577
+              }
+            },
+            "inputToSendMs": {
+              "p50": {
+                "before": 1.100000023841858,
+                "previous": 1.100000023841858,
+                "after": 1.2000000476837158,
+                "ratioToBefore": 1.0909091106131052,
+                "ratioToPrevious": 1.0909091106131052,
+                "reductionPercentFromBefore": -9.090911061310525,
+                "reductionPercentFromPrevious": -9.090911061310525
+              },
+              "p95": {
+                "before": 1.399999976158142,
+                "previous": 1.399999976158142,
+                "after": 678.8999999761581,
+                "ratioToBefore": 484.92857966982604,
+                "ratioToPrevious": 484.92857966982604,
+                "reductionPercentFromBefore": -48392.85796698261,
+                "reductionPercentFromPrevious": -48392.85796698261
+              },
+              "max": {
+                "before": 1.5,
+                "previous": 1.5,
+                "after": 687.5,
+                "ratioToBefore": 458.3333333333333,
+                "ratioToPrevious": 458.3333333333333,
+                "reductionPercentFromBefore": -45733.33333333333,
+                "reductionPercentFromPrevious": -45733.33333333333
+              },
+              "mean": {
+                "before": 1.0733333190282186,
+                "previous": 1.0733333190282186,
+                "after": 46.63333333333333,
+                "ratioToBefore": 43.44720554799745,
+                "ratioToPrevious": 43.44720554799745,
+                "reductionPercentFromBefore": -4244.720554799745,
+                "reductionPercentFromPrevious": -4244.720554799745
+              }
+            },
+            "sendToRemoteReceiveMs": {
+              "p50": {
+                "before": 819.6000000238419,
+                "previous": 819.6000000238419,
+                "after": 706.3999999761581,
+                "ratioToBefore": 0.861883845724267,
+                "ratioToPrevious": 0.861883845724267,
+                "reductionPercentFromBefore": 13.811615427573297,
+                "reductionPercentFromPrevious": 13.811615427573297
+              },
+              "p95": {
+                "before": 873.7999999523163,
+                "previous": 873.7999999523163,
+                "after": 866.7999999523163,
+                "ratioToBefore": 0.9919890135037972,
+                "ratioToPrevious": 0.9919890135037972,
+                "reductionPercentFromBefore": 0.8010986496202799,
+                "reductionPercentFromPrevious": 0.8010986496202799
+              },
+              "max": {
+                "before": 879.9000000953674,
+                "previous": 879.9000000953674,
+                "after": 979.6000000238419,
+                "ratioToBefore": 1.1133083303985323,
+                "ratioToPrevious": 1.1133083303985323,
+                "reductionPercentFromBefore": -11.330833039853228,
+                "reductionPercentFromPrevious": -11.330833039853228
+              },
+              "mean": {
+                "before": 820.3033333301544,
+                "previous": 820.3033333301544,
+                "after": 712.0366666634877,
+                "ratioToBefore": 0.8680163029118259,
+                "ratioToPrevious": 0.8680163029118259,
+                "reductionPercentFromBefore": 13.198369708817415,
+                "reductionPercentFromPrevious": 13.198369708817415
+              }
+            },
+            "remoteReceiveToDomMs": {
+              "p50": {
+                "before": 385.8000000715256,
+                "previous": 385.8000000715256,
+                "after": 105.0,
+                "ratioToBefore": 0.2721617417846902,
+                "ratioToPrevious": 0.2721617417846902,
+                "reductionPercentFromBefore": 72.78382582153098,
+                "reductionPercentFromPrevious": 72.78382582153098
+              },
+              "p95": {
+                "before": 421.2999999523163,
+                "previous": 421.2999999523163,
+                "after": 155.5,
+                "ratioToBefore": 0.36909565634369773,
+                "ratioToPrevious": 0.36909565634369773,
+                "reductionPercentFromBefore": 63.09043436563022,
+                "reductionPercentFromPrevious": 63.09043436563022
+              },
+              "max": {
+                "before": 430.6999999284744,
+                "previous": 430.6999999284744,
+                "after": 163.79999995231628,
+                "ratioToBefore": 0.3803111213826753,
+                "ratioToPrevious": 0.3803111213826753,
+                "reductionPercentFromBefore": 61.96888786173247,
+                "reductionPercentFromPrevious": 61.96888786173247
+              },
+              "mean": {
+                "before": 388.77666667699816,
+                "previous": 388.77666667699816,
+                "after": 113.76666666269303,
+                "ratioToBefore": 0.29262730100315454,
+                "ratioToPrevious": 0.29262730100315454,
+                "reductionPercentFromBefore": 70.73726989968453,
+                "reductionPercentFromPrevious": 70.73726989968453
+              }
+            },
+            "domToRenderingOpportunityMs": {
+              "p50": {
+                "before": 496.7999999523163,
+                "previous": 496.7999999523163,
+                "after": 375.8000000715256,
+                "ratioToBefore": 0.7564412240491053,
+                "ratioToPrevious": 0.7564412240491053,
+                "reductionPercentFromBefore": 24.35587759508947,
+                "reductionPercentFromPrevious": 24.35587759508947
+              },
+              "p95": {
+                "before": 552.3999999761581,
+                "previous": 552.3999999761581,
+                "after": 408.10000002384186,
+                "ratioToBefore": 0.7387762491699053,
+                "ratioToPrevious": 0.7387762491699053,
+                "reductionPercentFromBefore": 26.122375083009473,
+                "reductionPercentFromPrevious": 26.122375083009473
+              },
+              "max": {
+                "before": 580.2000000476837,
+                "previous": 580.2000000476837,
+                "after": 412.0,
+                "ratioToBefore": 0.7100999654707684,
+                "ratioToPrevious": 0.7100999654707684,
+                "reductionPercentFromBefore": 28.990003452923162,
+                "reductionPercentFromPrevious": 28.990003452923162
+              },
+              "mean": {
+                "before": 497.0033333261808,
+                "previous": 497.0033333261808,
+                "after": 371.40333333412804,
+                "ratioToBefore": 0.7472853971592539,
+                "ratioToPrevious": 0.7472853971592539,
+                "reductionPercentFromBefore": 25.27146028407461,
+                "reductionPercentFromPrevious": 25.27146028407461
+              }
+            },
+            "serverSubmitMs": {
+              "p50": {
+                "before": 0.5386670000152662,
+                "previous": 0.5386670000152662,
+                "after": 1.4949999999953434,
+                "ratioToBefore": 2.775369569609748,
+                "ratioToPrevious": 2.775369569609748,
+                "reductionPercentFromBefore": -177.53695696097478,
+                "reductionPercentFromPrevious": -177.53695696097478
+              },
+              "p95": {
+                "before": 1.893417000072077,
+                "previous": 1.893417000072077,
+                "after": 15.148750000000291,
+                "ratioToBefore": 8.000746797680396,
+                "ratioToPrevious": 8.000746797680396,
+                "reductionPercentFromBefore": -700.0746797680396,
+                "reductionPercentFromPrevious": -700.0746797680396
+              },
+              "max": {
+                "before": 4.7603750000707805,
+                "previous": 4.7603750000707805,
+                "after": 18.159708999999566,
+                "ratioToBefore": 3.8147643830012457,
+                "ratioToPrevious": 3.8147643830012457,
+                "reductionPercentFromBefore": -281.4764383001246,
+                "reductionPercentFromPrevious": -281.4764383001246
+              },
+              "mean": {
+                "before": 0.8230693666652465,
+                "previous": 0.8230693666652465,
+                "after": 3.012183366667159,
+                "ratioToBefore": 3.659695632788937,
+                "ratioToPrevious": 3.659695632788937,
+                "reductionPercentFromBefore": -265.9695632788937,
+                "reductionPercentFromPrevious": -265.9695632788937
+              }
+            }
+          }
+        },
+        {
+          "stage": "step2",
+          "metrics": {
+            "inputEventToRemoteDomMs": {
+              "p50": {
+                "before": 1221.7000000476837,
+                "previous": 892.2000000476837,
+                "after": 217.40000009536743,
+                "ratioToBefore": 0.1779487599958109,
+                "ratioToPrevious": 0.24366733925549033,
+                "reductionPercentFromBefore": 82.2051240004189,
+                "reductionPercentFromPrevious": 75.63326607445097
+              },
+              "p95": {
+                "before": 1717.0,
+                "previous": 1245.8999999761581,
+                "after": 264.0,
+                "ratioToBefore": 0.1537565521258008,
+                "ratioToPrevious": 0.21189501565539126,
+                "reductionPercentFromBefore": 84.62434478741991,
+                "reductionPercentFromPrevious": 78.81049843446087
+              },
+              "max": {
+                "before": 1730.2000000476837,
+                "previous": 1724.0,
+                "after": 271.3000000715256,
+                "ratioToBefore": 0.1568026818079116,
+                "ratioToPrevious": 0.15736658936863432,
+                "reductionPercentFromBefore": 84.31973181920884,
+                "reductionPercentFromPrevious": 84.26334106313656
+              },
+              "mean": {
+                "before": 1337.0566666801772,
+                "previous": 972.5733333230019,
+                "after": 222.2699999968211,
+                "ratioToBefore": 0.16623827960014795,
+                "ratioToPrevious": 0.22853803654824545,
+                "reductionPercentFromBefore": 83.3761720399852,
+                "reductionPercentFromPrevious": 77.14619634517545
+              }
+            },
+            "inputEventToRenderOpportunityMs": {
+              "p50": {
+                "before": 1722.3999999761581,
+                "previous": 1241.7999999523163,
+                "after": 234,
+                "ratioToBefore": 0.1358569438012303,
+                "ratioToPrevious": 0.18843614109275675,
+                "reductionPercentFromBefore": 86.41430561987697,
+                "reductionPercentFromPrevious": 81.15638589072432
+              },
+              "p95": {
+                "before": 2236.899999976158,
+                "previous": 1626.8999999761581,
+                "after": 288.10000002384186,
+                "ratioToBefore": 0.12879431357097437,
+                "ratioToPrevious": 0.17708525418161158,
+                "reductionPercentFromBefore": 87.12056864290257,
+                "reductionPercentFromPrevious": 82.29147458183884
+              },
+              "max": {
+                "before": 2251.899999976158,
+                "previous": 2101.6999999284744,
+                "after": 312.1999999284744,
+                "ratioToBefore": 0.13863848302845588,
+                "ratioToPrevious": 0.14854641477808408,
+                "reductionPercentFromBefore": 86.1361516971544,
+                "reductionPercentFromPrevious": 85.1453585221916
+              },
+              "mean": {
+                "before": 1834.0600000063578,
+                "previous": 1343.97666665713,
+                "after": 242.72333333889642,
+                "ratioToBefore": 0.132342089865138,
+                "ratioToPrevious": 0.18060085369087664,
+                "reductionPercentFromBefore": 86.76579101348621,
+                "reductionPercentFromPrevious": 81.93991463091234
+              }
+            },
+            "inputQueueMs": {
+              "p50": {
+                "before": 0.7999999523162842,
+                "previous": 3.9000000953674316,
+                "after": 0.10000002384185791,
+                "ratioToBefore": 0.1250000372529052,
+                "ratioToPrevious": 0.025641031127317596,
+                "reductionPercentFromBefore": 87.49999627470947,
+                "reductionPercentFromPrevious": 97.43589688726824
+              },
+              "p95": {
+                "before": 486.2000000476837,
+                "previous": 405.89999997615814,
+                "after": 0.2999999523162842,
+                "ratioToBefore": 0.0006170299306599381,
+                "ratioToPrevious": 0.0007390981826408122,
+                "reductionPercentFromBefore": 99.93829700693401,
+                "reductionPercentFromPrevious": 99.92609018173592
+              },
+              "max": {
+                "before": 536.3999999761581,
+                "previous": 634.0,
+                "after": 0.2999999523162842,
+                "ratioToBefore": 0.0005592840274601389,
+                "ratioToPrevious": 0.0004731860446629088,
+                "reductionPercentFromBefore": 99.94407159725398,
+                "reductionPercentFromPrevious": 99.9526813955337
+              },
+              "mean": {
+                "before": 126.90333335399627,
+                "previous": 100.13666666348776,
+                "after": 0.14000000953674316,
+                "ratioToBefore": 0.0011032019871866862,
+                "ratioToPrevious": 0.0013980893732684087,
+                "reductionPercentFromBefore": 99.88967980128133,
+                "reductionPercentFromPrevious": 99.86019106267315
+              }
+            },
+            "inputToSendMs": {
+              "p50": {
+                "before": 1.100000023841858,
+                "previous": 1.2000000476837158,
+                "after": 0.8999999761581421,
+                "ratioToBefore": 0.8181817787737894,
+                "ratioToPrevious": 0.7499999503294646,
+                "reductionPercentFromBefore": 18.18182212262106,
+                "reductionPercentFromPrevious": 25.000004967053535
+              },
+              "p95": {
+                "before": 1.399999976158142,
+                "previous": 678.8999999761581,
+                "after": 1.0,
+                "ratioToBefore": 0.7142857264499277,
+                "ratioToPrevious": 0.0014729709825233737,
+                "reductionPercentFromBefore": 28.571427355007227,
+                "reductionPercentFromPrevious": 99.85270290174766
+              },
+              "max": {
+                "before": 1.5,
+                "previous": 687.5,
+                "after": 1.0,
+                "ratioToBefore": 0.6666666666666666,
+                "ratioToPrevious": 0.0014545454545454545,
+                "reductionPercentFromBefore": 33.333333333333336,
+                "reductionPercentFromPrevious": 99.85454545454544
+              },
+              "mean": {
+                "before": 1.0733333190282186,
+                "previous": 46.63333333333333,
+                "after": 0.8633333365122478,
+                "ratioToBefore": 0.8043478397688223,
+                "ratioToPrevious": 0.018513223799404885,
+                "reductionPercentFromBefore": 19.56521602311777,
+                "reductionPercentFromPrevious": 98.14867762005952
+              }
+            },
+            "sendToRemoteReceiveMs": {
+              "p50": {
+                "before": 819.6000000238419,
+                "previous": 706.3999999761581,
+                "after": 114.89999997615814,
+                "ratioToBefore": 0.14019033671646625,
+                "ratioToPrevious": 0.16265571911103646,
+                "reductionPercentFromBefore": 85.98096632835338,
+                "reductionPercentFromPrevious": 83.73442808889635
+              },
+              "p95": {
+                "before": 873.7999999523163,
+                "previous": 866.7999999523163,
+                "after": 144.29999995231628,
+                "ratioToBefore": 0.16514076443143832,
+                "ratioToPrevious": 0.16647438850975357,
+                "reductionPercentFromBefore": 83.48592355685616,
+                "reductionPercentFromPrevious": 83.35256114902464
+              },
+              "max": {
+                "before": 879.9000000953674,
+                "previous": 979.6000000238419,
+                "after": 163.89999997615814,
+                "ratioToBefore": 0.18627116713080344,
+                "ratioToPrevious": 0.16731318902834738,
+                "reductionPercentFromBefore": 81.37288328691965,
+                "reductionPercentFromPrevious": 83.26868109716527
+              },
+              "mean": {
+                "before": 820.3033333301544,
+                "previous": 712.0366666634877,
+                "after": 119.75666665236155,
+                "ratioToBefore": 0.14599071073646616,
+                "ratioToPrevious": 0.16818890411012946,
+                "reductionPercentFromBefore": 85.40092892635339,
+                "reductionPercentFromPrevious": 83.18110958898706
+              }
+            },
+            "remoteReceiveToDomMs": {
+              "p50": {
+                "before": 385.8000000715256,
+                "previous": 105.0,
+                "after": 101.10000002384186,
+                "ratioToBefore": 0.2620528771516288,
+                "ratioToPrevious": 0.9628571430842082,
+                "reductionPercentFromBefore": 73.79471228483712,
+                "reductionPercentFromPrevious": 3.7142856915791778
+              },
+              "p95": {
+                "before": 421.2999999523163,
+                "previous": 155.5,
+                "after": 104.20000004768372,
+                "ratioToBefore": 0.2473296939460653,
+                "ratioToPrevious": 0.6700964633291557,
+                "reductionPercentFromBefore": 75.26703060539347,
+                "reductionPercentFromPrevious": 32.99035366708443
+              },
+              "max": {
+                "before": 430.6999999284744,
+                "previous": 163.79999995231628,
+                "after": 125.80000007152557,
+                "ratioToBefore": 0.2920826563557394,
+                "ratioToPrevious": 0.7680097686700069,
+                "reductionPercentFromBefore": 70.79173436442606,
+                "reductionPercentFromPrevious": 23.199023132999308
+              },
+              "mean": {
+                "before": 388.77666667699816,
+                "previous": 113.76666666269303,
+                "after": 101.50999999841055,
+                "ratioToBefore": 0.26110106058074384,
+                "ratioToPrevious": 0.8922648696333674,
+                "reductionPercentFromBefore": 73.88989394192562,
+                "reductionPercentFromPrevious": 10.773513036663262
+              }
+            },
+            "domToRenderingOpportunityMs": {
+              "p50": {
+                "before": 496.7999999523163,
+                "previous": 375.8000000715256,
+                "after": 16.5,
+                "ratioToBefore": 0.03321256038966123,
+                "ratioToPrevious": 0.043906333147577366,
+                "reductionPercentFromBefore": 96.67874396103387,
+                "reductionPercentFromPrevious": 95.60936668524226
+              },
+              "p95": {
+                "before": 552.3999999761581,
+                "previous": 408.10000002384186,
+                "after": 45.299999952316284,
+                "ratioToBefore": 0.08200579282091139,
+                "ratioToPrevious": 0.11100220521849984,
+                "reductionPercentFromBefore": 91.79942071790886,
+                "reductionPercentFromPrevious": 88.89977947815002
+              },
+              "max": {
+                "before": 580.2000000476837,
+                "previous": 412.0,
+                "after": 48.199999928474426,
+                "ratioToBefore": 0.0830748016623804,
+                "ratioToPrevious": 0.11699029108853017,
+                "reductionPercentFromBefore": 91.69251983376196,
+                "reductionPercentFromPrevious": 88.30097089114697
+              },
+              "mean": {
+                "before": 497.0033333261808,
+                "previous": 371.40333333412804,
+                "after": 20.453333342075346,
+                "ratioToBefore": 0.041153312202539954,
+                "ratioToPrevious": 0.055070408653749965,
+                "reductionPercentFromBefore": 95.88466877974601,
+                "reductionPercentFromPrevious": 94.492959134625
+              }
+            },
+            "serverSubmitMs": {
+              "p50": {
+                "before": 0.5386670000152662,
+                "previous": 1.4949999999953434,
+                "after": 0.8771669999987353,
+                "ratioToBefore": 1.6284030764347466,
+                "ratioToPrevious": 0.5867337792651957,
+                "reductionPercentFromBefore": -62.84030764347466,
+                "reductionPercentFromPrevious": 41.326622073480436
+              },
+              "p95": {
+                "before": 1.893417000072077,
+                "previous": 15.148750000000291,
+                "after": 2.1726249999992433,
+                "ratioToBefore": 1.1474624976518843,
+                "ratioToPrevious": 0.1434194240448355,
+                "reductionPercentFromBefore": -14.746249765188434,
+                "reductionPercentFromPrevious": 85.65805759551645
+              },
+              "max": {
+                "before": 4.7603750000707805,
+                "previous": 18.159708999999566,
+                "after": 3.2293749999953434,
+                "ratioToBefore": 0.6783866817104381,
+                "ratioToPrevious": 0.17783186944214913,
+                "reductionPercentFromBefore": 32.161331828956186,
+                "reductionPercentFromPrevious": 82.21681305578508
+              },
+              "mean": {
+                "before": 0.8230693666652465,
+                "previous": 3.012183366667159,
+                "after": 1.0615292333330824,
+                "ratioToBefore": 1.2897202548479982,
+                "ratioToPrevious": 0.3524118900197019,
+                "reductionPercentFromBefore": -28.972025484799822,
+                "reductionPercentFromPrevious": 64.7588109980298
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "direction": "pm-to-demo",
+      "stages": [
+        {
+          "stage": "step1",
+          "metrics": {
+            "inputEventToRemoteDomMs": {
+              "p50": {
+                "before": 1305.9000000953674,
+                "previous": 1305.9000000953674,
+                "after": 630.2999999523163,
+                "ratioToBefore": 0.48265563971689,
+                "ratioToPrevious": 0.48265563971689,
+                "reductionPercentFromBefore": 51.734436028311,
+                "reductionPercentFromPrevious": 51.734436028311
+              },
+              "p95": {
+                "before": 1784.3999999761581,
+                "previous": 1784.3999999761581,
+                "after": 1313.3999999761581,
+                "ratioToBefore": 0.7360457296535008,
+                "ratioToPrevious": 0.7360457296535008,
+                "reductionPercentFromBefore": 26.39542703464992,
+                "reductionPercentFromPrevious": 26.39542703464992
+              },
+              "max": {
+                "before": 2224.5,
+                "previous": 2224.5,
+                "after": 1367.6000000238419,
+                "ratioToBefore": 0.614789840424294,
+                "ratioToPrevious": 0.614789840424294,
+                "reductionPercentFromBefore": 38.521015957570604,
+                "reductionPercentFromPrevious": 38.521015957570604
+              },
+              "mean": {
+                "before": 1434.3099999904632,
+                "previous": 1434.3099999904632,
+                "after": 699.7566666682561,
+                "ratioToBefore": 0.48786989330961145,
+                "ratioToPrevious": 0.48786989330961145,
+                "reductionPercentFromBefore": 51.21301066903885,
+                "reductionPercentFromPrevious": 51.21301066903885
+              }
+            },
+            "inputEventToRenderOpportunityMs": {
+              "p50": {
+                "before": 2050.600000023842,
+                "previous": 2050.600000023842,
+                "after": 1253.6000000238419,
+                "ratioToBefore": 0.6113332683162326,
+                "ratioToPrevious": 0.6113332683162326,
+                "reductionPercentFromBefore": 38.86667316837674,
+                "reductionPercentFromPrevious": 38.86667316837674
+              },
+              "p95": {
+                "before": 2642.399999976158,
+                "previous": 2642.399999976158,
+                "after": 1593.8999999761581,
+                "ratioToBefore": 0.603201634873804,
+                "ratioToPrevious": 0.603201634873804,
+                "reductionPercentFromBefore": 39.6798365126196,
+                "reductionPercentFromPrevious": 39.6798365126196
+              },
+              "max": {
+                "before": 3004.399999976158,
+                "previous": 3004.399999976158,
+                "after": 1959.6000000238419,
+                "ratioToBefore": 0.652243376394419,
+                "ratioToPrevious": 0.652243376394419,
+                "reductionPercentFromBefore": 34.7756623605581,
+                "reductionPercentFromPrevious": 34.7756623605581
+              },
+              "mean": {
+                "before": 2096.146666665872,
+                "previous": 2096.146666665872,
+                "after": 1232.016666650772,
+                "ratioToBefore": 0.5877530834282775,
+                "ratioToPrevious": 0.5877530834282775,
+                "reductionPercentFromBefore": 41.22469165717225,
+                "reductionPercentFromPrevious": 41.22469165717225
+              }
+            },
+            "inputQueueMs": {
+              "p50": {
+                "before": 0.8999999761581421,
+                "previous": 0.8999999761581421,
+                "after": 3.700000047683716,
+                "ratioToBefore": 4.111111273000274,
+                "ratioToPrevious": 4.111111273000274,
+                "reductionPercentFromBefore": -311.1111273000274,
+                "reductionPercentFromPrevious": -311.1111273000274
+              },
+              "p95": {
+                "before": 495.10000002384186,
+                "previous": 495.10000002384186,
+                "after": 341.2999999523163,
+                "ratioToBefore": 0.6893556855905489,
+                "ratioToPrevious": 0.6893556855905489,
+                "reductionPercentFromBefore": 31.064431440945107,
+                "reductionPercentFromPrevious": 31.064431440945107
+              },
+              "max": {
+                "before": 507.09999990463257,
+                "previous": 507.09999990463257,
+                "after": 342.60000002384186,
+                "ratioToBefore": 0.6756063894464064,
+                "ratioToPrevious": 0.6756063894464064,
+                "reductionPercentFromBefore": 32.43936105535936,
+                "reductionPercentFromPrevious": 32.43936105535936
+              },
+              "mean": {
+                "before": 82.3599999944369,
+                "previous": 82.3599999944369,
+                "after": 25.30666666428248,
+                "ratioToBefore": 0.30726890075269364,
+                "ratioToPrevious": 0.30726890075269364,
+                "reductionPercentFromBefore": 69.27310992473063,
+                "reductionPercentFromPrevious": 69.27310992473063
+              }
+            },
+            "inputToSendMs": {
+              "p50": {
+                "before": 232.0,
+                "previous": 232.0,
+                "after": 65.5,
+                "ratioToBefore": 0.2823275862068966,
+                "ratioToPrevious": 0.2823275862068966,
+                "reductionPercentFromBefore": 71.76724137931035,
+                "reductionPercentFromPrevious": 71.76724137931035
+              },
+              "p95": {
+                "before": 242.30000007152557,
+                "previous": 242.30000007152557,
+                "after": 68.10000002384186,
+                "ratioToBefore": 0.281056541492939,
+                "ratioToPrevious": 0.281056541492939,
+                "reductionPercentFromBefore": 71.8943458507061,
+                "reductionPercentFromPrevious": 71.8943458507061
+              },
+              "max": {
+                "before": 247.39999997615814,
+                "previous": 247.39999997615814,
+                "after": 788.5,
+                "ratioToBefore": 3.1871463220533043,
+                "ratioToPrevious": 3.1871463220533043,
+                "reductionPercentFromBefore": -218.71463220533042,
+                "reductionPercentFromPrevious": -218.71463220533042
+              },
+              "mean": {
+                "before": 233.14999999602637,
+                "previous": 233.14999999602637,
+                "after": 89.30000000397364,
+                "ratioToBefore": 0.3830152262727669,
+                "ratioToPrevious": 0.3830152262727669,
+                "reductionPercentFromBefore": 61.69847737272332,
+                "reductionPercentFromPrevious": 61.69847737272332
+              }
+            },
+            "sendToRemoteReceiveMs": {
+              "p50": {
+                "before": 691.5,
+                "previous": 691.5,
+                "after": 375.60000002384186,
+                "ratioToBefore": 0.5431670282340446,
+                "ratioToPrevious": 0.5431670282340446,
+                "reductionPercentFromBefore": 45.68329717659554,
+                "reductionPercentFromPrevious": 45.68329717659554
+              },
+              "p95": {
+                "before": 1219.2000000476837,
+                "previous": 1219.2000000476837,
+                "after": 676.7999999523163,
+                "ratioToBefore": 0.5551181101753988,
+                "ratioToPrevious": 0.5551181101753988,
+                "reductionPercentFromBefore": 44.488188982460116,
+                "reductionPercentFromPrevious": 44.488188982460116
+              },
+              "max": {
+                "before": 1231.6000000238419,
+                "previous": 1231.6000000238419,
+                "after": 768.1000000238419,
+                "ratioToBefore": 0.6236602793187501,
+                "ratioToPrevious": 0.6236602793187501,
+                "reductionPercentFromBefore": 37.63397206812499,
+                "reductionPercentFromPrevious": 37.63397206812499
+              },
+              "mean": {
+                "before": 820.6300000031789,
+                "previous": 820.6300000031789,
+                "after": 397.7866666634878,
+                "ratioToBefore": 0.48473327402355126,
+                "ratioToPrevious": 0.48473327402355126,
+                "reductionPercentFromBefore": 51.526672597644875,
+                "reductionPercentFromPrevious": 51.526672597644875
+              }
+            },
+            "remoteReceiveToDomMs": {
+              "p50": {
+                "before": 308.39999997615814,
+                "previous": 308.39999997615814,
+                "after": 186.70000004768372,
+                "ratioToBefore": 0.6053826201754772,
+                "ratioToPrevious": 0.6053826201754772,
+                "reductionPercentFromBefore": 39.461737982452284,
+                "reductionPercentFromPrevious": 39.461737982452284
+              },
+              "p95": {
+                "before": 322.2999999523163,
+                "previous": 322.2999999523163,
+                "after": 192.79999995231628,
+                "ratioToBefore": 0.5982004343184633,
+                "ratioToPrevious": 0.5982004343184633,
+                "reductionPercentFromBefore": 40.17995656815367,
+                "reductionPercentFromPrevious": 40.17995656815367
+              },
+              "max": {
+                "before": 328.8000000715256,
+                "previous": 328.8000000715256,
+                "after": 206.20000004768372,
+                "ratioToBefore": 0.6271289537798904,
+                "ratioToPrevious": 0.6271289537798904,
+                "reductionPercentFromBefore": 37.28710462201096,
+                "reductionPercentFromPrevious": 37.28710462201096
+              },
+              "mean": {
+                "before": 298.1699999968211,
+                "previous": 298.1699999968211,
+                "after": 187.36333333651226,
+                "ratioToBefore": 0.6283775475014582,
+                "ratioToPrevious": 0.6283775475014582,
+                "reductionPercentFromBefore": 37.16224524985417,
+                "reductionPercentFromPrevious": 37.16224524985417
+              }
+            },
+            "domToRenderingOpportunityMs": {
+              "p50": {
+                "before": 788.2000000476837,
+                "previous": 788.2000000476837,
+                "after": 600.1000000238419,
+                "ratioToBefore": 0.7613549860283401,
+                "ratioToPrevious": 0.7613549860283401,
+                "reductionPercentFromBefore": 23.864501397165995,
+                "reductionPercentFromPrevious": 23.864501397165995
+              },
+              "p95": {
+                "before": 906.1999999284744,
+                "previous": 906.1999999284744,
+                "after": 660.6999999284744,
+                "ratioToBefore": 0.729088501413179,
+                "ratioToPrevious": 0.729088501413179,
+                "reductionPercentFromBefore": 27.091149858682094,
+                "reductionPercentFromPrevious": 27.091149858682094
+              },
+              "max": {
+                "before": 945.8999999761581,
+                "previous": 945.8999999761581,
+                "after": 684.0999999046326,
+                "ratioToBefore": 0.7232265566358765,
+                "ratioToPrevious": 0.7232265566358765,
+                "reductionPercentFromBefore": 27.677344336412347,
+                "reductionPercentFromPrevious": 27.677344336412347
+              },
+              "mean": {
+                "before": 661.8366666754087,
+                "previous": 661.8366666754087,
+                "after": 532.259999982516,
+                "ratioToBefore": 0.8042165488597169,
+                "ratioToPrevious": 0.8042165488597169,
+                "reductionPercentFromBefore": 19.578345114028306,
+                "reductionPercentFromPrevious": 19.578345114028306
+              }
+            },
+            "serverSubmitMs": {
+              "p50": {
+                "before": 0.7044170000590384,
+                "previous": 0.7044170000590384,
+                "after": 1.093250000005355,
+                "ratioToBefore": 1.5519926406002806,
+                "ratioToPrevious": 1.5519926406002806,
+                "reductionPercentFromBefore": -55.199264060028064,
+                "reductionPercentFromPrevious": -55.199264060028064
+              },
+              "p95": {
+                "before": 3.5374169999267906,
+                "previous": 3.5374169999267906,
+                "after": 3.6567079999949783,
+                "ratioToBefore": 1.0337226287063856,
+                "ratioToPrevious": 1.0337226287063856,
+                "reductionPercentFromBefore": -3.372262870638565,
+                "reductionPercentFromPrevious": -3.372262870638565
+              },
+              "max": {
+                "before": 5.6547090001404285,
+                "previous": 5.6547090001404285,
+                "after": 4.268207999994047,
+                "ratioToBefore": 0.7548059502068188,
+                "ratioToPrevious": 0.7548059502068188,
+                "reductionPercentFromBefore": 24.519404979318114,
+                "reductionPercentFromPrevious": 24.519404979318114
+              },
+              "mean": {
+                "before": 1.1615416666919676,
+                "previous": 1.1615416666919676,
+                "after": 1.407094400000642,
+                "ratioToBefore": 1.2114024320866599,
+                "ratioToPrevious": 1.2114024320866599,
+                "reductionPercentFromBefore": -21.140243208665986,
+                "reductionPercentFromPrevious": -21.140243208665986
+              }
+            }
+          }
+        },
+        {
+          "stage": "step2",
+          "metrics": {
+            "inputEventToRemoteDomMs": {
+              "p50": {
+                "before": 1305.9000000953674,
+                "previous": 630.2999999523163,
+                "after": 156.89999997615814,
+                "ratioToBefore": 0.12014702501317101,
+                "ratioToPrevious": 0.24892908137082026,
+                "reductionPercentFromBefore": 87.9852974986829,
+                "reductionPercentFromPrevious": 75.10709186291797
+              },
+              "p95": {
+                "before": 1784.3999999761581,
+                "previous": 1313.3999999761581,
+                "after": 188.10000002384186,
+                "ratioToBefore": 0.10541358441288674,
+                "ratioToPrevious": 0.1432160804227626,
+                "reductionPercentFromBefore": 89.45864155871132,
+                "reductionPercentFromPrevious": 85.67839195772375
+              },
+              "max": {
+                "before": 2224.5,
+                "previous": 1367.6000000238419,
+                "after": 189.5,
+                "ratioToBefore": 0.08518768262530906,
+                "ratioToPrevious": 0.1385639075728988,
+                "reductionPercentFromBefore": 91.48123173746909,
+                "reductionPercentFromPrevious": 86.14360924271011
+              },
+              "mean": {
+                "before": 1434.3099999904632,
+                "previous": 699.7566666682561,
+                "after": 160.88666666348774,
+                "ratioToBefore": 0.11217007945601543,
+                "ratioToPrevious": 0.22991801911586737,
+                "reductionPercentFromBefore": 88.78299205439846,
+                "reductionPercentFromPrevious": 77.00819808841327
+              }
+            },
+            "inputEventToRenderOpportunityMs": {
+              "p50": {
+                "before": 2050.600000023842,
+                "previous": 1253.6000000238419,
+                "after": 207.10000002384186,
+                "ratioToBefore": 0.10099483079168729,
+                "ratioToPrevious": 0.16520421188569168,
+                "reductionPercentFromBefore": 89.90051692083128,
+                "reductionPercentFromPrevious": 83.47957881143083
+              },
+              "p95": {
+                "before": 2642.399999976158,
+                "previous": 1593.8999999761581,
+                "after": 238.70000004768372,
+                "ratioToBefore": 0.0903345443724786,
+                "ratioToPrevious": 0.1497584541384367,
+                "reductionPercentFromBefore": 90.96654556275215,
+                "reductionPercentFromPrevious": 85.02415458615633
+              },
+              "max": {
+                "before": 3004.399999976158,
+                "previous": 1959.6000000238419,
+                "after": 239.29999995231628,
+                "ratioToBefore": 0.07964984687598697,
+                "ratioToPrevious": 0.12211675849632822,
+                "reductionPercentFromBefore": 92.0350153124013,
+                "reductionPercentFromPrevious": 87.78832415036717
+              },
+              "mean": {
+                "before": 2096.146666665872,
+                "previous": 1232.016666650772,
+                "after": 212.0633333325386,
+                "ratioToBefore": 0.1011681752545714,
+                "ratioToPrevious": 0.1721270004479981,
+                "reductionPercentFromBefore": 89.88318247454285,
+                "reductionPercentFromPrevious": 82.78729995520018
+              }
+            },
+            "inputQueueMs": {
+              "p50": {
+                "before": 0.8999999761581421,
+                "previous": 3.700000047683716,
+                "after": 0.10000002384185791,
+                "ratioToBefore": 0.11111114054550437,
+                "ratioToPrevious": 0.02702703312246177,
+                "reductionPercentFromBefore": 88.88888594544956,
+                "reductionPercentFromPrevious": 97.29729668775381
+              },
+              "p95": {
+                "before": 495.10000002384186,
+                "previous": 341.2999999523163,
+                "after": 0.20000004768371582,
+                "ratioToBefore": 0.0004039588924946166,
+                "ratioToPrevious": 0.000585994865841366,
+                "reductionPercentFromBefore": 99.95960411075053,
+                "reductionPercentFromPrevious": 99.94140051341587
+              },
+              "max": {
+                "before": 507.09999990463257,
+                "previous": 342.60000002384186,
+                "after": 29.5,
+                "ratioToBefore": 0.058173930202224215,
+                "ratioToPrevious": 0.08610624634543802,
+                "reductionPercentFromBefore": 94.18260697977759,
+                "reductionPercentFromPrevious": 91.38937536545619
+              },
+              "mean": {
+                "before": 82.3599999944369,
+                "previous": 25.30666666428248,
+                "after": 1.0933333436648052,
+                "ratioToBefore": 0.013275052740877313,
+                "ratioToPrevious": 0.04320337238281652,
+                "reductionPercentFromBefore": 98.67249472591226,
+                "reductionPercentFromPrevious": 95.67966276171835
+              }
+            },
+            "inputToSendMs": {
+              "p50": {
+                "before": 232.0,
+                "previous": 65.5,
+                "after": 63.09999990463257,
+                "ratioToBefore": 0.27198275820962314,
+                "ratioToPrevious": 0.9633587771699629,
+                "reductionPercentFromBefore": 72.80172417903769,
+                "reductionPercentFromPrevious": 3.6641222830037123
+              },
+              "p95": {
+                "before": 242.30000007152557,
+                "previous": 68.10000002384186,
+                "after": 81.70000004768372,
+                "ratioToBefore": 0.33718530756733944,
+                "ratioToPrevious": 1.1997063145239426,
+                "reductionPercentFromBefore": 66.28146924326606,
+                "reductionPercentFromPrevious": -19.97063145239426
+              },
+              "max": {
+                "before": 247.39999997615814,
+                "previous": 788.5,
+                "after": 86.60000002384186,
+                "ratioToBefore": 0.3500404205019704,
+                "ratioToPrevious": 0.10982878886980578,
+                "reductionPercentFromBefore": 64.99595794980296,
+                "reductionPercentFromPrevious": 89.01712111301943
+              },
+              "mean": {
+                "before": 233.14999999602637,
+                "previous": 89.30000000397364,
+                "after": 64.03999998966853,
+                "ratioToBefore": 0.27467295728398017,
+                "ratioToPrevious": 0.7171332585310067,
+                "reductionPercentFromBefore": 72.53270427160199,
+                "reductionPercentFromPrevious": 28.286674146899326
+              }
+            },
+            "sendToRemoteReceiveMs": {
+              "p50": {
+                "before": 691.5,
+                "previous": 375.60000002384186,
+                "after": 21.699999928474426,
+                "ratioToBefore": 0.03138105557263113,
+                "ratioToPrevious": 0.05777422770792594,
+                "reductionPercentFromBefore": 96.86189444273688,
+                "reductionPercentFromPrevious": 94.2225772292074
+              },
+              "p95": {
+                "before": 1219.2000000476837,
+                "previous": 676.7999999523163,
+                "after": 49.200000047683716,
+                "ratioToBefore": 0.040354330746193795,
+                "ratioToPrevious": 0.07269503553656928,
+                "reductionPercentFromBefore": 95.96456692538062,
+                "reductionPercentFromPrevious": 92.73049644634307
+              },
+              "max": {
+                "before": 1231.6000000238419,
+                "previous": 768.1000000238419,
+                "after": 53.10000002384186,
+                "ratioToBefore": 0.04311464763138513,
+                "ratioToPrevious": 0.06913162351541939,
+                "reductionPercentFromBefore": 95.68853523686148,
+                "reductionPercentFromPrevious": 93.08683764845807
+              },
+              "mean": {
+                "before": 820.6300000031789,
+                "previous": 397.7866666634878,
+                "after": 24.016666666666666,
+                "ratioToBefore": 0.029266132930277508,
+                "ratioToPrevious": 0.06037574579387258,
+                "reductionPercentFromBefore": 97.07338670697226,
+                "reductionPercentFromPrevious": 93.96242542061273
+              }
+            },
+            "remoteReceiveToDomMs": {
+              "p50": {
+                "before": 308.39999997615814,
+                "previous": 186.70000004768372,
+                "after": 71.19999992847443,
+                "ratioToBefore": 0.23086900108294026,
+                "ratioToPrevious": 0.3813604708638979,
+                "reductionPercentFromBefore": 76.91309989170597,
+                "reductionPercentFromPrevious": 61.86395291361021
+              },
+              "p95": {
+                "before": 322.2999999523163,
+                "previous": 192.79999995231628,
+                "after": 77,
+                "ratioToBefore": 0.23890784986469754,
+                "ratioToPrevious": 0.3993775934597708,
+                "reductionPercentFromBefore": 76.10921501353025,
+                "reductionPercentFromPrevious": 60.06224065402292
+              },
+              "max": {
+                "before": 328.8000000715256,
+                "previous": 206.20000004768372,
+                "after": 102.29999995231628,
+                "ratioToBefore": 0.3111313866486084,
+                "ratioToPrevious": 0.4961202712350118,
+                "reductionPercentFromBefore": 68.88686133513916,
+                "reductionPercentFromPrevious": 50.38797287649882
+              },
+              "mean": {
+                "before": 298.1699999968211,
+                "previous": 187.36333333651226,
+                "after": 71.73666666348775,
+                "ratioToBefore": 0.24058982011688823,
+                "ratioToPrevious": 0.38287462859473015,
+                "reductionPercentFromBefore": 75.94101798831117,
+                "reductionPercentFromPrevious": 61.712537140526976
+              }
+            },
+            "domToRenderingOpportunityMs": {
+              "p50": {
+                "before": 788.2000000476837,
+                "previous": 600.1000000238419,
+                "after": 49.39999997615814,
+                "ratioToBefore": 0.06267444807557675,
+                "ratioToPrevious": 0.08231961335476669,
+                "reductionPercentFromBefore": 93.73255519244232,
+                "reductionPercentFromPrevious": 91.76803866452333
+              },
+              "p95": {
+                "before": 906.1999999284744,
+                "previous": 660.6999999284744,
+                "after": 71.70000004768372,
+                "ratioToBefore": 0.0791216067682001,
+                "ratioToPrevious": 0.10852126540857539,
+                "reductionPercentFromBefore": 92.08783932317999,
+                "reductionPercentFromPrevious": 89.14787345914246
+              },
+              "max": {
+                "before": 945.8999999761581,
+                "previous": 684.0999999046326,
+                "after": 72.60000002384186,
+                "ratioToBefore": 0.07675229942453936,
+                "ratioToPrevious": 0.10612483560000396,
+                "reductionPercentFromBefore": 92.32477005754606,
+                "reductionPercentFromPrevious": 89.3875164399996
+              },
+              "mean": {
+                "before": 661.8366666754087,
+                "previous": 532.259999982516,
+                "after": 51.17666666905085,
+                "ratioToBefore": 0.0773252212303764,
+                "ratioToPrevious": 0.09614975138227921,
+                "reductionPercentFromBefore": 92.26747787696236,
+                "reductionPercentFromPrevious": 90.38502486177208
+              }
+            },
+            "serverSubmitMs": {
+              "p50": {
+                "before": 0.7044170000590384,
+                "previous": 1.093250000005355,
+                "after": 0.9082499999785796,
+                "ratioToBefore": 1.2893641123119652,
+                "ratioToPrevious": 0.8307797850209291,
+                "reductionPercentFromBefore": -28.936411231196523,
+                "reductionPercentFromPrevious": 16.922021497907092
+              },
+              "p95": {
+                "before": 3.5374169999267906,
+                "previous": 3.6567079999949783,
+                "after": 2.2862919999897713,
+                "ratioToBefore": 0.6463167899167918,
+                "ratioToPrevious": 0.6252323127777528,
+                "reductionPercentFromBefore": 35.36832100832083,
+                "reductionPercentFromPrevious": 37.47676872222472
+              },
+              "max": {
+                "before": 5.6547090001404285,
+                "previous": 4.268207999994047,
+                "after": 2.4170419999863952,
+                "ratioToBefore": 0.42743879480382996,
+                "ratioToPrevious": 0.5662896466127626,
+                "reductionPercentFromBefore": 57.256120519617006,
+                "reductionPercentFromPrevious": 43.37103533872374
+              },
+              "mean": {
+                "before": 1.1615416666919676,
+                "previous": 1.407094400000642,
+                "after": 1.0175499999987854,
+                "ratioToBefore": 0.8760340065085519,
+                "ratioToPrevious": 0.7231568827211032,
+                "reductionPercentFromBefore": 12.396599349144811,
+                "reductionPercentFromPrevious": 27.68431172788968
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "conditions": {
+    "initialChars": 100000,
+    "paragraphs": 625,
+    "charsPerParagraph": 160,
+    "warmupsPerDirection": 5,
+    "measuredPerDirection": 30,
+    "diagnosticPerDirection": 1,
+    "viewport": [
+      1440,
+      1000
+    ],
+    "devicePixelRatio": 1,
+    "input": "Same trusted ASCII key sequence and first-paragraph initial offset 50",
+    "endpoint": "Browser key event.timeStamp to second requestAnimationFrame after remote text matches; includes event-loop queue, excludes physical display scanout",
+    "sameInitialSeedBytes": true,
+    "seedSha256": "a77a2969dafc4884b77b6af4b0784184b36de6433b5e9661d8fca50b77fe5bd1",
+    "transport": "Local real POST/SSE and JSONL; one page, shared renderer thread"
+  },
+  "stage1": {
+    "sourceManifest": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step1/source-manifest.json",
+    "tests": {
+      "command": "FUZZ_SEEDS=3000 PM_SEEDS=300 npm test",
+      "libraryPass": 106,
+      "demoPass": 10,
+      "failed": 0,
+      "typecheck": "passed"
+    },
+    "correctness": {
+      "allMeasuredEditsVisibleInBothEditors": true,
+      "allInputsTrusted": true,
+      "finalClientModelsEqualServer": true,
+      "pending": [
+        0,
+        0
+      ],
+      "finalChars": 100072,
+      "finalParagraphs": 625,
+      "totalEditsIncludingWarmupsAndDiagnostics": 72,
+      "clientEventStats": [
+        {
+          "actor": "A-g0by",
+          "eventStats": {
+            "changes": 0,
+            "events": 0,
+            "fallbacks": 0
+          }
+        },
+        {
+          "actor": "P-w453",
+          "eventStats": {
+            "changes": 37,
+            "events": 38,
+            "fallbacks": 0
+          }
+        }
+      ]
+    },
+    "run": {
+      "work_id": "editor-latency-step12-20261022",
+      "stage": "step1",
+      "url": "http://localhost:60484/pm?doc=latency100k",
+      "seedSha256": "a77a2969dafc4884b77b6af4b0784184b36de6433b5e9661d8fca50b77fe5bd1",
+      "seedMatchesBaseline": true,
+      "serverPid": 94559,
+      "dataDirectory": "/tmp/doc-sync-editor-latency-step12-step1-20261022",
+      "before": {
+        "time": "2026-10-22T12:56:59.727215+00:00",
+        "loadavg": [
+          26.8037109375,
+          20.6162109375,
+          14.03662109375
+        ],
+        "topProcesses": [
+          "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+          "  796     1 150.6  0.2 07-21:19:47 /Users/user/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+          "  315     1  71.3  0.0 07-21:20:21 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+          "94559 93574  60.7  0.4       00:00 node",
+          "  385     1  47.2  0.3 07-21:20:20 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+          "  731     1  38.7  0.2 07-21:19:48 /Library/Application Support/ahnlab/EPrM/eprmc",
+          " 2496   796  35.5  0.1 07-21:19:37 /Users/user/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/148.0.7778.96/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper",
+          "74711 74685  23.5  1.0       12:07 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/156.0.8078.47/Helpers/Google Chrome Helper (Renderer).app/Contents/MacOS/Google Chrome Helper (Renderer)",
+          " 5763     1  21.9  0.1    11:30:36 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "  432     1  15.4  0.1 07-21:20:19 /usr/libexec/syspolicyd"
+        ]
+      },
+      "browserClosed": true,
+      "serverStopped": true,
+      "status": "complete",
+      "postExportConsoleParserError": "CLI console returned text rather than JSON. Fixed output parser; exported raw samples and diagnostics unchanged.",
+      "after": {
+        "time": "2026-10-22T13:03:04.087986+00:00",
+        "loadavg": [
+          21.884765625,
+          22.3759765625,
+          17.27587890625
+        ]
+      }
+    }
+  },
+  "stage2": {
+    "sourceManifest": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2-repeat/source-manifest.json",
+    "onlySourceDeltaFromStage1": [
+      "apps/demo/ui/editor.ts"
+    ],
+    "tests": {
+      "command": "npm test",
+      "libraryPass": 106,
+      "demoPass": 10,
+      "failed": 0,
+      "typecheck": "passed",
+      "browserChecksPassed": 30
+    },
+    "correctness": {
+      "allMeasuredEditsVisibleInBothEditors": true,
+      "allInputsTrusted": true,
+      "finalClientModelsEqualServer": true,
+      "pending": [
+        0,
+        0
+      ],
+      "finalChars": 100072,
+      "finalParagraphs": 625,
+      "totalEditsIncludingWarmupsAndDiagnostics": 72,
+      "clientEventStats": [
+        {
+          "actor": "A-6q0n",
+          "eventStats": {
+            "changes": 0,
+            "events": 0,
+            "fallbacks": 0
+          }
+        },
+        {
+          "actor": "P-247k",
+          "eventStats": {
+            "changes": 37,
+            "events": 38,
+            "fallbacks": 0
+          }
+        }
+      ]
+    },
+    "run": {
+      "work_id": "editor-latency-step12-20261022",
+      "stage": "step2-repeat",
+      "url": "http://localhost:49321/pm?doc=latency100k",
+      "seedSha256": "a77a2969dafc4884b77b6af4b0784184b36de6433b5e9661d8fca50b77fe5bd1",
+      "seedMatchesBaseline": true,
+      "serverPid": 92861,
+      "dataDirectory": "/tmp/doc-sync-editor-latency-step12-step2-repeat-20261022",
+      "before": {
+        "time": "2026-10-22T13:17:44.877109+00:00",
+        "loadavg": [
+          23.36865234375,
+          23.1357421875,
+          20.6142578125
+        ],
+        "topProcesses": [
+          "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+          "  796     1 139.0  0.2 07-21:40:33 /Users/user/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+          " 7604  7551  79.9  1.4       01:05 /usr/bin/log",
+          "  731     1  48.6  0.2 07-21:40:34 /Library/Application Support/ahnlab/EPrM/eprmc",
+          "33014 33008  43.8  1.8 02-04:28:26 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "  385     1  39.4  0.2 07-21:41:06 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+          " 2496   796  33.4  0.1 07-21:40:23 /Users/user/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/148.0.7778.96/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper",
+          "92861 91693  33.0  0.4       00:01 node",
+          "  945     1  20.4  0.2 07-21:40:29 /usr/local/share/iMonTOP/iMonClientSVC",
+          "  432     1  16.4  0.1 07-21:41:05 /usr/libexec/syspolicyd"
+        ]
+      },
+      "after": {
+        "time": "2026-10-22T13:20:46.890928+00:00",
+        "loadavg": [
+          20.52880859375,
+          21.7861328125,
+          20.53466796875
+        ],
+        "topProcesses": [
+          "  PID  PPID  %CPU %MEM     ELAPSED COMM",
+          "  796     1 149.3  0.2 07-21:43:34 /Users/user/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+          "92247 48239  83.9  1.8       00:42 /usr/bin/tar",
+          "33014 33008  79.9  1.7 02-04:31:27 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "  731     1  60.5  0.2 07-21:43:35 /Library/Application Support/ahnlab/EPrM/eprmc",
+          "  385     1  35.3  0.2 07-21:44:07 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+          " 2496   796  34.8  0.1 07-21:43:24 /Users/user/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/148.0.7778.96/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper",
+          "  945     1  33.2  0.2 07-21:43:30 /usr/local/share/iMonTOP/iMonClientSVC",
+          " 5763     1  26.7  0.1    11:54:23 /opt/homebrew/Cellar/python@3.13/3.13.5/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python",
+          "  432     1  15.5  0.1 07-21:44:06 /usr/libexec/syspolicyd"
+        ]
+      },
+      "status": "complete",
+      "browserClosed": true,
+      "serverStopped": true
+    }
+  },
+  "interruptedRun": {
+    "directory": "/Users/user/github/doc-sync/benchmarks/results/monorepo-2026-10-22/browser-latency-step12/step2",
+    "excluded": true,
+    "reason": "ENOSPC while saving CLI output",
+    "preservedSamples": 61,
+    "sampleCounts": [
+      {
+        "direction": "demo-to-pm",
+        "phase": "warmup",
+        "count": 5
+      },
+      {
+        "direction": "demo-to-pm",
+        "phase": "measured",
+        "count": 30
+      },
+      {
+        "direction": "demo-to-pm",
+        "phase": "diagnostic",
+        "count": 1
+      },
+      {
+        "direction": "pm-to-demo",
+        "phase": "warmup",
+        "count": 5
+      },
+      {
+        "direction": "pm-to-demo",
+        "phase": "measured",
+        "count": 20
+      }
+    ],
+    "userFilesDeleted": false
+  },
+  "limits": [
+    "One complete run of 30 samples per direction for each stage; no statistical equivalence or causal claim for every millisecond.",
+    "External desktop load differed. A parent compatibility verification may have overlapped the earlier part of stage1. Its completion receipt and load snapshots are preserved.",
+    "The incomplete disk-error run is excluded. A complete new step2-repeat run with identical source and seed is used.",
+    "Changed document revisions still require a whole canonical model build; remote full-model diff/verification and PM conversion remain.",
+    "DOM reuse uses stable block identity, style LWW references and per-block decorations. Structure changes, GC and undel paths that invalidate the block cache can still rebuild more DOM.",
+    "ASCII sequential insertion only; no IME, sustained typing, multi-user contention or large-table latency claim.",
+    "Same local machine and renderer thread; rendering-opportunity proxy, not physical display scanout."
+  ],
+  "sourceEdits": [
+    "packages/doc-sync/src/crdt/doc.ts",
+    "packages/doc-sync/test/model-cache.test.ts",
+    "apps/demo/ui/editor.ts"
+  ],
+  "compatEdits": []
+}

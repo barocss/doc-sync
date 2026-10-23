@@ -1,0 +1,48 @@
+{
+  "unit": "ms",
+  "metric": "key event timestamp through remote DOM and second rAF; rendering opportunity, not physical display",
+  "rows": [
+    {
+      "direction": "demo-to-pm",
+      "samples": 30,
+      "p50": 248.79999995231628,
+      "p95": 291,
+      "max": 294.60000002384186
+    },
+    {
+      "direction": "pm-to-demo",
+      "samples": 30,
+      "p50": 224.5,
+      "p95": 259.8000000715256,
+      "max": 292.3000000715256
+    }
+  ],
+  "correctness": {
+    "modelsEqual": true,
+    "pending": [
+      0,
+      0
+    ],
+    "fallbacks": [
+      0,
+      0
+    ],
+    "totalInputs": 70
+  },
+  "limits": [
+    "Same renderer thread and local HTTP/SSE",
+    "ASCII sequential inserts only; no OS IME or large-table performance claim",
+    "Paced and local long-fuzz jobs had ended before this after-PM run; unrelated external apps remained active. The before-PM headed run overlapped other jobs, so timing differences are not a controlled causal comparison."
+  ],
+  "browserMode": "headed",
+  "externalLoadBefore": [
+    18.85107421875,
+    32.97119140625,
+    47.080078125
+  ],
+  "externalLoadAfter": [
+    78.2421875,
+    82.98779296875,
+    67.51416015625
+  ]
+}
