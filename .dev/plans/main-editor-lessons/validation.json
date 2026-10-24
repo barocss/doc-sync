@@ -1,0 +1,125 @@
+{
+  "workId": "main-editor-lessons",
+  "implementationCommit": "0951185d9935bff90c972583c8fbbe4d40bdee4b",
+  "freshTests": {
+    "library": 567,
+    "demo": 12,
+    "docs": 27,
+    "compatibility": 31,
+    "typecheck": "PASS",
+    "compatBuild": "PASS",
+    "docsBuild": "PASS",
+    "docsCheck": {
+      "pages": 21,
+      "checkedInternalLinks": 957,
+      "english": true,
+      "localPathsExcluded": true
+    },
+    "docsChrome": 6
+  },
+  "priorEditorChrome": {
+    "checks": 340,
+    "runtimeCheckHashesMatch": true,
+    "rerunThisPhase": false,
+    "receipt": "docs/reports/merged-grid-2026-10-24/validation.json"
+  },
+  "independentScopeReview": "delegated read-only review; no blocking finding; no tests run by reviewer",
+  "publication": "authorized normal main push after commit; exact final documentation SHA is the commit containing this receipt",
+  "followup": "User requested Word-style, Notion-style and presentation schema concurrency tests",
+  "docsSources": [
+    {
+      "path": "HANDOFF.md",
+      "sha256": "10c8d7927a1076c9648405a7982cab756876e64239ca30e3377a47ef6fab75eb"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5ec29d898e773a17391f19cc93c946a453612a04f2500f6e4908c9788804f6d3"
+    },
+    {
+      "path": "apps/docs/.vitepress/config.mts",
+      "sha256": "841f34a2a1ea6a9a2a9b10c59968e2ec179808f94a0e390eb57ad5dda3e8b6ac"
+    },
+    {
+      "path": "apps/docs/scripts/check-build.mjs",
+      "sha256": "52597fb6847ec74291ec4a060a87d51bbb375eb7732adc13f0352916e658ab2c"
+    },
+    {
+      "path": "apps/docs/src/guide/editors.md",
+      "sha256": "995d2980aebf9d7ac5dd01004deaebeba095e1b414b528dba8d00e806188f340"
+    },
+    {
+      "path": "apps/docs/src/guide/editor-lessons.md",
+      "sha256": "d54688d9fa493be4dc38e7fc0bbac87d581636d2d163651ac2621131a520cc5b"
+    }
+  ],
+  "localEvidence": [
+    {
+      "path": "output/validation/main-editor-lessons/browser-open.log",
+      "sha256": "c88dea78a4f8533ee53fe92e27000f867db6c8450d7d6be8e1c2ea02d3c82e08"
+    },
+    {
+      "path": "output/validation/main-editor-lessons/compat-build.log",
+      "sha256": "9dd7a47fcfa0e349ca9f37bdd9e99b623cca58bb575407808a549076b505bcb7"
+    },
+    {
+      "path": "output/validation/main-editor-lessons/compat-test.log",
+      "sha256": "11e4904af4c7a722ebc36ab55e21b39bdebc2508ea1281f79ac696fd1ded6f07"
+    },
+    {
+      "path": "output/validation/main-editor-lessons/docs-build.log",
+      "sha256": "fb9cf2cbb3906ca3d3422eda258412594ec9b7a4c8d452bf5114476aab9567fc"
+    },
+    {
+      "path": "output/validation/main-editor-lessons/docs-check.log",
+      "sha256": "c834ef09695ba2dfe2506175218d24bc53b2b4e73027248ae9a48d05761129e0"
+    },
+    {
+      "path": "output/validation/main-editor-lessons/full-test.log",
+      "sha256": "91acaa6b913537a13f9c4d91806f62748a3cb75d26e10e0aa90445403c835a1c"
+    },
+    {
+      "path": "output/validation/main-editor-lessons/start-files.json",
+      "sha256": "88e1ca2f7992ac6626da0642ce4fbd8ab9c2a363b6de0ed8141c110f1b8e3811"
+    },
+    {
+      "path": "output/validation/main-editor-lessons/typecheck.log",
+      "sha256": "5e1fbff16a52c9a79dfb4303d8f7a262d17c1213b97e9a40eaab3d5d5a76d0d3"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/check-docs-final.log",
+      "sha256": "66bd8eed9532d01921640c72040c7f8fcc29eca8b5f15aa644c7f72060e3108c"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/check-docs-stable.log",
+      "sha256": "06dc6e90ce11f64ca266e7ecc7c93f37c82eddfe4d41a08478246be91413d14e"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/check-docs.js",
+      "sha256": "a1ef6317d95c7439e1ea50882792f9b4cdeb014460526c76086d926f15ebcda8"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/check-docs.json",
+      "sha256": "73363ae7ad2552dad1f078f0aa97eae71d23780dad9eb3c06097cadec2744512"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/check-docs.log",
+      "sha256": "2c9952d85c73955bd6b7231dcad8b3a606ed4ab4e55f9f75383393f918b980e7"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/editor-lessons-desktop.png",
+      "sha256": "79125d9c609f326162cb6ee9c71fbb6ea729ab73c0869b237b87d1ca27bf516f"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/editor-lessons-mobile-initial.png",
+      "sha256": "37d46533c33676f7b9a7ba24e4b774b83509a5fbab63ef8359d2145596dd1184"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/editor-lessons-mobile.png",
+      "sha256": "14fb44550f1a802deac34772e1c6af655eda699e0c1691f6df948d2ba1946f95"
+    },
+    {
+      "path": "output/playwright/main-editor-lessons/snapshot.log",
+      "sha256": "29e606f5ec9f449456d02af5bd38b3759bb993efe8aebbde8ee26063df2a720c"
+    }
+  ]
+}

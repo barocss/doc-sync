@@ -19,6 +19,8 @@ Slate and Lexical include composition drafts. Native input edits the draft while
 
 The application still supplies its schema, native rendering, toolbar, editor plugins, transport, and lifecycle. A codec's ability to retain data does not supply every native editing gesture for that data.
 
+Read [editor design lessons](./editor-lessons) for architecture differences, the selection/composition/table problems we solved, and the regression cases that expose them.
+
 ## Compare the editors
 
 The comparison app uses the public Slate and Lexical entry points. It opens two Slate editors, two Lexical editors, and one ProseMirror editor on one document, with a separate client identity for each.

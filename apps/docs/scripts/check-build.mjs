@@ -14,11 +14,11 @@ const walk = directory => {
 };
 walk(dist);
 const pages = files.filter(path => path.endsWith(".html"));
-const requiredGuides = ["getting-started", "schema", "full-schema", "document-rules", "editing", "blocks", "editors", "prosemirror", "slate", "lexical", "sync", "presence"];
+const requiredGuides = ["getting-started", "schema", "full-schema", "document-rules", "editing", "blocks", "editors", "editor-lessons", "prosemirror", "slate", "lexical", "sync", "presence"];
 for (const name of requiredGuides) {
     assert.ok(existsSync(join(dist, "guide", `${name}.html`)), `missing required guide: ${name}`);
 }
-assert.ok(pages.length >= 20, "the expected guides and references must be built");
+assert.ok(pages.length >= 21, "the expected guides and references must be built");
 const failures = [];
 let links = 0;
 for (const path of pages) {

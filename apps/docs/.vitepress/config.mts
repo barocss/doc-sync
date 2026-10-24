@@ -32,6 +32,7 @@ export default defineConfig({
             ]},
             {text: "Build an editor", items: [
                 {text: "Editor integration paths", link: "/guide/editors"},
+                {text: "Editor design lessons", link: "/guide/editor-lessons"},
                 {text: "Model operations", link: "/guide/editing"},
                 {text: "Schema-driven block operations", link: "/guide/blocks"},
                 {text: "Document rules and annotations", link: "/guide/document-rules"},
