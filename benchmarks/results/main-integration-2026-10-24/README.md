@@ -1,7 +1,7 @@
 ---
 work_id: main-integration-20261024
 artifact_type: integration-report
-status: qa_ready
+status: done
 owner_role: integration
 source_request: Final-check all uncommitted work, commit passing changes and push main, update HANDOFF.
 last_updated: 2026-10-24
@@ -34,7 +34,7 @@ Original logs: output/validation/main-integration-20261024/. Browser outputs and
 
 ## Delivery
 
-Two implementation commits separate the logical-text optimization from structural/path correctness and integrated documentation. A receipt-only follow-up records successful push and the Pages workflow. It does not change runtime or published-page source. No npm release is included. HANDOFF §5.22 is the current integration record.
+Two implementation commits separate the logical-text optimization from structural/path correctness and integrated documentation. Implementation commits `d0b8ab5` and `3f6a7b9` were pushed and remote main matched `3f6a7b922470caf4f83a6abfe5cabd8fb92d6ffb`. [Pages run 40061069142](https://github.com/barocss/doc-sync/actions/runs/40061069142) passed clean installation, documentation tests, build, static checks and deployment. Three anonymous HTTP content checks passed. A receipt-only follow-up records successful push and the Pages workflow. It does not change runtime or published-page source. No npm release is included. HANDOFF §5.22 is the current integration record.
 
 ```sh
 node --test packages/doc-sync/test/automatic-gap-paths.test.ts

@@ -569,8 +569,35 @@
     }
   ],
   "delivery": {
-    "status": "ready_for_commit_and_push",
-    "implementationCommits": []
+    "status": "implementation_pushed_and_pages_verified",
+    "implementationCommits": [
+      "d0b8ab5ad12e9425e42dce6df03f3dfe6b4b128f",
+      "3f6a7b922470caf4f83a6abfe5cabd8fb92d6ffb"
+    ],
+    "verifiedRemoteImplementationSha": "3f6a7b922470caf4f83a6abfe5cabd8fb92d6ffb",
+    "pages": {
+      "runId": 40061069142,
+      "url": "https://github.com/barocss/doc-sync/actions/runs/40061069142",
+      "headSha": "3f6a7b922470caf4f83a6abfe5cabd8fb92d6ffb",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "build",
+          "conclusion": "success",
+          "status": "completed"
+        },
+        {
+          "name": "deploy",
+          "conclusion": "success",
+          "status": "completed"
+        }
+      ]
+    },
+    "publicHttp": {
+      "passed": 3,
+      "file": "public-http.json"
+    },
+    "receiptOnlyFollowUp": "No runtime or deployed-page source changes; final local/remote equality verified after its push in local completion log."
   },
   "regressionArtifacts": [
     {
