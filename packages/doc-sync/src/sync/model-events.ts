@@ -2,6 +2,7 @@ import {isAlive} from "../crdt/doc.ts";
 import {blockPath} from "../crdt/edit.ts";
 import {canonical, unitsToRuns} from "../crdt/model.ts";
 import {keyOf} from "../crdt/ticket.ts";
+import {parseTextStorage} from "../crdt/text-storage.ts";
 import type {Doc, Item, Op, TextBlock} from "../crdt/doc.ts";
 import type {NodeJSON} from "../crdt/model.ts";
 import type {Schema} from "../crdt/schema.ts";
@@ -15,10 +16,11 @@ const MAX_TEXT_SCOPES = 8;
  * undo/redo·되살리기·노드 변경·가상 블록·새 토큰을 다시 참조하는 묶음은 대상이 아니다.
  */
 export const textEventScopes = (doc: Doc, ops: Op[]) => {
-    if (!doc.schema || !ops.length || doc.hasMoves || doc.hasCardinality) {
+    if (!doc.schema || !ops.length) {
         return null;
     }
 
+    const logical = doc.hasMoves || doc.hasCardinality;
     const chosen = new Map<TextBlock, string>();
     const members = new Map<Item, TextBlock>();
     let clock = doc.clock.lamport;
@@ -28,26 +30,46 @@ export const textEventScopes = (doc: Doc, ops: Op[]) => {
     };
 
     const include = (item: Item | undefined, origin: boolean): boolean => {
-        if (!item || !isAlive(item) || (!origin && item.kind !== "char") || !doc.visible(item.line.key)) {
+        if (!item || !isAlive(item) || (!origin && item.kind !== "char")) {
             return false;
         }
 
-        const block = members.get(item) ?? doc.blocks(item.line.key).find(b => b.kind === "text" &&
+        if (logical && members.has(item)) return true;
+        let line = item.line.key;
+        if (logical) {
+            const physical = doc.sourceBlocks(line).find(b => b.kind === "text" &&
+                (b.chars.includes(item) || (origin && b.marker === item)));
+            if (!physical) return false;
+            // A joined fragment follows its retained head, rather than its own
+            // placement. Use the complete resolver for that less common case.
+            const location = physical.marker.attrs.get("$join")?.value ? doc.tokenLocation(item.key) : null;
+            if (location && !location.visible) return false;
+            line = location?.line ?? doc.logicalLineOf(physical.marker);
+        }
+        if (!doc.visible(line)) return false;
+        const block = members.get(item) ?? doc.blocks(line).find(b => b.kind === "text" &&
             (b.chars.includes(item) || (origin && b.marker === item)));
 
         if (block?.kind !== "text" || block.virtual) {
             return false;
         }
 
+        // Empty automatic paragraphs can disappear beside other text. Their
+        // physical fragments need a structural comparison, even for text Ops.
+        if (logical && (block.parts ?? [block]).some(part =>
+            parseTextStorage(part.marker.key) || parseTextStorage(part.marker.line.key))) return false;
+
         if (!chosen.has(block)) {
             if (chosen.size === MAX_TEXT_SCOPES) {
                 return false;
             }
 
-            chosen.set(block, item.line.key);
+            chosen.set(block, line);
 
             // 한 블록은 기존 검색을 유지한다. 두 번째 블록부터 이미 찾은 글자들을 다시 검색하지 않는다.
-            if (chosen.size === 2) {
+            if (logical) {
+                remember(block);
+            } else if (chosen.size === 2) {
                 chosen.forEach((_line, selected) => remember(selected));
             } else if (chosen.size > 2) {
                 remember(block);

@@ -3,6 +3,8 @@ import {MAIN, cellSlot, slotKey, slotTicket} from "./doc.ts";
 import {canonMarks, inheritedMarks, runsToUnits} from "./model.ts";
 import {attrValueOk, gridParts} from "./schema.ts";
 import {keyOf} from "./ticket.ts";
+import {parseRequired} from "./cardinality.ts";
+import {parseTextStorage} from "./text-storage.ts";
 import type {Block, GridBlock, Item, Op, Pos, TextBlock, Doc} from "./doc.ts";
 import type {EditOp, ModelPath, NodeJSON, Run, Unit} from "./model.ts";
 import type {TextSpec} from "./schema.ts";
@@ -175,7 +177,9 @@ export const flowPath = (doc: Doc, line: string): ModelPath => {
 
 /** 블록의 모델 경로. 모델에 없는 블록(비어 있는 빈 자리)이면 null */
 export const blockPath = (doc: Doc, line: string, b: number): ModelPath | null => {
-    if (doc.hasMoves || doc.hasCardinality) {
+    // Ordinary flow blocks are already projected into their logical parent.
+    // Only private storage lines need to be redirected through token location.
+    if ((doc.hasMoves || doc.hasCardinality) && (parseRequired(line) || parseTextStorage(line))) {
         const physical = doc.blocks(line)[b];
         const location = physical && doc.tokenLocation(physical.marker.key);
         if (location?.visible && location.line !== line) {

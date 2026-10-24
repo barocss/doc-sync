@@ -1,0 +1,230 @@
+{
+  "work_id": "logical-text-scopes",
+  "createdAt": "2026-10-23T23:15:31.066322+00:00",
+  "baseline": "84fa81df7ff2288551fd33285dd6f3f2fa2de781",
+  "state": "verified uncommitted changes; no push or Pages deployment in this request",
+  "sourceHashes": {
+    "packages/doc-sync/src/editor/index.ts": "16c383f29a3965725fa6c480e7298a88a84d7962e5300e5c1c6c0b4aebe41210",
+    "packages/doc-sync/src/sync/index.ts": "2a0521485608ececcdc72bf680cd92636c19b1a1bfcc16ce5579014c6f86b357",
+    "packages/doc-sync/src/sync/protocol.ts": "acbd17da730df0efa36cfda0fbaebb4d2d4ef420ab3be21d0f9667d7d192571b",
+    "packages/doc-sync/src/sync/client.ts": "02c1494d61fd75f7396f024d9f0961e09b0215e5f0b2a253f7a3bcdb7e8145b9",
+    "packages/doc-sync/src/sync/http-transport.ts": "0508a339d3635253a7d8ff3e157dffa8b75a98d79d9e9fc11726a53802e9241a",
+    "packages/doc-sync/src/sync/model-events.ts": "5ed3bfcfb0d12a18bc801523663faff6c532f68b76453a95aafb04e3e699821f",
+    "packages/doc-sync/src/index.ts": "0cf4f3df60b225f8851d1ebf9e19eeea727d6dd447f888d2eb33cb64a739af78",
+    "packages/doc-sync/src/slate/binding.ts": "49c6d2ff86e5f0d2971b2d55818032cb428e329380cd25d6bf82d1f5196d54fc",
+    "packages/doc-sync/src/slate/codec.ts": "ba10d3ff55ddf48f3ebaed59bcff451ca52bca0227e110bbe179233e20468037",
+    "packages/doc-sync/src/slate/index.ts": "7a84ac755cfdc4ffee01263b983fc65b72f19dba85ab96375ef7ec135025d1b5",
+    "packages/doc-sync/src/pm/index.ts": "2bee5e889b32515e15e7881d8b72843be4ac863b27115507696816e3efa207eb",
+    "packages/doc-sync/src/pm/convert.ts": "67e952a2120dc635fa2c8c67715aec422d695d160b50040396aa9977608ae49b",
+    "packages/doc-sync/src/pm/binding.ts": "7b48c69704c04816c7a1faf7d6f49a647b0df4eb04063009b009babdfa54d5dc",
+    "packages/doc-sync/src/pm/schema.ts": "2a618cc269715f0491586c924134dec4fa544fe4f54207c1a3a2969c105b0bad",
+    "packages/doc-sync/src/crdt/ticket.ts": "70f8b71bac19b6f9039056570256ac41890f99fdc46da1675e91bd875aed8298",
+    "packages/doc-sync/src/crdt/fields.ts": "9ba7bd8fe7b23f2513b67460f4a418340cedff8c6939b10b4e8fa91e53e21b2d",
+    "packages/doc-sync/src/crdt/cardinality.ts": "7ec912022c1cb848e6e65494b7d28c39af0b0c0658ccd76649031078cc4e082e",
+    "packages/doc-sync/src/crdt/text-storage.ts": "ff94666e0a3f1e06d89a347e80d9692414abc43445076f036fff6e0d7bfd6b34",
+    "packages/doc-sync/src/crdt/edit.ts": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f",
+    "packages/doc-sync/src/crdt/model.ts": "5c4d51ea1960fc63063ce1640d9e8103fe93d5dbdfeffe160ff540e58a83a535",
+    "packages/doc-sync/src/crdt/doc.ts": "447ad9726da3ac968b616bde7b603ef357bd71b54cafa75cf41867462aa9bd67",
+    "packages/doc-sync/src/crdt/placement.ts": "5f1f5638b6b937cdd5de77f22b31eb2c5098d7f6e9c995906d7f89232d09c42a",
+    "packages/doc-sync/src/crdt/annotations.ts": "32b06a1977bc191647c663ba50d321313826d37aa974b5390185359839cb3eca",
+    "packages/doc-sync/src/crdt/commands.ts": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10",
+    "packages/doc-sync/src/crdt/history.ts": "4fb8c735b47a2779f09bf3ca93e302b66e89201435c4c70f9ebb9a10060690d1",
+    "packages/doc-sync/src/crdt/schema.ts": "6c7e6ab70dc2e12d3f81ea45122f7782acc7e816137a919162b742d9c9034b63",
+    "packages/doc-sync/src/lexical/binding.ts": "2f53663bc6c53b3c36ca226c7d14d4fb9758ea76bed7427f8efb4b2e1080ba79",
+    "packages/doc-sync/src/lexical/schema.ts": "b1313aaf54cb6ed7bae6a03016b32ee6a1adbf456655d18624dfb954818258f9",
+    "packages/doc-sync/src/lexical/selection.ts": "3c30af7b4c47f02c4fe0a837fb0613b88a2e1aa0c8bbc060c43b0b9c0933fbcb",
+    "packages/doc-sync/src/lexical/nodes.ts": "c82b9972be34d8703468620743babdf43a5c87efdf909e2f6289aa6a8312608c",
+    "packages/doc-sync/src/lexical/movement.ts": "a69d445fe5d0df9323ad14769bfeb31ebde96a6d04eb1ec9ff8821424b400841",
+    "packages/doc-sync/src/lexical/convert.ts": "81241a399ff98c28e6842806537e5a02d73d102610c02a7dd28652cb10cb5106",
+    "packages/doc-sync/src/lexical/index.ts": "ef00a202411e080930cf225bcf5559b810d42b0548df3ada02e104ee363b9322",
+    "packages/doc-sync/src/server/index.ts": "4e027766d473a4c11c91dcb9f5e86e048d6af2c512f341b9a3c63a0959b24029",
+    "packages/doc-sync/src/server/hub.ts": "d02d6f9e64a737bc4910185a878a4f12f5f8131f2bdbe8f99c197cacd565ffb4",
+    "packages/doc-sync/test/remote-logical-scopes.test.ts": "120977e3778d0afcc13b70ddec92397bc3e0ee880394674da6bd71b3e3427e79",
+    "apps/demo/compat/checks-logical-scopes.js": "ddd6b27bb93ce5e46a889e2d616e8cd41238d7b2900df07dacf0caf84e48dfc0",
+    "benchmarks/results/logical-text-scopes-2026-10-24/run.mjs": "271493c3e2375208653a1bd22d42c0b33a1eb98924e7e312ce8c663f94dc55d4",
+    "benchmarks/results/logical-text-scopes-2026-10-24/browser-fixture.mjs": "43e4e5b3b2507c03dcdf832c2b710c51647f245e29b3429b0b6af2a161fafc29",
+    "benchmarks/capabilities.ts": "0e8a838b93dfbcc70d6805e782f7ac54fea1f6fa56bd83ae569204cbd40c5eff",
+    "fixtures/demo-schema.ts": "2e0fd61e1ce9b32a252824d8b4c378dcd4c1d340e7f8285df4c6d76bade4dcde"
+  },
+  "tests": {
+    "workspaceCommand": "FUZZ_SEEDS=3000 PM_SEEDS=300 npm test",
+    "library": 489,
+    "demo": 12,
+    "docs": 27,
+    "compat": 31,
+    "failed": 0,
+    "newFocusedTests": 31,
+    "newDeterministicRounds": 200,
+    "baselineNewSuite": {
+      "passed": 10,
+      "failed": 21,
+      "reason": "Expected zero whole-model reads; baseline still performed two."
+    },
+    "randomCoverage": "Legacy generators retain their original operation scope; new fixed/finite histories are not universal proof."
+  },
+  "typecheck": "PASS",
+  "compatBuild": "PASS",
+  "documentation": {
+    "build": "PASS",
+    "pages": 20,
+    "checkedLinks": 882,
+    "english": true,
+    "localPathsExcluded": true,
+    "published": false
+  },
+  "chrome": {
+    "version": "156.0.8078.47",
+    "input": 84,
+    "ordinary": 20,
+    "operationTraces": 30,
+    "capabilityFlows": 8,
+    "newLogicalCases": 7,
+    "total": 149,
+    "failed": 0,
+    "scripts": [
+      {
+        "script": "checks-ime-cursor.js",
+        "label": null,
+        "cases": 36,
+        "failed": 0,
+        "sha256": "51cef4fb1261c19b0f881cbb85a254e2d0b764ab5f00fa9352d7bf1b97c65b11"
+      },
+      {
+        "script": "checks-input-extended.js",
+        "label": null,
+        "cases": 33,
+        "failed": 0,
+        "sha256": "39ca260a055103dac8d8a01cea9f0627c603bce5cdcf823e12e17bd3fd059543"
+      },
+      {
+        "script": "checks-table-input.js",
+        "label": null,
+        "cases": 12,
+        "failed": 0,
+        "sha256": "e8c42216143cec221c16857ee62863238675d16194d63c5b631fb00b03c2c12a"
+      },
+      {
+        "script": "checks-input-reset.js",
+        "label": null,
+        "cases": 3,
+        "failed": 0,
+        "sha256": "c15adfcd928c8e0ab5fc87290b83f2bc60f319015bd6acc794378b997e1bb0dc"
+      },
+      {
+        "script": "checks-text.js",
+        "label": null,
+        "cases": 6,
+        "failed": 0,
+        "sha256": "c2ad8d59138c0ae0bdb6d19eb9fba0a532fa8bc6da4d0b0061339f415309bd97"
+      },
+      {
+        "script": "checks-table.js",
+        "label": null,
+        "cases": 4,
+        "failed": 0,
+        "sha256": "e4034a259c1aa9f39026afe913ef48c80bf5877fb71c552a25bb4e759ae6ab09"
+      },
+      {
+        "script": "checks-concurrent.js",
+        "label": null,
+        "cases": 2,
+        "failed": 0,
+        "sha256": "fe8dd1910362e0ade7b9702c61d60d7e69741516b1010af150c73f7729762057"
+      },
+      {
+        "script": "checks-three.js",
+        "label": null,
+        "cases": 6,
+        "failed": 0,
+        "sha256": "ea98f07ac034ce5c10abebcc2203e226aec4a73f9918de1842c54b8e8dd8ae0a"
+      },
+      {
+        "script": "checks-probes.js",
+        "label": null,
+        "cases": 2,
+        "failed": 0,
+        "sha256": "bbb71036dc29131efd7f46aa694a006db2413da877a939723efb36ab845f5e71"
+      },
+      {
+        "script": "checks-operation-traces.js",
+        "label": null,
+        "cases": 30,
+        "failed": 0,
+        "sha256": "8d4b63d01a0ede2b4ab23d5d70da4334f8815e4563c352ad4c4badf8b2e07918"
+      },
+      {
+        "script": "checks-capabilities.js",
+        "label": null,
+        "cases": 8,
+        "failed": 0,
+        "sha256": "a70e7853952a27e7fa049337f4d1320e8aed6ab8a7ffbc00bd252ccd0dae524d"
+      },
+      {
+        "script": "checks-logical-scopes.js",
+        "label": null,
+        "cases": 2,
+        "failed": 0,
+        "sha256": "ddd6b27bb93ce5e46a889e2d616e8cd41238d7b2900df07dacf0caf84e48dfc0"
+      },
+      {
+        "script": "checks-logical-scopes.js",
+        "label": "required-logical-scopes",
+        "cases": 5,
+        "failed": 0,
+        "sha256": "ddd6b27bb93ce5e46a889e2d616e8cd41238d7b2900df07dacf0caf84e48dfc0"
+      }
+    ],
+    "requiredFixture": {
+      "testSchema": "DEMO_SCHEMA + content.childRules.paragraph.min = 2; isolated copy only",
+      "fixtureSha256": "79ff3b2779b841684a8cf1770583fffaff23878312a371d20ccbcec73f43a301",
+      "productResolution": "Copied server and bundle resolve @barocss/doc-sync through the original workspace node_modules; current product source, unchanged repository schema."
+    },
+    "requiredNativeScreenshot": "output/playwright/logical-text-scopes/required-paragraph.png",
+    "consoleErrors": 0,
+    "actualOSIME": "NOT EVALUATED"
+  },
+  "performance": {
+    "metadata": "abba/metadata.json",
+    "summary": "summary.json",
+    "allMirrorChecks": "PASS",
+    "wholeModelReads": "moved/cardinality: 2 before, 0 after per measured change",
+    "excludes": "network, native conversion, DOM and correctness checks",
+    "knownRemaining": "structural projection, private automatic storage, hidden content, structure, field writes and nine-plus-block Changes still have full-path or scan cost"
+  },
+  "selfReview": {
+    "result": "PASS",
+    "boundary": "Changed path invariants and diff reviewed by implementing agent; no claim of independent reviewer approval for this task.",
+    "rules": "CRDT application/history/projection/GC/protocol source unchanged",
+    "findings": "Two pre-existing structural behaviors reproduced equally before/after; retained as separate correctness work, with automatic/structural scope exclusions."
+  },
+  "localEvidenceSha256": {
+    "workspace-final.log": "90acf3722053fbff4fc23703b85864cc6cefc1112858f65eef3556ebaf2892fa",
+    "typecheck-final.log": "5e1fbff16a52c9a79dfb4303d8f7a262d17c1213b97e9a40eaab3d5d5a76d0d3",
+    "compat-final.log": "f651531ab1ecfa14b971acf064221cb911ba80352146537978e09ff39161119b",
+    "browser-build.log": "9dd7a47fcfa0e349ca9f37bdd9e99b623cca58bb575407808a549076b505bcb7",
+    "baseline-regression.log": "ed51cdacd3445d602aeadee18dab598629c8b866038abf6af795411640e42126",
+    "focused-final.log": "441821a0ad38beaee0f1a5129899520262791e3df7956ab4572766cd44aeb940",
+    "docs-build.log": "81f68d6ad0e5a7de3c535dfeb98352a82097fdfc3b63326e9c4224f55f2c30e8",
+    "docs-check.log": "1f6eea0b87ad548f297bee40f01e05056e5884b828f643268a5f2285f7f1a34b",
+    "chrome-run.log": "9f1c3948991d3ad316ded5dee68d4bbd5650b39d74997fc5a7842dcdc175eff8",
+    "structural-probe.json": "98a2f70854819d813aa1eb758941e3843c263d46ae3cd28191d9426a13427755",
+    "focused-current.log": "4d4f1ee939d59ddfcd2677199c632eb39877d4868868487386f42ab52bc1cc5d"
+  },
+  "historicalResults": {
+    "files": 1041,
+    "byteIdentical": true,
+    "reference": "84fa81df7ff2288551fd33285dd6f3f2fa2de781"
+  },
+  "evidenceBoundary": "Local original logs/screenshots under ignored output/. This tracked receipt binds source hashes and counts, not all local originals.",
+  "cleanup": {
+    "ownedServersStopped": [
+      56400,
+      56401,
+      56510,
+      56511
+    ],
+    "ownedBrowser": "doc-sync-logical-scopes closed",
+    "userResources": "preserved",
+    "noModeStateCreated": true
+  }
+}

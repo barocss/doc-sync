@@ -2,11 +2,28 @@
 
 Measure the layer you need. Core application time, client notification time, and visible editor latency cover different work.
 
-## Cost of extended document features
+## Logical text comparison
 
-The current delivery adds bindings and document capabilities. It does not establish a general performance improvement. A sequential before/after/after/before comparison used Node 22.19.0, 5 warmups and 30 samples per case. The baseline was `ce42144`. Some plain-document paths regressed, and structural tails varied under high external desktop load.
+Visible, stable text blocks now use bounded receive comparison even when the document has movement history or required-child rules. The receiver finds the current logical parent, verifies projected membership, and compares at most eight text blocks. Ordinary flow paths avoid the complete token-location scan; private storage paths still resolve through it.
 
-A separate current-only remote-receive run measured the following p95 times. Text rows insert one character; the field row updates one declared leaf. Timing ends at the model-event callback and excludes network, native conversion and DOM work.
+A sequential before/after/after/before run compared baseline `84fa81d` with the updated source. Each case used 5 warmups and 30 samples on Node 22.19.0. These are separate per-run p95 values in milliseconds, not pooled percentiles.
+
+| 100,000-character remote text insert | Before 1 | After 1 | After 2 | Before 2 |
+|---|---:|---:|---:|---:|
+| Prior block move | 95.088 | 14.220 | 12.827 | 81.507 |
+| Required-child rule | 35.144 | 2.061 | 1.904 | 26.413 |
+
+Whole-model reads dropped from two to zero per eligible change. Every model/mirror check passed with zero fallback. Network, native conversion and DOM work are excluded. External desktop load varied; no test/build job or active comparison-editor page overlapped timing. This is not a screen-latency or product SLO claim.
+
+Automatic text storage, hidden content, structural batches, old-clock insertion, references to new tokens in the same Change, and nine or more blocks retain full comparison. Structural projection and Slate/Lexical tree conversion still have costs. CRDT conflict, history, child projection, snapshot and GC rules are unchanged.
+
+[Source hashes, raw samples, control cases and reproduction commands](https://github.com/barocss/doc-sync/tree/main/benchmarks/results/logical-text-scopes-2026-10-24) describe the measured source and proof boundary.
+
+## Capability baseline before scoped comparison
+
+The capability baseline at `84fa81d` added bindings and document capabilities. It did not establish a general performance improvement. A sequential before/after/after/before comparison used Node 22.19.0, 5 warmups and 30 samples per case. The baseline was `ce42144`. Some plain-document paths regressed, and structural tails varied under high external desktop load.
+
+A separate baseline-only remote-receive run measured the following p95 times. Text rows insert one character; the field row updates one declared leaf. Timing ends at the model-event callback and excludes network, native conversion and DOM work.
 
 | 100,000-character workload | p95 ms | Full-model reads per change |
 |---|---:|---:|
@@ -16,9 +33,9 @@ A separate current-only remote-receive run measured the following p95 times. Tex
 | Document with a prior block move, text insert | 88.828 | 2 |
 | Declared field update | 49.793 | 2 |
 
-All mirror checks passed with zero fallbacks. Moved and required-child documents use full-model comparison to preserve logical placement and projection rules. These synchronous costs can cause visible delay. The annotation row does not measure annotation reads or rendering. Slate and Lexical also scan/rebuild the native tree on receipt. No new browser-latency or product SLO claim is made.
+All mirror checks passed with zero fallbacks. In that baseline, moved and required-child documents used full-model comparison to preserve logical placement and projection rules. Eligible text changes now use bounded comparison as described above. These synchronous costs can cause visible delay. The annotation row does not measure annotation reads or rendering. Slate and Lexical also scan/rebuild the native tree on receipt. No new browser-latency or product SLO claim is made.
 
-[All comparison runs, raw samples and reproduction commands](https://github.com/barocss/doc-sync/tree/main/benchmarks/results/document-capabilities-2026-10-24) include both improved and regressed results. Narrowing the logical moved/required receive scope is the next performance task.
+[All comparison runs, raw samples and reproduction commands](https://github.com/barocss/doc-sync/tree/main/benchmarks/results/document-capabilities-2026-10-24) include both improved and regressed results. The scoped text improvement above addresses that measured path; automatic storage and structural workloads remain separate.
 
 ## Structural cache measurements
 

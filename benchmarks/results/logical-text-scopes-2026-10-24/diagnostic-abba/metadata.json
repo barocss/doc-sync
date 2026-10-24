@@ -1,0 +1,105 @@
+{
+  "baseline": "84fa81df7ff2288551fd33285dd6f3f2fa2de781",
+  "node": "v22.19.0",
+  "startedAt": "2026-10-23T23:02:22.455Z",
+  "endedAt": "2026-10-23T23:03:21.873Z",
+  "startedLoad": [
+    20.03466796875,
+    21.74853515625,
+    18.7734375
+  ],
+  "endedLoad": [
+    15.25341796875,
+    20.01611328125,
+    18.32275390625
+  ],
+  "order": "before/after/after/before; sequential processes",
+  "samples": 30,
+  "warmups": 5,
+  "metric": "synchronous change receipt through model-event callback; no network, native conversion, DOM or correctness work in timed interval",
+  "baselineAdaptation": "Only benchmark bare imports point at archived baseline source; shared installed dependencies. No product adaptation.",
+  "sourceHashes": [
+    {
+      "path": "packages/doc-sync/src/sync/model-events.ts",
+      "sha256": "5ed3bfcfb0d12a18bc801523663faff6c532f68b76453a95aafb04e3e699821f"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/edit.ts",
+      "sha256": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/doc.ts",
+      "sha256": "447ad9726da3ac968b616bde7b603ef357bd71b54cafa75cf41867462aa9bd67"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/client.ts",
+      "sha256": "02c1494d61fd75f7396f024d9f0961e09b0215e5f0b2a253f7a3bcdb7e8145b9"
+    },
+    {
+      "path": "benchmarks/capabilities.ts",
+      "sha256": "0e8a838b93dfbcc70d6805e782f7ac54fea1f6fa56bd83ae569204cbd40c5eff"
+    }
+  ],
+  "runs": [
+    {
+      "label": "before-1",
+      "startedAt": "2026-10-23T23:02:22.456Z",
+      "endedAt": "2026-10-23T23:02:38.109Z",
+      "startedLoad": [
+        20.03466796875,
+        21.74853515625,
+        18.7734375
+      ],
+      "endedLoad": [
+        17.4853515625,
+        21.10595703125,
+        18.59619140625
+      ]
+    },
+    {
+      "label": "after-1",
+      "startedAt": "2026-10-23T23:02:38.110Z",
+      "endedAt": "2026-10-23T23:02:51.844Z",
+      "startedLoad": [
+        17.4853515625,
+        21.10595703125,
+        18.59619140625
+      ],
+      "endedLoad": [
+        16.6767578125,
+        20.7294921875,
+        18.50390625
+      ]
+    },
+    {
+      "label": "after-2",
+      "startedAt": "2026-10-23T23:02:51.845Z",
+      "endedAt": "2026-10-23T23:03:05.614Z",
+      "startedLoad": [
+        16.6767578125,
+        20.7294921875,
+        18.50390625
+      ],
+      "endedLoad": [
+        16.90576171875,
+        20.64013671875,
+        18.49755859375
+      ]
+    },
+    {
+      "label": "before-2",
+      "startedAt": "2026-10-23T23:03:05.615Z",
+      "endedAt": "2026-10-23T23:03:21.871Z",
+      "startedLoad": [
+        16.90576171875,
+        20.64013671875,
+        18.49755859375
+      ],
+      "endedLoad": [
+        15.25341796875,
+        20.01611328125,
+        18.32275390625
+      ]
+    }
+  ]
+}
