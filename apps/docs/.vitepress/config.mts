@@ -29,6 +29,7 @@ export default defineConfig({
                 {text: "Getting started", link: "/guide/getting-started"},
                 {text: "Define a schema", link: "/guide/schema"},
                 {text: "Complete example schema", link: "/guide/full-schema"},
+                {text: "Word, Notion and presentation schemas", link: "/guide/product-schemas"},
             ]},
             {text: "Build an editor", items: [
                 {text: "Editor integration paths", link: "/guide/editors"},

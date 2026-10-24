@@ -2402,7 +2402,7 @@ export class Doc {
                 }
             } else if (line.items.some(item => item.born === ANNOTATION_TYPE)) throw new Error("Annotation node outside reserved storage");
             const text = parseTextStorage(line.key), required = parseRequired(line.key);
-            if ((line.key.startsWith("0@~text:") || line.key.startsWith("0@~fragment:")) && !text || line.key.includes("@~required:") && !required) throw new Error("Invalid reserved storage identity");
+            if ((line.key.startsWith("0@~text:") || line.key.startsWith("0@~fragment:")) && !text || /^\d+@~required:/.test(line.key) && !required) throw new Error("Invalid reserved storage identity");
             if (text || required) {
                 const address = text ?? required!;
                 const parent = doc.lineMap.get(address.parent), head = parent?.items[0];
@@ -2421,7 +2421,8 @@ export class Doc {
                 if (text?.after && !text.detached) {
                     const movement = snapshot.moves?.find(move => keyOf(move.at) === text.after);
                     const anchor = doc.byKey.get(movement ? keyOf(movement.target) : text.after);
-                    if (!anchor || !["flow", "grid", "atom"].includes(schema?.nodes[anchor.born]?.shape ?? "") || (movement ? keyOf(movement.parent) !== text.parent : anchor.line.key !== text.parent)) throw new Error("Invalid trailing storage anchor");
+                    const origin = anchor && (parseRequired(anchor.line.key)?.parent ?? parseTextStorage(anchor.line.key)?.parent ?? anchor.line.key);
+                    if (!anchor || !["flow", "grid", "atom"].includes(schema?.nodes[anchor.born]?.shape ?? "") || (movement ? keyOf(movement.parent) !== text.parent : origin !== text.parent)) throw new Error("Invalid trailing storage anchor");
                 }
             }
             for (const item of line.items) for (const [key, entry] of item.attrs) {

@@ -21,6 +21,8 @@ The application still supplies its schema, native rendering, toolbar, editor plu
 
 Read [editor design lessons](./editor-lessons) for architecture differences, the selection/composition/table problems we solved, and the regression cases that expose them.
 
+The [Word, Notion and presentation profiles](./product-schemas) also test headless conversion of larger schemas. Their native application editing and layout remain separate integration work.
+
 ## Compare the editors
 
 The comparison app uses the public Slate and Lexical entry points. It opens two Slate editors, two Lexical editors, and one ProseMirror editor on one document, with a separate client identity for each.

@@ -8,6 +8,9 @@ It started with an idea tested in an earlier Yorkie experiment repository: "a do
 
 **Documentation**: Read the [public documentation site](https://barocss.github.io/doc-sync/) for schema-driven block operations, ProseMirror, Slate, and Lexical integration examples, collaboration rules, and verification limits. The site is built from `apps/docs` and deployed to GitHub Pages. Slate and Lexical have public binding subpaths in the same package. The complete example schema has its own guide. [Editor design lessons](https://barocss.github.io/doc-sync/guide/editor-lessons.html) compare the bindings and explain the input, selection, history, table and rendering problems we solved.
 
+Representative [Word, Notion and presentation schemas](https://barocss.github.io/doc-sync/guide/product-schemas.html) include complete sample models and tests for concurrent editing, history, snapshots and editor conversion. These fixtures do not provide product file import/export or page/canvas rendering.
+
+
 **Remote user display**: The demo and ProseMirror show user-colored selection ranges and named carets. They support forward, backward, and multi-paragraph selections, position tracking after edits, and overlapping participants. Demo ranges stay within one CRDT sequence (slot). See [`HANDOFF.md` §5.5](HANDOFF.md#55-remote-user-selection-ranges-2026-10-22) for the rules and browser results.
 
 **Input preservation in the comparison demo**: [`apps/demo/compat`](apps/demo/compat/README.md) connects Slate, Lexical, and ProseMirror. It uses token-based selection restoration and an IME composition draft. Chrome CDP checks covered input and carets during remote edits. The default `/pm` IME implementation and OS Korean keyboard validation are separate scopes.

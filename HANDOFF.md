@@ -1,6 +1,6 @@
 # Handoff — @barocss/doc-sync
 
-Created 2026-10-22. Verified integration and editor design lessons are in **§5.25**. Merged-grid native models and hidden-cell preservation are fixed in **§5.24**. Guarded structural event comparison is in **§5.23**. Final main integration is in **§5.22**. Automatic paragraph and post-move split fixes are in **§5.21**. The moved/required text receive optimization is in **§5.20**. Public editor bindings and extended document contracts are in **§5.19**. English documentation and the GitHub Pages app are in **§5.18**. Final integration checks for the 2026-10-23 structural cache change are in **§5.17**; implementation and measurements are in **§5.16**. Final checks and main integration for multi-text-block remote comparison are in **§5.15**; implementation and measurements are in **§5.14**. Main before that integration was `6f15291`. The previous full integration is in **§5.13**, consecutive formatting undo/redo in **§5.12**, intent preservation in **§5.11**, and screen latency in **§5.9–§5.10**. Remaining priorities are in **§6**.
+Created 2026-10-22. Representative Word-style, Notion-style and presentation profiles are in **§5.26**. Verified integration and editor design lessons are in **§5.25**. Merged-grid native models and hidden-cell preservation are fixed in **§5.24**. Guarded structural event comparison is in **§5.23**. Final main integration is in **§5.22**. Automatic paragraph and post-move split fixes are in **§5.21**. The moved/required text receive optimization is in **§5.20**. Public editor bindings and extended document contracts are in **§5.19**. English documentation and the GitHub Pages app are in **§5.18**. Final integration checks for the 2026-10-23 structural cache change are in **§5.17**; implementation and measurements are in **§5.16**. Final checks and main integration for multi-text-block remote comparison are in **§5.15**; implementation and measurements are in **§5.14**. Main before that integration was `6f15291`. The previous full integration is in **§5.13**, consecutive formatting undo/redo in **§5.12**, intent preservation in **§5.11**, and screen latency in **§5.9–§5.10**. Remaining priorities are in **§6**.
 See [`README.md`](README.md) for the concepts, [`docs/edit-api.md`](docs/edit-api.md) for editing API design, and the roadmap for the plan.
 
 ---
@@ -25,7 +25,7 @@ Remote `origin`: `https://github.com/barocss/doc-sync.git`. The first commit pre
 
 ```bash
 npm install --cache <writable-temporary-folder>/npm-cache   # ~/.npm gives EACCES; do not fix with sudo
-npm test                     # Library 567 + demo 12 + documentation 27 (default 500 random traces)
+npm test                     # Library 600 + demo 12 + documentation 27 (default 500 random traces)
 npm test --prefix apps/demo/compat  # 31 comparison-demo conversion, input, and probe tests
 FUZZ_SEEDS=3000 npm test     # Large random run (several minutes)
 PM_SEEDS=300 npm test        # More ProseMirror random traces
@@ -808,9 +808,31 @@ The original §5.23 merged-state FAIL remains historical evidence. A new Node re
 
 **Next requested work.** Build representative Word-style, Notion-style and presentation schemas and test their structure, concurrency, history, snapshot restoration and binding conversion. This is a schema/concurrency exercise; exact product file compatibility and page/canvas rendering require separate evidence. Keep the current demo schema and collaboration rules unchanged.
 
+## 5.26 Representative product schemas and snapshot regressions
+
+**Requested scope.** The user asked to exercise Word-style documents, Notion-style pages and presentations after publishing the prior implementation and editor-experience documentation. That prior publication is on main as `0951185` and `c423a32`; GitHub Pages run `40084728838` succeeded for `c423a32`. The separate profile change keeps one library package, DEMO_SCHEMA and the existing collaboration policies.
+
+**Profiles.** `fixtures/product-schemas.ts` exports WORD_SCHEMA, NOTION_SCHEMA and PRESENTATION_SCHEMA. `fixtures/product-documents.ts` supplies canonical sample documents. Word covers sections, nested page/margin fields, required header/footer flows, lists, tables, rich inline content, figures and page breaks. Notion covers recursive blocks, toggles/callouts/tasks, two-to-four-column projection, tables, database-shaped grid/view fields, embeds and equations. Presentations cover ordered slides, required titles/notes, text boxes, images/shapes/charts, nested object groups and frame fields. Chart data remains atomic metadata. Flows still begin with their default text block.
+
+**Defects exposed and fixed.** Initial profile tests had 21 passes and 9 failures. Grid canonicalization omitted nested cell-field defaults that Doc materialized; canonGrid now uses the existing patchFields rule for declared fields, producing 24 passes and 6 failures. Those six failures were snapshot restore errors: the required namespace check mistakenly matched a required flow's ordinary body-slot identity, and trailing-paragraph validation compared a derived required block's physical line instead of its immutable owning flow. Reserved identity detection now checks the actual line-ticket actor prefix, and restoration resolves the anchor's owning flow. Canonical heads, required-child addresses/types, movement destinations and malformed/character/foreign-flow anchors remain validated. The schema fixture also uses `code-block` for a node and `code` for a mark because ProseMirror cannot use the same name for both.
+
+**Profile proof.** `packages/doc-sync/test/product-schemas.test.ts`: 33 cases, 11 per profile. They cover schema validity and immutability; full canonical sample load/snapshot restore; three headless editor conversions; three-client text/delete/format conflicts in two receipt orders; participant history with independent fields; merged hidden text/fields and all codecs; section/toggle/slide movement with concurrent descendant input; editable required replacements; and negative snapshot references. Network cases compare clients, server, event mirrors, pending queues and zero event-application fallbacks. No concurrency policy is changed.
+
+**Diagnostic boundary.** A later raw-operation probe targeted dormant internal trailing storage rather than a visible editable paragraph. It is retained under output/validation/product-schemas/ as a diagnostic, not an accepted user-command regression or a supported editing route. The attempted receive-validator change and exploratory cold-replica tests were removed. The live operation validation contract is unchanged. Do not infer a current visible-input failure from that probe.
+
+**Chrome setup correction.** The initial logical-scope run converged across all five native editors with zero fallbacks, but typed `gamm!aS` instead of the intended `gammaS!`. The saved DOM probe showed offset 4 immediately after End and after settling; the expected end was offset 6. A required-child run similarly inserted an emoji before the final d. The comparison check now places each target native caret explicitly, checks the editor/paragraph/DOM offset, and then types through the real keyboard path. The same convergence/formatting assertions remain. The first failure, state and probe are retained. Existing completed cases are reused only with exact runtime/check hash matches; the corrected logical checks and the remaining scripts run afterward against the same product source.
+
+**Verification.** Node 22.19.0, Chrome 156.0.8078.47. FUZZ_SEEDS=3000 PM_SEEDS=300 npm test passes 600 library, 12 demo and 27 docs tests. Compatibility passes 31; typecheck and compatibility build pass. Existing-schema Chrome coverage records 310 asserted cases plus 30 captured operation traces (340 records), including the isolated required-child fixture. The new English guide builds directly from tested schema/sample source snippets; its executable example runs. Documentation has 22 pages; all links/fragments, English prose and local-path exclusion checks pass. Desktop/mobile guide smoke has 5 passes and saved screenshots. A delegated read-only review found no blocker and did not run additional tests.
+
+**Evidence and limits.** Tracked report/receipt: `docs/reports/product-schemas-2026-10-24/`. Local logs, diagnostic failures and fixture receipt: output/validation/product-schemas/. Local browser JSON/logs/screenshots: output/playwright/product-schemas/. These profiles establish bounded model/concurrency/headless-conversion behavior. Native editing/rendering for the new profiles, DOCX/PPTX import/export, pagination, database queries, canvas interactions, large-profile latency and actual OS IME are NOT RUN or NOT EVALUATED. Existing Chrome cases use the comparison demo schema, not the product profiles. No new performance comparison is claimed; prior measurements remain historical evidence. User-owned preview port 62490 and browser tabs are preserved. The public guide is `/guide/product-schemas.html`; the English editor experience guide remains `/guide/editor-lessons.html`.
+
 ## 6. Next work (in order)
 
 The structural paragraph-recalculation improvement is complete within §5.16 scope. The later editor-binding and document-capability delivery is in §5.19. Protocol epochs now reject unsafe pending replay across reset/restart; full lease-expiry recovery remains the next separate contract. Full structural-sequence scans, full-event comparison, returned copying, and normalization costs remain. Stage 0 exit evidence and long-run CI observation below remain separate work.
+
+### 6.0 Product profile follow-up
+
+The requested first profile set is complete within §5.26's model/concurrency scope. Next establish native node views and keyboard/selection behavior for those profiles, then test larger generated documents and measured editing latency. File-format fidelity, Word pagination, database execution and presentation canvas behavior each require a separate application contract. The profile fixtures do not close the stage 0 performance or release gates below.
 
 ### 6.1 Finish stage 0 (remaining work)
 
@@ -873,6 +895,7 @@ See the roadmap for details.
 ## 9. Known gaps
 
 - Performance (§5) is the largest gap.
+- Product profiles (§5.26) have headless model coverage; native profile UI, product formats/layout and scale/latency acceptance remain open.
 - The merged-grid native mismatch recorded in §5.23 is fixed and validated in §5.24. Actual OS IME and product performance acceptance remain separate work.
 - Flow `childRules` now express required/minimum and maximum child counts through deterministic projection (§5.19). Overflow remains stored. Required slot identities cannot be moved or retyped.
 - Validation is per sequence. Hand-built operations can insert text into an image block.

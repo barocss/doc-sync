@@ -15,6 +15,8 @@ This documentation describes the current implementation and its verification lim
 
 ## Regression coverage
 
+The product-profile integration passes 600 library, 12 demo and 27 documentation tests with `FUZZ_SEEDS=3000 PM_SEEDS=300`, plus 31 compatibility unit tests. This includes 33 [Word, Notion and presentation profile cases](./guide/product-schemas). The profile-specific editor checks are headless conversions; native profile editing and layout remain unvalidated.
+
 The earlier structural-cache implementation was verified with `FUZZ_SEEDS=3000 PM_SEEDS=300 npm test`: 246 library tests and 10 demo tests passed. The compatibility unit suite passed 31 tests. Stage0 Ours/Yjs passed 6 tests. Type checking and the compatibility build passed.
 
 Chrome checks covered 40 basic/nested/presence/multiple-block steps, 84 compatibility input cases, and 20 ordinary cases (18 convergence checks and 2 probes). Another 30 operation traces were captured. These are different evidence types; a captured trace is not an OS IME acceptance result.

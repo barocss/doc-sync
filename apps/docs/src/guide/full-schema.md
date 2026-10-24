@@ -1,5 +1,7 @@
 # Full demo schema
 
+For larger application models, see [Word, Notion and presentation schemas](./product-schemas). Those profiles have separate sample documents and collaboration tests.
+
 This page shows the complete `DEMO_SCHEMA` from [`fixtures/demo-schema.ts`](https://github.com/barocss/doc-sync/blob/main/fixtures/demo-schema.ts). The code is generated from the actual schema object. Only `ui` labels and placeholders are translated into English for display here. The runtime fixture is unchanged. Type names, allowed children, defaults, value restrictions, inheritance, and computed fields are identical.
 
 The [block operations guide](./blocks) uses a smaller example schema. That example adds paragraph alignment and omits the full image/caption structure. Use this page when you need the complete demo's schema rather than that teaching example.

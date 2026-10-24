@@ -390,7 +390,8 @@ const canonGrid = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, Nod
             Object.entries(cellSpec).forEach(([k, s]) => {
                 const v = cell.attrs?.[k];
 
-                !s.computed && v !== undefined && v !== null && v !== s.default && attrValueOk(s, v) && (a[k] = v);
+                if (!s.computed && isFieldSpec(s)) a[k] = patchFields(s, s.default, v ?? null);
+                else if (!s.computed && v !== undefined && v !== null && v !== s.default && attrValueOk(s, v)) a[k] = v;
             });
 
             const body = cell.children?.[0];

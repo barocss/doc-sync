@@ -9,11 +9,18 @@ async page => {
   const note=async(name,expected)=>results.push({name,status:'passed',snapshot:await wait(expected)});
   const open=async prefix=>{const doc=`scope-${prefix}-${run}`;await page.goto(`${origin}/?doc=${doc}`);await wait();return doc;};
   const remote=async(doc,edits)=>{const r=await page.request.post(`${origin}/test/remote`,{data:{doc,edits}});if(!r.ok())throw new Error(await r.text());};
+  const end=async(name,index,offset)=>{
+    const paragraph=page.getByRole('textbox',{name,exact:true}).locator('p').nth(index);await paragraph.click();
+    // End is platform-dependent. Set and verify the native caret before testing input.
+    await paragraph.evaluate(node=>{const range=document.createRange();range.selectNodeContents(node);range.collapse(false);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);document.dispatchEvent(new Event('selectionchange'));});
+    await page.waitForFunction(({name,index,offset})=>{const s=window.imeProbe.read().selection;return s.collapsed&&s.focus?.editor===name&&s.focus.paragraph===index&&s.focus.offset===offset;},{name,index,offset});
+    await page.waitForTimeout(120);
+  };
   let doc=await open('required');let initial=await wait();const required=initial.server.model.children.length===2;
   if(required){
     await page.getByRole('textbox',{name:'slate-a',exact:true}).locator('p').nth(1).click();await page.keyboard.type('required');
     await note('native Slate typing in a derived required paragraph reaches all five peers',['','required']);
-    await page.getByRole('textbox',{name:'lexical-a',exact:true}).locator('p').nth(1).click();await page.keyboard.press('End');await page.keyboard.insertText('😀');
+    await end('lexical-a',1,8);await page.keyboard.insertText('😀');
     await note('native Lexical UTF16 input preserves the required paragraph',['','required😀']);
     await page.locator('#lexical-a').getByRole('button',{name:'되돌리기',exact:true}).click();await wait(['','required']);
     await page.locator('#lexical-a').getByRole('button',{name:'다시하기',exact:true}).click();await wait(['','required😀']);
@@ -23,11 +30,11 @@ async page => {
   doc=await open('move');initial=await wait();
   await remote(doc,[{op:'delete',at:[0],count:initial.server.model.children.length},{op:'insert',at:[0],content:[p('alpha'),p('beta'),p('gamma')]}]);await wait(['alpha','beta','gamma']);
   await remote(doc,[{op:'move',from:[2],at:[0]}]);await wait(['gamma','alpha','beta']);
-  await page.getByRole('textbox',{name:'slate-b',exact:true}).locator('p').first().click();await page.keyboard.press('End');await page.keyboard.type('S');await wait(['gammaS','alpha','beta']);
-  await page.getByRole('textbox',{name:'lexical-b',exact:true}).locator('p').nth(2).click();await page.keyboard.press('End');await page.keyboard.type('L');
+  await end('slate-b',0,5);await page.keyboard.type('S');await wait(['gammaS','alpha','beta']);
+  await end('lexical-b',2,4);await page.keyboard.type('L');
   await note('native edits in moved and stationary paragraphs use the current logical paths',['gammaS','alpha','betaL']);
   await remote(doc,[{op:'update',at:[0,0],length:5,attrs:{bold:true}}]);await wait(['gammaS','alpha','betaL']);
-  await page.getByRole('textbox',{name:'pm-a',exact:true}).locator('p').first().click();await page.keyboard.press('End');await page.keyboard.type('!');
+  await end('pm-a',0,6);await page.keyboard.type('!');
   const final=await wait(['gammaS!','alpha','betaL']);if(!final.server.model.children[0].runs.some(run=>run.marks.bold))throw new Error('lost remote formatting');
   await note('ProseMirror typing preserves remote formatting after placement',['gammaS!','alpha','betaL']);
   return{browserVersion:page.context().browser().version(),requiredRuleFixture:required,results};
