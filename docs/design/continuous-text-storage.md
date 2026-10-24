@@ -1,9 +1,11 @@
 # Continuous-String CRDT Storage Review
 
 - work_id: other-editors-100k-20261022
-- Status: design review. Storage changes and performance improvements have not yet been verified.
+- Status: live string segments remain a design review. Runtime ID metadata now uses bounded actor ranges; character Items remain separate. See the [metadata report](../../benchmarks/results/metadata-memory-2026-10-24/report.md) for its separate measurement scope.
 - Baseline: the working tree on 2026-10-22. Source hashes are recorded in the comparison test's `source-manifest.json`.
 - Related results: [Other editor comparison](../../benchmarks/results/monorepo-2026-10-22/other-editors-100k/report.md).
+
+Live string merging remains excluded under the current project decision. The runtime index change does not resume that separate storage design.
 
 ## Proposed Decision
 
@@ -19,9 +21,9 @@ Input typed one character at a time must also be eligible for merging. Merging o
 | Edit generation | Consecutive characters with the same marks become one `text` operation. | `emitUnits` in `crdt/edit.ts` |
 | Transport | `Op.text` contains multiple characters. IDs are assigned consecutively from the starting ID. | `Op` in `crdt/doc.ts` |
 | Memory storage | `apply(text)` iterates `text.length` times and creates one `Item` per UTF-16 code unit. | `apply` in `crdt/doc.ts` |
-| ID lookup | One `byKey` entry per character. | `integrate`, `fromSnapshot` in `crdt/doc.ts` |
+| ID lookup | Logical IDs are indexed by actor and ranges of at most 256 IDs. Fragmented sequences use numeric keys. Character Items remain separate. | `crdt/key-index.ts`, `integrate`, `fromSnapshot` |
 | Blocks and positions | `TextBlock.chars`, `BlockCache.of`, and `posCache` also use character-level entries. | `blocks`, `replaceBlock`, and position functions in `crdt/doc.ts` |
-| Compaction after deletion | Stable consecutive tombstones merge into a `span`. Internal IDs retain their `byKey` entries. | `compact` in `crdt/doc.ts` |
+| Compaction after deletion | Stable consecutive tombstones merge into a `span`. Internal IDs retain lookup semantics; identical range references collapse after GC. | `compact` in `crdt/doc.ts`, `crdt/key-index.ts` |
 | Snapshot | Consecutive IDs and origins are omitted, but live characters are still recorded individually. | `itemToJSON` in `crdt/doc.ts` |
 | Undo | Input groups can already merge by time and cursor. Target ID lists are stored separately. | `record`, `ExistenceStep` in `crdt/history.ts` |
 

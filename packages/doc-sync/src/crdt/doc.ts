@@ -5,6 +5,7 @@ import {parseRequired, requiredTicket, requiredType} from "./cardinality.ts";
 import type {RequiredAddress} from "./cardinality.ts";
 import {decodeFieldKey, encodeFieldKey, fieldSpecAt, fieldValueOk, flattenFieldPatch, isFieldSpec, materializeFields} from "./fields.ts";
 import {Placements} from "./placement.ts";
+import {KeyIndex} from "./key-index.ts";
 import type {MoveOp, Placement, PlacementProjection} from "./placement.ts";
 import {compileEdits, resolvePath} from "./edit.ts";
 import {applyEdits, canonMarks, canonical, canonicalWithTextCache, diffModels, unitsToRuns, withGroupBoundary} from "./model.ts";
@@ -214,9 +215,10 @@ export type Snapshot = {format?: 2; capabilities?: string[]; moves?: MoveOp[]; l
 
 /**
  * 줄 하나의 블록 목록과, 글자 하나만 바뀌었을 때 고쳐 쓰기 위한 찾아보기.
- * of: 글자·글 안 노드 → 그것이 든 text 블록,  byMarker: 블록을 연 표지 → 그 블록 (흡수된 표지·가상 블록 제외)
+ * Internal references point to the current immutable text block, including virtual blocks.
  */
-type BlockCache = {blocks: Block[]; of: Map<Item, TextBlock>; byMarker: Map<Item, TextBlock>};
+type TextRef = {block: TextBlock};
+type BlockCache = {blocks: Block[]; of: Map<Item, TextRef>; byMarker: Map<Item, TextRef>};
 
 const charOf = (item: Item): string => (item.kind === "char" ? item.ch : "\ufffc");
 
@@ -292,7 +294,7 @@ export class Doc {
     /** 머리 키 → 줄. 본문이 맨 앞 */
     private readonly lineMap = new Map<string, Line>();
     /** 이름표 → 토큰. 압축으로 합쳐진 글자의 이름표는 그것을 대신하는 묶음 토큰을 가리킨다 */
-    private readonly byKey = new Map<string, Item>();
+    private readonly byKey = new KeyIndex<Item>();
     private blockCache = new Map<string, BlockCache>();
     /** 구조를 다시 읽을 때 같은 문단을 재사용한다. 줄마다 마지막 캐시 하나만 보관한다. */
     private previousBlocks = new Map<string, BlockCache>();
@@ -829,7 +831,7 @@ export class Doc {
 
                     if (item && (!current || compareTicket(op.at, current.at) > 0)) {
                         // 글자 서식은 Block 객체를 바꾸지 않는다. 실제 LWW 쓰기일 때 그 문단의 모델만 비운다.
-                        const block = (this.blockCache.get(item.line.key) ?? this.previousBlocks.get(item.line.key))?.of.get(item);
+                        const block = (this.blockCache.get(item.line.key) ?? this.previousBlocks.get(item.line.key))?.of.get(item)?.block;
 
                         block && this.textModels.delete(block);
                         attrsFor(item).set(op.key, {value: structuredClone(op.value), at: op.at});
@@ -891,9 +893,9 @@ export class Doc {
         }
 
         const left = i >= 0 && walked < MAX_TOMBSTONE_WALK ? items[i] : undefined;
-        const inBlock = left && cache.of.get(left);
-        const opened = left && !inBlock ? cache.byMarker.get(left) : undefined;
-        const block = inBlock ?? opened;
+        const inBlock = left && cache.of.get(left)?.block;
+        const opened = left && !inBlock ? cache.byMarker.get(left)?.block : undefined;
+        const block = inBlock ?? (opened?.virtual ? undefined : opened);
 
         if (!block) {
             this.blockCache.delete(line.key);
@@ -903,6 +905,7 @@ export class Doc {
 
         const at = inBlock ? block.chars.indexOf(left!) + 1 : 0;
 
+        cache.of.set(item, cache.byMarker.get(block.marker)!);
         this.replaceBlock(cache, block, [...block.chars.slice(0, at), item, ...block.chars.slice(at)], block.text.slice(0, at) + charOf(item) + block.text.slice(at));
     }
 
@@ -917,7 +920,7 @@ export class Doc {
             return;
         }
 
-        const block = cache.of.get(item);
+        const block = cache.of.get(item)?.block;
         const at = block ? block.chars.indexOf(item) : -1;
 
         if (!block || at < 0 || (block.virtual && block.chars.length === 1)) {
@@ -954,8 +957,7 @@ export class Doc {
         const blocks = cache.blocks.slice();
 
         blocks[blocks.indexOf(block)] = next;
-        chars.forEach(c => cache.of.set(c, next));
-        cache.byMarker.get(block.marker) === block && cache.byMarker.set(block.marker, next);
+        cache.byMarker.get(block.marker)!.block = next;
         cache.blocks = blocks;
     }
 
@@ -984,6 +986,9 @@ export class Doc {
             throw new Error(`기준 토큰 ${item.origin} 이 아직 없다 — 인과 순서가 깨졌다`);
         }
 
+        // Share the existing key string. A compacted alias can resolve to a
+        // different key, so retain the requested logical ID in that case.
+        if (item.origin === origin.key) item.origin = origin.key;
         const line = origin.line;
         let i = (hint >= 0 ? hint : this.indexOf(origin)) + 1;
 
@@ -1121,6 +1126,7 @@ export class Doc {
             this.reindex(line);
         }
 
+        if (removed) this.byKey.compact();
         return removed;
     }
 
@@ -1379,13 +1385,13 @@ export class Doc {
         }
 
         flushPending();
-        const of = new Map<Item, TextBlock>();
-        const byMarker = new Map<Item, TextBlock>();
+        const of = new Map<Item, TextRef>();
+        const byMarker = new Map<Item, TextRef>();
 
         blocks.forEach((block, i) => {
             if (block.kind === "text") {
                 let b: TextBlock = block;
-                const prior = !b.virtual && previous?.byMarker.get(b.marker);
+                const prior = !b.virtual && previous?.byMarker.get(b.marker)?.block;
 
                 if (prior && prior.type === b.type && JSON.stringify(prior.attrs) === JSON.stringify(b.attrs) &&
                     prior.chars.length === b.chars.length && prior.chars.every((c, j) => c === b.chars[j]) &&
@@ -1396,8 +1402,9 @@ export class Doc {
                 } else {
                     b.text = b.chars.map(charOf).join("");
                 }
-                b.chars.forEach(c => of.set(c, b));
-                b.virtual || byMarker.set(b.marker, b);
+                const ref = {block: b};
+                b.chars.forEach(c => of.set(c, ref));
+                byMarker.set(b.marker, ref);
             }
         });
         this.blockCache.set(lineKey, {blocks, of, byMarker});
@@ -1946,7 +1953,25 @@ export class Doc {
         Object.keys(b.attrs).length && (node.attrs = {...b.attrs});
 
         if (b.kind === "text") {
-            const units: Unit[] = b.chars.map(c => (c.kind === "char" ? {ch: c.ch, marks: this.marksOf(c)} : {inline: c.born, attrs: this.attrsOf(c, c.born)}));
+            const units: Unit[] = [];
+            const spanMarks = Object.values(this.need().nodes).flatMap(spec => spec.shape === "span" ? [spec.mark] : []);
+            let last: Extract<Unit, {ch: string}> | undefined;
+            let signature = "";
+            for (const c of b.chars) {
+                if (c.kind !== "char") {
+                    units.push({inline: c.born, attrs: this.attrsOf(c, c.born)});
+                    last = undefined;
+                    continue;
+                }
+                const marks = this.marksOf(c), key = JSON.stringify(marks);
+                // Span grouping compares values by identity, including JSON objects.
+                if (last && signature === key && spanMarks.every(mark => last!.marks[mark] === marks[mark])) last.ch += c.ch;
+                else {
+                    last = {ch: c.ch, marks};
+                    signature = key;
+                    units.push(last);
+                }
+            }
 
             node.runs = unitsToRuns(this.need(), units);
             this.textModels.set(b, node);
@@ -2491,7 +2516,9 @@ const itemFromJSON = (j: ItemJSON, line: Line, prev: Item | undefined): Item => 
     return {
         id,
         key: j.i ?? keyOf(id),
-        origin: j.o === undefined ? previousKey(id) : j.o,
+        origin: j.o === undefined
+            ? prev && prev.span === 1 && prev.id.actor === id.actor && prev.id.lamport + 1 === id.lamport ? prev.key : previousKey(id)
+            : j.o,
         kind: j.k === "n" ? "node" : j.k === "h" ? "head" : "char",
         ch: j.c ?? "",
         born: j.b ?? "",

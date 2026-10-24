@@ -1,0 +1,64 @@
+{
+  "workload": "sparse100k",
+  "size": 100000,
+  "node": "v22.19.0",
+  "initial": {
+    "rss": 152502272,
+    "heapTotal": 14925824,
+    "heapUsed": 10050792,
+    "external": 13613726,
+    "arrayBuffers": 24815
+  },
+  "cold": {
+    "rss": 217202688,
+    "heapTotal": 78004224,
+    "heapUsed": 42748744,
+    "external": 13653977,
+    "arrayBuffers": 24815
+  },
+  "warm": {
+    "rss": 248774656,
+    "heapTotal": 83148800,
+    "heapUsed": 47749032,
+    "external": 13653977,
+    "arrayBuffers": 24815
+  },
+  "heapCold": 32697952,
+  "heapWarm": 37698240,
+  "rssCold": 217202688,
+  "rssWarm": 248774656,
+  "items": 100001,
+  "index": {
+    "logicalIDs": 100001,
+    "ranges": null,
+    "dense": null,
+    "sparse": null
+  },
+  "modelHash": "57ef2f2e0419989a52c5fd47caaae46dc3f63c873d742f103326fa2eeeb248ab",
+  "snapshotHash": "245d45968db39a94e826efea0432f3acffd277ccfbd09cfaff04ac6db1944ff5",
+  "snapshotBytes": 4894397,
+  "createMs": 81.665417,
+  "modelMs": 92.550625,
+  "compactMs": null,
+  "snapshotMs": 8.480874999999287,
+  "restoreMs": 156.16845900000044,
+  "editMs": {
+    "n": 100,
+    "p50": 3.980207999999948,
+    "p95": 5.064208000000008,
+    "max": 5.272166000000027
+  },
+  "receiveModelMs": {
+    "n": 100,
+    "p50": 68.73320899999999,
+    "p95": 92.1888340000005,
+    "max": 135.09754200000043
+  },
+  "lookupMs": {
+    "n": 100,
+    "p50": 0.0003515419999999949,
+    "p95": 0.0004729580000000055,
+    "max": 0.0005386660000000347
+  },
+  "maxRSSKiB": 719568
+}

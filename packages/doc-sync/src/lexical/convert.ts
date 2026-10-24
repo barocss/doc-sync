@@ -172,6 +172,22 @@ export function $toLexical(info: LexicalSchemaInfo, model: NodeJSON): void {
     $setModelData($getRoot(), modelDataFor(model, "flow"));
     $getRoot().clear().append(...(model.children ?? []).map(child => $createModelNode(info, child)));
 }
+/** Replace only a changed root interval when its previous projection is known. */
+export function $projectLexical(info: LexicalSchemaInfo, before: NodeJSON, after: NodeJSON): void {
+    const old = before.children ?? [], next = after.children ?? [];
+    const root = $getRoot(), nodes = root.getChildren();
+    if (nodes.length !== old.length) { $toLexical(info, after); return; }
+    const equal = (a: NodeJSON, b: NodeJSON) => JSON.stringify(a) === JSON.stringify(b);
+    let start = 0, end = old.length, nextEnd = next.length;
+    while (start < end && start < nextEnd && equal(old[start], next[start])) start++;
+    while (end > start && nextEnd > start && equal(old[end - 1], next[nextEnd - 1])) { end--; nextEnd--; }
+    for (let index = start; index < end; index++) nodes[index].remove();
+    for (const model of next.slice(start, nextEnd)) {
+        const node = $createModelNode(info, model);
+        if (nodes[end]) nodes[end].insertBefore(node); else root.append(node);
+    }
+}
+
 export function $fromLexical(info: LexicalSchemaInfo): NodeJSON {
     const root = $getRoot();
     return canonical(info.schema, {...withAttrs(info.schema.root, attrsOf(root)), children: root.getChildren().map(child => $readModelNode(info, child) as NodeJSON)});

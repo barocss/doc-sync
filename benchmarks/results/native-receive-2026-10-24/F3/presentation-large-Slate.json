@@ -1,0 +1,1723 @@
+{
+  "browserVersion": "156.0.8078.47",
+  "config": {
+    "profile": "presentation",
+    "size": "large",
+    "source": "Slate",
+    "doc": "perf-p-l-1792846378",
+    "url": "http://127.0.0.1:53138",
+    "setup": false,
+    "warmups": 5,
+    "samples": 30
+  },
+  "visibility": {
+    "Slate": {
+      "visible": true,
+      "top": 635.5,
+      "bottom": 657.5,
+      "editorTop": 250.5,
+      "editorBottom": 1042.5
+    },
+    "Lexical": {
+      "visible": true,
+      "top": 635.5,
+      "bottom": 657.5,
+      "editorTop": 250.5,
+      "editorBottom": 1042.5
+    },
+    "ProseMirror": {
+      "visible": true,
+      "top": 635.5,
+      "bottom": 657.5,
+      "editorTop": 250.5,
+      "editorBottom": 1042.5
+    }
+  },
+  "verified": {
+    "beforeEqual": true,
+    "afterEqual": true,
+    "zeroFallbacks": true,
+    "range": {
+      "anchor": [
+        2,
+        1,
+        0,
+        84
+      ],
+      "focus": [
+        2,
+        1,
+        0,
+        84
+      ]
+    }
+  },
+  "records": [
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 7500.5,
+      "inputAt": 7501,
+      "receive": {
+        "Slate": {
+          "start": 7554,
+          "end": 7555.699999928474
+        },
+        "Lexical": {
+          "start": 7555.799999952316,
+          "end": 7601.5
+        },
+        "ProseMirror": {
+          "start": 7601.699999928474,
+          "end": 7605.299999952316
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 7501.899999976158,
+          "raf2": 7553.699999928474
+        },
+        "Lexical": {
+          "at": 7601.599999904633,
+          "raf2": 7608.5
+        },
+        "ProseMirror": {
+          "at": 7605.299999952316,
+          "raf2": 7608.5
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 7546.099999904633,
+      "sendStart": 7546.099999904633,
+      "commitEnd": 7546.399999976158,
+      "sendEnd": 7553.899999976158,
+      "endedAt": 7608.5
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 7616,
+      "inputAt": 7616.599999904633,
+      "receive": {
+        "Slate": {
+          "start": 7671.799999952316,
+          "end": 7673.5
+        },
+        "Lexical": {
+          "start": 7673.5,
+          "end": 7720.899999976158
+        },
+        "ProseMirror": {
+          "start": 7721.099999904633,
+          "end": 7724.199999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 7617.5,
+          "raf2": 7671.5
+        },
+        "Lexical": {
+          "at": 7721.099999904633,
+          "raf2": 7726.799999952316
+        },
+        "ProseMirror": {
+          "at": 7724.299999952316,
+          "raf2": 7726.799999952316
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 7663.899999976158,
+      "sendStart": 7663.899999976158,
+      "commitEnd": 7664.199999928474,
+      "sendEnd": 7671.799999952316,
+      "endedAt": 7726.799999952316
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 7733,
+      "inputAt": 7733.5,
+      "receive": {
+        "Slate": {
+          "start": 7783.799999952316,
+          "end": 7785.5
+        },
+        "Lexical": {
+          "start": 7785.5,
+          "end": 7830.599999904633
+        },
+        "ProseMirror": {
+          "start": 7830.799999952316,
+          "end": 7834
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 7734.299999952316,
+          "raf2": 7783.5
+        },
+        "Lexical": {
+          "at": 7830.799999952316,
+          "raf2": 7837
+        },
+        "ProseMirror": {
+          "at": 7834,
+          "raf2": 7837.099999904633
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 7776.5,
+      "sendStart": 7776.5,
+      "commitEnd": 7776.799999952316,
+      "sendEnd": 7783.699999928474,
+      "endedAt": 7837.099999904633
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 7845.799999952316,
+      "inputAt": 7846.399999976158,
+      "receive": {
+        "Slate": {
+          "start": 7899.299999952316,
+          "end": 7901
+        },
+        "Lexical": {
+          "start": 7901.099999904633,
+          "end": 7946.099999904633
+        },
+        "ProseMirror": {
+          "start": 7946.299999952316,
+          "end": 7949.599999904633
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 7847.099999904633,
+          "raf2": 7898.899999976158
+        },
+        "Lexical": {
+          "at": 7946.199999928474,
+          "raf2": 7953.399999976158
+        },
+        "ProseMirror": {
+          "at": 7949.699999928474,
+          "raf2": 7953.399999976158
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 7890.799999952316,
+      "sendStart": 7890.799999952316,
+      "commitEnd": 7891.099999904633,
+      "sendEnd": 7899.199999928474,
+      "endedAt": 7953.399999976158
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 7961.399999976158,
+      "inputAt": 7961.799999952316,
+      "receive": {
+        "Slate": {
+          "start": 8012.5,
+          "end": 8014.299999952316
+        },
+        "Lexical": {
+          "start": 8014.399999976158,
+          "end": 8059.5
+        },
+        "ProseMirror": {
+          "start": 8059.699999928474,
+          "end": 8062.899999976158
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 7962.599999904633,
+          "raf2": 8012.199999928474
+        },
+        "Lexical": {
+          "at": 8059.599999904633,
+          "raf2": 8065.899999976158
+        },
+        "ProseMirror": {
+          "at": 8062.899999976158,
+          "raf2": 8065.899999976158
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8005.199999928474,
+      "sendStart": 8005.199999928474,
+      "commitEnd": 8005.5,
+      "sendEnd": 8012.5,
+      "endedAt": 8065.899999976158
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 8072.099999904633,
+      "inputAt": 8072.599999904633,
+      "receive": {
+        "Slate": {
+          "start": 8123.5,
+          "end": 8125.299999952316
+        },
+        "Lexical": {
+          "start": 8125.399999976158,
+          "end": 8170.299999952316
+        },
+        "ProseMirror": {
+          "start": 8170.5,
+          "end": 8173.799999952316
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 8073.399999976158,
+          "raf2": 8123.199999928474
+        },
+        "Lexical": {
+          "at": 8170.399999976158,
+          "raf2": 8176.199999928474
+        },
+        "ProseMirror": {
+          "at": 8173.799999952316,
+          "raf2": 8176.299999952316
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8116,
+      "sendStart": 8116.099999904633,
+      "commitEnd": 8116.399999976158,
+      "sendEnd": 8123.399999976158,
+      "endedAt": 8176.299999952316
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 8182.599999904633,
+      "inputAt": 8183,
+      "receive": {
+        "Slate": {
+          "start": 8234,
+          "end": 8235.599999904633
+        },
+        "Lexical": {
+          "start": 8235.699999928474,
+          "end": 8280.299999952316
+        },
+        "ProseMirror": {
+          "start": 8280.599999904633,
+          "end": 8283.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 8183.599999904633,
+          "raf2": 8233.699999928474
+        },
+        "Lexical": {
+          "at": 8280.399999976158,
+          "raf2": 8287.099999904633
+        },
+        "ProseMirror": {
+          "at": 8283.799999952316,
+          "raf2": 8287.099999904633
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8226.699999928474,
+      "sendStart": 8226.699999928474,
+      "commitEnd": 8227,
+      "sendEnd": 8233.799999952316,
+      "endedAt": 8287.099999904633
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 8293.199999928474,
+      "inputAt": 8293.799999952316,
+      "receive": {
+        "Slate": {
+          "start": 8345.299999952316,
+          "end": 8347.099999904633
+        },
+        "Lexical": {
+          "start": 8347.199999928474,
+          "end": 8392.299999952316
+        },
+        "ProseMirror": {
+          "start": 8392.5,
+          "end": 8395.899999976158
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 8294.5,
+          "raf2": 8345
+        },
+        "Lexical": {
+          "at": 8392.399999976158,
+          "raf2": 8398.399999976158
+        },
+        "ProseMirror": {
+          "at": 8395.899999976158,
+          "raf2": 8398.5
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8337.799999952316,
+      "sendStart": 8337.799999952316,
+      "commitEnd": 8338.099999904633,
+      "sendEnd": 8345.199999928474,
+      "endedAt": 8398.5
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 8405.199999928474,
+      "inputAt": 8405.699999928474,
+      "receive": {
+        "Slate": {
+          "start": 8460.399999976158,
+          "end": 8462.199999928474
+        },
+        "Lexical": {
+          "start": 8462.199999928474,
+          "end": 8509
+        },
+        "ProseMirror": {
+          "start": 8509.199999928474,
+          "end": 8512.399999976158
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 8406.399999976158,
+          "raf2": 8460
+        },
+        "Lexical": {
+          "at": 8509.099999904633,
+          "raf2": 8516.399999976158
+        },
+        "ProseMirror": {
+          "at": 8512.399999976158,
+          "raf2": 8516.399999976158
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8452,
+      "sendStart": 8452,
+      "commitEnd": 8452.399999976158,
+      "sendEnd": 8460.299999952316,
+      "endedAt": 8516.399999976158
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 8522.899999976158,
+      "inputAt": 8523.399999976158,
+      "receive": {
+        "Slate": {
+          "start": 8575.399999976158,
+          "end": 8577.199999928474
+        },
+        "Lexical": {
+          "start": 8577.299999952316,
+          "end": 8622.699999928474
+        },
+        "ProseMirror": {
+          "start": 8623,
+          "end": 8626.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 8524.199999928474,
+          "raf2": 8575
+        },
+        "Lexical": {
+          "at": 8622.899999976158,
+          "raf2": 8629.099999904633
+        },
+        "ProseMirror": {
+          "at": 8626.699999928474,
+          "raf2": 8629.099999904633
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8567.699999928474,
+      "sendStart": 8567.699999928474,
+      "commitEnd": 8568,
+      "sendEnd": 8575.299999952316,
+      "endedAt": 8629.099999904633
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 8636,
+      "inputAt": 8636.5,
+      "receive": {
+        "Slate": {
+          "start": 8688.299999952316,
+          "end": 8690.099999904633
+        },
+        "Lexical": {
+          "start": 8690.199999928474,
+          "end": 8735.5
+        },
+        "ProseMirror": {
+          "start": 8735.699999928474,
+          "end": 8738.899999976158
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 8637.299999952316,
+          "raf2": 8687.899999976158
+        },
+        "Lexical": {
+          "at": 8735.599999904633,
+          "raf2": 8742.099999904633
+        },
+        "ProseMirror": {
+          "at": 8739,
+          "raf2": 8742.099999904633
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8680.599999904633,
+      "sendStart": 8680.599999904633,
+      "commitEnd": 8680.899999976158,
+      "sendEnd": 8688.199999928474,
+      "endedAt": 8742.099999904633
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 8748.199999928474,
+      "inputAt": 8748.599999904633,
+      "receive": {
+        "Slate": {
+          "start": 8800.399999976158,
+          "end": 8802.099999904633
+        },
+        "Lexical": {
+          "start": 8802.299999952316,
+          "end": 8848.299999952316
+        },
+        "ProseMirror": {
+          "start": 8848.5,
+          "end": 8851.899999976158
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 8749.399999976158,
+          "raf2": 8800
+        },
+        "Lexical": {
+          "at": 8848.399999976158,
+          "raf2": 8854.299999952316
+        },
+        "ProseMirror": {
+          "at": 8852,
+          "raf2": 8854.299999952316
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8792.699999928474,
+      "sendStart": 8792.699999928474,
+      "commitEnd": 8793,
+      "sendEnd": 8800.299999952316,
+      "endedAt": 8854.299999952316
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 8860.699999928474,
+      "inputAt": 8861.199999928474,
+      "receive": {
+        "Slate": {
+          "start": 9007.199999928474,
+          "end": 9009.099999904633
+        },
+        "Lexical": {
+          "start": 9009.099999904633,
+          "end": 9054.799999952316
+        },
+        "ProseMirror": {
+          "start": 9055,
+          "end": 9058.299999952316
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 8862,
+          "raf2": 8913.099999904633
+        },
+        "Lexical": {
+          "at": 9054.899999976158,
+          "raf2": 9060.699999928474
+        },
+        "ProseMirror": {
+          "at": 9058.399999976158,
+          "raf2": 9060.799999952316
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 8906.099999904633,
+      "sendStart": 8906.099999904633,
+      "commitEnd": 8906.299999952316,
+      "sendEnd": 9007.199999928474,
+      "endedAt": 9060.799999952316
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9083.399999976158,
+      "inputAt": 9083.799999952316,
+      "receive": {
+        "Slate": {
+          "start": 9135.5,
+          "end": 9137.199999928474
+        },
+        "Lexical": {
+          "start": 9137.299999952316,
+          "end": 9182.699999928474
+        },
+        "ProseMirror": {
+          "start": 9182.899999976158,
+          "end": 9186.199999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9084.599999904633,
+          "raf2": 9135.099999904633
+        },
+        "Lexical": {
+          "at": 9182.799999952316,
+          "raf2": 9189.299999952316
+        },
+        "ProseMirror": {
+          "at": 9186.299999952316,
+          "raf2": 9189.399999976158
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 9127.899999976158,
+      "sendStart": 9127.899999976158,
+      "commitEnd": 9128.199999928474,
+      "sendEnd": 9135.399999976158,
+      "endedAt": 9189.399999976158
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9196.799999952316,
+      "inputAt": 9197.199999928474,
+      "receive": {
+        "Slate": {
+          "start": 9248.299999952316,
+          "end": 9250
+        },
+        "Lexical": {
+          "start": 9250,
+          "end": 9295.199999928474
+        },
+        "ProseMirror": {
+          "start": 9295.399999976158,
+          "end": 9298.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9198.099999904633,
+          "raf2": 9248
+        },
+        "Lexical": {
+          "at": 9295.299999952316,
+          "raf2": 9301.5
+        },
+        "ProseMirror": {
+          "at": 9298.699999928474,
+          "raf2": 9301.5
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 9240.799999952316,
+      "sendStart": 9240.799999952316,
+      "commitEnd": 9241.099999904633,
+      "sendEnd": 9248.199999928474,
+      "endedAt": 9301.5
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9307.699999928474,
+      "inputAt": 9308.199999928474,
+      "receive": {
+        "Slate": {
+          "start": 9358.799999952316,
+          "end": 9360.5
+        },
+        "Lexical": {
+          "start": 9360.599999904633,
+          "end": 9405.799999952316
+        },
+        "ProseMirror": {
+          "start": 9405.899999976158,
+          "end": 9409.299999952316
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9309,
+          "raf2": 9358.599999904633
+        },
+        "Lexical": {
+          "at": 9405.899999976158,
+          "raf2": 9412.199999928474
+        },
+        "ProseMirror": {
+          "at": 9409.399999976158,
+          "raf2": 9412.299999952316
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 9351.599999904633,
+      "sendStart": 9351.599999904633,
+      "commitEnd": 9351.899999976158,
+      "sendEnd": 9358.799999952316,
+      "endedAt": 9412.299999952316
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9418.099999904633,
+      "inputAt": 9418.599999904633,
+      "receive": {
+        "Slate": {
+          "start": 9469.799999952316,
+          "end": 9471.5
+        },
+        "Lexical": {
+          "start": 9471.599999904633,
+          "end": 9518.099999904633
+        },
+        "ProseMirror": {
+          "start": 9518.299999952316,
+          "end": 9521.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9419.399999976158,
+          "raf2": 9469.5
+        },
+        "Lexical": {
+          "at": 9518.199999928474,
+          "raf2": 9524.5
+        },
+        "ProseMirror": {
+          "at": 9521.799999952316,
+          "raf2": 9524.5
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 9462.5,
+      "sendStart": 9462.5,
+      "commitEnd": 9462.799999952316,
+      "sendEnd": 9469.799999952316,
+      "endedAt": 9524.5
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9531.199999928474,
+      "inputAt": 9531.699999928474,
+      "receive": {
+        "Slate": {
+          "start": 9584.599999904633,
+          "end": 9586.5
+        },
+        "Lexical": {
+          "start": 9586.5,
+          "end": 9632.399999976158
+        },
+        "ProseMirror": {
+          "start": 9632.599999904633,
+          "end": 9635.899999976158
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9532.5,
+          "raf2": 9584.199999928474
+        },
+        "Lexical": {
+          "at": 9632.5,
+          "raf2": 9639
+        },
+        "ProseMirror": {
+          "at": 9635.899999976158,
+          "raf2": 9639.099999904633
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 9576.799999952316,
+      "sendStart": 9576.799999952316,
+      "commitEnd": 9577.199999928474,
+      "sendEnd": 9584.5,
+      "endedAt": 9639.099999904633
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9644.899999976158,
+      "inputAt": 9645.399999976158,
+      "receive": {
+        "Slate": {
+          "start": 9697.099999904633,
+          "end": 9699
+        },
+        "Lexical": {
+          "start": 9699,
+          "end": 9744.299999952316
+        },
+        "ProseMirror": {
+          "start": 9744.5,
+          "end": 9747.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9646.199999928474,
+          "raf2": 9696.799999952316
+        },
+        "Lexical": {
+          "at": 9744.399999976158,
+          "raf2": 9750.399999976158
+        },
+        "ProseMirror": {
+          "at": 9747.699999928474,
+          "raf2": 9750.399999976158
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 9689,
+      "sendStart": 9689,
+      "commitEnd": 9689.299999952316,
+      "sendEnd": 9697.099999904633,
+      "endedAt": 9750.399999976158
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9756.399999976158,
+      "inputAt": 9756.799999952316,
+      "receive": {
+        "Slate": {
+          "start": 9810.099999904633,
+          "end": 9812.099999904633
+        },
+        "Lexical": {
+          "start": 9812.099999904633,
+          "end": 9861.199999928474
+        },
+        "ProseMirror": {
+          "start": 9861.299999952316,
+          "end": 9864.5
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9757.599999904633,
+          "raf2": 9809.699999928474
+        },
+        "Lexical": {
+          "at": 9861.199999928474,
+          "raf2": 9867.799999952316
+        },
+        "ProseMirror": {
+          "at": 9864.599999904633,
+          "raf2": 9867.799999952316
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 9802,
+      "sendStart": 9802,
+      "commitEnd": 9802.299999952316,
+      "sendEnd": 9810.099999904633,
+      "endedAt": 9867.799999952316
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9874.699999928474,
+      "inputAt": 9875.399999976158,
+      "receive": {
+        "Slate": {
+          "start": 9929.899999976158,
+          "end": 9931.599999904633
+        },
+        "Lexical": {
+          "start": 9931.599999904633,
+          "end": 9976.799999952316
+        },
+        "ProseMirror": {
+          "start": 9977.099999904633,
+          "end": 9980.599999904633
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9876.199999928474,
+          "raf2": 9929.599999904633
+        },
+        "Lexical": {
+          "at": 9977,
+          "raf2": 9983
+        },
+        "ProseMirror": {
+          "at": 9980.699999928474,
+          "raf2": 9983.099999904633
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 9922.5,
+      "sendStart": 9922.5,
+      "commitEnd": 9922.799999952316,
+      "sendEnd": 9929.799999952316,
+      "endedAt": 9983.099999904633
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 9989.299999952316,
+      "inputAt": 9989.799999952316,
+      "receive": {
+        "Slate": {
+          "start": 10041.199999928474,
+          "end": 10043
+        },
+        "Lexical": {
+          "start": 10043.099999904633,
+          "end": 10089.899999976158
+        },
+        "ProseMirror": {
+          "start": 10090.099999904633,
+          "end": 10093.5
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 9990.5,
+          "raf2": 10040.899999976158
+        },
+        "Lexical": {
+          "at": 10090,
+          "raf2": 10096.599999904633
+        },
+        "ProseMirror": {
+          "at": 10093.599999904633,
+          "raf2": 10096.699999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10033.599999904633,
+      "sendStart": 10033.599999904633,
+      "commitEnd": 10034,
+      "sendEnd": 10041.099999904633,
+      "endedAt": 10096.699999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 10103.199999928474,
+      "inputAt": 10103.599999904633,
+      "receive": {
+        "Slate": {
+          "start": 10155.199999928474,
+          "end": 10156.899999976158
+        },
+        "Lexical": {
+          "start": 10156.899999976158,
+          "end": 10202.299999952316
+        },
+        "ProseMirror": {
+          "start": 10202.5,
+          "end": 10205.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 10104.599999904633,
+          "raf2": 10154.899999976158
+        },
+        "Lexical": {
+          "at": 10202.399999976158,
+          "raf2": 10208.199999928474
+        },
+        "ProseMirror": {
+          "at": 10205.899999976158,
+          "raf2": 10208.199999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10147.699999928474,
+      "sendStart": 10147.699999928474,
+      "commitEnd": 10148,
+      "sendEnd": 10155.099999904633,
+      "endedAt": 10208.199999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 10214.699999928474,
+      "inputAt": 10215.299999952316,
+      "receive": {
+        "Slate": {
+          "start": 10267.099999904633,
+          "end": 10268.799999952316
+        },
+        "Lexical": {
+          "start": 10268.799999952316,
+          "end": 10314.199999928474
+        },
+        "ProseMirror": {
+          "start": 10314.399999976158,
+          "end": 10317.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 10216.099999904633,
+          "raf2": 10266.699999928474
+        },
+        "Lexical": {
+          "at": 10314.299999952316,
+          "raf2": 10320.899999976158
+        },
+        "ProseMirror": {
+          "at": 10317.799999952316,
+          "raf2": 10321
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10259.599999904633,
+      "sendStart": 10259.599999904633,
+      "commitEnd": 10259.799999952316,
+      "sendEnd": 10267.099999904633,
+      "endedAt": 10321
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 10326.899999976158,
+      "inputAt": 10327.399999976158,
+      "receive": {
+        "Slate": {
+          "start": 10378.399999976158,
+          "end": 10380.099999904633
+        },
+        "Lexical": {
+          "start": 10380.199999928474,
+          "end": 10425.199999928474
+        },
+        "ProseMirror": {
+          "start": 10425.5,
+          "end": 10428.799999952316
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 10328.099999904633,
+          "raf2": 10378.099999904633
+        },
+        "Lexical": {
+          "at": 10425.299999952316,
+          "raf2": 10431.099999904633
+        },
+        "ProseMirror": {
+          "at": 10428.799999952316,
+          "raf2": 10431.199999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10371.099999904633,
+      "sendStart": 10371.099999904633,
+      "commitEnd": 10371.399999976158,
+      "sendEnd": 10378.399999976158,
+      "endedAt": 10431.199999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 10437.299999952316,
+      "inputAt": 10437.699999928474,
+      "receive": {
+        "Slate": {
+          "start": 10488,
+          "end": 10489.799999952316
+        },
+        "Lexical": {
+          "start": 10489.799999952316,
+          "end": 10535.099999904633
+        },
+        "ProseMirror": {
+          "start": 10535.199999928474,
+          "end": 10538.599999904633
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 10438.299999952316,
+          "raf2": 10487.799999952316
+        },
+        "Lexical": {
+          "at": 10535.099999904633,
+          "raf2": 10541.699999928474
+        },
+        "ProseMirror": {
+          "at": 10538.699999928474,
+          "raf2": 10541.699999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10480.699999928474,
+      "sendStart": 10480.699999928474,
+      "commitEnd": 10481,
+      "sendEnd": 10488,
+      "endedAt": 10541.699999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 10548.899999976158,
+      "inputAt": 10549.5,
+      "receive": {
+        "Slate": {
+          "start": 10602.5,
+          "end": 10604.299999952316
+        },
+        "Lexical": {
+          "start": 10604.299999952316,
+          "end": 10650.799999952316
+        },
+        "ProseMirror": {
+          "start": 10650.899999976158,
+          "end": 10654
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 10550.299999952316,
+          "raf2": 10602.199999928474
+        },
+        "Lexical": {
+          "at": 10650.899999976158,
+          "raf2": 10656.5
+        },
+        "ProseMirror": {
+          "at": 10654.199999928474,
+          "raf2": 10656.5
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10595.099999904633,
+      "sendStart": 10595.099999904633,
+      "commitEnd": 10595.299999952316,
+      "sendEnd": 10602.399999976158,
+      "endedAt": 10656.5
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 10662.799999952316,
+      "inputAt": 10663.099999904633,
+      "receive": {
+        "Slate": {
+          "start": 10714.899999976158,
+          "end": 10716.699999928474
+        },
+        "Lexical": {
+          "start": 10716.699999928474,
+          "end": 10762.399999976158
+        },
+        "ProseMirror": {
+          "start": 10762.599999904633,
+          "end": 10765.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 10663.799999952316,
+          "raf2": 10714.699999928474
+        },
+        "Lexical": {
+          "at": 10762.399999976158,
+          "raf2": 10768.699999928474
+        },
+        "ProseMirror": {
+          "at": 10765.899999976158,
+          "raf2": 10768.699999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10707.399999976158,
+      "sendStart": 10707.399999976158,
+      "commitEnd": 10707.699999928474,
+      "sendEnd": 10714.899999976158,
+      "endedAt": 10768.699999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 10774.899999976158,
+      "inputAt": 10775.399999976158,
+      "receive": {
+        "Slate": {
+          "start": 10827.699999928474,
+          "end": 10829.399999976158
+        },
+        "Lexical": {
+          "start": 10829.5,
+          "end": 10878.199999928474
+        },
+        "ProseMirror": {
+          "start": 10878.5,
+          "end": 10881.699999928474
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 10776.299999952316,
+          "raf2": 10827.5
+        },
+        "Lexical": {
+          "at": 10878.299999952316,
+          "raf2": 10884.099999904633
+        },
+        "ProseMirror": {
+          "at": 10881.699999928474,
+          "raf2": 10884.199999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10820.299999952316,
+      "sendStart": 10820.299999952316,
+      "commitEnd": 10820.599999904633,
+      "sendEnd": 10827.699999928474,
+      "endedAt": 10884.199999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 10891.199999928474,
+      "inputAt": 10891.699999928474,
+      "receive": {
+        "Slate": {
+          "start": 10943.899999976158,
+          "end": 10945.799999952316
+        },
+        "Lexical": {
+          "start": 10945.799999952316,
+          "end": 10990.399999976158
+        },
+        "ProseMirror": {
+          "start": 10990.599999904633,
+          "end": 10993.799999952316
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 10892.5,
+          "raf2": 10943.699999928474
+        },
+        "Lexical": {
+          "at": 10990.399999976158,
+          "raf2": 10996.899999976158
+        },
+        "ProseMirror": {
+          "at": 10993.899999976158,
+          "raf2": 10996.899999976158
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 10936.199999928474,
+      "sendStart": 10936.199999928474,
+      "commitEnd": 10936.5,
+      "sendEnd": 10943.899999976158,
+      "endedAt": 10996.899999976158
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 11002.899999976158,
+      "inputAt": 11003.299999952316,
+      "receive": {
+        "Slate": {
+          "start": 11053.899999976158,
+          "end": 11055.599999904633
+        },
+        "Lexical": {
+          "start": 11055.599999904633,
+          "end": 11101.799999952316
+        },
+        "ProseMirror": {
+          "start": 11102,
+          "end": 11105.299999952316
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 11004,
+          "raf2": 11053.5
+        },
+        "Lexical": {
+          "at": 11101.899999976158,
+          "raf2": 11107.699999928474
+        },
+        "ProseMirror": {
+          "at": 11105.399999976158,
+          "raf2": 11107.699999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 11046.5,
+      "sendStart": 11046.5,
+      "commitEnd": 11046.699999928474,
+      "sendEnd": 11053.799999952316,
+      "endedAt": 11107.699999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 11114,
+      "inputAt": 11114.399999976158,
+      "receive": {
+        "Slate": {
+          "start": 11165.299999952316,
+          "end": 11167.099999904633
+        },
+        "Lexical": {
+          "start": 11167.099999904633,
+          "end": 11212.299999952316
+        },
+        "ProseMirror": {
+          "start": 11212.5,
+          "end": 11216
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 11115.199999928474,
+          "raf2": 11165
+        },
+        "Lexical": {
+          "at": 11212.399999976158,
+          "raf2": 11219.199999928474
+        },
+        "ProseMirror": {
+          "at": 11216.099999904633,
+          "raf2": 11219.199999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 11158,
+      "sendStart": 11158,
+      "commitEnd": 11158.299999952316,
+      "sendEnd": 11165.299999952316,
+      "endedAt": 11219.199999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 11225.299999952316,
+      "inputAt": 11225.799999952316,
+      "receive": {
+        "Slate": {
+          "start": 11277.399999976158,
+          "end": 11279.399999976158
+        },
+        "Lexical": {
+          "start": 11279.399999976158,
+          "end": 11325
+        },
+        "ProseMirror": {
+          "start": 11325.099999904633,
+          "end": 11328.399999976158
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 11226.5,
+          "raf2": 11277.099999904633
+        },
+        "Lexical": {
+          "at": 11325.099999904633,
+          "raf2": 11331
+        },
+        "ProseMirror": {
+          "at": 11328.5,
+          "raf2": 11331
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 11269.899999976158,
+      "sendStart": 11269.899999976158,
+      "commitEnd": 11270.199999928474,
+      "sendEnd": 11277.399999976158,
+      "endedAt": 11331
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 11337.5,
+      "inputAt": 11337.899999976158,
+      "receive": {
+        "Slate": {
+          "start": 11389.5,
+          "end": 11391.299999952316
+        },
+        "Lexical": {
+          "start": 11391.399999976158,
+          "end": 11436.599999904633
+        },
+        "ProseMirror": {
+          "start": 11436.799999952316,
+          "end": 11440
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 11338.699999928474,
+          "raf2": 11389.299999952316
+        },
+        "Lexical": {
+          "at": 11436.699999928474,
+          "raf2": 11443.199999928474
+        },
+        "ProseMirror": {
+          "at": 11440,
+          "raf2": 11443.199999928474
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 11382.199999928474,
+      "sendStart": 11382.199999928474,
+      "commitEnd": 11382.399999976158,
+      "sendEnd": 11389.5,
+      "endedAt": 11443.199999928474
+    },
+    {
+      "source": "Slate",
+      "expected": "Result summaryqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+      "armedAt": 11449.099999904633,
+      "inputAt": 11449.5,
+      "receive": {
+        "Slate": {
+          "start": 11501.199999928474,
+          "end": 11503.699999928474
+        },
+        "Lexical": {
+          "start": 11503.799999952316,
+          "end": 11548.399999976158
+        },
+        "ProseMirror": {
+          "start": 11548.599999904633,
+          "end": 11551.899999976158
+        }
+      },
+      "dom": {
+        "Slate": {
+          "at": 11450.199999928474,
+          "raf2": 11500.799999952316
+        },
+        "Lexical": {
+          "at": 11548.5,
+          "raf2": 11554.299999952316
+        },
+        "ProseMirror": {
+          "at": 11552,
+          "raf2": 11554.399999976158
+        }
+      },
+      "complete": true,
+      "input": {
+        "type": "insertText",
+        "data": "q",
+        "trusted": true
+      },
+      "commitStart": 11493.899999976158,
+      "sendStart": 11493.899999976158,
+      "commitEnd": 11494.199999928474,
+      "sendEnd": 11501.199999928474,
+      "endedAt": 11554.399999976158
+    }
+  ],
+  "longTasks": [
+    {
+      "start": 2667.899999976158,
+      "duration": 50
+    },
+    {
+      "start": 3668.0999999046326,
+      "duration": 50
+    },
+    {
+      "start": 5168.899999976158,
+      "duration": 65
+    },
+    {
+      "start": 5373.899999976158,
+      "duration": 213
+    },
+    {
+      "start": 6943.799999952316,
+      "duration": 212
+    },
+    {
+      "start": 7500.799999952316,
+      "duration": 51
+    },
+    {
+      "start": 7616.399999976158,
+      "duration": 53
+    },
+    {
+      "start": 7846.199999928474,
+      "duration": 50
+    },
+    {
+      "start": 8405.5,
+      "duration": 52
+    },
+    {
+      "start": 8523.199999928474,
+      "duration": 50
+    },
+    {
+      "start": 8861,
+      "duration": 50
+    },
+    {
+      "start": 9531.599999904633,
+      "duration": 51
+    },
+    {
+      "start": 9756.699999928474,
+      "duration": 51
+    },
+    {
+      "start": 9875.099999904633,
+      "duration": 52
+    },
+    {
+      "start": 10549.299999952316,
+      "duration": 51
+    },
+    {
+      "start": 10775.199999928474,
+      "duration": 50
+    },
+    {
+      "start": 10891.5,
+      "duration": 50
+    },
+    {
+      "start": 11563.599999904633,
+      "duration": 212
+    }
+  ],
+  "peerStatus": [
+    {
+      "name": "Slate",
+      "seq": 71,
+      "pending": 0
+    },
+    {
+      "name": "Lexical",
+      "seq": 71,
+      "pending": 0
+    },
+    {
+      "name": "ProseMirror",
+      "seq": 71,
+      "pending": 0
+    }
+  ]
+}

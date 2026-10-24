@@ -1,9 +1,10 @@
 async page=>{
   const origin=new URL(page.url()).origin,run=Date.now().toString(36),results=[];
+  let expectedSeq=0;
   const p=text=>({type:'paragraph',runs:[{text,marks:{}}]});
   const cell=text=>({type:'table-cell',children:[{type:'table-cell-body',children:[p(text)]}]});
-  const remote=async(doc,edits)=>{const r=await page.request.post(`${origin}/test/remote`,{data:{doc,edits}});if(!r.ok())throw new Error(await r.text());};
-  const wait=async()=>{await page.waitForFunction(()=>{const s=window.compat?.snapshot();return s?.server&&!s.failures.length&&s.peers.every(p=>p.online&&!p.pending&&!p.fallbacks&&JSON.stringify(p.model)===JSON.stringify(s.server.model)&&JSON.stringify(p.nativeModel)===JSON.stringify(s.server.model));},null,{timeout:15000});return page.evaluate(()=>window.compat.snapshot());};
+  const remote=async(doc,edits)=>{const r=await page.request.post(`${origin}/test/remote`,{data:{doc,edits}});if(!r.ok())throw new Error(await r.text());const receipt=await r.json();if(!Number.isSafeInteger(receipt.serverSeq))throw new Error('Remote edit did not return a server revision');expectedSeq=Math.max(expectedSeq,receipt.serverSeq);};
+  const wait=async()=>{await page.waitForFunction(expectedSeq=>{const s=window.compat?.snapshot();return s?.server&&s.server.seq>=expectedSeq&&!s.failures.length&&s.peers.every(p=>p.seq>=expectedSeq&&p.online&&!p.pending&&!p.fallbacks&&JSON.stringify(p.model)===JSON.stringify(s.server.model)&&JSON.stringify(p.nativeModel)===JSON.stringify(s.server.model));},expectedSeq,{timeout:15000});return page.evaluate(()=>window.compat.snapshot());};
   const text=cell=>cell.children[0].children.flatMap(p=>(p.runs??[]).map(r=>r.text??'')).join('');
   const note=async(name,edited,merged)=>{
     const snapshot=await wait(),table=snapshot.server.model.children[1];
@@ -13,6 +14,7 @@ async page=>{
   };
   for(const [actor,short]of[['slate-a','s'],['lexical-a','l'],['pm-a','p']])for(const reverse of[false,true]){
     const doc=`merge-range-${short}-${reverse?'b':'f'}-${run}`;
+    expectedSeq=0;
     await page.goto(`${origin}/?doc=${doc}`);await wait();
     await remote(doc,[{op:'delete',at:[0],count:1},{op:'insert',at:[0],content:[p('before'),{type:'table',children:Array.from({length:3},(_,r)=>({type:'table-row',children:Array.from({length:3},(_,c)=>cell(`cell${r}${c}`))}))},p('after')]},{op:'update',at:[1,0,0],attrs:{colspan:2,rowspan:2}}]);await wait();
     const paragraph=page.getByRole('textbox',{name:actor,exact:true}).locator('p').filter({hasText:/^cell12$/});

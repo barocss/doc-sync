@@ -1,0 +1,188 @@
+{
+  "profile": "output/validation/receive-model-20261024/profile-after/CPU.20261024.235108.55614.0.001.cpuprofile",
+  "sha256": "465ce430326a76f25f923b012acff2eedcacf2b9a6976e1068cd59486a32ba5e",
+  "sampledMs": 3386.041,
+  "scope": "Setup, initial materialization and ten 1m-character insert/materialize iterations; CPU sampling, not exact phase self-time.",
+  "topFrames": [
+    {
+      "selfSampleMs": 1500.452,
+      "function": "(garbage collector)",
+      "url": "",
+      "line": 0
+    },
+    {
+      "selfSampleMs": 724.586,
+      "function": "rawBlock",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 1942
+    },
+    {
+      "selfSampleMs": 378.831,
+      "function": "marksOf",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 1248
+    },
+    {
+      "selfSampleMs": 128.546,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 1939
+    },
+    {
+      "selfSampleMs": 85.625,
+      "function": "integrate",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 976
+    },
+    {
+      "selfSampleMs": 67.668,
+      "function": "get",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/key-index.ts",
+      "line": 29
+    },
+    {
+      "selfSampleMs": 60.582,
+      "function": "apply",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 734
+    },
+    {
+      "selfSampleMs": 56.42,
+      "function": "get",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/key-index.ts",
+      "line": 29
+    },
+    {
+      "selfSampleMs": 46.333,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/model.ts",
+      "line": 68
+    },
+    {
+      "selfSampleMs": 44.372,
+      "function": "set",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/key-index.ts",
+      "line": 44
+    },
+    {
+      "selfSampleMs": 41.085,
+      "function": "charAdded",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 875
+    },
+    {
+      "selfSampleMs": 37.917,
+      "function": "canonMarks",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/model.ts",
+      "line": 65
+    },
+    {
+      "selfSampleMs": 31.665,
+      "function": "sourceBlocks",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 1303
+    },
+    {
+      "selfSampleMs": 31.251,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 1406
+    },
+    {
+      "selfSampleMs": 21.501,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/profile-after.mjs",
+      "line": 1
+    },
+    {
+      "selfSampleMs": 17.708,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 1391
+    },
+    {
+      "selfSampleMs": 16.334,
+      "function": "get",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 349
+    },
+    {
+      "selfSampleMs": 7.542,
+      "function": "__require",
+      "url": "node:internal/deps/amaro/dist/index",
+      "line": 8
+    },
+    {
+      "selfSampleMs": 5.708,
+      "function": "(program)",
+      "url": "",
+      "line": 0
+    },
+    {
+      "selfSampleMs": 2.542,
+      "function": "Module",
+      "url": "",
+      "line": 0
+    },
+    {
+      "selfSampleMs": 2.541,
+      "function": "keyOf",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/ticket.ts",
+      "line": 14
+    },
+    {
+      "selfSampleMs": 2.5,
+      "function": "decode",
+      "url": "node:internal/encoding",
+      "line": 440
+    },
+    {
+      "selfSampleMs": 2.5,
+      "function": "find",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/key-index.ts",
+      "line": 112
+    },
+    {
+      "selfSampleMs": 1.459,
+      "function": "projectedBlocks",
+      "url": "file:///Users/user/github/doc-sync/packages/doc-sync/src/crdt/doc.ts",
+      "line": 1658
+    },
+    {
+      "selfSampleMs": 1.458,
+      "function": "wasm-function[904]",
+      "url": "wasm://wasm/00dd46ba",
+      "line": 1
+    },
+    {
+      "selfSampleMs": 1.333,
+      "function": "tracePromise",
+      "url": "node:diagnostics_channel",
+      "line": 342
+    },
+    {
+      "selfSampleMs": 1.292,
+      "function": "wasm-function[275]",
+      "url": "wasm://wasm/00dd46ba",
+      "line": 1
+    },
+    {
+      "selfSampleMs": 1.292,
+      "function": "wasm-function[551]",
+      "url": "wasm://wasm/00dd46ba",
+      "line": 1
+    },
+    {
+      "selfSampleMs": 1.292,
+      "function": "wasm-function[2146]",
+      "url": "wasm://wasm/00dd46ba",
+      "line": 1
+    },
+    {
+      "selfSampleMs": 1.292,
+      "function": "wasm-function[1326]",
+      "url": "wasm://wasm/00dd46ba",
+      "line": 1
+    }
+  ]
+}

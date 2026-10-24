@@ -43,6 +43,18 @@ console.log(restored.toJSON());
 
 Use `NOTION_SCHEMA` with `PRODUCT_MODELS.notion`, or `PRESENTATION_SCHEMA` with `PRODUCT_MODELS.presentation`, to load the other profiles. Paths address the current model. Resolve a path again after a structural change. See [model operations](./editing) for command semantics and [document rules](./document-rules) for field and required-child behavior.
 
+## Native editor demo
+
+Run `npm run dev:products` from the repository root after installing the comparison harness dependencies in [`apps/demo/products/README.md`](https://github.com/barocss/doc-sync/blob/main/apps/demo/products/README.md). The default address is `http://127.0.0.1:5413/`. Choose `?profile=word`, `?profile=notion` or `?profile=presentation`. Add `size=large` to open a fresh document with 100,000 generated UTF-16 text units, in addition to the rich sample.
+
+Each page has three editable native views: Slate, Lexical and ProseMirror. They share a document through HTTP/SSE and use participant-specific undo/redo. The application supplies schema-aware elements and safe labels for media and atoms. Each profile has a separate backend with temporary storage. Existing documents are retained when reloaded.
+
+Chrome checks cover 90 common editing cases and 39 schema-context/structure cases. They include Unicode input/deletion, forward/backward selection through remote insertion, native formatting, undo/redo that preserves foreign edits, nested split/join, headers/footers/captions, columns/database cells/tasks, notes/object groups/titles, and merged hidden content. The full native, client and server models are checked. Nine more large-document checks verify that an unchanged distant DOM paragraph remains attached after remote input in every profile/editor combination. Twelve UI and request-guard checks bring the native demo total to 150 assertions. This extends the headless unit coverage below.
+
+A repeated before/after comparison contains 2,160 measured keyboard inputs after 360 excluded warmups, across sample and 100k documents, all three profiles and all three input editors. With unchanged native root blocks retained, large-document input-to-peer rendering-opportunity p95 changes from **305.6–610.1 ms** to **70.1–176.5 ms**. Sample results remain about 47–49 ms. This is a localhost development run with three editors in one Chrome page; the endpoint is DOM match plus a second animation frame, not physical screen timing. Read the [remote editor performance report](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/native-receive-2026-10-24/report.md) for per-source figures, repeated runs, raw records, remaining full reads and limits. The [earlier native baseline](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/product-native-2026-10-24/report.md) remains available.
+
+The views expose editable structure. Presentation objects use an outline, toggles remain expanded for editing, and media use labeled placeholders. Product layout, collapse/query UI and file fidelity remain application work.
+
 ## Complete schemas and samples
 
 The code below is included directly from the tested files at build time.
@@ -85,8 +97,8 @@ These profiles exposed two storage validation errors and a cell normalization er
 | Word-style documents | Pagination, section layout, header/footer placement and repetition, page numbers, tracked changes and DOCX fidelity |
 | Notion-style pages | Collapse UI, database queries, relations, formulas, permissions and embed rendering; the database profile stores grid content and view properties only |
 | Presentations | Canvas rendering, object drag/resize, coordinate transforms, connectors, themes, animations, presenter mode and PPTX fidelity; chart data is an atomic value, not an independently editable series model |
-| All three | Native node views, product-specific keyboard/selection behavior, paste/import policy, accessibility, large-document latency and actual OS IME validation |
+| All three | Product-specific node views and keyboard behavior, paste/import policy, accessibility, production-scale latency and actual OS IME validation |
 
 The presentation tree preserves slide and object order. A frame's `z` field is stored metadata; this fixture does not implement a renderer that sorts or composes it. A flow starts with its default text block, so object groups and slide contents can include an empty leading paragraph or title. Applications must account for that rule when rendering a canvas.
 
-The editor checks on these profiles are **headless model conversions**. Existing Chrome regression checks exercise the comparison demo's schema. They do not establish native editing or rendering acceptance for these three new profiles. Read [editor design lessons](./editor-lessons) before choosing a binding, and [status and limits](../status) before planning a release.
+The unit suite includes **headless model conversions**. The separate native demo covers the bounded editing cases described above. These checks do not establish full product UI, layout, real OS IME or release performance acceptance. Read [editor design lessons](./editor-lessons) before choosing a binding, and [status and limits](../status) before planning a release.

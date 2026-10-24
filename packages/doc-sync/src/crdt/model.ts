@@ -138,6 +138,29 @@ export const runsToUnits = (schema: Schema, runs: Run[] = [], outer: Marks = {})
     return units;
 };
 
+// Normalization does not address characters by offset. Keep a text run whole:
+// unitsToRuns only inspects marks and inline boundaries, not string length.
+const runsToChunks = (schema: Schema, runs: Run[] = [], outer: Marks = {}): Unit[] => {
+    const spans = spanSpecs(schema);
+    const chunks: Unit[] = [];
+    const append = (list: Run[], inherited: Marks): void => {
+        for (const run of list) {
+            if ("text" in run) {
+                if (typeof run.text !== "string") {
+                    // Keep the existing runtime validation/coercion for non-string input.
+                    for (const unit of runsToUnits(schema, [run], inherited)) chunks.push(unit);
+                } else if (run.text.length) chunks.push({ch: run.text, marks: {...run.marks, ...inherited}});
+                continue;
+            }
+            const span = spans.find(s => s.type === run.type);
+            if (span) append(run.runs ?? [], {...inherited, [span.spec.mark]: run.attrs?.[span.spec.attr]});
+            else chunks.push({inline: run.type, attrs: {...(run.attrs ?? {})}});
+        }
+    };
+    append(runs, outer);
+    return chunks;
+};
+
 /** 글자들을 조각으로 — 서식이 같은 이어진 글자를 합치고, 같은 링크로 이어진 글자를 span 하나로 묶는다 */
 export const unitsToRuns = (schema: Schema, units: Unit[]): Run[] => {
     const spans = spanSpecs(schema);
@@ -269,7 +292,7 @@ const canonText = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, Nod
     const attrs = fullAttrs(schema, node.type, node.attrs);
 
     attrs && (out.attrs = attrs);
-    out.runs = unitsToRuns(schema, runsToUnits(schema, node.runs));
+    out.runs = unitsToRuns(schema, runsToChunks(schema, node.runs));
     cache?.set(node, out);
 
     return out;

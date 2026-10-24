@@ -4,7 +4,7 @@ import {PROTOCOL_VERSION} from '@barocss/doc-sync/sync';
 import {schema} from './model.mjs';
 
 /** A separate CRDT actor, through the real HTTP protocol, without moving browser focus. */
-export async function remoteEdit(backend,{doc,edits}){
+export async function remoteEdit(backend,{doc,edits},documentSchema=schema){
   if(typeof doc!=='string'||!/^[a-z0-9-]{1,40}$/.test(doc))throw new Error('invalid test document');
   if(!Array.isArray(edits))throw new Error('invalid test edits');
   const signal=AbortSignal.timeout(10000);
@@ -27,7 +27,7 @@ export async function remoteEdit(backend,{doc,edits}){
       }
     }
   }finally{await reader.cancel();}
-  const replica=Doc.fromSnapshot(actor,hello.snapshot,schema);
+  const replica=Doc.fromSnapshot(actor,hello.snapshot,documentSchema);
   const ops=replica.edit(edits).ops;
   if(!ops.length)return {actor,serverSeq:hello.serverSeq,model:replica.toJSON()};
   const sent=await fetch(`${backend}/api/docs/${doc}/changes`,{method:'POST',headers:{'content-type':'application/json','x-doc-sync-protocol':String(PROTOCOL_VERSION),'x-doc-sync-epoch':hello.epoch},body:JSON.stringify({actor,seq:1,ops}),signal});

@@ -1,0 +1,1121 @@
+{
+  "workId": "main-integration-20261025",
+  "date": "2026-10-25",
+  "timezone": "Asia/Seoul",
+  "baseCommit": "499c221bcd7ce85fc91f9d6f2a144822e385b46a",
+  "targetBranch": "main",
+  "origin": "https://github.com/barocss/doc-sync.git",
+  "scope": "Product native demos, binding interval projection/cache guards, runtime ID metadata compression, receive/model materialization, regressions, English docs and measurement reports.",
+  "state": "This receipt accompanies the tested integration commit. Actual commit/remote SHAs and automatic Pages workflow result are recorded separately in ignored post-push output. Historical measurement receipts remain intact.",
+  "freshChecks": {
+    "library": 622,
+    "demo": 16,
+    "docs": 27,
+    "compatibilityUnit": 31,
+    "fuzzSeeds": 3000,
+    "pmSeeds": 300,
+    "typecheck": "PASS",
+    "isolatedProductBuild": "PASS",
+    "rootProductStartup": "PASS",
+    "threeProfileHTTPAndCanonicalModelSmoke": "PASS",
+    "docsBuild": "PASS",
+    "docsCheck": {
+      "pages": 22,
+      "internalLinks": 1030,
+      "english": true
+    },
+    "diffCheck": "PASS"
+  },
+  "reusedSourceBoundChrome": {
+    "receipt": "benchmarks/results/receive-model-2026-10-24/validation.json",
+    "runtimeFilesMatched": 58,
+    "localEvidenceFilesMatched": 204,
+    "productAssertions": 150,
+    "compatibilityAssertions": 310,
+    "separateCapturedTraces": 30,
+    "consoleErrors": 0,
+    "rerunForIntegration": false,
+    "reason": "Current runtime sources and fresh bundle repository sources match the verified final Chrome run byte for byte."
+  },
+  "performance": "No new timing run during final integration. Reports in HANDOFF 5.28-5.30 retain all conditions, controls and limitations.",
+  "preservation": {
+    "stoppedOwnedServer": {
+      "port": 57982,
+      "pid": 97631,
+      "command": "node apps/demo/products/start.mjs",
+      "signal": "SIGTERM"
+    },
+    "backends": {
+      "word": {
+        "url": "http://localhost:57978",
+        "dataDir": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-product-word-QuJ3Pc"
+      },
+      "notion": {
+        "url": "http://localhost:57979",
+        "dataDir": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-product-notion-8117km"
+      },
+      "presentation": {
+        "url": "http://localhost:57981",
+        "dataDir": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-product-presentation-FvrJRd"
+      }
+    },
+    "preservedUserServers": [
+      {
+        "port": 60012,
+        "pid": "1548"
+      },
+      {
+        "port": 62490,
+        "pid": "94783"
+      },
+      {
+        "port": 53138,
+        "pid": "27456"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "path": ".dev/plans/main-integration-20261025/plan.md",
+      "sha256": "d6b0687bb26b90e079f8158d3d3fd45bc94c725ead93fd072c5dc1067e68e9bf"
+    },
+    {
+      "path": ".dev/plans/product-native/plan.md",
+      "sha256": "163a44344464b0de2effcd3f7e7c2dc4ae18774a2a001e93ec32549ab89fd93c"
+    },
+    {
+      "path": "HANDOFF.md",
+      "sha256": "34f65ee8d38b9624dd1a896c43ab32f955f60d9d68a322c8b5a8600578cb4a5d"
+    },
+    {
+      "path": "README.md",
+      "sha256": "8317db3556ec9673192ce3a1b791bff4c991de32d8cf0edf09cfe3789dcaa0f9"
+    },
+    {
+      "path": "apps/demo/compat/checks-merged-selection.js",
+      "sha256": "d0d1ddee3ca0ccc4f8476af47540a711d120e39443503a46265ddcf30511b815"
+    },
+    {
+      "path": "apps/demo/compat/remote-edit.mjs",
+      "sha256": "f8072fe8ae554aa974ca37dedb593f6361f12912cc4e92c678754a7757ffeda4"
+    },
+    {
+      "path": "apps/demo/products/README.md",
+      "sha256": "8b296bf95123d419d29662ca1ef92103f66a01858c80e3950c11eb47781291ac"
+    },
+    {
+      "path": "apps/demo/products/build.mjs",
+      "sha256": "3a193b5079f95990deafe26b7bda5a373a7af3789940451c74256f2857b5bc78"
+    },
+    {
+      "path": "apps/demo/products/checks-native.js",
+      "sha256": "ebee340339e8f26fa799d8de4ca23a00db22d9704eb733ab93efb4fc15584cf5"
+    },
+    {
+      "path": "apps/demo/products/checks-performance.js",
+      "sha256": "cb3e7206fd4f7b66ca49a1a4b49e1621fd204d6ba675517f240bb2ab3b45a444"
+    },
+    {
+      "path": "apps/demo/products/checks-projection.js",
+      "sha256": "510bdc53ce6ba18edb9c5bfacd94bb4b6f662e55c49b3d8c5fb091a2188d0a5c"
+    },
+    {
+      "path": "apps/demo/products/checks-structure.js",
+      "sha256": "739a0c46b8077c2f25897b7755e60499097a128944bd2dee2ea3229a39908828"
+    },
+    {
+      "path": "apps/demo/products/checks-ui.js",
+      "sha256": "533a3ff4f2e87c2eafc2616f685be4edeaa10fedc8abf6b10543e6f6483f57c2"
+    },
+    {
+      "path": "apps/demo/products/documents.ts",
+      "sha256": "6c5d2b4789ab1f641749771c229776a4c514967529f720aaf86790bb653bf54d"
+    },
+    {
+      "path": "apps/demo/products/index.html",
+      "sha256": "dfd5a349f04e1ad1b57295b434651b856d27be06e3c3dac610160bc1173ac5c1"
+    },
+    {
+      "path": "apps/demo/products/leaf.mjs",
+      "sha256": "3ca3796d4f8ed136b74df4972a12c533d2ee713df80b3b9e2d98ce7402e61a7a"
+    },
+    {
+      "path": "apps/demo/products/main.jsx",
+      "sha256": "23958b61179218c6efc1e95c544a8bb6f29ed668369261c13765489c43a494e8"
+    },
+    {
+      "path": "apps/demo/products/serve.mjs",
+      "sha256": "4ede00ccff180ff893bbbd2e8bcc6f262fd4964a9fdda6ade50b97cef09ef59e"
+    },
+    {
+      "path": "apps/demo/products/start.mjs",
+      "sha256": "5ea65317d6ee5d8cf47ff6c7118e13629f6408aed569f927ba633c41812fe4c5"
+    },
+    {
+      "path": "apps/demo/server.ts",
+      "sha256": "684c8b7e5624fe7b135a104f03726a15ba4424c29625ae9d4d23b375bf00d757"
+    },
+    {
+      "path": "apps/demo/test/products.test.ts",
+      "sha256": "5f511d5c95536bc5f2592027e63d0811e915ac33925e68322872e42163c148db"
+    },
+    {
+      "path": "apps/docs/src/guide/editors.md",
+      "sha256": "bdaa9a7b2ba61ec706ae6873eac509880a9982c31927c2c50f2f55202da29bac"
+    },
+    {
+      "path": "apps/docs/src/guide/product-schemas.md",
+      "sha256": "c7a5494cfccee552fc4b777d4ce5f1de86ae65f078cbe542f6db8ec768afdfbc"
+    },
+    {
+      "path": "apps/docs/src/performance.md",
+      "sha256": "658fd104aa8b5138e6e087f2c01bf54b9eae6f19ffcf8bf086791a9dc0daf700"
+    },
+    {
+      "path": "apps/docs/src/status.md",
+      "sha256": "5408f7c3451bdea79ffcca684c4e618c2693a1363f8d6180bf841a03f62fc15b"
+    },
+    {
+      "path": "benchmarks/metadata-memory.mjs",
+      "sha256": "554fbc4b29c5d7487a038525b8c5257647aa4602f5a29672665ea8fcdf2b9eac"
+    },
+    {
+      "path": "benchmarks/receive-model-controls.mjs",
+      "sha256": "b106002c7ca46d7f7f3a85da7f2a8ecf83b2d7e3cb615b32c9f1d02adffd843e"
+    },
+    {
+      "path": "benchmarks/receive-model.mjs",
+      "sha256": "67ef6969e1dc25e7cdd86b79c53df70652049291e9aec39755f39c7d61394838"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/baseline.json",
+      "sha256": "c0d435d2f38a966ae3514731153fb4fa2175bd585ba3b0edf3b72e67ab5f8f97"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/execution.json",
+      "sha256": "81932f4584bba3dbd4a33cf055cb2dbb6dcc617f477af38c5f8688cb764e8dc4"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/actors100k-after-1.json",
+      "sha256": "37d6df3814240907d25dfdc5c65139a3106b05109013586705725218e541911a"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/actors100k-after-2.json",
+      "sha256": "b679f3c2d83050dfc0dd6252f61892143391eb11489e9212187446bcfeefb451"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/actors100k-after-3.json",
+      "sha256": "09b9c626092d90f5d90a5f76f00afb31148a1b24b800a85d1cdbe1c5968ddf6b"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/actors100k-before-1.json",
+      "sha256": "cdbde0abcdecde411b87f26ab22bc4cf4db9134041529fd6dd24104f4cc003e0"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/actors100k-before-2.json",
+      "sha256": "5db17549f03db040f55493f8b8dd92eee9c98e1dca18d7ef257d933e8f1486a9"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/actors100k-before-3.json",
+      "sha256": "a217372459471afaf08d60dc566fef5a712c674add3ca835968c9b31648cbe75"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/compacted100k-after-1.json",
+      "sha256": "3d9b9c03a2e2277e69cce00a6808009fc682318afa965ef11ecc0d8cfa279557"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/compacted100k-after-2.json",
+      "sha256": "b8f7b39bf5fae55e7d2717a24833ebf0698b762cf7d548831eb59c3c072e2454"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/compacted100k-after-3.json",
+      "sha256": "835cae928ded518214e9e2a376f1f8448f0786633ee50302ce1d112801fe2533"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/compacted100k-before-1.json",
+      "sha256": "ca5afc6548f03fe95e8cb936e75a1d033908cc9d2366bc620bf7fbf38b411c0e"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/compacted100k-before-2.json",
+      "sha256": "e09b6a4f8c1e37437cf0090d38b9b695cbf869635ad5a031dc79513b341eb296"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/compacted100k-before-3.json",
+      "sha256": "03ffdd3404c7af247c7bc5c138080a93e0cb3e7dce74127e9ff14b25167e4c82"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/marked100k-after-1.json",
+      "sha256": "f697c30bca22aa125b2fd6ec0345c81cbbf0139241c2aa50b3f7d5352dd35878"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/marked100k-after-2.json",
+      "sha256": "145f318f86e9d55e913faef25eaf67fd2ea5933bb43e70e2a9e433056bb89b86"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/marked100k-after-3.json",
+      "sha256": "30b53ac8541544f18e80e1db245c316fe1876823211adfc86a649628a8a6cbf6"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/marked100k-before-1.json",
+      "sha256": "27c70f22617dc0c66bc267e80aea3e6dbe67af8aff704a33796bfdf6e5f861d5"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/marked100k-before-2.json",
+      "sha256": "562c14f0d88752d2b5b9275ce8fdbca7a7db7bb37040b96b91b8cc0b6dea17df"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/marked100k-before-3.json",
+      "sha256": "50b7502ab86e8efd4ddfcc7a65ee22d2cff6541b8d6386a5edbb28205d850746"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain100k-after-1.json",
+      "sha256": "672745dae4865974bfa0aee9a86a8eea8708e35d629ea0c1526d62d034d06747"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain100k-after-2.json",
+      "sha256": "8d9771b14512b8ac04e4e313917a7e5ea7bcf6b7a96741a2c6f96a2c7b3cf6e6"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain100k-after-3.json",
+      "sha256": "10209248f0314734a863f7a9e5e6a142244f39b163a5b40130b7d7435100c331"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain100k-before-1.json",
+      "sha256": "4d91eb74367b971c54071f1e836e0f68a5f185a2831f621ce259e30302493cd8"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain100k-before-2.json",
+      "sha256": "d0bdfde28e0dea519a0e75612c40f279aa36184f33cd79e3bdba053433da2ece"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain100k-before-3.json",
+      "sha256": "8159d7ba62b69affdad7196cc0ced09c2d29e5c73a9c93912f58754530c2b718"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain1m-after-1.json",
+      "sha256": "0fb6da18a9f45e72f2a129c2d3ddeddf354466d2bc69f20e79a5f25a0c0be4d5"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain1m-after-2.json",
+      "sha256": "b2a95f546be5a73ef989ca47539f1824bd790a6b71a8871d78f2ebe790649310"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain1m-after-3.json",
+      "sha256": "2fc029595f5ec30057d9c17b47ac78d5d7cd439c0c54aca0414e8d997591290d"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain1m-before-1.json",
+      "sha256": "747ec62532c8e6edf05989c28b4fda1c8569310969ee535d28a312921ac94652"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain1m-before-2.json",
+      "sha256": "3b33680a73911bb25fc1bcb029e3ec6cf9800ad8d935379e830b209aaf0ad5cb"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/plain1m-before-3.json",
+      "sha256": "b4422092078b9cbad9bad25223be044b7c33c6c182742ff896ed4399d45eee5c"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/sparse100k-after-1.json",
+      "sha256": "026d41230d85b5239816997a27842603e03e87e17d865cf82cc54e94fa43f700"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/sparse100k-after-2.json",
+      "sha256": "4ea6edda0622ff1fbb585e429475aead5af8c64d4cd9e5058bd83e453423953b"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/sparse100k-after-3.json",
+      "sha256": "4b577e483be1952f5c93127b4940270649ae752263f8e5c5b13ecc78cfd4ad8c"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/sparse100k-before-1.json",
+      "sha256": "75f5787f366b0bfad277a8b8acd92e42a0610112a6b3ccfc86347ac2d8c8533e"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/sparse100k-before-2.json",
+      "sha256": "16cc2d19fbeca7db2b7c9a59945acdf43d35f6ea9016118cb2eb27a4ad108acf"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/raw/sparse100k-before-3.json",
+      "sha256": "fd3f13cf15953c566b4c8c691562cf2b33a9220e884ffb1697eb4c9a936f7fcd"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/report.md",
+      "sha256": "15c35e58b0b32c93e0ddaf7ed86698371ac1d350908cfdfa3960ea69a666e26f"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/summarize.py",
+      "sha256": "a4d666719bcce6b64cc8087987cb89c37f0a8915dd25c8a437f9dbad2a9dc551"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/summary.json",
+      "sha256": "5cef570d3cfc345e1b30483f72e88b403be5b4b0121940aa5a067066b042fd00"
+    },
+    {
+      "path": "benchmarks/results/metadata-memory-2026-10-24/validation.json",
+      "sha256": "bc7c932863efc1512f8985d8fa18e5e3ea88410fadb6e77c8df769f91ea7f30e"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/notion-large-Lexical.json",
+      "sha256": "75d3c96deb6fff2653273eb5b6f1d85f4fabc78753e99e82246f922416ff30aa"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/notion-large-ProseMirror.json",
+      "sha256": "ce3680f5bd7783db59d151a08ab5f566d308f76313e334130c09c2c6713d0b44"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/notion-large-Slate.json",
+      "sha256": "1c8c39a84ff7aa605773175d72867b5fc9f00a20ff03fad792adefb9e8476775"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/notion-sample-Lexical.json",
+      "sha256": "ba36dafe990472cf7826ce2f14cabfdad4e5c215138a96ca058e3ba256bea1fc"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/notion-sample-ProseMirror.json",
+      "sha256": "3bbfa1c62e481a2a101de0a7dbe3419efe12024e1375aaeea015e9a3c185f723"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/notion-sample-Slate.json",
+      "sha256": "0cf85ae4fa1f39f2e1a853d11a00b2b017f08da6d0a80d77abdca1ca98b52c60"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/presentation-large-Lexical.json",
+      "sha256": "630f9cf57a96ff701f3b2903d6f8f55accedd4021a81b5b95884766965401886"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/presentation-large-ProseMirror.json",
+      "sha256": "eeb4f28a5e01977bb226ece889769bacf7b806e29301f683662718767fd50b77"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/presentation-large-Slate.json",
+      "sha256": "c0d991befbd72c15831214eea933bb4cf158da2d576d3161f52fea9fc142d37e"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/presentation-sample-Lexical.json",
+      "sha256": "ed8e244b8ec871432069d53ce3fe0991278cf9893599d0c9bc34a107937c9cbf"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/presentation-sample-ProseMirror.json",
+      "sha256": "61a9867e51e9ed414471256e3d2345bcc31c22c96f2284575c5c5541dbfd94ac"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/presentation-sample-Slate.json",
+      "sha256": "3f9c2b6b6ca0126fc57fa6bc55ab6bd0c1b1cc4c506310797d6086cc7729ab3b"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/word-large-Lexical.json",
+      "sha256": "11029f3b6dabe8201f21dad9190ca83b8add874e0f8b8ce1b110703431c1989f"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/word-large-ProseMirror.json",
+      "sha256": "b7076ab19298beda6488d1a81ca588d855ab01a47f82699aaac98314a5069171"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/word-large-Slate.json",
+      "sha256": "a03242b77ce4114b226fa31c16c8baaa652595e7a9326e67cfdb2f50061adbbd"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/word-sample-Lexical.json",
+      "sha256": "0cb55958ce7c60b19aeb1dc04e1af6a208dd68ddeede48237dfa480d26b24fc0"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/word-sample-ProseMirror.json",
+      "sha256": "39097f431eeea04625edccc19ec74f32e23905f9739304af64bf3309738287a2"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A1/word-sample-Slate.json",
+      "sha256": "2cfc74cd01f22fed5aa039e0317677550789e78ede3d4fd8c0db36a0abf8a181"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/notion-large-Lexical.json",
+      "sha256": "9f9605aa4c2d554317fa4f7e4ff004a7c353d93be33698d13ed34293cec8bb99"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/notion-large-ProseMirror.json",
+      "sha256": "b37d9412acc40571f5ce76a6e26b57c7bf7dd33d0295ba21200a417b69b34f0a"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/notion-large-Slate.json",
+      "sha256": "08612f60b42ecf8fceee9ae9327132098475d63d36c35402c0fe5771f8240edb"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/notion-sample-Lexical.json",
+      "sha256": "774bdad29dca96532f6469aa3c0fb621ba7609e82586b9c8e0ebdbe79fc6ad96"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/notion-sample-ProseMirror.json",
+      "sha256": "b960bd2b9b579f4a16880c1fcc4786bc100c9bb18b48d4fee8c3b146cd625709"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/notion-sample-Slate.json",
+      "sha256": "7521840b6e04c55f72a04071e695fa1f94eabe6d8c7eb417e9cedf08a3796b12"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/presentation-large-Lexical.json",
+      "sha256": "63a1450867ffe40909c101ad2d214da62fc6a2f41d13a6c9399f0640f08820d3"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/presentation-large-ProseMirror.json",
+      "sha256": "16b36f68f238c7e045da106b2831f15edfd16ee58037e66c478ac6b1c6437fe4"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/presentation-large-Slate.json",
+      "sha256": "17b3948c1f8e84587fc59b9d3b76ac5aa25e3e17cb94cc1535bb26ec7ba1d368"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/presentation-sample-Lexical.json",
+      "sha256": "6c4fc4e82ab33c6cf508e7dfe7cdc95c569394914c6543991ee667598d38b7b0"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/presentation-sample-ProseMirror.json",
+      "sha256": "476acb113e1add9ce58dd568153474458ed40d036a043d0a88d5e4828d002db4"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/presentation-sample-Slate.json",
+      "sha256": "9aec8c3a364c6c05ca5a7270bc3d69bd3aafbc6d7d029bf74b23c61bd4f3c9ff"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/word-large-Lexical.json",
+      "sha256": "37970915e498f971e1ccb9d0ef8f1e8ba59d0249527d7a6f99b678a78fa59c4c"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/word-large-ProseMirror.json",
+      "sha256": "5026bf5d570ca6ce6dc60f9e5ff12d26acc03e411a23330d88cbf330566f9fda"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/word-large-Slate.json",
+      "sha256": "2cf4b14d987ee240a98037829a3b079dd0c960802f2d6067db4c68ab7e685411"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/word-sample-Lexical.json",
+      "sha256": "737442a066a5036fc9f236661c7cec92cb32ec56e3baaf0115d5c9d9d1090a47"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/word-sample-ProseMirror.json",
+      "sha256": "bb85bd42b31a18d167a1cc9c876db516f828512272e3916e0042108d3b320a1c"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/A2/word-sample-Slate.json",
+      "sha256": "adaf744ef2315d660143576a4ece320f8864922fd67a33152bb540b1fb84b351"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/notion-large-Lexical.json",
+      "sha256": "38f9475eaf3e7ea05579396e9e12acfbf9adc1013a8a8d8e2002a3cf4e8775c6"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/notion-large-ProseMirror.json",
+      "sha256": "d02bfc6ae1e83f44b38dd9579e86cf7a4ec49bb6820b5d8325c70e4ec4376315"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/notion-large-Slate.json",
+      "sha256": "16ae6876fd255ae2f20f8cec5012b1e15450ca50c2719afa566ed6dd15616c54"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/notion-sample-Lexical.json",
+      "sha256": "f5f03986e6d1d20e410c1f4cde320bb670787c0554f68a1b8dbbebe86edaccbf"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/notion-sample-ProseMirror.json",
+      "sha256": "99dd6e354c8042bbed68e43c439c3b67e45973a5284f1ab3fac93e32a2c76ab7"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/notion-sample-Slate.json",
+      "sha256": "64d851bdb3d883a303e631c6e082e9255470e39d0f7d03507b6ee87e681b623b"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/presentation-large-Lexical.json",
+      "sha256": "b2ed54e585d32c9c7a23167b9f1754a2c0078891acc83badb5693bedb0f5e45d"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/presentation-large-ProseMirror.json",
+      "sha256": "a50c1fc933750f26274993905b0d8f479734675c6c932b71aac9980f51cba951"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/presentation-large-Slate.json",
+      "sha256": "2cf71029f7ebffea94968b040db547b4f4d7d26aa08dfd5b80e69bdf4d6eb035"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/presentation-sample-Lexical.json",
+      "sha256": "8c7c4eafa59e1872e8735b69e482ab75971af6a651f75a926b18f0443ab4da29"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/presentation-sample-ProseMirror.json",
+      "sha256": "8c09345feb5dc95ca1af73aa8a0b582b39a8faf9bd4df6c548b6a2e39d169817"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/presentation-sample-Slate.json",
+      "sha256": "dee4027f15dfd9ec98f0a9a0885cc5b4091b7bd85d308a634e386d4d9bf2cae7"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/word-large-Lexical.json",
+      "sha256": "0af75915f084849ddd63b88c4c67fe3b0cc2c9a5e1c5e712deb7fe96aeb6445c"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/word-large-ProseMirror.json",
+      "sha256": "6ce8cfff8c172a4f7a1475c247db48b50b5d443527111300f4ca072275419830"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/word-large-Slate.json",
+      "sha256": "fcbc3d01af698a7064752b6391dab7f24b85ff293656379c03431ab05810698f"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/word-sample-Lexical.json",
+      "sha256": "cc90f2b255d1437ed8806b7eaffc76af3a295239f43568ed0310aa5d54f45337"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/word-sample-ProseMirror.json",
+      "sha256": "82728e514aebcf53a6c2fe269288fdaeee031c4daef6e0ad5a735000566769aa"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F3/word-sample-Slate.json",
+      "sha256": "d8e4ad9fe0a6a7279c80ee27e66d18ef8091664fce7273ac055dabe4cd4bd50f"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/notion-large-Lexical.json",
+      "sha256": "b3628e8cb68c556b4b1af4d9d2256bffc70e65fcc2932f995047ff33dabb6da7"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/notion-large-ProseMirror.json",
+      "sha256": "a326dd85d021342904f2b575e595c05d46c86b625a9a98662e986a4a8a792fb4"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/notion-large-Slate.json",
+      "sha256": "bda0ade61f05f821b96cb3cce5caf46fcfc25878f2d5a24839adac5bf8062734"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/notion-sample-Lexical.json",
+      "sha256": "f1cd9210dc01013ea93efc76254d7a3ffae93e0164163c0dd0bd4651f4fd23f6"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/notion-sample-ProseMirror.json",
+      "sha256": "630c55fe01e60f8faa3bdfbcd921864dfa94a106e93847e84a3be5637ebddae7"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/notion-sample-Slate.json",
+      "sha256": "87ea5bdfb53544ee5a2adde4df77c8ebe6a4a93b1b064824bf97b6f9a51efb93"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/presentation-large-Lexical.json",
+      "sha256": "1e8f2f0c9fbfe229e89d5c663e169c538c4300725d0d5f409c6e0e7ef37c6c94"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/presentation-large-ProseMirror.json",
+      "sha256": "89b7b2477a4be9a06beaf4e9e7d82afa4869f16a25655ec82eadf61cc7e14af5"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/presentation-large-Slate.json",
+      "sha256": "673960e0d7f54fcf913ade1466b219c4cfdb9957569f215291051f6a5bc3d4d2"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/presentation-sample-Lexical.json",
+      "sha256": "9ca7b18833526fc2fa615e258940c5494a1de9736b4c44381aa3f9d9b00388c0"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/presentation-sample-ProseMirror.json",
+      "sha256": "7c06b532f4c85a1bca423997b35f43af4be2c5b4d97a3809ea0dc7f4c0c8ba28"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/presentation-sample-Slate.json",
+      "sha256": "be40949d4730166fd84420c636aa014f93e6c3dc9b9cf63bf7b400ae1824f15a"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/word-large-Lexical.json",
+      "sha256": "c6ccd62809d5872a34629189e5dc9ab1133f6e251c984ee3aa7463fecb8b772d"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/word-large-ProseMirror.json",
+      "sha256": "3598254b839eb719b2623b02c4de0725eff80c8ade3d02a768b49f04dff37ff7"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/word-large-Slate.json",
+      "sha256": "caca4e29ce4919ec297d3cf8c7d978917b6a249de95172fae4c3bef4b50da5a7"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/word-sample-Lexical.json",
+      "sha256": "480b70480b3ee96d640487e8e9f4eed8b884eebbc08b99be30b0e0f7e951e153"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/word-sample-ProseMirror.json",
+      "sha256": "fc6671dad8f0f76efa2ca0e643eaab1a8cd0a7545b661c2aad703268c8520b9f"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/F4/word-sample-Slate.json",
+      "sha256": "a4e049502acb3d2f9153f88e0b91ec63bd702266999f3761f68ea38173687478"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/report.md",
+      "sha256": "12dcfe511160acb6a77b82cc69947402da2b00285f3def300c0dff488ce900b2"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/summary.json",
+      "sha256": "b26a46f574f0c8cd938a2a874c234baaa4f4d3140c7abdeeaa8501e9f9794bf5"
+    },
+    {
+      "path": "benchmarks/results/native-receive-2026-10-24/validation.json",
+      "sha256": "910aa6b4b43608f211a9ac01bc43812d30b749b4e68a71926243fa6f42a3e0bd"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-large-Lexical.json",
+      "sha256": "a0e50922a5547ebf1a7d3a1e737ea4904ae1ecc8fc526dab75c59c4d45807866"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-large-ProseMirror.json",
+      "sha256": "937b9d056ee9b718229dc598dcff7447fa5b4f34be9dcdfcdc68c474f3f9202b"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-large-Slate.json",
+      "sha256": "11ca1ee35c5d70dc8a3d5463f0bda2de332d8f437b7d5f86ae1897c7184695f1"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-sample-Lexical.json",
+      "sha256": "1291d24bf16e9bd0e9bb36821e94764d1d95ff4cf9fe28bdc82e452765e15305"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-sample-ProseMirror.json",
+      "sha256": "ad1a6b8bac974e80c45890c1bdf4ecdf56dd00171f640ba27dcbffac2cee1a2b"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-sample-Slate.json",
+      "sha256": "e6a9905899aa432c9f3a51b34bc202e1fd6036a94184aeae240ec76d4d2cc06f"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-large-Lexical.json",
+      "sha256": "1139908609556fdcb17ce18e1e5c71ed1d9204afe25d80a3ba3eeba6f1fff022"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-large-ProseMirror.json",
+      "sha256": "e90fc7b533731b0faf5e673b572d43b19d1b191824bef27eb43cb4cb6d37baa5"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-large-Slate.json",
+      "sha256": "556e0378c50435be954b98338292384152f1f61f787add273014d34259dc6cb7"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-sample-Lexical.json",
+      "sha256": "847bd8f51877864e648baae48ff16f36bdcbbf02d7842b37dfb16d217143bf85"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-sample-ProseMirror.json",
+      "sha256": "18611c7fa69a851d0f55678a33256bd44ad6d25d48662c8ea86943dde52a82a1"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-sample-Slate.json",
+      "sha256": "7a09c19857818d1039e8ed393620335a08e860b7698d35a441486ba6a8eece60"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/report.md",
+      "sha256": "7773123c2038899ab44bf3ba54da9bcda3be0b23f41654025580f2a8a9b6c7f1"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/summary.json",
+      "sha256": "666b9dc8e9ca603053fdbdc9a9c88f2a1a3879b76f3a9651260261c44448e5e2"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/validation.json",
+      "sha256": "50a88e0bf9a6c811c2afe4d83c6f27d3f8780bc602cc2f98381d014de4e8b105"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-large-Lexical.json",
+      "sha256": "cc02903c4af9c3f66be7c4f56f8d3e4d122f5049501bbe24acc03fab2365d548"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-large-ProseMirror.json",
+      "sha256": "1eaafa9382082f149aaf53829f50aa02c98d0d2fcd9fbb8f5fd7c4cf9ebe2a74"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-large-Slate.json",
+      "sha256": "97861649cee5afd6d2c56def0270825c8bc3f48b9bdec053fc6e3e7418cc7439"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-sample-Lexical.json",
+      "sha256": "59865c60b92bdb1e6c07e19e87dc7517ee7ecf4371b0ae459ba86bf232daf4b4"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-sample-ProseMirror.json",
+      "sha256": "a82c18251862ae71c84dc81b505eeb8f55eac1ac0ebe097b9a75d358ee308835"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-sample-Slate.json",
+      "sha256": "363b05c661008c376af3db6298d6055ec219e94026c5ed744b4851e016fedad4"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/baseline-core.patch",
+      "sha256": "85520fd53b5a7d5fc80265ff5ec1cab371f04fe6741f5c5042d8e11784a65826"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/baseline.json",
+      "sha256": "62e4f7eceb62c0258c08187f3bbc81eee0b692ffee918d7985e4d683c5f2b190"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/control-summary.json",
+      "sha256": "9adcafb2828e207d54507d60842bb4876e2c2d996559e307cb492a4319e86ff3"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/alternating20k-after-1.json",
+      "sha256": "6496e4b406033bbd753d6588c048190be45c44643cb07de3c327ab26f84b4c37"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/alternating20k-after-2.json",
+      "sha256": "ced1c5b3c5a21d129037c8f686d31b498018d081c6e650dd7a1cccf61e97321a"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/alternating20k-after-3.json",
+      "sha256": "1dbbd4c7ea694321d9673e9bbcbc0a8f745bc817c9b0a227823890ac4c76a106"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/alternating20k-before-1.json",
+      "sha256": "8b687de09c8ce6c1c4f6b937dd0231a9bdbfd88f51ca208955e53a0f77e1e43a"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/alternating20k-before-2.json",
+      "sha256": "b729acece21b3d8b324c6b91b58bb68c6f51a2f5b48520a9b87d77bf16881b7e"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/alternating20k-before-3.json",
+      "sha256": "7cd9ed3fe977ee8b467babd7ad6854b5764eaa6ae44ca5067cd97a7f0947ebad"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/links20k-after-1.json",
+      "sha256": "9d0204530c9606f8fab984e343dc61e0df5d83592b54dd518cd4bc292ed9d641"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/links20k-after-2.json",
+      "sha256": "79ab4ceacf2bdd7d16ef3aa66074ba324cb3b1a8406e1f5272351f5db8ed6093"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/links20k-after-3.json",
+      "sha256": "fd891f84d65b50c1d4faa4c6b4c32b28b0f6d30d39ea5050b702fe42513d1f9a"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/links20k-before-1.json",
+      "sha256": "0424612445c2655b6cedc2db98c326c9ce639f0707f4f34204a4c5d206e47ff4"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/links20k-before-2.json",
+      "sha256": "53be569c5c7ffb42c28588307f9e6206ee8cec546810466a6282183616b17914"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/links20k-before-3.json",
+      "sha256": "4be02b28e4717f1afca50a346428e075f4b86fa3a6752fcaf3a3bc2be48764e7"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/paragraphs100k-after-1.json",
+      "sha256": "347e59bf37ccae344982b57e9b4b4081fead090903c5d227884858392126f5c9"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/paragraphs100k-after-2.json",
+      "sha256": "35b64b5a685dd905696201dfe5b90ceb2e2086d0defc76643ac973b9099df39f"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/paragraphs100k-after-3.json",
+      "sha256": "c3f57467b244c956b2d3cd980ae407a94f583b3287659b33669ae83123eda212"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/paragraphs100k-before-1.json",
+      "sha256": "0c841c1ef8889d77e4d97f4bb9568fe795c92cbfa16530d70f756858f2256302"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/paragraphs100k-before-2.json",
+      "sha256": "8722beeecf43511911ecbb2518c7cd91641ebd95a48629e367525ea177a55e84"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/controls/paragraphs100k-before-3.json",
+      "sha256": "5cbac6e093535e36ac46b43ce65f2f456810c741de507c29952ce7fd9bcae025"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/execution.json",
+      "sha256": "cea62bd20990d2e2eaa2ebb51f15479cdc1ec29a4056151be030ab6c4fce203e"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/profile-after.json",
+      "sha256": "fea07e55411b5e4a7827641519bc41934450af1e7fe9531f6a2b9bbc5419777f"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/profile-before.json",
+      "sha256": "d0cb51ed97f6695da2142237e5da74051824a6a54ed9f58f45925b520443af0e"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/actors100k-after-1.json",
+      "sha256": "cd3d086c8e1b5b4730e7bc3fb6ba174debe0d4de02a81b998581d292b62ddc24"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/actors100k-after-2.json",
+      "sha256": "177c30785f8c445bbce362280888683b05ea839c1b3058176642b4cd4257e9e2"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/actors100k-after-3.json",
+      "sha256": "0f88ae26ce7018c316a46a239f4a0ab0cd588138915e22439efaee293338acca"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/actors100k-before-1.json",
+      "sha256": "7086f45cbba83e5762133d1c9e229d19b116fff2c41890ca662c1f515c5f2f03"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/actors100k-before-2.json",
+      "sha256": "80a5a6f7566e3eecb6e6bd04ae0502d70f5d77c4755e035535e889be8cfe7c98"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/actors100k-before-3.json",
+      "sha256": "d227a9b6633dca27029846485d450db2f8ab445ae9bf562366ae4e6466656e72"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/compacted100k-after-1.json",
+      "sha256": "d2747453b8e4d9484654402fc4ce7dbd96891219673c2e013f38e011681166a8"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/compacted100k-after-2.json",
+      "sha256": "dd7a00b1573338d24ede3e423bc503c1022dec5a4e9ae8b77d5e3d80a3af539e"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/compacted100k-after-3.json",
+      "sha256": "827d3895194cf4c51659e5600dcd29c6dc32bef244f292bfde85ecd691fe1f62"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/compacted100k-before-1.json",
+      "sha256": "89ea8c139de31f5e6ea75a41dd736db28045e77b78275fad23bdf7648893daf3"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/compacted100k-before-2.json",
+      "sha256": "64e88ea7a65b34d8021760373baa8c454c5fb8ac9f8d912c658626aca1ab3024"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/compacted100k-before-3.json",
+      "sha256": "e16212d29b6ebed8bf6ce756ae888b4271c749ddf54b69598caa49a16e33559b"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/marked100k-after-1.json",
+      "sha256": "9cef933d1a654be751197cd06ce446eab362279eade5324e705edf6921eeba47"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/marked100k-after-2.json",
+      "sha256": "d7dea18540825a1488521048f0c83c3761d5c753fdc6eadc2cf5c76a436f8caf"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/marked100k-after-3.json",
+      "sha256": "a00119f4b9bc0c6e22b5be74368cd6416d241ebb2cf944066c3261ffa681d385"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/marked100k-before-1.json",
+      "sha256": "2e3ca07b3e21f70beba6be3ccb550f0abd78a01a967c43dc47dcb6b256bcdd0c"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/marked100k-before-2.json",
+      "sha256": "f213b78927a44536f7ee0ea5b356f0bf97f56c512f1b32a9e9192fe2b4510277"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/marked100k-before-3.json",
+      "sha256": "ce9e69c0779d6d97c67b244a066de625d885f1d77e3162d0057d532e299b1aa9"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain100k-after-1.json",
+      "sha256": "66819a4dfdab2803b3e66626c9c9a08d2b27bdbea2257a54038c8e9beec660c2"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain100k-after-2.json",
+      "sha256": "4b68c24df77d57cce986dab18286bd9e208c36adb2f5ae6a08a6db0a74c71e8a"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain100k-after-3.json",
+      "sha256": "0d1f2430f1e678065e47e01428acf66a7448eae72437e233ff9db9ccb1fca4e4"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain100k-before-1.json",
+      "sha256": "1211964df09de45bbf4b2531e23dd3a51daf504417ed1311e8f5543c9947d4c0"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain100k-before-2.json",
+      "sha256": "2e76522fcc1b07ff4aaf8ee4e63a9b55162e9f9b0437fd4abb7e0c0e9412f1fa"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain100k-before-3.json",
+      "sha256": "e1368dbf231b3c31011202a333bdab44fcc3f7a6ef1a5a579e9c2f6314ea9f2d"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain1m-after-1.json",
+      "sha256": "44ea3d96e6f1121a48118d144d6ef17a56a60674a859787a93edee730b718ff5"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain1m-after-2.json",
+      "sha256": "8d53d0fd27b69cc5c15b1bfbab8c0782980a3dedaaaea840017923776c2cf2ce"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain1m-after-3.json",
+      "sha256": "c47f412fdd20bc4fafdf8414b16aebbf06f3a2e3ed932701a134a30fb9f26d95"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain1m-before-1.json",
+      "sha256": "46ec736778525e708e0004cff640c386712ae8c36a4bd05235a168b10a2ee6e1"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain1m-before-2.json",
+      "sha256": "969030010886db1a9b437d6ca55362491d3a8a4f05cd1910600629800e93ae4e"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/plain1m-before-3.json",
+      "sha256": "4c2babfbfc13d4b705e4e6b270591f88aa25b22cf089ccf13888ae2c25845487"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/sparse100k-after-1.json",
+      "sha256": "a7eaf7250b85f8dcdadf6de323cd3a77b150d7881ddba5bed34f71434f26620d"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/sparse100k-after-2.json",
+      "sha256": "58ccca01cedbd431c4096e93aacca954b7b2b2311543f92bf2278341b8ecfca5"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/sparse100k-after-3.json",
+      "sha256": "71ccc3de3557f3a03703416b9d6a403ea5a3d3ba8d122334f757caf9cad48905"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/sparse100k-before-1.json",
+      "sha256": "9de51b17f1bfbf75efa937785e6ef705cc7889870745c57762c02a0013c03c5d"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/sparse100k-before-2.json",
+      "sha256": "9fe0db28b3e39c3c56780d2906891b13ec73a700c3161ac06307e55b2a0b7c17"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/raw/sparse100k-before-3.json",
+      "sha256": "22ba49a5f4555ef5a1af184b4b55afb723cd753261f7969a70e7653a0b76c3a1"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/report.md",
+      "sha256": "73cc60a97b02cea7e8fed72c74468a3219c539a5c64546d6ff25e33bb6b574be"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/summarize.py",
+      "sha256": "5db6c8535ecddbe7c7d602c2fdb0681de86601f030b8eb145e9cd5f6893ad877"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/summary.json",
+      "sha256": "1ddd4e161a27fa019cc46f4bac9c6866269823cc3483a190f2c84cde1fd1fa9b"
+    },
+    {
+      "path": "benchmarks/results/receive-model-2026-10-24/validation.json",
+      "sha256": "cd2f277fa9c1ec8bbef5b65b67974ac59e0aaf2a17d2122416e50958d0a7f246"
+    },
+    {
+      "path": "docs/design/continuous-text-storage.md",
+      "sha256": "d65b3ef4e3e5cb0b47d98217187fd96d7bcca875e9fb9724aa2ec8bd4d379f7a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "198df593af3e4b9d4a829e55958aca81174af00630431ef292a51c7528d547d5"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/doc.ts",
+      "sha256": "5a6139a74f886b92a417e7710886162702aaee8a8aaab61c39f4b46df4e6cca4"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/key-index.ts",
+      "sha256": "ff447129ce1d006ae1cb24430b21d448fbb41dc043098145b07a3bcee126a1dd"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/model.ts",
+      "sha256": "caf25d46ecf9b4806f4a588c3dc2ceb76cc1b857d3609dbd89d508d62c541d79"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/binding.ts",
+      "sha256": "d6b600269c89473053c0c98f393dc400909a3704a87011940378064fbacce4a2"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/convert.ts",
+      "sha256": "37b4089c8514c12374a2fe7d77e7b546d66a9ac7173d9e27d88d9209747ac5e1"
+    },
+    {
+      "path": "packages/doc-sync/src/slate/binding.ts",
+      "sha256": "c83ab25ef3e0e4111a117fafb6599a8bdd3e909a6bc1ca4ed5ad424732848734"
+    },
+    {
+      "path": "packages/doc-sync/src/slate/codec.ts",
+      "sha256": "cd25f5ef073282e46ef7b5000821219101514c74cb27329f3ee848a4c53977e3"
+    },
+    {
+      "path": "packages/doc-sync/test/key-index-doc.test.ts",
+      "sha256": "4852b2e81428b91a4b1a482dbbb79bb515b3198093e5c465d030419c9944a937"
+    },
+    {
+      "path": "packages/doc-sync/test/key-index.test.ts",
+      "sha256": "21636041e54cfcaff572e4eb0df1657c9803bfb26bf6248b28a8a6046c83fd55"
+    },
+    {
+      "path": "packages/doc-sync/test/lexical-binding.test.ts",
+      "sha256": "25669aa0b2de973b1fbafceacc0a923e92d6b8dc173542ffd97e4283d32cf70d"
+    },
+    {
+      "path": "packages/doc-sync/test/native-projection.test.ts",
+      "sha256": "8d891c225275da9fceb2ade518e4e9ad5b17280fad4f1952a9cd49ccc9f8670f"
+    },
+    {
+      "path": "packages/doc-sync/test/receive-model.test.ts",
+      "sha256": "d58e39b2983d37ebaa40de5b0d25dbb4ec0910c8d2531b52c5a29bc90e097d67"
+    },
+    {
+      "path": "packages/doc-sync/test/slate-binding.test.ts",
+      "sha256": "2744e001e4154bc6a40b10848fc0e916e031758f2ca679e8a2da1283ec5eca24"
+    }
+  ],
+  "localLogs": [
+    {
+      "path": "output/validation/main-integration-20261025/cleanup.json",
+      "sha256": "6d4ea853f3a137b6aa78227e5dbc39d4c26eb8904f0c61c7028c8c6b9e2f7aad"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/compat-unit.log",
+      "sha256": "af07b07b0bd04ab5e3d9b75f6ce27f133df35a4cca604a22e9e83605bb77b238"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/docs-build.log",
+      "sha256": "531f0cd83846e918217cb776f2262c2f0dde0eceea9206df0db2e146155276d8"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/docs-check.log",
+      "sha256": "12710f092eff683216fa5efb843bf850f40f32d05bbeb38502f82295e8bf4b61"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/finalize.py",
+      "sha256": "c5dfcba112e4b125b3d16ce289ac46ff789cce7650c2e74e66d0555534eb797b"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/full-test.log",
+      "sha256": "f0d25f84b238ecaa7145b87b533684cee90df914ebf40d35b11b8421f8ab79d7"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/inherited.patch",
+      "sha256": "9f37374970647385de04337d92ab55a74a99dc12310ce804f4c5bb58708fe211"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/product-build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/product-bundle.json",
+      "sha256": "6c042850357883f23b3b71220ededd3673b48bdc98727ca4f3ec51aa3f22b4b5"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/product-smoke.json",
+      "sha256": "9b817dcd4ec88ed4309209ae05e9b9561ce89c32f30d65853a76063c629b51a3"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/product-smoke.log",
+      "sha256": "c018ef7635e318d575379515dc3f4a1456e0369c5792d70c7d3b0ca758b3e1b2"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/product-smoke.mjs",
+      "sha256": "8576cfa9fef5754e9472ab4219e757dffe9d19d510e6ae35aefa60b4a6e06a80"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/product-start.log",
+      "sha256": "6dad2d5ec6f3b4ccc9d0cc64a5ad7f761c3a3832e5f38c3688a843c253028738"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/typecheck.log",
+      "sha256": "5e1fbff16a52c9a79dfb4303d8f7a262d17c1213b97e9a40eaab3d5d5a76d0d3"
+    },
+    {
+      "path": "output/validation/main-integration-20261025/untracked-before.json",
+      "sha256": "aadd805de30dd049492405b0dc8d9cf9c1eb1e1ca7f9d500a257ec59e8a6dc87"
+    }
+  ]
+}

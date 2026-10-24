@@ -1,0 +1,185 @@
+{
+  "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "node": "v22.19.0",
+  "head": "499c221bcd7ce85fc91f9d6f2a144822e385b46a",
+  "started": "2026-10-24T23:41:29+0900",
+  "sources": {
+    "before": {
+      "output/validation/receive-model-20261024/before/src/crdt/schema.ts": "6c7e6ab70dc2e12d3f81ea45122f7782acc7e816137a919162b742d9c9034b63",
+      "output/validation/receive-model-20261024/before/src/crdt/history.ts": "4fb8c735b47a2779f09bf3ca93e302b66e89201435c4c70f9ebb9a10060690d1",
+      "output/validation/receive-model-20261024/before/src/crdt/commands.ts": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10",
+      "output/validation/receive-model-20261024/before/src/crdt/annotations.ts": "32b06a1977bc191647c663ba50d321313826d37aa974b5390185359839cb3eca",
+      "output/validation/receive-model-20261024/before/src/crdt/placement.ts": "ad27804d11d719f95a6e138e3eabcf904cec515df84108a3e264471d41845e1d",
+      "output/validation/receive-model-20261024/before/src/crdt/doc.ts": "70f4cfe8e5d3da96686b1d6b2208090502891093891e9686b5a9327d14768d7f",
+      "output/validation/receive-model-20261024/before/src/crdt/model.ts": "854383eb2566e90635a8937e18d9c51cdddfcd1a9a90a2cd8be355e56b95d2a1",
+      "output/validation/receive-model-20261024/before/src/crdt/edit.ts": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f",
+      "output/validation/receive-model-20261024/before/src/crdt/text-storage.ts": "ff94666e0a3f1e06d89a347e80d9692414abc43445076f036fff6e0d7bfd6b34",
+      "output/validation/receive-model-20261024/before/src/crdt/key-index.ts": "ff447129ce1d006ae1cb24430b21d448fbb41dc043098145b07a3bcee126a1dd",
+      "output/validation/receive-model-20261024/before/src/crdt/cardinality.ts": "7ec912022c1cb848e6e65494b7d28c39af0b0c0658ccd76649031078cc4e082e",
+      "output/validation/receive-model-20261024/before/src/crdt/fields.ts": "9ba7bd8fe7b23f2513b67460f4a418340cedff8c6939b10b4e8fa91e53e21b2d",
+      "output/validation/receive-model-20261024/before/src/crdt/ticket.ts": "70f8b71bac19b6f9039056570256ac41890f99fdc46da1675e91bd875aed8298"
+    },
+    "after": {
+      "packages/doc-sync/src/crdt/schema.ts": "6c7e6ab70dc2e12d3f81ea45122f7782acc7e816137a919162b742d9c9034b63",
+      "packages/doc-sync/src/crdt/history.ts": "4fb8c735b47a2779f09bf3ca93e302b66e89201435c4c70f9ebb9a10060690d1",
+      "packages/doc-sync/src/crdt/commands.ts": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10",
+      "packages/doc-sync/src/crdt/annotations.ts": "32b06a1977bc191647c663ba50d321313826d37aa974b5390185359839cb3eca",
+      "packages/doc-sync/src/crdt/placement.ts": "ad27804d11d719f95a6e138e3eabcf904cec515df84108a3e264471d41845e1d",
+      "packages/doc-sync/src/crdt/doc.ts": "5a6139a74f886b92a417e7710886162702aaee8a8aaab61c39f4b46df4e6cca4",
+      "packages/doc-sync/src/crdt/model.ts": "caf25d46ecf9b4806f4a588c3dc2ceb76cc1b857d3609dbd89d508d62c541d79",
+      "packages/doc-sync/src/crdt/edit.ts": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f",
+      "packages/doc-sync/src/crdt/text-storage.ts": "ff94666e0a3f1e06d89a347e80d9692414abc43445076f036fff6e0d7bfd6b34",
+      "packages/doc-sync/src/crdt/key-index.ts": "ff447129ce1d006ae1cb24430b21d448fbb41dc043098145b07a3bcee126a1dd",
+      "packages/doc-sync/src/crdt/cardinality.ts": "7ec912022c1cb848e6e65494b7d28c39af0b0c0658ccd76649031078cc4e082e",
+      "packages/doc-sync/src/crdt/fields.ts": "9ba7bd8fe7b23f2513b67460f4a418340cedff8c6939b10b4e8fa91e53e21b2d",
+      "packages/doc-sync/src/crdt/ticket.ts": "70f8b71bac19b6f9039056570256ac41890f99fdc46da1675e91bd875aed8298"
+    }
+  },
+  "runs": [
+    {
+      "name": "plain100k-before-1",
+      "seconds": 8.502
+    },
+    {
+      "name": "plain100k-after-1",
+      "seconds": 3.41
+    },
+    {
+      "name": "plain1m-before-1",
+      "seconds": 46.861
+    },
+    {
+      "name": "plain1m-after-1",
+      "seconds": 17.751
+    },
+    {
+      "name": "actors100k-before-1",
+      "seconds": 8.626
+    },
+    {
+      "name": "actors100k-after-1",
+      "seconds": 3.487
+    },
+    {
+      "name": "marked100k-before-1",
+      "seconds": 11.661
+    },
+    {
+      "name": "marked100k-after-1",
+      "seconds": 5.211
+    },
+    {
+      "name": "sparse100k-before-1",
+      "seconds": 8.551
+    },
+    {
+      "name": "sparse100k-after-1",
+      "seconds": 3.366
+    },
+    {
+      "name": "compacted100k-before-1",
+      "seconds": 0.382
+    },
+    {
+      "name": "compacted100k-after-1",
+      "seconds": 0.375
+    },
+    {
+      "name": "plain100k-after-2",
+      "seconds": 3.179
+    },
+    {
+      "name": "plain100k-before-2",
+      "seconds": 8.413
+    },
+    {
+      "name": "plain1m-after-2",
+      "seconds": 17.308
+    },
+    {
+      "name": "plain1m-before-2",
+      "seconds": 45.905
+    },
+    {
+      "name": "actors100k-after-2",
+      "seconds": 3.05
+    },
+    {
+      "name": "actors100k-before-2",
+      "seconds": 7.994
+    },
+    {
+      "name": "marked100k-after-2",
+      "seconds": 4.812
+    },
+    {
+      "name": "marked100k-before-2",
+      "seconds": 11.053
+    },
+    {
+      "name": "sparse100k-after-2",
+      "seconds": 3.76
+    },
+    {
+      "name": "sparse100k-before-2",
+      "seconds": 8.641
+    },
+    {
+      "name": "compacted100k-after-2",
+      "seconds": 0.372
+    },
+    {
+      "name": "compacted100k-before-2",
+      "seconds": 0.355
+    },
+    {
+      "name": "plain100k-before-3",
+      "seconds": 8.135
+    },
+    {
+      "name": "plain100k-after-3",
+      "seconds": 3.022
+    },
+    {
+      "name": "plain1m-before-3",
+      "seconds": 42.81
+    },
+    {
+      "name": "plain1m-after-3",
+      "seconds": 16.091
+    },
+    {
+      "name": "actors100k-before-3",
+      "seconds": 8.288
+    },
+    {
+      "name": "actors100k-after-3",
+      "seconds": 2.969
+    },
+    {
+      "name": "marked100k-before-3",
+      "seconds": 10.817
+    },
+    {
+      "name": "marked100k-after-3",
+      "seconds": 4.647
+    },
+    {
+      "name": "sparse100k-before-3",
+      "seconds": 8.174
+    },
+    {
+      "name": "sparse100k-after-3",
+      "seconds": 3.001
+    },
+    {
+      "name": "compacted100k-before-3",
+      "seconds": 0.353
+    },
+    {
+      "name": "compacted100k-after-3",
+      "seconds": 0.356
+    }
+  ]
+}

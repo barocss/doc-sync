@@ -2,6 +2,29 @@
 
 Measure the layer you need. Core application time, client notification time, and visible editor latency cover different work.
 
+## Receive model materialization
+
+Text projection now accumulates adjacent equal-format characters in temporary string chunks. Normalization keeps each existing text run whole instead of expanding it again. A shared private reference per text block also avoids rewriting every character's membership entry after one insertion. Public blocks remain immutable, span-value identity is preserved, and editing/diff offsets still use the existing unit conversion. Live Items, logical IDs, history ownership, snapshots and wire format are unchanged.
+
+A repeated Node 22.19.0 local comparison uses the metadata-compressed baseline, three fresh processes per workload/variant, and separate warmups. Values below are medians of per-process p95s, not pooled p95s. They measure `Doc.apply + Doc.toJSON`, including full model copying, and exclude SyncClient, network, native conversion and DOM work.
+
+| Plain one-paragraph document | Before p95 | After p95 | Reduction |
+|---|---:|---:|---:|
+| 100,000 UTF-16 units | 82.955 ms | 25.697 ms | 69.0% |
+| 1,000,000 UTF-16 units | 1,049.757 ms | 352.018 ms | 66.5% |
+
+One-million-unit cold incremental JS heap remains essentially unchanged (251.899 → 251.915 MiB); warm heap is 292.820 → 291.880 MiB. The ID metadata compression remains active. Control workloads retain less favorable results: 625 short paragraphs are about 1 ms, with no demonstrated gain, and per-character alternating marks have a 2.5% higher p95 median. Long changed paragraphs still require full character reads, and fragmented marks still create many runs.
+
+[All 54 fresh-process records, memory readings, controls and reproduction steps](https://github.com/barocss/doc-sync/tree/main/benchmarks/results/receive-model-2026-10-24) define the proof boundary. Browser regressions verify bounded functionality; this comparison does not measure screen latency or establish a release SLO.
+
+## Runtime ID metadata
+
+The runtime index shares actor names and groups consecutive logical IDs in ranges of at most 256 entries. Fragmented sequences use numeric keys. Stable tombstone aliases can share one reference per range after the existing GC policy permits merging. Equal insertion-origin strings reuse an existing key string.
+
+Each live UTF-16 unit still has its own Item, logical ID, formatting registers and history targets. Item identity, conflict rules, hidden content, wire operations and snapshot format remain unchanged. This is runtime index compression; it does not implement live string segments or the complete Automerge storage model.
+
+[Memory and core performance measurements](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/metadata-memory-2026-10-24/report.md) cover fresh-process GC measurements, cache state, fragmented IDs and before/after correctness checks. Core timings do not establish input-to-screen latency or a production memory limit.
+
 ## Logical text comparison
 
 Visible, stable text blocks now use bounded receive comparison even when the document has movement history or required-child rules. The receiver finds the current logical parent, verifies projected membership, and compares at most eight text blocks. Ordinary flow paths avoid the complete token-location scan; private storage paths still resolve through it.

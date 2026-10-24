@@ -1,6 +1,6 @@
 import {COMMAND_PRIORITY_HIGH, INSERT_PARAGRAPH_COMMAND, REDO_COMMAND, SKIP_DOM_SELECTION_TAG, UNDO_COMMAND, $addUpdateTag, $getRoot} from "lexical";
 import {InputSession, commitModelEdits, modelEdits, sameModel, subscribeClient} from "../editor/index.ts";
-import {$fromLexical, $syncLexicalCells, $toLexical, readLexicalModel} from "./convert.ts";
+import {$fromLexical, $projectLexical, $syncLexicalCells, $toLexical, readLexicalModel} from "./convert.ts";
 import {buildLexicalSchema} from "./schema.ts";
 import {$lexicalSelection, $setLexicalSelection} from "./selection.ts";
 import {$nativePlacements, nativeReparent} from "./movement.ts";
@@ -8,11 +8,12 @@ import {applyEdits} from "../crdt/model.ts";
 import {anchorAt, pathAt} from "../crdt/edit.ts";
 import {keyOf} from "../crdt/ticket.ts";
 import {runsToUnits} from "../crdt/model.ts";
-import type {LexicalEditor} from "lexical";
+import type {EditorState, LexicalEditor} from "lexical";
 import type {SyncClient} from "../sync/client.ts";
 import type {AnchoredRange} from "../editor/index.ts";
 import type {LexicalSchemaInfo} from "./schema.ts";
 import type {Op} from "../crdt/doc.ts";
+import type {NodeJSON} from "../crdt/model.ts";
 
 export const LEXICAL_REMOTE_TAG = "doc-sync-remote";
 export type LexicalBindingOptions = {info?: LexicalSchemaInfo; onError?: (error: Error) => void; groupTyping?: boolean};
@@ -28,6 +29,7 @@ export class LexicalBinding {
     private cleanup: Array<() => void> = [];
     private finishTimer: ReturnType<typeof setTimeout> | null = null;
     private localCommand = false;
+    private native: {state: EditorState; model: NodeJSON} | null = null;
     private report: (error: Error) => void;
 
     constructor(client: SyncClient, editor: LexicalEditor, infoOrOptions: LexicalSchemaInfo | LexicalBindingOptions = {}) {
@@ -45,6 +47,7 @@ export class LexicalBinding {
             this.cleanup.push(editor.registerUpdateListener(({editorState, prevEditorState, tags, dirtyElements, dirtyLeaves}) => {
                 if (this.disposed || tags.has(LEXICAL_REMOTE_TAG) || (!dirtyElements.size && !dirtyLeaves.size)) return;
                 try {
+                    this.native = null;
                     const next = editorState.read(() => $fromLexical(this.info), {editor});
                     const before = this.input.doc.toJSON();
                     if (sameModel(before, next)) return;
@@ -153,19 +156,32 @@ export class LexicalBinding {
     pull(): void {
         if (this.disposed || this.input.active) return;
         const model = this.client.doc.toJSON();
+        const state = this.editor.getEditorState();
+        const previous = this.native?.state === state ? this.native.model : null;
+        if (previous && sameModel(previous, model)) return;
         const populated = this.editor.getEditorState().read(() => $getRoot().getChildrenSize() > 0, {editor: this.editor});
         let matches = false;
-        try { matches = populated && sameModel(readLexicalModel(this.editor, this.info), model); }
+        try { matches = populated && sameModel(previous ?? readLexicalModel(this.editor, this.info), model); }
         catch { /* Replace rejected native content from the authoritative document. */ }
         if (matches) {
-            this.editor.update(() => $syncLexicalCells(this.info, model), {discrete: true, tag: LEXICAL_REMOTE_TAG});
+            this.editor.update(() => $syncLexicalCells(this.info, model), {discrete: true, tag: LEXICAL_REMOTE_TAG,
+                onUpdate: () => { this.native = null; },
+            });
             return;
         }
         const range = this.input.resolve(this.saved);
         this.editor.update(() => {
-            $toLexical(this.info, model);
+            if (previous) $projectLexical(this.info, previous, model);
+            else $toLexical(this.info, model);
             if (range) $setLexicalSelection(this.info, range);
-        }, {discrete: true, tag: this.focused() ? [LEXICAL_REMOTE_TAG] : [LEXICAL_REMOTE_TAG, SKIP_DOM_SELECTION_TAG]});
+        }, {discrete: true, tag: this.focused() ? [LEXICAL_REMOTE_TAG] : [LEXICAL_REMOTE_TAG, SKIP_DOM_SELECTION_TAG],
+            onUpdate: () => {
+                // Native transforms and application codecs can alter the projection.
+                // Cache the verified readback, never the requested model alone.
+                try { this.native = {state: this.editor.getEditorState(), model: readLexicalModel(this.editor, this.info)}; }
+                catch { this.native = null; }
+            },
+        });
     }
     beginComposition(): void {
         if (this.disposed) return;

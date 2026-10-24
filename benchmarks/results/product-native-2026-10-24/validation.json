@@ -1,0 +1,949 @@
+{
+  "workId": "product-native",
+  "baseCommit": "499c221bcd7ce85fc91f9d6f2a144822e385b46a",
+  "state": "Verified local uncommitted work; no commit, push or deployment requested.",
+  "librarySourceUnchanged": true,
+  "results": {
+    "nativeEditing": 90,
+    "nativeStructure": 39,
+    "ui": 12,
+    "chromeAssertions": 141,
+    "measuredInputs": 540,
+    "excludedWarmups": 90,
+    "remoteRenderingOpportunities": 1080,
+    "allPerformanceModelCheckpointsEqual": true,
+    "allMeasuredInputEventsTrusted": true,
+    "library": 600,
+    "demo": 16,
+    "documentation": 27,
+    "compatibility": 31,
+    "fuzzSeeds": 3000,
+    "pmSeeds": 300,
+    "typecheck": "PASS",
+    "productBuild": "PASS",
+    "rootStartupSmoke": "PASS",
+    "docsBuild": "PASS",
+    "docsCheck": {
+      "pages": 22,
+      "checkedInternalLinks": 1028,
+      "english": true,
+      "localPathsExcluded": true
+    },
+    "performanceAcceptance": "OPEN: large worst-peer p95 332.3\u2013621.7 ms; no agreed target",
+    "actualOSIME": "NOT EVALUATED",
+    "productLayoutOrFormats": "NOT RUN"
+  },
+  "installedVersions": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "slate": "0.146.0",
+    "slate-react": "0.147.3",
+    "slate-dom": "0.147.3",
+    "lexical": "0.52.0",
+    "@lexical/rich-text": "0.52.0",
+    "@lexical/table": "0.52.0",
+    "prosemirror-model": "1.25.12",
+    "prosemirror-state": "1.4.4",
+    "prosemirror-view": "1.42.6",
+    "prosemirror-tables": "1.8.5",
+    "esbuild": "0.28.2"
+  },
+  "bundleSourceCheck": {
+    "bundleSha256": "48290f3a2fca17bd45b1d727e82698ede54bd33144b88ab4c057baa07de4fc13",
+    "sourceMapSha256": "fd9c73ef95d9aa9c0a9a45326ca606000126d7e733ac3a49d1f22e032e15d245",
+    "verifiedBundledRepositorySources": [
+      {
+        "path": "apps/demo/products/main.jsx",
+        "sha256": "23958b61179218c6efc1e95c544a8bb6f29ed668369261c13765489c43a494e8"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/text-storage.ts",
+        "sha256": "ff94666e0a3f1e06d89a347e80d9692414abc43445076f036fff6e0d7bfd6b34"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/fields.ts",
+        "sha256": "9ba7bd8fe7b23f2513b67460f4a418340cedff8c6939b10b4e8fa91e53e21b2d"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/cardinality.ts",
+        "sha256": "7ec912022c1cb848e6e65494b7d28c39af0b0c0658ccd76649031078cc4e082e"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/schema.ts",
+        "sha256": "6c7e6ab70dc2e12d3f81ea45122f7782acc7e816137a919162b742d9c9034b63"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/model.ts",
+        "sha256": "854383eb2566e90635a8937e18d9c51cdddfcd1a9a90a2cd8be355e56b95d2a1"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/ticket.ts",
+        "sha256": "70f8b71bac19b6f9039056570256ac41890f99fdc46da1675e91bd875aed8298"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/edit.ts",
+        "sha256": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/annotations.ts",
+        "sha256": "32b06a1977bc191647c663ba50d321313826d37aa974b5390185359839cb3eca"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/placement.ts",
+        "sha256": "ad27804d11d719f95a6e138e3eabcf904cec515df84108a3e264471d41845e1d"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/doc.ts",
+        "sha256": "183bd20dd91693d86bfa5073e10f84a6809d191d050073c91385f7bdf0f33777"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/commands.ts",
+        "sha256": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/history.ts",
+        "sha256": "4fb8c735b47a2779f09bf3ca93e302b66e89201435c4c70f9ebb9a10060690d1"
+      },
+      {
+        "path": "packages/doc-sync/src/sync/model-events.ts",
+        "sha256": "91010edc78978a3ed8abc24ebd55c7410d32021c260ad73caeac14e977daab55"
+      },
+      {
+        "path": "packages/doc-sync/src/sync/protocol.ts",
+        "sha256": "acbd17da730df0efa36cfda0fbaebb4d2d4ef420ab3be21d0f9667d7d192571b"
+      },
+      {
+        "path": "packages/doc-sync/src/sync/client.ts",
+        "sha256": "12ae49fdcc995be7042dd7382eaa3ea87eb61cdddd74366d889af7578241e9f6"
+      },
+      {
+        "path": "packages/doc-sync/src/sync/http-transport.ts",
+        "sha256": "0508a339d3635253a7d8ff3e157dffa8b75a98d79d9e9fc11726a53802e9241a"
+      },
+      {
+        "path": "packages/doc-sync/src/editor/index.ts",
+        "sha256": "16c383f29a3965725fa6c480e7298a88a84d7962e5300e5c1c6c0b4aebe41210"
+      },
+      {
+        "path": "packages/doc-sync/src/slate/codec.ts",
+        "sha256": "ba10d3ff55ddf48f3ebaed59bcff451ca52bca0227e110bbe179233e20468037"
+      },
+      {
+        "path": "packages/doc-sync/src/slate/binding.ts",
+        "sha256": "49c6d2ff86e5f0d2971b2d55818032cb428e329380cd25d6bf82d1f5196d54fc"
+      },
+      {
+        "path": "packages/doc-sync/src/lexical/grid.ts",
+        "sha256": "6f2dbca7497ff9538876d8bf8be7dc5c7e72a607546e62b2c28b511981ca337d"
+      },
+      {
+        "path": "packages/doc-sync/src/lexical/nodes.ts",
+        "sha256": "0b9b79ec32b75b2cc8b2d075da3fe0696e0dcafc9fa7159f38359db5b6651571"
+      },
+      {
+        "path": "packages/doc-sync/src/lexical/convert.ts",
+        "sha256": "9431cb92aa9fb34a51f60da1ea22cdbf932086ff08787ea147550f6847d76c4b"
+      },
+      {
+        "path": "packages/doc-sync/src/lexical/schema.ts",
+        "sha256": "b1313aaf54cb6ed7bae6a03016b32ee6a1adbf456655d18624dfb954818258f9"
+      },
+      {
+        "path": "packages/doc-sync/src/lexical/selection.ts",
+        "sha256": "ecb926410d791a298807cfffb3b8499ceebe4067fbd9e65d980290d1b2017de8"
+      },
+      {
+        "path": "packages/doc-sync/src/lexical/movement.ts",
+        "sha256": "50cc0204bb4d858fe877d6a23e41924e681ce557e125d0a1360be98bce7b4eb9"
+      },
+      {
+        "path": "packages/doc-sync/src/lexical/binding.ts",
+        "sha256": "538c37ebc16c08a77aea4341da947413f4ca45108a0fe6936adf1d88548a7cf0"
+      },
+      {
+        "path": "packages/doc-sync/src/pm/schema.ts",
+        "sha256": "2a618cc269715f0491586c924134dec4fa544fe4f54207c1a3a2969c105b0bad"
+      },
+      {
+        "path": "packages/doc-sync/src/pm/convert.ts",
+        "sha256": "3e27f6c5f9d7b0b649c91d36ce38daa5d110a366f228124973cc8f6c119e5ee7"
+      },
+      {
+        "path": "packages/doc-sync/src/pm/binding.ts",
+        "sha256": "7b48c69704c04816c7a1faf7d6f49a647b0df4eb04063009b009babdfa54d5dc"
+      },
+      {
+        "path": "fixtures/product-schemas.ts",
+        "sha256": "b0074d691c3ffd4d61bac8c68470fd84e14ff57df641eb6141b7de733a1be08a"
+      },
+      {
+        "path": "fixtures/product-documents.ts",
+        "sha256": "51b8c7b6d216720d3bec4ee157b3d41405cfebc9b43e5089babb285c16008914"
+      },
+      {
+        "path": "apps/demo/products/documents.ts",
+        "sha256": "6c5d2b4789ab1f641749771c229776a4c514967529f720aaf86790bb653bf54d"
+      },
+      {
+        "path": "apps/demo/products/leaf.mjs",
+        "sha256": "3ca3796d4f8ed136b74df4972a12c533d2ee713df80b3b9e2d98ce7402e61a7a"
+      }
+    ]
+  },
+  "measuredConditions": "summary.json and report.md; actual development native editing in one Chrome page over localhost; second rAF is a rendering opportunity, not physical display.",
+  "firstFailure": "Review selector also matched Reviewer; corrected to exact text + model-path assertion. Original script and failure state retained locally. No library rule change.",
+  "ownedReviewServer": {
+    "url": "http://127.0.0.1:60012",
+    "schemaBackends": 3,
+    "storage": "fresh temporary DATA_DIR per schema; original data preserved"
+  },
+  "preservedUserResources": [
+    "existing in-app browser tabs",
+    "preview port 62490",
+    "original data/"
+  ],
+  "sources": [
+    {
+      "path": ".dev/plans/product-native/plan.md",
+      "sha256": "163a44344464b0de2effcd3f7e7c2dc4ae18774a2a001e93ec32549ab89fd93c"
+    },
+    {
+      "path": "HANDOFF.md",
+      "sha256": "f5898ace3fcb4af5d64c3a98dc5c9c3552c92a5cf1526f83437fd3462e56f81e"
+    },
+    {
+      "path": "README.md",
+      "sha256": "8317db3556ec9673192ce3a1b791bff4c991de32d8cf0edf09cfe3789dcaa0f9"
+    },
+    {
+      "path": "apps/demo/compat/package.json",
+      "sha256": "3f5b2e22d8c070a654255c29cfacca3ac93a88b32fd4ec11f9bf9ebea36bc21d"
+    },
+    {
+      "path": "apps/demo/compat/remote-edit.mjs",
+      "sha256": "f8072fe8ae554aa974ca37dedb593f6361f12912cc4e92c678754a7757ffeda4"
+    },
+    {
+      "path": "apps/demo/products/README.md",
+      "sha256": "89dab2ee36a5a8cbd104183b7f47f0b809ad4c1744dae9f9166ff4e7d16e2bab"
+    },
+    {
+      "path": "apps/demo/products/build.mjs",
+      "sha256": "5ea3a3dd8bc51ba12554c081d2ee457e7bd3668e07039cc0192464dadade6ac8"
+    },
+    {
+      "path": "apps/demo/products/checks-native.js",
+      "sha256": "ebee340339e8f26fa799d8de4ca23a00db22d9704eb733ab93efb4fc15584cf5"
+    },
+    {
+      "path": "apps/demo/products/checks-performance.js",
+      "sha256": "cb3e7206fd4f7b66ca49a1a4b49e1621fd204d6ba675517f240bb2ab3b45a444"
+    },
+    {
+      "path": "apps/demo/products/checks-structure.js",
+      "sha256": "739a0c46b8077c2f25897b7755e60499097a128944bd2dee2ea3229a39908828"
+    },
+    {
+      "path": "apps/demo/products/checks-ui.js",
+      "sha256": "533a3ff4f2e87c2eafc2616f685be4edeaa10fedc8abf6b10543e6f6483f57c2"
+    },
+    {
+      "path": "apps/demo/products/documents.ts",
+      "sha256": "6c5d2b4789ab1f641749771c229776a4c514967529f720aaf86790bb653bf54d"
+    },
+    {
+      "path": "apps/demo/products/index.html",
+      "sha256": "dfd5a349f04e1ad1b57295b434651b856d27be06e3c3dac610160bc1173ac5c1"
+    },
+    {
+      "path": "apps/demo/products/leaf.mjs",
+      "sha256": "3ca3796d4f8ed136b74df4972a12c533d2ee713df80b3b9e2d98ce7402e61a7a"
+    },
+    {
+      "path": "apps/demo/products/main.jsx",
+      "sha256": "23958b61179218c6efc1e95c544a8bb6f29ed668369261c13765489c43a494e8"
+    },
+    {
+      "path": "apps/demo/products/serve.mjs",
+      "sha256": "e9b017b78c13cefe062a828b434ff1c574f8421e4ba58b650016e82f54365a37"
+    },
+    {
+      "path": "apps/demo/products/start.mjs",
+      "sha256": "5ea65317d6ee5d8cf47ff6c7118e13629f6408aed569f927ba633c41812fe4c5"
+    },
+    {
+      "path": "apps/demo/server.ts",
+      "sha256": "684c8b7e5624fe7b135a104f03726a15ba4424c29625ae9d4d23b375bf00d757"
+    },
+    {
+      "path": "apps/demo/test/products.test.ts",
+      "sha256": "5f511d5c95536bc5f2592027e63d0811e915ac33925e68322872e42163c148db"
+    },
+    {
+      "path": "apps/docs/src/guide/editors.md",
+      "sha256": "408bf701d64f4530da723712bde67d6cc36e41c09cb6f5fc835f9d45b0fc86ae"
+    },
+    {
+      "path": "apps/docs/src/guide/product-schemas.md",
+      "sha256": "8b25613a2a0f05f5b4cbbb80d846ab37e8880fdbae08b6f3fe9b16c9608e67f2"
+    },
+    {
+      "path": "apps/docs/src/status.md",
+      "sha256": "310859d87bda27490d5a82a98083a3ec3383d99e78910c5f64d8f87c61c410e3"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-large-Lexical.json",
+      "sha256": "a0e50922a5547ebf1a7d3a1e737ea4904ae1ecc8fc526dab75c59c4d45807866"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-large-ProseMirror.json",
+      "sha256": "937b9d056ee9b718229dc598dcff7447fa5b4f34be9dcdfcdc68c474f3f9202b"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-large-Slate.json",
+      "sha256": "11ca1ee35c5d70dc8a3d5463f0bda2de332d8f437b7d5f86ae1897c7184695f1"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-sample-Lexical.json",
+      "sha256": "1291d24bf16e9bd0e9bb36821e94764d1d95ff4cf9fe28bdc82e452765e15305"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-sample-ProseMirror.json",
+      "sha256": "ad1a6b8bac974e80c45890c1bdf4ecdf56dd00171f640ba27dcbffac2cee1a2b"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/notion-sample-Slate.json",
+      "sha256": "e6a9905899aa432c9f3a51b34bc202e1fd6036a94184aeae240ec76d4d2cc06f"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-large-Lexical.json",
+      "sha256": "1139908609556fdcb17ce18e1e5c71ed1d9204afe25d80a3ba3eeba6f1fff022"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-large-ProseMirror.json",
+      "sha256": "e90fc7b533731b0faf5e673b572d43b19d1b191824bef27eb43cb4cb6d37baa5"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-large-Slate.json",
+      "sha256": "556e0378c50435be954b98338292384152f1f61f787add273014d34259dc6cb7"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-sample-Lexical.json",
+      "sha256": "847bd8f51877864e648baae48ff16f36bdcbbf02d7842b37dfb16d217143bf85"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-sample-ProseMirror.json",
+      "sha256": "18611c7fa69a851d0f55678a33256bd44ad6d25d48662c8ea86943dde52a82a1"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/presentation-sample-Slate.json",
+      "sha256": "7a09c19857818d1039e8ed393620335a08e860b7698d35a441486ba6a8eece60"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/report.md",
+      "sha256": "7773123c2038899ab44bf3ba54da9bcda3be0b23f41654025580f2a8a9b6c7f1"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/summary.json",
+      "sha256": "666b9dc8e9ca603053fdbdc9a9c88f2a1a3879b76f3a9651260261c44448e5e2"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-large-Lexical.json",
+      "sha256": "cc02903c4af9c3f66be7c4f56f8d3e4d122f5049501bbe24acc03fab2365d548"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-large-ProseMirror.json",
+      "sha256": "1eaafa9382082f149aaf53829f50aa02c98d0d2fcd9fbb8f5fd7c4cf9ebe2a74"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-large-Slate.json",
+      "sha256": "97861649cee5afd6d2c56def0270825c8bc3f48b9bdec053fc6e3e7418cc7439"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-sample-Lexical.json",
+      "sha256": "59865c60b92bdb1e6c07e19e87dc7517ee7ecf4371b0ae459ba86bf232daf4b4"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-sample-ProseMirror.json",
+      "sha256": "a82c18251862ae71c84dc81b505eeb8f55eac1ac0ebe097b9a75d358ee308835"
+    },
+    {
+      "path": "benchmarks/results/product-native-2026-10-24/word-sample-Slate.json",
+      "sha256": "363b05c661008c376af3db6298d6055ec219e94026c5ed744b4851e016fedad4"
+    },
+    {
+      "path": "fixtures/demo-schema.ts",
+      "sha256": "2e0fd61e1ce9b32a252824d8b4c378dcd4c1d340e7f8285df4c6d76bade4dcde"
+    },
+    {
+      "path": "fixtures/product-documents.ts",
+      "sha256": "51b8c7b6d216720d3bec4ee157b3d41405cfebc9b43e5089babb285c16008914"
+    },
+    {
+      "path": "fixtures/product-schemas.ts",
+      "sha256": "b0074d691c3ffd4d61bac8c68470fd84e14ff57df641eb6141b7de733a1be08a"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "6b25444b033f8856759be8a0c98a5e3d0500cd3c9e4712ce34d2d4ab285c026d"
+    },
+    {
+      "path": "package.json",
+      "sha256": "198df593af3e4b9d4a829e55958aca81174af00630431ef292a51c7528d547d5"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/annotations.ts",
+      "sha256": "32b06a1977bc191647c663ba50d321313826d37aa974b5390185359839cb3eca"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/cardinality.ts",
+      "sha256": "7ec912022c1cb848e6e65494b7d28c39af0b0c0658ccd76649031078cc4e082e"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/commands.ts",
+      "sha256": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/doc.ts",
+      "sha256": "183bd20dd91693d86bfa5073e10f84a6809d191d050073c91385f7bdf0f33777"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/edit.ts",
+      "sha256": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/fields.ts",
+      "sha256": "9ba7bd8fe7b23f2513b67460f4a418340cedff8c6939b10b4e8fa91e53e21b2d"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/history.ts",
+      "sha256": "4fb8c735b47a2779f09bf3ca93e302b66e89201435c4c70f9ebb9a10060690d1"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/model.ts",
+      "sha256": "854383eb2566e90635a8937e18d9c51cdddfcd1a9a90a2cd8be355e56b95d2a1"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/placement.ts",
+      "sha256": "ad27804d11d719f95a6e138e3eabcf904cec515df84108a3e264471d41845e1d"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/schema.ts",
+      "sha256": "6c7e6ab70dc2e12d3f81ea45122f7782acc7e816137a919162b742d9c9034b63"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/text-storage.ts",
+      "sha256": "ff94666e0a3f1e06d89a347e80d9692414abc43445076f036fff6e0d7bfd6b34"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/ticket.ts",
+      "sha256": "70f8b71bac19b6f9039056570256ac41890f99fdc46da1675e91bd875aed8298"
+    },
+    {
+      "path": "packages/doc-sync/src/editor/index.ts",
+      "sha256": "16c383f29a3965725fa6c480e7298a88a84d7962e5300e5c1c6c0b4aebe41210"
+    },
+    {
+      "path": "packages/doc-sync/src/index.ts",
+      "sha256": "0cf4f3df60b225f8851d1ebf9e19eeea727d6dd447f888d2eb33cb64a739af78"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/binding.ts",
+      "sha256": "538c37ebc16c08a77aea4341da947413f4ca45108a0fe6936adf1d88548a7cf0"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/convert.ts",
+      "sha256": "9431cb92aa9fb34a51f60da1ea22cdbf932086ff08787ea147550f6847d76c4b"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/grid.ts",
+      "sha256": "6f2dbca7497ff9538876d8bf8be7dc5c7e72a607546e62b2c28b511981ca337d"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/index.ts",
+      "sha256": "ef00a202411e080930cf225bcf5559b810d42b0548df3ada02e104ee363b9322"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/movement.ts",
+      "sha256": "50cc0204bb4d858fe877d6a23e41924e681ce557e125d0a1360be98bce7b4eb9"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/nodes.ts",
+      "sha256": "0b9b79ec32b75b2cc8b2d075da3fe0696e0dcafc9fa7159f38359db5b6651571"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/schema.ts",
+      "sha256": "b1313aaf54cb6ed7bae6a03016b32ee6a1adbf456655d18624dfb954818258f9"
+    },
+    {
+      "path": "packages/doc-sync/src/lexical/selection.ts",
+      "sha256": "ecb926410d791a298807cfffb3b8499ceebe4067fbd9e65d980290d1b2017de8"
+    },
+    {
+      "path": "packages/doc-sync/src/pm/binding.ts",
+      "sha256": "7b48c69704c04816c7a1faf7d6f49a647b0df4eb04063009b009babdfa54d5dc"
+    },
+    {
+      "path": "packages/doc-sync/src/pm/convert.ts",
+      "sha256": "3e27f6c5f9d7b0b649c91d36ce38daa5d110a366f228124973cc8f6c119e5ee7"
+    },
+    {
+      "path": "packages/doc-sync/src/pm/index.ts",
+      "sha256": "2bee5e889b32515e15e7881d8b72843be4ac863b27115507696816e3efa207eb"
+    },
+    {
+      "path": "packages/doc-sync/src/pm/schema.ts",
+      "sha256": "2a618cc269715f0491586c924134dec4fa544fe4f54207c1a3a2969c105b0bad"
+    },
+    {
+      "path": "packages/doc-sync/src/server/hub.ts",
+      "sha256": "d02d6f9e64a737bc4910185a878a4f12f5f8131f2bdbe8f99c197cacd565ffb4"
+    },
+    {
+      "path": "packages/doc-sync/src/server/index.ts",
+      "sha256": "4e027766d473a4c11c91dcb9f5e86e048d6af2c512f341b9a3c63a0959b24029"
+    },
+    {
+      "path": "packages/doc-sync/src/slate/binding.ts",
+      "sha256": "49c6d2ff86e5f0d2971b2d55818032cb428e329380cd25d6bf82d1f5196d54fc"
+    },
+    {
+      "path": "packages/doc-sync/src/slate/codec.ts",
+      "sha256": "ba10d3ff55ddf48f3ebaed59bcff451ca52bca0227e110bbe179233e20468037"
+    },
+    {
+      "path": "packages/doc-sync/src/slate/index.ts",
+      "sha256": "7a84ac755cfdc4ffee01263b983fc65b72f19dba85ab96375ef7ec135025d1b5"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/client.ts",
+      "sha256": "12ae49fdcc995be7042dd7382eaa3ea87eb61cdddd74366d889af7578241e9f6"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/http-transport.ts",
+      "sha256": "0508a339d3635253a7d8ff3e157dffa8b75a98d79d9e9fc11726a53802e9241a"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/index.ts",
+      "sha256": "2a0521485608ececcdc72bf680cd92636c19b1a1bfcc16ce5579014c6f86b357"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/model-events.ts",
+      "sha256": "91010edc78978a3ed8abc24ebd55c7410d32021c260ad73caeac14e977daab55"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/protocol.ts",
+      "sha256": "acbd17da730df0efa36cfda0fbaebb4d2d4ef420ab3be21d0f9667d7d192571b"
+    }
+  ],
+  "localEvidence": [
+    {
+      "path": "output/playwright/product-native/capture-structure-failure.js",
+      "sha256": "bfb1981c7a1112acb48d1cd3178d28582c254b34d9e0815de706295a46d999e4"
+    },
+    {
+      "path": "output/playwright/product-native/check-docs.js",
+      "sha256": "5446653cd5a7b594f8ba25020899aab22903886ebff3951620e15d02a524e54a"
+    },
+    {
+      "path": "output/playwright/product-native/checks-structure-initial.js",
+      "sha256": "f367dae7a345b9ba965b08d15dca22c550b29306f18cb8e3afac83a01033daf2"
+    },
+    {
+      "path": "output/playwright/product-native/docs-smoke.log",
+      "sha256": "e7d7ee4e58b91f4071749c4a9b8689f597613bf60bff494cdad0bca9ad631455"
+    },
+    {
+      "path": "output/playwright/product-native/native-final-ui.json",
+      "sha256": "9fdb0bd4ede09dbe9d4082309ade3836d1f550207ebcf4e64902a81ed4ee8245"
+    },
+    {
+      "path": "output/playwright/product-native/native-final-ui.log",
+      "sha256": "c9b66f0468063ba0da24817751ae08f5c84ad923e3591cc648c03fb30c95e4c4"
+    },
+    {
+      "path": "output/playwright/product-native/native-initial.json",
+      "sha256": "421de48362524df7d3368a1eb73fa3ca6d1e1308fef76c2b816ed0edeeb923de"
+    },
+    {
+      "path": "output/playwright/product-native/native-initial.log",
+      "sha256": "360febb9fd7a3662626ee29abf1ab42809c57dc77c5b0c62a547c2920d4e804e"
+    },
+    {
+      "path": "output/playwright/product-native/notion-desktop-final.png",
+      "sha256": "b7e96f72846ac31660fa7b4ae93ac5d5fd202f3150a9e0ba22f7a7c63715fe42"
+    },
+    {
+      "path": "output/playwright/product-native/notion-desktop.png",
+      "sha256": "d47f90944bb7c42691d15c372b3bf02314b0b4312bb519df4cc99a5d46383c5d"
+    },
+    {
+      "path": "output/playwright/product-native/notion-mobile.png",
+      "sha256": "421a7c4cfe4f68aeb5be773215eb2704ef640d6799f642b7422155f37bf81f26"
+    },
+    {
+      "path": "output/playwright/product-native/open-initial.log",
+      "sha256": "1dd97ef0cd822e886d6cc0b8d463802d3239604ebb915b7937b76848a9d20a3f"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-Lexical.js",
+      "sha256": "cf5ce204dcdfbcd5f85329a3d264b387529cd3f28b0cb944639ad7fbf5d69858"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-Lexical.json",
+      "sha256": "a0e50922a5547ebf1a7d3a1e737ea4904ae1ecc8fc526dab75c59c4d45807866"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-Lexical.log",
+      "sha256": "6ffd1d726656e1742cfd02711fc86ea3bbf8ab4c9906b9dcfd3978aa7e134975"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-ProseMirror.js",
+      "sha256": "66f5dc37dc65ec8bf2774102b8f4c82d665bf3f3021eaf5070bb4f0d066142f8"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-ProseMirror.json",
+      "sha256": "937b9d056ee9b718229dc598dcff7447fa5b4f34be9dcdfcdc68c474f3f9202b"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-ProseMirror.log",
+      "sha256": "1c02c52d36b8e53382e7617a4a45e6df03069bafb3803118107d395de9cd031d"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-Slate.js",
+      "sha256": "7dc9c921bad7b3f550969b52eb8e4a8e368c1e6966d03df1d7a0d75de08412ef"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-Slate.json",
+      "sha256": "11ca1ee35c5d70dc8a3d5463f0bda2de332d8f437b7d5f86ae1897c7184695f1"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-large-Slate.log",
+      "sha256": "2d7954ce31acf14943779087b7ae4679477aa7628ffec9d8d658489038f9402b"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-Lexical.js",
+      "sha256": "fc34f4970bd71eba45bccfdf04adcbeb62c770ad04093a521b7a8d259d746b50"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-Lexical.json",
+      "sha256": "1291d24bf16e9bd0e9bb36821e94764d1d95ff4cf9fe28bdc82e452765e15305"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-Lexical.log",
+      "sha256": "f579079ae6f75d20613170fa1c4ba9c56ddc69880ebb3edca5ff1079653eb822"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-ProseMirror.js",
+      "sha256": "731b731ff7aef159b535f7ac8d7522fc4725007102a437f230368572e2d15645"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-ProseMirror.json",
+      "sha256": "ad1a6b8bac974e80c45890c1bdf4ecdf56dd00171f640ba27dcbffac2cee1a2b"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-ProseMirror.log",
+      "sha256": "e29a4047f597824f0c8adc89555c8d67dd2248804fc989c64d9a794024bb6ca9"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-Slate.js",
+      "sha256": "3c98781b2efac37ad155443abb58989dd05f78ca40b3f4ea55f150b6296217a1"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-Slate.json",
+      "sha256": "e6a9905899aa432c9f3a51b34bc202e1fd6036a94184aeae240ec76d4d2cc06f"
+    },
+    {
+      "path": "output/playwright/product-native/performance/notion-sample-Slate.log",
+      "sha256": "221ef37a4867f70ce8ce3a34b98def1c08558eb091bbc41aad37c5f1f5932a59"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-Lexical.js",
+      "sha256": "cc202aeee290ded222bd980e94c44a961b336b02b3270aa9c07fc0a94346bbb2"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-Lexical.json",
+      "sha256": "1139908609556fdcb17ce18e1e5c71ed1d9204afe25d80a3ba3eeba6f1fff022"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-Lexical.log",
+      "sha256": "1bed7f33e635b34f8a9796b7d1efda7df3367081863a26c3f6730dd4111050d9"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-ProseMirror.js",
+      "sha256": "ab15b0f42a827685833931bf9cfc842b20edc072e30d43d2e18d5b24db0e0503"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-ProseMirror.json",
+      "sha256": "e90fc7b533731b0faf5e673b572d43b19d1b191824bef27eb43cb4cb6d37baa5"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-ProseMirror.log",
+      "sha256": "7cf825701a1e95ad56d11c5b5472b8067870ba1e498d4760020742f1959de3e6"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-Slate.js",
+      "sha256": "5c2d30b8b4b8ac7af82dab8551fc44e510cc4ec5849629322bca43e33b225d08"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-Slate.json",
+      "sha256": "556e0378c50435be954b98338292384152f1f61f787add273014d34259dc6cb7"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-large-Slate.log",
+      "sha256": "ca75b6526c91afcf3d0986c8e58504d7623b2280d03b69b2e2963e00594be8f7"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-Lexical.js",
+      "sha256": "8ebfbb3c7a9cf32d5dc5998ce9c5d641fcf98079820d6839f37dd8be7e196d68"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-Lexical.json",
+      "sha256": "847bd8f51877864e648baae48ff16f36bdcbbf02d7842b37dfb16d217143bf85"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-Lexical.log",
+      "sha256": "2946f6e435d430a3e05e4e44a94c15811f4a98ceac3639ca97e5dc0020d4d41a"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-ProseMirror.js",
+      "sha256": "b70b8e2477544333da5c53a96ebd96a74cf1a22f55ea8c38a425d576dd1ec01d"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-ProseMirror.json",
+      "sha256": "18611c7fa69a851d0f55678a33256bd44ad6d25d48662c8ea86943dde52a82a1"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-ProseMirror.log",
+      "sha256": "62a163470095c5b85e722161a0d8756d32a8bce79e57f294c63b461236e3d662"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-Slate.js",
+      "sha256": "58516a803e7deff15f62d40e55cbef6d7191991794071885bbf98b9a3de0c7ea"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-Slate.json",
+      "sha256": "7a09c19857818d1039e8ed393620335a08e860b7698d35a441486ba6a8eece60"
+    },
+    {
+      "path": "output/playwright/product-native/performance/presentation-sample-Slate.log",
+      "sha256": "403c40eeee048ba3299af924fc36994a1d43ab168c316cc7b5aa01fb6989b63a"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-Lexical.js",
+      "sha256": "79b9c4f2cb4eb0ae96a8ed5f94720565f94c5e4b702ad1c015a80a081ce5efde"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-Lexical.json",
+      "sha256": "cc02903c4af9c3f66be7c4f56f8d3e4d122f5049501bbe24acc03fab2365d548"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-Lexical.log",
+      "sha256": "68f6cc9ad2b2e5cc65a309e75d88d569252be08794ac936dcc1d1bbc29caadcc"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-ProseMirror.js",
+      "sha256": "0259916604588b50bbe33af9fdcf7e44595775ce8c8e91205026b140c4f0d3d2"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-ProseMirror.json",
+      "sha256": "1eaafa9382082f149aaf53829f50aa02c98d0d2fcd9fbb8f5fd7c4cf9ebe2a74"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-ProseMirror.log",
+      "sha256": "d8e80913569e03aa2da83e36a9e9f3972328c3c48a7cf9fa1f248389cdd36e53"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-Slate.js",
+      "sha256": "e52433f13326d3ddf45297f44967c18bec88fcad029458b5bba813d4a6116f63"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-Slate.json",
+      "sha256": "97861649cee5afd6d2c56def0270825c8bc3f48b9bdec053fc6e3e7418cc7439"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-large-Slate.log",
+      "sha256": "172a36bd3a6c92e38431556a868d118f3c5ba27407a357e2cd77e857b16d68c9"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-Lexical.js",
+      "sha256": "15a3555839eebf47418b97fe0da80c66e985e607032066af9e89f52a91c4ae30"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-Lexical.json",
+      "sha256": "59865c60b92bdb1e6c07e19e87dc7517ee7ecf4371b0ae459ba86bf232daf4b4"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-Lexical.log",
+      "sha256": "0370a645cd7429627a8a7d18680a4dbfcb7c748f6e55f16f2b6a9b10eb888b5c"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-ProseMirror.js",
+      "sha256": "ee5784c51bb4f7f19fcf4f2ca8d54ad8ad1ccd665c19d7b917ecb055caa5660f"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-ProseMirror.json",
+      "sha256": "a82c18251862ae71c84dc81b505eeb8f55eac1ac0ebe097b9a75d358ee308835"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-ProseMirror.log",
+      "sha256": "4137136b5a440233d4593e702c7df509d18422bcb2a6ab9527d58c55e283ba85"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-Slate.js",
+      "sha256": "5929e0a0fecb40853f7003341502871e605fbc42dffbab71a01305b07f1f89d2"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-Slate.json",
+      "sha256": "363b05c661008c376af3db6298d6055ec219e94026c5ed744b4851e016fedad4"
+    },
+    {
+      "path": "output/playwright/product-native/performance/word-sample-Slate.log",
+      "sha256": "8879b81696b99785daa9409925909bbabadff9345bb3c6ebaaa55783c5498289"
+    },
+    {
+      "path": "output/playwright/product-native/presentation-desktop-final.png",
+      "sha256": "4816496a210af32f46c478348c1f61e1f52a059a06d5049b777a682148a7c4d4"
+    },
+    {
+      "path": "output/playwright/product-native/presentation-desktop.png",
+      "sha256": "87f9e74eb45987657f279a82c0a05be4a5f54d07caf07f1014694573546ed668"
+    },
+    {
+      "path": "output/playwright/product-native/presentation-mobile.png",
+      "sha256": "479e539dc9f72274d94c428e74b1c8db83da3d970dd2b73a59341180bd357395"
+    },
+    {
+      "path": "output/playwright/product-native/smoke-word-initial.log",
+      "sha256": "ab3eb8e5bfacc3d7d1f19089830036e2696c9cce61b8660a72e42f7d9941ff1f"
+    },
+    {
+      "path": "output/playwright/product-native/smoke.js",
+      "sha256": "058d6527710247735a50fa1c367add47a29cf8483a2674748dfc6a6d80cab231"
+    },
+    {
+      "path": "output/playwright/product-native/structure-first-failure-state.log",
+      "sha256": "d970a50688996335ae862f5db364f4905e521bc4e0a04d33cc9e84dbe16de2c0"
+    },
+    {
+      "path": "output/playwright/product-native/structure-initial.log",
+      "sha256": "a3dad7fb8af9cb1f4f0134dc34465db6e843946091693670cdd9a15cd38a15f9"
+    },
+    {
+      "path": "output/playwright/product-native/structure-second.json",
+      "sha256": "8435c0336d952d8b2f29d89139bf2ec70cdd5e9bc09f11a5e8a70f8c8ad028d2"
+    },
+    {
+      "path": "output/playwright/product-native/structure-second.log",
+      "sha256": "a771ed8570f49beedbbd25e07b8d304d22700273a3566d9a69d6a788e925c8aa"
+    },
+    {
+      "path": "output/playwright/product-native/ui-final.json",
+      "sha256": "299c7a66fe51240f7532a6ed24867a478a1cde826bbedd54f4438475bb05d78e"
+    },
+    {
+      "path": "output/playwright/product-native/ui-final.log",
+      "sha256": "1e8b9a8e79fcac4c87b5f4e8340ce427e90da33646ffe79c7d6ae4acce3e22fb"
+    },
+    {
+      "path": "output/playwright/product-native/word-desktop-final.png",
+      "sha256": "048c1f8be23509dace8f60c4c828442545ab514327d46d9066339eeab636eb41"
+    },
+    {
+      "path": "output/playwright/product-native/word-desktop.png",
+      "sha256": "a2794782a50f119c4a7c3bf059fdf21221dea941dac58a881e1fa971921f3d59"
+    },
+    {
+      "path": "output/playwright/product-native/word-mobile.png",
+      "sha256": "73fe20a2759872b8bfc67812e92b20a1733ae06e6de995baa011008859151bc7"
+    },
+    {
+      "path": "output/validation/product-native/build-final-ui.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "output/validation/product-native/build-initial.log",
+      "sha256": "da2bb096c884aaa6952b11081e480fb03e3f30a022efc4b11123d9a240848f3d"
+    },
+    {
+      "path": "output/validation/product-native/build-second.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "output/validation/product-native/build-third.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "output/validation/product-native/bundle-source-check.json",
+      "sha256": "dd90fc68df36d28a617bfd56b896fd185d2bb7b2da6fab7795155e576605bc25"
+    },
+    {
+      "path": "output/validation/product-native/check-startup.py",
+      "sha256": "d70662221e1f77caf97c7d73c66943951b5103f822dc36af85fad8b24d1b694f"
+    },
+    {
+      "path": "output/validation/product-native/compat-test.log",
+      "sha256": "c8276a044250128154d7308810fc3e07e2320d857ffc46cf0478efc33b33cc9a"
+    },
+    {
+      "path": "output/validation/product-native/docs-build.log",
+      "sha256": "9cd0dc273414fe2844c4b73f1dc62a74b492a9e79211d2ea8ef0f9f55a025c9e"
+    },
+    {
+      "path": "output/validation/product-native/docs-check.log",
+      "sha256": "9bf1e861c7f832aa83eb9248f0eb0816a1bc958942b94369242c0142f5dc44b3"
+    },
+    {
+      "path": "output/validation/product-native/docs-test.log",
+      "sha256": "18b9163760e5ec87835e8e97f47d19ac1e36698d79bc44a11a68137511c2bacf"
+    },
+    {
+      "path": "output/validation/product-native/full-test.log",
+      "sha256": "c4fd3d63e0a736da67cb486a5b2785bf8acd4952f0df8e4c9393fdc5c019909d"
+    },
+    {
+      "path": "output/validation/product-native/make-receipt.py",
+      "sha256": "f853915b54fa14a7ff85bbc4f4f090f5363e21feb55ea6ff520b54dba7e8ffdc"
+    },
+    {
+      "path": "output/validation/product-native/performance-driver-initial.log",
+      "sha256": "4b557f6dd9987dff67f543c7b2fc3230f005f95c76a4da1ff01529bbbd5838cf"
+    },
+    {
+      "path": "output/validation/product-native/product-fixture-test.log",
+      "sha256": "524cea73bfeae177964ceb500ed6cfbad99b18ace67eb2db197efa3c17919122"
+    },
+    {
+      "path": "output/validation/product-native/run-performance.py",
+      "sha256": "f483892ecb99eb4e566cdf64cf4b33bcb0d7f36d45f3bf37e17c54f35ec326e1"
+    },
+    {
+      "path": "output/validation/product-native/server-initial.log",
+      "sha256": "116a7fbd66a075e0413c5a8ed18828ebb99c1e171a59a6437f20a664bc96f3c2"
+    },
+    {
+      "path": "output/validation/product-native/startup-smoke.json",
+      "sha256": "edd88ce68a7f9aea617c82e09202ec172ef68c2fe43996cc4c2bb7bef6c1d9cf"
+    },
+    {
+      "path": "output/validation/product-native/startup-smoke.log",
+      "sha256": "575c7c86ccad999bac3f7de00db2b6e89c45a4a581907c8946a0126422ea0163"
+    },
+    {
+      "path": "output/validation/product-native/summarize.py",
+      "sha256": "3dd1928d809b8d42efe76fc24e5ef4cc613e6df1109779a49277bfd6a61ae098"
+    },
+    {
+      "path": "output/validation/product-native/typecheck-final.log",
+      "sha256": "5e1fbff16a52c9a79dfb4303d8f7a262d17c1213b97e9a40eaab3d5d5a76d0d3"
+    },
+    {
+      "path": "output/validation/product-native/typecheck-initial.log",
+      "sha256": "5e1fbff16a52c9a79dfb4303d8f7a262d17c1213b97e9a40eaab3d5d5a76d0d3"
+    },
+    {
+      "path": "output/validation/product-native/url.txt",
+      "sha256": "841bf9d5b92c9713898d843c1336f4122b8eecb98168eac40b7768766936211e"
+    }
+  ]
+}

@@ -42,11 +42,7 @@ const attrsOk = (schema: Schema, type: string, attrs: Record<string, unknown> = 
 };
 
 /** Schema type names are preserved; attributes live in attrs and marks are leaf properties. */
-export const toSlate = (schema: Schema, model: NodeJSON): Descendant[] => {
-    schemaOk(schema);
-    if (model.type !== schema.root) fail(`expected root "${schema.root}"`);
-    if (model.attrs && Object.keys(model.attrs).length) fail("root attributes are not part of the document model");
-    if (model.runs?.length) fail("root cannot contain text runs");
+const converter = (schema: Schema) => {
     const runs = (items: Run[], owner: string): SlateNode[] => {
         const spec = specOf(schema, owner);
         const converted = items.map<SlateNode>(run => {
@@ -86,6 +82,18 @@ export const toSlate = (schema: Schema, model: NodeJSON): Descendant[] => {
             : fail(`"${item.type}" is not a block`);
         return {type: item.type, ...(item.attrs ? {attrs: {...item.attrs}} : {}), children: children.length ? children : [{text: ""}]};
     };
+    return node;
+};
+
+/** Internal projection of an already canonical authoritative block. */
+export const projectSlateBlock = (schema: Schema, model: NodeJSON): Descendant => converter(schema)(model) as Descendant;
+
+export const toSlate = (schema: Schema, model: NodeJSON): Descendant[] => {
+    schemaOk(schema);
+    if (model.type !== schema.root) fail(`expected root "${schema.root}"`);
+    if (model.attrs && Object.keys(model.attrs).length) fail("root attributes are not part of the document model");
+    if (model.runs?.length) fail("root cannot contain text runs");
+    const node = converter(schema);
     // Validate the input before normalization can discard unsupported data.
     const root = specOf(schema, schema.root);
     if (root.shape !== "flow") fail("root must be a flow");

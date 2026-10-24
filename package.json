@@ -20,7 +20,8 @@
     "docs:dev": "npm run dev --workspace @doc-sync/docs --",
     "docs:build": "npm run build --workspace @doc-sync/docs",
     "docs:preview": "npm run preview --workspace @doc-sync/docs --",
-    "docs:check": "npm run check:build --workspace @doc-sync/docs"
+    "docs:check": "npm run check:build --workspace @doc-sync/docs",
+    "dev:products": "node apps/demo/products/start.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

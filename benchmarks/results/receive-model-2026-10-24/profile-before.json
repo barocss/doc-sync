@@ -1,0 +1,188 @@
+{
+  "profile": "output/validation/receive-model-20261024/CPU.20261024.233404.41947.0.001.cpuprofile",
+  "sha256": "59a95a7e75e626256f67a9ced529131e86b07ae5967ba11e314307cb26cd1a2f",
+  "sampledMs": 9860.667,
+  "scope": "Setup, initial materialization and ten 1m-character insert/materialize iterations; CPU sampling, not exact phase self-time.",
+  "topFrames": [
+    {
+      "selfSampleMs": 4529.558,
+      "function": "(garbage collector)",
+      "url": "",
+      "line": 0
+    },
+    {
+      "selfSampleMs": 947.581,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 150
+    },
+    {
+      "selfSampleMs": 935.531,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 150
+    },
+    {
+      "selfSampleMs": 881.585,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 958
+    },
+    {
+      "selfSampleMs": 419.657,
+      "function": "marksOf",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 1247
+    },
+    {
+      "selfSampleMs": 282.543,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 1954
+    },
+    {
+      "selfSampleMs": 268.672,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 124
+    },
+    {
+      "selfSampleMs": 167.002,
+      "function": "plain",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 147
+    },
+    {
+      "selfSampleMs": 162.128,
+      "function": "rawBlock",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 1940
+    },
+    {
+      "selfSampleMs": 145.502,
+      "function": "runsToUnits",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 118
+    },
+    {
+      "selfSampleMs": 139.874,
+      "function": "plain",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 147
+    },
+    {
+      "selfSampleMs": 79.582,
+      "function": "set",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/key-index.ts",
+      "line": 44
+    },
+    {
+      "selfSampleMs": 74.542,
+      "function": "get",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/key-index.ts",
+      "line": 29
+    },
+    {
+      "selfSampleMs": 69.043,
+      "function": "integrate",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 975
+    },
+    {
+      "selfSampleMs": 59.085,
+      "function": "get",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/key-index.ts",
+      "line": 29
+    },
+    {
+      "selfSampleMs": 53.084,
+      "function": "apply",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 733
+    },
+    {
+      "selfSampleMs": 49.791,
+      "function": "unitsToRuns",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 142
+    },
+    {
+      "selfSampleMs": 47.543,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 68
+    },
+    {
+      "selfSampleMs": 45.998,
+      "function": "charAdded",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 874
+    },
+    {
+      "selfSampleMs": 42.376,
+      "function": "unitsToRuns",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 142
+    },
+    {
+      "selfSampleMs": 39.999,
+      "function": "canonMarks",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 65
+    },
+    {
+      "selfSampleMs": 37.624,
+      "function": "canonMarks",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 65
+    },
+    {
+      "selfSampleMs": 36.0,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 1404
+    },
+    {
+      "selfSampleMs": 31.541,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 68
+    },
+    {
+      "selfSampleMs": 31.292,
+      "function": "sourceBlocks",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 1302
+    },
+    {
+      "selfSampleMs": 31.04,
+      "function": "replaceBlock",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/doc.ts",
+      "line": 953
+    },
+    {
+      "selfSampleMs": 27.834,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/profile.mjs",
+      "line": 1
+    },
+    {
+      "selfSampleMs": 27.374,
+      "function": "canonMarks",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 65
+    },
+    {
+      "selfSampleMs": 23.875,
+      "function": "open",
+      "url": "",
+      "line": 0
+    },
+    {
+      "selfSampleMs": 22.708,
+      "function": "",
+      "url": "file:///Users/user/github/doc-sync/output/validation/receive-model-20261024/before/src/crdt/model.ts",
+      "line": 68
+    }
+  ]
+}

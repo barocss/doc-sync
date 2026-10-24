@@ -298,3 +298,22 @@ test("SlateBinding undo commits a composition draft then undoes only that draft"
         assert.equal(plain(c.a.doc.toJSON()), "Rab");
     } finally { c.close(); }
 });
+
+test("Slate incremental projection accepts presentation-only native normalization", async () => {
+    const c = await start();
+    const normalize = c.editor.normalizeNode;
+    c.editor.normalizeNode = entry => {
+        const [node, path] = entry;
+        if ("type" in node && node.type === "paragraph" && !(node as unknown as {visual?: boolean}).visual) {
+            Transforms.setNodes<{children: Descendant[]; visual?: boolean}>(c.editor, {visual: true}, {at: path});
+            return;
+        }
+        normalize(entry);
+    };
+    try {
+        c.binding.sync(true); await c.flush(); c.same();
+        c.b.commit(c.b.doc.edit([{op: "insert", at: [0, 1], content: "remote"}]).ops);
+        await c.flush(); c.same();
+        assert.equal((c.editor.children[0] as unknown as {visual?: boolean}).visual, true);
+    } finally { c.close(); }
+});

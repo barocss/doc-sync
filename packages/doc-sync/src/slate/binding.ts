@@ -1,7 +1,7 @@
 import {Editor, Transforms} from "slate";
 import {InputSession, commitModelEdits, modelEdits, sameModel, subscribeClient} from "../editor/index.ts";
 import {applyEdits} from "../crdt/model.ts";
-import {fromSlate, modelRangeToSlate, slateRangeToModel, toSlate} from "./codec.ts";
+import {fromSlate, modelRangeToSlate, slateRangeToModel, toSlate, projectSlateBlock} from "./codec.ts";
 import type {BaseEditor, Descendant} from "slate";
 import type {EditOp, NodeJSON} from "../crdt/model.ts";
 import type {SyncClient} from "../sync/client.ts";
@@ -39,6 +39,7 @@ export class SlateBinding {
     private resetPending = false;
     private selection: AnchoredRange | null = null;
     private rendered: NodeJSON;
+    private native: {children: Descendant[]; model: NodeJSON; projected: boolean} | null = null;
 
     constructor(client: SyncClient, editor: BaseEditor, options: SlateBindingOptions = {}) {
         if (owners.has(editor)) throw new Error("SlateBinding: the editor already has a binding");
@@ -114,7 +115,9 @@ export class SlateBinding {
         if (this.disposed || this.busy) return;
         this.busy = true;
         try {
+            if (this.native?.children === this.editor.children) { this.capture(); return; }
             const after = fromSlate(this.client.schema, this.editor.children);
+            this.native = {children: this.editor.children, model: after, projected: false};
             const before = this.session.doc.toJSON();
             if (sameModel(before, after)) {
                 this.capture();
@@ -158,22 +161,37 @@ export class SlateBinding {
         if (this.disposed || this.busy || (this.session.active && !force)) return;
         const model = this.client.doc.toJSON();
         let native: NodeJSON | null = null;
-        try { native = fromSlate(this.client.schema, this.editor.children); } catch { /* Replace unsupported native content on recovery. */ }
-        if (!force && native && sameModel(native, model)) return;
+        try { native = this.native?.children === this.editor.children ? this.native.model : fromSlate(this.client.schema, this.editor.children); } catch { /* Replace unsupported native content on recovery. */ }
+        if (!force && native && sameModel(native, model)) {
+            this.native = {children: this.editor.children, model, projected: this.native?.children === this.editor.children && this.native.projected || false};
+            return;
+        }
         this.busy = true;
         try {
-            const children = toSlate(this.client.schema, model);
+            // Reuse identical root blocks. Rebuild only the changed interval;
+            // grid projection and custom normalization stay on the existing codec.
+            const previous = !force && this.native?.projected && this.native.children === this.editor.children ? this.native.model : null;
+            const old = previous?.children ?? [], next = model.children ?? [];
+            let start = 0, end = old.length, nextEnd = next.length;
+            if (previous) {
+                while (start < end && start < nextEnd && sameModel(old[start], next[start])) start++;
+                while (end > start && nextEnd > start && sameModel(old[end - 1], next[nextEnd - 1])) { end--; nextEnd--; }
+            }
+            const children = previous ? next.slice(start, nextEnd).map(node => projectSlateBlock(this.client.schema, node)) : toSlate(this.client.schema, model);
+            const expected = previous ? [...this.editor.children.slice(0, start), ...children, ...this.editor.children.slice(end)] : children;
             const anchored = this.selection;
             Editor.withoutNormalizing(this.editor, () => {
                 Transforms.deselect(this.editor);
-                for (let index = this.editor.children.length - 1; index >= 0; index -= 1) Transforms.removeNodes(this.editor, {at: [index]});
-                Transforms.insertNodes(this.editor, children, {at: [0]});
+                for (let index = (previous ? end : this.editor.children.length) - 1; index >= (previous ? start : 0); index -= 1) Transforms.removeNodes(this.editor, {at: [index]});
+                if (children.length) Transforms.insertNodes(this.editor, children, {at: [previous ? start : 0]});
             });
             const range = modelRangeToSlate(this.client.schema, this.editor.children, this.session.resolve(anchored));
             if (range) Transforms.select(this.editor, range);
             this.capture();
-            const normalized = fromSlate(this.client.schema, this.editor.children);
-            if (!sameModel(normalized, model)) throw new Error("SlateBinding: editor normalization changed schema content");
+            const exact = sameModel(this.editor.children, expected);
+            const matches = exact || sameModel(fromSlate(this.client.schema, this.editor.children), model);
+            if (!matches) throw new Error("SlateBinding: editor normalization changed schema content");
+            this.native = {children: this.editor.children, model, projected: exact};
             const changed = !sameModel(this.rendered, model);
             this.rendered = model;
             if (changed) this.options.onChange?.(model);

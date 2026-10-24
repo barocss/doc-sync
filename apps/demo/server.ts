@@ -7,6 +7,7 @@ import {fileURLToPath} from "node:url";
 import {DocHub} from "@barocss/doc-sync/server";
 import {isAlive} from "@barocss/doc-sync";
 import {DEMO_SCHEMA} from "../../fixtures/demo-schema.ts";
+import {PRODUCT_SCHEMAS} from "../../fixtures/product-schemas.ts";
 import type {IncomingMessage, ServerResponse} from "node:http";
 import type {Ack, Change, Presence, ServerEvent} from "@barocss/doc-sync/sync";
 
@@ -33,6 +34,9 @@ import type {Ack, Change, Presence, ServerEvent} from "@barocss/doc-sync/sync";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const DATA = resolve(process.env.DATA_DIR ?? join(ROOT, "data"));
 const PORT = Number(process.env.PORT ?? 5410);
+const profile = process.env.DOC_PROFILE;
+if (profile && !Object.hasOwn(PRODUCT_SCHEMAS, profile)) throw new Error(`Unknown document profile: ${profile}`);
+const documentSchema = profile ? PRODUCT_SCHEMAS[profile as keyof typeof PRODUCT_SCHEMAS] : DEMO_SCHEMA;
 /** 끊긴 참여자의 핀을 지켜 주는 시간 */
 const LEASE = 2 * 60_000;
 /** 이만큼 압축할 묘비가 모이면 스스로 GC */
@@ -50,7 +54,7 @@ const hubOf = (doc: string): DocHub => {
     }
 
     // 서버도 같은 스키마로 검사한다. 스키마 없이 띄워도(schema: null) 순서 매기기·적용·GC 는 된다
-    hub = new DocHub({lease: LEASE, schema: process.env.NO_SCHEMA ? null : DEMO_SCHEMA});
+    hub = new DocHub({lease: LEASE, schema: process.env.NO_SCHEMA ? null : documentSchema});
 
     if (existsSync(logPath(doc))) {
         readFileSync(logPath(doc), "utf8")

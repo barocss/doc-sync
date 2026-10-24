@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {createEditor, $getRoot, $getSelection, $isRangeSelection, $isElementNode, $isTextNode, INSERT_PARAGRAPH_COMMAND, UNDO_COMMAND, REDO_COMMAND} from "lexical";
+import {createEditor, TextNode, $getRoot, $getSelection, $isRangeSelection, $isElementNode, $isTextNode, INSERT_PARAGRAPH_COMMAND, UNDO_COMMAND, REDO_COMMAND} from "lexical";
 import {registerRichText} from "@lexical/rich-text";
 import {$isTableNode, $isTableRowNode, $isTableCellNode} from "@lexical/table";
 import {buildLexicalSchema, LexicalBinding, readLexicalModel, $setLexicalSelection, $lexicalSelection} from "../src/lexical/index.ts";
@@ -359,4 +359,23 @@ test("Lexical native reparent retains content tokens inside nested flows", async
         s.bindings[0].undo(); await s.net.settle(); equal(s);
         assert.deepEqual(a.doc.toJSON().children!.filter(node => node.type === "callout")[0].children![0].runs, [{text: "left", marks: {}}]);
     } finally { s.dispose(); s.clients.forEach(client => client.disconnect()); }
+});
+
+
+test("Lexical projection cache uses actual readback after an application transform", async () => {
+    const s = await setup();
+    let rewrite = true;
+    const stop = s.editors[1].registerNodeTransform(TextNode, node => {
+        if (rewrite && node.getTextContent().includes("X")) {
+            rewrite = false;
+            node.setTextContent(node.getTextContent() + "!");
+        }
+    });
+    try {
+        type(s.editors[0], s.info, [0, 1], "X");
+        await s.net.settle();
+        assert.equal(rewrite, false);
+        assert.equal(content(s.editors[1]), "aXbc");
+        equal(s);
+    } finally { stop(); s.dispose(); }
 });
