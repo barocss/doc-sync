@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import {execFileSync, spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {mkdirSync, mkdtempSync, readFileSync, writeFileSync, copyFileSync, symlinkSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join, resolve} from 'node:path';
+
+const root = process.cwd(), args = process.argv.slice(2), index = args.indexOf('--out-dir');
+assert.ok(index >= 0 && args[index + 1], 'Provide a fresh --out-dir');
+const out = resolve(args[index + 1]);
+mkdirSync(out);
+const commit = '84fa81df7ff2288551fd33285dd6f3f2fa2de781';
+const test = 'packages/doc-sync/test/move-structure-regressions.test.ts';
+const testSha256 = createHash('sha256').update(readFileSync(test)).digest('hex');
+assert.equal(testSha256, '7c3299dab755a888dbda289e76ae1e68be2bd08565d5860daacdd0c919e2c4f2', 'Use the final 18-case regression file recorded by this report');
+const tree = mkdtempSync(join(tmpdir(), 'doc-sync-move-before-'));
+execFileSync('tar', ['-x', '-C', tree], {input: execFileSync('git', ['archive', commit, 'packages/doc-sync', 'fixtures', 'package.json'], {maxBuffer: 16 * 1024 * 1024})});
+symlinkSync(join(root, 'node_modules'), join(tree, 'node_modules'), 'dir');
+copyFileSync(test, join(tree, test));
+const result = spawnSync(process.execPath, ['--test', test], {cwd: tree, encoding: 'utf8'});
+writeFileSync(join(out, 'node-before.log'), result.stdout + result.stderr, {flag: 'wx'});
+writeFileSync(join(out, 'receipt.json'), JSON.stringify({commit, testSha256, tree, node: process.version, exit: result.status}, null, 2) + '\n', {flag: 'wx'});
+assert.equal(result.status, 1);
+assert.match(result.stdout, /# tests 18\n/);
+assert.match(result.stdout, /# fail 18\n/);
+console.log('Expected baseline reproduced: 18 failures. See node-before.log.');

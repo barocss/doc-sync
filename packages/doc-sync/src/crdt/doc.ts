@@ -1,4 +1,4 @@
-import {parseJoin, parseTextStorage, textTicket} from "./text-storage.ts";
+import {parseJoin, parseSplitBoundary, parseTextStorage, textTicket} from "./text-storage.ts";
 import type {TextAddress, JoinValue} from "./text-storage.ts";
 import {ANNOTATION_HEAD, ANNOTATION_HEAD_KEY, ANNOTATION_SLOT, ANNOTATION_TYPE, annotationEndpointKeys, annotationJsonOk, validateAnnotationAttributes, validateAnnotationAttribute} from "./annotations.ts";
 import {parseRequired, requiredTicket, requiredType} from "./cardinality.ts";
@@ -530,7 +530,8 @@ export class Doc {
                 if (op.after) {
                     const placement = this.placements.get(keyOf(op.after)) ?? stagedMoves.get(keyOf(op.after));
                     const anchor = factOf(keyOf(op.after));
-                    if (placement ? keyOf(placement.parent) !== keyOf(op.parent) : !anchor || (parseRequired(anchor.line.key)?.parent ?? anchor.line.key) !== keyOf(op.parent) || anchor.kind === "char") return "Move anchor belongs to another flow";
+                    const anchorLine = anchor && (parseRequired(anchor.line.key)?.parent ?? parseTextStorage(anchor.line.key)?.parent ?? anchor.line.key);
+                    if (placement ? keyOf(placement.parent) !== keyOf(op.parent) : !anchor || anchorLine !== keyOf(op.parent) || anchor.kind === "char") return "Move anchor belongs to another flow";
                 }
                 if (compareTicket(op.at, op.target) <= 0 || op.after && compareTicket(op.at, op.after) <= 0) return "Move identity must follow its references";
                 if (!ACTOR.test(op.at.actor)) return "Invalid movement actor";
@@ -1532,32 +1533,63 @@ export class Doc {
 
     get hasMoves(): boolean { return this.placements.active; }
 
+    /** Replacement gaps use an existing movement stamp as their fragment nonce. */
+    private automaticGap(address: TextAddress): TextAddress | null {
+        const seen = new Set<string>();
+        while (address.detached) {
+            if (!address.after || seen.has(address.after)) return null;
+            seen.add(address.after);
+            const movement = this.placements.get(address.after);
+            const original = movement && parseTextStorage(keyOf(movement.target));
+            if (!original) {
+                const anchor = movement && this.byKey.get(keyOf(movement.target));
+                return movement && keyOf(movement.parent) === address.parent && anchor && ["flow", "grid", "atom"].includes(this.specOf(anchor.born)?.shape ?? "")
+                    ? {parent: address.parent, after: movement.after ? keyOf(movement.after) : null} : null;
+            }
+            if (original.parent !== address.parent) return null;
+            address = original;
+        }
+        return address;
+    }
+
     private projectionCache: {version: number; lines: number; value: PlacementProjection} | null = null;
     private placementProjection(): PlacementProjection {
         for (const movement of this.placements.values()) this.get(keyOf(movement.parent));
         const cached = this.projectionCache;
         if (cached?.version === this.revision && cached.lines === this.lineMap.size) return cached.value;
         const base: Placement[] = [];
+        const gaps = new Map<string, Ticket>();
+        const rank = (key: string, stamps: Ticket[]): void => {
+            for (const stamp of stamps) if (!gaps.has(key) || compareTicket(stamp, gaps.get(key)!) < 0) gaps.set(key, stamp);
+        };
         for (const line of [...this.lineMap.values()]) {
             if (parseRequired(line.key) || !this.flowSpecOf(line)) continue;
             const address = parseTextStorage(line.key);
             if (address) {
-                let after = address.detached ? null : address.after;
+                const gap = this.automaticGap(address);
+                let after = gap?.after ?? null;
+                if (gap) rank(line.key, [...line.items.slice(1).map(item => item.id), ...[...line.items[0].attrs.values()].map(register => register.at)]);
                 for (const item of line.items) {
-                    if (item.kind === "char" || this.isInline(item) || address.detached && isHead(item)) continue;
+                    if (item.kind === "char" || this.isInline(item) || address.detached && !gap && isHead(item)) continue;
                     base.push({id: item.id, target: item.key, parent: address.parent, after});
-                    after = item.key;
+                    if (!parseSplitBoundary(item.boundary)) after = item.key;
                 }
                 continue;
             }
             let after: string | null = null;
+            let virtualByMarker: Map<string, TextBlock> | undefined;
             for (const item of line.items) {
                 if (item.kind === "char" || this.isInline(item)) continue;
                 base.push({id: item.id, target: item.key, parent: line.key, after});
-                after = item.key;
+                // Logical splits carry their own placement. Their physical
+                // partition marker must not reanchor existing siblings.
+                if (!parseSplitBoundary(item.boundary)) after = item.key;
                 if (!this.isTextMarker(item)) {
                     const id = textTicket({parent: line.key, after: item.key});
                     base.push({id, target: keyOf(id), parent: line.key, after});
+                    virtualByMarker ??= new Map(this.sourceBlocks(line.key).flatMap(block => block.kind === "text" && block.virtual ? [[block.marker.key, block] as const] : []));
+                    const virtual = virtualByMarker.get(item.key);
+                    if (virtual) rank(keyOf(id), virtual.chars.map(char => char.id));
                     after = keyOf(id);
                 }
             }
@@ -1572,7 +1604,7 @@ export class Doc {
                 base.push({id, target: keyOf(id), parent: line.key, after}); after = keyOf(id);
             }
         }
-        const value = this.placements.project(base, line => this.get(line)?.line.owner?.key ?? null);
+        const value = this.placements.project(base, line => this.get(line)?.line.owner?.key ?? null, gaps);
         this.projectionCache = {version: this.revision, lines: this.lineMap.size, value};
         return value;
     }
@@ -1638,9 +1670,12 @@ export class Doc {
             const sourceBlocks = this.sourceBlocks(source.key);
             const address = parseTextStorage(source.key)!;
             for (const child of sourceBlocks.slice(1)) if (!(child.kind === "text" && child.virtual) && isAlive(child.marker)) available.set(child.marker.key, child);
-            if (address.detached) continue;
+            const gap = this.automaticGap(address);
+            if (address.detached && !gap) continue;
             const physicalHead = sourceBlocks[0] as TextBlock;
-            const block = address.after !== null && source.items.length === 1 && !physicalHead.marker.attrs.size && !this.placements.values().some(op => keyOf(op.target) === source.key) ? {...physicalHead, virtual: true} : physicalHead;
+            // A detached replacement stores a move nonce, not its logical gap.
+            // Leading gaps must stay visible to both model paths and toJSON.
+            const block = (gap ?? address).after !== null && source.items.length === 1 && !physicalHead.marker.attrs.size && !this.placements.values().some(op => keyOf(op.target) === source.key) ? {...physicalHead, virtual: true} : physicalHead;
             const original = physicalVirtual.get(source.key);
             if (original) {
                 const parts = [block, original];
@@ -1685,29 +1720,48 @@ export class Doc {
             }
             return {...head, parts, aliases: parts.flatMap(part => part.marker === head.marker ? part.aliases : [part.marker, ...part.aliases]), chars: parts.flatMap(part => part.chars), text: parts.map(part => part.text).join("")};
         };
+        const fallback = (after: string | null, before?: Block): TextBlock => {
+            let key = keyOf(textTicket({parent: lineKey, after}));
+            let item = this.get(key)!;
+            let placement = projection.current.get(item.key);
+            while (placement && keyOf(placement.id) !== key) {
+                key = keyOf(textTicket({parent: lineKey, after: keyOf(placement.id), detached: true}));
+                item = this.get(key)!;
+                placement = projection.current.get(item.key);
+            }
+            let block = available.get(item.key) as TextBlock ?? this.sourceBlocks(item.line.key)[0] as TextBlock;
+            if (before && (block.chars.length || item.attrs.size) && result.some(candidate => candidate.marker === item)) {
+                const boundary = projection.current.get(before.marker.key);
+                if (boundary && this.placements.get(keyOf(boundary.id))) {
+                    item = this.fragmentStorage(lineKey, boundary.id);
+                    block = available.get(item.key) as TextBlock ?? this.sourceBlocks(item.line.key)[0] as TextBlock;
+                }
+            }
+            return after !== null && item.line.items.length === 1 && !item.attrs.size ? {...block, virtual: true} : block;
+        };
         const result: Block[] = [];
         for (const key of projection.order.get(lineKey) ?? []) {
             const block = available.get(key);
             if (block && !joins.has(key)) result.push(block.kind === "text" ? appendParts(block) : block);
         }
         const out: Block[] = [];
-        const fallback = (after: string | null): TextBlock => {
-            const key = keyOf(textTicket({parent: lineKey, after}));
-            const item = this.get(key)!;
-            const block = available.get(key) as TextBlock ?? this.sourceBlocks(item.line.key)[0] as TextBlock;
-            return after !== null && item.line.items.length === 1 && !item.attrs.size ? {...block, virtual: true} : block;
+        const emitted = new Set<string>();
+        const append = (block: Block): void => {
+            if (emitted.has(block.marker.key)) return;
+            emitted.add(block.marker.key); out.push(block);
         };
         for (let i = 0; i < result.length; i++) {
             const block = result[i];
+            if (emitted.has(block.marker.key)) continue;
             // Unedited automatic paragraphs do not create duplicate gaps beside
             // a real text block. Once edited, their identity and contents persist.
             if (block.kind === "text" && parseTextStorage(block.marker.key) && !block.chars.length && !this.placements.values().some(op => keyOf(op.target) === block.marker.key) && (result[i + 1]?.kind === "text" || out.at(-1)?.kind === "text")) continue;
-            if (!out.length && block.kind !== "text") out.push(fallback(null));
-            if (out.length && out.at(-1)!.kind !== "text" && block.kind !== "text") out.push(fallback(keyOf(this.placementOf(out.at(-1)!.marker.id)?.at ?? out.at(-1)!.marker.id)));
-            out.push(block);
+            if (!out.length && block.kind !== "text") append(fallback(null, block));
+            if (out.length && out.at(-1)!.kind !== "text" && block.kind !== "text") append(fallback(keyOf(this.placementOf(out.at(-1)!.marker.id)?.at ?? out.at(-1)!.marker.id), block));
+            append(block);
         }
-        if (!out.length) out.push(fallback(null));
-        if (out.at(-1)!.kind !== "text") out.push(fallback(keyOf(this.placementOf(out.at(-1)!.marker.id)?.at ?? out.at(-1)!.marker.id)));
+        if (!out.length) append(fallback(null));
+        if (out.at(-1)!.kind !== "text") append(fallback(keyOf(this.placementOf(out.at(-1)!.marker.id)?.at ?? out.at(-1)!.marker.id)));
         return this.applyChildRules(lineKey, out);
     }
 

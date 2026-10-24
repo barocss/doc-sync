@@ -64,6 +64,10 @@ A move can reorder a block or group in a flow or move it into a compatible neste
 
 Post-move split undo checks both its join state and the tail's placement. If another writer has moved the tail and that move was received, undo does not pull it back into the original paragraph. An unrecorded same-actor move also breaks ownership. If a later move was recorded in the same history, undoing that move restores the shared placement Ticket; the earlier split can then be undone. Split/merge chains share restored join Tickets and retain their original text identities through undo and redo.
 
+Automatic input paragraphs have one visible occurrence per identity. Typing into a leading gap keeps that paragraph before its adjacent structured block. Moving the populated paragraph leaves a distinct editable gap where one is needed; its text does not also remain in the new gap. A later explicit move can still place another paragraph before it. An empty leading replacement remains a visible model child after reads, later edits and snapshot restoration. Its presence must not shift editing paths to unrelated content.
+
+Splitting `abc | ghi | def` after moving `ghi` before `def` at offset 1 produces `a | bc | ghi | def`. The split does not write new placements for `ghi` or `def`. Splitting populated automatic input before a structured block keeps both halves before that block. Same-boundary concurrent Enter absorption, conditional undo ownership and independent remote formatting still apply. Fixed examples, both delivery orders, compaction and snapshot checks are in `move-structure-regressions.test.ts`.
+
 ### 2.7 Nested Fields Have Independent Ownership
 
 An attribute is atomic unless its schema declares `fields`. Declared leaves then have separate LWW keys. A width change and a theme change can both survive; two changes to width compete by Ticket. Omitted patch leaves keep their values, while null resets a declared leaf or branch to defaults. An explicit write of the current value still claims ownership with a new Ticket. Editor model diffs emit only changed leaves to avoid claiming unrelated values.

@@ -1,0 +1,17 @@
+--- a/packages/doc-sync/src/crdt/doc.ts
++++ b/packages/doc-sync/src/crdt/doc.ts
+@@ -1670,9 +1670,12 @@
+             const sourceBlocks = this.sourceBlocks(source.key);
+             const address = parseTextStorage(source.key)!;
+             for (const child of sourceBlocks.slice(1)) if (!(child.kind === "text" && child.virtual) && isAlive(child.marker)) available.set(child.marker.key, child);
+-            if (address.detached && !this.automaticGap(address)) continue;
++            const gap = this.automaticGap(address);
++            if (address.detached && !gap) continue;
+             const physicalHead = sourceBlocks[0] as TextBlock;
+-            const block = address.after !== null && source.items.length === 1 && !physicalHead.marker.attrs.size && !this.placements.values().some(op => keyOf(op.target) === source.key) ? {...physicalHead, virtual: true} : physicalHead;
++            // A detached replacement stores a move nonce, not its logical gap.
++            // Leading gaps must stay visible to both model paths and toJSON.
++            const block = (gap ?? address).after !== null && source.items.length === 1 && !physicalHead.marker.attrs.size && !this.placements.values().some(op => keyOf(op.target) === source.key) ? {...physicalHead, virtual: true} : physicalHead;
+             const original = physicalVirtual.get(source.key);
+             if (original) {
+                 const parts = [block, original];

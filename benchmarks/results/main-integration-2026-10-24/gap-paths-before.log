@@ -1,0 +1,842 @@
+TAP version 13
+# Subtest: incoming structured move: reconstructed leading gap has a visible model path
+not ok 1 - incoming structured move: reconstructed leading gap has a visible model path
+  ---
+  duration_ms: 8.533375
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:39:5'
+  failureType: 'testCodeFailure'
+  error: 'Expected "actual" to be strictly unequal to: true'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: true
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:42:16)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: incoming structured move: insert targets the paragraph after an empty replacement
+not ok 2 - incoming structured move: insert targets the paragraph after an empty replacement
+  ---
+  duration_ms: 4.460791
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [],
+            type: 'paragraph'
+    ...
+                marks: {},
+    +           text: 'ab'
+    -           text: 'aXb'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'lXead'
+    -           text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'aXb'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ab'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lXead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:34:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:64:48)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: incoming structured move: delete targets the paragraph after an empty replacement
+not ok 3 - incoming structured move: delete targets the paragraph after an empty replacement
+  ---
+  duration_ms: 1.785959
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [],
+            type: 'paragraph'
+    ...
+                marks: {},
+    +           text: 'ab'
+    -           text: 'b'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ead'
+    -           text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'b'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ab'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:34:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:64:48)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: incoming structured move: update targets the paragraph after an empty replacement
+not ok 4 - incoming structured move: update targets the paragraph after an empty replacement
+  ---
+  duration_ms: 4.184125
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [],
+            type: 'paragraph'
+    ...
+              {
+    -           marks: {
+    -             bold: true
+    -           },
+    -           text: 'a'
+    -         },
+    -         {
+                marks: {},
+    +           text: 'ab'
+    -           text: 'b'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+            runs: [
+              {
+    +           marks: {
+    +             bold: true
+    +           },
+    +           text: 'l'
+    +         },
+    +         {
+                marks: {},
+    +           text: 'ead'
+    -           text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+              bold: true
+          1:
+            text: 'b'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ab'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'l'
+            marks:
+              bold: true
+          1:
+            text: 'ead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:34:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:64:48)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: incoming structured move: split targets the paragraph after an empty replacement
+not ok 5 - incoming structured move: split targets the paragraph after an empty replacement
+  ---
+  duration_ms: 1.662459
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [],
+            type: 'paragraph'
+    ...
+                marks: {},
+    +           text: 'ab'
+    -           text: 'a'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'l'
+    -           text: 'b'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ead'
+    -           text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'b'
+            marks:
+      4:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ab'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'l'
+            marks:
+      4:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:34:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:64:48)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: incoming structured move: deletion undo and redo preserve the unrelated paragraph
+not ok 6 - incoming structured move: deletion undo and redo preserve the unrelated paragraph
+  ---
+  duration_ms: 1.341875
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:67:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [],
+            type: 'paragraph'
+    ...
+                marks: {},
+    +           text: 'ab'
+    -           text: 'b'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ead'
+    -           text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'b'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ab'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:34:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:70:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: automatic same-parent move: reconstructed leading gap has a visible model path
+not ok 7 - automatic same-parent move: reconstructed leading gap has a visible model path
+  ---
+  duration_ms: 0.921708
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:39:5'
+  failureType: 'testCodeFailure'
+  error: 'Expected "actual" to be strictly unequal to: true'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: true
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:42:16)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: automatic same-parent move: insert targets the paragraph after an empty replacement
+not ok 8 - automatic same-parent move: insert targets the paragraph after an empty replacement
+  ---
+  duration_ms: 1.232541
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: '경로 [3]: 3 번째 자식이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:105:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.insert (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:414:29)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:325:29)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:59:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic same-parent move: delete targets the paragraph after an empty replacement
+not ok 9 - automatic same-parent move: delete targets the paragraph after an empty replacement
+  ---
+  duration_ms: 1.577333
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: '경로 [3]: 3 번째 자식이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:105:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.delete (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:894:29)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:327:35)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:59:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic same-parent move: update targets the paragraph after an empty replacement
+not ok 10 - automatic same-parent move: update targets the paragraph after an empty replacement
+  ---
+  duration_ms: 1.135709
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: '경로 [3]: 3 번째 자식이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:105:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.update (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1024:41)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:329:29)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:59:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic same-parent move: split targets the paragraph after an empty replacement
+not ok 11 - automatic same-parent move: split targets the paragraph after an empty replacement
+  ---
+  duration_ms: 1.202625
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: '경로 [3]: 3 번째 자식이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:105:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.split (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1128:40)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:331:29)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:59:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic same-parent move: deletion undo and redo preserve the unrelated paragraph
+not ok 12 - automatic same-parent move: deletion undo and redo preserve the unrelated paragraph
+  ---
+  duration_ms: 0.644208
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:67:5'
+  failureType: 'testCodeFailure'
+  error: '경로 [3]: 3 번째 자식이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:105:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.delete (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:894:29)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:327:35)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:69:28)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic cross-parent move: reconstructed leading gap has a visible model path
+not ok 13 - automatic cross-parent move: reconstructed leading gap has a visible model path
+  ---
+  duration_ms: 0.718291
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:39:5'
+  failureType: 'testCodeFailure'
+  error: 'Expected "actual" to be strictly unequal to: true'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: true
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:42:16)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: automatic cross-parent move: insert targets the paragraph after an empty replacement
+not ok 14 - automatic cross-parent move: insert targets the paragraph after an empty replacement
+  ---
+  duration_ms: 1.26975
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: '경로 [1,1]: 행 1 이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:127:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.insert (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:414:29)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:325:29)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:59:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic cross-parent move: delete targets the paragraph after an empty replacement
+not ok 15 - automatic cross-parent move: delete targets the paragraph after an empty replacement
+  ---
+  duration_ms: 0.754959
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: '경로 [1,1]: 행 1 이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:127:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.delete (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:894:29)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:327:35)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:59:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic cross-parent move: update targets the paragraph after an empty replacement
+not ok 16 - automatic cross-parent move: update targets the paragraph after an empty replacement
+  ---
+  duration_ms: 1.033917
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: '경로 [1,1]: 행 1 이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:127:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.update (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1024:41)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:329:29)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:59:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic cross-parent move: split targets the paragraph after an empty replacement
+not ok 17 - automatic cross-parent move: split targets the paragraph after an empty replacement
+  ---
+  duration_ms: 0.885583
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:52:9'
+  failureType: 'testCodeFailure'
+  error: '경로 [1,1]: 행 1 이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:127:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.split (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1128:40)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:331:29)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:59:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: automatic cross-parent move: deletion undo and redo preserve the unrelated paragraph
+not ok 18 - automatic cross-parent move: deletion undo and redo preserve the unrelated paragraph
+  ---
+  duration_ms: 1.053583
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:67:5'
+  failureType: 'testCodeFailure'
+  error: '경로 [1,1]: 행 1 이 없다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    resolvePath (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:127:23)
+    Compiler.ref (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:379:16)
+    Compiler.delete (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:894:29)
+    Compiler.compile (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:327:35)
+    file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:32
+    Array.forEach (<anonymous>)
+    compileEdits (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/edit.ts:1205:9)
+    Doc.edit (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/src/crdt/doc.ts:2027:21)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-gap-path-before-955wbjhj/packages/doc-sync/test/automatic-gap-paths.test.ts:69:28)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 0
+# fail 18
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 166.290333

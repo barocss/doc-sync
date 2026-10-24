@@ -1,0 +1,1912 @@
+TAP version 13
+# Subtest: editing automatic leading input displays its stored text only once
+not ok 1 - editing automatic leading input displays its stored text only once
+  ---
+  duration_ms: 10.132167
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:20:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'X'
+    +         }
+    +       ],
+    +       type: 'paragraph'
+    +     },
+    +     {
+    +       runs: [
+    +         {
+    +           marks: {},
+                text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:23:50)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: automatic leading input undo and redo preserve one identity and content occurrence
+not ok 2 - automatic leading input undo and redo preserve one identity and content occurrence
+  ---
+  duration_ms: 1.226959
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'X'
+    +         }
+    +       ],
+    +       type: 'paragraph'
+    +     },
+    +     {
+    +       runs: [
+    +         {
+    +           marks: {},
+                text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:31:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: moving edited automatic leading input creates a distinct editable replacement
+not ok 3 - moving edited automatic leading input creates a distinct editable replacement
+  ---
+  duration_ms: 1.778333
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:36:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        children: [
+          {
+    +       runs: [
+    +         {
+    +           marks: {},
+    +           text: 'X'
+    +         }
+    +       ],
+    -       runs: [],
+            type: 'paragraph'
+          },
+          {
+            children: [
+              {
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:39:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: split at 0 preserves moved and stationary following siblings
+not ok 4 - split at 0 preserves moved and stationary following siblings
+  ---
+  duration_ms: 1.116959
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:45:30'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [],
+            type: 'paragraph'
+    ...
+                marks: {},
+    +           text: 'def'
+    -           text: 'ghi'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ghi'
+    -           text: 'def'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'abc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'abc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:49:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: split at 1 preserves moved and stationary following siblings
+not ok 5 - split at 1 preserves moved and stationary following siblings
+  ---
+  duration_ms: 1.020584
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:45:30'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'def'
+    -           text: 'ghi'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ghi'
+    -           text: 'def'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:49:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: split at 3 preserves moved and stationary following siblings
+not ok 6 - split at 3 preserves moved and stationary following siblings
+  ---
+  duration_ms: 0.516834
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:45:30'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'def'
+    -           text: 'ghi'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ghi'
+    -           text: 'def'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'abc'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'abc'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:49:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: splitting before several moved siblings preserves all their relative positions
+not ok 7 - splitting before several moved siblings preserves all their relative positions
+  ---
+  duration_ms: 1.458167
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:53:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'def'
+    -           text: 'mno'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ghi'
+    -           text: 'jkl'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'mno'
+    -           text: 'def'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'jkl'
+    -           text: 'ghi'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'mno'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'jkl'
+            marks:
+      4:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+      5:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+      4:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'mno'
+            marks:
+      5:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'jkl'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:56:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: split undo redo and later remote formatting preserve sibling order and ownership
+not ok 8 - split undo redo and later remote formatting preserve sibling order and ownership
+  ---
+  duration_ms: 2.921583
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:59:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'def'
+    -           text: 'ghi'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ghi'
+    -           text: 'def'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:62:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: concurrent same-boundary splits after movement converge once (false)
+not ok 9 - concurrent same-boundary splits after movement converge once (false)
+  ---
+  duration_ms: 3.798041
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:68:36'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'def'
+    -           text: 'ghi'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ghi'
+    -           text: 'def'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:74:31)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: concurrent same-boundary splits after movement converge once (true)
+not ok 10 - concurrent same-boundary splits after movement converge once (true)
+  ---
+  duration_ms: 1.965291
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:68:36'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'def'
+    -           text: 'ghi'
+              }
+            ],
+            type: 'paragraph'
+          },
+          {
+    ...
+                marks: {},
+    +           text: 'ghi'
+    -           text: 'def'
+              }
+            ],
+            type: 'paragraph'
+          }
+        ],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'def'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'ghi'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:74:31)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: splitting populated automatic leading input keeps both halves before the moved block
+not ok 11 - splitting populated automatic leading input keeps both halves before the moved block
+  ---
+  duration_ms: 0.92
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:77:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+          {
+    -       runs: [
+    -         {
+    -           marks: {},
+    -           text: 'bc'
+    -         }
+    -       ],
+    -       type: 'paragraph'
+    -     },
+    -     {
+            children: [
+              {
+                runs: [
+                  {
+                    marks: {},
+    ...
+                marks: {},
+    +           text: 'a'
+    +         }
+    +       ],
+    +       type: 'paragraph'
+    +     },
+    +     {
+    +       runs: [
+    +         {
+    +           marks: {},
+    +           text: 'bc'
+    +         }
+    +       ],
+    +       type: 'paragraph'
+    +     },
+    +     {
+    +       runs: [
+    +         {
+    +           marks: {},
+                text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      2:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'a'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'bc'
+            marks:
+      4:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:79:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: automatic input can move across parents while its replacement stays editable
+not ok 12 - automatic input can move across parents while its replacement stays editable
+  ---
+  duration_ms: 2.630333
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:82:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        children: [
+          {
+    +       runs: [
+    +         {
+    +           marks: {},
+    +           text: 'X'
+    +         }
+    +       ],
+    -       runs: [],
+            type: 'paragraph'
+          },
+          {
+            children: [
+              {
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+          1:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'X'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+          1:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'X'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:84:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: later explicit paragraph movement can precede an edited automatic paragraph
+not ok 13 - later explicit paragraph movement can precede an edited automatic paragraph
+  ---
+  duration_ms: 0.581791
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:90:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+                marks: {},
+    -           text: 'lead'
+    -         }
+    -       ],
+    -       type: 'paragraph'
+    -     },
+    -     {
+    -       runs: [
+    -         {
+    -           marks: {},
+                text: 'X'
+              }
+            ],
+            type: 'paragraph'
+          },
+    ...
+          },
+    +     {
+    +       runs: [
+    +         {
+    +           marks: {},
+    +           text: 'lead'
+    +         }
+    +       ],
+    +       type: 'paragraph'
+    +     }
+        ],
+        type: 'content'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      2:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:93:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: later structured movement creates a new gap without displaying old automatic text twice
+not ok 14 - later structured movement creates a new gap without displaying old automatic text twice
+  ---
+  duration_ms: 0.500917
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:96:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        children: [
+          {
+    +       runs: [
+    +         {
+    +           marks: {},
+    +           text: 'X'
+    +         }
+    +       ],
+    -       runs: [],
+            type: 'paragraph'
+          },
+          {
+            children: [
+              {
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'X'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:99:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: automatic input merges concurrent input and formatting (false)
+not ok 15 - automatic input merges concurrent input and formatting (false)
+  ---
+  duration_ms: 1.510917
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:105:38'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'aX'
+    +         },
+    +         {
+    +           marks: {
+    +             bold: true
+    +           },
+    +           text: 'b'
+    +         },
+    +         {
+    +           marks: {},
+    +           text: 'c'
+    +         }
+    +       ],
+    +       type: 'paragraph'
+    +     },
+    +     {
+    +       runs: [
+    +         {
+    +           marks: {},
+                text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'aX'
+            marks:
+          1:
+            text: 'b'
+            marks:
+              bold: true
+          2:
+            text: 'c'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'aX'
+            marks:
+          1:
+            text: 'b'
+            marks:
+              bold: true
+          2:
+            text: 'c'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'aX'
+            marks:
+          1:
+            text: 'b'
+            marks:
+              bold: true
+          2:
+            text: 'c'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:114:35)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: automatic input merges concurrent input and formatting (true)
+not ok 16 - automatic input merges concurrent input and formatting (true)
+  ---
+  duration_ms: 1.205458
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:105:38'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+                marks: {},
+    +           text: 'aX'
+    +         },
+    +         {
+    +           marks: {
+    +             bold: true
+    +           },
+    +           text: 'b'
+    +         },
+    +         {
+    +           marks: {},
+    +           text: 'c'
+    +         }
+    +       ],
+    +       type: 'paragraph'
+    +     },
+    +     {
+    +       runs: [
+    +         {
+    +           marks: {},
+                text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'aX'
+            marks:
+          1:
+            text: 'b'
+            marks:
+              bold: true
+          2:
+            text: 'c'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'aX'
+            marks:
+          1:
+            text: 'b'
+            marks:
+              bold: true
+          2:
+            text: 'c'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'aX'
+            marks:
+          1:
+            text: 'b'
+            marks:
+              bold: true
+          2:
+            text: 'c'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:114:35)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: automatic gap ordering survives deletion compaction and snapshot restoration
+not ok 17 - automatic gap ordering survives deletion compaction and snapshot restoration
+  ---
+  duration_ms: 0.736667
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:117:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        children: [
+          {
+            runs: [
+              {
+    ...
+          {
+    -       runs: [],
+    -       type: 'paragraph'
+    -     },
+    -     {
+            children: [
+              {
+                runs: [
+                  {
+                    marks: {},
+    ...
+                marks: {},
+    +           text: 'c'
+    +         }
+    +       ],
+    +       type: 'paragraph'
+    +     },
+    +     {
+    +       runs: [],
+    +       type: 'paragraph'
+    +     },
+    +     {
+    +       runs: [
+    +         {
+    +           marks: {},
+                text: 'lead'
+              }
+            ],
+            type: 'paragraph'
+          }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'c'
+            marks:
+      1:
+        type: 'paragraph'
+        runs:
+      2:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      3:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  actual:
+    type: 'content'
+    children:
+      0:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'c'
+            marks:
+      1:
+        type: 'box'
+        children:
+          0:
+            type: 'paragraph'
+            runs:
+              0:
+                text: 'body'
+                marks:
+      2:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'c'
+            marks:
+      3:
+        type: 'paragraph'
+        runs:
+      4:
+        type: 'paragraph'
+        runs:
+          0:
+            text: 'lead'
+            marks:
+  operator: 'deepStrictEqual'
+  stack: |-
+    check (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:14:12)
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:121:5)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: private automatic anchors are accepted only in their immutable owning flow
+not ok 18 - private automatic anchors are accepted only in their immutable owning flow
+  ---
+  duration_ms: 0.444625
+  type: 'test'
+  location: '/private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:127:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'Move anchor belongs to another flow'
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: 'Move anchor belongs to another flow'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-move-before-7bexyxx0/packages/doc-sync/test/move-structure-regressions.test.ts:134:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 0
+# fail 18
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 192.259042

@@ -87,3 +87,12 @@ The [measurement guide](../benchmarks/stage0/README.md) describes baseline insta
 Locally, all 8 shards passed with a total of 1,000,021 wire Ops. Each shard uses 8 replicas. These are local runs. They do not establish a GitHub scheduled-workflow run or two consecutive weeks of success. Local records and final review results are in `output/validation/roadmap-execution-20261023/`. Git excludes `output/`.
 
 The source-bound capability comparison is in [document-capabilities-2026-10-24](../benchmarks/results/document-capabilities-2026-10-24/README.md). It records mixed plain-document results and a known full-comparison limit: at 100,000 characters, prior-move text receipt p95 was 88.828 ms and minimum-child text receipt was 25.484 ms. Narrow this path before claiming large-document interactive acceptance.
+
+The later [logical text comparison report](../benchmarks/results/logical-text-scopes-2026-10-24/README.md) narrows safe moved/required text receipt without changing CRDT semantics. At 100,000 characters, two updated p95 runs were 12.827–14.220 ms for movement and 1.904–2.061 ms for cardinality, with zero whole-model reads. Automatic storage, hidden content and structural changes retain full comparison. This supersedes the preceding full-comparison performance limit for eligible text, not for every workload.
+
+
+## Automatic paragraphs and post-move splitting
+
+The two correctness defects identified during logical-text optimization are fixed separately in HANDOFF §5.21. Edited automatic paragraphs display once; moving one leaves a distinct editable replacement when needed. Split markers no longer reanchor untouched following siblings. No corrective moves are emitted for other users' blocks. Existing placement arbitration, same-boundary Enter and conditional history rules remain. Fixed Node cases and Chrome native-editor checks record the current proof boundary; actual OS IME and product performance gates remain open.
+
+Final integration review also fixed editing paths after lazy replacement-gap reconstruction. Empty leading replacements stay visible to both the model and editing paths, so later insert/delete/format/split operations keep their intended target. HANDOFF §5.22 records 18 new fixed cases, the expanded 525-case library run and the fresh 175-check Chrome run.

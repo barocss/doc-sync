@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: editing automatic leading input displays its stored text only once
+ok 1 - editing automatic leading input displays its stored text only once
+  ---
+  duration_ms: 9.3295
+  type: 'test'
+  ...
+# Subtest: automatic leading input undo and redo preserve one identity and content occurrence
+ok 2 - automatic leading input undo and redo preserve one identity and content occurrence
+  ---
+  duration_ms: 2.066792
+  type: 'test'
+  ...
+# Subtest: moving edited automatic leading input creates a distinct editable replacement
+ok 3 - moving edited automatic leading input creates a distinct editable replacement
+  ---
+  duration_ms: 2.320083
+  type: 'test'
+  ...
+# Subtest: split at 0 preserves moved and stationary following siblings
+ok 4 - split at 0 preserves moved and stationary following siblings
+  ---
+  duration_ms: 1.885791
+  type: 'test'
+  ...
+# Subtest: split at 1 preserves moved and stationary following siblings
+ok 5 - split at 1 preserves moved and stationary following siblings
+  ---
+  duration_ms: 0.60025
+  type: 'test'
+  ...
+# Subtest: split at 3 preserves moved and stationary following siblings
+ok 6 - split at 3 preserves moved and stationary following siblings
+  ---
+  duration_ms: 0.585042
+  type: 'test'
+  ...
+# Subtest: splitting before several moved siblings preserves all their relative positions
+ok 7 - splitting before several moved siblings preserves all their relative positions
+  ---
+  duration_ms: 0.906583
+  type: 'test'
+  ...
+# Subtest: split undo redo and later remote formatting preserve sibling order and ownership
+ok 8 - split undo redo and later remote formatting preserve sibling order and ownership
+  ---
+  duration_ms: 1.768334
+  type: 'test'
+  ...
+# Subtest: concurrent same-boundary splits after movement converge once (false)
+ok 9 - concurrent same-boundary splits after movement converge once (false)
+  ---
+  duration_ms: 2.009667
+  type: 'test'
+  ...
+# Subtest: concurrent same-boundary splits after movement converge once (true)
+ok 10 - concurrent same-boundary splits after movement converge once (true)
+  ---
+  duration_ms: 1.52425
+  type: 'test'
+  ...
+# Subtest: splitting populated automatic leading input keeps both halves before the moved block
+ok 11 - splitting populated automatic leading input keeps both halves before the moved block
+  ---
+  duration_ms: 1.12125
+  type: 'test'
+  ...
+# Subtest: automatic input can move across parents while its replacement stays editable
+ok 12 - automatic input can move across parents while its replacement stays editable
+  ---
+  duration_ms: 1.428458
+  type: 'test'
+  ...
+# Subtest: later explicit paragraph movement can precede an edited automatic paragraph
+ok 13 - later explicit paragraph movement can precede an edited automatic paragraph
+  ---
+  duration_ms: 0.863625
+  type: 'test'
+  ...
+# Subtest: later structured movement creates a new gap without displaying old automatic text twice
+ok 14 - later structured movement creates a new gap without displaying old automatic text twice
+  ---
+  duration_ms: 1.095042
+  type: 'test'
+  ...
+# Subtest: automatic input merges concurrent input and formatting (false)
+ok 15 - automatic input merges concurrent input and formatting (false)
+  ---
+  duration_ms: 1.665666
+  type: 'test'
+  ...
+# Subtest: automatic input merges concurrent input and formatting (true)
+ok 16 - automatic input merges concurrent input and formatting (true)
+  ---
+  duration_ms: 1.643625
+  type: 'test'
+  ...
+# Subtest: automatic gap ordering survives deletion compaction and snapshot restoration
+ok 17 - automatic gap ordering survives deletion compaction and snapshot restoration
+  ---
+  duration_ms: 1.333208
+  type: 'test'
+  ...
+# Subtest: private automatic anchors are accepted only in their immutable owning flow
+ok 18 - private automatic anchors are accepted only in their immutable owning flow
+  ---
+  duration_ms: 0.841959
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 171.432

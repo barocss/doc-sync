@@ -17,7 +17,7 @@ export class Placements {
         if (previous && JSON.stringify(previous) !== JSON.stringify(op)) throw new Error("Conflicting movement identity");
         if (!previous) this.records.set(key, structuredClone(op));
     }
-    project(base: Placement[], ownerOf: (line: string) => string | null): PlacementProjection {
+    project(base: Placement[], ownerOf: (line: string) => string | null, gaps = new Map<string, Ticket>()): PlacementProjection {
         const current = new Map(base.map(entry => [entry.target, entry]));
         const all = new Map(base.map(entry => [keyOf(entry.id), entry]));
         for (const op of this.values()) {
@@ -44,7 +44,10 @@ export class Placements {
         }
         const order = new Map<string, string[]>();
         for (const [parent, byOrigin] of children) {
-            for (const siblings of byOrigin.values()) siblings.sort((a, b) => compareTicket(b.id, a.id));
+            // A derived gap has no authored birth stamp. Its first retained
+            // content supplies an ordering rank; explicit moves keep their ID.
+            const rank = (entry: Placement) => keyOf(entry.id) === entry.target ? gaps.get(entry.target) ?? entry.id : entry.id;
+            for (const siblings of byOrigin.values()) siblings.sort((a, b) => compareTicket(rank(b), rank(a)) || compareTicket(b.id, a.id));
             const result: string[] = [], visited = new Set<string>();
             const stack = [...(byOrigin.get(null) ?? [])].reverse();
             while (stack.length) {
