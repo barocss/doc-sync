@@ -1,0 +1,32 @@
+{
+  "baseline": "d46db51b75120539d1f649e4025800b7c96b7506",
+  "status": "EXISTING_NATIVE_MODEL_MISMATCH_NOT_FIXED",
+  "notCountedAsNativeMergeAcceptance": true,
+  "rows": [
+    {
+      "phase": "before",
+      "baselineMatchesCurrent": true,
+      "coreModelsMatchServer": true,
+      "nativeEquality": "PASS",
+      "nativeMismatches": []
+    },
+    {
+      "phase": "merged",
+      "baselineMatchesCurrent": true,
+      "coreModelsMatchServer": true,
+      "nativeEquality": "FAIL",
+      "nativeMismatches": [
+        "lexical-a",
+        "lexical-b",
+        "pm-a"
+      ]
+    },
+    {
+      "phase": "unmerged",
+      "baselineMatchesCurrent": true,
+      "coreModelsMatchServer": true,
+      "nativeEquality": "PASS",
+      "nativeMismatches": []
+    }
+  ]
+}

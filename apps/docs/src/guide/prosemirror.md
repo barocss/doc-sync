@@ -28,6 +28,21 @@ Common insertion, deletion, split, merge, and mark steps are converted directly 
 
 Remote updates use a replacement transaction for the changed range. ProseMirror maps its selection through that transaction. Model and conversion caches depend on both the `Doc` instance and its version, so snapshot or reset replacement does not reuse the wrong document.
 
+## Merged cells and model reads
+
+ProseMirror contains only visible table cells. The shared document retains covered cells, including their content, marks and attributes. `PmBinding` supplies the current model as a reference during conversion. Merging cells therefore preserves covered content for unmerge and collaboration-aware history.
+
+If your application calls the conversion helper directly, pass the matching full model as its fourth argument:
+
+```ts
+import {canonical} from "@barocss/doc-sync";
+import {fromPmJSON} from "@barocss/doc-sync/prosemirror";
+
+const model = canonical(schema, fromPmJSON(info, schema, view.state.doc.toJSON(), client.doc.toJSON()));
+```
+
+A native document alone cannot reconstruct content that it does not contain. Returned covered-cell data is copied from the reference. Application commands that edit the core document directly should call `binding.pull()` after committing their operations to refresh the view.
+
 ## Input limits
 
 Automated Chrome tests include remote edits during simulated composition and cursor mapping. They are not a substitute for real OS keyboard and IME acceptance tests. The basic `/pm` demo and the Slate/Lexical compatibility demo have separate input implementations.

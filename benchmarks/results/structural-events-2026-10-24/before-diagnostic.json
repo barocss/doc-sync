@@ -1,0 +1,305 @@
+{
+  "startedAt": "2026-10-24T08:25:05.089Z",
+  "endedAt": "2026-10-24T08:25:25.987Z",
+  "node": "v22.19.0",
+  "startedLoadAverage": [
+    29.7900390625,
+    23.6953125,
+    21.53369140625
+  ],
+  "endedLoadAverage": [
+    29.77783203125,
+    24.15771484375,
+    21.76123046875
+  ],
+  "label": "baseline-diagnostic",
+  "metric": "synchronous remote change receipt through model-events callback; excludes network, DOM and correctness checks",
+  "unit": "ms",
+  "productImports": [
+    {
+      "specifier": "@barocss/doc-sync",
+      "resolved": "file:///Users/user/github/doc-sync/packages/doc-sync/src/index.ts"
+    },
+    {
+      "specifier": "@barocss/doc-sync/sync",
+      "resolved": "file:///Users/user/github/doc-sync/packages/doc-sync/src/sync/index.ts"
+    }
+  ],
+  "harnessSha256": "597eba2a1a15b276a01706530767e7b2553c02e199cf4b5dde9632b5b6914a82",
+  "sourceHashes": [
+    {
+      "path": "packages/doc-sync/src/crdt/doc.ts",
+      "sha256": "fc2cdc5256c838382a5744a2ecf50bc2431d20ef150771d8730050c3972dfd3d"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/model.ts",
+      "sha256": "5c4d51ea1960fc63063ce1640d9e8103fe93d5dbdfeffe160ff540e58a83a535"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/client.ts",
+      "sha256": "02c1494d61fd75f7396f024d9f0961e09b0215e5f0b2a253f7a3bcdb7e8145b9"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/model-events.ts",
+      "sha256": "5ed3bfcfb0d12a18bc801523663faff6c532f68b76453a95aafb04e3e699821f"
+    },
+    {
+      "path": "benchmarks/structural-events.ts",
+      "sha256": "597eba2a1a15b276a01706530767e7b2553c02e199cf4b5dde9632b5b6914a82"
+    }
+  ],
+  "rows": [
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "root-split",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        160,
+        160
+      ],
+      "phases": [
+        {
+          "totalMs": 85.9085,
+          "applyMs": 0.05445800000006784,
+          "modelMs": 17.53170799999998,
+          "otherMs": 68.32233399999996,
+          "stringifyMs": 17.35800700007485,
+          "stringifyCalls": 201520
+        },
+        {
+          "totalMs": 71.29654200000004,
+          "applyMs": 0.003665999999611813,
+          "modelMs": 12.864207999999962,
+          "otherMs": 58.42866800000047,
+          "stringifyMs": 17.619881999986774,
+          "stringifyCalls": 201204
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 68.49299999999994,
+      "p95": 85.53687499999978,
+      "max": 85.53687499999978,
+      "rawMs": [
+        79.36779100000012,
+        66.5317500000001,
+        85.53687499999978,
+        68.49299999999994,
+        64.80874999999969
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "callout-split",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        120,
+        120
+      ],
+      "phases": [
+        {
+          "totalMs": 63.392125000000306,
+          "applyMs": 0.0056670000003578025,
+          "modelMs": 1.157416999999441,
+          "otherMs": 62.22904100000051,
+          "stringifyMs": 19.192735999825345,
+          "stringifyCalls": 201446
+        },
+        {
+          "totalMs": 63.572667000000365,
+          "applyMs": 0.0037080000001878943,
+          "modelMs": 1.2134159999995973,
+          "otherMs": 62.35554300000058,
+          "stringifyMs": 19.87814499993965,
+          "stringifyCalls": 201803
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 52.32012499999928,
+      "p95": 107.08283300000039,
+      "max": 107.08283300000039,
+      "rawMs": [
+        107.08283300000039,
+        56.56908299999941,
+        47.612834000000475,
+        52.32012499999928,
+        50.51429199999984
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "root-type",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        160,
+        160
+      ],
+      "phases": [
+        {
+          "totalMs": 81.26641700000073,
+          "applyMs": 0.010874999999941792,
+          "modelMs": 17.50470800000039,
+          "otherMs": 63.750834000000395,
+          "stringifyMs": 18.848583999610128,
+          "stringifyCalls": 201202
+        },
+        {
+          "totalMs": 84.66629199999988,
+          "applyMs": 0.026041999999506515,
+          "modelMs": 15.015582999998514,
+          "otherMs": 69.62466700000186,
+          "stringifyMs": 19.481136999927912,
+          "stringifyCalls": 201203
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 62.78687499999978,
+      "p95": 84.09237500000017,
+      "max": 84.09237500000017,
+      "rawMs": [
+        59.20220800000061,
+        62.78687499999978,
+        57.05208300000049,
+        62.82995799999844,
+        84.09237500000017
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "cell-split",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        120,
+        120
+      ],
+      "phases": [
+        {
+          "totalMs": 65.74408300000141,
+          "applyMs": 0.006499999999505235,
+          "modelMs": 1.1300419999988662,
+          "otherMs": 64.60754100000304,
+          "stringifyMs": 19.054961000265394,
+          "stringifyCalls": 201458
+        },
+        {
+          "totalMs": 54.898457999999664,
+          "applyMs": 0.004208000000289758,
+          "modelMs": 1.209499999999025,
+          "otherMs": 53.68475000000035,
+          "stringifyMs": 16.334434000129477,
+          "stringifyCalls": 201211
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 49.91858300000058,
+      "p95": 57.386875000000146,
+      "max": 57.386875000000146,
+      "rawMs": [
+        55.163791000000856,
+        49.91858300000058,
+        57.386875000000146,
+        43.44566599999962,
+        42.95008400000006
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "table-row",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        0,
+        0
+      ],
+      "phases": [
+        {
+          "totalMs": 88.39700000000084,
+          "applyMs": 0.016499999997904524,
+          "modelMs": 13.910958000000392,
+          "otherMs": 74.46954200000255,
+          "stringifyMs": 18.09243300001981,
+          "stringifyCalls": 201212
+        },
+        {
+          "totalMs": 83.88395799999853,
+          "applyMs": 0.005917000002227724,
+          "modelMs": 14.607458000002225,
+          "otherMs": 69.27058299999408,
+          "stringifyMs": 19.921564000349463,
+          "stringifyCalls": 201209
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 70.43112499999916,
+      "p95": 74.52633400000013,
+      "max": 74.52633400000013,
+      "rawMs": [
+        71.33400000000074,
+        70.43112499999916,
+        64.70537499999955,
+        74.52633400000013,
+        69.90700000000106
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "table-span",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        0,
+        0
+      ],
+      "phases": [
+        {
+          "totalMs": 84.29166600000099,
+          "applyMs": 0.0052500000019790605,
+          "modelMs": 12.539416000003257,
+          "otherMs": 71.74699999999575,
+          "stringifyMs": 19.638621999827592,
+          "stringifyCalls": 201228
+        },
+        {
+          "totalMs": 78.17812499999854,
+          "applyMs": 0.004792000003362773,
+          "modelMs": 11.869042000002082,
+          "otherMs": 66.3042909999931,
+          "stringifyMs": 18.474641000044357,
+          "stringifyCalls": 201211
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 72.89079199999833,
+      "p95": 78.89445899999919,
+      "max": 78.89445899999919,
+      "rawMs": [
+        78.89445899999919,
+        72.10316599999715,
+        72.89079199999833,
+        74.43733300000167,
+        67.03200000000288
+      ]
+    }
+  ]
+}

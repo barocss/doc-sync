@@ -1,3 +1,4 @@
+import {$modelChildren} from "./grid.ts";
 import {$getRoot, $isElementNode} from "lexical";
 import {$isTableCellNode} from "@lexical/table";
 import {$lexicalModelType} from "./convert.ts";
@@ -11,6 +12,7 @@ type NativePlacements = {blocks: Map<string, Placement>; containers: Map<string,
 export function $nativePlacements(info: LexicalSchemaInfo): NativePlacements {
     const blocks = new Map<string, Placement>(), containers = new Map<string, number[]>();
     const root = $getRoot();
+    const columns = new Map();
     containers.set(root.getKey(), []);
     const visit = (node: LexicalNode, path: number[], parent: string, index: number) => {
         const type = $lexicalModelType(info, node), shape = info.schema.nodes[type]?.shape;
@@ -18,7 +20,7 @@ export function $nativePlacements(info: LexicalSchemaInfo): NativePlacements {
         if (!$isElementNode(node) || shape === "text" || shape === "span") return;
         const prefix = $isTableCellNode(node) ? [...path, 0] : path;
         containers.set(node.getKey(), prefix);
-        node.getChildren().forEach((child, i) => visit(child, [...prefix, i], node.getKey(), i));
+        $modelChildren(node, columns).forEach(({node: child, index: i}) => visit(child, [...prefix, i], node.getKey(), i));
     };
     root.getChildren().forEach((node, index) => visit(node, [index], root.getKey(), index));
     return {blocks, containers};

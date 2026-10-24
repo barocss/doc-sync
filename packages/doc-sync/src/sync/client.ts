@@ -3,7 +3,7 @@ import {Doc} from "../crdt/doc.ts";
 import {History} from "../crdt/history.ts";
 import {applyEdits, diffModels} from "../crdt/model.ts";
 import {checkSchema} from "../crdt/schema.ts";
-import {textEventScopes} from "./model-events.ts";
+import {modelEventWindow, textEventScopes} from "./model-events.ts";
 import type {Op} from "../crdt/doc.ts";
 import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, NodeJSON} from "../crdt/model.ts";
@@ -151,11 +151,18 @@ export class SyncClient {
                 return result;
             }
 
-            events = diffModels(this.schema, before!, after);
+            const window = modelEventWindow(this.schema, before!, after);
+            const localBefore = window?.before ?? before!;
+            const localAfter = window?.after ?? after;
+            const local = diffModels(this.schema, localBefore, localAfter);
 
-            if (JSON.stringify(applyEdits(this.schema, before!, events)) !== JSON.stringify(after)) {
+            if (JSON.stringify(applyEdits(this.schema, localBefore, local)) !== JSON.stringify(localAfter)) {
                 events = replaceAll(before!, after);
                 fallback = true;
+            } else {
+                const path = (at: number[]) => [at[0] + window!.start, ...at.slice(1)];
+                events = window ? local.map(event => event.op === "move"
+                    ? {...event, at: path(event.at), from: path(event.from)} : {...event, at: path(event.at)}) : local;
             }
         }
 

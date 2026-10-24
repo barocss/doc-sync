@@ -172,9 +172,11 @@ const gridFromPm = (info: PmSchemaInfo, schema: DocSchema, type: string, node: P
 
                     if (a !== r || b !== c) {
                         // 가려진 칸 — 글은 바꾸기 전 모델의 같은 자리에서
-                        const hidden = ref?.children?.[a]?.children?.[b]?.children?.[0];
+                        const hidden = ref?.children?.[a]?.children?.[b];
 
-                        grid[a][b] = {type: parts.cell, attrs: {spanned: true}, children: [hidden ?? {type: parts.body, children: []}]};
+                        grid[a][b] = hidden
+                            ? {...structuredClone(hidden), attrs: {...structuredClone(hidden.attrs), spanned: true}}
+                            : {type: parts.cell, attrs: {spanned: true}, children: [{type: parts.body, children: []}]};
                     }
                 }
             }

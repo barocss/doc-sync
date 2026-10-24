@@ -4,6 +4,7 @@ import {
 } from "lexical";
 import {$createHeadingNode, $createQuoteNode, $isHeadingNode, $isQuoteNode} from "@lexical/rich-text";
 import {$createTableNode, $createTableRowNode, $createTableCellNode, $isTableNode, $isTableRowNode, $isTableCellNode} from "@lexical/table";
+import {$modelChildren} from "./grid.ts";
 import {canonical} from "../crdt/model.ts";
 import {attrValueOk, gridParts} from "../crdt/schema.ts";
 import {$modelData, $setModelData, modelDataFor, SchemaElementNode, SchemaLeafNode} from "./nodes.ts";
@@ -57,7 +58,21 @@ export function $createModelNode(info: LexicalSchemaInfo, model: NodeJSON | Run)
     $setModelData(node, data);
     if (!$isElementNode(node)) throw new Error(`Container must be an element: ${model.type}`);
     const children = spec.shape === "span" ? (model.runs ?? []) : (elementModel.children ?? []);
-    node.append(...children.map(child => $createModelNode(info, child)));
+    if ($isTableNode(node)) {
+        const hidden = hiddenCells(elementModel);
+        if (hidden.length) $setModelData(node, {...data, hidden});
+        node.append(...(elementModel.children ?? []).map((row, r) => {
+            const nativeRow = $createModelNode(info, {...row, children: []});
+            if (!$isElementNode(nativeRow)) throw new Error("Table row must be an element");
+            for (const [c, cell] of (row.children ?? []).entries()) {
+                if (cell.attrs?.spanned) continue;
+                const nativeCell = $createModelNode(info, cell);
+                $setModelData(nativeCell, {...$modelData(nativeCell)!, grid: {row: r, column: c}});
+                nativeRow.append(nativeCell);
+            }
+            return nativeRow;
+        }));
+    } else node.append(...children.map(child => $createModelNode(info, child)));
     if ($isTableNode(node) && model.attrs?.header === true) {
         const first = node.getFirstChild();
         if ($isTableRowNode(first)) for (const child of first.getChildren()) if ($isTableCellNode(child)) child.setHeaderStyles(1);
@@ -148,7 +163,7 @@ export function $readModelNode(info: LexicalSchemaInfo, node: LexicalNode): Node
             attrs.header = true;
         } else if (spec.attrs?.header) attrs.header = false;
     }
-    return {...withAttrs(type, attrs), children: node.getChildren().map(child => $readModelNode(info, child) as NodeJSON)};
+    return {...withAttrs(type, attrs), children: $isTableNode(node) ? readGrid(info, node, type) : node.getChildren().map(child => $readModelNode(info, child) as NodeJSON)};
 }
 
 export function $toLexical(info: LexicalSchemaInfo, model: NodeJSON): void {
@@ -175,21 +190,94 @@ export function readLexicalModel(editor: LexicalEditor, info: LexicalSchemaInfo)
     return editor.getEditorState().read(() => $fromLexical(info), {editor});
 }
 
-/** Refresh computed cell visibility after a native span edit canonicalizes its grid. */
-export function $syncLexicalCells(model: NodeJSON): void {
-    const visit = (node: LexicalNode, current: NodeJSON | undefined) => {
+/** Retain covered content outside native table geometry and serialized DOM nodes. */
+function hiddenCells(table: NodeJSON) {
+    const hidden: NonNullable<import("./nodes.ts").LexicalModelData["hidden"]> = [];
+    for (const [r, row] of (table.children ?? []).entries()) for (const [c, cell] of (row.children ?? []).entries()) {
+        if (cell.attrs?.spanned) continue;
+        for (let dr = 0; dr < Number(cell.attrs?.rowspan ?? 1); dr++) for (let dc = 0; dc < Number(cell.attrs?.colspan ?? 1); dc++) {
+            const covered = table.children?.[r + dr]?.children?.[c + dc];
+            if ((dr || dc) && covered) hidden.push({row: r + dr, column: c + dc, owner: {row: r, column: c}, cell: structuredClone(covered)});
+        }
+    }
+    return hidden;
+}
+function readGrid(info: LexicalSchemaInfo, table: import("@lexical/table").TableNode, type: string): NodeJSON[] {
+    const parts = gridParts(info.schema, type)!;
+    const rows = table.getChildren();
+    // Older exported states kept covered cells as native row children.
+    if (rows.some(row => $isElementNode(row) && row.getChildren().some(cell => $modelData(cell)?.attrs?.spanned))) {
+        return rows.map(row => $readModelNode(info, row) as NodeJSON);
+    }
+    const grid: NodeJSON[][] = rows.map(() => []);
+    const native = new Map<string, LexicalNode>();
+    const origins = new Map<string, {row: number; column: number}>(), columns = new Map();
+    rows.forEach((row, r) => $modelChildren(row, columns).forEach(({node, index}) => {
+        const origin = $modelData(node)?.grid;
+        const key = origin && `${origin.row}:${origin.column}`;
+        if (key && !origins.has(key)) origins.set(key, {row: r, column: index});
+    }));
+    // Retained native cell identity remaps covered data when rows/columns are
+    // inserted before a merge. Split-cell clones follow the original master.
+    const hidden = ($modelData(table)?.hidden ?? []).flatMap(item => {
+        const origin = origins.get(`${item.owner.row}:${item.owner.column}`);
+        return origin ? [{...item, row: item.row + origin.row - item.owner.row, column: item.column + origin.column - item.owner.column}] : [];
+    });
+    const covered = new Map(hidden.map(item => [`${item.row}:${item.column}`, item.cell]));
+    for (const [r, row] of rows.entries()) {
+        for (const {node, index: c} of $modelChildren(row, columns)) {
+            if (!$isTableCellNode(node)) throw new Error("Table row requires native cells");
+            native.set(`${r}:${c}`, node);
+            grid[r][c] = $readModelNode(info, node) as NodeJSON;
+            for (let dr = 0; dr < node.getRowSpan() && r + dr < rows.length; dr++) {
+                for (let dc = 0; dc < node.getColSpan(); dc++) if (dr || dc) {
+                    grid[r + dr][c + dc] = structuredClone(covered.get(`${r + dr}:${c + dc}`) ?? {type: parts.cell, children: [{type: parts.body, children: []}]});
+                }
+            }
+        }
+    }
+    // Native unmerge creates blank cells. Restore their retained data before the
+    // binding projects the canonical grid back into those native cells.
+    for (const item of hidden) {
+        if (!grid[item.row]) continue;
+        const node = native.get(`${item.row}:${item.column}`);
+        if (!grid[item.row][item.column] || node && !node.getTextContent()) grid[item.row][item.column] = structuredClone(item.cell);
+    }
+    const width = Math.max(0, ...grid.map(row => row.length));
+    return rows.map((row, r) => ({...withAttrs(parts.row, attrsOf(row)), children: Array.from({length: width}, (_, c) => grid[r][c] ?? {type: parts.cell, children: [{type: parts.body, children: []}]})}));
+}
+
+/** Refresh canonical metadata and restored content without replacing selections. */
+export function $syncLexicalCells(info: LexicalSchemaInfo, model: NodeJSON): void {
+    const columns = new Map();
+    const visit = (node: LexicalNode, current: NodeJSON | undefined, r = 0, c = 0) => {
         if (!current || !$isElementNode(node)) return;
         if ($isTableCellNode(node)) {
-            const data = $modelData(node);
-            if (data && JSON.stringify(data.attrs ?? {}) !== JSON.stringify(current.attrs ?? {})) {
-                const next = {...data};
-                if (current.attrs) next.attrs = structuredClone(current.attrs); else delete next.attrs;
-                $setModelData(node, next);
-            }
+            const next = {...$modelData(node)!, ...modelDataFor(current, "cell"), grid: {row: r, column: c}};
+            if (!current.attrs) delete next.attrs;
+            if (JSON.stringify($modelData(node)) !== JSON.stringify(next)) $setModelData(node, next);
             const columnSpan = Number(current.attrs?.colspan ?? 1), rowSpan = Number(current.attrs?.rowspan ?? 1);
             if (node.getColSpan() !== columnSpan) node.setColSpan(columnSpan);
             if (node.getRowSpan() !== rowSpan) node.setRowSpan(rowSpan);
-            node.getChildren().forEach((child, index) => visit(child, current.children?.[0]?.children?.[index]));
+            const background = typeof current.attrs?.backgroundColor === "string" ? current.attrs.backgroundColor : null;
+            if (node.getBackgroundColor() !== background) node.setBackgroundColor(background);
+            const body = current.children?.[0];
+            const actual = node.getChildren().map(child => $readModelNode(info, child));
+            if (JSON.stringify(actual) !== JSON.stringify(body?.children ?? [])) {
+                node.clear().append(...(body?.children ?? []).map(child => $createModelNode(info, child)));
+            }
+            return;
+        }
+        if ($isTableNode(node)) {
+            const data = $modelData(node);
+            if (data) {
+                const next = {...data}, hidden = hiddenCells(current);
+                if (hidden.length) next.hidden = hidden; else delete next.hidden;
+                if (JSON.stringify(data) !== JSON.stringify(next)) $setModelData(node, next);
+            }
+            node.getChildren().forEach((row, index) => visit(row, current.children?.[index], index));
+        } else if ($isTableRowNode(node)) {
+            $modelChildren(node, columns).forEach(({node: cell, index}) => visit(cell, current.children?.[index], r, index));
         } else node.getChildren().forEach((child, index) => visit(child, current.children?.[index]));
     };
     $getRoot().getChildren().forEach((node, index) => visit(node, model.children?.[index]));

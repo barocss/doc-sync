@@ -367,7 +367,7 @@ function mountProseMirror(name) {
     peer.remote++;peer.pull();
     if(tracingEnabled)recordOperation({name,kind:'ProseMirror',phase:'remote',cause:detail.cause,events,deferred:peer.input.active,nativeBefore,nativeAfter:view.state.doc.toJSON(),model:peer.client.doc.toJSON()});
   };
-  peer.read=()=>canon(fromPmJSON(info,schema,view.state.doc.toJSON()));
+  peer.read=()=>canon(fromPmJSON(info,schema,view.state.doc.toJSON(),peer.input.doc.toJSON()));
   const run=command=>{command(view.state,view.dispatch,view);view.focus();};
   peer.action('표 2×3',()=>run((state,dispatch)=>{
     const cell=()=>info.pm.nodes.table_cell.create(null,info.pm.nodes.paragraph.create());
@@ -395,7 +395,7 @@ await Promise.all(peers.map(p=>p.ready));
 peers.forEach(p=>p.client.connect());
 window.addEventListener('pagehide',()=>peers.forEach(p=>{p.dispose?.();p.client.disconnect();p.transport.leave();}));
 window.compat={snapshot,trace:readOperations,clearTrace:clearOperations,
-  edit:(name,edits)=>{const peer=peers.find(p=>p.name===name);if(!peer)throw new Error('Unknown peer');peer.client.commit(peer.client.doc.edit(edits).ops);},
+  edit:(name,edits)=>{const peer=peers.find(p=>p.name===name);if(!peer)throw new Error('Unknown peer');peer.client.commit(peer.client.doc.edit(edits).ops);peer.pull();},
   annotations:()=>peers.map(peer=>({name:peer.name,records:getAnnotations(peer.client.doc)})),
   annotate:(name,range,data,options)=>{const peer=peers.find(p=>p.name===name);if(!peer)throw new Error('Unknown peer');const result=createAnnotation(peer.client.doc,range,data,options);peer.client.commit(result.ops);return result.id;},
   updateAnnotation:(name,id,patch)=>{const peer=peers.find(p=>p.name===name);if(!peer)throw new Error('Unknown peer');peer.client.commit(updateAnnotation(peer.client.doc,id,patch));},

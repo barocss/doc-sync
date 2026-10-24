@@ -1,0 +1,305 @@
+{
+  "startedAt": "2026-10-24T08:30:12.733Z",
+  "endedAt": "2026-10-24T08:30:28.971Z",
+  "node": "v22.19.0",
+  "startedLoadAverage": [
+    34.25048828125,
+    32.89697265625,
+    26.54541015625
+  ],
+  "endedLoadAverage": [
+    35.12451171875,
+    33.14794921875,
+    26.7451171875
+  ],
+  "label": "candidate",
+  "metric": "synchronous remote change receipt through model-events callback; excludes network, DOM and correctness checks",
+  "unit": "ms",
+  "productImports": [
+    {
+      "specifier": "@barocss/doc-sync",
+      "resolved": "file:///Users/user/github/doc-sync/packages/doc-sync/src/index.ts"
+    },
+    {
+      "specifier": "@barocss/doc-sync/sync",
+      "resolved": "file:///Users/user/github/doc-sync/packages/doc-sync/src/sync/index.ts"
+    }
+  ],
+  "harnessSha256": "597eba2a1a15b276a01706530767e7b2553c02e199cf4b5dde9632b5b6914a82",
+  "sourceHashes": [
+    {
+      "path": "packages/doc-sync/src/crdt/doc.ts",
+      "sha256": "fc2cdc5256c838382a5744a2ecf50bc2431d20ef150771d8730050c3972dfd3d"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/model.ts",
+      "sha256": "5c4d51ea1960fc63063ce1640d9e8103fe93d5dbdfeffe160ff540e58a83a535"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/client.ts",
+      "sha256": "12ae49fdcc995be7042dd7382eaa3ea87eb61cdddd74366d889af7578241e9f6"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/model-events.ts",
+      "sha256": "7340af2aad837abd61fa22fd5f5d3c72069f0e772e5217fa86fca4e1139e96f8"
+    },
+    {
+      "path": "benchmarks/structural-events.ts",
+      "sha256": "597eba2a1a15b276a01706530767e7b2553c02e199cf4b5dde9632b5b6914a82"
+    }
+  ],
+  "rows": [
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "root-split",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        160,
+        160
+      ],
+      "phases": [
+        {
+          "totalMs": 16.807624999999916,
+          "applyMs": 0.05720900000005713,
+          "modelMs": 14.642667000000074,
+          "otherMs": 2.107748999999785,
+          "stringifyMs": 1.3975899999927606,
+          "stringifyCalls": 2542
+        },
+        {
+          "totalMs": 19.91949999999997,
+          "applyMs": 0.005666999999903055,
+          "modelMs": 18.38170799999989,
+          "otherMs": 1.5321250000001783,
+          "stringifyMs": 1.1227330000006077,
+          "stringifyCalls": 2226
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 14.030041999999867,
+      "p95": 18.48483299999998,
+      "max": 18.48483299999998,
+      "rawMs": [
+        18.48483299999998,
+        14.030041999999867,
+        12.881875000000036,
+        13.676500000000033,
+        14.09875000000011
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "callout-split",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        120,
+        120
+      ],
+      "phases": [
+        {
+          "totalMs": 2.850333000000319,
+          "applyMs": 0.007749999999759893,
+          "modelMs": 1.1384580000003552,
+          "otherMs": 1.7041250000002037,
+          "stringifyMs": 1.219587000008687,
+          "stringifyCalls": 3022
+        },
+        {
+          "totalMs": 4.0694579999999405,
+          "applyMs": 0.003666999999950349,
+          "modelMs": 1.2248749999998836,
+          "otherMs": 2.8409160000001066,
+          "stringifyMs": 1.343909000007443,
+          "stringifyCalls": 3379
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 2.8721660000001066,
+      "p95": 3.5832919999993464,
+      "max": 3.5832919999993464,
+      "rawMs": [
+        2.8721660000001066,
+        3.2128750000001673,
+        2.596332999999504,
+        3.5832919999993464,
+        2.62170900000001
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "root-type",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        160,
+        160
+      ],
+      "phases": [
+        {
+          "totalMs": 13.400458000000071,
+          "applyMs": 0.005957999999736785,
+          "modelMs": 11.688126000000011,
+          "otherMs": 1.7063740000003236,
+          "stringifyMs": 1.252335000007406,
+          "stringifyCalls": 2224
+        },
+        {
+          "totalMs": 13.1372080000001,
+          "applyMs": 0.009915999999975611,
+          "modelMs": 11.604624999999032,
+          "otherMs": 1.5226670000010927,
+          "stringifyMs": 1.161419999996724,
+          "stringifyCalls": 2225
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 13.372957999999926,
+      "p95": 20.900499999999738,
+      "max": 20.900499999999738,
+      "rawMs": [
+        12.201458999999886,
+        20.900499999999738,
+        15.046374999999898,
+        13.372957999999926,
+        12.185958000000028
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "cell-split",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        120,
+        120
+      ],
+      "phases": [
+        {
+          "totalMs": 3.380957999999737,
+          "applyMs": 0.016458000000056927,
+          "modelMs": 1.6440000000002328,
+          "otherMs": 1.720499999999447,
+          "stringifyMs": 1.2505420000343292,
+          "stringifyCalls": 3034
+        },
+        {
+          "totalMs": 4.1151669999999285,
+          "applyMs": 0.004166999999142718,
+          "modelMs": 1.2629589999996824,
+          "otherMs": 2.8480410000011034,
+          "stringifyMs": 1.2413560000331927,
+          "stringifyCalls": 2787
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 2.6770420000011654,
+      "p95": 3.7646660000009433,
+      "max": 3.7646660000009433,
+      "rawMs": [
+        2.592625000001135,
+        2.5418749999989814,
+        2.6770420000011654,
+        3.7646660000009433,
+        2.905291999999463
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "table-row",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        0,
+        0
+      ],
+      "phases": [
+        {
+          "totalMs": 13.620291999999608,
+          "applyMs": 0.013458999999784282,
+          "modelMs": 11.957832999998573,
+          "otherMs": 1.6490000000012515,
+          "stringifyMs": 1.2044970000188187,
+          "stringifyCalls": 2788
+        },
+        {
+          "totalMs": 15.155875000000378,
+          "applyMs": 0.05799999999908323,
+          "modelMs": 13.43737499999952,
+          "otherMs": 1.6605000000017753,
+          "stringifyMs": 1.2015299999820854,
+          "stringifyCalls": 2785
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 12.782540999998673,
+      "p95": 15.67095899999913,
+      "max": 15.67095899999913,
+      "rawMs": [
+        12.280958000001192,
+        13.265166000001045,
+        12.782540999998673,
+        15.67095899999913,
+        12.664166999998997
+      ]
+    },
+    {
+      "mainChars": 100000,
+      "paragraphs": 625,
+      "scenario": "table-span",
+      "samples": 5,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        0,
+        0
+      ],
+      "phases": [
+        {
+          "totalMs": 14.149874999999156,
+          "applyMs": 0.01658299999871815,
+          "modelMs": 12.51758399999926,
+          "otherMs": 1.6157080000011774,
+          "stringifyMs": 1.171565000047849,
+          "stringifyCalls": 2804
+        },
+        {
+          "totalMs": 15.89587500000016,
+          "applyMs": 0.01733299999978044,
+          "modelMs": 12.716082999999344,
+          "otherMs": 3.1624590000010357,
+          "stringifyMs": 2.038938000032431,
+          "stringifyCalls": 2787
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 15.094542000000729,
+      "p95": 16.947666999998546,
+      "max": 16.947666999998546,
+      "rawMs": [
+        16.947666999998546,
+        15.640042000000903,
+        14.572541999999885,
+        13.861583999998402,
+        15.094542000000729
+      ]
+    }
+  ]
+}

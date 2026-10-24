@@ -1,12 +1,10 @@
-import {COMMAND_PRIORITY_HIGH, INSERT_PARAGRAPH_COMMAND, REDO_COMMAND, SKIP_DOM_SELECTION_TAG, UNDO_COMMAND, $addUpdateTag, $getRoot, $isElementNode} from "lexical";
-import {$isTableCellNode} from "@lexical/table";
+import {COMMAND_PRIORITY_HIGH, INSERT_PARAGRAPH_COMMAND, REDO_COMMAND, SKIP_DOM_SELECTION_TAG, UNDO_COMMAND, $addUpdateTag, $getRoot} from "lexical";
 import {InputSession, commitModelEdits, modelEdits, sameModel, subscribeClient} from "../editor/index.ts";
 import {$fromLexical, $syncLexicalCells, $toLexical, readLexicalModel} from "./convert.ts";
 import {buildLexicalSchema} from "./schema.ts";
 import {$lexicalSelection, $setLexicalSelection} from "./selection.ts";
 import {$nativePlacements, nativeReparent} from "./movement.ts";
 import {applyEdits} from "../crdt/model.ts";
-import {$modelData} from "./nodes.ts";
 import {anchorAt, pathAt} from "../crdt/edit.ts";
 import {keyOf} from "../crdt/ticket.ts";
 import {runsToUnits} from "../crdt/model.ts";
@@ -92,7 +90,7 @@ export class LexicalBinding {
                     this.editor.update(() => $toLexical(this.info, client.doc.toJSON()), {
                         discrete: true,
                         tag: this.focused() ? LEXICAL_REMOTE_TAG : [LEXICAL_REMOTE_TAG, SKIP_DOM_SELECTION_TAG],
-                        onUpdate: () => { this.refreshHiddenCells(); this.report(failure); },
+                        onUpdate: () => this.report(failure),
                     });
                 }
             }));
@@ -152,19 +150,6 @@ export class LexicalBinding {
         const range = this.editor.getEditorState().read(() => $lexicalSelection(this.info), {editor: this.editor});
         this.saved = this.input.capture(range);
     }
-    /** Native tables keep hidden full-grid cells; hide only their DOM, never their data. */
-    private refreshHiddenCells(): void {
-        this.editor.getEditorState().read(() => {
-            const visit = (node: import("lexical").LexicalNode) => {
-                if ($isTableCellNode(node)) {
-                    const element = this.editor.getElementByKey(node.getKey());
-                    if (element) element.style.display = $modelData(node)?.attrs?.spanned === true ? "none" : "";
-                }
-                if ($isElementNode(node)) node.getChildren().forEach(visit);
-            };
-            visit($getRoot());
-        }, {editor: this.editor});
-    }
     pull(): void {
         if (this.disposed || this.input.active) return;
         const model = this.client.doc.toJSON();
@@ -173,8 +158,7 @@ export class LexicalBinding {
         try { matches = populated && sameModel(readLexicalModel(this.editor, this.info), model); }
         catch { /* Replace rejected native content from the authoritative document. */ }
         if (matches) {
-            this.editor.update(() => $syncLexicalCells(model), {discrete: true, tag: LEXICAL_REMOTE_TAG});
-            this.refreshHiddenCells();
+            this.editor.update(() => $syncLexicalCells(this.info, model), {discrete: true, tag: LEXICAL_REMOTE_TAG});
             return;
         }
         const range = this.input.resolve(this.saved);
@@ -182,7 +166,6 @@ export class LexicalBinding {
             $toLexical(this.info, model);
             if (range) $setLexicalSelection(this.info, range);
         }, {discrete: true, tag: this.focused() ? [LEXICAL_REMOTE_TAG] : [LEXICAL_REMOTE_TAG, SKIP_DOM_SELECTION_TAG]});
-        this.refreshHiddenCells();
     }
     beginComposition(): void {
         if (this.disposed) return;

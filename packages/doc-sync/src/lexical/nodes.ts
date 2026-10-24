@@ -9,6 +9,8 @@ export type LexicalModelData = {
     attrs?: Record<string, unknown>;
     marks?: Marks;
     body?: {type: string; attrs?: Record<string, unknown>};
+    grid?: {row: number; column: number};
+    hidden?: Array<{row: number; column: number; owner: {row: number; column: number}; cell: NodeJSON}>;
 };
 const dataState = createState("docSync", {
     parse: (value: unknown): LexicalModelData | null => {

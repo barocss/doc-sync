@@ -1,0 +1,562 @@
+[
+  {
+    "mainChars": 10000,
+    "paragraphs": 63,
+    "scenario": "root-split",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      160,
+      160
+    ],
+    "phases": [
+      {
+        "totalMs": 8.32045800000003,
+        "applyMs": 0.00508399999989706,
+        "modelMs": 1.4875409999999647,
+        "otherMs": 6.827833000000169,
+        "stringifyMs": 1.9233209999983956,
+        "stringifyCalls": 21204
+      },
+      {
+        "totalMs": 8.672957999999994,
+        "applyMs": 0.009707999999932326,
+        "modelMs": 2.66599999999994,
+        "otherMs": 5.997250000000122,
+        "stringifyMs": 2.6840859999944087,
+        "stringifyCalls": 21520
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 5.528457999999944,
+    "p95": 6.1995000000000005,
+    "max": 7.239624999999933
+  },
+  {
+    "mainChars": 10000,
+    "paragraphs": 63,
+    "scenario": "callout-split",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      120,
+      120
+    ],
+    "phases": [
+      {
+        "totalMs": 6.096749999999929,
+        "applyMs": 0.0030839999999443535,
+        "modelMs": 0.2658339999998134,
+        "otherMs": 5.827832000000171,
+        "stringifyMs": 2.5233599999999115,
+        "stringifyCalls": 21803
+      },
+      {
+        "totalMs": 5.565458000000035,
+        "applyMs": 0.004790999999841006,
+        "modelMs": 0.2875420000000304,
+        "otherMs": 5.273125000000164,
+        "stringifyMs": 1.9055180000009386,
+        "stringifyCalls": 21446
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 4.575209000000086,
+    "p95": 5.4022919999999885,
+    "max": 5.904999999999859
+  },
+  {
+    "mainChars": 10000,
+    "paragraphs": 63,
+    "scenario": "root-type",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      160,
+      160
+    ],
+    "phases": [
+      {
+        "totalMs": 6.55379199999993,
+        "applyMs": 0.005667000000130429,
+        "modelMs": 1.0072920000000067,
+        "otherMs": 5.540832999999793,
+        "stringifyMs": 1.9266910000085318,
+        "stringifyCalls": 21203
+      },
+      {
+        "totalMs": 6.140458000000081,
+        "applyMs": 0.004333999999971638,
+        "modelMs": 1.0272909999998774,
+        "otherMs": 5.1088330000002316,
+        "stringifyMs": 1.6344399999888992,
+        "stringifyCalls": 21202
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 5.373749999999973,
+    "p95": 5.896124999999984,
+    "max": 12.588416999999936
+  },
+  {
+    "mainChars": 10000,
+    "paragraphs": 63,
+    "scenario": "cell-split",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      120,
+      120
+    ],
+    "phases": [
+      {
+        "totalMs": 6.068916999999601,
+        "applyMs": 0.0034579999996822153,
+        "modelMs": 0.24608299999999872,
+        "otherMs": 5.81937599999992,
+        "stringifyMs": 2.5644930000344175,
+        "stringifyCalls": 21211
+      },
+      {
+        "totalMs": 5.57141700000011,
+        "applyMs": 0.004208000000289758,
+        "modelMs": 0.28291600000011385,
+        "otherMs": 5.284292999999707,
+        "stringifyMs": 1.7818610000035733,
+        "stringifyCalls": 21458
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 5.205333000000337,
+    "p95": 7.256290999999692,
+    "max": 7.410374999999931
+  },
+  {
+    "mainChars": 10000,
+    "paragraphs": 63,
+    "scenario": "table-row",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      0,
+      0
+    ],
+    "phases": [
+      {
+        "totalMs": 7.401249999999891,
+        "applyMs": 0.00429100000019389,
+        "modelMs": 0.8900840000001153,
+        "otherMs": 6.506874999999582,
+        "stringifyMs": 2.4621739999738566,
+        "stringifyCalls": 21209
+      },
+      {
+        "totalMs": 6.666917000000012,
+        "applyMs": 0.012208000000100583,
+        "modelMs": 0.9242920000001504,
+        "otherMs": 5.730416999999761,
+        "stringifyMs": 2.1463890000286483,
+        "stringifyCalls": 21212
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 5.658208999999715,
+    "p95": 12.88412500000004,
+    "max": 15.585791999999856
+  },
+  {
+    "mainChars": 10000,
+    "paragraphs": 63,
+    "scenario": "table-span",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      0,
+      0
+    ],
+    "phases": [
+      {
+        "totalMs": 12.769416999999976,
+        "applyMs": 0.0031669999998484855,
+        "modelMs": 0.8974160000002485,
+        "otherMs": 11.868833999999879,
+        "stringifyMs": 5.109488000006422,
+        "stringifyCalls": 21211
+      },
+      {
+        "totalMs": 12.123999999999796,
+        "applyMs": 0.005709000000024389,
+        "modelMs": 0.9479169999999613,
+        "otherMs": 11.17037399999981,
+        "stringifyMs": 4.225661000008586,
+        "stringifyCalls": 21228
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 5.279625000000124,
+    "p95": 6.364291000000321,
+    "max": 7.204000000000178
+  },
+  {
+    "mainChars": 10000,
+    "paragraphs": 63,
+    "scenario": "root-list",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      160,
+      160
+    ],
+    "phases": [
+      {
+        "totalMs": 7.308915999999954,
+        "applyMs": 0.004041000000142958,
+        "modelMs": 1.5307919999995647,
+        "otherMs": 5.774083000000246,
+        "stringifyMs": 2.5840899999648173,
+        "stringifyCalls": 21205
+      },
+      {
+        "totalMs": 7.261083999999755,
+        "applyMs": 0.005041999999775726,
+        "modelMs": 1.1615840000004027,
+        "otherMs": 6.094457999999577,
+        "stringifyMs": 2.5793660000099408,
+        "stringifyCalls": 21209
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 5.443959000000177,
+    "p95": 8.45995799999946,
+    "max": 9.342291999999361
+  },
+  {
+    "mainChars": 10000,
+    "paragraphs": 63,
+    "scenario": "root-cardinality",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      160,
+      160
+    ],
+    "phases": [
+      {
+        "totalMs": 6.360167000000729,
+        "applyMs": 0.00220900000022084,
+        "modelMs": 1.0771249999997963,
+        "otherMs": 5.280833000000712,
+        "stringifyMs": 1.7418560000014622,
+        "stringifyCalls": 21204
+      },
+      {
+        "totalMs": 7.19262499999968,
+        "applyMs": 0.009041999999681138,
+        "modelMs": 1.2014999999992142,
+        "otherMs": 5.9820830000007845,
+        "stringifyMs": 1.8874249999817039,
+        "stringifyCalls": 21520
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 6.317000000000007,
+    "p95": 12.625166000000718,
+    "max": 14.174458000000413
+  },
+  {
+    "mainChars": 100000,
+    "paragraphs": 625,
+    "scenario": "root-split",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      160,
+      160
+    ],
+    "phases": [
+      {
+        "totalMs": 71.90358300000116,
+        "applyMs": 0.008250000000771252,
+        "modelMs": 10.904125000000931,
+        "otherMs": 60.99120799999946,
+        "stringifyMs": 17.79825300000448,
+        "stringifyCalls": 201204
+      },
+      {
+        "totalMs": 74.45375000000058,
+        "applyMs": 0.05720799999835435,
+        "modelMs": 11.783084000002418,
+        "otherMs": 62.61345799999981,
+        "stringifyMs": 18.97439600024154,
+        "stringifyCalls": 201520
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 56.20829099999901,
+    "p95": 65.74583299999904,
+    "max": 73.97254200000043
+  },
+  {
+    "mainChars": 100000,
+    "paragraphs": 625,
+    "scenario": "callout-split",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      120,
+      120
+    ],
+    "phases": [
+      {
+        "totalMs": 59.71937500000058,
+        "applyMs": 0.0030839999999443535,
+        "modelMs": 1.1103330000005371,
+        "otherMs": 58.6059580000001,
+        "stringifyMs": 16.13453999986814,
+        "stringifyCalls": 201803
+      },
+      {
+        "totalMs": 74.18295800000124,
+        "applyMs": 0.013999999999214197,
+        "modelMs": 2.5693329999994603,
+        "otherMs": 71.59962500000256,
+        "stringifyMs": 17.74591699993107,
+        "stringifyCalls": 201446
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 46.98133400000006,
+    "p95": 56.56254100000115,
+    "max": 56.75791600000048
+  },
+  {
+    "mainChars": 100000,
+    "paragraphs": 625,
+    "scenario": "root-type",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      160,
+      160
+    ],
+    "phases": [
+      {
+        "totalMs": 73.71391700000095,
+        "applyMs": 0.008125000000291038,
+        "modelMs": 13.033416999998735,
+        "otherMs": 60.67237500000192,
+        "stringifyMs": 16.992740000339836,
+        "stringifyCalls": 201203
+      },
+      {
+        "totalMs": 64.7490420000031,
+        "applyMs": 0.010874999999941792,
+        "modelMs": 9.013166000000638,
+        "otherMs": 55.72500100000252,
+        "stringifyMs": 16.26097700004175,
+        "stringifyCalls": 201202
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 55.747458999998344,
+    "p95": 66.48466700000063,
+    "max": 70.93579200000022
+  },
+  {
+    "mainChars": 100000,
+    "paragraphs": 625,
+    "scenario": "cell-split",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      120,
+      120
+    ],
+    "phases": [
+      {
+        "totalMs": 58.825417000000016,
+        "applyMs": 0.002874999998311978,
+        "modelMs": 1.1317089999974996,
+        "otherMs": 57.690833000004204,
+        "stringifyMs": 17.124544999340287,
+        "stringifyCalls": 201211
+      },
+      {
+        "totalMs": 66.62154100000043,
+        "applyMs": 0.007458000000042375,
+        "modelMs": 1.3997909999998228,
+        "otherMs": 65.21429200000057,
+        "stringifyMs": 19.127080999853206,
+        "stringifyCalls": 201458
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 45.59549999999945,
+    "p95": 56.96516700000211,
+    "max": 57.355250000000524
+  },
+  {
+    "mainChars": 100000,
+    "paragraphs": 625,
+    "scenario": "table-row",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      0,
+      0
+    ],
+    "phases": [
+      {
+        "totalMs": 75.98991699999897,
+        "applyMs": 0.003874999994877726,
+        "modelMs": 10.956208000003244,
+        "otherMs": 65.02983400000085,
+        "stringifyMs": 18.005245999411272,
+        "stringifyCalls": 201209
+      },
+      {
+        "totalMs": 70.55829200000153,
+        "applyMs": 0.008708000001206528,
+        "modelMs": 10.257540999999037,
+        "otherMs": 60.292043000001286,
+        "stringifyMs": 17.316574999735167,
+        "stringifyCalls": 201212
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 58.50116600000183,
+    "p95": 68.67866700000013,
+    "max": 152.22037499999715
+  },
+  {
+    "mainChars": 100000,
+    "paragraphs": 625,
+    "scenario": "table-span",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      0,
+      0
+    ],
+    "phases": [
+      {
+        "totalMs": 101.6549159999995,
+        "applyMs": 0.014333999999507796,
+        "modelMs": 16.256790999999794,
+        "otherMs": 85.3837910000002,
+        "stringifyMs": 22.358764000149677,
+        "stringifyCalls": 201211
+      },
+      {
+        "totalMs": 79.67062499999884,
+        "applyMs": 0.0065420000028098,
+        "modelMs": 10.414332999993348,
+        "otherMs": 69.24975000000268,
+        "stringifyMs": 18.293509001785424,
+        "stringifyCalls": 201228
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 55.14708300000348,
+    "p95": 68.85787500000151,
+    "max": 94.8984169999967
+  },
+  {
+    "mainChars": 100000,
+    "paragraphs": 625,
+    "scenario": "root-list",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      160,
+      160
+    ],
+    "phases": [
+      {
+        "totalMs": 79.41729200000555,
+        "applyMs": 0.004333999997470528,
+        "modelMs": 11.726292999992438,
+        "otherMs": 67.68666500001564,
+        "stringifyMs": 19.82650099924649,
+        "stringifyCalls": 201205
+      },
+      {
+        "totalMs": 86.59441599999991,
+        "applyMs": 0.00595900000189431,
+        "modelMs": 13.941416999994544,
+        "otherMs": 72.64704000000347,
+        "stringifyMs": 19.060270000059973,
+        "stringifyCalls": 201209
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 67.93074999999953,
+    "p95": 83.93133300000045,
+    "max": 187.3346670000028
+  },
+  {
+    "mainChars": 100000,
+    "paragraphs": 625,
+    "scenario": "root-cardinality",
+    "samples": 30,
+    "warmups": 5,
+    "diagnosticSamples": 2,
+    "markReads": [
+      160,
+      160
+    ],
+    "phases": [
+      {
+        "totalMs": 89.16829100000177,
+        "applyMs": 0.003166000002238434,
+        "modelMs": 12.280917000003683,
+        "otherMs": 76.88420799999585,
+        "stringifyMs": 19.507942000534968,
+        "stringifyCalls": 201204
+      },
+      {
+        "totalMs": 98.21775000000343,
+        "applyMs": 0.08920799999759765,
+        "modelMs": 17.323583000004874,
+        "otherMs": 80.80495900000096,
+        "stringifyMs": 19.782791999918118,
+        "stringifyCalls": 201520
+      }
+    ],
+    "correct": true,
+    "fallbacks": 0,
+    "p50": 68.48520799999824,
+    "p95": 90.41587499999878,
+    "max": 206.33033299999806
+  }
+]

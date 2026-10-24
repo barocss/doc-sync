@@ -2,6 +2,7 @@ import {isAlive} from "../crdt/doc.ts";
 import {blockPath} from "../crdt/edit.ts";
 import {canonical, unitsToRuns} from "../crdt/model.ts";
 import {keyOf} from "../crdt/ticket.ts";
+import {groupOf} from "../crdt/schema.ts";
 import {parseTextStorage} from "../crdt/text-storage.ts";
 import type {Doc, Item, Op, TextBlock} from "../crdt/doc.ts";
 import type {NodeJSON} from "../crdt/model.ts";
@@ -129,4 +130,39 @@ export const textEventScopes = (doc: Doc, ops: Op[]) => {
 
         return {schema, path, read, before: read()};
     });
+};
+
+// Guard nodes count toward the limit. Large changes keep whole-model verification.
+const MAX_EVENT_WINDOW = 8;
+
+/** Actual canonical models determine the changed range; no wire-op prediction. */
+export const modelEventWindow = (schema: Schema, before: NodeJSON, after: NodeJSON) => {
+    const flow = schema.nodes[schema.root];
+    if (flow?.shape !== "flow" || flow.childRules || before.type !== schema.root || after.type !== schema.root) return null;
+    const a = before.children ?? [], b = after.children ?? [];
+    if (Math.max(a.length, b.length) <= MAX_EVENT_WINDOW) return null;
+    const equal = (x: NodeJSON, y: NodeJSON) => JSON.stringify(x) === JSON.stringify(y);
+    let start = 0;
+    while (start < a.length && start < b.length && equal(a[start], b[start])) start += 1;
+    if (start === a.length && start === b.length) return null;
+    let endA = a.length, endB = b.length;
+    while (endA > start && endB > start && equal(a[endA - 1], b[endB - 1])) {endA -= 1; endB -= 1;}
+
+    // A retained plain-text guard prevents leading normalization or regrouping
+    // with the unchanged prefix. A group boundary keeps the existing full path.
+    const plainText = (node: NodeJSON) => schema.nodes[node.type]?.shape === "text" && !groupOf(schema, flow, node.type);
+    if (start > 0) start -= 1;
+    while (start > 0 && (!plainText(a[start]) || !plainText(b[start]))) {
+        if (schema.nodes[a[start].type]?.shape === "group" || schema.nodes[b[start].type]?.shape === "group") return null;
+        start -= 1;
+        if (Math.max(endA - start, endB - start) > MAX_EVENT_WINDOW) return null;
+    }
+    if (!a[start] || !b[start] || !plainText(a[start]) || !plainText(b[start])) return null;
+    // Retain an unchanged suffix guard when one exists. No text group may
+    // straddle the slice boundary, including transient regrouping during edits.
+    if (endA < a.length) {endA += 1; endB += 1;}
+    if (Math.max(endA - start, endB - start) > MAX_EVENT_WINDOW || start === 0 && endA === a.length && endB === b.length) return null;
+    const left = a.slice(start, endA), right = b.slice(start, endB);
+    if ([...left, ...right].some(node => schema.nodes[node.type]?.shape === "group" || schema.nodes[node.type]?.shape === "text" && !plainText(node))) return null;
+    return {start, before: {type: schema.root, children: left}, after: {type: schema.root, children: right}};
 };

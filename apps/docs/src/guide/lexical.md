@@ -68,7 +68,7 @@ The codec supports the model tree for all nine schema shapes, including lists, n
 
 Nested `AttrSpec.fields` are supported on text, inline, grid, atom, and cell types, and on stored flow containers whose type is neither the root nor a cell-body flow type. List fields belong to their text item type. Schema validation rejects fields on the root, rows, cell-body flow types, groups, spans, and value marks. See [nested attribute fields](../reference/edit-api#nested-attribute-fields) for patch and reset rules.
 
-Covered table cells remain in the full-grid model. The binding hides their DOM cells while preserving their text. Cell-body metadata is retained even though native Lexical cells do not have a separate cell-body node.
+Covered table cells remain in the full-grid document model. Native Lexical rows contain only visible cells, so the table plugin counts merged rows and columns correctly. Serialized NodeState retains each covered cell, including its content, marks and attributes. The reader reconstructs the full grid; unmerge restores the retained cells. Selection paths use logical grid columns and exclude covered cells. Cell-body metadata is retained even though native Lexical cells do not have a separate cell-body node.
 
 A custom codec can declare `nodes`, `toLexical(model, context)`, and `fromLexical(node, context)`. Return null to let the normal codec handle a value. These functions run as application code and must preserve the model contract. They are not data supplied by a remote document.
 

@@ -1,0 +1,129 @@
+{
+  "startedAt": "2026-10-24T08:39:24.735Z",
+  "endedAt": "2026-10-24T08:39:25.426Z",
+  "node": "v22.19.0",
+  "startedLoadAverage": [
+    27.90869140625,
+    26.51904296875,
+    25.673828125
+  ],
+  "endedLoadAverage": [
+    28.55615234375,
+    26.67626953125,
+    25.73388671875
+  ],
+  "label": "control-smoke",
+  "metric": "synchronous remote change receipt through model-events callback; excludes network, DOM and correctness checks",
+  "unit": "ms",
+  "productImports": [
+    {
+      "specifier": "@barocss/doc-sync",
+      "resolved": "file:///Users/user/github/doc-sync/packages/doc-sync/src/index.ts"
+    },
+    {
+      "specifier": "@barocss/doc-sync/sync",
+      "resolved": "file:///Users/user/github/doc-sync/packages/doc-sync/src/sync/index.ts"
+    }
+  ],
+  "harnessSha256": "1f00f5c32b335e9d8e4489cab1f6435355cda9bb20d9ea1be372409efa247b87",
+  "sourceHashes": [
+    {
+      "path": "packages/doc-sync/src/crdt/doc.ts",
+      "sha256": "fc2cdc5256c838382a5744a2ecf50bc2431d20ef150771d8730050c3972dfd3d"
+    },
+    {
+      "path": "packages/doc-sync/src/crdt/model.ts",
+      "sha256": "5c4d51ea1960fc63063ce1640d9e8103fe93d5dbdfeffe160ff540e58a83a535"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/client.ts",
+      "sha256": "12ae49fdcc995be7042dd7382eaa3ea87eb61cdddd74366d889af7578241e9f6"
+    },
+    {
+      "path": "packages/doc-sync/src/sync/model-events.ts",
+      "sha256": "91010edc78978a3ed8abc24ebd55c7410d32021c260ad73caeac14e977daab55"
+    },
+    {
+      "path": "benchmarks/structural-events.ts",
+      "sha256": "1f00f5c32b335e9d8e4489cab1f6435355cda9bb20d9ea1be372409efa247b87"
+    }
+  ],
+  "rows": [
+    {
+      "mainChars": 10000,
+      "paragraphs": 63,
+      "scenario": "root-list",
+      "samples": 1,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        160,
+        160
+      ],
+      "phases": [
+        {
+          "totalMs": 10.213000000000022,
+          "applyMs": 0.007083999999963453,
+          "modelMs": 1.5618740000000457,
+          "otherMs": 8.644042000000013,
+          "stringifyMs": 3.404517999997097,
+          "stringifyCalls": 21341
+        },
+        {
+          "totalMs": 8.185667000000024,
+          "applyMs": 0.004458999999997104,
+          "modelMs": 1.4455420000000458,
+          "otherMs": 6.735665999999981,
+          "stringifyMs": 2.4608220000024517,
+          "stringifyCalls": 21337
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 6.3267079999999964,
+      "p95": 6.3267079999999964,
+      "max": 6.3267079999999964,
+      "rawMs": [
+        6.3267079999999964
+      ]
+    },
+    {
+      "mainChars": 10000,
+      "paragraphs": 63,
+      "scenario": "root-cardinality",
+      "samples": 1,
+      "warmups": 5,
+      "diagnosticSamples": 2,
+      "markReads": [
+        160,
+        160
+      ],
+      "phases": [
+        {
+          "totalMs": 13.103250000000003,
+          "applyMs": 0.10970799999995506,
+          "modelMs": 2.755918000000065,
+          "otherMs": 10.237623999999983,
+          "stringifyMs": 2.9024119999988898,
+          "stringifyCalls": 21520
+        },
+        {
+          "totalMs": 8.999083999999925,
+          "applyMs": 0.004082999999923231,
+          "modelMs": 2.4392509999998992,
+          "otherMs": 6.555750000000103,
+          "stringifyMs": 2.115682999996352,
+          "stringifyCalls": 21204
+        }
+      ],
+      "correct": true,
+      "fallbacks": 0,
+      "p50": 12.93508399999996,
+      "p95": 12.93508399999996,
+      "max": 12.93508399999996,
+      "rawMs": [
+        12.93508399999996
+      ]
+    }
+  ]
+}

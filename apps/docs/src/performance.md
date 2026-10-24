@@ -19,6 +19,27 @@ Automatic text storage, hidden content, structural batches, old-clock insertion,
 
 [Source hashes, raw samples, control cases and reproduction commands](https://github.com/barocss/doc-sync/tree/main/benchmarks/results/logical-text-scopes-2026-10-24) describe the measured source and proof boundary.
 
+## Structural event verification
+
+For a document with more than eight top-level children, structural events can compare and verify a guarded window of at most eight top-level nodes. The receiver still reads the actual whole models before and after the change. It finds an identical prefix/suffix, includes stable boundary nodes, verifies the local patch, and translates its paths back to the document. The window includes complete nested subtrees. Full model reads, copying and structural projection remain.
+
+Small documents, root child-count rules, top-level groups in the window or its boundary, large changed spans and windows without a stable text start retain whole-model comparison and verification. Nested group/child-count rules are processed inside their complete parent subtree. Existing whole replacement fallback remains if patch verification fails. Text identity, CRDT arbitration, deletion/formatting ownership, conditional history, snapshots and protocol are unchanged.
+
+An independent sequential before/after/after/before run used baseline `d46db51`, Node 22.19.0, five warmups and 30 samples per case. These are separate p95 values in milliseconds for 100,000 body characters plus nested content:
+
+| Structural receipt | Before 1 | After 1 | After 2 | Before 2 |
+|---|---:|---:|---:|---:|
+| Root split/join | 65.746 | 21.147 | 13.172 | 60.397 |
+| Nested split/join | 56.563 | 5.453 | 3.617 | 51.190 |
+| Block type | 66.485 | 14.468 | 14.082 | 55.572 |
+| Cell split/join | 56.965 | 3.663 | 3.746 | 47.239 |
+| Table row insert/delete | 68.679 | 15.695 | 15.639 | 62.634 |
+| Cell merge/split | 68.858 | 17.323 | 16.221 | 62.262 |
+
+All timed changes passed full event-mirror/model assertions with zero fallback. Timing covers synchronous receipt through the callback, excluding network, native conversion, DOM and correctness checks. Diagnostic wrappers run outside the timing samples. No tests/build or active comparison page overlapped timing; external desktop load remained uncontrolled. Root-list and root-cardinality controls retain full verification and varied across runs. No improvement is claimed for those controls or for every structural document. No screen-latency or product SLO result follows from this measurement.
+
+[Raw samples, diagnostic phases, controls, source hashes and reproduction commands](https://github.com/barocss/doc-sync/tree/main/benchmarks/results/structural-events-2026-10-24) describe the exact scope. The earlier figures below keep their original measured source.
+
 ## Capability baseline before scoped comparison
 
 The capability baseline at `84fa81d` added bindings and document capabilities. It did not establish a general performance improvement. A sequential before/after/after/before comparison used Node 22.19.0, 5 warmups and 30 samples per case. The baseline was `ce42144`. Some plain-document paths regressed, and structural tails varied under high external desktop load.

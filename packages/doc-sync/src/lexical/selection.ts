@@ -1,3 +1,4 @@
+import {$modelChildren} from "./grid.ts";
 import {$createRangeSelection, $getRoot, $getSelection, $isElementNode, $isRangeSelection, $isTextNode, $setSelection} from "lexical";
 import {$isTableCellNode} from "@lexical/table";
 import {$lexicalModelType} from "./convert.ts";
@@ -9,13 +10,14 @@ import type {LexicalSchemaInfo} from "./schema.ts";
 type Block = {node: ElementNode; path: number[]};
 function blocks(info: LexicalSchemaInfo): Block[] {
     const result: Block[] = [];
+    const columns = new Map();
     const visit = (node: LexicalNode, path: number[]) => {
         if (!$isElementNode(node)) return;
         if ($modelData(node)?.attrs?.spanned === true) return;
         const type = $lexicalModelType(info, node);
         if (info.schema.nodes[type]?.shape === "text") { result.push({node, path}); return; }
         const prefix = $isTableCellNode(node) ? [...path, 0] : path;
-        node.getChildren().forEach((child, index) => visit(child, [...prefix, index]));
+        $modelChildren(node, columns).forEach(({node: child, index}) => visit(child, [...prefix, index]));
     };
     $getRoot().getChildren().forEach((node, index) => visit(node, [index]));
     return result;
