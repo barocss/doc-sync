@@ -5,8 +5,8 @@ import {dirname, resolve} from "node:path";
 import {loadavg} from "node:os";
 import {performance} from "node:perf_hooks";
 import {fileURLToPath} from "node:url";
-import {applyEdits, Doc} from "@barocss/doc-sync";
-import {SyncClient} from "@barocss/doc-sync/sync";
+import {applyEdits, Doc, schemaVersion} from "@barocss/doc-sync";
+import {SyncClient, PROTOCOL_VERSION} from "@barocss/doc-sync/sync";
 import {DEMO_SCHEMA as schema} from "../fixtures/demo-schema.ts";
 import type {EditOp, NodeJSON} from "@barocss/doc-sync";
 import type {ServerEvent} from "@barocss/doc-sync/sync";
@@ -41,7 +41,7 @@ const rows = sizes.flatMap(mainChars => scenarios.map(scenario => {
         send: async () => undefined, sendPresence: () => undefined,
     }, {schema});
     client.connect();
-    receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
+    receive({type: "hello", schemaVersion: schemaVersion(schema), epoch: "fixture", protocol: PROTOCOL_VERSION, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
     const sender = Doc.fromSnapshot("sender", seed.snapshot(), schema);
     let events: EditOp[] = [];
     let callbacks = 0;

@@ -11,8 +11,8 @@ import type {Op, Snapshot} from "../crdt/doc.ts";
  * 같은 자리에서 같은 압축을 한다.
  */
 
-/** Version 2 requires identity placement, field registers, annotations and child rules. */
-export const PROTOCOL_VERSION = 2 as const;
+/** Version 3 requires schema identity and retains the version 2 document capabilities. */
+export const PROTOCOL_VERSION = 3 as const;
 export const DOCUMENT_CAPABILITIES = Object.freeze(["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"] as const);
 
 export type Change = {
@@ -48,11 +48,13 @@ export type Presence = {
 };
 
 export type ServerEvent =
-    /** Protocol 2 requires a nonempty epoch. Optional typing permits rejection of legacy input. */
-    | {type: "hello"; protocol?: number; capabilities?: readonly string[]; epoch?: string; serverSeq: number; snapshot: Snapshot | null; delSeqs: Array<[string, number]>; presence: Presence[]; clientSeqs?: Array<[string, number]>}
+    /** Protocol 3 requires a nonempty epoch and an explicit schema identity or schema-free marker. */
+    | {type: "hello"; protocol?: number; capabilities?: readonly string[]; epoch?: string; schemaVersion?: string | null; serverSeq: number; snapshot: Snapshot | null; delSeqs: Array<[string, number]>; presence: Presence[]; clientSeqs?: Array<[string, number]>}
     | {type: "change"; envelope: Envelope}
     | {type: "presence"; presence: Presence}
     | {type: "leave"; actor: string}
+    /** The server changed the document schema. Clients must verify before sending more changes. */
+    | {type: "schema"; schemaVersion: string}
     | {type: "reset"; epoch?: string};
 
 /** 참여자 쪽에서 본 전송 계층. 메모리 안 시험용과 HTTP 용이 이것을 구현한다 */
@@ -60,9 +62,10 @@ export interface Transport {
     /**
      * 서버 이벤트를 받기 시작한다. since 이후의 변경만 받는다 (0 이면 스냅숏부터).
      * Pass the last accepted document epoch. A different epoch requires a full snapshot.
+     * A schema version identifies the schema the client is prepared to use.
      * @returns 구독 끊기
      */
-    subscribe(since: number, onEvent: (event: ServerEvent) => void, epoch?: string): () => void;
+    subscribe(since: number, onEvent: (event: ServerEvent) => void, epoch?: string, schemaVersion?: string): () => void;
     /** 보낸 순서대로 서버에 닿아야 한다 */
     send(message: Outbound): Promise<void>;
     sendPresence(presence: Presence): void;

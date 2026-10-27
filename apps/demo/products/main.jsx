@@ -49,10 +49,10 @@ function makePeer(name){
  const section=document.createElement('section');section.className='panel';section.id=name;section.innerHTML=`<h2>${name}</h2><div class="meta">Connecting</div><div class="tools"></div><div class="mount"></div>`;document.querySelector('#panes').append(section);
  const actor=`${name}-${crypto.randomUUID().slice(0,8)}`,transport=new HttpTransport(doc,actor,base),peer={name,actor,section,cleanup:[]};
  const send=transport.send.bind(transport);transport.send=async message=>{const record=current();if(record&&message.kind==='change'&&name===record.source)record.sendStart=performance.now();try{return await send(message);}finally{if(record&&message.kind==='change'&&name===record.source)record.sendEnd=performance.now();}};
- const subscribe=transport.subscribe.bind(transport);transport.subscribe=(since,handler,epoch)=>subscribe(since,event=>{
+ const subscribe=transport.subscribe.bind(transport);transport.subscribe=(since,handler,epoch,schemaVersion)=>subscribe(since,event=>{
   const record=current(),timed=record&&event.type==='change'&&event.envelope.change?.actor===peers.find(peer=>peer.name===record.source)?.actor;
   if(timed)record.receive[name]={start:performance.now()};handler(event);if(timed)record.receive[name].end=performance.now();
- },epoch);
+ },epoch,schemaVersion);
  const client=new SyncClient(actor,transport,{schema,ackDelay:50});peer.client=client;peer.transport=transport;
  const commit=client.commit.bind(client);client.commit=(ops,record)=>{const measurement=current();if(measurement?.source===name)measurement.commitStart=performance.now();const result=commit(ops,record);if(measurement?.source===name)measurement.commitEnd=performance.now();return result;};
  client.onUpdate=()=>{section.querySelector('.meta').textContent=`${client.online?'Online':'Offline'} · pending ${client.pending.length} · revision ${client.serverSeq}`;};

@@ -1,0 +1,124 @@
+{
+  "source": "/private/tmp/doc-sync-log-baseline-2u089us2",
+  "sourceSha256": "52c6e80cf08d13f74d0ffd4d0d1403698d24aab2e41992e5cf1db07005546458",
+  "coreTreeSha256": "a31e50beae95cbf736a59646adbb6cebf9cee7f0b7e365045e2ec0ae544426d1",
+  "fixtureGeneration": "00000000-0000-4000-8000-000000000001",
+  "fixtureSha256": "e9718312e3192eab562ef129305c33e31874fb90fcd23087fb816a3a28f2cf91",
+  "node": "v24.22.1",
+  "platform": "Darwin 24.6.0 arm64",
+  "cpu": "Apple M3 Max",
+  "loadAverage": [
+    21.87451171875,
+    17.642578125,
+    14.0576171875
+  ],
+  "count": 30000,
+  "samples": 12,
+  "warmups": 2,
+  "fixtureBytes": 5093177,
+  "method": "threshold 2, second reservation triggers compaction; unrelated change launched 1 ms after trigger; record both HTTP responses and first observed era advance after both responses",
+  "compactionMs": {
+    "min": 330.80704200000037,
+    "median": 348.0100000000002,
+    "p95": 394.74983299999803,
+    "max": 394.74983299999803
+  },
+  "completionMs": {
+    "min": 337.1994580000028,
+    "median": 354.4337090000008,
+    "p95": 401.52666699999827,
+    "max": 401.52666699999827
+  },
+  "unrelatedEditMs": {
+    "min": 335.25475000000006,
+    "median": 352.5609169999989,
+    "p95": 399.47087499999907,
+    "max": 399.47087499999907
+  },
+  "runs": [
+    {
+      "compactionMs": 361.8977080000004,
+      "completionMs": 368.72116600000027,
+      "completionPolls": 1,
+      "unrelatedEditMs": 366.753291,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 353.19504099999995,
+      "completionMs": 359.6528329999992,
+      "completionPolls": 1,
+      "unrelatedEditMs": 358.6227079999999,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 348.0100000000002,
+      "completionMs": 354.4337090000008,
+      "completionPolls": 1,
+      "unrelatedEditMs": 352.5609169999989,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 342.80570799999987,
+      "completionMs": 348.52529200000026,
+      "completionPolls": 1,
+      "unrelatedEditMs": 346.5017910000006,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 394.15541699999994,
+      "completionMs": 400.8540830000002,
+      "completionPolls": 1,
+      "unrelatedEditMs": 398.81466700000055,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 348.6602500000008,
+      "completionMs": 355.20645800000057,
+      "completionPolls": 1,
+      "unrelatedEditMs": 353.0134999999991,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 346.3189999999995,
+      "completionMs": 351.52979199999754,
+      "completionPolls": 1,
+      "unrelatedEditMs": 349.71941700000025,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 343.44824999999764,
+      "completionMs": 353.2955409999995,
+      "completionPolls": 1,
+      "unrelatedEditMs": 350.15970899999957,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 394.74983299999803,
+      "completionMs": 401.52666699999827,
+      "completionPolls": 1,
+      "unrelatedEditMs": 399.47087499999907,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 334.84870800000135,
+      "completionMs": 350.4445000000014,
+      "completionPolls": 1,
+      "unrelatedEditMs": 348.57816699999967,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 360.4667079999999,
+      "completionMs": 366.8604579999992,
+      "completionPolls": 1,
+      "unrelatedEditMs": 365.0900419999998,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 330.80704200000037,
+      "completionMs": 337.1994580000028,
+      "completionPolls": 1,
+      "unrelatedEditMs": 335.25475000000006,
+      "logBytes": 5093538
+    }
+  ]
+}

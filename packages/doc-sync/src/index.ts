@@ -14,6 +14,7 @@ export {anchorAt, blockPath, childCount, compileEdits, flowPath, gridPath, pathA
 export {History} from "./crdt/history.ts";
 export {applyEdit, applyEdits, canonMarks, canonical, diffModels, inheritedMarks, markOrder, runsToUnits, unitsToRuns} from "./crdt/model.ts";
 export {acceptsText, attrValueOk, checkSchema, gridParts, groupOf, inlineTypes, storedTypes} from "./crdt/schema.ts";
+export {assertCompatibleSchema, schemaVersion} from "./crdt/schema-version.ts";
 export {Clock, ROOT, compareTicket, keyOf, shortOf, ticketOf} from "./crdt/ticket.ts";
 export type {AtomBlock, Block, FlowBlock, GridBlock, Item, Line, Op, Pos, Snapshot, SpanValue, TextBlock} from "./crdt/doc.ts";
 export type {RecordOptions} from "./crdt/history.ts";

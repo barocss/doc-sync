@@ -2,7 +2,7 @@
 
 export {SyncClient} from "./client.ts";
 export {HttpTransport} from "./http-transport.ts";
-export type {ClientOptions, EventCause} from "./client.ts";
+export type {ClientOptions, ClientCheckpoint, EventCause} from "./client.ts";
 export type {Ack, Change, Envelope, Outbound, Presence, ServerEvent, Transport} from "./protocol.ts";
 
 export {DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "./protocol.ts";

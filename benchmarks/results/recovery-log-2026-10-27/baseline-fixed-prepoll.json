@@ -1,0 +1,94 @@
+{
+  "source": "/private/tmp/doc-sync-log-baseline-2u089us2",
+  "sourceSha256": "52c6e80cf08d13f74d0ffd4d0d1403698d24aab2e41992e5cf1db07005546458",
+  "coreTreeSha256": "a31e50beae95cbf736a59646adbb6cebf9cee7f0b7e365045e2ec0ae544426d1",
+  "fixtureGeneration": "00000000-0000-4000-8000-000000000001",
+  "fixtureSha256": "e9718312e3192eab562ef129305c33e31874fb90fcd23087fb816a3a28f2cf91",
+  "node": "v24.22.1",
+  "platform": "Darwin 24.6.0 arm64",
+  "cpu": "Apple M3 Max",
+  "loadAverage": [
+    10.91552734375,
+    15.576171875,
+    13.22119140625
+  ],
+  "count": 30000,
+  "samples": 12,
+  "warmups": 2,
+  "fixtureBytes": 5093177,
+  "method": "threshold 2, second reservation triggers compaction; unrelated change launched 1 ms after trigger; durations end at HTTP response",
+  "compactionMs": {
+    "min": 322.29662499999904,
+    "median": 347.44233299999905,
+    "p95": 488.08250000000044,
+    "max": 488.08250000000044
+  },
+  "unrelatedEditMs": {
+    "min": 332.921792000001,
+    "median": 352.80987500000265,
+    "p95": 491.786709,
+    "max": 491.786709
+  },
+  "runs": [
+    {
+      "compactionMs": 368.69874999999956,
+      "unrelatedEditMs": 373.6409170000006,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 342.1815830000005,
+      "unrelatedEditMs": 373.27833400000054,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 348.3209590000006,
+      "unrelatedEditMs": 352.98412500000086,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 348.60333400000127,
+      "unrelatedEditMs": 353.26345799999945,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 342.7169159999994,
+      "unrelatedEditMs": 347.5405840000003,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 365.25474999999824,
+      "unrelatedEditMs": 368.94079200000124,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 340.45600000000195,
+      "unrelatedEditMs": 345.28708299999926,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 347.80312499999854,
+      "unrelatedEditMs": 352.083584,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 347.44233299999905,
+      "unrelatedEditMs": 352.80987500000265,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 322.29662499999904,
+      "unrelatedEditMs": 344.0280840000014,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 327.13687500000015,
+      "unrelatedEditMs": 332.921792000001,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 488.08250000000044,
+      "unrelatedEditMs": 491.786709,
+      "logBytes": 5093538
+    }
+  ]
+}

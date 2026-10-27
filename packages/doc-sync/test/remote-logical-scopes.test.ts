@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, MAIN, commands} from "../src/index.ts";
+import {Doc, MAIN, commands, schemaVersion} from "../src/index.ts";
 import {applyEdits, diffModels} from "../src/crdt/model.ts";
 import {textEventScopes} from "../src/sync/model-events.ts";
 import {blockPath, posOfPath} from "../src/crdt/edit.ts";
@@ -34,7 +34,7 @@ const fixture = (initial: Doc) => {
     let receive!: (event: ServerEvent) => void;
     const client = new SyncClient("receiver", {subscribe: (_since, callback) => {receive = callback; return () => undefined;}, send: async () => undefined, sendPresence: () => undefined}, {schema: source});
     client.connect();
-    receive({type: "hello", protocol: PROTOCOL_VERSION, capabilities: DOCUMENT_CAPABILITIES, epoch: "logical-test", serverSeq: 1, snapshot: initial.snapshot(), presence: [], delSeqs: []});
+    receive({type: "hello", schemaVersion: schemaVersion(source), protocol: PROTOCOL_VERSION, capabilities: DOCUMENT_CAPABILITIES, epoch: "logical-test", serverSeq: 1, snapshot: initial.snapshot(), presence: [], delSeqs: []});
     const sender = Doc.fromSnapshot("sender", initial.snapshot(), source), read = client.doc.toJSON.bind(client.doc);
     let reads = 0, sequence = 1;
     client.doc.toJSON = () => {reads += 1; return read();};

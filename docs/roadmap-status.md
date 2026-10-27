@@ -1,14 +1,16 @@
 # Roadmap Execution Status — 2026-10-23
 
+> Historical execution record. For the current ordered work and acceptance criteria, see the [roadmap](../apps/docs/src/roadmap.md) and the latest integration section in `HANDOFF.md`. The stage assessments and measurements below describe their original checkpoints and are not current-source acceptance results.
+
 The previous integration is main `6f15291`, recorded in [HANDOFF §5.13](../HANDOFF.md#513-final-checks-and-main-integration-of-all-changes-2026-10-23). Remote model-event comparison for multiple text blocks was extended on top of it. Final retesting and main integration follow [§5.15](../HANDOFF.md#515-final-checks-and-main-integration-of-multi-text-block-remote-comparison-2026-10-23). Implementation, measurements, and scope follow [§5.14](../HANDOFF.md#514-roadmap-priority-remote-comparison-of-multiple-text-blocks-2026-10-23). Earlier screen-latency improvements remain in §5.9–§5.10; intent preservation and History fixes remain in §5.11–§5.12. The single library package and private demo/benchmark structure remain.
 
 Paragraph-cache reuse after structural changes was added in [HANDOFF §5.16](../HANDOFF.md#516-improving-paragraph-recalculation-after-structural-changes-2026-10-23). The measurement baseline was main `10dfd86`; changes were uncommitted at that time. Subsequent final integration checks follow HANDOFF §5.17.
 
 ## Document capabilities and editor bindings
 
-The later capability delivery adds public Slate and Lexical bindings, a complete example-schema page, paragraph/block/group movement, required-child projection, persistent annotations and declared nested attribute fields. Protocol 2 and document epochs gate compatible replay and preserve pending state on incompatible recovery. Independent fixed regressions cover the reported move-history, validation, snapshot and reference-isolation defects. Final integration evidence is recorded in HANDOFF §5.19.
+The later capability delivery adds public Slate and Lexical bindings, a complete example-schema page, paragraph/block/group movement, required-child projection, persistent annotations and declared nested attribute fields. Protocol 3, schema fingerprints and document epochs gate compatible replay and preserve pending state on incompatible recovery. Independent fixed regressions cover the reported move-history, validation, snapshot and reference-isolation defects. Final integration evidence is recorded in HANDOFF §5.19.
 
-Movement retains its placement log. This is an explicit later change to the earlier no-move decision. It does not implement arbitrary subtree cuts, row/column/inline/span movement, schema migration, bounded movement-log pruning, actual OS IME acceptance or product performance gates. Legacy safe receive comparison remains available; documents with movements or child rules use full comparison. Earlier measurements below keep their original source and scope.
+Movement retains its placement log. This is an explicit later change to the earlier no-move decision. It does not implement arbitrary subtree cuts, row/column/inline/span movement, incompatible schema migration, bounded movement-log pruning, actual OS IME acceptance or product performance gates. At the capability checkpoint, documents with movements or child rules used full comparison. Later work narrowed eligible text comparisons; see the latest handoff and performance reports. Earlier measurements below keep their original source and scope.
 
 ## This Execution
 
@@ -45,12 +47,12 @@ Movement retains its placement log. This is an explicit later change to the earl
 | 1 Performance | Up to 8 text blocks on receipt, large paste, paragraph-model reuse after structure, Paint improvements | Structural-line scan, full comparison/copying/normalization, costs for 9+ blocks and undo/redo, actual product criteria, G1 |
 | 2 Correctness | Specification, property/intent regressions, consecutive formatting undo fix, long-run CI foundation | Lease-expiry recovery, actual CI runs, two-week observation, long-lived single-document scope |
 | 3 Storage/operations | Existing demo implementation | Durable snapshots/log truncation, authentication/authorization/size/rate limits, failure and multi-server validation |
-| 4 Schema evolution | Unimplemented | Schema version/fingerprint negotiation, migration functions, rejection of old versions |
+| 4 Schema evolution | Unimplemented at this checkpoint; Protocol 3 later added fingerprint checks and compatible additive transitions | Incompatible migration and wider capability transitions remain separate work |
 | 5 Target-product integration | Public PM integration and comparison demo | Actual target-editor operations, intent, performance, and OS IME validation |
 | 6 Feature completion | Some foundations exist | Child-count min/max, per-mark boundary policies, comments, historical lookup, integrated selection, row/column sizing |
 | 7 Release | Single-package structure complete | Release build, API/version policy, security verification, migration tools, pilot operation, G4 |
 
-The latest single-package decision replaces stage 7's former multiple-public-package proposal. Continuous-string storage remains a design review and does not automatically reverse the decision to exclude implementation. Binary encoding awaits a decision. Move/cut operations and collection of text from merged cells were not added in this work.
+The latest single-package decision replaces stage 7's former multiple-public-package proposal. Continuous-string storage remains a design review and does not automatically reverse the decision to exclude implementation. Binary encoding awaits a decision. Move/cut operations and collection of text from merged cells were not added at this checkpoint; identity-preserving block and group movement was added later.
 
 ## Measurement Boundaries and Targets
 

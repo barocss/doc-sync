@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {Doc} from "../src/crdt/doc.ts";
+import {schemaVersion} from "../src/crdt/schema-version.ts";
 import * as cmd from "../src/crdt/commands.ts";
 import {applyEdits, diffModels} from "../src/crdt/model.ts";
 import {SyncClient} from "../src/sync/client.ts";
@@ -23,7 +24,7 @@ const fixture = (children: NodeJSON[]) => {
         send: async () => undefined, sendPresence: () => undefined,
     }, {schema: DEMO_SCHEMA});
     client.connect();
-    receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
+    receive({type: "hello", schemaVersion: schemaVersion(DEMO_SCHEMA), epoch: "fixture", protocol: 3, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
     const sender = Doc.fromSnapshot("sender", seed.snapshot(), DEMO_SCHEMA);
     const read = client.doc.toJSON.bind(client.doc);
     let reads = 0, seq = 1;

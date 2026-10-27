@@ -9,6 +9,7 @@ export class HttpTransport implements Transport {
     private readonly base: string;
     private readonly actor: string;
     private epoch: string | undefined;
+    private schemaVersion: string | undefined;
     private subscription = 0;
 
     constructor(doc: string, actor: string, origin = "") {
@@ -16,10 +17,11 @@ export class HttpTransport implements Transport {
         this.actor = actor;
     }
 
-    subscribe(since: number, onEvent: (event: ServerEvent) => void, epoch?: string): () => void {
+    subscribe(since: number, onEvent: (event: ServerEvent) => void, epoch?: string, schemaVersion?: string): () => void {
         const subscription = ++this.subscription;
         this.epoch = epoch;
-        const source = new EventSource(`${this.base}/stream?protocol=${PROTOCOL_VERSION}&since=${since}&actor=${encodeURIComponent(this.actor)}${epoch ? `&epoch=${encodeURIComponent(epoch)}` : ""}`);
+        this.schemaVersion = schemaVersion;
+        const source = new EventSource(`${this.base}/stream?protocol=${PROTOCOL_VERSION}&since=${since}&actor=${encodeURIComponent(this.actor)}${epoch ? `&epoch=${encodeURIComponent(epoch)}` : ""}${schemaVersion ? `&schemaVersion=${encodeURIComponent(schemaVersion)}` : ""}`);
 
         let active = true;
         source.onmessage = message => {
@@ -36,7 +38,7 @@ export class HttpTransport implements Transport {
         const [path, body] = message.kind === "change" ? ["changes", message.change] : ["ack", message.ack];
         const response = await fetch(`${this.base}/${path}`, {
             method: "POST",
-            headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION), ...(this.epoch ? {"x-doc-sync-epoch": this.epoch} : {})},
+            headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION), ...(this.epoch ? {"x-doc-sync-epoch": this.epoch} : {}), ...(this.schemaVersion ? {"x-doc-sync-schema": this.schemaVersion} : {})},
             body: JSON.stringify(body),
         });
 
@@ -47,13 +49,16 @@ export class HttpTransport implements Transport {
 
     /** 창을 닫을 때 — 서버가 더 기다리지 않도록 */
     leave(): void {
-        navigator.sendBeacon(`${this.base}/leave${this.epoch ? `?epoch=${encodeURIComponent(this.epoch)}` : ""}`, JSON.stringify({actor: this.actor}));
+        const query = new URLSearchParams();
+        if (this.epoch) query.set("epoch", this.epoch);
+        if (this.schemaVersion) query.set("schemaVersion", this.schemaVersion);
+        navigator.sendBeacon(`${this.base}/leave${query.size ? `?${query}` : ""}`, JSON.stringify({actor: this.actor}));
     }
 
     sendPresence(presence: Presence): void {
         fetch(`${this.base}/presence`, {
             method: "POST",
-            headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION), ...(this.epoch ? {"x-doc-sync-epoch": this.epoch} : {})},
+            headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION), ...(this.epoch ? {"x-doc-sync-epoch": this.epoch} : {}), ...(this.schemaVersion ? {"x-doc-sync-schema": this.schemaVersion} : {})},
             body: JSON.stringify(presence),
             keepalive: true,
         }).catch(() => undefined);

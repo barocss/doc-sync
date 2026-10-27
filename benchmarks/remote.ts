@@ -5,8 +5,8 @@ import {dirname, resolve} from "node:path";
 import {performance} from "node:perf_hooks";
 import {loadavg} from "node:os";
 import {fileURLToPath} from "node:url";
-import {applyEdits, Doc} from "@barocss/doc-sync";
-import {SyncClient} from "@barocss/doc-sync/sync";
+import {applyEdits, Doc, schemaVersion} from "@barocss/doc-sync";
+import {SyncClient, PROTOCOL_VERSION} from "@barocss/doc-sync/sync";
 import type {EditOp, NodeJSON, Schema} from "@barocss/doc-sync";
 import type {ServerEvent} from "@barocss/doc-sync/sync";
 
@@ -65,7 +65,7 @@ const rows = sizes.flatMap(chars => blockCounts.flatMap(changedBlocks => operati
     }, {schema});
 
     client.connect();
-    receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
+    receive({type: "hello", schemaVersion: schemaVersion(schema), epoch: "fixture", protocol: PROTOCOL_VERSION, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
 
     const sender = Doc.fromSnapshot("sender", seed.snapshot(), schema);
     let events: EditOp[] = [];

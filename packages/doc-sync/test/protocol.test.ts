@@ -48,11 +48,12 @@ test("protocol handshake holds offline edits until all required capabilities are
     c.client.disconnect();
 });
 
-for (const mode of ["legacy", "future", "missing-capability"] as const) {
+for (const mode of ["legacy", "version-2", "future", "missing-capability"] as const) {
     test(`protocol rejects ${mode} before sending and preserves local edits for retry`, async () => {
         const event = hello();
         if (event.type !== "hello") throw new Error("hello expected");
         if (mode === "legacy") delete event.protocol;
+        if (mode === "version-2") event.protocol = 2;
         if (mode === "future") event.protocol = PROTOCOL_VERSION + 1;
         if (mode === "missing-capability") event.capabilities = DOCUMENT_CAPABILITIES.slice(1);
         const c = setup(event);
@@ -329,7 +330,7 @@ test("demo HTTP rejects old-generation changes, acknowledgements, presence, and 
         await fetch(`${base}/reset`, {method: "POST"});
         finish();
         assert.equal(await inflight, 409, "an old request that finishes after reset must not enter the new generation");
-        const after = await (await fetch(`${base}/state`)).json() as {epoch: string};
+        const after = await (await fetch(`${base}/state`)).json() as {epoch: string; schemaVersion: string};
         assert.notEqual(after.epoch, before.epoch);
         const node = new SyncClient("old-request", {subscribe: () => () => undefined, send: async () => undefined, sendPresence: () => undefined}, {schema: DEMO_SCHEMA});
         node.commit(node.doc.edit([{op: "insert", at: [0, 0], content: "stale"}]).ops);
@@ -343,7 +344,7 @@ test("demo HTTP rejects old-generation changes, acknowledgements, presence, and 
         const untouched = await (await fetch(`${base}/state`)).json() as {serverSeq: number; peers: unknown[]};
         assert.equal(untouched.serverSeq, 0);
         assert.deepEqual(untouched.peers, []);
-        const accepted = await fetch(`${base}/changes`, {method: "POST", headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION), "x-doc-sync-epoch": after.epoch}, body: JSON.stringify(node.pending[0])});
+        const accepted = await fetch(`${base}/changes`, {method: "POST", headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION), "x-doc-sync-epoch": after.epoch, "x-doc-sync-schema": after.schemaVersion}, body: JSON.stringify(node.pending[0])});
         assert.equal(accepted.status, 200);
         const current = await (await fetch(`${base}/state`)).json() as {serverSeq: number};
         assert.equal(current.serverSeq, 1);

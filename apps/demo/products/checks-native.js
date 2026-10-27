@@ -1,5 +1,5 @@
 async page=>{
- const origin=new URL(page.url()).origin,run=Date.now().toString(36),results=[];
+ const origin=new URL(page.url()).origin,run=`${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`,results=[];
  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
  const at=(root,path)=>path.reduce((node,index)=>node.children[index],root);
  const text=node=>(node.runs??[]).map(run=>'text'in run?run.text:text({runs:run.runs})).join('');
@@ -65,7 +65,7 @@ async page=>{
    if(state.peers.some(peer=>peer.fallbacks))throw new Error('Unexpected event fallback');
    await note(`${name}: final native/client/server equality and zero event fallbacks`,{finalModel:state.server});
   }
-  await page.setViewportSize({width:1680,height:1100});await page.screenshot({path:`output/playwright/product-native/${profile}-desktop.png`,fullPage:false});
+  await page.setViewportSize({width:1680,height:1100});await page.screenshot({path:`output/playwright/product-native/${run}/${profile}-desktop.png`,fullPage:false});
  }
  return {browserVersion:page.context().browser().version(),run,results};
 }

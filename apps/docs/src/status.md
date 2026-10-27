@@ -2,6 +2,8 @@
 
 This documentation describes the current implementation and its verification limits. A passing bounded test is not a production release or a guarantee for every editor and workload.
 
+For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
+
 ## Available behavior
 
 - Schema-defined text, inline content, lists, nested flows, tables, spans, and attributes.
@@ -12,8 +14,12 @@ This documentation describes the current implementation and its verification lim
 - Identity-preserving paragraph, block and group placement, with conditional undo.
 - Required-child and maximum-count projection with retained overflow.
 - Declared nested-attribute field registers and persistent annotations.
+- Node synchronization and a private MCP server with server-checked conditional edits and compatible schema transitions.
+- A macOS-only, review-only MCP conditional-edit journal and a single-process demo-server receipt lookup. An unresolved record blocks automatic replay; this does not restore undo history.
 
 ## Regression coverage
+
+The latest local recovery integration passed 649 library, 26 demo, 27 documentation, and 29 MCP tests, with one platform-specific MCP test skipped, plus 32 comparison-editor tests. Separate real process checks covered MCP termination, server restart, receipt lookup and a concurrent human edit. Earlier Protocol 3 Chrome checks passed 90 native editing and 39 structure checks across three profiles and editor bindings before the recovery storage changes; they have not been repeated for those changes. This checkpoint is local work in progress. Performance results below describe earlier source-bound runs; they are not a new recovery performance measurement.
 
 Receive model materialization passes 622 library, 16 demo and 27 documentation tests with `FUZZ_SEEDS=3000 PM_SEEDS=300`, plus 31 compatibility unit tests. Chrome passes 460 functional assertions and captures 30 separate operation traces, with zero console errors. Long-paragraph core receive/model p95 improves 64.5–69.3% across the measured live workloads, while the compressed ID index and cold heap footprint remain essentially unchanged. Short-paragraph and alternating-format controls do not show the same gain. See the [comparison report and limits](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/receive-model-2026-10-24/report.md).
 
@@ -27,7 +33,7 @@ Chrome checks covered 40 basic/nested/presence/multiple-block steps, 84 compatib
 
 The fixed collaboration-intent cases cover overlapping deletion, formatting, insertion, and undo. Sequential formatting undo/redo regressions include remote same-value and partial-range writes.
 
-The new capability review added fixed cases for placement cycles, post-move split/join/history, required slots, field ownership, annotation affinity, snapshots, invalid operations and mutable-output isolation. Functional and security review suites passed 137 cases. Final aggregate and browser results are recorded with the current source; earlier counts above describe their original integration.
+The capability review added fixed cases for placement cycles, post-move split/join/history, required slots, field ownership, annotation affinity, snapshots, invalid operations and mutable-output isolation. Functional and security review suites passed 137 cases. These counts and browser results describe their original integration, not a fresh Protocol 3 run.
 
 Automatic paragraphs now keep one visible identity when edited or moved. Splitting before moved siblings preserves their order and placement ownership. Fixed regressions cover concurrent input/formatting, same-boundary splits, history, compaction, snapshots and private-anchor validation. Chrome exercises native input and Enter in Slate, Lexical and ProseMirror, with five native/client models matching the server. See the collaboration intent reference for the expected examples.
 
@@ -37,9 +43,9 @@ Final expanded tests pass 567 library, 12 demo and 27 documentation cases, plus 
 
 | Area | Remaining work |
 |---|---|
-| Recovery | Fresh-session snapshot recovery after lease expiry; old pending edits and history. |
+| Recovery | The macOS MCP journal preserves conditional edit evidence for inspection after process exit; the demo can return an exact accepted receipt or unknown after restart. Ordinary pending edits, undo history, lease-expiry recovery, automatic replay, and other platforms remain open. |
 | Operations | Authentication, authorization, durable snapshot/log retention, limits, and failure recovery. |
-| Schema evolution | Schema migration and evolution. Protocol 2 gates the current capabilities and rejects incompatible peers; it does not migrate schemas. |
+| Schema evolution | Protocol 3 verifies schema identity. Compatible additions can transition without resetting the document; incompatible migration needs a separate contract. |
 | Editor acceptance | Broader target-editor behavior and real OS IME validation. The reported Lexical/PM merged-grid mismatch is fixed; finite Chrome checks cover merged geometry, hidden data, history and selection. |
 | Performance | Structural line scans, whole-model comparison/copy, conversion, DOM work, and unexplained tail latency. Stable visible text in moved/required documents now uses at most eight scopes. Whole before/after reads remain for structural changes; eligible large documents compare/verify guarded windows of at most eight top-level nodes. Root child rules, group boundaries and wider spans retain whole verification. Native projection retains unchanged root blocks; changed root containers, Lexical readback, local conversion and whole-model comparisons remain. |
 | Long-term evidence | Actual scheduled CI and two-week observation; the 30-minute target cadence is not complete. |

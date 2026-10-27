@@ -6,6 +6,7 @@ import {DecorationSet} from "prosemirror-view";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import * as cmd from "../src/crdt/commands.ts";
 import {Doc} from "../src/crdt/doc.ts";
+import {schemaVersion} from "../src/crdt/schema-version.ts";
 import {canonical} from "../src/crdt/model.ts";
 import {PmBinding} from "../src/pm/binding.ts";
 import {fromPmJSON, toPmJSON} from "../src/pm/convert.ts";
@@ -137,7 +138,7 @@ test("PM 재사용: snapshot과 reset은 version 0이어도 새 내용을 반영
     client.connect();
     try {
         assert.equal(client.doc.version, 0);
-        receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 0, snapshot: snapshotDoc("snapshot").snapshot(), delSeqs: [], presence: []});
+        receive({type: "hello", schemaVersion: schemaVersion(DEMO_SCHEMA), epoch: "fixture", protocol: 3, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 0, snapshot: snapshotDoc("snapshot").snapshot(), delSeqs: [], presence: []});
         assert.equal(client.doc.version, 0);
         assert.equal(binding.state.doc.textContent, "snapshot");
         sameModel(binding);

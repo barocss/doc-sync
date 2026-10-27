@@ -265,11 +265,132 @@ export type RecordOptions = {
     typing?: boolean;
 };
 
+/** A JSON checkpoint. Restore it only with the matching document and GC protection. */
+export type HistorySnapshot = {
+    version: 1;
+    undo: unknown[];
+    redo: unknown[];
+    sets: unknown[];
+    moves: unknown[];
+    currentSets: unknown[];
+    currentMoves: unknown[];
+};
+
+type HistoryInternals = {
+    undoStack: Group[]; redoStack: Group[]; setStates: SetStates; moveStates: Map<string, MoveState>;
+};
+const fields = <T>(value: unknown): T => value as T;
+
+// Values in document operations are JSON. Reject lossy conversions, cycles and
+// exotic objects instead of silently changing an undo value in a checkpoint.
+function jsonCopy(value: unknown): unknown {
+    const ancestors = new Set<object>();
+    let count = 0;
+    const visit = (v: unknown, depth: number): void => {
+        if (++count > 1000000 || depth > 100) throw new Error("Invalid history snapshot: JSON limit");
+        if (v === null || typeof v === "string" || typeof v === "boolean") return;
+        if (typeof v === "number" && Number.isFinite(v)) return;
+        if (typeof v !== "object" || v === null || ancestors.has(v)) throw new Error("Invalid history snapshot: JSON value");
+        const proto = Object.getPrototypeOf(v);
+        if (Array.isArray(v) ? proto !== Array.prototype : proto !== Object.prototype && proto !== null) throw new Error("Invalid history snapshot: JSON object");
+        ancestors.add(v);
+        for (const key of Reflect.ownKeys(v)) {
+            if (typeof key !== "string") throw new Error("Invalid history snapshot: JSON key");
+            if (Array.isArray(v) && key === "length") continue;
+            const descriptor = Object.getOwnPropertyDescriptor(v, key)!;
+            if (!descriptor.enumerable || !("value" in descriptor)) throw new Error("Invalid history snapshot: JSON property");
+            visit(descriptor.value, depth + 1);
+        }
+        if (Array.isArray(v) && (Object.keys(v).length !== v.length || Object.keys(v).some((key, i) => key !== String(i)))) throw new Error("Invalid history snapshot: JSON array");
+        ancestors.delete(v);
+    };
+    visit(value, 0);
+    return JSON.parse(JSON.stringify(value));
+}
+
+function historySnapshot(history: HistoryInternals): HistorySnapshot {
+    const sets: SetState[] = [], moves: MoveState[] = [];
+    const setIds = new Map<SetState, number>(), moveIds = new Map<MoveState, number>();
+    const setId = (state: SetState): number => {
+        let id = setIds.get(state); if (id === undefined) { id = sets.length; sets.push(state); setIds.set(state, id); } return id;
+    };
+    const moveId = (state: MoveState): number => {
+        let id = moveIds.get(state); if (id === undefined) { id = moves.length; moves.push(state); moveIds.set(state, id); } return id;
+    };
+    const step = (value: Step): unknown => {
+        if (value instanceof ExistenceStep) {
+            const x = fields<{ids: Ticket[]; delAt: Ticket | null}>(value);
+            return {type: "existence", ids: x.ids, delAt: x.delAt};
+        }
+        if (value instanceof SplitStep) {
+            const x = fields<{id: Ticket; slot: string; before: SetState; after: SetState; placement: MoveState; undone: boolean}>(value);
+            return {type: "split", id: x.id, slot: x.slot, before: setId(x.before), after: setId(x.after), placement: moveId(x.placement), undone: x.undone};
+        }
+        if (value instanceof MoveStep) {
+            const x = fields<{target: Ticket; before: MoveState; after: MoveState; undone: boolean}>(value);
+            return {type: "move", target: x.target, before: moveId(x.before), after: moveId(x.after), undone: x.undone};
+        }
+        if (value instanceof SetStep) {
+            const x = fields<{key: string; targets: Array<{id: Ticket; slot: string; before: SetState; after: SetState; undone: boolean}>}>(value);
+            return {type: "set", key: x.key, targets: x.targets.map(t => ({id: t.id, slot: t.slot, before: setId(t.before), after: setId(t.after), undone: t.undone}))};
+        }
+        throw new Error("Unknown history step");
+    };
+    const group = (g: Group): unknown => ({...g, steps: g.steps.map(step)});
+    const undo = history.undoStack.map(group), redo = history.redoStack.map(group);
+    const currentSets = [...fields<{current: Map<string, SetState>}>(history.setStates).current].map(([key, state]) => [key, setId(state)]);
+    const currentMoves = [...history.moveStates].map(([key, state]) => [key, moveId(state)]);
+    // Omit optional tickets instead of writing undefined, which JSON would drop.
+    const snapshot = {version: 1, undo, redo, sets: sets.map(s => s.at ? {value: s.value, at: s.at, users: s.users} : {value: s.value, users: s.users}), moves, currentSets, currentMoves};
+    return jsonCopy(snapshot) as HistorySnapshot;
+}
+
+function restoreHistory(input: unknown): History {
+    const invalid = (): never => { throw new Error("Invalid history snapshot"); };
+    const x = jsonCopy(input) as Record<string, unknown>;
+    const object = (v: unknown): Record<string, unknown> => v && typeof v === "object" && !Array.isArray(v) ? v as Record<string, unknown> : invalid();
+    const array = (v: unknown): unknown[] => Array.isArray(v) ? v : invalid();
+    const str = (v: unknown): string => typeof v === "string" ? v : invalid();
+    const bool = (v: unknown): boolean => typeof v === "boolean" ? v : invalid();
+    const ticket = (v: unknown): Ticket => { const t = object(v); if (!Number.isSafeInteger(t.lamport) || (t.lamport as number) < 0 || typeof t.actor !== "string" || !t.actor) invalid(); return {lamport: t.lamport as number, actor: t.actor as string}; };
+    const maybeTicket = (v: unknown): Ticket | null => v === null ? null : ticket(v);
+    if (!x || x.version !== 1) invalid();
+    const sets: SetState[] = array(x.sets).map(v => { const s = object(v); if (!("value" in s) || !Number.isSafeInteger(s.users) || (s.users as number) < 1) invalid(); return {value: s.value, users: s.users as number, ...(s.at === undefined ? {} : {at: ticket(s.at)})}; });
+    const moves: MoveState[] = array(x.moves).map(v => { const m = object(v); return {parent: ticket(m.parent), after: maybeTicket(m.after), at: ticket(m.at)}; });
+    const ref = <T>(table: T[], id: unknown): T => Number.isSafeInteger(id) && (id as number) >= 0 && (id as number) < table.length ? table[id as number] : invalid();
+    const result = new History(), h = fields<HistoryInternals>(result);
+    const currentSets = fields<{current: Map<string, SetState>}>(h.setStates).current;
+    for (const entry of array(x.currentSets)) { const pair = array(entry); if (pair.length !== 2 || currentSets.has(str(pair[0]))) invalid(); currentSets.set(str(pair[0]), ref(sets, pair[1])); }
+    for (const entry of array(x.currentMoves)) { const pair = array(entry); if (pair.length !== 2 || h.moveStates.has(str(pair[0]))) invalid(); h.moveStates.set(str(pair[0]), ref(moves, pair[1])); }
+    const make = <T>(prototype: object, props: object): T => Object.assign(Object.create(prototype), props) as T;
+    const step = (v: unknown): Step => {
+        const s = object(v);
+        if (s.type === "existence") return new ExistenceStep(array(s.ids).map(ticket), maybeTicket(s.delAt));
+        if (s.type === "split") { const id = ticket(s.id), slot = str(s.slot); if (slot !== JSON.stringify([keyOf(id), "$join"])) invalid(); return make<SplitStep>(SplitStep.prototype, {id, slot, before: ref(sets, s.before), after: ref(sets, s.after), placement: ref(moves, s.placement), undone: bool(s.undone), states: h.setStates}); }
+        if (s.type === "move") return make<MoveStep>(MoveStep.prototype, {target: ticket(s.target), before: ref(moves, s.before), after: ref(moves, s.after), undone: bool(s.undone)});
+        if (s.type === "set") {
+            const key = str(s.key), targets = array(s.targets).map(v => { const t = object(v), id = ticket(t.id), slot = str(t.slot); if (slot !== JSON.stringify([keyOf(id), key])) invalid(); return {id, slot, before: ref(sets, t.before), after: ref(sets, t.after), undone: bool(t.undone)}; });
+            return make<SetStep>(SetStep.prototype, {key, targets, states: h.setStates});
+        }
+        return invalid();
+    };
+    const group = (v: unknown): Group => { const g = object(v); if (typeof g.at !== "number" || !Number.isFinite(g.at)) invalid(); const steps = array(g.steps).map(step); if (!steps.length) invalid(); return {steps, caretBefore: str(g.caretBefore), caretAfter: str(g.caretAfter), typing: bool(g.typing), at: g.at as number}; };
+    const undo = array(x.undo), redo = array(x.redo); if (undo.length + redo.length > DEPTH) invalid();
+    h.undoStack.push(...undo.map(group)); h.redoStack.push(...redo.map(group));
+    return result;
+}
+
 export class History {
     private readonly undoStack: Group[] = [];
     private readonly redoStack: Group[] = [];
     private readonly setStates = new SetStates();
     private readonly moveStates = new Map<string, MoveState>();
+
+    /** Export this history with its shared ownership state. */
+    snapshot(): HistorySnapshot { return historySnapshot(fields<HistoryInternals>(this)); }
+
+    /** Validate and restore a detached history. The caller must verify its checkpoint and GC pin. */
+    static fromSnapshot(snapshot: unknown): History { return restoreHistory(snapshot); }
 
     private release(group: Group): void {
         group.steps.forEach(step => step instanceof SetStep && step.release());

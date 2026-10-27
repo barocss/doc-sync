@@ -3,7 +3,7 @@ import {createHash} from "node:crypto";
 import {readFileSync, writeFileSync} from "node:fs";
 import {performance} from "node:perf_hooks";
 import {loadavg} from "node:os";
-import {applyEdits, createAnnotation, Doc} from "@barocss/doc-sync";
+import {applyEdits, createAnnotation, Doc, schemaVersion} from "@barocss/doc-sync";
 import {SyncClient, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "@barocss/doc-sync/sync";
 import type {EditOp, NodeJSON, Schema} from "@barocss/doc-sync";
 import type {ServerEvent} from "@barocss/doc-sync/sync";
@@ -34,7 +34,7 @@ const rows = sizes.flatMap(chars => modes.map(mode => {
         send: async () => undefined, sendPresence: () => undefined,
     }, {schema});
     client.connect();
-    receive({type: "hello", protocol: PROTOCOL_VERSION, capabilities: DOCUMENT_CAPABILITIES, epoch: "capability-benchmark", serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
+    receive({type: "hello", schemaVersion: schemaVersion(schema), protocol: PROTOCOL_VERSION, capabilities: DOCUMENT_CAPABILITIES, epoch: "capability-benchmark", serverSeq: 1, snapshot: seed.snapshot(), delSeqs: [], presence: []});
     const sender = Doc.fromSnapshot("sender", seed.snapshot(), schema);
     let mirror = client.doc.toJSON(), events: EditOp[] = [], reads = 0;
     const read = client.doc.toJSON.bind(client.doc);

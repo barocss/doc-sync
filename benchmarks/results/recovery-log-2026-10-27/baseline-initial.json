@@ -1,0 +1,93 @@
+{
+  "source": "/private/tmp/doc-sync-log-baseline-2u089us2",
+  "sourceSha256": "52c6e80cf08d13f74d0ffd4d0d1403698d24aab2e41992e5cf1db07005546458",
+  "coreTreeSha256": "a31e50beae95cbf736a59646adbb6cebf9cee7f0b7e365045e2ec0ae544426d1",
+  "fixtureSha256": "e1590d4bf984cd38c0cc9b86bd1bca3972c1bc9da484cb04a9fae3f9715836e1",
+  "node": "v24.22.1",
+  "platform": "Darwin 24.6.0 arm64",
+  "cpu": "Apple M3 Max",
+  "loadAverage": [
+    12.52587890625,
+    16.66064453125,
+    13.4619140625
+  ],
+  "count": 30000,
+  "samples": 12,
+  "warmups": 2,
+  "fixtureBytes": 5093177,
+  "method": "threshold 2, second reservation triggers compaction; unrelated change launched 1 ms after trigger; durations end at HTTP response",
+  "compactionMs": {
+    "min": 336.05579099999886,
+    "median": 352.3015830000004,
+    "p95": 386.6593749999993,
+    "max": 386.6593749999993
+  },
+  "unrelatedEditMs": {
+    "min": 340.617166,
+    "median": 357.9813749999994,
+    "p95": 393.1976249999998,
+    "max": 393.1976249999998
+  },
+  "runs": [
+    {
+      "compactionMs": 339.2099159999998,
+      "unrelatedEditMs": 342.5824169999996,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 386.6593749999993,
+      "unrelatedEditMs": 393.1976249999998,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 357.49787500000093,
+      "unrelatedEditMs": 363.0890840000011,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 373.011625000001,
+      "unrelatedEditMs": 377.5832500000015,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 344.09658300000046,
+      "unrelatedEditMs": 357.9813749999994,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 374.9346659999992,
+      "unrelatedEditMs": 380.7798750000002,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 336.05579099999886,
+      "unrelatedEditMs": 340.617166,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 352.3015830000004,
+      "unrelatedEditMs": 355.8022920000003,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 345.2419579999987,
+      "unrelatedEditMs": 351.1205829999999,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 362.28558300000077,
+      "unrelatedEditMs": 366.8179999999993,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 385.3269590000018,
+      "unrelatedEditMs": 390.0014169999995,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 340.90020800000275,
+      "unrelatedEditMs": 349.0434170000008,
+      "logBytes": 5093538
+    }
+  ]
+}

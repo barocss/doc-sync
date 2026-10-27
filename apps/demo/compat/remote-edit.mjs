@@ -1,5 +1,5 @@
 import {randomUUID} from 'node:crypto';
-import {Doc} from '@barocss/doc-sync';
+import {Doc,schemaVersion} from '@barocss/doc-sync';
 import {PROTOCOL_VERSION} from '@barocss/doc-sync/sync';
 import {schema} from './model.mjs';
 
@@ -27,10 +27,12 @@ export async function remoteEdit(backend,{doc,edits},documentSchema=schema){
       }
     }
   }finally{await reader.cancel();}
+  const version=schemaVersion(documentSchema);
+  if(hello.schemaVersion!==null&&hello.schemaVersion!==version)throw new Error('remote schema version mismatch');
   const replica=Doc.fromSnapshot(actor,hello.snapshot,documentSchema);
   const ops=replica.edit(edits).ops;
   if(!ops.length)return {actor,serverSeq:hello.serverSeq,model:replica.toJSON()};
-  const sent=await fetch(`${backend}/api/docs/${doc}/changes`,{method:'POST',headers:{'content-type':'application/json','x-doc-sync-protocol':String(PROTOCOL_VERSION),'x-doc-sync-epoch':hello.epoch},body:JSON.stringify({actor,seq:1,ops}),signal});
+  const sent=await fetch(`${backend}/api/docs/${doc}/changes`,{method:'POST',headers:{'content-type':'application/json','x-doc-sync-protocol':String(PROTOCOL_VERSION),'x-doc-sync-epoch':hello.epoch,...(hello.schemaVersion?{'x-doc-sync-schema':version}:{})},body:JSON.stringify({actor,seq:1,ops}),signal});
   if(!sent.ok)throw new Error(`remote edit HTTP ${sent.status}: ${await sent.text()}`);
   return {actor,...await sent.json(),model:replica.toJSON()};
 }

@@ -732,6 +732,7 @@ export class Doc {
      * 대상이 압축된 묘비이거나 없는 토큰이면 조용히 지나간다(지우기·속성은 이미 의미가 없다).
      */
     apply(op: Op): void {
+        this.editGuard?.();
         this.modelCache = null;
         this.revision += 1;
 
@@ -1067,6 +1068,7 @@ export class Doc {
      * @returns 줄어든 토큰 수
      */
     compact(frontier: number, seqOf: (delKey: string) => number | undefined): number {
+        this.editGuard?.();
         this.modelCache = null;
         this.revision += 1;
         this.dirty();
@@ -2002,6 +2004,8 @@ export class Doc {
 
     /** 편집 연산이 들어올 때마다 — 편집기 쪽 모델을 맞춰 가는 데 (fuzz 의 거울 검사 같은) */
     editListener: ((edits: EditOp[], normalize: EditOp[]) => void) | null = null;
+    /** Optional guard used by a client while a conditional edit is unresolved. */
+    editGuard: (() => void) | null = null;
 
     /**
      * 같은 글 블록의 글자·서식만 바꾸는 묶음은 그 블록만 검산한다. 경로와 블록 모양은 그대로다.
@@ -2049,6 +2053,7 @@ export class Doc {
      * 행마다 칸 수가 다른 열 넣기는 열 하나로 바로잡는다, 같은 칸을 겹쳐 합치면 하나만 받는다 …
      */
     edit(edits: EditOp[], options: {normalize?: boolean} = {}): {ops: Op[]; normalize: EditOp[]} {
+        this.editGuard?.();
         const want = options.normalize || !!this.editListener;
         const scope = want ? this.textEditScope(edits) : null;
         const before = want ? (scope ? scope.read() : this.toJSON()) : null;
@@ -2071,6 +2076,7 @@ export class Doc {
 
     /** 내부용 — 만든 전선 연산을 적용한다 (edit.ts 가 쓴다). 속성 쓰기는 되돌리기에 쓰도록 직전 값을 기억한다 */
     emit(ops: Op[]): Op[] {
+        this.editGuard?.();
         return this.run(ops);
     }
 

@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
-import {Doc} from '@barocss/doc-sync';
+import {Doc,schemaVersion} from '@barocss/doc-sync';
 import {schema} from '../model.mjs';
 import {remoteEdit} from '../remote-edit.mjs';
 
@@ -16,14 +16,14 @@ const withBackend=async(handler,check)=>{
     await new Promise(resolve=>server.close(resolve));
   }
 };
-const hello=doc=>JSON.stringify({type:'hello',epoch:'test-epoch',protocol:2,serverSeq:7,snapshot:doc.snapshot(),delSeqs:[],presence:[]});
+const hello=doc=>JSON.stringify({type:'hello',epoch:'test-epoch',schemaVersion:schemaVersion(schema),protocol:3,serverSeq:7,snapshot:doc.snapshot(),delSeqs:[],presence:[]});
 
 test('remote edit reads SSE comments and unrelated frames, then submits a separate actor',async()=>{
   const doc=new Doc('seed',schema);
   doc.edit([{op:'insert',at:[0,0],content:'base'}]);
   let submitted;
   await withBackend(async(req,res)=>{
-    if(req.url.endsWith('/stream?since=0&protocol=2')){
+    if(req.url.endsWith('/stream?since=0&protocol=3')){
       res.writeHead(200,{'content-type':'text/event-stream'});
       res.write(': keepalive\r\n\r\ndata: {"type":"presence"}\r\n\r\n');
       const frame=`data: ${hello(doc)}\r\n\r\n`;
@@ -31,8 +31,9 @@ test('remote edit reads SSE comments and unrelated frames, then submits a separa
       res.end(frame.slice(15));
     }else{
       let body='';for await(const chunk of req)body+=chunk;
-      assert.equal(req.headers['x-doc-sync-protocol'],'2');
+      assert.equal(req.headers['x-doc-sync-protocol'],'3');
       assert.equal(req.headers['x-doc-sync-epoch'],'test-epoch');
+      assert.equal(req.headers['x-doc-sync-schema'],schemaVersion(schema));
       submitted=JSON.parse(body);
       submitted.ops.forEach(op=>doc.apply(op));
       res.writeHead(200,{'content-type':'application/json'});
@@ -85,7 +86,16 @@ test('remote edit rejects HTTP errors, missing hello and malformed SSE data',asy
 test('remote edit reports rejected change submission',async()=>{
   const doc=new Doc('seed',schema);
   await withBackend((req,res)=>{
-    if(req.url.endsWith('/stream?since=0&protocol=2'))res.end(`data: ${hello(doc)}\n\n`);
+    if(req.url.endsWith('/stream?since=0&protocol=3'))res.end(`data: ${hello(doc)}\n\n`);
     else{res.writeHead(409);res.end('rejected');}
   },backend=>assert.rejects(remoteEdit(backend,{doc:'probe-test',edits:[{op:'insert',at:[0,0],content:'X'}]}),/remote edit HTTP 409: rejected/));
+});
+
+test('remote edit refuses a mismatched schema before submitting',async()=>{
+  const doc=new Doc('seed',schema);let requests=0;
+  await withBackend((req,res)=>{
+    requests++;
+    res.end(`data: ${JSON.stringify({...JSON.parse(hello(doc)),schemaVersion:'sha256:wrong'})}\n\n`);
+  },backend=>assert.rejects(remoteEdit(backend,{doc:'probe-test',edits:[{op:'insert',at:[0,0],content:'X'}]}),/schema version mismatch/));
+  assert.equal(requests,1);
 });

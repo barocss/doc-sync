@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, History, applyEdits} from "../src/index.ts";
+import {Doc, History, applyEdits, schemaVersion} from "../src/index.ts";
 import {modelEventWindow} from "../src/sync/model-events.ts";
 import {SyncClient, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../src/sync/index.ts";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
@@ -23,7 +23,7 @@ function receiver(initial: Doc) {
     let receive!: (event: ServerEvent) => void;
     const client = new SyncClient("receiver", {subscribe: (_since, listener) => {receive = listener; return () => undefined;}, send: async () => undefined, sendPresence: () => undefined}, {schema});
     client.connect();
-    receive({type: "hello", epoch: "structural-window", protocol: PROTOCOL_VERSION, capabilities: DOCUMENT_CAPABILITIES, serverSeq: 1, snapshot: initial.snapshot(), delSeqs: [], presence: []});
+    receive({type: "hello", schemaVersion: schemaVersion(schema), epoch: "structural-window", protocol: PROTOCOL_VERSION, capabilities: DOCUMENT_CAPABILITIES, serverSeq: 1, snapshot: initial.snapshot(), delSeqs: [], presence: []});
     let seq = 1, mirror = client.doc.toJSON();
     const deliver = (ops: Op[], expected: NodeJSON, windowed?: boolean) => {
         const before = client.doc.toJSON(), reference = Doc.fromSnapshot("reference", client.doc.snapshot(), schema);

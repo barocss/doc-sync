@@ -1,0 +1,211 @@
+{
+  "source": "/private/tmp/doc-sync-log-after-pbt7_tnx",
+  "sourceSha256": "48bf1609b1597491d22bd6d8303919e94a264b792ac59bd9344967594ee5b53b",
+  "workerSha256": "45a43781e36b03ca151ec15cdec33f85d1c195f1992b6cc298be50366aaf65e9",
+  "coreTreeSha256": "a31e50beae95cbf736a59646adbb6cebf9cee7f0b7e365045e2ec0ae544426d1",
+  "fixturesTreeSha256": "7071e395b6b5897b3109c6e774bc7bbb40f71c80001478e4895d27e9385aef4f",
+  "fixtureGeneration": "00000000-0000-4000-8000-000000000001",
+  "fixtureSha256": "e9718312e3192eab562ef129305c33e31874fb90fcd23087fb816a3a28f2cf91",
+  "benchmarkSha256": "3a6532f461da2074c187fc7b838956746be785d065de06c84213007731f3a63f",
+  "node": "v24.22.1",
+  "platform": "Darwin 24.6.0 arm64",
+  "cpu": "Apple M3 Max",
+  "loadAverage": [
+    17.716796875,
+    16.400390625,
+    14.35205078125
+  ],
+  "count": 30000,
+  "samples": 12,
+  "warmups": 2,
+  "fixtureBytes": 5093177,
+  "method": "threshold 2; separate change starts 1 ms after compaction trigger; observe era after both responses; then exact receipt and state read starts 1 ms later",
+  "compactionMs": {
+    "min": 119.35754199999974,
+    "median": 137.57254199999988,
+    "p95": 194.26929199999904,
+    "max": 194.26929199999904
+  },
+  "completionMs": {
+    "min": 119.82633300000089,
+    "median": 138.1982079999998,
+    "p95": 195.5986670000002,
+    "max": 195.5986670000002
+  },
+  "unrelatedEditMs": {
+    "min": 11.946541000001162,
+    "median": 20.756000000001222,
+    "p95": 34.21991700000035,
+    "max": 34.21991700000035
+  },
+  "receiptMs": {
+    "min": 31.91112499999872,
+    "median": 35.417750000000524,
+    "p95": 116.42175000000043,
+    "max": 116.42175000000043
+  },
+  "unrelatedReadMs": {
+    "min": 0.7026669999995647,
+    "median": 1.269625000000815,
+    "p95": 2.414958999999726,
+    "max": 2.414958999999726
+  },
+  "runs": [
+    {
+      "compactionMs": 124.32737499999985,
+      "completionMs": 124.96012500000006,
+      "completionPolls": 1,
+      "unrelatedEditMs": 23.143332999999984,
+      "editStartOffsetMs": 0.38854200000014316,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 33.254083000000264,
+      "unrelatedReadMs": 0.7609999999999673,
+      "readStartOffsetMs": 1.3957500000001346,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 140.41391699999986,
+      "completionMs": 141.1676669999997,
+      "completionPolls": 1,
+      "unrelatedEditMs": 13.64483300000029,
+      "editStartOffsetMs": 1.4950840000001335,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 116.42175000000043,
+      "unrelatedReadMs": 1.2373339999994641,
+      "readStartOffsetMs": 1.5811250000006112,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 150.7670419999995,
+      "completionMs": 151.56420799999978,
+      "completionPolls": 1,
+      "unrelatedEditMs": 34.21991700000035,
+      "editStartOffsetMs": 1.6399579999997513,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 35.385166999999456,
+      "unrelatedReadMs": 1.5154579999998532,
+      "readStartOffsetMs": 1.4024170000002414,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 131.6805830000003,
+      "completionMs": 132.24354200000016,
+      "completionPolls": 1,
+      "unrelatedEditMs": 31.175916000000143,
+      "editStartOffsetMs": 1.384541999999783,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 40.42616700000053,
+      "unrelatedReadMs": 1.269625000000815,
+      "readStartOffsetMs": 0.22358299999996234,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 122.41712500000176,
+      "completionMs": 122.8832910000001,
+      "completionPolls": 1,
+      "unrelatedEditMs": 11.946541000001162,
+      "editStartOffsetMs": 1.4668750000000728,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 31.91112499999872,
+      "unrelatedReadMs": 0.7026669999995647,
+      "readStartOffsetMs": 1.3674159999991389,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 134.85366600000089,
+      "completionMs": 135.4703750000008,
+      "completionPolls": 1,
+      "unrelatedEditMs": 19.389124999999694,
+      "editStartOffsetMs": 1.376125000000684,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 35.565042000000176,
+      "unrelatedReadMs": 1.7507499999992433,
+      "readStartOffsetMs": 1.6910420000003796,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 119.35754199999974,
+      "completionMs": 119.82633300000089,
+      "completionPolls": 1,
+      "unrelatedEditMs": 29.430082999999286,
+      "editStartOffsetMs": 0.6095420000001468,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 33.126625000000786,
+      "unrelatedReadMs": 0.7221250000002328,
+      "readStartOffsetMs": 1.3644580000000133,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 138.38720900000044,
+      "completionMs": 138.98858400000063,
+      "completionPolls": 1,
+      "unrelatedEditMs": 21.979875000000902,
+      "editStartOffsetMs": 1.3908339999998134,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 40.84045800000058,
+      "unrelatedReadMs": 1.0402500000000146,
+      "readStartOffsetMs": 1.3952080000017304,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 158.96458300000086,
+      "completionMs": 159.59829100000024,
+      "completionPolls": 1,
+      "unrelatedEditMs": 31.0714169999992,
+      "editStartOffsetMs": 1.4407910000008997,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 33.678625000000466,
+      "unrelatedReadMs": 1.489916999998968,
+      "readStartOffsetMs": 1.520583000001352,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 194.26929199999904,
+      "completionMs": 195.5986670000002,
+      "completionPolls": 1,
+      "unrelatedEditMs": 19.106000000001586,
+      "editStartOffsetMs": 1.5727919999990263,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 68.90287500000159,
+      "unrelatedReadMs": 2.414958999999726,
+      "readStartOffsetMs": 2.0771660000009433,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 137.57254199999988,
+      "completionMs": 138.1982079999998,
+      "completionPolls": 1,
+      "unrelatedEditMs": 14.869040999999925,
+      "editStartOffsetMs": 1.5281669999985752,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 47.578207999998995,
+      "unrelatedReadMs": 1.3664169999992737,
+      "readStartOffsetMs": 1.408332999999402,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    },
+    {
+      "compactionMs": 143.1539589999993,
+      "completionMs": 143.66133400000035,
+      "completionPolls": 1,
+      "unrelatedEditMs": 20.756000000001222,
+      "editStartOffsetMs": 1.397791999999754,
+      "editFinishedBeforeTriggerResponse": true,
+      "receiptMs": 35.417750000000524,
+      "unrelatedReadMs": 1.3991249999999127,
+      "readStartOffsetMs": 1.368333000002167,
+      "readFinishedBeforeReceipt": true,
+      "logBytes": 5093538
+    }
+  ]
+}

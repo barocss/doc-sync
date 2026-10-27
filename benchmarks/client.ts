@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import {writeFileSync} from "node:fs";
 import {performance} from "node:perf_hooks";
-import {Doc} from "@barocss/doc-sync";
-import {SyncClient} from "@barocss/doc-sync/sync";
+import {Doc, schemaVersion} from "@barocss/doc-sync";
+import {SyncClient, PROTOCOL_VERSION} from "@barocss/doc-sync/sync";
 import {BENCH_SCHEMA} from "./engines.ts";
 import type {EditOp, NodeJSON, Snapshot} from "@barocss/doc-sync";
 import type {ServerEvent, Transport} from "@barocss/doc-sync/sync";
@@ -23,7 +23,7 @@ const WARMUPS = 5;
 const makeClient = (snapshot: Snapshot): SyncClient => {
     const transport: Transport = {
         subscribe: (_since, receive) => {
-            receive({type: "hello", epoch: "fixture", protocol: 2, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot, delSeqs: [], presence: []} satisfies ServerEvent);
+            receive({type: "hello", schemaVersion: schemaVersion(BENCH_SCHEMA), epoch: "fixture", protocol: PROTOCOL_VERSION, capabilities: ["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"], serverSeq: 1, snapshot, delSeqs: [], presence: []} satisfies ServerEvent);
 
             return () => undefined;
         },

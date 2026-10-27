@@ -4,9 +4,11 @@ A document CRDT library with an injected schema. It is written in TypeScript. Th
 It started with an idea tested in an earlier Yorkie experiment repository: "a document as one token sequence." It is now a standalone library, separate from Yorkie and the schema-based document editor. Its name is `@barocss/doc-sync` (user decision, 2026-10-22).
 **Read [`HANDOFF.md`](HANDOFF.md) first in a new session.**
 
-**Monorepo structure**: `packages/doc-sync` is the only library that provides the public API. `apps/demo`, `apps/docs`, and `benchmarks` are separate private npm workspaces. The shared example schema is in `fixtures/demo-schema.ts`. The existing package name remains. Six entry points expose the core, sync, server, and three editor bindings. The library also keeps its existing `private: true` setting until release preparation.
+**Monorepo structure**: `packages/doc-sync` is the only library that provides the public API. The apps and benchmarks are separate private npm workspaces. The shared example schema is in `fixtures/demo-schema.ts`. The existing package name remains. Entry points expose the core, sync, Node transport, server, and three editor bindings. The library also keeps its existing `private: true` setting until release preparation.
 
 **Documentation**: Read the [public documentation site](https://barocss.github.io/doc-sync/) for schema-driven block operations, ProseMirror, Slate, and Lexical integration examples, collaboration rules, and verification limits. The site is built from `apps/docs` and deployed to GitHub Pages. Slate and Lexical have public binding subpaths in the same package. The complete example schema has its own guide. [Editor design lessons](https://barocss.github.io/doc-sync/guide/editor-lessons.html) compare the bindings and explain the input, selection, history, table and rendering problems we solved.
+
+**AI and headless clients**: The private `apps/mcp` workspace exposes schema, document read, edit, undo, redo, and history discard tools to an MCP host. `NodeHttpTransport` connects a Node participant to the demo HTTP/SSE server. Conditional edits check the document epoch, server sequence, and schema identity atomically on the server. Compatible additive schema transitions retain the client session's pending changes and history. See the [AI and headless clients guide](apps/docs/src/guide/ai.md) for setup, unknown outcomes, and session limits, and the [schema guide](apps/docs/src/guide/schema.md#changing-a-schema) for transition rules.
 
 Representative [Word, Notion and presentation schemas](https://barocss.github.io/doc-sync/guide/product-schemas.html) include complete sample models and tests for concurrent editing, history, snapshots and editor conversion. Run `npm run dev:products` for the native Slate/Lexical/ProseMirror demo; setup is in [apps/demo/products](apps/demo/products/README.md). These views do not provide product file import/export or page/canvas rendering.
 
@@ -18,6 +20,7 @@ Representative [Word, Notion and presentation schemas](https://barocss.github.io
 ```ts
 import {Doc, commands} from "@barocss/doc-sync";     // Core: no dependencies
 import {SyncClient, HttpTransport} from "@barocss/doc-sync/sync";
+import {NodeHttpTransport} from "@barocss/doc-sync/node";
 import {DocHub} from "@barocss/doc-sync/server";
 import {PmBinding, buildPmSchema} from "@barocss/doc-sync/prosemirror";
 ```
@@ -28,6 +31,7 @@ The CRDT does not know block types. **Inject the schema from outside**, with a t
 ```bash
 npm install                  # Dev dependencies (prosemirror-*, typescript, yjs; yjs is for benchmarks)
 npm run dev                  # http://localhost:5410  (Node 22.18+, apps/demo/server.ts)
+npm run start --workspace @doc-sync/mcp  # MCP server over standard input/output
 npm test                     # Scenarios + 500 random traces
 FUZZ_SEEDS=3000 npm test     # 3000 random traces × 2 and 4 participants
 npm run typecheck
@@ -377,5 +381,5 @@ Use `DATA_DIR=/absolute/path PORT=5411 npm run dev` for a separate log folder an
 | Schema-based document editor binding | The current editor is a demo. Model output already matches that editor's document JSON form. Add a converter between its model operations and these operations. |
 | Authentication, authorization, multiple servers | Demo-level implementation. Per-document server routing can support horizontal scaling. |
 | Performance | Position indexes, block caches, and SyncClient local verification costs were reduced. Remote model comparison and full PM conversion costs remain. Before/after raw data and monorepo comparisons are in `HANDOFF.md` §5.1–5.4. |
-| Long-disconnected participants | After the 2-minute lease, participants leave the watermark calculation. If they reconnect and undo an offline edit that needs an already compacted tombstone, divergence is possible. No forced snapshot recovery exists yet. |
+| Long-disconnected participants | Ordinary peer leases expire after two minutes. A generic client still needs an application-defined recovery and GC protection contract. The macOS MCP app uses a durable reservation and checkpoint for bounded recovery with the single-process demo server; see the [recovery guide](apps/docs/src/guide/ai.md#recover-a-session-after-restart). |
 | Value formatting such as links and text color | Formatting is currently on/off only. The same per-character LWW mechanism can support values. |

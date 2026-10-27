@@ -38,6 +38,7 @@ export default defineConfig({
                 {text: "Schema-driven block operations", link: "/guide/blocks"},
                 {text: "Document rules and annotations", link: "/guide/document-rules"},
                 {text: "Synchronization", link: "/guide/sync"},
+                {text: "AI and headless clients", link: "/guide/ai"},
                 {text: "Cursors and selections", link: "/guide/presence"},
                 {text: "ProseMirror", link: "/guide/prosemirror"},
                 {text: "Slate", link: "/guide/slate"},
@@ -50,7 +51,9 @@ export default defineConfig({
                 {text: "Collaboration intent", link: "/reference/collaboration-intent"},
             ]},
             {text: "Engineering", items: [
+                {text: "Roadmap", link: "/roadmap"},
                 {text: "Status and limits", link: "/status"},
+                {text: "Recovery plan", link: "/reference/recovery-plan"},
                 {text: "Performance evidence", link: "/performance"},
             ]},
         ],

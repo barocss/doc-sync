@@ -1,0 +1,180 @@
+{
+  "source": "/var/folders/kd/q2hh9cdj51zblmfh_3pd0p_h0000gn/T/doc-sync-cold-before-b4eosnh5",
+  "sourceSha256": "48bf1609b1597491d22bd6d8303919e94a264b792ac59bd9344967594ee5b53b",
+  "workerSha256": "45a43781e36b03ca151ec15cdec33f85d1c195f1992b6cc298be50366aaf65e9",
+  "coreTreeSha256": "a31e50beae95cbf736a59646adbb6cebf9cee7f0b7e365045e2ec0ae544426d1",
+  "fixturesTreeSha256": "7071e395b6b5897b3109c6e774bc7bbb40f71c80001478e4895d27e9385aef4f",
+  "fixtureSha256": "a190cea12f4b12c143ddb6c3eea4e8ebcd4ce234c48b81a07842f8a06852463e",
+  "benchmarkSha256": "644af11278d94cd39902b07de1f9f31939ed563d6f28b6f722904d750d5496fc",
+  "node": "v24.22.1",
+  "platform": "Darwin 24.6.0 arm64",
+  "cpu": "Apple M3 Max",
+  "loadAverage": [
+    7.9208984375,
+    9.5234375,
+    11.62744140625
+  ],
+  "count": 30000,
+  "samples": 12,
+  "warmups": 2,
+  "fixtureBytes": 5093156,
+  "method": "warm doc state first; cold doc GET state followed ~1ms later by independent warm doc append; then warm append followed ~1ms later by warm state; times are client HTTP response durations",
+  "coldOpenMs": {
+    "min": 255.1192920000003,
+    "median": 265.8708749999987,
+    "p95": 384.790167000001,
+    "max": 384.790167000001
+  },
+  "otherDocumentAppendMs": {
+    "min": 8.405750000001717,
+    "median": 269.6512080000002,
+    "p95": 389.8911250000001,
+    "max": 389.8911250000001
+  },
+  "warmAppendMs": {
+    "min": 4.897207999999864,
+    "median": 16.13550000000032,
+    "p95": 29.50525000000016,
+    "max": 29.50525000000016
+  },
+  "warmReadMs": {
+    "min": 3.732166999999663,
+    "median": 15.050167000001238,
+    "p95": 28.46808299999975,
+    "max": 28.46808299999975
+  },
+  "runs": [
+    {
+      "coldOpenMs": 261.46054200000026,
+      "otherDocumentAppendMs": 265.32837500000005,
+      "otherStartOffsetMs": 1.6187920000002123,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 20.125290999999834,
+      "warmReadMs": 18.99350000000004,
+      "warmReadStartOffsetMs": 1.3078749999999673,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 269.1044579999998,
+      "otherDocumentAppendMs": 273.44879100000026,
+      "otherStartOffsetMs": 1.6196249999998145,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 4.897207999999864,
+      "warmReadMs": 3.732166999999663,
+      "warmReadStartOffsetMs": 1.3728750000000218,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 263.9953749999995,
+      "otherDocumentAppendMs": 269.6512080000002,
+      "otherStartOffsetMs": 1.4654169999994338,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 26.462625000000116,
+      "warmReadMs": 26.556416999999783,
+      "warmReadStartOffsetMs": 0.150166999999783,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 255.1192920000003,
+      "otherDocumentAppendMs": 258.6879170000002,
+      "otherStartOffsetMs": 1.516458000000057,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 15.606832999999824,
+      "warmReadMs": 14.54108400000041,
+      "warmReadStartOffsetMs": 1.2810409999992771,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 261.22762500000044,
+      "otherDocumentAppendMs": 264.93333299999995,
+      "otherStartOffsetMs": 1.4412090000005264,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 15.561375000000226,
+      "warmReadMs": 14.400166999999783,
+      "warmReadStartOffsetMs": 1.3350000000000364,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 270.75858400000016,
+      "otherDocumentAppendMs": 275.1423329999998,
+      "otherStartOffsetMs": 1.5770419999998921,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 5.3703340000001845,
+      "warmReadMs": 5.252875000000131,
+      "warmReadStartOffsetMs": 0.24029200000040873,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 269.1009589999994,
+      "otherDocumentAppendMs": 273.7561250000008,
+      "otherStartOffsetMs": 1.5831249999991996,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 5.046542000000045,
+      "warmReadMs": 3.8657499999999345,
+      "warmReadStartOffsetMs": 1.3543749999998909,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 271.03229199999987,
+      "otherDocumentAppendMs": 8.405750000001717,
+      "otherStartOffsetMs": 0.2603339999986929,
+      "otherFinishedBeforeCold": true,
+      "warmAppendMs": 25.205167000000074,
+      "warmReadMs": 25.04754199999843,
+      "warmReadStartOffsetMs": 0.28025000000161526,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 261.3334159999995,
+      "otherDocumentAppendMs": 265.45866699999897,
+      "otherStartOffsetMs": 1.5650409999998374,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 29.50525000000016,
+      "warmReadMs": 28.46808299999975,
+      "warmReadStartOffsetMs": 1.2967919999991864,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 268.19525000000067,
+      "otherDocumentAppendMs": 273.4439160000002,
+      "otherStartOffsetMs": 0.5549169999994774,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 19.266332999999577,
+      "warmReadMs": 18.211333999999624,
+      "warmReadStartOffsetMs": 1.3036659999997937,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 384.790167000001,
+      "otherDocumentAppendMs": 389.8911250000001,
+      "otherStartOffsetMs": 0.26916700000037963,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 16.13550000000032,
+      "warmReadMs": 15.050167000001238,
+      "warmReadStartOffsetMs": 1.3878750000003492,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    },
+    {
+      "coldOpenMs": 265.8708749999987,
+      "otherDocumentAppendMs": 270.6695840000011,
+      "otherStartOffsetMs": 0.488707999998951,
+      "otherFinishedBeforeCold": false,
+      "warmAppendMs": 19.594208000000435,
+      "warmReadMs": 18.60295799999949,
+      "warmReadStartOffsetMs": 1.286167000000205,
+      "warmReadFinishedBeforeAppend": false,
+      "logBytes": 5093235
+    }
+  ]
+}
