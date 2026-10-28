@@ -118,7 +118,7 @@ The demo assigns a durable generation to a new document and keeps it across a se
 
 `transition_schema` proposes a complete new schema to the server using a base containing `epoch`, `serverSeq`, and `schemaVersion`. The server checks that base and the compatibility rules atomically. On acceptance, the MCP session installs the new schema and reconnects. Use `get_server_schema` and the document state to obtain the base; if the proposal is rejected as stale, read again. If the response is lost, its outcome is unknown: inspect the server schema and document before proposing another transition. Schema transitions are limited to compatible additions; they do not migrate incompatible documents. See [changing a schema](./schema#changing-a-schema).
 
-This transition updates the headless client. A live editor may also need a new native schema, registered nodes, and binding. The application must preserve and restore selection around that rebuild. The headless tests do not establish automatic migration of an open editor.
+This transition updates the headless client. An open editor also needs a new native schema, registered nodes and binding. The application can coordinate that rebuild and selection restoration with `upgradeOpenEditorSchema`; see [rebuilding an open editor](./schema#rebuild-an-open-editor). Application plugins and codecs still need their own reconstruction.
 
 ## AI and concurrent editing
 

@@ -18,6 +18,8 @@ For an isolated validation build, set `PRODUCT_BUNDLE=output/playwright/my-check
 
 Use a new `doc` name for a fresh document. Reloading an existing document does not replace its content. Profile and document names are validated. All editor history buttons use the participant's CRDT history. The application supplies schema-aware Slate elements, ProseMirror DOM hints and a Lexical codec for safe inline/atom labels.
 
+After a compatible schema has been accepted by the server, select **Load server schema** to rebuild all three open editors. The demo pauses input during the rebuild and reconnects with the existing clients, pending changes and history. It rejects an active composition or a selection it cannot restore. If rebuilding or reconnecting fails after an editor is detached, that editor stays paused for inspection; keep its client and pending changes. This button does not propose a schema transition or migrate incompatible schemas.
+
 The views expose structure and editable text. They do not implement Word pagination, a Notion query engine, presentation canvas positioning or product file import/export. Slide objects use an outline. Stored media are labeled placeholders; arbitrary URLs/HTML are not loaded into native node views.
 
 ## Chrome checks
@@ -27,11 +29,12 @@ Use the Playwright CLI skill with Google Chrome. Open the printed URL in a dedic
 ```sh
 playwright-cli -s=product-check open 'http://127.0.0.1:5413/?profile=word' --browser chrome
 playwright-cli -s=product-check run-code --filename apps/demo/products/checks-native.js
+playwright-cli -s=product-check run-code --filename apps/demo/products/checks-schema-transition.js
 playwright-cli -s=product-check run-code --filename apps/demo/products/checks-structure.js
 playwright-cli -s=product-check run-code --filename apps/demo/products/checks-ui.js
 playwright-cli -s=product-check run-code --filename apps/demo/products/checks-projection.js
 ```
 
-Inspect every result and browser error. The native script checks 90 cases across all three schemas and all three editor sources. The structure script adds 39 cases for headers/footers/captions/cells, columns/database cells/callouts/tasks, notes/object groups/titles, and merged hidden content through native views and history. The projection script adds nine checks that a distant unchanged DOM paragraph stays attached after remote input in a 100k document, across all profiles and editors. Each operation checks native editor, client and server equality. A separate UI script adds 12 desktop/mobile, seed-retention and request-guard cases. Chrome input is not proof of actual OS IME behavior.
+Inspect every result and browser error. The native script checks 90 cases across all three schemas and all three editor sources. The schema-transition script checks pending and remote input, forward and backward selections, carets, history, native input and a newly added node across all three editors and profiles. The structure script adds 39 cases for headers/footers/captions/cells, columns/database cells/callouts/tasks, notes/object groups/titles, and merged hidden content through native views and history. The projection script adds nine checks that a distant unchanged DOM paragraph stays attached after remote input in a 100k document, across all profiles and editors. Each operation checks native editor, client and server equality. A separate UI script adds 12 desktop/mobile, seed-retention and request-guard cases. Chrome input is not proof of actual OS IME behavior.
 
 `checks-performance.js` is a template: replace `CONFIG` with a JSON object containing `profile`, `size`, `source`, `doc`, `setup`, `warmups` and `samples`. Use a fresh document per profile/size; set `setup: true` for the first source, then reuse that page for the other sources. Performance runs use actual keyboard input, timestamp-only commit/transport/receive hooks, a DOM observer and a second `requestAnimationFrame` per editor. Full model comparisons run before/after each batch, outside measured input intervals. The DOM/rAF endpoint is a rendering-opportunity proxy, not proof of physical display timing. Local localhost transport and three editors in one Chrome page differ from independent clients or a WAN deployment.

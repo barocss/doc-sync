@@ -68,7 +68,31 @@ client.connect();
 
 Resolve an unconfirmed conditional edit before calling `upgradeSchema`. A successful reconnect verifies the new schema and retries the client's pending changes. Keep the client session alive during the transition; pending changes and history are held in memory. Do not discard a disconnected client while it still has pending work.
 
-`upgradeSchema` updates the sync client. It does not rebuild a live editor's native schema, registered nodes, codecs, or selection. For an editor integration, pause input and finish composition, preserve selection anchors, dispose the old binding, and rebuild the native editor schema and binding for the new schema. Restore a valid selection before resuming input. This editor transition is an application responsibility; automatic live migration of ProseMirror, Slate, or Lexical bindings is not established by the headless transition tests.
+### Rebuild an open editor
+
+The sync package provides `upgradeOpenEditorSchema` to coordinate an open editor after the server accepts a compatible schema. The application supplies a host that owns its editor and binding:
+
+```ts
+import {upgradeOpenEditorSchema} from "@barocss/doc-sync/sync";
+
+await upgradeOpenEditorSchema(client, nextSchema, {
+  pause() { /* block input; reject an active composition */ },
+  selection() { return currentModelRange(); }, // {anchor, focus} or null
+  prepare(schema, model) { return buildDetachedEditor(schema, model); },
+  detach() { disposeMountedEditor(); },
+  async install(prepared, selection) {
+    await mountEditor(prepared);
+    restoreModelRange(selection);
+  },
+  resume() { unblockInput(); },
+});
+```
+
+The named functions in the example belong to the application. `pause`, `selection`, `prepare`, and `detach` must be synchronous. `pause` must block edits and reject an active composition without discarding it. Capture the native selection before a pause that changes focus. `prepare` must validate the replacement without changing the mounted editor. The helper anchors both selection endpoints to document tokens, preserves the client and its history and pending changes, installs the replacement, and waits for a verified server connection before resuming input. The installed binding must continue to map selection when subsequent remote edits arrive.
+
+If preparation fails, the old editor resumes. If detaching, installation, selection restoration, or reconnection fails after detachment, the helper disconnects the client and leaves input paused. When the client already knows the document epoch, a changed epoch during the transition also stops reconnection before it can replace the local document or history. The application must inspect the error and rebuild or reconnect explicitly; it must retain the client and its pending changes. An unresolved conditional edit blocks the transition. A null selection means no selection; an unsupported native selection must be rejected rather than silently converted to null. Keep the client's event callbacks in place while the transition is running.
+
+The product demo implements these host steps for Slate, Lexical and ProseMirror. It rebuilds native editor state and restores forward or backward text selections. Select **Load server schema** after a compatible server transition. The demo does not automatically migrate application plugins or codecs, and it cannot convert incompatible schemas. Applications must supply their own native schema, plugin and codec reconstruction. The bounded Chrome checks use automated input and do not establish real OS IME behavior.
 
 For the demo server, `GET /api/docs/{doc}/state` returns the current `epoch`, `serverSeq`, and `schemaVersion`. `GET /api/docs/{doc}/schema` returns the current schema and version. To propose a transition, send `POST /api/docs/{doc}/schema` with `{base: {epoch, serverSeq, schemaVersion}, schema: nextSchema}`. Set `content-type: application/json`, `x-doc-sync-protocol: 3`, `x-doc-sync-epoch` to the base epoch, and `x-doc-sync-schema` to the base schema version. A stale or incompatible proposal is rejected; read the current state before making a new proposal. The demo persists accepted schema transitions with its document log. It does not provide authentication or authorization for this endpoint.
 
