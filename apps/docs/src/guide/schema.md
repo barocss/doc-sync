@@ -94,6 +94,8 @@ If preparation fails, the old editor resumes. If detaching, installation, select
 
 The product demo implements these host steps for Slate, Lexical and ProseMirror. It rebuilds native editor state and restores forward or backward text selections. Select **Load server schema** after a compatible server transition. The demo does not automatically migrate application plugins or codecs, and it cannot convert incompatible schemas. Applications must supply their own native schema, plugin and codec reconstruction. The bounded Chrome checks use automated input and do not establish real OS IME behavior.
 
+[Follow the editor-specific transition guide →](./schema-transition)
+
 For the demo server, `GET /api/docs/{doc}/state` returns the current `epoch`, `serverSeq`, and `schemaVersion`. `GET /api/docs/{doc}/schema` returns the current schema and version. To propose a transition, send `POST /api/docs/{doc}/schema` with `{base: {epoch, serverSeq, schemaVersion}, schema: nextSchema}`. Set `content-type: application/json`, `x-doc-sync-protocol: 3`, `x-doc-sync-epoch` to the base epoch, and `x-doc-sync-schema` to the base schema version. A stale or incompatible proposal is rejected; read the current state before making a new proposal. The demo persists accepted schema transitions with its document log. It does not provide authentication or authorization for this endpoint.
 
 Changing existing rules, removing types, changing defaults, or converting stored content is **not** supported by this transition. Such changes need a separate migration and an application-defined policy for offline changes and history. The library does not automatically migrate incompatible schemas.

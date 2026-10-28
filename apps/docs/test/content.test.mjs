@@ -20,6 +20,21 @@ test("the documented quick-start example runs against the actual public API", ()
     assert.equal(result.status, 0, result.stderr);
 });
 
+test("schema transition guide links editor-specific steps and current sync exports", () => {
+    const guide = readFileSync(new URL("../src/guide/schema-transition.md", import.meta.url), "utf8");
+    for (const heading of ["### Slate", "### Lexical", "### ProseMirror", "## If the transition fails"]) assert.ok(guide.includes(heading));
+    for (const name of ["slate", "lexical", "prosemirror"]) {
+        const editor = readFileSync(new URL(`../src/guide/${name}.md`, import.meta.url), "utf8");
+        assert.ok(editor.includes(`./schema-transition#${name}`));
+    }
+    const result = spawnSync(process.execPath, ["--input-type=module", "-"], {
+        cwd: root,
+        input: `import assert from 'node:assert/strict';\nimport {upgradeOpenEditorSchema} from '@barocss/doc-sync/sync';\nimport {NodeHttpTransport} from '@barocss/doc-sync/node';\nassert.equal(typeof upgradeOpenEditorSchema, 'function');\nassert.equal(typeof NodeHttpTransport, 'function');`,
+        encoding: "utf8", timeout: 10000,
+    });
+    assert.equal(result.status, 0, result.stderr);
+});
+
 test("reference preparation uses the authoritative documents without internal handoff links", () => {
     const result = spawnSync(process.execPath, ["apps/docs/scripts/prepare-content.mjs"], {cwd: root, encoding: "utf8"});
     assert.equal(result.status, 0, result.stderr);

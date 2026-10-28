@@ -19,6 +19,8 @@ Slate and Lexical include composition drafts. Native input edits the draft while
 
 The application still supplies its schema, native rendering, toolbar, editor plugins, transport, and lifecycle. A codec's ability to retain data does not supply every native editing gesture for that data.
 
+When the server accepts a compatible schema change, a mounted editor must rebuild its native schema and binding. The [open-editor transition guide](./schema-transition) shows the shared lifecycle and selection conversions for all three editors.
+
 Slate and Lexical retain unchanged root blocks during remote projection. They replace the interval between the common prefix and suffix, using the existing schema codecs. Slate checks its immutable child array and verifies normalization. Lexical invalidates its cache on native content updates and reads back projected content before caching an editor state. Composition, unknown native states and cell restoration keep their recovery paths.
 
 This reduces repeated conversion and native tree construction. It is not a complete incremental renderer: a changed root container is still rebuilt, comparisons can scan the document, Lexical readback still converts the full model, and local native input retains conversion costs. See the [remote editor performance report](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/native-receive-2026-10-24/report.md) for Chrome measurements across the three product profiles.

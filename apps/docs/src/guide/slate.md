@@ -118,6 +118,10 @@ Use `binding.undo()` and `binding.redo()` for shared history. These methods fini
 
 After movement, split undo retains the original tail tokens and checks ownership of both the logical join and tail placement. It skips a later observed foreign move or an unrecorded same-actor move. Undoing a later recorded move in the same history restores the ownership needed to undo the split.
 
+## Change the schema while open
+
+After a compatible server transition, dispose the old binding and build the replacement editor and rendering with the new schema. Use `upgradeOpenEditorSchema` with an application host to preserve the client, pending changes, history and model selection. The [transition guide](./schema-transition#slate) shows how to convert the range in both directions.
+
 ## Cleanup and limits
 
 ```ts

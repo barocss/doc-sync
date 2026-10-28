@@ -43,6 +43,10 @@ The hub is independent of HTTP. The repository demo attaches HTTP, SSE, and a JS
 
 ## Reconnect and history
 
-Pending changes can be sent after a normal disconnect. Acknowledgments include history pins so GC does not discard data still needed for undo. Fresh-session recovery after lease expiry is not implemented yet. Do not assume old pending edits or undo history can always be restored from a new snapshot.
+Pending changes can be sent after a normal disconnect. Acknowledgments include history pins so GC does not discard data still needed for undo. An ordinary `SyncClient` keeps these changes and history in memory; it does not automatically persist a checkpoint or establish durable recovery protection.
+
+The macOS MCP app and single-process demo server provide a bounded recovery path using a checkpoint, exact receipts and a recovery reservation. An ordinary pending change can be recognized or applied once after restart when the required protection is proven. An unresolved conditional outcome or unsafe recovery blocks further edits for inspection. See the [recovery plan](../reference/recovery-plan) for its conditions and remaining work. A server snapshot by itself does not restore a participant's undo history.
+
+After a compatible server schema transition, use [the open-editor transition procedure](./schema-transition) to rebuild a mounted editor without discarding its client or pending work.
 
 [Read the state and reconnect contract →](../reference/spec)

@@ -112,6 +112,10 @@ Remote changes continue reaching the live client during composition. Native repl
 
 After movement, split undo retains the original tail tokens and checks ownership of both the logical join and tail placement. It skips a later observed foreign move or an unrecorded same-actor move. Undoing a later recorded move in the same history restores the ownership needed to undo the split.
 
+## Change the schema while open
+
+After a compatible server transition, build new schema information, register its nodes on a replacement editor, and recreate the binding and application plugins. Use `upgradeOpenEditorSchema` with an application host to preserve the client, pending changes, history and model selection. The [transition guide](./schema-transition#lexical) shows the read and update contexts for the range conversion.
+
 ## Cleanup and limits
 
 ```ts

@@ -1,13 +1,14 @@
 # Public API
 
-The library has one package and six entry points. The demo, documentation, and benchmark workspaces are private npm packages.
+The library has one package and seven entry points. The demo, documentation, and benchmark workspaces are private npm packages.
 
 ## Entry points
 
 | Import | Main exports |
 |---|---|
 | `@barocss/doc-sync` | `Doc`, `History`, `commands`, model/schema/position helpers, and shared types. |
-| `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `PROTOCOL_VERSION`, `DOCUMENT_CAPABILITIES`, and protocol types. |
+| `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `upgradeOpenEditorSchema`, `OpenEditorSchemaHost`, `ModelRange`, protocol constants and types. |
+| `@barocss/doc-sync/node` | `NodeHttpTransport` for Node.js HTTP and SSE synchronization. |
 | `@barocss/doc-sync/server` | `DocHub`, `HubOptions`. |
 | `@barocss/doc-sync/prosemirror` | `PmBinding`, `buildPmSchema`, model/position conversion. |
 | `@barocss/doc-sync/slate` | `SlateBinding`, schema codecs and selection conversion. |
@@ -43,6 +44,14 @@ The current exports point to TypeScript source. A published npm release still ne
 The [schema-driven block operations guide](../guide/blocks) includes executable examples for lists, nested flows, tables, spans, inline nodes, attributes, and atomic blocks.
 
 `SyncClient` owns collaboration history for connected editors. `client.undo()` and `client.redo()` create new wire operations. They do not restore a past whole-document snapshot. The exact ownership and concurrent-write rules are in [collaboration intent](./collaboration-intent).
+
+## Schema transitions
+
+`schemaVersion(schema)` returns the fingerprint of a schema. `assertCompatibleSchema(previous, next)` rejects unsupported changes. After the server accepts a compatible schema, `client.upgradeSchema(next)` installs it locally; call `client.connect()` to reconnect. This does not rebuild a native editor.
+
+Use `upgradeOpenEditorSchema(client, next, host, timeoutMs?)` when an editor is mounted. The application-owned `OpenEditorSchemaHost` blocks input, captures a `ModelRange`, builds and installs the replacement editor, and resumes input. The helper retains the client, its history and pending changes, anchors the selection and waits for a verified connection. The default reconnect timeout is 10 seconds. See [change an open editor's schema](../guide/schema-transition) for lifecycle steps, examples for the three editors and failure handling.
+
+The private MCP app exposes schema inspection, compatible transitions and conditional edits to a headless participant. See [AI and headless clients](../guide/ai).
 
 ## Authoritative source
 

@@ -43,6 +43,10 @@ const model = canonical(schema, fromPmJSON(info, schema, view.state.doc.toJSON()
 
 A native document alone cannot reconstruct content that it does not contain. Returned covered-cell data is copied from the reference. Application commands that edit the core document directly should call `binding.pull()` after committing their operations to refresh the view.
 
+## Change the schema while open
+
+Build a new ProseMirror schema, view state and application plugins after the server accepts a compatible schema. Save the text selection as model paths before destroying the old view. Use `upgradeOpenEditorSchema` with an application host to anchor and restore that selection while retaining the client, pending changes and history. The [transition guide](./schema-transition#prosemirror) shows the position conversions and failure handling.
+
 ## Input limits
 
 Automated Chrome tests include remote edits during simulated composition and cursor mapping. They are not a substitute for real OS keyboard and IME acceptance tests. The basic `/pm` demo and the Slate/Lexical compatibility demo have separate input implementations.

@@ -5,7 +5,7 @@ title: Schema-defined collaborative documents
 # doc-sync
 
 <p class="lead">Define your document schema. Edit locally. Merge changes by stable token identity.</p>
-<p class="package-name">@barocss/doc-sync · TypeScript · Development release</p>
+<p class="package-name">@barocss/doc-sync · TypeScript · Development workspace</p>
 
 doc-sync is a document CRDT with a synchronization client, a transport-independent server, and ProseMirror, Slate and Lexical bindings. The application provides the schema. The core works with document shapes rather than built-in paragraph or table names.
 
@@ -33,13 +33,15 @@ console.log(doc.toJSON());
 ## Learn the contracts
 
 - [Schema shapes](./guide/schema) define text, inline nodes, flows, groups, and grids.
-- [Five model operations](./guide/editing) connect an editor to stable CRDT operations.
+- [Model operations](./guide/editing) connect an editor to stable CRDT operations, including block movement.
 - [Editor integration paths](./guide/editors) include ProseMirror, Slate, Lexical, and the custom demo editor.
+- [Change an open editor's schema](./guide/schema-transition) explains selection restoration and pending changes.
+- [AI and headless clients](./guide/ai) describes Node synchronization and MCP editing.
 - [Collaboration intent](./reference/collaboration-intent) defines deletion, formatting, insertion, and undo outcomes.
 - [State and wire contract](./reference/spec) describes ordering, validation, reconnect, and garbage collection.
 
 ## Know the current limits
 
-The package is a source workspace with `private: true`. It is not yet an npm release. Lease-expiry recovery, production authorization, schema migration, and long-term deployment validation remain open. Convergence does not guarantee every user's semantic intent.
+The package is a source workspace with `private: true`. It is not yet an npm release. The macOS MCP app has bounded restart and lease-expiry recovery with the demo server; production recovery, authorization, incompatible schema migration and long-term deployment validation remain open. Convergence does not guarantee every user's semantic intent.
 
 [Read status and limits →](./status)

@@ -14,7 +14,7 @@ const walk = directory => {
 };
 walk(dist);
 const pages = files.filter(path => path.endsWith(".html"));
-const requiredGuides = ["getting-started", "schema", "full-schema", "product-schemas", "document-rules", "editing", "blocks", "editors", "editor-lessons", "prosemirror", "slate", "lexical", "sync", "presence"];
+const requiredGuides = ["getting-started", "schema", "schema-transition", "full-schema", "product-schemas", "document-rules", "editing", "blocks", "editors", "editor-lessons", "prosemirror", "slate", "lexical", "sync", "presence"];
 for (const name of requiredGuides) {
     assert.ok(existsSync(join(dist, "guide", `${name}.html`)), `missing required guide: ${name}`);
 }

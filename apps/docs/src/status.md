@@ -15,11 +15,12 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 - Required-child and maximum-count projection with retained overflow.
 - Declared nested-attribute field registers and persistent annotations.
 - Node synchronization and a private MCP server with server-checked conditional edits and compatible schema transitions.
-- A macOS-only, review-only MCP conditional-edit journal and a single-process demo-server receipt lookup. An unresolved record blocks automatic replay; this does not restore undo history.
+- A macOS MCP checkpoint and journal with protected, bounded restart recovery for pending changes and undo/redo history. An unknown conditional outcome blocks further edits for inspection.
+- A host-based open-editor schema transition with text selection restoration. The product demo uses it with Slate, Lexical and ProseMirror after a compatible server transition.
 
 ## Regression coverage
 
-The latest local recovery integration passed 649 library, 26 demo, 27 documentation, and 29 MCP tests, with one platform-specific MCP test skipped, plus 32 comparison-editor tests. Separate real process checks covered MCP termination, server restart, receipt lookup and a concurrent human edit. Earlier Protocol 3 Chrome checks passed 90 native editing and 39 structure checks across three profiles and editor bindings before the recovery storage changes; they have not been repeated for those changes. This checkpoint is local work in progress. Performance results below describe earlier source-bound runs; they are not a new recovery performance measurement.
+The latest integration passed 688 library, 57 demo, 28 documentation and 59 MCP tests, with one platform-specific MCP test skipped, plus 32 comparison-editor tests. Real process checks covered MCP termination, server restart, GC, receipts and another participant's edit. Chrome passed 90 native editing checks and 28 open-editor schema checks across three profiles and bindings, including a synthetic composition guard. The earlier 39 structure checks were not repeated after the recovery storage changes. A real Codex collaboration scenario was tested before the open-editor schema changes. These tests do not establish real OS IME or production acceptance. Performance results below describe their earlier source-bound runs.
 
 Receive model materialization passes 622 library, 16 demo and 27 documentation tests with `FUZZ_SEEDS=3000 PM_SEEDS=300`, plus 31 compatibility unit tests. Chrome passes 460 functional assertions and captures 30 separate operation traces, with zero console errors. Long-paragraph core receive/model p95 improves 64.5–69.3% across the measured live workloads, while the compressed ID index and cold heap footprint remain essentially unchanged. Short-paragraph and alternating-format controls do not show the same gain. See the [comparison report and limits](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/receive-model-2026-10-24/report.md).
 
@@ -37,18 +38,18 @@ The capability review added fixed cases for placement cycles, post-move split/jo
 
 Automatic paragraphs now keep one visible identity when edited or moved. Splitting before moved siblings preserves their order and placement ownership. Fixed regressions cover concurrent input/formatting, same-boundary splits, history, compaction, snapshots and private-anchor validation. Chrome exercises native input and Enter in Slate, Lexical and ProseMirror, with five native/client models matching the server. See the collaboration intent reference for the expected examples.
 
-Final expanded tests pass 567 library, 12 demo and 27 documentation cases, plus 31 compatibility unit cases. Chrome passes 340 finite regression/roundtrip checks, including guarded structural changes, merged-grid geometry and forward/backward range restoration. Merged states now require all five native/client models to match the server. Tests preserve foreign hidden text, formatting and cell attributes across typing, merge undo/redo and unmerge. The 30 operation traces within that count establish captured operations and convergence, not OS IME acceptance.
+An earlier expanded run passed 567 library, 12 demo and 27 documentation cases, plus 31 compatibility unit cases. Its Chrome run passed 340 finite regression/roundtrip checks, including guarded structural changes, merged-grid geometry and forward/backward range restoration. Merged states required all five native/client models to match the server. Tests preserved foreign hidden text, formatting and cell attributes across typing, merge undo/redo and unmerge. The 30 operation traces within that count establish captured operations and convergence, not OS IME acceptance.
 
 ## Open work
 
 | Area | Remaining work |
 |---|---|
-| Recovery | The macOS MCP journal preserves conditional edit evidence for inspection after process exit; the demo can return an exact accepted receipt or unknown after restart. Ordinary pending edits, undo history, lease-expiry recovery, automatic replay, and other platforms remain open. |
+| Recovery | The macOS MCP app and single-process demo support bounded recovery of pending ordinary changes and history when generation, schema, reservation and GC protection are proven. Unknown conditional outcomes, unsupported platforms, storage failures, retention and production recovery remain open. See the [recovery plan](./reference/recovery-plan). |
 | Operations | Authentication, authorization, durable snapshot/log retention, limits, and failure recovery. |
-| Schema evolution | Protocol 3 verifies schema identity. Compatible additions can transition without resetting the document; incompatible migration needs a separate contract. |
+| Schema evolution | Protocol 3 verifies schema identity. Compatible additions can transition without resetting the document; a host can rebuild an open editor. Incompatible migration, application plugin reconstruction and broader failure coverage need separate work. |
 | Editor acceptance | Broader target-editor behavior and real OS IME validation. The reported Lexical/PM merged-grid mismatch is fixed; finite Chrome checks cover merged geometry, hidden data, history and selection. |
 | Performance | Structural line scans, whole-model comparison/copy, conversion, DOM work, and unexplained tail latency. Stable visible text in moved/required documents now uses at most eight scopes. Whole before/after reads remain for structural changes; eligible large documents compare/verify guarded windows of at most eight top-level nodes. Root child rules, group boundaries and wider spans retain whole verification. Native projection retains unchanged root blocks; changed root containers, Lexical readback, local conversion and whole-model comparisons remain. |
-| Long-term evidence | Actual scheduled CI and two-week observation; the 30-minute target cadence is not complete. |
+| Long-term evidence | Two-week scheduled observation and the 30-minute target cadence are not complete. |
 | Distribution | npm build output, API/version policy, migration tools, and release gates. |
 
 G0/G1 and product SLOs are not approved. The long local test used bounded histories; it is not a million operations accumulated in one permanent document.
