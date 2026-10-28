@@ -37,6 +37,8 @@ console.log(doc.toJSON());
 - [Editor integration paths](./guide/editors) include ProseMirror, Slate, Lexical, and the custom demo editor.
 - [Change an open editor's schema](./guide/schema-transition) explains selection restoration and pending changes.
 - [AI and headless clients](./guide/ai) describes Node synchronization and MCP editing.
+- [Runnable editor examples](./guide/runnable-examples) and the [Codex walkthrough](./guide/ai-walkthrough) show complete local exercises.
+- [Troubleshooting](./guide/troubleshooting) and [operations and performance](./guide/operations-performance) cover recovery and measurement limits.
 - [Collaboration intent](./reference/collaboration-intent) defines deletion, formatting, insertion, and undo outcomes.
 - [State and wire contract](./reference/spec) describes ordering, validation, reconnect, and garbage collection.
 

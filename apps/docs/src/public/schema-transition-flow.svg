@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 280" role="img" aria-labelledby="title description">
+  <title id="title">Open editor schema transition</title>
+  <desc id="description">The server accepts a compatible schema. The editor pauses and captures selection. The application prepares and installs a replacement. The client reconnects and resumes input. If installation or reconnection fails, input remains paused and pending work is retained.</desc>
+  <rect width="1120" height="280" rx="18" fill="#f6f8fd"/>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/></marker></defs>
+  <g font-family="system-ui, sans-serif">
+    <text x="32" y="34" font-size="16" font-weight="700" fill="#34435e">OPEN EDITOR · COMPATIBLE SCHEMA</text>
+    <g fill="#ffffff" stroke="#d2dbea" stroke-width="2">
+      <rect x="32" y="60" width="185" height="105" rx="13"/><rect x="249" y="60" width="185" height="105" rx="13"/><rect x="466" y="60" width="185" height="105" rx="13"/><rect x="683" y="60" width="185" height="105" rx="13"/><rect x="900" y="60" width="188" height="105" rx="13"/>
+    </g>
+    <g stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"><path d="M 218 112 H 242"/><path d="M 435 112 H 459"/><path d="M 652 112 H 676"/><path d="M 869 112 H 893"/></g>
+    <g font-size="16" font-weight="700" fill="#172a4a"><text x="48" y="90">1. Server accepts</text><text x="265" y="90">2. Pause input</text><text x="482" y="90">3. Prepare</text><text x="699" y="90">4. Replace</text><text x="916" y="90">5. Reconnect</text></g>
+    <g font-size="13" fill="#475569"><text x="48" y="116">Compatible schema</text><text x="48" y="136">gets a new version</text><text x="265" y="116">Capture selection</text><text x="265" y="136">as model paths</text><text x="482" y="116">Validate snapshot</text><text x="482" y="136">and native schema</text><text x="699" y="116">Mount new binding</text><text x="699" y="136">and restore range</text><text x="916" y="116">Verify the server</text><text x="916" y="136">then resume input</text></g>
+    <path d="M 775 166 V 203 H 1090" fill="none" stroke="#c17b29" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="32" y="218" width="1056" height="38" rx="9" fill="#fff5e7"/>
+    <text x="48" y="243" font-size="14" fill="#75450f">If installation or reconnection fails: keep input paused and retain the client and pending changes.</text>
+  </g>
+</svg>

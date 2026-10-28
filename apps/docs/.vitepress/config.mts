@@ -11,6 +11,7 @@ export default defineConfig({
     lastUpdated: true,
     head: [
         ["meta", {name: "theme-color", content: "#2563eb"}],
+        ["script", {src: "/doc-sync/pre-hydration.js"}],
         ["link", {rel: "icon", type: "image/svg+xml", href: "/doc-sync/favicon.svg"}],
     ],
     themeConfig: {
@@ -29,6 +30,7 @@ export default defineConfig({
                 {text: "Getting started", link: "/guide/getting-started"},
                 {text: "Define a schema", link: "/guide/schema"},
                 {text: "Change an open editor's schema", link: "/guide/schema-transition"},
+                {text: "Runnable editor examples", link: "/guide/runnable-examples"},
                 {text: "Complete example schema", link: "/guide/full-schema"},
                 {text: "Word, Notion and presentation schemas", link: "/guide/product-schemas"},
             ]},
@@ -40,6 +42,7 @@ export default defineConfig({
                 {text: "Document rules and annotations", link: "/guide/document-rules"},
                 {text: "Synchronization", link: "/guide/sync"},
                 {text: "AI and headless clients", link: "/guide/ai"},
+                {text: "Codex collaboration walkthrough", link: "/guide/ai-walkthrough"},
                 {text: "Cursors and selections", link: "/guide/presence"},
                 {text: "ProseMirror", link: "/guide/prosemirror"},
                 {text: "Slate", link: "/guide/slate"},
@@ -54,6 +57,8 @@ export default defineConfig({
             {text: "Engineering", items: [
                 {text: "Roadmap", link: "/roadmap"},
                 {text: "Status and limits", link: "/status"},
+                {text: "Troubleshooting", link: "/guide/troubleshooting"},
+                {text: "Operations and performance", link: "/guide/operations-performance"},
                 {text: "Recovery plan", link: "/reference/recovery-plan"},
                 {text: "Performance evidence", link: "/performance"},
             ]},

@@ -38,6 +38,24 @@ async page=>{
   if(!state.server.children.some(node=>node.type==='review-marker'))throw Error('New schema node was not inserted');
   results.push({profile,editor:name,direction,status:'passed',pendingBefore:pending,selection,after,expected,newNode:'review-marker'});
  }
+ // No remote content change: focus restoration must preserve the selection by itself.
+ for(const name of ['Slate','Lexical','ProseMirror'])for(const direction of ['forward','backward','caret']){
+  const doc=`quiet-${name[0].toLowerCase()}-${direction[0]}-${run}`;await page.goto(`${origin}/?profile=word&doc=${doc}`);await wait();
+  await page.evaluate(()=>window.products.clearHistory());const p=page.locator(`#${name} .editor p`).filter({hasText:'Opening text'}).first();await p.scrollIntoViewIfNeeded();await p.click();
+  await page.evaluate(name=>window.products.disconnect(name),name);
+  await p.evaluate(node=>{const t=document.createTreeWalker(node,NodeFilter.SHOW_TEXT).nextNode();window.getSelection().setBaseAndExtent(t,t.length,t,t.length);document.dispatchEvent(new Event('selectionchange'))});await page.keyboard.insertText('U');
+  const anchor=direction==='backward'?6:direction==='caret'?4:2,focus=direction==='backward'?2:direction==='caret'?4:6;
+  await p.evaluate((node,{anchor,focus})=>{const t=document.createTreeWalker(node,NodeFilter.SHOW_TEXT).nextNode();window.getSelection().setBaseAndExtent(t,anchor,t,focus);document.dispatchEvent(new Event('selectionchange'))},{anchor,focus});await page.waitForTimeout(150);
+  const before=await page.evaluate(name=>({text:window.getSelection().toString(),range:window.products.range(name),pending:window.products.status().find(peer=>peer.name===name).pending}),name);
+  if(before.pending!==1||!before.range||(direction!=='caret'&&!before.text))throw Error('Quiet transition precondition failed');
+  const state=await(await page.request.get(`${origin}/profiles/word/api/docs/${doc}/state`)).json(),old=await(await page.request.get(`${origin}/profiles/word/api/docs/${doc}/schema`)).json(),next=structuredClone(old.schema);next.marks.push('quietReview');
+  const response=await page.request.post(`${origin}/profiles/word/api/docs/${doc}/schema`,{headers:{'x-doc-sync-protocol':'3','x-doc-sync-epoch':state.epoch,'x-doc-sync-schema':state.schemaVersion},data:{base:{epoch:state.epoch,serverSeq:state.serverSeq,schemaVersion:state.schemaVersion},schema:next}});if(!response.ok())throw Error(await response.text());
+  await page.getByRole('button',{name:'Load server schema',exact:true}).click();await page.waitForFunction(()=>window.products.upgradeStatus()==='Schema loaded'||window.products.upgradeStatus().startsWith('Schema transition failed:'),null,{timeout:20000});
+  const status=await page.evaluate(()=>window.products.upgradeStatus());if(status!=='Schema loaded')throw Error(status);
+  const final=await wait(),after=await page.evaluate(name=>({text:window.getSelection().toString(),range:window.products.range(name)}),name);
+  if(text(at(final.server,[1,0]))!=='Opening textU'||after.text!==before.text||JSON.stringify(after.range)!==JSON.stringify(before.range))throw Error(`${name}/${direction}: quiet transition lost selection or input ${JSON.stringify({before,after})}`);
+  results.push({profile:'word',editor:name,direction:`quiet-${direction}`,status:'passed',before,after});
+ }
  // Synthetic composition checks the guard and recovery path; it is not an OS IME test.
  {
   const doc=`schema-compose-${run}`;await page.goto(`${origin}/?profile=word&doc=${doc}`);await wait();

@@ -6,17 +6,13 @@ This guide describes the host contract used by the product demo for **ProseMirro
 
 ## What changes
 
-```text
-Server accepts the new schema
-            ↓
-Pause input and save the editor selection
-            ↓
-Validate and prepare the new native editor
-            ↓
-Detach the old binding and install the new one
-            ↓
-Restore selection → reconnect → resume input
-```
+<div class="operation-figure" tabindex="0" role="region" aria-label="Open editor schema transition diagram">
+
+![The server accepts a compatible schema; the application pauses input, prepares and installs a replacement editor, restores selection, reconnects, and resumes. If installation or reconnection fails, input remains paused and pending work is retained.](/schema-transition-flow.svg)
+
+</div>
+
+On a narrow screen, scroll the diagram horizontally to see every step. The same steps are also listed in [the host methods](#coordinate-the-rebuild).
 
 The same `SyncClient` stays in use. Its pending operations and undo/redo history are not replaced by the editor rebuild. Both selection endpoints are saved as document-token anchors and resolved in the new document. Remote changes received after reconnect can move those positions again.
 
@@ -134,6 +130,6 @@ Recreate application plugins and their state as required by your editor. Node se
 
 The helper does not submit a server transition, migrate incompatible schemas, persist a client checkpoint, or rebuild arbitrary application plugins. The default demo server is a single-process development server without authentication.
 
-Chrome checks cover the three editors and three sample schemas with pending input, another participant's input, forward and backward selections, carets, undo/redo, native input and an added node. A synthetic composition case checks the pause and retry path. These checks do not establish real OS IME, all native selection types, large-document transition performance or production recovery.
+Chrome checks cover the three editors and three sample schemas with pending input, another participant's input, forward and backward selections, carets, undo/redo, native input and an added node. Additional Word-profile cases check forward and backward selections and carets when no other participant edits during the transition. A synthetic composition case checks the pause and retry path. These checks do not establish real OS IME, all native selection types, large-document transition performance or production recovery.
 
 [Read synchronization →](./sync) · [Read the schema rules →](./schema#changing-a-schema)

@@ -1,7 +1,7 @@
 import React,{useEffect} from 'react';
 import {createRoot} from 'react-dom/client';
 import {createEditor as createSlateEditor,Editor,Transforms} from 'slate';
-import {Slate,Editable,withReact} from 'slate-react';
+import {Slate,Editable,withReact,ReactEditor} from 'slate-react';
 import {createEditor as createLexicalEditor,FORMAT_TEXT_COMMAND,SKIP_DOM_SELECTION_TAG} from 'lexical';
 import {registerRichText} from '@lexical/rich-text';
 import {registerTablePlugin,registerTableSelectionObserver} from '@lexical/table';
@@ -129,7 +129,20 @@ function editorHost(peer){
    }
    observe(peer);peer.button('Undo',()=>peer.binding.undo());peer.button('Redo',()=>peer.binding.redo());
   },
-  resume(){peer.section.inert=false;if(focused)peer.element.focus();},
+  resume(){
+   peer.section.inert=false;
+   if(focused&&peer.name==='Slate'){
+    const range=peer.editor.selection;
+    ReactEditor.focus(peer.editor);
+    if(range){
+     const anchor=ReactEditor.toDOMPoint(peer.editor,range.anchor),focus=ReactEditor.toDOMPoint(peer.editor,range.focus);
+     peer.element.ownerDocument.getSelection()?.setBaseAndExtent(...anchor,...focus);
+    }
+   }else if(focused&&peer.name==='Lexical'){
+    const range=peer.range();peer.element.focus();
+    if(range)peer.editor.update(()=>{$setLexicalSelection(peer.binding.info,range);},{discrete:true,tag:LEXICAL_REMOTE_TAG});
+   }else if(focused)peer.view.focus();
+  },
  };
 }
 let upgrading=false;
