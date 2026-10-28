@@ -5,8 +5,13 @@ async page=>{
  const text=node=>(node.runs??[]).map(run=>'text'in run?run.text:text({runs:run.runs})).join('');
  const wait=async()=>{
   await page.waitForFunction(()=>window.products?.ready()&&!window.products.errors.length&&window.products.status().every(peer=>peer.online&&!peer.pending),null,{timeout:20000});
-  await page.waitForFunction(async()=>{const s=await window.products.snapshot();return s.equal;},null,{timeout:20000});
-  return page.evaluate(()=>window.products.snapshot());
+  const deadline=Date.now()+20000;
+  do{
+   const state=await page.evaluate(()=>window.products.snapshot());
+   if(state.equal)return state;
+   await page.waitForTimeout(100);
+  }while(Date.now()<deadline);
+  throw new Error('Native, client and server models did not converge');
  };
  const note=async(name,details={})=>{results.push({name,status:'passed',profile:await page.evaluate(()=>window.products.profile),...details});};
  const select=async(name,expected,anchor,focus=anchor)=>{

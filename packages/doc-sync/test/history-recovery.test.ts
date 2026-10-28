@@ -73,7 +73,8 @@ test("rejects malformed history without mutating the active instance", () => {
     assert.equal(history.undo(doc).ops.length > 0, true);
 });
 
-test("retains typing group boundaries when new edits are recorded after restoration", () => {
+test("retains typing group boundaries when new edits are recorded after restoration", t => {
+    t.mock.method(Date, "now", () => 1_000_000);
     const doc = new Doc("A", schema), history = new History();
     const first = doc.edit([{op: "insert", at: [0, 0], content: "a"}]).ops;
     history.record(first, doc, {caretBefore: "0", caretAfter: "1", typing: true});
