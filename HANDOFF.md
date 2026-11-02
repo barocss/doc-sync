@@ -5120,3 +5120,16 @@ not blanket performance PASS results. There is no registry release.
 Publication target: `https://github.com/barocss/doc-sync.git`, branch `main`.
 Remote confirmation is appended after a successful non-force push. GitHub Pages
 workflow/deployment status is separate from Git push success.
+
+
+**Remote confirmation (2026-11-03).** The normal push to `origin/main` succeeded.
+`git ls-remote origin refs/heads/main` independently matched local HEAD
+`c3636d22e0ce7cb340497b3f8859c5982a71fa9d` after that push. The pushed sequence is
+`409ee2abc5add5bf611b7070fe90da39bc484f39` (unified Client checkpoint),
+`d782d22d07a0dc664ea479bc487de7130c647746` (input-tail diagnostics), and
+`c3636d22e0ce7cb340497b3f8859c5982a71fa9d` (local state persistence). The working
+tree was clean at that confirmation. This paragraph is a separate documentation
+receipt; it changes no runtime source or verification artifact. Original timing
+remains **INVESTIGATE** for one Node Slate 10k p95 cell and five Chrome local
+10k p95 cells. Remote push success does not establish CI or Pages deployment
+success. No registry publication or release was performed.
