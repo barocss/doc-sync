@@ -530,11 +530,36 @@ Incompatible document migration is a separate feature.
 | R5: Native server and WASM client adapters | Planned | Separate restart, reconnect, transport, editor, and recovery evidence required. |
 | R6: Product decision | Planned | End-to-end correctness, latency, memory, compatibility, and rollback gates. |
 
-The hidden-root-gap reference correction is implemented and its movement
-comparison passes. The next order is runtime schema loading, then compatible
-live schema transitions. A complete R4 gate
-also needs broader child/group rules, field-level attributes, value marks,
-protected GC, and serialization/recovery checks.
+### Ordered delivery work
+
+The target is one binding setup with TS or Rust/WASM selected when the client
+is created. Engine hot swap during a live editing session is a separate future
+feature. The following steps are planned; none is a new working backend option.
+
+| Order | Work | Completion gate |
+| --- | --- | --- |
+| D1 | Shared client/engine ports, wire values and snapshot transfer | A selected TS factory drives an actual binding/client; routing tests, existing regressions and the incremental-path performance budget pass. |
+| D2 | Runtime Rust schema kernel | Renamed schemas and three product schemas work without rebuilding Rust; invalid inputs reject atomically. |
+| D3 | Complete EditOp compiler and remaining schema semantics | Independent TS/Rust authoring preserves IDs, normalized models and foreign-write ownership. |
+| D4 | Composition, events, anchors/presence, recovery, GC and schema changes | Lost responses, crashes, GC, pending changes, History and selection retain their documented behavior. |
+| D5 | Complete typed native SDK | An external Cargo consumer uses schema-based editing and exact recovery against TS peers. |
+| D6 | Full document CRDT WASM package | Native/Node/browser contract corpus, artifact loading, error and lifetime checks pass. |
+| D7 | Same bindings with selected TS/WASM backend | Each editor passes TS/TS, TS/WASM, WASM/TS and WASM/WASM Chrome scenarios against the TS server. |
+| D8 | Package, long-session and performance qualification | Isolated consumers, differential/fuzz cases and predeclared product budgets pass; retain TS default until an explicit decision. |
+| D9 | Optional native Rust server | Separate shadow, durable protocol/restart and performance evidence; not required for D7. |
+
+D1 and the D2 schema kernel can progress in parallel after the value/schema
+contract is agreed. A text-only browser prototype can follow D1 to test ABI and
+session assumptions early; it must not claim full schema or recovery support.
+D5 and D6 share the same semantic core, but the native SDK release does not block
+the WASM client release. Each has its own D8 qualification. The native server
+lane remains separate.
+
+See the [detailed delivery queue](https://github.com/barocss/doc-sync/blob/main/docs/rust-roadmap.md#delivery-goal-and-ordered-work)
+for file references, dependencies, scope and exit conditions. The next task is
+D1: route a real TypeScript client/binding through the selected engine and keep
+legacy APIs and concurrent editing rules intact. A factory-only change does
+not complete that task.
 
 ## Does Rust make editing faster?
 

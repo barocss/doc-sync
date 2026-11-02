@@ -1,6 +1,7 @@
 # Handoff — @barocss/doc-sync
 
-Latest: final review, Rust SDK/WASM usage, and the main publication checkpoint
+Latest planning: the numbered Rust/WASM delivery queue is in **§5.103**.
+Final review, Rust SDK/WASM usage, and the main publication checkpoint
 are in **§5.102**. Safe conditional rejection settlement is in **§5.101**;
 owner approval and accepted-request recovery are in **§5.100**.
 Unknown outcomes remain blocked; a refreshed change requires a new approval.
@@ -4097,3 +4098,45 @@ storage/Gap correctness smoke, and SDK 20 actions/40 states pass. Earlier full
 storage/Gap receipts keep their unchanged workload inputs. Final staged
 whitespace checks pass. See output/final-push-rust/final-recheck/receipt.json
 and output/final-main-push/whitespace-qualification.json.
+
+
+### 5.103 Rust/WASM delivery planning
+
+Planning only. The SDK/runtime implementation checkpoint remains dd0c4a1,
+whose Pages and MCP workflows completed successfully (41375285141 and
+41375285155). Final push receipts are in output/checkpoints/final-main-push.json.
+No new Rust, WASM, client or binding implementation is established by this plan.
+
+The canonical ordered queue is docs/rust-roadmap.md, Delivery goal and ordered
+work; the site summary is guide/rust.md, Ordered delivery work. D1 is the next
+implementation task: complete real client/engine/host callable ports and route
+an existing binding through the selected TypeScript engine, preserving legacy
+TS APIs and incremental performance. A factory-only change is insufficient.
+D2 is runtime schemas; D3 the editing compiler; D4 sessions, events, recovery,
+GC and compatible schema transitions; D5 the complete native SDK; D6 a full
+CRDT WASM package; D7 unchanged bindings with selected mixed TS/WASM clients;
+D8 separate package/product qualification. Optional D9 creates a new server
+engine seam for native Rust; it is not required for the WASM client.
+
+Backend selection is at instance creation. Live engine hot swap, cross-engine
+checkpoint conversion, incompatible schema migration and automatic production
+replacement remain separate work. A text-only early browser prototype is
+allowed after the ports settle, with other capabilities blocked and no full
+schema/recovery claim. The native SDK and WASM delivery lanes share the semantic
+kernel but can ship independently. The prototype factory's per-mutation full
+snapshot copy must not enter the production keystroke path.
+
+Two independent source/planning lanes supplied file/line facts and dependency
+critique. The plan corrects dependencies so D7 does not require the D5 native
+SDK release, and D8 makes independent native/WASM go/no-go decisions. Source
+plans are in .omx/plans/rust-wasm-delivery-roadmap.md and the linked analysis
+artifacts. Existing R1–R6 receipts remain historical evidence; numbered plans
+are not new PASS results. Only documentation verification is rerun here.
+
+
+Planning documentation verification passes 28/28 tests, the production site
+build, and 40-page/2,921-link English checks. No engine/runtime files changed.
+This documentation continues the authorized main publication task; its commit
+is separate from the dd0c4a1 runtime changes. Publication receipts are recorded
+under output/checkpoints/rust-wasm-roadmap.json rather than inferred from these
+local checks.

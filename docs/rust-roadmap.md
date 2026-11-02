@@ -5,6 +5,192 @@ This roadmap separates Rust research from production engine delivery and the
 unchanged by these experiments. A storage result does not approve an engine
 migration. Each stage needs its own evidence and decision.
 
+## Delivery goal and ordered work
+
+The delivery target is **the same editor bindings with a TypeScript or Rust/WASM
+backend selected when a client is created**. TypeScript remains the default.
+A native Rust SDK is a separate useful product; a native server adapter is an
+optional parallel lane. Neither storage benchmarks nor the present factory
+prototype satisfy this target. Switching engines inside a live editing session
+is not required for the first release.
+
+The historical R1–R6 research gates below stay in place. D1–D8 are the ordered
+implementation queue that makes the remaining R4–R6 work actionable. D9 is a
+separate native-server option. All D stages are **planned**, not implemented
+configuration or new verification results.
+
+### Current source boundary
+
+| Area | Current state and evidence pointer |
+| --- | --- |
+| Native SDK | Private typed API, History, anchors, pending prefix and checkpoints; six fixed presets. See [SchemaPreset](../experiments/rust-sdk/src/lib.rs#L26-L55). |
+| Runtime schemas | Native manifests are compiled in. Arbitrary node names/rules and live transitions are not implemented. See [native schema constants](../experiments/rust-shadow/src/lib.rs#L17-L37). |
+| Engine port | Draft factory supports five basic capabilities. Composition, events, GC, schema transition and disposal need callable contracts. See [contract](../packages/doc-sync-core/src/engine/contract.ts#L6-L68). |
+| Client selection | SyncClient owns Doc and History. A factory alone cannot replace them. See [client](../packages/doc-sync-core/src/sync/client.ts#L69-L70) and [host adapter](../packages/doc-sync-core/src/editor/sync-client-host.ts#L27-L64). |
+| Wire compatibility | Native Text uses UTF-16 units; TypeScript uses a string. Current comparison normalizes their values. A real wire codec and complete server snapshot import still need qualification. See [SDK comparison](../experiments/rust-sdk/scripts/compare-typescript.mjs#L38-L44). |
+| WASM | Current rust-core module is a UTF-16 storage experiment, not a CRDT document engine. See [module scope](../experiments/rust-core/src/lib.rs#L1). |
+
+### D1. Complete the shared client and engine boundary — first priority
+
+Define real operations for transactions, model reads, anchor visibility,
+events, composition sessions, ordered GC, schema changes, checkpoint transfer,
+and disposal. Separate compile/apply from commit/History ownership so one edit
+cannot be recorded twice. Separate document revision from server sequence.
+Specify lossless text/value/wire conversion and how an engine imports the
+current server snapshot; private engine checkpoints remain tagged and opaque.
+Visible model JSON alone cannot bootstrap retained operations or History.
+
+Migrate the TypeScript client/host path first. Preserve existing TypeScript
+constructors and public client.doc compatibility for legacy TS callers only;
+never substitute a stale shadow Doc for a WASM engine. Portable bindings use the
+host contract. Select a backend at construction. Unsupported capabilities fail
+before connecting or mutating. No working Rust selector is claimed by this step.
+Do not put the draft factory's full document/History copy on every production
+keystroke. Preserve scoped model events, caches and the current incremental path;
+the adapter seam needs production transaction ownership, not just a wrapper.
+
+**Gate:** one existing binding uses an explicitly selected TypeScript factory;
+a tracking engine proves edit/receive/undo/redo/session/recovery calls reach it.
+The complete existing TypeScript regression suite stays green. Compare the
+current TS path and selected-TS path on the same editing traces, including large
+documents; establish and check the migration budget before merging D1. Invalid calls
+preserve document, pending queue, History, clock and revision. Contract fixtures
+cover omitted/null values, actor ordering, safe clocks, isolated text surrogates,
+and operation/snapshot round trips without changing the existing wire contract.
+
+### D2. Load a validated runtime schema in Rust
+
+Replace preset/type-name branches with per-document compiled schema data.
+Support all nine shapes, allowed children, grouping, grid chains, defaults,
+next/text rules, boolean/value marks, nested attribute fields, cardinality,
+computed values and supported pattern rules. Match TypeScript schema identity,
+including UI metadata. Presets remain convenience fixtures, not the mechanism.
+Unsupported descriptors must reject atomically; a limited subset is not full
+arbitrary-schema support.
+
+**Gate:** independently renamed schemas coexist without rebuilding Rust. Vary
+roots, node/mark/attribute names, defaults and rules. Compare valid and invalid
+inputs, models, History, anchors and restore against TypeScript. Include the
+Word, Notion and presentation schema fixtures. Dependencies: D1 value/schema
+identity contract; implementation can run alongside the D1 client migration.
+
+### D3. Implement the schema-based editing compiler
+
+Provide the public EditOp/command path in Rust, rather than requiring callers
+to hand-author low-level operations. Cover insert/delete/update/split/merge/move,
+normalization, mark inheritance, blocks, groups, inline/span content, tables,
+merged hidden cells, required/overflow children, field attributes and annotations.
+Preserve IDs, origins, ownership and atomic failure. Use the actual TypeScript
+feature corpus to bound supported behavior.
+
+**Gate:** independent TS and Rust authoring from the same commands compares
+operations and state, not just replay of TS-generated operations. Concurrent
+delete/format/insert/move and every undo/redo order retain foreign edits. Invalid
+batches leave state unchanged. Dependencies: D1 and D2.
+
+### D4. Complete sessions, recovery and GC
+
+Add composition draft/clock reservation/commit/cancel, incremental model-event
+DTOs, visible/retained anchor lookup, presence ranges, and logged-frontier GC.
+Preserve exact pending operations, actor sequence, History pins and protected
+checkpoints. Implement compatible schema changes and open-editor selection
+restoration under the existing TS rules; uncertain conditional outcomes block
+unsafe transitions. Separate local checkpoint restore from server recovery.
+
+**Gate:** crash before/after send, accepted-response loss, duplicate receipt,
+negative settlement, server restart, refresh, reservation release and GC all
+retain IDs, pending edits and foreign changes. Undo/redo stays actor-owned.
+Schema transitions preserve supported pending/history and selection state.
+Composition with remote edits, cancel and reset has dedicated cases.
+Dependencies: D1–D3; facets can proceed independently after their ports settle.
+
+### D5. Complete the native Rust SDK contract
+
+Expose the completed schema/compiler/lifecycle functions as a typed native API,
+with explicit errors, ownership, persistence responsibilities, exact pending
+acknowledgement, supported versions and executable examples. Retain low-level
+record/apply_remote for advanced hosts; do not make it the only authoring path.
+A host still supplies networking and trusted durable storage.
+
+**Gate:** an external Cargo consumer edits the three product schemas, restores
+History and pending state, retries exact operations, and exchanges actual public
+wire values with TS. Wrong schema/checkpoint/version and malformed inputs fail
+atomically. Dependencies: D2–D4. Native SDK delivery does not depend on WASM or
+a native HTTP server.
+
+### D6. Build the full CRDT WASM SDK
+
+Wrap the semantic core from D2–D4, not the storage benchmark. Supply a built
+module, typed JS factory, async loader, asset/ABI version checks, bounded value
+codec, owned handles, memory-growth-safe views and explicit disposal. Define
+initialization failure, cancellation, instance isolation, double close and
+stale-handle behavior. The binding-facing edit API can remain synchronous after
+module initialization. Batch transfers without losing incremental updates.
+
+**Gate:** shared contract fixtures pass in native Rust, Node WASM and browser
+WASM. A fresh consumer loads the built artifact; failed calls preserve live
+state; repeated create/dispose finishes with zero live handles. Record memory
+measurements separately from logical-handle correctness. Dependencies: D1–D4;
+packaging/ABI prototypes can proceed earlier with a declared limited scope.
+
+### D7. Connect the same bindings to the selectable backend
+
+Connect the WASM factory to the real client/host boundary from D1. Keep editor
+setup and binding code the same except backend construction. Preserve the TS
+server protocol and Node/MCP callers; a native server is not a prerequisite.
+Qualify ProseMirror, Tiptap, Slate and Lexical independently.
+
+**Gate:** Chrome runs TS/TS, TS/WASM, WASM/TS and WASM/WASM peers with the same
+schemas. Cover input, formatting, backward/overlapping selection, bot presence,
+undo/redo, moves/tables/hidden cells, offline pending, reconnect, restart,
+compatible schema transition and GC. Test IME composition; actual OS IME proof
+is separate from synthetic browser events. Dependencies: D1–D4 and D6; the native SDK release in D5 does not block this lane.
+
+### D8. Qualify packages, long sessions and performance
+
+Provide independently consumable core/native/WASM artifacts and unchanged
+binding peers. Package names and publication remain separate release decisions;
+no proposed import should be documented as an existing registry package.
+Retain the default TypeScript path and an operational rollback plan.
+
+**Gate:** isolated consumer/export/type/loader tests pass; deterministic and
+randomized differential failures are zero for the declared support matrix.
+Test repeated sessions, cancellation and memory limits. Compare startup,
+wire/bridge cost, memory, core time and actual editor latency separately using
+the same schemas/documents/actors and at least seven samples per workload.
+Set acceptance budgets before judging results. Make separate native and WASM
+go/no-go decisions; reject a default migration that does not meet its budgets.
+The WASM release lane depends on D7; the native SDK release lane depends on D5.
+Qualify and decide each independently. These gates do not promise a Rust speedup.
+
+### D9. Optional native Rust server adapter
+
+After D1–D4, a separate lane can define a new server engine port and embed the
+Rust semantic core behind it. The current DocHub has no selectable engine port. Start as a read-only shadow; it must not submit a second
+edit. An opt-in authoritative backend comes only after exact protocol, schema,
+GC, conditional receipt, durable negative seal, storage-failure and restart
+parity. This need not rewrite HTTP/auth/MCP in Rust.
+
+**Gate:** mixed native/TS/WASM peers converge; same-point races, lost responses,
+GC/restart and undo retain edits and ownership. Native throughput/RSS and failure
+recovery have separate evidence. D9 is not required to finish the WASM client.
+
+### Parallel work and first implementation slice
+
+- Lane A: D1 client/host ports and selected TypeScript implementation.
+- Lane B: D2 runtime schema kernel, then D3 compiler and D4 semantic lifecycle.
+- Lane C: independent wire/History/recovery fixtures and package/ABI prototypes.
+- After D1, a text-only Rust/WASM prototype can mount one existing binding to
+  expose ABI/session problems early. It must reject other features and remain
+  labelled text-only; it does not pass D2–D7 or establish protected recovery.
+- D5 native SDK and D6 WASM delivery can proceed in parallel once the shared
+  kernel gates pass. D9 server work is independently optional.
+
+The next concrete change is D1: write failing routing/conformance tests, complete
+the missing callable ports, and run one real binding through the selected TS
+engine. Keep legacy constructors and the same concurrent editing behavior.
+Do not start with a fake Rust selector or only another benchmark.
+
 ## R1. Freeze the UTF-16 contract and baseline
 
 **Status: delivered within the isolated storage experiment.** The
@@ -548,8 +734,9 @@ The exact multi-type attribute-domain fixture from the TypeScript path correctio
 
 ## R5. Add native server and WASM client shadow adapters
 
-**Status: planned after R4.** Run a native Rust server adapter and a WASM client
-adapter beside the current TypeScript paths. TypeScript remains authoritative.
+**Status: planned after R4.** Native-server and WASM-client adapters have separate
+exit gates. The native server is not required to release a qualified WASM client.
+Run each adapter beside its corresponding current TypeScript path. TypeScript remains authoritative.
 Feed both engines the same recorded operations and compare their results.
 Rust shadow output must not submit a second edit or change participant history.
 
