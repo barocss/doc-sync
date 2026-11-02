@@ -1,7 +1,6 @@
 import {schemaVersion} from '../crdt/schema-version.ts';
 import type {Change} from './protocol.ts';
 import {SyncClient, type ClientCheckpoint} from './client.ts';
-import {History} from '../crdt/history.ts';
 
 type State = {generation: string | null; epoch: string; serverSeq: number; schemaVersion: string | null; reservationEra?: number};
 type Protection = {status: 'unsafe'} | {status: 'protected'; generation: string; pin: number; lastGc: number; existing: boolean};
@@ -40,7 +39,7 @@ export class LiveRecovery {
 
     private clean(): boolean {
         return this.client.synchronized && this.client.schemaVerified && !this.client.pending.length &&
-            !this.client.conditionalPending && !this.client.history.canUndo && !this.client.history.canRedo;
+            !this.client.conditionalPending && !this.client.historyStatus().canUndo && !this.client.historyStatus().canRedo;
     }
 
     private validProtection(result: Protection, proof: Reservation): boolean {
@@ -127,14 +126,15 @@ export class LiveRecovery {
     async restore(checkpoint: ClientCheckpoint, value: LiveRecoveryProof): Promise<void> {
         this.assertActive();
         if (this.busy || this.reservation || this.client.online || this.client.pending.length || this.client.conditionalPending ||
-            this.client.history.canUndo || this.client.history.canRedo) throw new Error('Restore requires a fresh disconnected recovery controller');
+            this.client.historyStatus().canUndo || this.client.historyStatus().canRedo) throw new Error('Restore requires a fresh disconnected recovery controller');
         const proof = structuredClone(value), stored = structuredClone(checkpoint);
         if (!proof || typeof proof.generation !== 'string' || !proof.generation || typeof proof.id !== 'string' || !proof.id ||
             typeof proof.epoch !== 'string' || !proof.epoch || proof.version !== schemaVersion(this.client.schema) ||
             !Number.isSafeInteger(proof.pin) || proof.pin < 1 || proof.pin > stored.serverSeq + 1) throw new Error('Invalid stored recovery proof');
         // Validate detached data before contacting the server or replacing the live replica.
-        const validator = new SyncClient(this.client.actor, {subscribe: () => () => {}, send: async () => {}, sendPresence: () => {}}, {schema:this.client.schema});
+        const validator = new SyncClient(this.client.actor, {subscribe: () => () => {}, send: async () => {}, sendPresence: () => {}}, {schema:this.client.schema, engineFactory:this.client.engineFactory});
         validator.restoreCheckpoint(stored, proof.epoch);
+        validator.engine.dispose();
         const before = this.client.checkpoint();
         this.busy = true;
         try {
@@ -162,7 +162,11 @@ export class LiveRecovery {
         try {
             const before = this.client.checkpoint();
             if (before.pending.length || this.client.conditionalPending || this.client.epoch !== this.protection.epoch) throw new Error('Recover the current epoch before retirement');
-            const empty = structuredClone(before); empty.history = new History().snapshot();
+            const draft = new SyncClient(this.client.actor, {subscribe: () => () => {}, send: async () => {}, sendPresence: () => {}}, {schema:this.client.schema, engineFactory:this.client.engineFactory});
+            draft.restoreCheckpoint(before, this.protection.epoch);
+            draft.clearHistory();
+            const empty = draft.checkpoint();
+            draft.dispose();
             const record: LiveRecoveryRelease = {proof: structuredClone(this.protection), client: empty, releasePending:true};
             await saveReleaseIntent(structuredClone(record));
             durable = true;
@@ -170,7 +174,7 @@ export class LiveRecovery {
             this.assertActive();
             if (JSON.stringify(this.client.checkpoint()) !== JSON.stringify(before)) throw new Error('Local recovery state changed during retirement');
             // Only the durable intent authorizes removal of the live undo/redo history.
-            this.client.history.clear();
+            this.client.engine.clearHistory();
         } catch (error) {
             if (!durable) { this.resumeMutations?.(); this.resumeMutations = null; }
             throw error;
@@ -183,12 +187,14 @@ export class LiveRecovery {
         this.assertActive();
         if (this.busy || this.client.online || this.client.pending.length || this.client.conditionalPending) throw new Error('Pending retirement requires a disconnected client without pending changes');
         const record = structuredClone(value), proof = record.proof;
-        const history = History.fromSnapshot(record.client.history);
-        if (record.releasePending !== true || record.client.pending.length || history.canUndo || history.canRedo ||
+        if (record.releasePending !== true || record.client.pending.length ||
             proof.version !== schemaVersion(this.client.schema) || record.client.actor !== this.client.actor ||
             !proof.generation || !proof.id || !proof.epoch || !Number.isSafeInteger(proof.pin) || proof.pin < 1) throw new Error('Invalid durable release intent');
-        const validator = new SyncClient(this.client.actor, {subscribe: () => () => {}, send: async () => {}, sendPresence: () => {}}, {schema:this.client.schema});
+        const validator = new SyncClient(this.client.actor, {subscribe: () => () => {}, send: async () => {}, sendPresence: () => {}}, {schema:this.client.schema, engineFactory:this.client.engineFactory});
         validator.restoreCheckpoint(record.client, proof.epoch);
+        const history = validator.historyStatus();
+        if (history.canUndo || history.canRedo) throw new Error('Invalid durable release history');
+        validator.dispose();
         if ((this.releaseIntent && JSON.stringify(this.releaseIntent) !== JSON.stringify(record)) ||
             (this.reservation && (this.reservation.id !== proof.id || this.reservation.generation !== proof.generation))) throw new Error('A different recovery retirement is already pending');
         this.busy = true;

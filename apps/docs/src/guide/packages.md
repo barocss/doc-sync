@@ -8,7 +8,7 @@ version `0.0.0`. They have not been published to the npm registry.
 
 | Package | Contents | Required package peers |
 | --- | --- | --- |
-| `@barocss/doc-sync-core` | CRDT, sync client, server, Node transport, input session, draft engine contract | None. No external runtime dependencies. |
+| `@barocss/doc-sync-core` | CRDT, sync client, server, Node transport, input session, production and immutable engine contracts | None. No external runtime dependencies. |
 | `@barocss/doc-sync-prosemirror` | ProseMirror schema, conversion, and binding | Core; `prosemirror-model`, `prosemirror-state`, `prosemirror-transform`, `prosemirror-view`. |
 | `@barocss/doc-sync-tiptap` | Tiptap extension and generated schema | Core; ProseMirror binding; `@tiptap/core` and `@tiptap/pm` at `3.32.2`. |
 | `@barocss/doc-sync-slate` | Slate binding and codec | Core; `slate`. |
@@ -183,11 +183,48 @@ Choose one of these entry points:
 - [Rust restart and acknowledgement recipe](./rust#checkpoint-retry-selection-and-history-recipe): exact pending retry, stable selections, and History.
 - [Storage-only WASM recipe](./rust#use-the-storage-only-wasm-adapter): build, load, initialize, splice, read, and clear a UTF-16 buffer.
 
-The package split does not switch the document engine. `SyncClient` and the
-input session still use the TypeScript engine. The ProseMirror implementation
-now uses a binding-facing `EditorHost`; Tiptap uses that same implementation.
-Slate and Lexical also use the shared host/session contract.
-There is no supported `engine: 'wasm'` option for those integrations.
+`SyncClient` accepts a production `ClientEngineFactory` at construction. The
+selected engine owns the document, History, and composition drafts. The common
+`EditorHost` uses this port for ProseMirror, Slate, and Lexical; Tiptap uses the
+same ProseMirror implementation. Only TypeScript ships today:
+
+```ts
+import {SyncClient, HttpTransport} from '@barocss/doc-sync-core/sync';
+import {typescriptClientEngineFactory} from '@barocss/doc-sync-core/engine';
+import {createSyncClientEditorHost} from '@barocss/doc-sync-core/editor';
+
+const actor = 'alice-session-1';
+const client = new SyncClient(actor, new HttpTransport('example', actor), {
+    schema,
+    engineFactory: typescriptClientEngineFactory,
+});
+const host = createSyncClientEditorHost(client);
+host.commit(host.apply([{op: 'insert', at: [0, 0], content: 'Hello'}]));
+client.connect();
+```
+
+Here `schema` is your application schema. Omit `engineFactory` to use the same
+TypeScript default. Factory identity, methods, schema, and capabilities are
+checked before connection. Selection happens once; live engine switching is not
+supported. A Rust/WASM production factory is not available.
+
+The common engine and host paths do not expose `Doc` or `History`. Legacy
+TypeScript access returns the actual authoritative objects through an optional
+compatibility extension. Existing custom Doc-based input sessions and document
+facades use a separate TypeScript compatibility adapter. A portable backend does
+not need to support those escape paths.
+
+`apply` returns already-applied wire operations without History. Commit once to
+record and queue them. Composition publication applies the retained draft
+operations; `InputSession.end()` commits them once. `disconnect()` preserves
+pending changes and History. Terminal `dispose()` rejects protected work or
+remaining undo/redo History.
+
+Selected-engine routing, regressions and conversion-count checks pass.
+Repeated/pooled Node and controlled Chrome comparisons qualify the client
+migration. Original separate-server latency and small-block tail crossings
+remain reported; general product-latency acceptance remains open. See
+[status and limits](../status) for the evidence boundary.
 
 Core exports a draft value-based engine contract at
 `@barocss/doc-sync-core/engine`. Its TypeScript factory supports edit, receive,
@@ -214,7 +251,8 @@ const restored = typescriptEngine.restore('alice', schema, checkpoint);
 console.log(bob.model(), restored.model());
 ```
 
-This example uses the draft engine API directly. It does not connect a
+This older immutable factory is not a production `ClientEngineFactory` and
+cannot be passed to `SyncClient`. This example does not connect a
 `SyncClient` or an editor. The contract passes plain data values across the
 boundary. Its current capabilities do not include composition, model events,
 garbage collection, or schema transitions. Call `requireCapability` before
@@ -224,14 +262,14 @@ a TypeScript checkpoint cannot be restored into the native Rust SDK.
 | Capability | Production TypeScript path | Native Rust SDK | Browser Rust/WASM path |
 | --- | --- | --- | --- |
 | Runtime schema data | Supported, with compatible transition rules | Six fixed presets | Not implemented as a full document adapter |
-| Browser editor bindings and `SyncClient` | Supported through `Doc` | No adapter | No qualified adapter or selector |
+| Browser editor bindings and `SyncClient` | Selected production TypeScript factory and editor host | No adapter | No qualified adapter or selector |
 | Native text, operations, history, and anchors | Available in TypeScript | Available through a private Cargo path dependency | Not available as a full browser engine |
 | WASM storage experiment | Separate from the TypeScript engine | Separate from the native SDK | Vec/Gap UTF-16 buffers only; no CRDT or editor integration |
 | Draft common engine factory | TypeScript implementation | Separate native API; no common factory | Planned |
 | Performance acceptance | See the measured TypeScript reports | No native SDK performance acceptance | No full-engine browser acceptance |
 
-A future engine choice needs a Rust/WASM adapter, the missing binding
-capabilities, and migration of the client and bindings to the common contract.
+A Rust/WASM choice needs a production adapter and the remaining native
+capabilities.
 It also needs schema, recovery, selection, and history parity checks. Keep that
 work separate from an independent binding release. See the [Rust guide](./rust)
 and [roadmap](../roadmap) for the current native API and remaining work.

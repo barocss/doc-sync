@@ -1,13 +1,15 @@
 import {keyOf} from "../crdt/ticket.ts";
-import {Doc} from "../crdt/doc.ts";
-import {History} from "../crdt/history.ts";
-import {applyEdits, diffModels} from "../crdt/model.ts";
+import type {Doc} from "../crdt/doc.ts";
+import type {History, HistorySnapshot} from "../crdt/history.ts";
 import {assertCompatibleSchema, schemaVersion} from "../crdt/schema-version.ts";
-import {modelEventWindow, textEventScopes} from "./model-events.ts";
 import type {Op, Snapshot} from "../crdt/doc.ts";
 import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, NodeJSON} from "../crdt/model.ts";
 import type {Schema} from "../crdt/schema.ts";
+import {typescriptClientEngineFactory} from "../engine/typescript-client.ts";
+import {ENGINE_CONTRACT_VERSION} from "../engine/contract.ts";
+import type {EngineCheckpoint} from "../engine/contract.ts";
+import type {ClientEngine, ClientEngineFactory, EnginePreparedDocument, EngineEventCapture, TypeScriptClientCompatibility} from "../engine/client-contract.ts";
 import {DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "./protocol.ts";
 import type {Change, Envelope, Outbound, Presence, ServerEvent, Transport} from "./protocol.ts";
 
@@ -26,6 +28,8 @@ import type {Change, Envelope, Outbound, Presence, ServerEvent, Transport} from 
 export type ClientOptions = {
     /** 문서 스키마 — 바깥에서 주입한다. 블록 종류·속성·서식을 정한다 (schema.ts) */
     schema: Schema;
+    /** Authoritative production engine. The immutable draft factory is not compatible. */
+    engineFactory?: ClientEngineFactory;
     /** 받은 뒤 ack 를 보내기까지 기다리는 시간 (ms). 0 이면 바로 */
     ackDelay?: number;
     /** Persist the current checkpoint before a change or acknowledgement can leave this client. */
@@ -45,6 +49,12 @@ export type ClientCheckpoint = {
     history: ReturnType<History["snapshot"]>; seq: number; serverSeq: number;
     gcFrontier: number; delSeq: Array<[string, number]>; pending: Change[];
 };
+/** Backend-neutral local state. The tagged engine payload is stored exactly once. */
+export type ClientStateCheckpoint = {
+    format: 2; actor: string; schemaVersion: string; engine: EngineCheckpoint;
+    seq: number; serverSeq: number; gcFrontier: number; delSeq: Array<[string, number]>; pending: Change[];
+};
+type ClientStateMetadata = Omit<ClientStateCheckpoint, "format" | "engine">;
 type ConditionalAttempt = {
     base: ConditionalBase; change: Change; edits: EditOp[]; snapshot: string;
     events: Array<{event: ServerEvent; connection: number}>; reconnect: boolean; attempting: boolean; priorGuard: (() => void) | null; wasUnconfirmed: boolean;
@@ -66,8 +76,22 @@ function ownedSchema(input: Schema): Schema {
 }
 
 export class SyncClient {
-    doc: Doc;
-    history = new History();
+    readonly engine: ClientEngine;
+    readonly engineFactory: ClientEngineFactory;
+    private compatibility(): TypeScriptClientCompatibility {
+        const engine = this.engine as ClientEngine & Partial<TypeScriptClientCompatibility>;
+        if (typeof engine.typescriptDocument !== "function" || typeof engine.typescriptHistory !== "function" ||
+            typeof engine.replaceTypeScriptDocument !== "function" || typeof engine.replaceTypeScriptHistory !== "function") {
+            throw new Error("Selected engine does not provide TypeScript compatibility");
+        }
+        return engine as ClientEngine & TypeScriptClientCompatibility;
+    }
+    get doc(): Doc { return this.compatibility().typescriptDocument(); }
+    set doc(doc: Doc) { this.compatibility().replaceTypeScriptDocument(doc); this.attach(); }
+    get history(): History { return this.compatibility().typescriptHistory(); }
+    set history(history: History) { this.compatibility().replaceTypeScriptHistory(history); }
+    historyStatus() { return this.engine.historyStatus(); }
+    previewSchema(next: Schema): NodeJSON { return this.engine.previewSchema(next); }
     readonly actor: string;
     online = false;
     /** Set when the server cannot safely process this client version. Pending edits are retained. */
@@ -81,10 +105,12 @@ export class SyncClient {
     private recoveryHistoryGuards = 0;
     private localMutationPauses = 0;
     private checkpointFailed = false;
+    private disposed = false;
     /** Persist synchronous state changes, including disconnected edits. A failure stops the connection. */
     onCheckpoint: (() => void) | null = null;
 
     private assertLocalMutation(): void {
+        if (this.disposed) throw new Error("Client is disposed");
         if (this.localMutationPauses) throw new Error("Local changes are paused until recovery completes");
     }
 
@@ -151,7 +177,7 @@ export class SyncClient {
 
     set onLocalEdits(listener: LocalEditsListener | null) {
         this.localEdits = listener;
-        this.attach(this.doc);
+        this.attach();
     }
 
     /** 받는 쪽 이벤트 통계 — 바뀐 횟수·연산 수·물러선 횟수 */
@@ -168,7 +194,7 @@ export class SyncClient {
     private readonly ackDelay: number;
     private readonly beforeSend: (() => void) | undefined;
     private currentSchema: Schema;
-    get schema(): Schema { return this.currentSchema; }
+    get schema(): Schema { return this.engine?.schema() ?? this.currentSchema; }
     /** False for an explicitly schema-free server. */
     schemaVerified = false;
     private conditional: ConditionalAttempt | null = null;
@@ -208,90 +234,42 @@ export class SyncClient {
         this.currentSchema = ownedSchema(options.schema);
         this.ackDelay = options.ackDelay ?? 0;
         this.beforeSend = options.beforeSend;
-        this.doc = this.attach(new Doc(actor, this.schema));
+        this.engineFactory = options.engineFactory ?? typescriptClientEngineFactory;
+        if (!this.engineFactory || this.engineFactory.contractVersion !== ENGINE_CONTRACT_VERSION || typeof this.engineFactory.create !== "function") throw new Error("Incompatible client engine factory");
+        this.engine = this.engineFactory.create(actor, this.schema);
+        const methods = ["identity", "schema", "requireCapabilities", "setEditHooks", "assertEditing", "stamp", "model", "apply", "applyModelEdits", "deleteRange", "captureAnchor", "locateAnchor", "record", "receive", "emitLocal", "check", "undo", "redo", "historyStatus", "clearHistory", "historyDeletionKeys", "historyPin", "compact", "snapshot", "allocationFloor", "prepareSnapshot", "replayPrepared", "compilePrepared", "installPrepared", "checkpoint", "prepareCheckpoint", "installCheckpoint", "previewSchema", "upgradeSchema", "reset", "beginEvents", "finishEvents", "createSession", "dispose"] as const;
+        try {
+        if (!this.engine || methods.some(method => typeof this.engine[method] !== "function")) throw new Error("Incompatible production client engine");
+        const identity = this.engine.identity();
+        if (identity.engine !== this.engineFactory.engine || identity.contractVersion !== ENGINE_CONTRACT_VERSION || identity.actor !== actor || identity.schemaVersion !== schemaVersion(this.schema)) throw new Error("Client engine identity mismatch");
+        this.engine.requireCapabilities(["edit", "receive", "history", "anchors", "checkpoint", "composition", "events", "gc", "schema-transition"]);
+        this.attach();
+        } catch (error) { try { this.engine?.dispose?.(); } catch { /* Preserve the validation failure. */ } throw error; }
     }
 
     /** 문서를 갈아 끼울 때마다 내 편집 알림을 잇는다 */
-    private attach(doc: Doc): Doc {
-        const priorGuard = doc.editGuard;
-        doc.editGuard = () => { this.assertLocalMutation(); priorGuard?.(); };
-        // 구독자가 없으면 normalize 를 위한 모델 계산도 필요 없다. 명시한 normalize 옵션은 Doc.edit 이 지킨다.
-        doc.editListener = this.localEdits ? (edits, normalize) => {
+    private attach(): void {
+        this.engine.setEditHooks({guard: () => {
+            this.assertLocalMutation();
+            if (this.conditional && !this.installingConditional) throw new Error("A conditional edit is unresolved; retry it before changing the document");
+        }, listener: this.localEdits ? (edits, normalize) => {
             const installing = this.installingConditional;
             this.installingConditional = false;
             try { this.notify("onLocalEdits", () => this.localEdits?.(edits, normalize)); }
             finally { this.installingConditional = installing; }
-        } : null;
-
-        return doc;
+        } : null});
     }
 
-    /** fn 이 모델을 바꾸면 받는 쪽 이벤트를 낸다 (듣는 쪽이 있을 때만 계산한다) */
-    private withEvents<T>(cause: EventCause, fn: () => T, ops?: Op[]): T {
-        if (!this.onModelEvents) {
-            return fn();
+    private withEvents<T>(cause: EventCause, fn: (capture?: EngineEventCapture) => T, ops?: Op[]): T {
+        if (!this.onModelEvents) return fn();
+        const capture = this.engine.beginEvents(ops);
+        const result = fn(capture);
+        const {events, fallback} = this.engine.finishEvents(capture);
+        if (events.length) {
+            this.eventStats.changes += 1; this.eventStats.events += events.length;
+            if (fallback) this.eventStats.fallbacks += 1;
+            this.notify("onModelEvents", () => this.onModelEvents?.(events, {cause, fallback}));
         }
-
-        const scopes = ops ? textEventScopes(this.doc, ops) : null;
-        const before = scopes ? null : this.doc.toJSON();
-        const result = fn();
-        let events: EditOp[] = [];
-        let fallback = false;
-
-        if (scopes) {
-            for (const scope of scopes) {
-                const after = scope.read();
-
-                if (JSON.stringify(scope.before) === JSON.stringify(after)) {
-                    continue;
-                }
-
-                const next = diffModels(scope.schema, scope.before, after);
-
-                if (JSON.stringify(applyEdits(scope.schema, scope.before, next)) !== JSON.stringify(after)) {
-                    const wholeAfter = this.doc.toJSON();
-
-                    // 부분 결과는 모두 버린다. 글자만 바뀌어 루트 자식 수는 이전과 같다.
-                    events = replaceAll(wholeAfter, wholeAfter);
-                    fallback = true;
-                    break;
-                }
-
-                for (const event of next) {
-                    events.push({...event, at: [...scope.path, ...event.at.slice(1)]});
-                }
-            }
-        } else {
-            const after = this.doc.toJSON();
-
-            if (JSON.stringify(before) === JSON.stringify(after)) {
-                return result;
-            }
-
-            const window = modelEventWindow(this.schema, before!, after);
-            const localBefore = window?.before ?? before!;
-            const localAfter = window?.after ?? after;
-            const local = diffModels(this.schema, localBefore, localAfter);
-
-            if (JSON.stringify(applyEdits(this.schema, localBefore, local)) !== JSON.stringify(localAfter)) {
-                events = replaceAll(before!, after);
-                fallback = true;
-            } else {
-                const path = (at: number[]) => [at[0] + window!.start, ...at.slice(1)];
-                events = window ? local.map(event => event.op === "move"
-                    ? {...event, at: path(event.at), from: path(event.from)} : {...event, at: path(event.at)}) : local;
-            }
-        }
-
-        if (!events.length) {
-            return result;
-        }
-
-        this.eventStats.changes += 1;
-        this.eventStats.events += events.length;
-        fallback && (this.eventStats.fallbacks += 1);
-        this.notify("onModelEvents", () => this.onModelEvents?.(events, {cause, fallback}));
-
         return result;
     }
 
@@ -300,8 +278,10 @@ export class SyncClient {
     /** Capture a single synchronous replica state. Persisting it requires a separate durable boundary. */
     checkpoint(): ClientCheckpoint {
         if (this.conditional) throw new Error("An unresolved conditional request needs its own recovery evidence");
+        const state = this.engine.checkpoint();
+        if (state.format !== "doc-sync-typescript-checkpoint-v1") throw new Error("Legacy format-1 client checkpoint requires a TypeScript engine payload");
         return structuredClone({format: 1 as const, actor: this.actor, schemaVersion: schemaVersion(this.schema),
-            snapshot: this.doc.snapshot(), history: this.history.snapshot(), seq: this.seq, serverSeq: this.serverSeq,
+            snapshot: state.document as Snapshot, history: state.history as HistorySnapshot, seq: this.seq, serverSeq: this.serverSeq,
             gcFrontier: this.gcFrontier, delSeq: [...this.delSeq], pending: this.pending});
     }
 
@@ -316,15 +296,27 @@ export class SyncClient {
         this.connectionError = null;
     }
 
-    /** Restore only after the caller proves matching generation, schema and GC protection. */
-    restoreCheckpoint(value: ClientCheckpoint, epoch: string): void {
-        if (this.online || this.conditional || this.pending.length) throw new Error("Restore requires a disconnected, settled client");
-        if (!value || value.format !== 1 || value.actor !== this.actor || value.schemaVersion !== schemaVersion(this.schema) ||
+    /** Capture engine-private state without assuming TypeScript document or History layout. */
+    captureState(): ClientStateCheckpoint {
+        if (this.conditional) throw new Error("An unresolved conditional request needs its own recovery evidence");
+        const engine = this.engine.checkpoint();
+        this.assertCheckpointIdentity(engine);
+        return structuredClone({format: 2 as const, actor: this.actor, schemaVersion: schemaVersion(this.schema), engine,
+            seq: this.seq, serverSeq: this.serverSeq, gcFrontier: this.gcFrontier, delSeq: [...this.delSeq], pending: this.pending});
+    }
+
+    private assertCheckpointIdentity(checkpoint: EngineCheckpoint): void {
+        const selected = this.engine.identity(), identity = checkpoint?.identity;
+        if (!checkpoint || typeof checkpoint.format !== "string" || !checkpoint.format || !identity ||
+            identity.engine !== selected.engine || identity.contractVersion !== selected.contractVersion ||
+            identity.actor !== this.actor || identity.schemaVersion !== schemaVersion(this.schema)) throw new Error("Incompatible tagged engine checkpoint");
+    }
+
+    private prepareMetadata(value: ClientStateMetadata, epoch: string): {delSeq: Map<string, number>; pending: Change[]} {
+        if (!value || value.actor !== this.actor || value.schemaVersion !== schemaVersion(this.schema) ||
             typeof epoch !== "string" || !epoch || !Number.isSafeInteger(value.seq) || value.seq < 0 ||
             !Number.isSafeInteger(value.serverSeq) || value.serverSeq < 0 || !Number.isSafeInteger(value.gcFrontier) ||
-            value.gcFrontier < 0 || value.gcFrontier > value.serverSeq || !Array.isArray(value.delSeq) || !Array.isArray(value.pending)) {
-            throw new Error("Invalid client checkpoint");
-        }
+            value.gcFrontier < 0 || value.gcFrontier > value.serverSeq || !Array.isArray(value.delSeq) || !Array.isArray(value.pending)) throw new Error("Invalid client checkpoint");
         const delSeq = new Map<string, number>();
         for (const pair of value.delSeq) {
             if (!Array.isArray(pair) || pair.length !== 2 || typeof pair[0] !== "string" || !pair[0] ||
@@ -338,16 +330,37 @@ export class SyncClient {
             priorSeq = change.seq;
         }
         if (priorSeq && priorSeq !== value.seq) throw new Error("Invalid checkpoint pending sequence");
-        const doc = Doc.fromSnapshot(this.actor, value.snapshot, this.schema);
-        const history = History.fromSnapshot(value.history);
-        // Validate into detached values before replacing any live state.
-        const pending = structuredClone(value.pending);
-        this.doc = this.attach(doc); this.history = history; this.seq = value.seq;
-        this.serverSeq = value.serverSeq;
-        this.forceSnapshot = true; // Reconcile against the complete server snapshot before sending.
+        return {delSeq, pending: structuredClone(value.pending)};
+    }
+
+    private installMetadata(value: ClientStateMetadata, metadata: ReturnType<SyncClient["prepareMetadata"]>, epoch: string): void {
+        this.seq = value.seq; this.serverSeq = value.serverSeq;
+        this.forceSnapshot = true;
         this.gcFrontier = value.gcFrontier;
-        this.delSeq.clear(); for (const [key, seq] of delSeq) this.delSeq.set(key, seq);
-        this.pending = pending; this.epoch = epoch; this.connectionError = null;
+        this.delSeq.clear(); for (const [key, seq] of metadata.delSeq) this.delSeq.set(key, seq);
+        this.pending = metadata.pending; this.epoch = epoch; this.connectionError = null;
+    }
+
+    /** Restore only after the caller proves matching generation, schema and GC protection. */
+    restoreCheckpoint(value: ClientCheckpoint, epoch: string): void {
+        if (this.online || this.conditional || this.pending.length) throw new Error("Restore requires a disconnected, settled client");
+        if (!value || value.format !== 1) throw new Error("Invalid client checkpoint");
+        const metadata = this.prepareMetadata(value, epoch);
+        const prepared = this.engine.prepareCheckpoint({format: "doc-sync-typescript-checkpoint-v1", identity: this.engine.identity(), revision: 0,
+            document: value.snapshot, history: value.history});
+        this.engine.installCheckpoint(prepared);
+        this.installMetadata(value, metadata, epoch);
+    }
+
+    /** Restore a tagged engine payload after the same external recovery proof as format 1. */
+    restoreState(value: ClientStateCheckpoint, epoch: string): void {
+        if (this.online || this.conditional || this.pending.length) throw new Error("Restore requires a disconnected, settled client");
+        if (!value || value.format !== 2) throw new Error("Invalid client state checkpoint");
+        const metadata = this.prepareMetadata(value, epoch);
+        this.assertCheckpointIdentity(value.engine);
+        const prepared = this.engine.prepareCheckpoint(value.engine);
+        this.engine.installCheckpoint(prepared);
+        this.installMetadata(value, metadata, epoch);
     }
 
     /** Install a separately proven accepted conditional intent before reconnecting. */
@@ -355,13 +368,11 @@ export class SyncClient {
         if (this.online || this.conditional || this.pending.length || change.actor !== this.actor || change.seq !== this.seq + 1) {
             throw new Error("Accepted intent cannot follow this checkpoint");
         }
-        const doc = Doc.fromSnapshot(this.actor, snapshot, this.schema);
-        const {ops} = doc.edit(edits);
+        const prepared = this.engine.prepareSnapshot(snapshot);
+        const {ops} = this.engine.compilePrepared(prepared, edits);
         if (JSON.stringify(ops) !== JSON.stringify(change.ops)) throw new Error("Accepted intent does not reproduce its change");
-        // Validate on a detached history graph so failed installation is atomic.
-        const history = History.fromSnapshot(this.history.snapshot());
-        history.record(ops, doc, {caretBefore: "", caretAfter: ""});
-        this.doc = this.attach(doc); this.history = history; this.seq = change.seq;
+        this.engine.installPrepared(prepared);
+        this.engine.record(ops, {caretBefore: "", caretAfter: ""}); this.seq = change.seq;
         // Server snapshot will supply the already accepted change.
     }
 
@@ -429,10 +440,10 @@ export class SyncClient {
         assertCompatibleSchema(this.schema, nextSchema);
         const next = ownedSchema(nextSchema);
         assertCompatibleSchema(this.schema, next);
-        const replacement = Doc.fromSnapshot(this.actor, this.doc.snapshot(), next);
+        this.engine.previewSchema(next);
         this.disconnect();
+        this.engine.upgradeSchema(next);
         this.currentSchema = next;
-        this.doc = this.attach(replacement);
         this.schemaVerified = false;
         this.notify("onUpdate", () => this.onUpdate?.());
     }
@@ -450,7 +461,7 @@ export class SyncClient {
             return;
         }
 
-        record && this.history.record(ops, this.doc, record);
+        record && this.engine.record(ops, record);
         this.seq += 1;
 
         const change: Change = {actor: this.actor, seq: this.seq, ops};
@@ -465,7 +476,7 @@ export class SyncClient {
     undo(): string | null {
         this.assertLocalMutation();
         if (this.conditional) throw new Error("A conditional edit is unresolved; retry it before undo");
-        const {ops, caret} = this.withEvents("undo", () => this.history.undo(this.doc));
+        const {ops, caret} = this.withEvents("undo", () => this.engine.undo());
 
         this.commit(ops, null);
 
@@ -475,7 +486,7 @@ export class SyncClient {
     redo(): string | null {
         this.assertLocalMutation();
         if (this.conditional) throw new Error("A conditional edit is unresolved; retry it before redo");
-        const {ops, caret} = this.withEvents("redo", () => this.history.redo(this.doc));
+        const {ops, caret} = this.withEvents("redo", () => this.engine.redo());
 
         this.commit(ops, null);
 
@@ -486,7 +497,7 @@ export class SyncClient {
     clearHistory(): void {
         this.assertLocalMutation();
         if (this.conditional) throw new Error("A conditional edit is unresolved; retry it before clearing history");
-        this.history.clear();
+        this.engine.clearHistory();
         this.persistCheckpoint(this.onCheckpoint);
         this.scheduleAck();
     }
@@ -504,19 +515,16 @@ export class SyncClient {
         }
         // Honor a caller's guard before submitting. Do not invoke arbitrary guards
         // again after the server has accepted the change.
-        this.doc.editGuard?.();
-        const snapshot = JSON.stringify(this.doc.snapshot());
-        const draft = Doc.fromSnapshot(this.actor, JSON.parse(snapshot), this.schema);
-        const candidate = draft.edit(edits);
-        const problem = this.doc.check(candidate.ops);
+        this.engine.assertEditing();
+        const snapshot = JSON.stringify(this.engine.snapshot());
+        const draft = this.engine.prepareSnapshot(JSON.parse(snapshot) as Snapshot);
+        const candidate = this.engine.compilePrepared(draft, edits);
+        const problem = this.engine.check(candidate.ops);
         if (problem) throw new Error(`Schema or operation validation failed: ${problem}`);
         if (!candidate.ops.length) return {status: "no_change"};
         this.conditional = {base: {...base}, change: {actor: this.actor, seq: this.seq + 1, ops: candidate.ops},
-            edits: structuredClone(edits), snapshot, events: [], reconnect: false, attempting: false, priorGuard: this.doc.editGuard, wasUnconfirmed: false};
-        const priorGuard = this.doc.editGuard;
-        this.doc.editGuard = () => {
-            if (!this.installingConditional) throw new Error("A conditional edit is unresolved; retry it before changing the document");
-        };
+            edits: structuredClone(edits), snapshot, events: [], reconnect: false, attempting: false, priorGuard: null, wasUnconfirmed: false};
+        this.attach();
         return this.retryConditional(send);
     }
 
@@ -544,23 +552,24 @@ export class SyncClient {
         if (reply.status === "accepted") {
             // Do not install accepted operations onto an unexpectedly changed local state.
             // The original request remains available for idempotent recovery.
-            if (JSON.stringify(this.doc.snapshot()) !== attempt.snapshot || this.seq + 1 !== attempt.change.seq) {
+            if (JSON.stringify(this.engine.snapshot()) !== attempt.snapshot || this.seq + 1 !== attempt.change.seq) {
                 return {status: "unconfirmed", message: "The server accepted the edit, but the local state changed. The request is retained for recovery."};
             }
-            const check = Doc.fromSnapshot(this.actor, this.doc.snapshot(), this.schema).edit(attempt.edits);
+            const preview = this.engine.prepareSnapshot(this.engine.snapshot());
+            const check = this.engine.compilePrepared(preview, attempt.edits);
             if (JSON.stringify(check.ops) !== JSON.stringify(attempt.change.ops)) {
                 return {status: "unconfirmed", message: "The accepted edit could not be reproduced locally. The request is retained for recovery."};
             }
             this.installingConditional = true;
             let ops: Op[];
-            try { ({ops} = this.doc.edit(attempt.edits)); }
+            try { ops = this.engine.apply(attempt.edits, {accepted: true}); }
             finally { this.installingConditional = false; }
-            this.history.record(ops, this.doc, {caretBefore: "", caretAfter: ""});
+            this.engine.record(ops, {caretBefore: "", caretAfter: ""});
             this.seq = attempt.change.seq;
             this.pending.push(attempt.change);
         }
-        this.doc.editGuard = attempt.priorGuard;
         this.conditional = null;
+        this.attach();
         if (attempt.reconnect) {
             if (!this.online) this.connect();
         } else {
@@ -573,6 +582,13 @@ export class SyncClient {
         } finally {
             this.finalizingConditional = false;
         }
+    }
+
+    dispose(): void {
+        if (this.disposed) return;
+        const history = this.engine.historyStatus();
+        if (this.hasProtectedLocalState || this.conditional || history.canUndo || history.canRedo) throw new Error("Cannot dispose a client with protected local state or history");
+        this.disconnect(); this.engine.dispose(); this.disposed = true;
     }
 
     /** 줄에 선 것을 차례로 하나씩 보낸다. 끊기면 멈추고, 다시 이어질 때 확인 안 된 변경부터 다시 보낸다 */
@@ -617,7 +633,7 @@ export class SyncClient {
             this.outbox = this.outbox.filter(m => m.kind !== "ack");
             this.outbox.push({
                 kind: "ack",
-                ack: {actor: this.actor, serverSeq: this.serverSeq, pin: this.history.pin(this.seqOf)},
+                ack: {actor: this.actor, serverSeq: this.serverSeq, pin: this.engine.historyPin(this.engine.historyDeletionKeys().flatMap(key => { const seq = this.delSeq.get(key); return seq === undefined ? [] : [[key, seq] as [string, number]]; }))},
             });
             this.flush();
         };
@@ -633,7 +649,7 @@ export class SyncClient {
     // ── 서버에서 온 것 ────────────────────────────────────────────────────
 
     private receive(event: ServerEvent, connection: number): void {
-        let helloDoc: Doc | null = null;
+        let helloDoc: EnginePreparedDocument | null = null;
         // A reset replaces the document generation. Never discard unconfirmed
         // local work merely because a live reset arrived before a new hello.
         if (event.type === "reset" && this.hasProtectedLocalState) {
@@ -692,7 +708,7 @@ export class SyncClient {
             // Prepare untrusted stored state before acknowledging or discarding any pending edit.
             // A failed snapshot must also leave native composition/reset hooks untouched.
             if (event.snapshot) {
-                try { helloDoc = Doc.fromSnapshot(this.actor, event.snapshot, this.schema); }
+                try { helloDoc = this.engine.prepareSnapshot(event.snapshot); }
                 catch (error) {
                     this.connectionError = error instanceof Error ? error : new Error(String(error));
                     this.disconnect();
@@ -724,15 +740,13 @@ export class SyncClient {
                 // A same-generation snapshot can omit locally allocated identities
                 // from retired or protected work. Never allocate those names again.
                 // Epoch replacement still uses the existing reset rules below.
-                const allocationFloor = this.epoch !== undefined && this.epoch === event.epoch ? this.doc.clock.lamport : 0;
+                const allocationFloor = this.epoch !== undefined && this.epoch === event.epoch ? this.engine.allocationFloor() : 0;
                 const accepted = event.snapshot ? event.clientSeqs?.find(([actor]) => actor === this.actor)?.[1] ?? 0 : 0;
                 const pending = event.snapshot ? this.pending.filter(change => change.seq > accepted) : this.pending;
                 if (helloDoc) {
                     const mine = pending.flatMap(change => change.ops);
                     try {
-                        const problem = helloDoc.check(mine);
-                        if (problem) throw new Error(`Cannot reapply pending edits: ${problem}`);
-                        mine.forEach(op => helloDoc!.apply(op));
+                        this.engine.replayPrepared(helloDoc, this.actor, mine);
                     } catch (error) {
                         this.connectionError = error instanceof Error ? error : new Error(String(error));
                         this.disconnect();
@@ -740,7 +754,7 @@ export class SyncClient {
                     }
                 }
                 if (this.epoch !== undefined && event.epoch !== this.epoch) {
-                    this.history = new History();
+                    this.engine.clearHistory();
                     this.seq = 0;
                     this.delSeq.clear();
                     this.gcFrontier = 0;
@@ -753,8 +767,7 @@ export class SyncClient {
                     this.pending = pending;
                     this.outbox = this.outbox.filter(message => message.kind !== "change" || message.change.seq > accepted);
                     const replacement = helloDoc;
-                    replacement.clock.lamport = Math.max(replacement.clock.lamport, allocationFloor);
-                    this.withEvents("snapshot", () => { this.doc = this.attach(replacement); });
+                    this.withEvents("snapshot", () => this.engine.installPrepared(replacement, {clockFloor: allocationFloor}));
                     event.delSeqs.forEach(([key, seq]) => this.delSeq.set(key, seq));
                     this.serverSeq = event.serverSeq;
                     this.forceSnapshot = false;
@@ -779,8 +792,8 @@ export class SyncClient {
                 break;
             case "reset":
                 if (event.epoch) this.epoch = event.epoch;
-                this.withEvents("reset", () => (this.doc = this.attach(new Doc(this.actor, this.schema))));
-                this.history = new History();
+                this.withEvents("reset", () => this.engine.reset());
+                this.engine.clearHistory();
                 this.pending = [];
                 this.outbox = [];
                 this.delSeq.clear();
@@ -794,40 +807,26 @@ export class SyncClient {
     }
 
     private receiveEnvelope(envelope: Envelope): void {
-        // 스냅숏에 이미 포함된 내 변경도 수신 확인은 처리한다.
-        if (envelope.change?.actor === this.actor) {
-            this.pending = this.pending.filter(change => change.seq > envelope.change!.seq);
-        }
-
+        const own = envelope.change?.actor === this.actor;
         if (envelope.serverSeq <= this.serverSeq) {
+            if (own) this.pending = this.pending.filter(change => change.seq > envelope.change!.seq);
             return;
         }
-
-        this.serverSeq = envelope.serverSeq;
-
         if (envelope.gc !== undefined) {
-            // 로그의 이 자리에서 모두가 같은 압축을 한다
-            this.doc.compact(envelope.gc, this.seqOf);
+            this.engine.compact(envelope.gc, [...this.delSeq]);
+            this.serverSeq = envelope.serverSeq;
             this.gcFrontier = envelope.gc;
             this.scheduleAck();
-
             return;
         }
-
         const {change} = envelope;
-
-        change.ops.forEach(op => op.t === "del" && this.delSeq.set(keyOf(op.at), envelope.serverSeq));
-
-        if (change.actor !== this.actor) {
-            this.withEvents("remote", () => change.ops.forEach(op => this.doc.apply(op)), change.ops);
-        }
-
+        const accepted = (deletions: string[]) => {
+            this.serverSeq = envelope.serverSeq;
+            deletions.forEach(key => this.delSeq.set(key, envelope.serverSeq));
+            if (own) this.pending = this.pending.filter(pending => pending.seq > change.seq);
+        };
+        if (own) accepted(change.ops.flatMap(op => op.t === "del" ? [keyOf(op.at)] : []));
+        else this.withEvents("remote", capture => { const result = this.engine.receive(change.actor, change.ops, capture); accepted(result.deletions); }, change.ops);
         this.scheduleAck();
     }
 }
-
-/** 물러서기 — 맨 위 자식을 모두 지우고 뒤 모델의 자식으로 채운다 */
-const replaceAll = (before: NodeJSON, after: NodeJSON): EditOp[] => [
-    {op: "delete", at: [0], count: (before.children ?? []).length},
-    {op: "insert", at: [0], content: after.children ?? []},
-];

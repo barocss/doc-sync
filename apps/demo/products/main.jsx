@@ -13,7 +13,7 @@ import {baseKeymap,toggleMark} from 'prosemirror-commands';
 import {keymap} from 'prosemirror-keymap';
 import {tableEditing} from 'prosemirror-tables';
 import {Doc,canonical,assertCompatibleSchema} from '@barocss/doc-sync';
-import {SyncClient,HttpTransport,LiveRecovery,BrowserRecovery,upgradeOpenEditorSchema,botFace} from '@barocss/doc-sync/sync';
+import {SyncClient,HttpTransport,LiveRecovery,BrowserRecovery,upgradeOpenEditorSchema,botFace,typescriptClientEngineFactory} from '@barocss/doc-sync/sync';
 import {SlateBinding,fromSlate,slateRangeToModel,modelRangeToSlate,toSlate} from '@barocss/doc-sync/slate';
 import {LexicalBinding,buildLexicalSchema,readLexicalModel,$lexicalSelection,$setLexicalSelection,LEXICAL_REMOTE_TAG} from '@barocss/doc-sync/lexical';
 import {PmBinding,buildPmSchema,fromPmJSON,pmPosToPath,pathToPmPos,toPmJSON} from '@barocss/doc-sync/prosemirror';
@@ -23,6 +23,14 @@ import {productLeafCodec} from './leaf.mjs';
 
 const query=new URLSearchParams(location.search),recoveryEnabled=query.get('recovery')==='1',profile=query.get('profile')??'word',size=query.get('size')==='large'?'large':'sample';
 if(!Object.hasOwn(PRODUCT_SCHEMAS,profile))throw new Error('Unknown product profile');
+const engineChoice=query.get('engine');
+if(engineChoice!==null&&engineChoice!=='typescript')throw new Error('Unknown production engine');
+const engineDiagnostics=[];
+function selectedEngineFactory(name){
+ const calls=Object.create(null),entry={name,factory:typescriptClientEngineFactory.engine,calls,identity:null};engineDiagnostics.push(entry);
+ const track=(value,prefix='')=>new Proxy(value,{get(target,key){const member=Reflect.get(target,key,target);if(typeof member!=='function')return member;return (...args)=>{const method=prefix+String(key);calls[method]=(calls[method]??0)+1;const result=member.apply(target,args);return key==='createSession'?track(result,'session.'):result;};}});
+ return {engine:typescriptClientEngineFactory.engine,contractVersion:typescriptClientEngineFactory.contractVersion,create(actor,schema){calls.create=(calls.create??0)+1;const selected=typescriptClientEngineFactory.create(actor,schema);entry.identity=selected.identity();return track(selected);}};
+}
 let schema=PRODUCT_SCHEMAS[profile];const target=TARGETS[profile],doc=query.get('doc')??`${profile}-${Date.now().toString(36)}`,base=`/profiles/${profile}`;
 if(recoveryEnabled&&!query.has('doc')){query.set('doc',doc);history.replaceState(null,'',`${location.pathname}?${query}`);}
 const durablePeers=new Map();
@@ -51,7 +59,7 @@ async function refreshBot(){try{const response=await fetch(botUrl);if(!response.
 botSelect.addEventListener('change',renderBotJobs);
 botForm.addEventListener('submit',async event=>{event.preventDefault();if(!ready||peers.some(peer=>!peer.client.synchronized))return;botButton.disabled=true;botMessage.textContent='Starting bot…';try{const response=await fetch('/test/bot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile,doc,bot:botSelect.value,mission:document.querySelector('#bot-mission').value})});if(!response.ok){const data=await response.json();throw Error(data.error??'Unable to start');}await refreshBot();}catch(error){botMessage.textContent=`Could not start · ${error.message}`;botButton.disabled=false;}});
 if(query.get('bot')==='1'){refreshBot();setInterval(refreshBot,2000);}
-const botQuery=(query.get('bot')==='1'?'&bot=1':'')+(recoveryEnabled?'&recovery=1':'');
+const botQuery=(query.get('bot')==='1'?'&bot=1':'')+(recoveryEnabled?'&recovery=1':'')+(engineChoice?'&engine=typescript':'');
 const peers=[],errors=[],records=[];let active=null,ready=false;
 const report=error=>{errors.push(String(error.stack??error));document.querySelector('#errors').textContent=errors.join('\n');};
 window.addEventListener('error',event=>report(event.error??event.message));window.addEventListener('unhandledrejection',event=>report(event.reason));
@@ -84,7 +92,7 @@ function makePeer(name){
   const record=current(),timed=record&&event.type==='change'&&event.envelope.change?.actor===peers.find(peer=>peer.name===record.source)?.actor;
   if(timed)record.receive[name]={start:performance.now()};handler(event);if(timed)record.receive[name].end=performance.now();
  },epoch,schemaVersion);
- const client=new SyncClient(actor,transport,{schema,ackDelay:50,...(durable?{beforeSend:durable.persist}:{})});peer.client=client;peer.transport=transport;
+ const client=new SyncClient(actor,transport,{schema,ackDelay:50,...(engineChoice?{engineFactory:selectedEngineFactory(name)}:{}),...(durable?{beforeSend:durable.persist}:{})});peer.client=client;peer.transport=transport;
  if(recoveryEnabled){peer.recovery=new LiveRecovery(client,transport,{onProof:durable.saveProof});durable.bind(client,peer.recovery);durable.onFailure=error=>{peer.recoveryStopped=true;peer.section.inert=true;peer.recoveryStatus=error.message;renderPeerStatus(peer);};peer.section.inert=true;peer.recoveryStatus='Preparing recovery protection';peer.recoveryStopped=false;}
  const commit=client.commit.bind(client);client.commit=(ops,record)=>{const measurement=current();if(measurement?.source===name)measurement.commitStart=performance.now();const result=commit(ops,record);if(measurement?.source===name)measurement.commitEnd=performance.now();return result;};
  let presenceSignature='';
@@ -240,10 +248,10 @@ const upgradeStatus=document.createElement('span');upgradeStatus.setAttribute('r
 const upgradeButton=document.createElement('button');upgradeButton.textContent='Load server schema';upgradeButton.onmousedown=event=>event.preventDefault();upgradeButton.onclick=async()=>{upgradeStatus.textContent='Loading schema';try{const response=await fetch(`${base}/api/docs/${doc}/schema`);if(!response.ok)throw new Error(await response.text());const result=await response.json();if(!result.schema)throw new Error('Server schema unavailable');await upgradeEditors(result.schema);upgradeStatus.textContent='Schema loaded';}catch(error){upgradeStatus.textContent=`Schema transition failed: ${String(error.message??error)}`;}};document.querySelector('#profiles').append(upgradeButton,upgradeStatus);
 async function snapshot(){
  const response=await fetch(`${base}/api/docs/${doc}/state`);if(!response.ok)throw new Error(await response.text());const server=await response.json();
- const rows=peers.map(peer=>({name:peer.name,online:peer.client.online,pending:peer.client.pending.length,seq:peer.client.serverSeq,fallbacks:peer.client.eventStats.fallbacks,model:peer.client.doc.toJSON(),native:peer.read()}));
+ const rows=peers.map(peer=>({name:peer.name,online:peer.client.online,pending:peer.client.pending.length,seq:peer.client.serverSeq,fallbacks:peer.client.eventStats.fallbacks,model:peer.client.engine.model(),native:peer.read()}));
  const expected=JSON.stringify(server.model);return {profile,size,doc,ready,errors:[...errors],equal:!errors.length&&rows.every(row=>row.online&&!row.pending&&JSON.stringify(row.model)===expected&&JSON.stringify(row.native)===expected),server:server.model,peers:rows};
 }
-window.products={profile,size,doc,target,errors,retire:async name=>{const peer=peers.find(peer=>peer.name===name);if(!peer?.durable)throw new Error('Durable recovery is not enabled');peer.recoveryStopped=true;peer.section.inert=true;await peer.durable.retire();peer.recoveryStatus='Recovery retired';renderPeerStatus(peer);},recoveryRecords:()=>peers.map(peer=>({name:peer.name,record:peer.durable?.record??null})),ready:()=>ready,snapshot,status:()=>peers.map(peer=>({name:peer.name,online:peer.client.online,pending:peer.client.pending.length,seq:peer.client.serverSeq,recovery:peer.recoveryStatus??null})),range:name=>peers.find(peer=>peer.name===name).range(),schema:()=>structuredClone(schema),upgradeStatus:()=>upgradeStatus.textContent,upgrading:()=>upgrading,upgrade:upgradeEditors,disconnect:name=>peers.find(peer=>peer.name===name).client.disconnect(),connect:name=>peers.find(peer=>peer.name===name).client.connect(),clearHistory:()=>peers.forEach(peer=>peer.client.clearHistory()),edit:(name,edits)=>{const peer=peers.find(peer=>peer.name===name);peer.client.commit(peer.client.doc.edit(edits).ops);if(name==='Slate')peer.binding.sync();else if(name==='Lexical')peer.binding.pull();else peer.binding.pull();},
+window.products={profile,size,doc,target,errors,engine:{selection:engineChoice??'default',peers:engineDiagnostics},retire:async name=>{const peer=peers.find(peer=>peer.name===name);if(!peer?.durable)throw new Error('Durable recovery is not enabled');peer.recoveryStopped=true;peer.section.inert=true;await peer.durable.retire();peer.recoveryStatus='Recovery retired';renderPeerStatus(peer);},recoveryRecords:()=>peers.map(peer=>({name:peer.name,record:peer.durable?.record??null})),ready:()=>ready,snapshot,status:()=>peers.map(peer=>({name:peer.name,online:peer.client.online,pending:peer.client.pending.length,seq:peer.client.serverSeq,recovery:peer.recoveryStatus??null})),range:name=>peers.find(peer=>peer.name===name).range(),schema:()=>structuredClone(schema),upgradeStatus:()=>upgradeStatus.textContent,upgrading:()=>upgrading,upgrade:upgradeEditors,disconnect:name=>peers.find(peer=>peer.name===name).client.disconnect(),connect:name=>peers.find(peer=>peer.name===name).client.connect(),clearHistory:()=>peers.forEach(peer=>peer.client.clearHistory()),edit:(name,edits)=>{const peer=peers.find(peer=>peer.name===name);peer.client.commit(peer.client.engine.apply(edits));if(name==='Slate')peer.binding.sync();else if(name==='Lexical')peer.binding.pull();else peer.binding.pull();},
  arm:(source,expected)=>{if(current())throw new Error('Previous measurement is incomplete');active={source,expected,armedAt:performance.now(),inputAt:null,receive:{},dom:{},complete:false};records.push(active);return records.length-1;},measurement:()=>active,records:()=>records,clearMeasurements:()=>{active=null;records.length=0;}};
 const longTasks=[];
 if(PerformanceObserver.supportedEntryTypes.includes('longtask')){const observer=new PerformanceObserver(list=>{if(active)for(const entry of list.getEntries())longTasks.push({start:entry.startTime,duration:entry.duration});});observer.observe({type:'longtask'});window.products.longTasks=()=>longTasks;}

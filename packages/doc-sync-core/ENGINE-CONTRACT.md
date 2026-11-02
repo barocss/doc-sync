@@ -1,120 +1,139 @@
-# Draft engine contract, revision 1
+# Engine contracts, revision 1
 
-`@barocss/doc-sync-core/engine` exports `DocumentEngine`, its DTO types, and the
-`typescriptEngine` factory. This is a tested TypeScript adapter groundwork.
-Production `SyncClient`, `InputSession`, and editor bindings still use `Doc`.
-They do not select or use this port. No Rust or WASM backend is provided.
+Core exports two different engine contracts from
+`@barocss/doc-sync-core/engine`. The production contract is `ClientEngineFactory`
+and `ClientEngine`. The older immutable contract is `EngineFactory` and
+`DocumentEngine`. Their factories are not interchangeable.
+
+Only the TypeScript production implementation ships. Rust and WASM cannot be
+selected for a `SyncClient`. Selecting a factory at construction does not support
+changing engines in a live client. Routing, regression and conversion-count checks pass. Repeated/pooled Node and controlled Chrome client comparisons qualify the
+client migration. Small-block tails and original separate-server Chrome guard
+crossings remain reported; this is not general product-latency acceptance. See HANDOFF section
+5.104 and the client-engine comparison report.
+
+## Select the production engine
 
 ```ts
-import {typescriptEngine} from '@barocss/doc-sync-core/engine';
-const schema = {
-  root: 'note', marks: [],
-  nodes: {
-    note: {shape: 'flow', children: ['paragraph'], default: 'paragraph'},
-    paragraph: {shape: 'text'},
-  },
-} as const;
-const engine = typescriptEngine.create('writer-A', schema);
-const {ops, normalize} = engine.edit([
-  {op: 'insert', at: [0, 0], content: 'hello'},
-]);
+import {SyncClient, HttpTransport} from '@barocss/doc-sync-core/sync';
+import {typescriptClientEngineFactory} from '@barocss/doc-sync-core/engine';
+import {createSyncClientEditorHost} from '@barocss/doc-sync-core/editor';
+
+const actor = 'writer-A';
+const client = new SyncClient(actor, new HttpTransport('example', actor), {
+    schema,
+    engineFactory: typescriptClientEngineFactory,
+});
+const host = createSyncClientEditorHost(client);
+host.commit(host.apply([{op: 'insert', at: [0, 0], content: 'hello'}]));
+client.connect();
 ```
 
-## Supported operations
+`schema` is the application's validated schema. The factory creates the
+client's authoritative state. The constructor checks the production methods,
+identity, schema fingerprint, contract version, and required capabilities before
+connection. A metadata-only factory is insufficient. Omitting `engineFactory`
+selects `typescriptClientEngineFactory`.
 
-- Create an engine with any schema accepted by the existing TypeScript schema
-  validator. Identity includes engine name, contract revision, actor, complete
-  schema fingerprint, and supported capabilities. Invalid actors are rejected.
-- Query detached model and schema DTOs. No `Doc`, token storage object, `Map`, or
-  clock object crosses the interface.
-- Compile `EditOp[]` with the real compiler. Return actual wire `Op[]` and model
-  `normalize` edits. Normalization is always enabled. Only operations from this
-  edit enter local history. Pass `null` as the second argument to omit recording.
-- Receive a causally ordered wire batch with its writer actor. Validate the batch
-  on a candidate document, then apply it. Exact retries, including own edit,
-  undo, and redo echoes, retain the existing document semantics. Receive never
-  records history. Newly received operations advance the document clock. The
-  writer must match each operation's issuing ticket; referenced tokens can belong
-  to any actor. Missing causal predecessors are rejected, not buffered.
-- Own actor history: undo, redo, clear, availability, and deletion pin. The pin
-  method takes JSON pairs of deletion-ticket keys and server sequence numbers.
-  It calculates the existing History pin and does not run GC.
-- Capture and resolve anchors and forward or backward selections. Strings and
-  offsets use UTF-16 code units. Surrogate pairs and isolated surrogates survive
-  edit, wire transfer, JSON checkpoint, and undo. Hidden nested content resolves
-  to `null`. Deleted text in a visible line follows existing nearest-position
-  rules. Invalid paths and missing token keys return `null`.
-- Export and restore a coupled document and history checkpoint. Checkpoints are
-  tagged with the TypeScript engine format. Restore requires the same actor,
-  engine, contract revision, capability set, and schema fingerprint. History's
-  decoder validates its reference tables. Additional checks reject missing
-  document targets, insertion/deletion history from another actor, and history
-  clocks beyond the document clock. The checkpoint is trusted local recovery
-  data, not an authenticated or tamper-proof message.
+`SyncClient`, `InputSession`, and the common editor host use the selected engine.
+ProseMirror, Slate, and Lexical bindings use that host; Tiptap uses the shared
+ProseMirror implementation. The common port has no `Doc`, `History`, token map,
+clock object, or callback that takes a document. Models are borrowed immutable
+views. Generation/revision stamps let hosts cache them.
 
-Each input and output must contain finite plain JSON values. Accessors, cycles,
-exotic objects, sparse arrays, and non-finite numbers are rejected. DTO copies use `structuredClone` after the plain-value guard. This preserves
-shared references, negative zero, and isolated surrogate code units at the copy
-boundary. The existing History serializer and inverse-operation grouping use
-JSON number semantics: negative zero can become positive zero during undo or
-history recovery. JSON serialization of a checkpoint also normalizes negative
-zero. This port does not strengthen those existing guarantees.
+The default preserves the actual legacy `client.doc`, `client.history`, and
+`InputSession.doc` objects through a separate TypeScript compatibility extension.
+A backend without that extension rejects these accesses. Existing custom
+Doc-based input sessions and inherited document facades use a named TypeScript
+compatibility adapter. They are optional escape paths, not portable backend APIs.
+No shadow Doc mirrors a selected backend.
 
-Each mutation first clones the document snapshot and restores a separate history
-graph. The adapter installs both only after the complete operation and output
-copy succeed. A compiler, validation, apply, or restore error preserves the live
-document, history, clock, and revision. This favors a clear atomicity boundary.
-It adds a full document/history copy per mutation and has no latency guarantee.
-Revision counts successful mutation calls, including duplicate receive calls and
-empty history actions. Restore installs the saved revision. Revision is not a
-server sequence or a content hash.
+## Mutation and session ownership
 
-## Limits and next steps
+- `engine.apply()` and `applyModelEdits()` compile and apply local edits. They
+  return exact wire operations and do not record History or queue transport work.
+- `client.commit(ops, record)` records once, allocates a client sequence, and
+  queues the already-applied operations. Do not apply those operations again.
+- Engine undo and redo apply their operations and update History once. The
+  client queues them without another History entry.
+- Remote receive does not record local History. An own server echo acknowledges
+  the pending change without applying it again.
+- `InputSession` holds an engine-created session. Editing and selection capture
+  use its draft; selection resolution uses live state. Clock reservation keeps
+  allocation safe while remote receipt continues.
+- A session collects an owned copy of draft operations. `publish()` applies those retained
+  operations to live state without recording or queuing. `InputSession.end()`
+  calls `client.commit()` once with the combined caret range, then cancels the
+  session. It does not rebuild operations from a model diff.
 
-Capabilities `composition`, `events`, `gc`, and `schema-transition` are absent.
-`requireCapability()` throws for these capabilities. The port does not implement
-composition drafts, clock reservation between drafts and live state, pending
-transport queues or acknowledgements, conditional edits, recovery controller
-protection, live schema changes, verified mutation events, disposal, or GC.
-A port checkpoint does not save pending network operations or server metadata.
-Use the existing client recovery API for a connected production client. An engine
-restore is local recovery and must not run beside another live writer with the
-same actor identity.
+Prepared document, checkpoint, and event handles belong to their engine
+instance. A different instance must reject them before mutation. The engine
+owns snapshot preparation/replay/install, conditional-edit preparation, scoped
+model events, anchors, GC, and compatible schema preview/upgrade.
 
-The checkpoint envelope deliberately identifies a TypeScript document format.
-The common `EngineCheckpoint` leaves document and history payloads opaque.
-`TypeScriptEngineCheckpoint` gives the existing `Snapshot` and `HistorySnapshot`
-DTOs concrete types. Another backend must reject the TypeScript format until
-lossless snapshot/history conversion is proved. No common native snapshot layout
-is assumed. Contract revision 1 remains
-a draft; backend-specific state layout needs review before a second backend.
+The TypeScript implementation uses a bounded existing-text fast path for normal
+single edits and plain root text split/merge. More complex edits use detached preflight. It does not put the
+older immutable engine's full document/History transaction on each keystroke.
+This describes the implementation; it is not a performance acceptance result.
 
-Migration must first add the missing capabilities and their acceptance tests.
-Then adapt `InputSession`, `SyncClient`, model events, and each editor binding.
-Rust still needs compiler, arbitrary-schema, runtime-schema, history, anchor, GC,
-and UTF-16 parity before an actual WASM adapter can pass the same suite. A future
-engine selector requires that adapter and browser editor validation.
+Preflight runs after the initial TypeScript edit guard and before compilation.
+Invalid engine inputs preserve document state, History and allocation state.
+Custom guards must act as assertions. Later legacy emit guards can run more
+than once; arbitrary mutations or exceptions inside those callbacks are not a
+rollback transaction. Application callback side effects are outside the engine
+input-atomicity guarantee.
 
-## Evidence
+For remote events, `beginEvents(ops)` copies and validates the whole batch before
+lazy model reads. `receive(writer, ops, capture)` applies that owned batch and
+returns `{deletions: string[]}` from the operations actually applied. It reuses
+the proof on the unchanged path. Source-array mutation cannot change the prepared
+batch or the client's deletion ledger. Captures are instance-bound, source-bound
+and single-use for receive. Changed generation, revision or schema rejects the
+staged receive before application; token-only materialization requires recheck.
+Prepare another capture after an intervening edit. A successful receive leaves
+its capture available for `finishEvents`; finishing a stale unreceived capture
+fails. Captures without a batch keep the existing undo/reset event lifecycle.
+Without model listeners, the client receives and validates directly once.
 
-The focused suite is `test/engine-contract.test.ts`. It covers two independently
-renamed text schemas and a separately named grid schema; actual nonempty table
-normalization; UTF-16 and isolated surrogates; concurrent actors with causal delay
-and duplicate retries; same-actor edit/undo/redo echoes; continuation after restore;
-foreign same-value formatting and concurrent deletion; backward selections; hidden
-anchors; and atomic failures for edits, wire batches, checkpoint metadata,
-history references, document coupling, and clocks. Differential checks compare
-shared and distinct object-valued span inputs with the real `Doc` compiler, model,
-anchors, and checkpoint continuation. A separate `Doc`/`History` comparison checks
-negative-zero DTO copies and existing undo number semantics.
+`disconnect()` retains pending changes and History for reconnect. `dispose()` is
+terminal. It rejects protected local state, an unresolved conditional request,
+or undo/redo History. Clear or resolve that state through the normal application
+workflow before disposal.
 
-Run it with Node 24 and run the core build and workspace typecheck:
+## Checkpoints and recovery
 
-```sh
-node --test packages/doc-sync-core/test/engine-contract.test.ts
-npm run build --workspace @barocss/doc-sync-core
-npm run typecheck
-```
+Legacy `checkpoint()` and `restoreCheckpoint()` retain the exact format-1
+TypeScript snapshot/History envelope. That format is TypeScript-specific.
 
-These are adapter/source checks. They do not establish production binding use,
-network recovery, performance, WASM support, or package publication.
+`captureState()` and `restoreState()` use format 2. The envelope holds one tagged
+engine checkpoint, plus client sequence, pending operations, and GC metadata.
+The client treats the engine payload as opaque and checks engine, version,
+actor, and schema identity before installation. The engine validates its own
+payload. This is matching-engine recovery, not conversion between engines.
+Restore requires a disconnected, settled client and external proof of the
+matching epoch and GC protection. Capture alone does not persist durable state.
+
+`LiveRecovery` and the Node journal currently use the legacy format-1
+recovery path. They remain TypeScript-specific. A portable durable recovery
+adapter is future D4 work. A server snapshot alone cannot restore actor History.
+
+## Older immutable document API
+
+`typescriptEngine` implements `DocumentEngine` for direct document experiments.
+It supports edit, receive, actor History, anchors, and tagged TypeScript
+checkpoints. `edit()` records by default; pass `null` to omit recording. Each
+mutation stages a document snapshot and separate History graph, then installs
+both after validation. This favors atomicity and adds full copies per mutation.
+It is not the production `ClientEngineFactory` and cannot be passed as
+`SyncClient`'s `engineFactory`.
+
+This older port lacks production composition, model events, GC, schema
+transitions, transport queues, and client recovery. Its
+`test/engine-contract.test.ts` checks direct adapter behavior. Those checks do
+not prove production client routing, browser bindings, performance, a Rust/WASM
+backend, or package publication.
+
+Both contracts use UTF-16 offsets and preserve isolated surrogate code units.
+Existing History and JSON number semantics can normalize negative zero. Engine
+checkpoint formats remain backend-specific; no native state layout or lossless
+cross-engine conversion is assumed.

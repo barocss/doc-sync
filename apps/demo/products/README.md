@@ -22,6 +22,31 @@ After a compatible schema has been accepted by the server, select **Load server 
 
 The views expose structure and editable text. They do not implement Word pagination, a Notion query engine, presentation canvas positioning or product file import/export. Slide objects use an outline. Stored media are labeled placeholders; arbitrary URLs/HTML are not loaded into native node views.
 
+## Explicit TypeScript engine trace
+
+Open `http://127.0.0.1:5413/?profile=word&engine=typescript` to pass
+`typescriptClientEngineFactory` explicitly to each real `SyncClient`. The shared
+editor host and composition sessions use the selected engine. Inspect
+`window.products.engine` for the selection, per-peer factory/engine identity, and
+live method counts. Composition calls have a `session.` prefix. Diagnostics do
+not capture full snapshots. Profile and size links retain the engine query.
+
+An unsupported engine value fails before client creation or connection. Without
+the query, the demo uses the normal TypeScript default without tracing proxies.
+Only TypeScript ships; this option does not select Rust/WASM or change engines
+in a running client. The older immutable `typescriptEngine` factory is not a
+production client factory.
+
+The separate Tiptap demo also accepts `?engine=typescript`. Its
+`window.tiptapDemo.engine` contains per-actor live engine call counts. Tiptap uses
+ProseMirror transactions, so its diagnostic marks draft sessions as not
+applicable. Unsupported values fail before connection; no query uses the
+untraced default.
+
+These traces show routing. They do not establish a full D1 PASS, the performance
+budget, durable recovery with another backend, or physical OS IME behavior.
+D1 validation remains pending until the recorded gates pass.
+
 ## Chrome checks
 
 Use the Playwright CLI skill with Google Chrome. Open the printed URL in a dedicated session, then run:

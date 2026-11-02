@@ -85,7 +85,7 @@ Bot work has its own acceptance gates and does not renumber engine items 1–9. 
 
 ## Separate Rust experiment
 
-See the [Rust engine overview](./guide/rust) for the current contract, evidence, and remaining gates. The [ordered D1–D9 delivery queue](./guide/rust#ordered-delivery-work) turns the remaining R4–R6 gates into client-boundary, schema/compiler, recovery, native SDK, full WASM, binding and release work. D1 is the next implementation slice; the native server remains optional.
+See the [Rust engine overview](./guide/rust) for the current contract, evidence, and remaining gates. The [ordered D1–D9 delivery queue](./guide/rust#ordered-delivery-work) turns the remaining R4–R6 gates into client-boundary, schema/compiler, recovery, native SDK, full WASM, binding and release work. D1 now provides the selected TypeScript client and binding boundary, with passing routing/regression/count checks and bounded client timing evidence. Broader Chrome end-to-end latency remains open. D2 runtime schemas are the next Rust implementation lane; the native server remains optional.
 
 The [Rust engine roadmap](https://github.com/barocss/doc-sync/blob/main/docs/rust-roadmap.md) defines a separate R1–R6 sequence. R1 has bounded UTF-16 contract and baseline evidence. R2 passed its declared [storage comparison gate](https://github.com/barocss/doc-sync/blob/main/experiments/rust-core/STORAGE-RESULTS.md) with independent JavaScript, native Rust, and WASM checks; the alternating-end regression remains recorded. R3 passed its declared boundary and lifetime gate in Node 24 and Chrome. These results do not approve a production migration.
 

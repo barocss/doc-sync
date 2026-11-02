@@ -230,3 +230,29 @@ test("host live editing preserves direct custom guard invocation counts", () => 
     assert.equal(adaptedCount, directCount);
     assert.deepEqual(adapted.client.doc.toJSON(), direct.client.doc.toJSON());
 });
+
+test("legacy document-only clients retain selection lookup without an engine", () => {
+    const doc = new Doc("legacy", schema);
+    doc.edit(insert("abc"));
+    const input = new InputSession({doc} as SyncClient);
+    const range = input.capture({anchor: [0, 1], focus: [0, 2]});
+    assert.ok(range);
+    assert.deepEqual(input.resolve(range), {anchor: [0, 1], focus: [0, 2]});
+    assert.equal(input.resolve({anchor: "missing", focus: "missing"}), null);
+});
+
+test("legacy inherited client facades read their dynamic document identity", () => {
+    const {client} = setup();
+    const make = (value: string) => {
+        const doc = new Doc("seed", schema); doc.edit(insert(value));
+        return Doc.fromSnapshot(client.actor, doc.snapshot(), schema);
+    };
+    let current = make("live");
+    const facade = Object.create(client) as SyncClient;
+    Object.defineProperty(facade, "doc", {get: () => current});
+    const host = createSyncClientEditorHost(facade), first = host.model();
+    current = make("draft");
+    assert.equal(first.stamp.revision, current.version);
+    assert.equal(text(host.model().model), "draft");
+    assert.notEqual(host.stamp().generation, first.stamp.generation);
+});

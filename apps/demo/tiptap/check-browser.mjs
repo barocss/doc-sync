@@ -8,6 +8,7 @@ import {pathToFileURL} from 'node:url';
 const url = process.argv[2];
 if (!url) throw new Error('Usage: node apps/demo/tiptap/check-browser.mjs http://127.0.0.1:PORT');
 const session = `docsync-tiptap-proof-${process.pid}`;
+const selected = new URL(url).searchParams.get('engine') === 'typescript';
 const output = process.env.TIPTAP_BROWSER_OUT
     ? pathToFileURL(resolve(process.env.TIPTAP_BROWSER_OUT) + sep)
     : new URL('../../../output/tiptap-evidence/', import.meta.url);
@@ -23,7 +24,7 @@ const button = (actor, position) => run('click', `#panes > section:nth-child(${a
 const editor = actor => run('click', `[aria-label="${actor} editor"]`);
 const state = () => evaluate('({equal:tiptapDemo.inspect().equal,pending:tiptapDemo.clients.map(c=>c.pending.length),online:tiptapDemo.clients.map(c=>c.online),text:tiptapDemo.editors.map(e=>e.getText()),destroyed:tiptapDemo.editors.map(e=>e.isDestroyed)})');
 let firstFailure = null;
-const receipt = {browser: null, input: null, undo: null, redo: null, selection: null, offline: null, reconnect: null, remount: null, errors: null, osIME: 'NOT_RUN'};
+const receipt = {browser: null, input: null, undo: null, redo: null, selection: null, offline: null, reconnect: null, remount: null, errors: null, engine: null, osIME: 'NOT_RUN'};
 try {
     run('open', url); run('wait', '--fn', '!!window.tiptapDemo');
     run('click', '#reset'); wait();
@@ -46,6 +47,21 @@ try {
     button(2, 9); button(1, 7); button(2, 9); wait(); receipt.remount = state();
     assert.equal(receipt.remount.equal, true); assert.deepEqual(receipt.remount.destroyed, [false, false]);
     run('screenshot', new URL('chrome-remount.png', output).pathname);
+    receipt.engine = evaluate('tiptapDemo.engine');
+    if (selected) {
+        assert.equal(receipt.engine.selected, 'typescript'); assert.equal(receipt.engine.tracked, true);
+        for (const actor of ['alice', 'bob']) {
+            const calls = receipt.engine.calls[actor];
+            assert.equal(calls.create, 1); assert.ok(calls.model > 0);
+            assert.ok((calls.apply ?? 0) + (calls.applyModelEdits ?? 0) > 0);
+            assert.ok(calls.receive > 0); assert.ok(calls.record > 0);
+            assert.ok(calls.captureAnchor > 0); assert.ok(calls.locateAnchor > 0);
+        }
+        assert.ok(receipt.engine.calls.alice.undo > 0); assert.ok(receipt.engine.calls.alice.redo > 0);
+    } else {
+        assert.equal(receipt.engine.selected, 'default'); assert.equal(receipt.engine.tracked, false);
+        assert.deepEqual(receipt.engine.calls, {});
+    }
     receipt.errors = run('errors');
     assert.deepEqual(receipt.errors.errors ?? [], []);
     receipt.result = 'PASS';
@@ -53,6 +69,8 @@ try {
     console.log(JSON.stringify(receipt, null, 2));
 } catch (error) {
     firstFailure = error;
+    receipt.result = 'FAIL'; receipt.firstFailure = String(error?.stack ?? error);
+    await writeFile(new URL('chrome-receipt.json', output), JSON.stringify(receipt, null, 2) + '\n');
     throw error;
 } finally {
     try { run('close'); }

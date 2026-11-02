@@ -6,6 +6,6 @@ Run `npm install` and `npm run build` from the repository root with Node 24. The
 
 The core has no external runtime dependencies. Public entries are the root, `/sync`, `/server`, `/node`, `/editor`, and `/engine`. Root and sync imports do not require an editor.
 
-The experimental TypeScript engine contract is not wired into production bindings or transports. See [ENGINE-CONTRACT.md](./ENGINE-CONTRACT.md) for supported operations and limits. No Rust/WASM backend is supplied.
+`SyncClient` accepts `engineFactory: typescriptClientEngineFactory` from `/engine` or `/sync`. The selected engine owns live document and History state and drives the client, editor hosts and input sessions. TypeScript is the default and the only production implementation. The separate immutable `typescriptEngine` API remains an experiment. See [ENGINE-CONTRACT.md](./ENGINE-CONTRACT.md) for ownership, checkpoint and compatibility rules. No Rust/WASM backend is supplied.
 
 The draft internal compatibility range is `>=0.0.0 <0.1.0`. A binding patch can advance within this range without changing facade or sibling package versions. This is a local artifact policy, not registry release evidence. A future 0.1 minor release must set and verify its own supported ranges.

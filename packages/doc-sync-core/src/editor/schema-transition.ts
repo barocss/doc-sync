@@ -1,4 +1,3 @@
-import {Doc} from "../crdt/doc.ts";
 import {assertCompatibleSchema, schemaVersion} from "../crdt/schema-version.ts";
 import {InputSession, subscribeClient} from "./index.ts";
 import type {ModelRange} from "./index.ts";
@@ -36,7 +35,7 @@ export async function upgradeOpenEditorSchema<Prepared>(client: SyncClient, next
         const selection = host.selection();
         const anchors = new InputSession(client).capture(selection);
         if (selection && !anchors) throw new Error("The editor selection cannot be anchored safely");
-        const model = Doc.fromSnapshot(client.actor, client.doc.snapshot(), next).toJSON();
+        const model = client.previewSchema(next);
         const prepared = host.prepare(next, model);
         client.disconnect();
         detached = true;

@@ -11,7 +11,7 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 - Per-user undo and redo that retain independent changes under the stated ownership rules.
 - Remote cursors and selection ranges, including backward and overlapping selection.
 - Independent ProseMirror, Tiptap, Slate and Lexical binding packages, with the original compatibility subpaths.
-- Shared EditorHost/EditorSession integration backed by the existing TypeScript client, with preserved legacy client/input references.
+- Shared EditorHost/EditorSession integration that calls the selected production client engine, with preserved legacy TypeScript client/input references. TypeScript is the only delivered backend.
 - Identity-preserving paragraph, block and group placement, with conditional undo.
 - Required-child and maximum-count projection with retained overflow.
 - Declared nested-attribute field registers and persistent annotations.
@@ -25,7 +25,29 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 
 ## Regression coverage
 
-The current SDK-documentation and final-review checkpoint passes **1,148
+The selected-TypeScript engine checkpoint passes **1,199 full-workspace cases
+on macOS: 1,197 PASS, two platform SKIPs, zero FAIL** with `FUZZ_SEEDS=3000` and
+`PM_SEEDS=300`. This includes 751 library, 110 Core, eight binding Host, 53 bot,
+68 demo, 28 documentation and 181 MCP cases. Type checking and the separate
+33-case comparison demo pass. Six package artifacts pass seven isolated consumer
+checks. Format-2 opaque state and real selected-engine binding routing have
+dedicated regressions. Portable durable recovery remains D4 work.
+
+Fresh Chrome 156 checks pass nine rich-profile combinations (Word, Notion and
+presentation × Slate, Lexical and ProseMirror) for input, foreign edits, selection,
+undo/redo and reconnect, plus nine native Enter/Backspace combinations. Actual
+selected engine calls are checked. Tiptap passes default and explicit TS modes,
+selection, History, reconnect and remount; an unsupported selector is rejected
+before editor mount. Normal paths have no console/page errors. Actual OS IME
+remains NOT_RUN. Controlled comparisons include a 64-pair Chrome check. The pooled Node remote8
+128-pair median/p95 are within guards; two of its four small-block p95 scores
+remain flagged. Exact shared-backend Chrome controls cover all 12 original
+flagged cells, with no persistent crossing under those conditions. The original separate-server
+comparison still flags 12/27 source/target cells. General Chrome end-to-end
+latency acceptance remains open; these results do not turn every original score
+into a PASS.
+
+The earlier SDK-documentation and final-review checkpoint passes **1,148
 full-workspace tests on macOS: 1,146 PASS, two platform SKIPs, zero FAIL**. This
 includes 748 library, 62 Core, eight binding Host, 53 bot, 68 demo, 28
 documentation, and 181 MCP cases. The comparison demo separately passes 33/33.

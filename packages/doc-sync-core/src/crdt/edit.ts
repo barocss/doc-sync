@@ -94,7 +94,37 @@ const innerLine = (ref: Ref, doc: Doc): string | null => {
     return null;
 };
 
+type PathMemo = {revision: number; tokens: number; schema: Doc["schema"]; entries: Map<string, Ref>};
+const pathMemos = new WeakMap<Doc, PathMemo>();
+
+/** Only the production engine opts in. Mutation invalidates every stored path. */
+export function withPathMemo<T>(doc: Doc, read: () => T): T {
+    if (!Object.isFrozen(doc.schema)) return read();
+    const prior = pathMemos.get(doc);
+    pathMemos.set(doc, {revision: doc.version, tokens: doc.storedTokenCount(), schema: doc.schema, entries: new Map()});
+    try { return read(); }
+    finally { if (prior) pathMemos.set(doc, prior); else pathMemos.delete(doc); }
+}
+
 export const resolvePath = (doc: Doc, path: ModelPath, vacant?: Set<string>): Ref => {
+    const memo = vacant?.size ? undefined : pathMemos.get(doc);
+    if (!memo) return resolvePathUncached(doc, path, vacant);
+    const refresh = () => {
+        const tokens = doc.storedTokenCount();
+        if (memo.revision !== doc.version || memo.tokens !== tokens || memo.schema !== doc.schema) {
+            memo.entries.clear(); memo.revision = doc.version; memo.tokens = tokens; memo.schema = doc.schema;
+        }
+    };
+    refresh();
+    const key = JSON.stringify(path), cached = memo.entries.get(key);
+    if (cached) return cached;
+    const ref = resolvePathUncached(doc, path, vacant);
+    refresh(); // A valid read can materialize a deterministic implicit head.
+    memo.entries.set(key, ref);
+    return ref;
+};
+
+const resolvePathUncached = (doc: Doc, path: ModelPath, vacant?: Set<string>): Ref => {
     let ref: Ref = {kind: "flow", line: MAIN};
 
     for (const i of path) {

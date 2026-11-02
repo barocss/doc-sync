@@ -1,6 +1,8 @@
 # Handoff — @barocss/doc-sync
 
-Latest planning: the numbered Rust/WASM delivery queue is in **§5.103**.
+Latest publication review is in **§5.105**. Selected TypeScript client engines
+and their verification limits are described in **§5.104**.
+The numbered Rust/WASM delivery queue is in **§5.103**.
 Final review, Rust SDK/WASM usage, and the main publication checkpoint
 are in **§5.102**. Safe conditional rejection settlement is in **§5.101**;
 owner approval and accepted-request recovery are in **§5.100**.
@@ -4140,3 +4142,193 @@ This documentation continues the authorized main publication task; its commit
 is separate from the dd0c4a1 runtime changes. Publication receipts are recorded
 under output/checkpoints/rust-wasm-roadmap.json rather than inferred from these
 local checks.
+
+
+### 5.104 Selected TypeScript client engine
+
+D1 connects the production SyncClient, input sessions and editor host to a
+selected ClientEngineFactory. TypeScript is the default and the only delivered
+production engine. This does not enable Rust/WASM clients or engine hot swap.
+
+The production contract is client-contract.ts; typescript-client.ts owns the
+live Doc and History. The older immutable DocumentEngine is a separate
+experiment. Portable bindings call the selected port. Legacy Doc/History access
+returns the authoritative TS objects through an optional compatibility extension.
+A synthetic Doc-based application facade uses an explicitly named TS adapter;
+it is not the normal selected-engine path.
+
+Apply compiles and mutates; client.commit records and queues once. InputSession
+publishes its retained operations and passes those same applied objects to one
+combined commit. This retains
+History's prior-state identities, actor ownership and foreign writes. Snapshot
+preparation/replay, conditional edits, model events, GC and compatible schema
+changes also use the selected engine. Unsupported factories fail before connect.
+
+Format-1 checkpoint APIs retain the legacy TS envelope. New captureState and
+restoreState use format 2 with one opaque, tagged engine checkpoint plus transport
+metadata. Restore requires a matching engine, actor, schema, contract version and
+external epoch/GC proof. LiveRecovery and the Node journal remain format-1 TS
+adapters; portable durable recovery is still D4 work. Disconnect keeps local
+state; disposal rejects protected work, unknown conditional work and undo/redo
+History.
+
+Performance review found and corrected repeated parent-path scans and duplicate
+anchor resolution. Common text edits and plain root text split/merge use bounded
+validation. Complex structural edits retain detached preflight. The initial
+legacy guard runs before that proof. Guards must act as assertions; arbitrary
+side effects in later emit guards do not form a rollback transaction. A copied
+DTO visit cap was removed so a valid large marked snapshot can still restore.
+
+Final frozen source passes 1,199 full-workspace cases on macOS: 1,197 PASS,
+two platform SKIPs, zero FAIL, with FUZZ_SEEDS=3000 and PM_SEEDS=300. Counts are
+751 library, 110 Core, four Lexical Host, four Slate Host, 53 bot, 68 demo,
+28 documentation and 181 MCP (179 PASS/two SKIP). Type checking, comparison demo
+33/33 and six-package/seven-consumer checks pass. An independent final source
+review found no further blocker; it is not browser or performance proof.
+
+Chrome 156.0.8078.74 passes nine rich-profile combinations for trusted native
+Unicode input, foreign edits, actor-owned undo/redo, forward/backward selections
+and same-mounted-editor reconnect. An additional nine combinations pass native
+Enter/Backspace, exact split/merge model and caret restoration. Real selected
+apply/session/record/receive/history calls are asserted. Tiptap passes default
+and explicit TS selection, input, selection, undo/redo, reconnect and remount;
+an unsupported selector fails before editor mount. Normal paths have zero
+console/page errors. Actual OS IME remains NOT_RUN.
+
+A vanished task-owned product server caused an initial connection refusal.
+Its failed infrastructure receipt is retained separately; only the complete
+retry against the restarted owned server is a functional PASS. Lexical handles
+Enter at keydown, so the structural browser helper asserts trusted native keys
+and exact effects while retaining beforeinput observations; it does not require
+a beforeinput event that Lexical suppresses.
+
+The original 20 size/scenario count cells and eight additional local PM split/
+join records match baseline model, wire-operation, History and conversion counts.
+The receive path now validates and owns the batch before scoped reads, then
+applies that same proof once. Stale event captures reject before mutation.
+Deletion keys come from the applied owned batch, so source mutation cannot
+corrupt the transport ledger. Seven additional regressions cover this boundary.
+The fixed Node runs retain all original guard crossings. No identical median
+guard persists across both final full runs. Supplementary 32-pair mark checks
+are within the median/p95 guards; remote8 median 2.267→2.353 ms is within its
+0.227 ms guard, while p95 3.751→5.595 ms remains reported.
+
+Original separate-server Chrome comparison retains 12/27 flagged source/target
+cells. A no-Proxy diagnostic also flags 12 cells in different directions, so
+Proxy overhead alone does not explain them. Same-Chrome paired stage timestamps
+locate the investigated extra intervals before receive or after DOM, not in a
+persistent synchronous commit/receive cost. A fresh shared unchanged baseline
+backend with symmetric proxy origins resolves the tested median increases.
+Focused Notion PM 64-pair comparison gives local rendering-opportunity median
+10.0→10.1 ms and p95 17.9→18.8 ms (rank 61 of 64), within the original 2/4 ms guards.
+DOM median is 4.1→4.1 ms and p95 is 5.0→5.5 ms. Commit median is 0.3→0.3 ms
+and p95 is 0.5→0.5 ms. No overlapping LongTask/LongAnimationFrame entry was
+recorded in 128 intervals; this does not
+rule out shorter work or prove a scheduler/GC/network cause.
+
+The final Node remote8 investigation uses four independent 32-pair blocks with
+fixture/prelude resets. Pooled median is 2.164→2.263 ms within its 0.216 ms guard;
+p95 rank 122 of 128 is 3.681→3.663 ms within its 0.552 ms guard. All four block
+medians pass; two block p95 crossings remain recorded. Observed GC overlaps
+associate with many tails but do not prove a cause.
+
+All 12 original Chrome flagged cells now have exact common-backend controlled
+coverage, with no persistent crossing under those conditions. Focused Notion
+Slate 64-pair DOM p95 is 60.9→61.8 ms for Lexical and 65.5→66.1 ms for PM,
+within their guards. Source commit median is 0.3 ms in both versions. Original
+separate-server scores and the changed control topology remain explicit.
+
+Routing/regression/count gates pass. Repeated/pooled Node and controlled Chrome
+results qualify the investigated client migration.
+General separate-server Chrome latency acceptance remains OPEN. The original
+12 flags are not rewritten as PASS and global product latency is not qualified.
+Full conditions, original values and limits are in
+benchmarks/results/client-engine-selection/report.md. Receipts are under
+output/d1-engine-selection in the baseline and isolated candidate worktrees.
+
+
+A separate array-storage investigation addresses the JS linked-list hypothesis.
+Current TS sequences use Item arrays plus an independent logical-ID index;
+origin is CRDT ancestry, not a next pointer. Node24/V8 diagnostics of an actual
+100k Doc before/after middle insertion show packed object elements, no holes and
+no dictionary elements. Chrome156 synthetic 10k/100k/1m arrays separate direct
+indexing, indexOf, middle splice and a hand-built list traversal. Direct random
+read medians are 1.6/1.8/8.4 ns (batch-derived); indexOf medians are
+439/3,809/39,063 ns. These are different operations and not editor latency.
+Splice results are non-monotonic; no scaling or storage-replacement acceptance
+is inferred. Chrome internal element kinds and exact Chrome-source revision
+were not inspected. See benchmarks/results/array-storage-investigation/report.md
+and ignored output/array-storage-investigation for raw samples, sources, Node
+kind checks and the Korean report. No production storage change was made.
+
+
+The reviewed D1 source was first integrated into main as an uncommitted
+checkpoint. Section 5.105 records the publication follow-up.
+The isolated codex/d1-engine-selection worktree is retained. Transfer required a
+clean main at dafe2c762a205f4570e3e9cbefc008befd5b866c and verified every copied
+source file. Original generated baseline artifacts and overwritten source files
+are preserved under output/d1-engine-selection/integration.
+
+Fresh main checks pass six package tarballs/seven consumers, workspace typecheck,
+28 selected-engine routing/staged-receive/real-binding cases, 28 documentation
+tests, production documentation build and 40-page/2,928-internal-link English
+checks. The full 1,199-case enhanced-fuzz run and Chrome checks were executed in
+the isolated candidate. All 70 main runtime JavaScript files are byte-identical
+to those tested inputs. Of 140 generated files, 139 are byte-identical; one
+client-contract declaration differs only in final JSDoc comments, with unchanged
+type signatures. Fresh main consumers use the final declarations. These facts
+qualify the full candidate results rather than relabel a focused main rerun as
+a fresh full main suite.
+
+Runtime and public-API source reviews found no remaining blocker. A documentation
+review caught an overly broad performance summary; it was corrected to retain
+original end-to-end/block-tail limits and the exact controlled evidence scopes.
+Final receipts are output/d1-engine-selection/integration/final-verification.json,
+receive-final-tests/receipt.json and after/receive-final-status.json. The original
+baseline source is recoverable from its Git SHA; generated baseline files are
+archived before main rebuild. Do not rerun an old baseline helper against the
+now-modified main tree without restoring that baseline first.
+
+The implementation checkpoint did not commit, push, release or deploy D1. Task-owned
+browser sessions, proxy servers, baseline/candidate demo servers and their
+children were closed; existing user tabs/services and all temporary evidence
+were preserved. Actual OS IME and physical display latency remain outside this
+checkpoint.
+
+
+### 5.105 Final D1 review and main publication
+
+This checkpoint publishes the reviewed D1 implementation, regressions, demo
+routing, English guides and array-storage investigation on main as one cohesive
+change. It does not publish npm or Cargo packages or change the site domain.
+
+Before publication, all 37 changed source files and all 140 generated files
+matched the final main verification receipt. All 70 JavaScript inputs remain
+identical to the tested implementation. A separate read-only review checked
+staged receive, deletion-ledger ownership, session/History publication, legacy
+compatibility, checkpoints and public API examples and found no new blocker.
+Only this publication record changes after that source/hash check; no runtime,
+test, schema, package manifest or browser workload is changed.
+
+The enhanced full-workspace result remains 1,199 cases: 1,197 PASS, two platform
+SKIPs, zero FAIL, with FUZZ_SEEDS=3000 and PM_SEEDS=300. That run was executed in
+the isolated candidate and qualified to main by identical runtime inputs. Fresh
+main routing/staged-receive/binding 28/28, documentation 28/28, type checking,
+six-package/seven-consumer verification and the 40-page/2,928-link English build
+retain their exact scopes. The publication preflight repeats the focused and
+documentation checks; it does not relabel them as a new full-workspace run.
+
+Controlled client timing covers all 12 original Chrome flagged cells and the
+pooled 128-pair Node remote8 check. The original separate-server 12/27 flags and
+two of four small-block Node p95 flags remain in the reports. General product
+latency acceptance stays OPEN. Chrome functionality, OS IME, physical display,
+TypeScript-only backend selection and future Rust/WASM work keep the scope in
+section 5.104. No new Chrome or Rust runtime result is claimed by this commit.
+
+Publication follows the normal GitHub Pages and MCP durable-recovery workflows:
+[documentation](https://github.com/barocss/doc-sync/actions/workflows/docs-pages.yml)
+and [MCP recovery](https://github.com/barocss/doc-sync/actions/workflows/mcp-durable-recovery.yml).
+The exact final commit, remote ref, workflow runs, deployment result and public
+HTTP byte checks are recorded separately in
+output/checkpoints/d1-main-push.json and output/d1-final-publication. Local
+preflight PASS alone does not establish a successful push or deployment.

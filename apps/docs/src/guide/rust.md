@@ -5,11 +5,19 @@ directly. It is a private Cargo crate in this checkout, not a crates.io release.
 The production server, browser clients, MCP path, and editor bindings still use
 TypeScript. The native SDK does not yet replace those integrations.
 
-The six-package npm split is complete, but engine selection is a separate
-milestone. Core exports a draft TypeScript engine factory. Existing clients and
-bindings still use `Doc`; no Rust/WASM selector is connected. See
-[Packages and engines](./packages#engine-selection-is-a-separate-milestone) for
-the current capability comparison and a direct TypeScript factory example.
+The six-package npm split and the production client/engine selection seam are
+implemented. `SyncClient` accepts `ClientEngineFactory` and uses
+`typescriptClientEngineFactory` by default. The selected engine drives the common
+editor host and input sessions. The older immutable `typescriptEngine` API is a
+separate document experiment and is not a production client factory. Routing, regression and conversion-count checks pass. Repeated/pooled Node and controlled Chrome timing qualify the client migration.
+Original separate-server and small-block crossings remain reported; general
+product-latency acceptance remains open. See [status and limits](../status).
+
+Only TypeScript ships on this production path. The native Rust SDK is a separate
+API. There is no Rust/WASM production factory, cross-engine checkpoint converter,
+or live engine switch. Legacy TypeScript Doc/History access remains an optional
+compatibility extension. See [Packages and engines](./packages#engine-selection-is-a-separate-milestone)
+for the constructor option and current boundary.
 
 ## Use the native Rust SDK
 
@@ -308,6 +316,14 @@ The work has three layers. They have separate acceptance gates:
 | SDK and product adapters | Expose typed native calls and connect transport, persistence, MCP, and browser editors. | Initial native SDK delivered; product adapters remain planned. |
 
 The Gap benchmark is not the current CRDT engine's storage implementation.
+The production TypeScript engine stores internal sequences in `Item[]` arrays
+and uses a separate logical-ID index. Main storage can contain many paragraphs.
+An Item's origin is insertion ancestry, not a next/previous linked-list pointer.
+The native shadow uses Vec token storage. Neither implementation has adopted
+the experimental Gap buffer as its CRDT kernel. See the source-bound
+[array-storage investigation](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/array-storage-investigation/report.md)
+for the distinction between indexed access, searching and middle insertion.
+
 The shadow interpreter retains tokens in a native `Vec`, ordered physical
 lines, register maps, deletion sets, and projection caches. It still performs
 linear lookups and clones candidate state for atomic requests. These choices
@@ -534,7 +550,10 @@ Incompatible document migration is a separate feature.
 
 The target is one binding setup with TS or Rust/WASM selected when the client
 is created. Engine hot swap during a live editing session is a separate future
-feature. The following steps are planned; none is a new working backend option.
+feature. The following steps define the acceptance gates. The TypeScript selection seam
+is implemented, with verified routing and bounded client timing comparisons.
+Broader end-to-end Chrome latency acceptance remains open. No step adds a shipped Rust/WASM
+backend option yet.
 
 | Order | Work | Completion gate |
 | --- | --- | --- |
@@ -556,10 +575,10 @@ the WASM client release. Each has its own D8 qualification. The native server
 lane remains separate.
 
 See the [detailed delivery queue](https://github.com/barocss/doc-sync/blob/main/docs/rust-roadmap.md#delivery-goal-and-ordered-work)
-for file references, dependencies, scope and exit conditions. The next task is
-D1: route a real TypeScript client/binding through the selected engine and keep
-legacy APIs and concurrent editing rules intact. A factory-only change does
-not complete that task.
+for file references, dependencies, scope and exit conditions. D1 must validate
+the selected TypeScript client/binding path, legacy APIs, concurrent editing
+rules, and the declared performance budget. A factory-only change does not
+complete that task.
 
 ## Does Rust make editing faster?
 
