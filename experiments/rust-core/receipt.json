@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-01",
+  "platform": "aarch64-apple-darwin",
+  "native_rustc": "1.86.0 (05f9846f8 2025-03-31)",
+  "wasm_rustc": "1.86.0 (05f9846f8 2025-03-31)",
+  "node": "v18.10.0",
+  "checks": {
+    "cargo_test_rust_1_87": "PASS: 4 tests",
+    "cargo_fmt_check": "PASS",
+    "wasm_release_build_rustup_stable": "PASS",
+    "javascript_wasm_checksum_rounds_0_1_31_1000": "PASS",
+    "wasm_invalid_round_count": "PASS: 100001 returns 0",
+    "production_engine_integration": "NOT_RUN: isolated experiment",
+    "browser": "NOT_RUN"
+  },
+  "first_build_failure": "Homebrew rustc 1.87 had no WASM std. Installed rustup stable rustc 1.86 was selected with RUSTC. No downloads or default-toolchain changes.",
+  "workload": {
+    "initial_utf16_units": 100000,
+    "rounds": 1000,
+    "checksum": 719347296,
+    "native_warmups": 1,
+    "node_warmups_per_implementation": 3,
+    "timing_includes": ["allocation", "initialization", "splice batch", "checksum"],
+    "timing_excludes": ["module loading", "module compilation", "text transfer across WASM ABI"]
+  },
+  "milliseconds": {
+    "rust_native": [1.56375, 1.513375, 1.522583, 1.513875, 1.517666, 1.602709, 1.582459],
+    "javascript_typed_array": [1.6769578456878662, 1.67787504196167, 1.644624948501587, 1.6272499561309814, 1.7317910194396973, 1.7084581851959229, 1.6623330116271973],
+    "rust_wasm": [7.127166986465454, 7.284667015075684, 7.3454999923706055, 7.273082971572876, 7.199249982833862, 7.311625003814697, 7.232332944869995]
+  },
+  "scope": "Single local process batch microbenchmark. Different allocation strategies. No full CRDT equivalence or production performance claim. WASM was slower than the JS baseline in this run."
+}

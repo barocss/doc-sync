@@ -1,0 +1,850 @@
+{
+  "status": "PASS",
+  "scope": "Same gap algorithm in JavaScript and existing Rust WASM backend 1; isolated UTF-16 storage, no editor or CRDT integration",
+  "algorithm": "Initial gap 64; move gap with overlapping copy; delete before growth; extra=max(required-gap,floor(logicalLength/2),64); fresh read output",
+  "timingBoundary": "API-inclusive JavaScript to WASM path. Includes input validation, per-edit scratch copy, ABI calls and Rust mutex. Rust Vec allocation and JavaScript TypedArray allocation differ. No pure-language speed claim.",
+  "timers": "Construction includes input copy. Edits use identical prepared Uint16Array inputs. Materialization includes fresh output copy. Pipeline is the per-sample sum of the three phases. Trace preparation, oracle, checks, hashing, drop and module instantiation are excluded.",
+  "differential": {
+    "status": "PASS",
+    "operations": 60033,
+    "invalid": 19,
+    "fullStateAfterEveryOperation": true,
+    "oracle": "independent JavaScript UTF-16 string slice; each code unit compared",
+    "readCopies": "fresh output and mutation isolation checked",
+    "memoryGrowth": {
+      "oldBufferDetached": true,
+      "currentBytes": 12386304
+    },
+    "maximumJsInitializedGapUnits": 1048640,
+    "traces": [
+      {
+        "seed": 305419896,
+        "kind": "cursor-local",
+        "operations": 10000,
+        "finalUnits": 100000,
+        "checksum": 1250648887,
+        "initializedGapUnits": 100064
+      },
+      {
+        "seed": 305419896,
+        "kind": "far-jump",
+        "operations": 10000,
+        "finalUnits": 100000,
+        "checksum": 3733865730,
+        "initializedGapUnits": 100064
+      },
+      {
+        "seed": 305419896,
+        "kind": "alternating-ends",
+        "operations": 10000,
+        "finalUnits": 100000,
+        "checksum": 971030360,
+        "initializedGapUnits": 100064
+      },
+      {
+        "seed": 192837465,
+        "kind": "cursor-local",
+        "operations": 10000,
+        "finalUnits": 100000,
+        "checksum": 3081390431,
+        "initializedGapUnits": 100064
+      },
+      {
+        "seed": 192837465,
+        "kind": "far-jump",
+        "operations": 10000,
+        "finalUnits": 100000,
+        "checksum": 2750389169,
+        "initializedGapUnits": 100064
+      },
+      {
+        "seed": 192837465,
+        "kind": "alternating-ends",
+        "operations": 10000,
+        "finalUnits": 100000,
+        "checksum": 184667837,
+        "initializedGapUnits": 100064
+      }
+    ]
+  },
+  "benchmarks": [
+    {
+      "kind": "cursor-local",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerRuntime": 1,
+      "finalUnits": 100000,
+      "checksum": 1250648887,
+      "orders": [
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ]
+      ],
+      "storage": {
+        "jsInitializedGapUnits": 100064,
+        "rustInitializedGapUnitsFromSameAlgorithm": 100064,
+        "rustStorageDirectlyObserved": false,
+        "wasmScratchUnits": 2097152,
+        "note": "Initialized lengths only. Vec allocator capacity, JavaScript heap, and RSS are not measured."
+      },
+      "results": [
+        {
+          "runtime": "javascript-gap",
+          "construction_ms": [
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            0.8999998569488525,
+            0.7999999523162842,
+            1.1999998092651367,
+            0.7999999523162842,
+            0.7999999523162842,
+            1,
+            0.8999998569488525
+          ],
+          "materialization_ms": [
+            0,
+            0,
+            0.10000014305114746,
+            0,
+            0.10000014305114746,
+            0,
+            0
+          ],
+          "pipeline_ms": [
+            1,
+            0.7999999523162842,
+            1.2999999523162842,
+            0.7999999523162842,
+            0.9000000953674316,
+            1,
+            0.8999998569488525
+          ]
+        },
+        {
+          "runtime": "rust-wasm-gap",
+          "construction_ms": [
+            0.10000014305114746,
+            0,
+            0.09999990463256836,
+            0.09999990463256836,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            0.8999998569488525,
+            1.1000001430511475,
+            1,
+            1.1000001430511475,
+            1.1000001430511475,
+            1.0999999046325684,
+            1.2000000476837158
+          ],
+          "materialization_ms": [
+            0.10000014305114746,
+            0,
+            0.10000014305114746,
+            0.09999990463256836,
+            0.09999990463256836,
+            0.10000014305114746,
+            0
+          ],
+          "pipeline_ms": [
+            1.1000001430511475,
+            1.1000001430511475,
+            1.2000000476837158,
+            1.2999999523162842,
+            1.2000000476837158,
+            1.2000000476837158,
+            1.2000000476837158
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "far-jump",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerRuntime": 1,
+      "finalUnits": 100000,
+      "checksum": 3733865730,
+      "orders": [
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ]
+      ],
+      "storage": {
+        "jsInitializedGapUnits": 100064,
+        "rustInitializedGapUnitsFromSameAlgorithm": 100064,
+        "rustStorageDirectlyObserved": false,
+        "wasmScratchUnits": 2097152,
+        "note": "Initialized lengths only. Vec allocator capacity, JavaScript heap, and RSS are not measured."
+      },
+      "results": [
+        {
+          "runtime": "javascript-gap",
+          "construction_ms": [
+            0,
+            0.09999990463256836,
+            0.10000014305114746,
+            0.09999990463256836,
+            0.10000014305114746,
+            0,
+            0
+          ],
+          "edits_ms": [
+            9.200000047683716,
+            9,
+            9.199999809265137,
+            9.100000143051147,
+            9.099999904632568,
+            9.099999904632568,
+            8.900000095367432
+          ],
+          "materialization_ms": [
+            0,
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pipeline_ms": [
+            9.200000047683716,
+            9.200000047683716,
+            9.299999952316284,
+            9.200000047683716,
+            9.200000047683716,
+            9.099999904632568,
+            8.900000095367432
+          ]
+        },
+        {
+          "runtime": "rust-wasm-gap",
+          "construction_ms": [
+            0.09999990463256836,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            47.5,
+            47.700000047683716,
+            48.09999990463257,
+            47.90000009536743,
+            47.5,
+            47.200000047683716,
+            47.39999985694885
+          ],
+          "materialization_ms": [
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0,
+            0.09999990463256836,
+            0
+          ],
+          "pipeline_ms": [
+            47.700000047683716,
+            47.700000047683716,
+            48.09999990463257,
+            47.90000009536743,
+            47.5,
+            47.299999952316284,
+            47.39999985694885
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "alternating-ends",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerRuntime": 1,
+      "finalUnits": 100000,
+      "checksum": 971030360,
+      "orders": [
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ]
+      ],
+      "storage": {
+        "jsInitializedGapUnits": 100064,
+        "rustInitializedGapUnitsFromSameAlgorithm": 100064,
+        "rustStorageDirectlyObserved": false,
+        "wasmScratchUnits": 2097152,
+        "note": "Initialized lengths only. Vec allocator capacity, JavaScript heap, and RSS are not measured."
+      },
+      "results": [
+        {
+          "runtime": "javascript-gap",
+          "construction_ms": [
+            0,
+            0,
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            28.600000143051147,
+            28.800000190734863,
+            28.700000047683716,
+            28.09999990463257,
+            27.700000047683716,
+            28.299999952316284,
+            28.09999990463257
+          ],
+          "materialization_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pipeline_ms": [
+            28.600000143051147,
+            28.800000190734863,
+            28.800000190734863,
+            28.09999990463257,
+            27.700000047683716,
+            28.299999952316284,
+            28.09999990463257
+          ]
+        },
+        {
+          "runtime": "rust-wasm-gap",
+          "construction_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            142.79999995231628,
+            143.20000004768372,
+            143,
+            140.29999995231628,
+            139,
+            152.60000014305115,
+            140.60000014305115
+          ],
+          "materialization_ms": [
+            0,
+            0,
+            0.10000014305114746,
+            0.09999990463256836,
+            0,
+            0,
+            0
+          ],
+          "pipeline_ms": [
+            142.79999995231628,
+            143.20000004768372,
+            143.10000014305115,
+            140.39999985694885,
+            139,
+            152.60000014305115,
+            140.60000014305115
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "cursor-local",
+      "seed": 192837465,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerRuntime": 1,
+      "finalUnits": 100000,
+      "checksum": 3081390431,
+      "orders": [
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ]
+      ],
+      "storage": {
+        "jsInitializedGapUnits": 100064,
+        "rustInitializedGapUnitsFromSameAlgorithm": 100064,
+        "rustStorageDirectlyObserved": false,
+        "wasmScratchUnits": 2097152,
+        "note": "Initialized lengths only. Vec allocator capacity, JavaScript heap, and RSS are not measured."
+      },
+      "results": [
+        {
+          "runtime": "javascript-gap",
+          "construction_ms": [
+            0.09999990463256836,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            0.7999999523162842,
+            0.9000000953674316,
+            0.9000000953674316,
+            1,
+            0.9000000953674316,
+            0.7999999523162842,
+            0.8999998569488525
+          ],
+          "materialization_ms": [
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pipeline_ms": [
+            1,
+            0.9000000953674316,
+            0.9000000953674316,
+            1,
+            0.9000000953674316,
+            0.7999999523162842,
+            0.8999998569488525
+          ]
+        },
+        {
+          "runtime": "rust-wasm-gap",
+          "construction_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            1.0999999046325684,
+            1.0999999046325684,
+            1.2999999523162842,
+            1.1999998092651367,
+            1.1000001430511475,
+            1,
+            1.2999999523162842
+          ],
+          "materialization_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.09999990463256836,
+            0.09999990463256836
+          ],
+          "pipeline_ms": [
+            1.0999999046325684,
+            1.0999999046325684,
+            1.2999999523162842,
+            1.1999998092651367,
+            1.1000001430511475,
+            1.0999999046325684,
+            1.3999998569488525
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "far-jump",
+      "seed": 192837465,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerRuntime": 1,
+      "finalUnits": 100000,
+      "checksum": 2750389169,
+      "orders": [
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ]
+      ],
+      "storage": {
+        "jsInitializedGapUnits": 100064,
+        "rustInitializedGapUnitsFromSameAlgorithm": 100064,
+        "rustStorageDirectlyObserved": false,
+        "wasmScratchUnits": 2097152,
+        "note": "Initialized lengths only. Vec allocator capacity, JavaScript heap, and RSS are not measured."
+      },
+      "results": [
+        {
+          "runtime": "javascript-gap",
+          "construction_ms": [
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.10000014305114746
+          ],
+          "edits_ms": [
+            9,
+            8.700000047683716,
+            8.700000047683716,
+            8.700000047683716,
+            8.799999952316284,
+            8.900000095367432,
+            8.699999809265137
+          ],
+          "materialization_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pipeline_ms": [
+            9.100000143051147,
+            8.700000047683716,
+            8.700000047683716,
+            8.700000047683716,
+            8.799999952316284,
+            8.900000095367432,
+            8.799999952316284
+          ]
+        },
+        {
+          "runtime": "rust-wasm-gap",
+          "construction_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.09999990463256836,
+            0
+          ],
+          "edits_ms": [
+            47.799999952316284,
+            47.80000019073486,
+            46.299999952316284,
+            46,
+            46.09999990463257,
+            46.799999952316284,
+            48.10000014305115
+          ],
+          "materialization_ms": [
+            0.10000014305114746,
+            0,
+            0,
+            0.10000014305114746,
+            0.09999990463256836,
+            0,
+            0.09999990463256836
+          ],
+          "pipeline_ms": [
+            47.90000009536743,
+            47.80000019073486,
+            46.299999952316284,
+            46.10000014305115,
+            46.19999980926514,
+            46.89999985694885,
+            48.200000047683716
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "alternating-ends",
+      "seed": 192837465,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerRuntime": 1,
+      "finalUnits": 100000,
+      "checksum": 184667837,
+      "orders": [
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ],
+        [
+          "javascript-gap",
+          "rust-wasm-gap"
+        ],
+        [
+          "rust-wasm-gap",
+          "javascript-gap"
+        ]
+      ],
+      "storage": {
+        "jsInitializedGapUnits": 100064,
+        "rustInitializedGapUnitsFromSameAlgorithm": 100064,
+        "rustStorageDirectlyObserved": false,
+        "wasmScratchUnits": 2097152,
+        "note": "Initialized lengths only. Vec allocator capacity, JavaScript heap, and RSS are not measured."
+      },
+      "results": [
+        {
+          "runtime": "javascript-gap",
+          "construction_ms": [
+            0,
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            28.799999952316284,
+            28.699999809265137,
+            28.200000047683716,
+            28.299999952316284,
+            28.700000047683716,
+            29,
+            28.700000047683716
+          ],
+          "materialization_ms": [
+            0,
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pipeline_ms": [
+            28.799999952316284,
+            28.90000009536743,
+            28.200000047683716,
+            28.299999952316284,
+            28.700000047683716,
+            29,
+            28.700000047683716
+          ]
+        },
+        {
+          "runtime": "rust-wasm-gap",
+          "construction_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            144.19999980926514,
+            146.29999995231628,
+            146.90000009536743,
+            140.5,
+            143.10000014305115,
+            143.70000004768372,
+            140.40000009536743
+          ],
+          "materialization_ms": [
+            0,
+            0.09999990463256836,
+            0,
+            0.09999990463256836,
+            0,
+            0.09999990463256836,
+            0
+          ],
+          "pipeline_ms": [
+            144.19999980926514,
+            146.39999985694885,
+            146.90000009536743,
+            140.59999990463257,
+            143.10000014305115,
+            143.79999995231628,
+            140.40000009536743
+          ]
+        }
+      ]
+    }
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "sourceAndWasmSha256": {
+    "scripts/gap-compare-suite.mjs": "bb191200397ccd7b3d1e7fe5d508cf22799200c7a7efd41b10d94a1a15ca2082",
+    "scripts/gap-compare-check.mjs": "8c7b3246a1e0b7aedb66ec6e3f936a4a53733ed13c45a4dc38a5399376d3e72c",
+    "scripts/gap-compare-browser.html": "3cc26e0978b8259907f8ac9d641d748f2a5af37c23cf11b318fd53867a9b00cc",
+    "scripts/js-gap.mjs": "62b1b12e9e8b011d69c8dea39b7049a95bbc0a90de800102c8d68313d81e5808",
+    "scripts/storage-wasm.mjs": "d96f2852cd277d577586ee1a92c2a20ffe4981bd7df9f795aaf81988abfdc456",
+    "scripts/storage-workload.mjs": "189b94fa812715f76406326b9fbf632b100d46bb30690e10232f8f4cb26a1619",
+    "src/lib.rs": "cb3857dbac29a3241cebe2461ef3c06a48f2cb0dc2d0867f175de81d8b85398a",
+    "src/gap.rs": "834cdbad968a3be0e4d5dcd468a7ed2f08a7d09a97ca3a4789d6b8973dc0998a",
+    "src/storage_wasm.rs": "f8183f66c98f1dfbc319835c9818b8c80c079262521157a98ab455e0b423e00a",
+    "src/storage_trace.rs": "438914f02fa9c9c34643c1cd1c9325f7d639a9199cfac2a1b3e575cb73e88a52",
+    "Cargo.toml": "6d9a490e82d178600cac8e0b992334c70ad2b792bb502bec42910fc1328cb111",
+    "Cargo.lock": "1f3c2e05a1520a535c5e5d1443da44be2cb13441594676b8adcc84f07987078a",
+    "target/wasm32-unknown-unknown/release/doc_sync_rust_experiment.wasm": "25a6c2e02ad8cf029a384fcaa701dd813568ad070cb40ad5f079f2b442e41d5e"
+  }
+}

@@ -1,5 +1,6 @@
 import {createHash, randomUUID} from "node:crypto";
 import {constants} from "node:fs";
+import {openWriterLock} from "./kernel-lock.ts";
 import {mkdir, open, realpath, rename, unlink} from "node:fs/promises";
 import {basename, dirname, join, resolve} from "node:path";
 import {Doc, schemaVersion} from "@barocss/doc-sync";
@@ -39,10 +40,6 @@ export type JournalRecord = PreparedIntent & {
 };
 
 const MAX_BYTES = 16 * 1024 * 1024;
-// Darwin's O_EXLOCK is acquired by open(2) and is released by the kernel on
-// process exit, including SIGKILL. Keep this inode and descriptor for the
-// lifetime of the session; do not unlink or rename the lock file.
-const DARWIN_O_EXLOCK = 0x20;
 const digest = (value: unknown): string => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 
 function assertPlainJson(value: unknown, active = new Set<object>(), depth = 0): void {
@@ -93,6 +90,23 @@ function recordWithoutDigest(record: JournalRecord): Omit<JournalRecord, "record
     return rest;
 }
 
+/** Stateless exact record validation. Does not open storage or authorize replay. */
+export function parseJournalRecord(parsed: unknown, document: string, actor?: string): JournalRecord {
+    assertPlainJson(parsed);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Invalid journal record; original file was preserved");
+    const record = parsed as JournalRecord;
+    const keys = ["format", "state", "document", "actor", "generation", "base", "change", "edits", "snapshot", "schema", "requestDigest", "recordDigest"].sort();
+    if (JSON.stringify(Object.keys(record).sort()) !== JSON.stringify(keys) || record.format !== 1 || record.state !== "may_have_been_sent" ||
+        record.document !== document || typeof record.actor !== "string" || !/^[\w~-]{1,256}$/.test(record.actor) ||
+        typeof record.requestDigest !== "string" || typeof record.recordDigest !== "string" ||
+        digest(recordWithoutDigest(record)) !== record.recordDigest || requestDigest(record) !== record.requestDigest) {
+        throw new Error("Invalid journal record or digest; original file was preserved");
+    }
+    validateIntent({generation: record.generation, base: record.base, change: record.change, edits: record.edits, snapshot: record.snapshot, schema: record.schema}, record.actor);
+    if (actor !== undefined && record.actor !== actor) throw new Error("Journal actor differs; original preserved");
+    return record;
+}
+
 /** Exclusive, same-directory, durable journal for one document and actor. */
 export class IntentJournal {
     readonly path: string;
@@ -108,9 +122,9 @@ export class IntentJournal {
         this.path = path; this.document = document; this.actor = actor; this.lock = lock;
     }
 
-    /** macOS only until another platform has a verified kernel lock implementation. */
+    /** Kernel-owned writer exclusion on macOS and Linux; other platforms fail closed. */
     static async open(path: string, options: {document: string; actor?: string}): Promise<IntentJournal> {
-        if (process.platform !== "darwin") throw new Error("Durable journals require a supported kernel file lock; this platform is not supported");
+        if (process.platform !== "darwin" && process.platform !== "linux") throw new Error("Durable journals require a supported kernel file lock; this platform is not supported");
         if (typeof path !== "string" || !path || path.includes("\0")) throw new Error("Invalid journal path");
         if (!/^[a-z0-9-]{1,40}$/.test(options.document)) throw new Error("Invalid document ID");
         if (options.actor !== undefined && !/^[\w~-]{1,256}$/.test(options.actor)) throw new Error("Invalid actor ID");
@@ -119,17 +133,8 @@ export class IntentJournal {
         await mkdir(dirname(absolute), {recursive: true, mode: 0o700});
         const directory = await realpath(dirname(absolute));
         const canonicalPath = join(directory, name);
-        let lock: Awaited<ReturnType<typeof open>>;
+        const lock = await openWriterLock(`${canonicalPath}.lock`);
         try {
-            lock = await open(`${canonicalPath}.lock`, constants.O_CREAT | constants.O_RDWR | constants.O_NONBLOCK | constants.O_NOFOLLOW | DARWIN_O_EXLOCK, 0o600);
-        } catch (error) {
-            const code = (error as NodeJS.ErrnoException).code;
-            if (code === "EAGAIN" || code === "EWOULDBLOCK") throw new Error("Journal already has an active writer");
-            throw error;
-        }
-        try {
-            const lockStat = await lock.stat();
-            if (!lockStat.isFile() || lockStat.nlink !== 1 || (lockStat.mode & 0o077) !== 0) throw new Error("Journal lock must be a private regular file");
             const initial = new IntentJournal(canonicalPath, options.document, options.actor ?? "", lock);
             const record = await initial.load();
             const checkpoint = await initial.loadCheckpoint();
@@ -149,7 +154,7 @@ export class IntentJournal {
 
     private async load(): Promise<JournalRecord | null> {
         let file: Awaited<ReturnType<typeof open>>;
-        try { file = await open(this.path, constants.O_RDONLY | constants.O_NOFOLLOW); }
+        try { file = await open(this.path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK); }
         catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return null; throw error; }
         let raw: string;
         try {
@@ -159,18 +164,7 @@ export class IntentJournal {
         } finally { await file.close(); }
         let parsed: unknown;
         try { parsed = JSON.parse(raw); } catch { throw new Error("Journal is corrupt; original file was preserved"); }
-        assertPlainJson(parsed);
-        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Invalid journal record; original file was preserved");
-        const record = parsed as JournalRecord;
-        const keys = ["format", "state", "document", "actor", "generation", "base", "change", "edits", "snapshot", "schema", "requestDigest", "recordDigest"].sort();
-        if (JSON.stringify(Object.keys(record).sort()) !== JSON.stringify(keys) || record.format !== 1 || record.state !== "may_have_been_sent" ||
-            record.document !== this.document || typeof record.actor !== "string" || !/^[\w~-]{1,256}$/.test(record.actor) ||
-            typeof record.requestDigest !== "string" || typeof record.recordDigest !== "string" ||
-            digest(recordWithoutDigest(record)) !== record.recordDigest || requestDigest(record) !== record.requestDigest) {
-            throw new Error("Invalid journal record or digest; original file was preserved");
-        }
-        validateIntent({generation: record.generation, base: record.base, change: record.change, edits: record.edits, snapshot: record.snapshot, schema: record.schema}, record.actor);
-        return record;
+        return parseJournalRecord(parsed, this.document);
     }
 
     async read(): Promise<JournalRecord | null> {
@@ -182,7 +176,7 @@ export class IntentJournal {
 
     private async loadCheckpoint(): Promise<RecoveryCheckpoint | null> {
         let file: Awaited<ReturnType<typeof open>>;
-        try { file = await open(`${this.path}.checkpoint`, constants.O_RDONLY | constants.O_NOFOLLOW); }
+        try { file = await open(`${this.path}.checkpoint`, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK); }
         catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return null; throw error; }
         let raw: string;
         try {
@@ -286,7 +280,7 @@ export class IntentJournal {
             // A previous rename may have succeeded even though syncing its
             // directory failed. Do not allow a send until both the existing
             // file and its directory have been synced successfully.
-            const existing = await open(this.path, constants.O_RDONLY | constants.O_NOFOLLOW);
+            const existing = await open(this.path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
             try {
                 const stat = await existing.stat();
                 if (!stat.isFile() || stat.nlink !== 1 || stat.size > MAX_BYTES || (stat.mode & 0o077) !== 0) throw new Error("Journal must be a bounded private regular file");
@@ -321,6 +315,18 @@ export class IntentJournal {
     async clearAfterConfirmed(expectedRecordDigest: string): Promise<void> {
         if (this.closing) throw new Error("Journal is closing");
         return this.serial(() => this.removeConfirmed(expectedRecordDigest));
+    }
+
+    /** Exact CAS after the durable negative settlement plan and retired checkpoint. */
+    async clearAfterNotApplied(expectedRecordDigest: string, expectedCheckpointDigest: string): Promise<void> {
+        if (this.closing) throw new Error("Journal is closing");
+        return this.serial(async () => {
+            const checkpoint = await this.readCheckpoint();
+            if (!checkpoint || checkpoint.recordDigest !== expectedCheckpointDigest) throw new Error("Retired checkpoint differs; original preserved");
+            const retained = await this.read();
+            if (retained) await this.removeConfirmed(expectedRecordDigest);
+            else await this.syncDirectory();
+        });
     }
 
     private async removeConfirmed(expectedRecordDigest: string): Promise<void> {

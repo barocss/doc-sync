@@ -144,7 +144,7 @@ const log = (data: string) => join(data, `${document}.jsonl`);
 const text = (model: unknown) => JSON.stringify(model);
 
 test("reservation retention bounds release metadata and preserves protected history across real restarts", {
-    timeout: 60000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 60000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async t => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-retention-"));
     const data = join(root, "data"), journal = join(root, "journal");
@@ -227,7 +227,7 @@ test("reservation retention bounds release metadata and preserves protected hist
 });
 
 test("an empty unconfirmed checkpoint changes its stale era only after server and MCP restart", {
-    timeout: 45000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 45000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-retention-prepare-"));
     const data = join(root, "data"), journal = join(root, "journal"), path = join(journal, `${document}.json.checkpoint`);
@@ -319,7 +319,7 @@ test("paired 48-cycle comparison bounds recovery records without removing docume
 });
 
 test("releasePending from a sealed era finishes after MCP and server restart", {
-    timeout: 60000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 60000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-retention-release-"));
     const data = join(root, "data"), journal = join(root, "journal"), path = join(journal, `${document}.json.checkpoint`);
@@ -371,7 +371,7 @@ test("releasePending from a sealed era finishes after MCP and server restart", {
 
 for (const mode of ["history", "pending", "intent"] as const) {
     test(`stale unconfirmed checkpoint with ${mode} is preserved instead of rekeyed`, {
-        timeout: 45000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+        timeout: 45000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
     }, async () => {
         const root = await mkdtemp(join(tmpdir(), `doc-sync-retention-${mode}-`));
         const data = join(root, "data"), journalDir = join(root, "journal"), journalPath = join(journalDir, `${document}.json`);

@@ -10,7 +10,7 @@ if (!process.argv[2] || existsSync(output)) throw Error('Usage: node freeze.mjs 
 mkdirSync(output, {recursive: true});
 const baseline = mkdtempSync(join(tmpdir(), 'doc-sync-stage0-baseline-'));
 mkdirSync(`${baseline}/packages/doc-sync`, {recursive: true});
-cpSync(`${root}/packages/doc-sync/src`, `${baseline}/packages/doc-sync/src`, {recursive: true});
+cpSync(`${root}/packages/doc-sync-core/src`, `${baseline}/packages/doc-sync/src`, {recursive: true});
 cpSync(`${root}/fixtures`, `${baseline}/fixtures`, {recursive: true});
 mkdirSync(`${baseline}/benchmarks`);
 for (const name of ['engines.ts', 'trace.ts']) cpSync(`${root}/benchmarks/${name}`, `${baseline}/benchmarks/${name}`);

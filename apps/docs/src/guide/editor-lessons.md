@@ -48,7 +48,7 @@ A transaction can contain several Steps. Each Step must use its own before/after
 
 The public PM binding and the composition-aware comparison app have distinct input wiring. The app uses an input-session facade. Its simulated composition results do not certify the default `/pm` input implementation or an OS keyboard.
 
-Source and tests: [PM binding](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/pm/binding.ts), [conversion](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/pm/convert.ts), [cache regressions](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/pm-cache.test.ts) and [native command traces](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/pm-fuzz.ts).
+Source and tests: [PM binding](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-prosemirror/src/binding.ts), [conversion](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-prosemirror/src/convert.ts), [cache regressions](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/pm-cache.test.ts) and [native command traces](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/pm-fuzz.ts).
 
 ## Slate: JSON trees still need precise coordinates
 
@@ -62,7 +62,7 @@ That structure lets our codec retain schema type names, attributes, nested flows
 
 Remote display currently reconstructs the Slate tree. During composition, the binding keeps that display stable while the live client receives changes. The draft operations are committed on completion. The application should use one composition wiring method and one shared history authority.
 
-Source and tests: [Slate binding](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/slate/binding.ts), [codec and coordinates](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/slate/codec.ts) and [binding regressions](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/slate-binding.test.ts).
+Source and tests: [Slate binding](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-slate/src/binding.ts), [codec and coordinates](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-slate/src/codec.ts) and [binding regressions](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/slate-binding.test.ts).
 
 ## Lexical: native node identity and plugins matter
 
@@ -78,7 +78,7 @@ The corrected native table contains only visible cells. Table NodeState retains 
 
 A codec-only roundtrip did not expose the extra-column bug. Tests with `registerTablePlugin` did. Native plugin transforms belong in integration tests whenever they can normalize the tree.
 
-Source and tests: [Lexical binding](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/lexical/binding.ts), [conversion](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/lexical/convert.ts), [logical grid columns](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/lexical/grid.ts), [binding regressions](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/lexical-binding.test.ts) and [merged-grid regressions](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/merged-grid.test.ts).
+Source and tests: [Lexical binding](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-lexical/src/binding.ts), [conversion](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-lexical/src/convert.ts), [logical grid columns](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-lexical/src/grid.ts), [binding regressions](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/lexical-binding.test.ts) and [merged-grid regressions](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/merged-grid.test.ts).
 
 ## One table, several valid native representations
 
@@ -113,7 +113,7 @@ Browser cases: [merged grids](https://github.com/barocss/doc-sync/blob/main/apps
 | Error reporting prevented recovery | A throwing callback ran before the replacement update completed | Restore shared content before reporting the conversion error |
 | Unmount left listeners behind | The binding removed too little or replaced another owner's hooks | Track owned registrations and restore hooks only while still owned |
 
-The shared [input session and model translation](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/editor/index.ts) implement reusable parts of these rules. The [comparison input tests](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/test/input-session.test.mjs) exercise draft cancellation, clock reservation and coordinate conversion.
+The shared [input session and model translation](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-core/src/editor/index.ts) implement reusable parts of these rules. The [comparison input tests](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/test/input-session.test.mjs) exercise draft cancellation, clock reservation and coordinate conversion.
 
 ## The custom demo: input and rendering are application code
 
@@ -134,3 +134,58 @@ Keep three checks separate: native state, the client document and the server doc
 The recorded integration includes 567 library tests, 31 compatibility unit tests and 340 Chrome checks. These are finite cases at their recorded source. Thirty browser operation traces within that count record operations and convergence; they are not OS IME acceptance. Simulated composition does not prove a real Korean keyboard session. Codec coverage also does not provide every keyboard gesture, native table command or custom plugin combination.
 
 The [merged-grid report](https://github.com/barocss/doc-sync/tree/main/docs/reports/merged-grid-2026-10-24), [collaboration rules](../reference/collaboration-intent) and [status page](../status) describe the current proof boundaries. Use the framework guides for API setup and this guide when designing the binding's failure and regression cases.
+
+## Rust experiment
+
+Use UTF-16 offsets at the model boundary. A backward selection keeps its direction. This example selects across an emoji, which occupies two UTF-16 units.
+
+Use the [native SDK crate setup](./rust#use-the-native-rust-sdk) to run this complete Rust program.
+
+```rust
+use doc_sync_native_sdk::{
+    Attributes, Document, EditOptions, Key, Position, Result, SchemaPreset, Selection,
+};
+
+fn main() -> Result<()> {
+    let mut doc = Document::new("selection-host", SchemaPreset::Text)?;
+    doc.insert_text(
+        &Key::root(),
+        "A😀B",
+        Attributes::new(),
+        EditOptions::default(),
+        0.0,
+    )?;
+    let range = Selection {
+        anchor: Position(vec![0, 3]),
+        focus: Position(vec![0, 1]),
+    };
+    let stable = doc
+        .capture_selection(Some(range.clone()))?
+        .expect("visible range");
+    assert_ne!(stable.anchor, stable.focus);
+    assert_eq!(doc.resolve_selection(Some(stable))?, Some(range));
+    Ok(())
+}
+```
+
+The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+
+<details>
+<summary>Raw protocol probe and reference checks</summary>
+
+Position units must stay consistent across an engine adapter. The native fixture below stores `A😀B` as four UTF-16 units and resolves a backward range. An emoji occupies two units.
+
+Build the private executable with the commands in [the Rust guide](./rust#run-the-private-experiment). Run the following command from the repository root. Each input line produces one JSON response.
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"A","actor":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"A"},"origin":{"lamport":0,"actor":"~root"},"units":[65,55357,56832,66]}]}
+{"cmd":"selection_capture","replica":"A","range":{"anchor":[0,3],"focus":[0,1]}}
+{"cmd":"selection_resolve","replica":"A","range":{"anchor":"3@A","focus":"1@A"}}
+JSONL
+```
+
+Capture returns `anchor: "3@A"` and `focus: "1@A"`. Resolve returns `{anchor: [0,3], focus: [0,1]}`. The direction and UTF-16 offsets remain intact. This checks the private engine contract, not DOM ranges, native editor keys, composition or focus. The production bindings remain TypeScript; see [cursor limits](./rust#cursors-and-selections).
+
+</details>

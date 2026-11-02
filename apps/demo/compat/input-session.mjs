@@ -16,9 +16,10 @@ export class InputSession {
     const lamport=Math.max(this.fork.clock.lamport,this.client.doc.clock.lamport);
     this.fork.clock.lamport=lamport;this.client.doc.clock.lamport=lamport;
   }
-  begin(){if(!this.fork){this.fork=Doc.fromSnapshot(this.client.actor,this.client.doc.snapshot(),this.client.schema);this.pending=[];}}
+  begin(){this.client.assertLocalEditing();if(!this.fork){this.fork=Doc.fromSnapshot(this.client.actor,this.client.doc.snapshot(),this.client.schema);this.pending=[];}}
   end(){
     if(!this.fork)return [];
+    this.client.assertLocalEditing();
     const ops=this.pending.flatMap(change=>change.ops);
     const first=this.pending[0]?.record,last=this.pending.at(-1)?.record;
     this.client.doc.emit(ops);
@@ -28,6 +29,7 @@ export class InputSession {
   }
   cancel(){this.fork=null;this.pending=[];}
   commit(ops,record){
+    this.client.assertLocalEditing();
     if(this.fork){
       // Reserve the draft's actor tickets before undo/redo or another live action.
       this.reserveClock();

@@ -1,6 +1,8 @@
 # Lexical binding
 
-Use `LexicalBinding` from **`@barocss/doc-sync/lexical`**. It connects a Lexical editor to a `SyncClient`. Build the schema information first, register its node classes, and then construct the binding.
+Use the built repository workspaces or local tarballs. These package names are not yet published on npm. See [Packages and engines](./packages) for Core, binding, and editor peer requirements.
+
+Use `LexicalBinding` from **`@barocss/doc-sync-lexical`**. It connects a Lexical editor to a `SyncClient`. Build the schema information first, register its node classes, and then construct the binding.
 
 This is a subpath of the same library. The library is still unpublished; the examples resolve through the repository workspace.
 
@@ -20,9 +22,9 @@ This example creates a headless editor. A browser editor can attach its root ele
 
 ```ts
 import {createEditor} from "lexical";
-import {type Schema} from "@barocss/doc-sync";
-import {HttpTransport, SyncClient} from "@barocss/doc-sync/sync";
-import {buildLexicalSchema, LexicalBinding} from "@barocss/doc-sync/lexical";
+import {type Schema} from "@barocss/doc-sync-core";
+import {HttpTransport, SyncClient} from "@barocss/doc-sync-core/sync";
+import {buildLexicalSchema, LexicalBinding} from "@barocss/doc-sync-lexical";
 
 const schema: Schema = {
     root: "content",
@@ -77,7 +79,7 @@ A custom codec can declare `nodes`, `toLexical(model, context)`, and `fromLexica
 ```ts
 import {
     readLexicalModel, toLexicalJSON, fromLexicalJSON,
-} from "@barocss/doc-sync/lexical";
+} from "@barocss/doc-sync-lexical";
 
 const model = readLexicalModel(editor, info);
 const serialized = toLexicalJSON(info, model);
@@ -132,4 +134,63 @@ Data retention for a schema shape does not provide every native keyboard command
 
 Headless tests use real Lexical editor updates. Browser/CDP input checks are a separate test layer; neither proves actual OS IME acceptance. No product performance target, production readiness, or completion of separate capability work is implied.
 
-See [editor integration](./editors), [the editing API](./editing), and [binding source](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/lexical).
+See [editor integration](./editors), [the editing API](./editing), and [binding source](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-lexical/src).
+
+## Rust experiment
+
+This calls the native SDK selection boundary. The Rust model position is a UTF-16 path. The host must still map Lexical node keys and offsets to this path and map the resolved path back through the TypeScript binding shown above. No native browser binding is supplied.
+
+Use the [native SDK crate setup](./rust#use-the-native-rust-sdk) to run this complete Rust program.
+
+```rust
+use doc_sync_native_sdk::{
+    Attributes, Document, EditOptions, Key, Position, Result, SchemaPreset, Selection,
+};
+
+fn main() -> Result<()> {
+    let mut doc = Document::new("lexical-host", SchemaPreset::Text)?;
+    let mut peer = Document::new("lexical-peer", SchemaPreset::Text)?;
+    let change = doc.insert_text(
+        &Key::root(),
+        "😀",
+        Attributes::new(),
+        EditOptions::default(),
+        0.0,
+    )?;
+    peer.apply_remote(&change.ops)?;
+    let range = Selection {
+        anchor: Position(vec![0, 2]),
+        focus: Position(vec![0, 2]),
+    };
+    let captured = doc.capture_selection(Some(range.clone()))?;
+    assert_eq!(peer.resolve_selection(captured)?, Some(range));
+    assert_eq!(doc.model()?, peer.model()?);
+    Ok(())
+}
+```
+
+The existing TypeScript adapter uses `$lexicalSelection` and `$setLexicalSelection` in `packages/doc-sync-lexical/src/selection.ts`. A Rust-backed adapter must call the equivalent conversions inside Lexical read or update contexts, connect the Rust selection API, and project `model()` into Lexical nodes. The example does not install or test that adapter.
+
+The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+
+<details>
+<summary>Raw protocol probe and reference checks</summary>
+
+The production Lexical binding still maps node keys and text offsets through TypeScript. This native example checks a collapsed model selection after a two-unit emoji; Lexical node keys are not CRDT token keys.
+
+Build the driver with [Run the private experiment](./rust#run-the-private-experiment), then run this from the repository root:
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"editor","actor":"editor","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"editor","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"human"},"origin":{"lamport":0,"actor":"~root"},"units":[55357,56832]}]}
+{"cmd":"selection_capture","replica":"editor","range":{"anchor":[0,2],"focus":[0,2]}}
+{"cmd":"selection_resolve","replica":"editor","range":{"anchor":"2@human","focus":"2@human"}}
+JSONL
+```
+
+Both endpoints resolve to `[0, 2]`. This checks the core UTF-16 caret only. Node-key conversion, composition, and DOM restoration require Lexical tests. Inline nodes count once; link spans add no model-path level. Covered table cells retain content while visible selection is unavailable; the TypeScript binding supplies the editor mapping and reference data.
+
+This uses the fixed base text schema. Rust has no production editor, bot, or MCP adapter. See the [Rust engine guide](./rust) for the separate v1 through v6 capabilities and limits.
+
+</details>

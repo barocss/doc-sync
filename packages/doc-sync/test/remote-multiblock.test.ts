@@ -1,15 +1,15 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../src/crdt/doc.ts";
-import {schemaVersion} from "../src/crdt/schema-version.ts";
-import * as cmd from "../src/crdt/commands.ts";
-import {applyEdits, diffModels} from "../src/crdt/model.ts";
-import {SyncClient} from "../src/sync/client.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {schemaVersion} from "../../doc-sync-core/dist/crdt/schema-version.js";
+import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import {applyEdits, diffModels} from "../../doc-sync-core/dist/crdt/model.js";
+import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import {MemoryNet} from "./harness.ts";
-import type {EditOp, NodeJSON} from "../src/crdt/model.ts";
-import type {Op} from "../src/crdt/doc.ts";
-import type {ServerEvent} from "../src/sync/protocol.ts";
+import type {EditOp, NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
+import type {Op} from "../../doc-sync-core/dist/crdt/doc.js";
+import type {ServerEvent} from "../../doc-sync-core/dist/sync/protocol.js";
 
 const run = (text: string, marks: Record<string, boolean> = {}) => ({text, marks});
 const paragraph = (text: string): NodeJSON => ({type: "paragraph", runs: text ? [run(text)] : []});

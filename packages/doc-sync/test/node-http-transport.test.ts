@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import {createServer} from "node:http";
 import {once} from "node:events";
 import {test} from "node:test";
-import {NodeHttpTransport} from "../src/node.ts";
-import type {ServerEvent} from "../src/sync/protocol.ts";
+import {NodeHttpTransport} from "../../doc-sync-core/dist/node.js";
+import type {ServerEvent} from "../../doc-sync-core/dist/sync/protocol.js";
 
 const waitFor = async (check: () => boolean, timeout = 4000) => {
     const until = Date.now() + timeout;
@@ -95,7 +95,7 @@ test("Node clients converge after concurrent edits, undo, and offline reconnect"
     const {tmpdir} = await import("node:os");
     const {join} = await import("node:path");
     const {fileURLToPath} = await import("node:url");
-    const {SyncClient} = await import("../src/sync/client.ts");
+    const {SyncClient} = await import("../../doc-sync-core/dist/sync/client.js");
     const {DEMO_SCHEMA} = await import("../../../fixtures/demo-schema.ts");
     const data = mkdtempSync(join(tmpdir(), "doc-sync-node-transport-"));
     const child = spawn(process.execPath, [fileURLToPath(new URL("../../../apps/demo/server.ts", import.meta.url))], {

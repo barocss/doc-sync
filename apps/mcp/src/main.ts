@@ -10,6 +10,7 @@ import {DocumentSession} from "./session.ts";
 import {createServer} from "./server.ts";
 import {shutdownSession} from "./shutdown.ts";
 import {IntentJournal} from "./journal.ts";
+import {saveStepEvidence} from "./step-evidence.ts";
 
 async function main() {
     const origin = process.env.DOC_SYNC_URL ?? "http://127.0.0.1:5410";
@@ -22,6 +23,13 @@ async function main() {
         if (!loaded.schema && !loaded.default) throw new Error("Schema module must export schema or default");
         schema = (loaded.schema ?? loaded.default)!;
     }
+    else if (process.env.DOC_SYNC_DISCOVER_SCHEMA === "on") {
+        // Schema is data, not executable code. The transport validates its fingerprint.
+        const probe = new NodeHttpTransport(document, actorHint ?? "schema-probe", origin);
+        const discovered = await probe.getSchema();
+        if (!discovered.schema || !discovered.schemaVersion) throw new Error("The server must provide a verifiable schema");
+        schema = discovered.schema;
+    }
     // Use a stable per-document location so an interrupted request is found on restart.
     // Applications that explicitly choose the previous ephemeral behavior can disable it.
     const journal = process.env.DOC_SYNC_JOURNAL === "off" ? null : await IntentJournal.open(
@@ -32,7 +40,9 @@ async function main() {
     const checkpoint = journal ? await journal.readCheckpoint() : null;
     const actor = journal?.actor ?? actorHint ?? `ai-${randomUUID()}`;
     const transport = new NodeHttpTransport(document, actor, origin);
-    const session = new DocumentSession(actor, transport, recovered?.schema ?? checkpoint?.schema ?? schema, 10_000, journal);
+    const bridge=process.env.DOC_SYNC_MISSION_BRIDGE;
+    if (bridge && !journal) throw Error("Mission evidence requires a durable journal");
+    const session = new DocumentSession(actor, transport, recovered?.schema ?? checkpoint?.schema ?? schema, 10_000, journal, bridge ? (step,record)=>saveStepEvidence(bridge,step,record) : undefined);
     try { await session.start(); } catch (error) { await session.close(); throw error; }
     const server = createServer(session);
     const stdio = new StdioServerTransport();

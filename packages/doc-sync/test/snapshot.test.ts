@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import * as cmd from "../src/crdt/commands.ts";
-import {Doc} from "../src/crdt/doc.ts";
-import {keyOf} from "../src/crdt/ticket.ts";
-import type {Op} from "../src/crdt/doc.ts";
+import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {keyOf} from "../../doc-sync-core/dist/crdt/ticket.js";
+import type {Op} from "../../doc-sync-core/dist/crdt/doc.js";
 
 Doc.verifyBlocks = true;
 

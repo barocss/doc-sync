@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import * as cmd from "../src/crdt/commands.ts";
-import {Doc, isAlive} from "../src/crdt/doc.ts";
-import {runsToUnits} from "../src/crdt/model.ts";
-import {keyOf} from "../src/crdt/ticket.ts";
-import type {Op} from "../src/crdt/doc.ts";
+import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import {Doc, isAlive} from "../../doc-sync-core/dist/crdt/doc.js";
+import {runsToUnits} from "../../doc-sync-core/dist/crdt/model.js";
+import {keyOf} from "../../doc-sync-core/dist/crdt/ticket.js";
+import type {Op} from "../../doc-sync-core/dist/crdt/doc.js";
 
 const apply = (doc: Doc, ops: Op[]): void => ops.forEach(op => doc.apply(op));
 const clone = (doc: Doc, actor: string): Doc => Doc.fromSnapshot(actor, JSON.parse(JSON.stringify(doc.snapshot())), DEMO_SCHEMA);

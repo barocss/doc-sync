@@ -10,11 +10,11 @@ The library exposes checkpoint serialization and restoration as mechanisms. A `S
 
 ## 2. Local storage
 
-On macOS, the MCP journal is enabled by default at `~/.local/state/doc-sync/recovery`. Set `DOC_SYNC_JOURNAL_DIR` to another stable directory. Restart with the same directory and document ID. Different servers or simultaneous actors using the same document ID require separate directories. The app restores the recorded actor; an incompatible explicitly configured actor is rejected.
+On macOS and Linux, the MCP journal is enabled by default at `~/.local/state/doc-sync/recovery`. Set `DOC_SYNC_JOURNAL_DIR` to another stable directory. Restart with the same directory and document ID. Different servers or simultaneous actors using the same document ID require separate directories. The app restores the recorded actor; an incompatible explicitly configured actor is rejected.
 
 The journal uses a private single-writer kernel lock. Each intent and checkpoint is bounded to 16 MiB. Files contain document content, so protect the directory as document data. Writes validate the content, flush a private temporary file, rename it in the same directory, and flush the directory. A corrupt or mismatched record is preserved for inspection. These checks do not authenticate the file or prove power-loss durability.
 
-Enabled durable storage currently supports macOS only. On other platforms startup fails unless `DOC_SYNC_JOURNAL=off` explicitly selects an ephemeral session. With the journal disabled, process exit loses in-memory pending changes and history.
+Enabled durable storage supports macOS and Linux on a private local filesystem. Linux requires `/usr/bin/flock` from util-linux; a missing helper or failed kernel lock stops startup. On other platforms startup fails unless `DOC_SYNC_JOURNAL=off` explicitly selects an ephemeral session. With the journal disabled, process exit loses in-memory pending changes and history.
 
 ## 3. Server generation and recovery reservations
 

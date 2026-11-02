@@ -251,7 +251,7 @@ async function aiEdit(mcp: Awaited<ReturnType<typeof connectMcp>>, edits: unknow
 }
 
 test("discard releases only its own reservation and permits GC while keeping other edits", {
-    timeout: 45000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 45000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-discard-success-"));
     const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");
@@ -298,7 +298,7 @@ test("discard releases only its own reservation and permits GC while keeping oth
 
 for (const mode of ["before-send", "after-accept"] as const) {
     test(`discard recovers across MCP and server crash ${mode} of reservation release`, {
-        timeout: 60000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+        timeout: 60000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
     }, async () => {
         const root = await mkdtemp(join(tmpdir(), `doc-sync-discard-${mode}-`));
         const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");
@@ -360,7 +360,7 @@ for (const mode of ["before-send", "after-accept"] as const) {
 }
 
 test("discard rejects an unresolved ordinary change without changing its evidence", {
-    timeout: 60000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 60000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-discard-pending-"));
     const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");
@@ -410,7 +410,7 @@ test("discard rejects an unresolved ordinary change without changing its evidenc
 });
 
 test("discard rejects an unresolved conditional intent and preserves it across restart", {
-    timeout: 60000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 60000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-discard-conditional-"));
     const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");
@@ -462,7 +462,7 @@ test("discard rejects an unresolved conditional intent and preserves it across r
 });
 
 test("late echo cannot discard persisted pending history without an exact receipt", {
-    timeout: 60000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 60000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-discard-late-echo-"));
     const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");

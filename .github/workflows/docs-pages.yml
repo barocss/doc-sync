@@ -6,7 +6,9 @@ on:
     paths:
       - "apps/docs/**"
       - "docs/**"
-      - "packages/doc-sync/**"
+      - "packages/doc-sync*/**"
+      - "scripts/**"
+      - "tsconfig*.json"
       - "fixtures/**"
       - "README.md"
       - "package.json"
@@ -16,7 +18,9 @@ on:
     paths:
       - "apps/docs/**"
       - "docs/**"
-      - "packages/doc-sync/**"
+      - "packages/doc-sync*/**"
+      - "scripts/**"
+      - "tsconfig*.json"
       - "fixtures/**"
       - "README.md"
       - "package.json"
@@ -45,6 +49,7 @@ jobs:
           node-version: "22.19.0"
           cache: npm
       - run: npm ci
+      - run: npm run build
       - run: npm test --workspace @doc-sync/docs
       - run: npm run docs:build
       - run: npm run docs:check

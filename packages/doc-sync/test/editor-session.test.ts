@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {InputSession, commitModelEdits, modelEdits, sameModel, subscribeClient} from "../src/editor/index.ts";
-import {applyEdits, canonical} from "../src/crdt/model.ts";
+import {InputSession, commitModelEdits, modelEdits, sameModel, subscribeClient} from "../../doc-sync-core/dist/editor/index.js";
+import {applyEdits, canonical} from "../../doc-sync-core/dist/crdt/model.js";
 import {MemoryNet} from "./harness.ts";
-import type {EditOp, NodeJSON} from "../src/crdt/model.ts";
+import type {EditOp, NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
 
 const p = (text: string): NodeJSON => ({type: "paragraph", runs: text ? [{text, marks: {}}] : []});
 const start = async (children: NodeJSON[] = [p("ab")]) => {

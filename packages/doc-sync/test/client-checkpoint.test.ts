@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, type Schema} from "../src/index.ts";
-import {SyncClient, type ClientCheckpoint, type Transport} from "../src/sync/index.ts";
-import {DocHub} from "../src/server/index.ts";
+import {Doc, type Schema} from "../../doc-sync-core/dist/index.js";
+import {SyncClient, type ClientCheckpoint, type Transport} from "../../doc-sync-core/dist/sync/index.js";
+import {DocHub} from "../../doc-sync-core/dist/server/index.js";
 
 const schema: Schema = {root: "content", marks: ["bold", "italic"], nodes: {
     content: {shape: "flow", children: ["p"], default: "p"}, p: {shape: "text"},

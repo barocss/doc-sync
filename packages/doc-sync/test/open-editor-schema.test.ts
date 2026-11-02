@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import {upgradeOpenEditorSchema} from "../src/editor/schema-transition.ts";
-import type {OpenEditorSchemaHost} from "../src/editor/schema-transition.ts";
-import type {ModelRange} from "../src/editor/index.ts";
+import {upgradeOpenEditorSchema} from "../../doc-sync-core/dist/editor/schema-transition.js";
+import type {OpenEditorSchemaHost} from "../../doc-sync-core/dist/editor/schema-transition.js";
+import type {ModelRange} from "../../doc-sync-core/dist/editor/index.js";
 import {MemoryNet} from "./harness.ts";
 
 function extended() {

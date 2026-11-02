@@ -17,7 +17,7 @@ function checkpoint(actor = "agent-1") {
         schema: DEMO_SCHEMA, client: client.checkpoint()};
 }
 
-test("checkpoint persists privately and restores the original actor and history", {skip: process.platform !== "darwin"}, async () => {
+test("checkpoint persists privately and restores the original actor and history", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-checkpoint-")), path = join(directory, "doc.json");
     let journal: IntentJournal | null = null;
     try {
@@ -34,7 +34,7 @@ test("checkpoint persists privately and restores the original actor and history"
     } finally { await journal?.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("invalid input and corrupt checkpoint do not overwrite stored bytes", {skip: process.platform !== "darwin"}, async () => {
+test("invalid input and corrupt checkpoint do not overwrite stored bytes", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-checkpoint-invalid-")), path = join(directory, "doc.json");
     let journal: IntentJournal | null = await IntentJournal.open(path, {document: "example", actor: "agent-1"});
     try {
@@ -53,7 +53,7 @@ test("invalid input and corrupt checkpoint do not overwrite stored bytes", {skip
     } finally { await journal?.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("checkpoint and writer lock survive a process termination", {skip: process.platform !== "darwin", timeout: 10000}, async () => {
+test("checkpoint and writer lock survive a process termination", {skip: (process.platform !== "darwin" && process.platform !== "linux"), timeout: 10000}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-checkpoint-kill-")), path = join(directory, "doc.json");
     const module = new URL("../src/journal.ts", import.meta.url).href;
     const saved = checkpoint();

@@ -16,9 +16,9 @@ const output = resolve(process.env.BENCH_OUTPUT ?? join(repo, 'benchmarks/result
 const samples = Number(process.env.BENCH_SAMPLES ?? 12);
 const warmups = Number(process.env.BENCH_WARMUPS ?? 2);
 const count = Number(process.env.BENCH_RECORDS ?? 30000);
-const {Doc, schemaVersion} = await import(pathToFileURL(join(source, 'packages/doc-sync/src/index.ts')));
+const {Doc, schemaVersion} = await import(pathToFileURL(join(source, 'packages/doc-sync-core/dist/index.js')));
 const {DEMO_SCHEMA} = await import(pathToFileURL(join(source, 'fixtures/demo-schema.ts')));
-const {PROTOCOL_VERSION} = await import(pathToFileURL(join(source, 'packages/doc-sync/src/sync/protocol.ts')));
+const {PROTOCOL_VERSION} = await import(pathToFileURL(join(source, 'packages/doc-sync-core/dist/sync/protocol.js')));
 const version = schemaVersion(DEMO_SCHEMA);
 const generation = '00000000-0000-4000-8000-000000000001';
 const model = new Doc('fixture', DEMO_SCHEMA);
@@ -123,7 +123,7 @@ try {
     const workerPath=join(source,'apps/demo/recovery-compaction-worker.ts');
     const workerBytes=await readFile(workerPath).catch(error=>{if(error.code==='ENOENT') return null; throw error;});
     const value={source,sourceSha256:createHash('sha256').update(await readFile(join(source,'apps/demo/server.ts'))).digest('hex'),workerSha256:workerBytes?createHash('sha256').update(workerBytes).digest('hex'):null,
-        coreTreeSha256:await treeHash(join(source,'packages/doc-sync/src')),fixturesTreeSha256:await treeHash(join(source,'fixtures')),fixtureSha256:createHash('sha256').update(fixture).digest('hex'),
+        coreTreeSha256:await treeHash(join(source,'packages/doc-sync-core/src')),coreDistTreeSha256:await treeHash(join(source,'packages/doc-sync-core/dist')),facadeTreeSha256:await treeHash(join(source,'packages/doc-sync')),buildInputsSha256:Object.fromEntries(await Promise.all(['package.json','package-lock.json','tsconfig.base.json','scripts/build-packages.mjs','scripts/build-package.mjs','packages/doc-sync-core/package.json','packages/doc-sync-core/tsconfig.build.json','node_modules/typescript/package.json'].map(async path=>[path,createHash('sha256').update(await readFile(join(source,path))).digest('hex')]))),fixturesTreeSha256:await treeHash(join(source,'fixtures')),fixtureSha256:createHash('sha256').update(fixture).digest('hex'),
         benchmarkSha256:createHash('sha256').update(await readFile(import.meta.filename)).digest('hex'),node:process.version,platform:`${os.type()} ${os.release()} ${os.arch()}`,cpu:os.cpus()[0]?.model,loadAverage:os.loadavg(),count,samples,warmups,fixtureBytes,
         method:'warm doc state first; cold doc GET state followed ~1ms later by independent warm doc append; then warm append followed ~1ms later by warm state; times are client HTTP response durations',
         coldOpenMs:summarize(results.map(x=>x.coldOpenMs)),otherDocumentAppendMs:summarize(results.map(x=>x.otherDocumentAppendMs)),warmAppendMs:summarize(results.map(x=>x.warmAppendMs)),warmReadMs:summarize(results.map(x=>x.warmReadMs)),runs:results};

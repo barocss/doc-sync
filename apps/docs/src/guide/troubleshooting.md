@@ -16,7 +16,7 @@ After a restart, use the same document ID and journal directory and call `recove
 
 ## A journal is locked or unavailable
 
-Use a different actor ID and journal directory for each concurrent agent. Keep each directory stable across its own restarts. Check directory permissions and available storage. Journal records are limited to 16 MiB. Durable MCP journals currently require macOS; `DOC_SYNC_JOURNAL=off` disables durable recovery and is appropriate only for disposable sessions. Journal files contain document content and require protection.
+Use a different actor ID and journal directory for each concurrent agent. Keep each directory stable across its own restarts. Check directory permissions and available storage. Journal records are limited to 16 MiB. Durable MCP journals require supported macOS/Linux kernel locks on private local storage; Linux requires `/usr/bin/flock` from util-linux; `DOC_SYNC_JOURNAL=off` disables durable recovery and is appropriate only for disposable sessions. Journal files contain document content and require protection.
 
 ## The editors do not reconnect
 

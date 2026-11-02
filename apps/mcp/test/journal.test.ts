@@ -17,7 +17,7 @@ function intent(actor = "agent-1", text = "hello"): PreparedIntent {
         change: {actor, seq: 1, ops: doc.edit(edits).ops}, edits, snapshot, schema: DEMO_SCHEMA};
 }
 
-test("journal persists the exact intent privately and restores the actor without replaying", {skip: process.platform !== "darwin"}, async () => {
+test("journal persists the exact intent privately and restores the actor without replaying", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-journal-")), path = join(directory, "document.json");
     let journal: IntentJournal | null = null;
     try {
@@ -40,7 +40,7 @@ test("journal persists the exact intent privately and restores the actor without
     } finally { await journal?.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("corrupt, mismatched and symbolic journal inputs are refused without changing their files", {skip: process.platform !== "darwin"}, async () => {
+test("corrupt, mismatched and symbolic journal inputs are refused without changing their files", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-journal-invalid-")), path = join(directory, "document.json");
     try {
         const original = "{incomplete journal";
@@ -56,7 +56,7 @@ test("corrupt, mismatched and symbolic journal inputs are refused without changi
     } finally { await rm(directory, {recursive: true, force: true}); }
 });
 
-test("digest corruption and actor mismatch never overwrite the record", {skip: process.platform !== "darwin"}, async () => {
+test("digest corruption and actor mismatch never overwrite the record", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-journal-digest-")), path = join(directory, "document.json");
     let journal: IntentJournal | null = await IntentJournal.open(path, {document: "example", actor: "agent-1"});
     try {
@@ -70,7 +70,7 @@ test("digest corruption and actor mismatch never overwrite the record", {skip: p
     } finally { await journal?.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("concurrent writes within one process cannot replace an unresolved intent", {skip: process.platform !== "darwin"}, async () => {
+test("concurrent writes within one process cannot replace an unresolved intent", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-journal-serial-")), path = join(directory, "document.json");
     const journal = await IntentJournal.open(path, {document: "example", actor: "agent-1"});
     try {
@@ -80,7 +80,7 @@ test("concurrent writes within one process cannot replace an unresolved intent",
     } finally { await journal.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("a rejected persistence attempt cannot replace an existing intent", {skip: process.platform !== "darwin"}, async () => {
+test("a rejected persistence attempt cannot replace an existing intent", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-journal-error-")), path = join(directory, "document.json");
     const journal = await IntentJournal.open(path, {document: "example", actor: "agent-1"});
     try {
@@ -97,7 +97,7 @@ test("a rejected persistence attempt cannot replace an existing intent", {skip: 
     } finally { await chmod(directory, 0o700); await journal.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("a failed pre-send journal write leaves no apparent prepared request", {skip: process.platform !== "darwin"}, async () => {
+test("a failed pre-send journal write leaves no apparent prepared request", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-journal-nosend-")), path = join(directory, "document.json");
     const journal = await IntentJournal.open(path, {document: "example", actor: "agent-1"});
     try {
@@ -108,7 +108,7 @@ test("a failed pre-send journal write leaves no apparent prepared request", {ski
     } finally { await chmod(directory, 0o700); await journal.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("a retry after rename cannot proceed until directory sync succeeds", {skip: process.platform !== "darwin"}, async () => {
+test("a retry after rename cannot proceed until directory sync succeeds", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-journal-dirsync-")), path = join(directory, "document.json");
     const journal = await IntentJournal.open(path, {document: "example", actor: "agent-1"});
     const internals = journal as unknown as {syncDirectory: () => Promise<void>};
@@ -131,7 +131,7 @@ test("a retry after rename cannot proceed until directory sync succeeds", {skip:
     } finally { await journal.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("kernel writer lock excludes another process and is released after SIGKILL", {skip: process.platform !== "darwin", timeout: 10000}, async () => {
+test("kernel writer lock excludes another process and is released after SIGKILL", {skip: (process.platform !== "darwin" && process.platform !== "linux"), timeout: 10000}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-journal-lock-")), path = join(directory, "document.json");
     const module = new URL("../src/journal.ts", import.meta.url).href;
     const program = `import {IntentJournal} from ${JSON.stringify(module)}; const j=await IntentJournal.open(process.argv[1],{document:'example',actor:'agent-1'}); await j.prepare(${JSON.stringify(intent())}); console.log('ready'); setInterval(()=>void j.actor,60000);`;
@@ -146,10 +146,14 @@ test("kernel writer lock excludes another process and is released after SIGKILL"
             child.once("exit", code => reject(new Error(`Lock helper exited ${code}: ${stderr}`)));
             child.stdout.on("data", chunk => { if (String(chunk).includes("ready")) { clearTimeout(timer); resolve(); } });
         });
+        const lockInode = (await stat(`${path}.lock`)).ino;
         await assert.rejects(IntentJournal.open(path, {document: "example", actor: "agent-1"}), /active writer/);
         child.kill("SIGKILL"); await exited;
         const restored = await IntentJournal.open(path, {document: "example", actor: "agent-1"});
-        try { assert.deepEqual((await restored.read())?.change, intent().change); }
+        try {
+            assert.equal((await stat(`${path}.lock`)).ino, lockInode, "SIGKILL relock keeps the original inode");
+            assert.deepEqual((await restored.read())?.change, intent().change);
+        }
         finally { await restored.close(); }
     } finally {
         if (child.exitCode === null && child.signalCode === null) { child.kill("SIGKILL"); await exited; }
@@ -157,6 +161,6 @@ test("kernel writer lock excludes another process and is released after SIGKILL"
     }
 });
 
-test("unsupported platforms fail closed instead of using an unsafe lock", {skip: process.platform === "darwin"}, async () => {
+test("unsupported platforms fail closed instead of using an unsafe lock", {skip: (process.platform === "darwin" || process.platform === "linux")}, async () => {
     await assert.rejects(IntentJournal.open("/tmp/example-journal", {document: "example"}), /not supported/);
 });

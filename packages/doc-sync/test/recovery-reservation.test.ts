@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../src/crdt/doc.ts";
-import {DocHub, RecoveryCompactionDeferredError} from "../src/server/hub.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {DocHub, RecoveryCompactionDeferredError} from "../../doc-sync-core/dist/server/hub.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 
 test("durable recovery reservation outlives peer lease and rejects compacted history", () => {

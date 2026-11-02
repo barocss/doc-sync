@@ -3,10 +3,10 @@ import {test} from "node:test";
 import {createEditor, TextNode, $getRoot, $getSelection, $isRangeSelection, $isElementNode, $isTextNode, INSERT_PARAGRAPH_COMMAND, UNDO_COMMAND, REDO_COMMAND} from "lexical";
 import {registerRichText} from "@lexical/rich-text";
 import {$isTableNode, $isTableRowNode, $isTableCellNode} from "@lexical/table";
-import {buildLexicalSchema, LexicalBinding, readLexicalModel, $setLexicalSelection, $lexicalSelection} from "../src/lexical/index.ts";
+import {buildLexicalSchema, LexicalBinding, readLexicalModel, $setLexicalSelection, $lexicalSelection} from "../../doc-sync-lexical/dist/index.js";
 import {MemoryNet} from "./harness.ts";
 import type {LexicalEditor} from "lexical";
-import type {LexicalSchemaInfo} from "../src/lexical/index.ts";
+import type {LexicalSchemaInfo} from "../../doc-sync-lexical/dist/index.js";
 
 const content = (editor: LexicalEditor) => editor.getEditorState().read(() => $getRoot().getTextContent());
 const type = (editor: LexicalEditor, info: LexicalSchemaInfo, path: number[], value: string) => editor.update(() => {

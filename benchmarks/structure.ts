@@ -90,7 +90,7 @@ const rows = sizes.flatMap(mainChars => scenarios.map(scenario => {
     return {mainChars, paragraphs, scenario, samples, warmups, diagnosticSamples: 2, markReads, correct: true,
         p50: sorted[Math.floor(samples * .5)], p95: sorted[Math.floor(samples * .95)], max: sorted.at(-1), rawMs};
 }));
-const sourcePaths = ["packages/doc-sync/src/crdt/doc.ts", "packages/doc-sync/src/crdt/model.ts", "packages/doc-sync/src/sync/client.ts", "packages/doc-sync/src/sync/model-events.ts", "benchmarks/structure.ts"];
+const sourcePaths = ["packages/doc-sync-core/dist/crdt/doc.js", "packages/doc-sync-core/dist/crdt/model.js", "packages/doc-sync-core/dist/sync/client.js", "packages/doc-sync-core/dist/sync/model-events.js", "benchmarks/structure.ts"];
 const result = {startedAt, endedAt: new Date().toISOString(), node: process.version, startedLoadAverage, endedLoadAverage: loadavg(),
     label: argument("label", "current"), metric: "synchronous remote change receipt through model-events callback; excludes network, DOM and correctness checks", unit: "ms",
     productImports: ["@barocss/doc-sync", "@barocss/doc-sync/sync"].map(specifier => ({specifier, resolved: import.meta.resolve(specifier)})),

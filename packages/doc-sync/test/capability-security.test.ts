@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, ROOT, keyOf, type Op, type Schema, type Snapshot} from "../src/index.ts";
-import {SyncClient} from "../src/sync/client.ts";
-import type {ServerEvent, Transport} from "../src/sync/protocol.ts";
-import {DocHub} from "../src/server/hub.ts";
-import {createAnnotation, getAnnotations, ANNOTATION_HEAD, ANNOTATION_HEAD_KEY} from "../src/crdt/annotations.ts";
-import {encodeFieldKey} from "../src/crdt/fields.ts";
-import {textTicket} from "../src/crdt/text-storage.ts";
+import {Doc, ROOT, keyOf, type Op, type Schema, type Snapshot} from "../../doc-sync-core/dist/index.js";
+import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import type {ServerEvent, Transport} from "../../doc-sync-core/dist/sync/protocol.js";
+import {DocHub} from "../../doc-sync-core/dist/server/hub.js";
+import {createAnnotation, getAnnotations, ANNOTATION_HEAD, ANNOTATION_HEAD_KEY} from "../../doc-sync-core/dist/crdt/annotations.js";
+import {encodeFieldKey} from "../../doc-sync-core/dist/crdt/fields.js";
+import {textTicket} from "../../doc-sync-core/dist/crdt/text-storage.js";
 
 const schema: Schema = {root: "content", marks: [], nodes: {
     content: {shape: "flow", children: ["paragraph", "box", "rule"], default: "paragraph"},

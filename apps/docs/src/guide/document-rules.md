@@ -115,3 +115,69 @@ Provide the same schema to each client and to `new DocHub({schema})` for these c
 A document epoch also identifies the server generation. A clean reconnect to a different epoch replaces the model and clears old history. If unconfirmed edits remain, the client disconnects with an explicit error and retains its local model and pending changes. The demo gives each process a new epoch, so a restart uses the same safe blocking rule. Invalid snapshots are rejected before pending changes are acknowledged or removed.
 
 `HttpTransport` advertises the version automatically. A custom HTTP client must send `protocol=3`, its remembered `epoch`, and its schema fingerprint on the SSE stream. It must send `x-doc-sync-protocol: 3`, `x-doc-sync-epoch`, and `x-doc-sync-schema` on change requests. Acknowledgments and presence use the epoch header; leave beacons use an epoch query parameter. Stale-epoch or schema-mismatch writes return HTTP 409. The demo server returns HTTP 426 for unsupported versions before applying those requests. Custom transports and servers must enforce the same compatibility boundary. Protocol versioning is not authentication.
+
+## Rust experiment
+
+The SDK accepts six fixed presets. It cannot register this page's schema, required-child rules, or field merge rules. In `Blocks`, `meta` is one atomic register. This SDK example writes two objects and confirms that the second object removes the earlier `spacing` field. It also needs `serde_json = "=1.0.140"` in the example crate.
+
+Use the [native SDK crate setup](./rust#use-the-native-rust-sdk) to run this complete Rust program.
+
+```rust
+use doc_sync_native_sdk::{Document, EditOptions, Key, Op, Result, SchemaPreset};
+use serde_json::json;
+
+fn main() -> Result<()> {
+    let mut doc = Document::new("rules-host", SchemaPreset::Blocks)?;
+    for (now, value) in [
+        (0.0, json!({"color":"red", "spacing":12})),
+        (10.0, json!({"color":"blue"})),
+    ] {
+        let at = doc.next_ticket()?;
+        doc.record(
+            vec![Op::Set {
+                at,
+                ids: vec![Key::root().ticket()?],
+                key: "meta".into(),
+                value,
+            }],
+            EditOptions::default(),
+            now,
+        )?;
+    }
+    let model = doc.model()?;
+    assert_eq!(model.children[0].attrs["meta"], json!({"color":"blue"}));
+    assert!(model.children[0].attrs["meta"].get("spacing").is_none());
+    Ok(())
+}
+```
+
+The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+
+<details>
+<summary>Raw protocol probe and reference checks</summary>
+
+Required-child projection, overflow rules, field-level attribute merging and persistent annotations remain TypeScript features. The private Rust manifests do not accept this page's arbitrary schema. Their `meta` attribute is one atomic JSON register. It does not implement `fields`.
+
+The following native example makes two whole-object writes. The later writer replaces the entire `meta` value.
+
+Build the private executable with the commands in [the Rust guide](./rust#run-the-private-experiment). Run the following command from the repository root. Each input line produces one JSON response.
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"A","actor":"A","schema":"general-flow-blocks:json-attrs:v1","capabilities":["general-blocks-attrs-v1"]}
+{"cmd":"apply","replica":"A","schema":"general-flow-blocks:json-attrs:v1","ops":[{"t":"set","at":{"lamport":1,"actor":"A"},"ids":[{"lamport":0,"actor":"~root"}],"key":"meta","value":{"color":"red","spacing":12}},{"t":"set","at":{"lamport":2,"actor":"B"},"ids":[{"lamport":0,"actor":"~root"}],"key":"meta","value":{"color":"blue"}}]}
+{"cmd":"state","replica":"A"}
+JSONL
+```
+
+The projected paragraph has `meta: {"color":"blue"}`. It has no `spacing` field. This is the declared atomic-register behavior, not a field-merge result.
+
+Run the TypeScript rule regressions separately:
+
+```sh
+node --test packages/doc-sync/test/cardinality.test.ts packages/doc-sync/test/cardinality-review.test.ts packages/doc-sync/test/nested-fields.test.ts packages/doc-sync/test/fields-review.test.ts packages/doc-sync/test/annotations.test.ts
+```
+
+Those tests check the production rules. The native example checks only the fixed general-block JSON subset. Their results do not establish Rust support for required slots, field paths, annotations, protocol negotiation or protected GC. See [remaining native limits](./rust#source-map-and-remaining-limits).
+
+</details>

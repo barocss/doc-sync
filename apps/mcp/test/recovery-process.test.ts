@@ -159,7 +159,7 @@ async function userInsert(origin: string) {
 for (const mode of ["before-send", "after-accept"] as const) {
     test(`SIGKILL ${mode}: conditional intent survives process and server restart`, {
         timeout: 45_000,
-        skip: process.platform !== "darwin" ? "The durable journal currently requires the macOS kernel lock" : false,
+        skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The durable journal requires a macOS or Linux kernel lock" : false,
     }, async () => {
         const root = await mkdtemp(join(tmpdir(), `doc-sync-recovery-${mode}-`));
         const data = join(root, "server"), journalDir = join(root, "journal");

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dual backend UTF-16 storage validation</title>
+<style>body{max-width:900px;margin:40px auto;padding:0 20px;font:16px/1.5 system-ui}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eee;padding:16px}</style>
+<h1>Dual backend UTF-16 storage validation</h1>
+<p>Independent JavaScript string oracle, Rust WASM Vec, and Rust WASM Gap. This is an isolated storage experiment.</p>
+<p>100,000 initial UTF-16 units; 10,000 edits per trace; 7 timing samples. Full state checks after each validation edit. Timings separate construction, edits with per-call transfer, and output copy.</p>
+<pre id="output">RUNNING: validation and benchmark start automatically.</pre>
+<script type="module">
+import { runStorageSuite } from './scripts/storage-suite.mjs';
+try {
+  window.storageStatus = 'RUNNING';
+  const response = await fetch('./target/wasm32-unknown-unknown/release/doc_sync_rust_experiment.wasm');
+  if (!response.ok) throw new Error(`WASM fetch ${response.status}`);
+  const { instance } = await WebAssembly.instantiate(await response.arrayBuffer(), {});
+  window.storageReceipt = { ...runStorageSuite(instance.exports), userAgent: navigator.userAgent };
+} catch (error) { window.storageReceipt = { status: 'FAIL', error: String(error), stack: error.stack }; }
+window.storageStatus = window.storageReceipt.status;
+document.querySelector('#output').textContent = JSON.stringify(window.storageReceipt, null, 2);
+</script></html>

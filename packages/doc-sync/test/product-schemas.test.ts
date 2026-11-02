@@ -1,16 +1,16 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, History, checkSchema, canonical, applyEdits, keyOf, type NodeJSON} from "../src/index.ts";
-import {buildPmSchema, toPmJSON, fromPmJSON} from "../src/pm/index.ts";
-import {toSlate, fromSlate} from "../src/slate/index.ts";
-import {buildLexicalSchema, toLexicalJSON, fromLexicalJSON} from "../src/lexical/index.ts";
+import {Doc, History, checkSchema, canonical, applyEdits, keyOf, type NodeJSON} from "../../doc-sync-core/dist/index.js";
+import {buildPmSchema, toPmJSON, fromPmJSON} from "../../doc-sync-prosemirror/dist/index.js";
+import {toSlate, fromSlate} from "../../doc-sync-slate/dist/index.js";
+import {buildLexicalSchema, toLexicalJSON, fromLexicalJSON} from "../../doc-sync-lexical/dist/index.js";
 import {PRODUCT_SCHEMAS} from "../../../fixtures/product-schemas.ts";
 import {PRODUCT_MODELS} from "../../../fixtures/product-documents.ts";
 import {MemoryNet} from "./harness.ts";
-import type {EditOp} from "../src/crdt/model.ts";
+import type {EditOp} from "../../doc-sync-core/dist/crdt/model.js";
 
-import {parseTextStorage, textTicket} from "../src/crdt/text-storage.ts";
-import {parseRequired} from "../src/crdt/cardinality.ts";
+import {parseTextStorage, textTicket} from "../../doc-sync-core/dist/crdt/text-storage.js";
+import {parseRequired} from "../../doc-sync-core/dist/crdt/cardinality.js";
 
 type Profile = keyof typeof PRODUCT_SCHEMAS;
 const nodeAt = (root: NodeJSON, path: number[]) => path.reduce((node, index) => node.children![index], root);

@@ -1,0 +1,4236 @@
+{
+  "status": "PASS",
+  "scope": "Isolated Node24 JavaScript Gap versus native Rust Gap. No WASM, CRDT, editor or production integration.",
+  "started": "2026-11-01T07:15:39.421Z",
+  "completed": "2026-11-01T07:15:51.057Z",
+  "conditions": {
+    "node": "v24.22.1",
+    "nodeExecutable": "/Users/user/.volta/tools/image/node/24.22.1/bin/node",
+    "nodeExecutableSha256": "6f32069480ec14d52b6d7b1f3c7124cfbbc46203abf5ddf5c65b127435f3f329",
+    "platform": "darwin",
+    "arch": "arm64",
+    "os": "24.6.0",
+    "cpu": "Apple M3 Max",
+    "logicalCpus": 14,
+    "ambientRustc": "rustc 1.87.0 (17067e9ac 2025-05-09) (Homebrew)",
+    "buildCompiler": "rustc 1.86.0 (05f9846f8 2025-03-31)",
+    "buildCommand": "cargo +stable build --release --manifest-path experiments/rust-core/Cargo.toml --bin native-gap-compare",
+    "buildCompilerSource": "Native runner owner build command, independently queried stable toolchain version",
+    "binary": "target/release/native-gap-compare",
+    "binarySha256": "4f6ab18ba51a58820ba4276217abe8564e16032a8acfeaab2cd213abd5b450c6",
+    "optimization": "cargo build --release, Cargo profile lto=true codegen-units=1 panic=abort",
+    "concurrency": "Sequential child processes; one measured runtime at a time. External machine load not controlled.",
+    "warmups": 5,
+    "samples": 7
+  },
+  "algorithm": "Initial initialized gap 64; overlapping gap movement; delete before growth; extra=max(required-gap,floor(post-delete logical length/2),64); fresh contiguous output. Rust Vec allocator capacity may differ from initialized units.",
+  "timingBoundary": "Fresh process per runtime/sample; prepared binary trace parsing and process startup excluded. Five untimed complete warmups in the same process. Construction includes copying initial units. Edit phase includes the runtime native API and validation. Fresh materialization allocates/copies output. Pipeline equals per-sample phase sum. JSON, IPC, independent oracle, hashing, and release excluded.",
+  "fairnessLimits": "Node JIT/GC versus Rust release compilation; Vec and TypedArray allocators differ. Native runner uses Result/capacity checks and JS uses RangeError/capacity checks. This is bounded storage/runtime comparison, not a language-wide claim.",
+  "differential": {
+    "status": "PASS",
+    "oracle": "Independent UTF-16 JavaScript string slice, each full code unit checked after every operation against both runtimes; status and initialized storage growth parity checked.",
+    "traces": [
+      {
+        "fixture": "small-305419896-cursor-local",
+        "sha256": "d5c19dfd98449f848220d4a0b8371f3ce8301060e052e0d1463c0a7516bba1cc",
+        "initialUnits": 128,
+        "operations": 4000,
+        "rejected": 0,
+        "fullStateAfterEveryOperation": true,
+        "finalUnits": 128
+      },
+      {
+        "fixture": "small-305419896-far-jump",
+        "sha256": "e4b00efc23a09b5489206cc13928f55af3536f309d4c8cc313896157ff4e771f",
+        "initialUnits": 128,
+        "operations": 4000,
+        "rejected": 0,
+        "fullStateAfterEveryOperation": true,
+        "finalUnits": 128
+      },
+      {
+        "fixture": "small-305419896-alternating-ends",
+        "sha256": "a513cae68058b040fbfc81b5bd837915c7a5ca35a54d0b491cb7064cbd409853",
+        "initialUnits": 128,
+        "operations": 4000,
+        "rejected": 0,
+        "fullStateAfterEveryOperation": true,
+        "finalUnits": 128
+      },
+      {
+        "fixture": "small-192837465-cursor-local",
+        "sha256": "e16aa45b8d75380f5d347234069da560ecdef6966011a8538b98f995db5c321e",
+        "initialUnits": 128,
+        "operations": 4000,
+        "rejected": 0,
+        "fullStateAfterEveryOperation": true,
+        "finalUnits": 128
+      },
+      {
+        "fixture": "small-192837465-far-jump",
+        "sha256": "608ea3915d56203e98294b9ca46a92071a16b11ce6b047260180aa2a9ea9b15c",
+        "initialUnits": 128,
+        "operations": 4000,
+        "rejected": 0,
+        "fullStateAfterEveryOperation": true,
+        "finalUnits": 128
+      },
+      {
+        "fixture": "small-192837465-alternating-ends",
+        "sha256": "4fb15835db2e5ef20b87b85b728d766c2b9dc791e7f6fe0b1d4417c0d39ca34e",
+        "initialUnits": 128,
+        "operations": 4000,
+        "rejected": 0,
+        "fullStateAfterEveryOperation": true,
+        "finalUnits": 128
+      },
+      {
+        "fixture": "errors-and-growth",
+        "sha256": "0cf6087b12e6fd1d15e0ac0e3ce2c437b6718a514762163764900cab3777552d",
+        "initialUnits": 4,
+        "operations": 9,
+        "rejected": 4,
+        "fullStateAfterEveryOperation": true,
+        "finalUnits": 0
+      }
+    ]
+  },
+  "benchmarks": [
+    {
+      "kind": "cursor-local",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerFreshSampleProcess": 5,
+      "fixtureSha256": "aaa94b1aee82fd45787e03369311decd6a2ad8fa37d79600527ad6d1b3e3c4b5",
+      "fixtureBytes": 360020,
+      "finalUnits": 100000,
+      "checksum": 1250648887,
+      "orders": [
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ]
+      ],
+      "rawSamples": [
+        {
+          "sample": 0,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.06675000000000253,
+              "edits_ms": 2.7361250000000013,
+              "materialization_ms": 0.051041000000001446
+            },
+            {
+              "construction_ms": 0.019957999999999032,
+              "edits_ms": 1.799833999999997,
+              "materialization_ms": 0.03733399999999776
+            },
+            {
+              "construction_ms": 0.022417000000000797,
+              "edits_ms": 1.1161670000000008,
+              "materialization_ms": 0.026457999999998094
+            },
+            {
+              "construction_ms": 0.017500000000001847,
+              "edits_ms": 1.3044169999999973,
+              "materialization_ms": 0.02712500000000162
+            },
+            {
+              "construction_ms": 0.019499999999997186,
+              "edits_ms": 0.989250000000002,
+              "materialization_ms": 0.027582999999999913
+            }
+          ],
+          "construction_ms": 0.01912499999999895,
+          "edits_ms": 0.9528329999999983,
+          "materialization_ms": 0.02070799999999906,
+          "storage_units": 100064,
+          "pipeline_ms": 0.9926659999999963,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 0,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.022417,
+              "edits_ms": 0.186084,
+              "materialization_ms": 0.015458
+            },
+            {
+              "construction_ms": 0.003167,
+              "edits_ms": 0.15925,
+              "materialization_ms": 0.003375
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.14645899999999998,
+              "materialization_ms": 0.003167
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.139042,
+              "materialization_ms": 0.00325
+            },
+            {
+              "construction_ms": 0.002667,
+              "edits_ms": 0.136625,
+              "materialization_ms": 0.003042
+            }
+          ],
+          "construction_ms": 0.0025840000000000004,
+          "edits_ms": 0.133167,
+          "materialization_ms": 0.003125,
+          "storage_units": 100064,
+          "pipeline_ms": 0.138876,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.021625000000000002,
+              "edits_ms": 0.196792,
+              "materialization_ms": 0.015209
+            },
+            {
+              "construction_ms": 0.00325,
+              "edits_ms": 0.195458,
+              "materialization_ms": 0.023291000000000003
+            },
+            {
+              "construction_ms": 0.003375,
+              "edits_ms": 0.157917,
+              "materialization_ms": 0.015083
+            },
+            {
+              "construction_ms": 0.002666,
+              "edits_ms": 0.141125,
+              "materialization_ms": 0.00275
+            },
+            {
+              "construction_ms": 0.0027080000000000003,
+              "edits_ms": 0.130792,
+              "materialization_ms": 0.00275
+            }
+          ],
+          "construction_ms": 0.0025830000000000002,
+          "edits_ms": 0.125542,
+          "materialization_ms": 0.0027089999999999996,
+          "storage_units": 100064,
+          "pipeline_ms": 0.13083399999999998,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.09600000000000009,
+              "edits_ms": 2.731459000000001,
+              "materialization_ms": 0.04729099999999775
+            },
+            {
+              "construction_ms": 0.02204099999999798,
+              "edits_ms": 1.5930420000000005,
+              "materialization_ms": 0.03120800000000301
+            },
+            {
+              "construction_ms": 0.018541000000002583,
+              "edits_ms": 1.070416999999999,
+              "materialization_ms": 0.024041000000000423
+            },
+            {
+              "construction_ms": 0.02949999999999875,
+              "edits_ms": 1.1497080000000004,
+              "materialization_ms": 0.006083000000000283
+            },
+            {
+              "construction_ms": 0.005250000000000199,
+              "edits_ms": 0.8413330000000023,
+              "materialization_ms": 0.015209000000002248
+            }
+          ],
+          "construction_ms": 0.016332999999999487,
+          "edits_ms": 0.8713340000000009,
+          "materialization_ms": 0.017541999999998836,
+          "storage_units": 100064,
+          "pipeline_ms": 0.9052089999999993,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07595799999999997,
+              "edits_ms": 2.8423750000000005,
+              "materialization_ms": 0.04658399999999929
+            },
+            {
+              "construction_ms": 0.025625000000001563,
+              "edits_ms": 1.7467919999999992,
+              "materialization_ms": 0.03283300000000011
+            },
+            {
+              "construction_ms": 0.02420800000000156,
+              "edits_ms": 1.223666999999999,
+              "materialization_ms": 0.07329199999999858
+            },
+            {
+              "construction_ms": 0.02266699999999844,
+              "edits_ms": 1.1980830000000005,
+              "materialization_ms": 0.023499999999998522
+            },
+            {
+              "construction_ms": 0.023915999999999826,
+              "edits_ms": 0.9500840000000004,
+              "materialization_ms": 0.02495800000000159
+            }
+          ],
+          "construction_ms": 0.020333000000000823,
+          "edits_ms": 0.9369590000000017,
+          "materialization_ms": 0.013249999999999318,
+          "storage_units": 100064,
+          "pipeline_ms": 0.9705420000000018,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.027833,
+              "edits_ms": 0.21804199999999999,
+              "materialization_ms": 0.018125
+            },
+            {
+              "construction_ms": 0.003125,
+              "edits_ms": 0.195541,
+              "materialization_ms": 0.026542
+            },
+            {
+              "construction_ms": 0.003791,
+              "edits_ms": 0.15820900000000002,
+              "materialization_ms": 0.014292
+            },
+            {
+              "construction_ms": 0.0025,
+              "edits_ms": 0.145959,
+              "materialization_ms": 0.002959
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.139625,
+              "materialization_ms": 0.002667
+            }
+          ],
+          "construction_ms": 0.002542,
+          "edits_ms": 0.13625,
+          "materialization_ms": 0.00275,
+          "storage_units": 100064,
+          "pipeline_ms": 0.141542,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.015667,
+              "edits_ms": 0.198042,
+              "materialization_ms": 0.015333000000000001
+            },
+            {
+              "construction_ms": 0.002791,
+              "edits_ms": 0.160917,
+              "materialization_ms": 0.003292
+            },
+            {
+              "construction_ms": 0.007083,
+              "edits_ms": 0.145042,
+              "materialization_ms": 0.003209
+            },
+            {
+              "construction_ms": 0.00575,
+              "edits_ms": 0.13549999999999998,
+              "materialization_ms": 0.003125
+            },
+            {
+              "construction_ms": 0.005833,
+              "edits_ms": 0.129542,
+              "materialization_ms": 0.003291
+            }
+          ],
+          "construction_ms": 0.00575,
+          "edits_ms": 0.126833,
+          "materialization_ms": 0.003208,
+          "storage_units": 100064,
+          "pipeline_ms": 0.135791,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07349999999999923,
+              "edits_ms": 2.955209,
+              "materialization_ms": 0.051667000000001906
+            },
+            {
+              "construction_ms": 0.025832999999998663,
+              "edits_ms": 1.6707919999999987,
+              "materialization_ms": 0.025667000000002105
+            },
+            {
+              "construction_ms": 0.02604199999999679,
+              "edits_ms": 1.1246250000000018,
+              "materialization_ms": 0.02495800000000159
+            },
+            {
+              "construction_ms": 0.019250000000003098,
+              "edits_ms": 1.1873749999999994,
+              "materialization_ms": 0.00941699999999912
+            },
+            {
+              "construction_ms": 0.008790999999998661,
+              "edits_ms": 0.9305419999999991,
+              "materialization_ms": 0.02441599999999866
+            }
+          ],
+          "construction_ms": 0.021209000000002476,
+          "edits_ms": 0.8347919999999966,
+          "materialization_ms": 0.01774999999999949,
+          "storage_units": 100064,
+          "pipeline_ms": 0.8737509999999986,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07450000000000045,
+              "edits_ms": 2.730791,
+              "materialization_ms": 0.0402079999999998
+            },
+            {
+              "construction_ms": 0.020916000000003265,
+              "edits_ms": 1.6112500000000018,
+              "materialization_ms": 0.02775000000000105
+            },
+            {
+              "construction_ms": 0.020416999999998353,
+              "edits_ms": 1.0963749999999983,
+              "materialization_ms": 0.019667000000001877
+            },
+            {
+              "construction_ms": 0.01804199999999767,
+              "edits_ms": 1.073792000000001,
+              "materialization_ms": 0.006541999999999604
+            },
+            {
+              "construction_ms": 0.007041999999998438,
+              "edits_ms": 0.8732499999999987,
+              "materialization_ms": 0.017417000000001792
+            }
+          ],
+          "construction_ms": 0.029958000000000595,
+          "edits_ms": 0.8937500000000007,
+          "materialization_ms": 0.006375000000002018,
+          "storage_units": 100064,
+          "pipeline_ms": 0.9300830000000033,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.015291999999999998,
+              "edits_ms": 0.1775,
+              "materialization_ms": 0.013917
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.156833,
+              "materialization_ms": 0.00325
+            },
+            {
+              "construction_ms": 0.006625,
+              "edits_ms": 0.142875,
+              "materialization_ms": 0.003042
+            },
+            {
+              "construction_ms": 0.0053750000000000004,
+              "edits_ms": 0.13549999999999998,
+              "materialization_ms": 0.003083
+            },
+            {
+              "construction_ms": 0.005458,
+              "edits_ms": 0.13120800000000002,
+              "materialization_ms": 0.003125
+            }
+          ],
+          "construction_ms": 0.005332999999999999,
+          "edits_ms": 0.128667,
+          "materialization_ms": 0.0029170000000000003,
+          "storage_units": 100064,
+          "pipeline_ms": 0.136917,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.01575,
+              "edits_ms": 0.18175,
+              "materialization_ms": 0.013791000000000001
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.160875,
+              "materialization_ms": 0.003125
+            },
+            {
+              "construction_ms": 0.006666,
+              "edits_ms": 0.146875,
+              "materialization_ms": 0.003125
+            },
+            {
+              "construction_ms": 0.005458,
+              "edits_ms": 0.1395,
+              "materialization_ms": 0.003042
+            },
+            {
+              "construction_ms": 0.0053750000000000004,
+              "edits_ms": 0.135542,
+              "materialization_ms": 0.003125
+            }
+          ],
+          "construction_ms": 0.0053750000000000004,
+          "edits_ms": 0.141291,
+          "materialization_ms": 0.003084,
+          "storage_units": 100064,
+          "pipeline_ms": 0.14975,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.08083300000000193,
+              "edits_ms": 2.628542000000003,
+              "materialization_ms": 0.03204199999999702
+            },
+            {
+              "construction_ms": 0.019040999999997865,
+              "edits_ms": 1.448209000000002,
+              "materialization_ms": 0.03091699999999875
+            },
+            {
+              "construction_ms": 0.028958000000002926,
+              "edits_ms": 1.0715839999999979,
+              "materialization_ms": 0.020958000000000254
+            },
+            {
+              "construction_ms": 0.0349579999999996,
+              "edits_ms": 1.186916,
+              "materialization_ms": 0.0275420000000004
+            },
+            {
+              "construction_ms": 0.02112499999999784,
+              "edits_ms": 0.8780000000000001,
+              "materialization_ms": 0.01870800000000017
+            }
+          ],
+          "construction_ms": 0.019666999999998325,
+          "edits_ms": 0.890708,
+          "materialization_ms": 0.018000000000000682,
+          "storage_units": 100064,
+          "pipeline_ms": 0.9283749999999991,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.09770799999999724,
+              "edits_ms": 2.911916999999999,
+              "materialization_ms": 0.05487499999999912
+            },
+            {
+              "construction_ms": 0.03316599999999781,
+              "edits_ms": 1.519124999999999,
+              "materialization_ms": 0.024082999999997412
+            },
+            {
+              "construction_ms": 0.022709000000002533,
+              "edits_ms": 1.049125,
+              "materialization_ms": 0.018582999999999572
+            },
+            {
+              "construction_ms": 0.018166999999998268,
+              "edits_ms": 1.101625000000002,
+              "materialization_ms": 0.005708000000002045
+            },
+            {
+              "construction_ms": 0.0052920000000007406,
+              "edits_ms": 0.8626670000000018,
+              "materialization_ms": 0.026875000000000426
+            }
+          ],
+          "construction_ms": 0.016290999999998945,
+          "edits_ms": 0.8616250000000001,
+          "materialization_ms": 0.016749999999998266,
+          "storage_units": 100064,
+          "pipeline_ms": 0.8946659999999973,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.018791,
+              "edits_ms": 0.18212499999999998,
+              "materialization_ms": 0.014457999999999999
+            },
+            {
+              "construction_ms": 0.002916,
+              "edits_ms": 0.168542,
+              "materialization_ms": 0.00325
+            },
+            {
+              "construction_ms": 0.006959,
+              "edits_ms": 0.146875,
+              "materialization_ms": 0.003208
+            },
+            {
+              "construction_ms": 0.005667,
+              "edits_ms": 0.13975,
+              "materialization_ms": 0.003209
+            },
+            {
+              "construction_ms": 0.005667,
+              "edits_ms": 0.135958,
+              "materialization_ms": 0.003208
+            }
+          ],
+          "construction_ms": 0.005708,
+          "edits_ms": 0.133833,
+          "materialization_ms": 0.003208,
+          "storage_units": 100064,
+          "pipeline_ms": 0.142749,
+          "fullOutputOracle": "PASS"
+        }
+      ]
+    },
+    {
+      "kind": "far-jump",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerFreshSampleProcess": 5,
+      "fixtureSha256": "199b9782f31dff4e658b1374ed4372f7f853039321f397f3e19274ecc60edc54",
+      "fixtureBytes": 360020,
+      "finalUnits": 100000,
+      "checksum": 3733865730,
+      "orders": [
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ]
+      ],
+      "rawSamples": [
+        {
+          "sample": 0,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.019417,
+              "edits_ms": 8.432916,
+              "materialization_ms": 0.030333
+            },
+            {
+              "construction_ms": 0.004042,
+              "edits_ms": 8.330292,
+              "materialization_ms": 0.018583000000000002
+            },
+            {
+              "construction_ms": 0.003916,
+              "edits_ms": 8.278625,
+              "materialization_ms": 0.003333
+            },
+            {
+              "construction_ms": 0.003208,
+              "edits_ms": 8.272583000000001,
+              "materialization_ms": 0.003583
+            },
+            {
+              "construction_ms": 0.003375,
+              "edits_ms": 8.310291,
+              "materialization_ms": 0.003625
+            }
+          ],
+          "construction_ms": 0.003333,
+          "edits_ms": 8.352916,
+          "materialization_ms": 0.003208,
+          "storage_units": 100064,
+          "pipeline_ms": 8.359457,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 0,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.06616600000000261,
+              "edits_ms": 11.692250000000001,
+              "materialization_ms": 0.05229100000000031
+            },
+            {
+              "construction_ms": 0.02304200000000023,
+              "edits_ms": 9.972208000000002,
+              "materialization_ms": 0.012166000000000565
+            },
+            {
+              "construction_ms": 0.01812500000000483,
+              "edits_ms": 9.433625,
+              "materialization_ms": 0.02441599999999511
+            },
+            {
+              "construction_ms": 0.019666999999998325,
+              "edits_ms": 9.439332999999998,
+              "materialization_ms": 0.03233300000000128
+            },
+            {
+              "construction_ms": 0.02616700000000094,
+              "edits_ms": 9.219999999999999,
+              "materialization_ms": 0.006749999999996703
+            }
+          ],
+          "construction_ms": 0.023834000000007904,
+          "edits_ms": 10.115625000000009,
+          "materialization_ms": 0.006249999999994316,
+          "storage_units": 100064,
+          "pipeline_ms": 10.14570900000001,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.06908300000000267,
+              "edits_ms": 11.954917000000002,
+              "materialization_ms": 0.04587499999999878
+            },
+            {
+              "construction_ms": 0.036708999999998326,
+              "edits_ms": 9.957790999999997,
+              "materialization_ms": 0.023749999999999716
+            },
+            {
+              "construction_ms": 0.02616599999999636,
+              "edits_ms": 9.157958,
+              "materialization_ms": 0.02283299999999855
+            },
+            {
+              "construction_ms": 0.018124999999997726,
+              "edits_ms": 9.2485,
+              "materialization_ms": 0.020916999999997188
+            },
+            {
+              "construction_ms": 0.01850000000000307,
+              "edits_ms": 9.015500000000003,
+              "materialization_ms": 0.025040999999987434
+            }
+          ],
+          "construction_ms": 0.018709000000001197,
+          "edits_ms": 9.098084,
+          "materialization_ms": 0.019458000000000197,
+          "storage_units": 100064,
+          "pipeline_ms": 9.136251000000001,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.015417000000000002,
+              "edits_ms": 7.9742500000000005,
+              "materialization_ms": 0.014124999999999999
+            },
+            {
+              "construction_ms": 0.003084,
+              "edits_ms": 8.20475,
+              "materialization_ms": 0.027042
+            },
+            {
+              "construction_ms": 0.003666,
+              "edits_ms": 8.13025,
+              "materialization_ms": 0.0036669999999999997
+            },
+            {
+              "construction_ms": 0.009167,
+              "edits_ms": 8.317542000000001,
+              "materialization_ms": 0.003208
+            },
+            {
+              "construction_ms": 0.006333,
+              "edits_ms": 8.818207999999998,
+              "materialization_ms": 0.017459
+            }
+          ],
+          "construction_ms": 0.005208999999999999,
+          "edits_ms": 9.066167,
+          "materialization_ms": 0.003458,
+          "storage_units": 100064,
+          "pipeline_ms": 9.074834000000001,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.017915999999999998,
+              "edits_ms": 8.97575,
+              "materialization_ms": 0.016042
+            },
+            {
+              "construction_ms": 0.003666,
+              "edits_ms": 9.590917,
+              "materialization_ms": 0.031084000000000004
+            },
+            {
+              "construction_ms": 0.004333,
+              "edits_ms": 9.472292,
+              "materialization_ms": 0.017499999999999998
+            },
+            {
+              "construction_ms": 0.004875,
+              "edits_ms": 9.557959,
+              "materialization_ms": 0.003917
+            },
+            {
+              "construction_ms": 0.004292,
+              "edits_ms": 9.73775,
+              "materialization_ms": 0.004
+            }
+          ],
+          "construction_ms": 0.0035,
+          "edits_ms": 9.566959,
+          "materialization_ms": 0.003417,
+          "storage_units": 100064,
+          "pipeline_ms": 9.573876000000002,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.08229200000000247,
+              "edits_ms": 11.482375000000001,
+              "materialization_ms": 0.050084000000001794
+            },
+            {
+              "construction_ms": 0.020416999999998353,
+              "edits_ms": 9.395124999999997,
+              "materialization_ms": 0.020207999999996673
+            },
+            {
+              "construction_ms": 0.01695800000000247,
+              "edits_ms": 9.097041999999995,
+              "materialization_ms": 0.020959000000004835
+            },
+            {
+              "construction_ms": 0.01941699999999713,
+              "edits_ms": 9.308457999999995,
+              "materialization_ms": 0.0067079999999961615
+            },
+            {
+              "construction_ms": 0.014041999999996335,
+              "edits_ms": 8.971124999999994,
+              "materialization_ms": 0.00929099999999039
+            }
+          ],
+          "construction_ms": 0.02158300000000679,
+          "edits_ms": 8.988500000000002,
+          "materialization_ms": 0.017042000000003554,
+          "storage_units": 100064,
+          "pipeline_ms": 9.027125000000012,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.045458,
+              "edits_ms": 11.495292000000003,
+              "materialization_ms": 0.06183300000000003
+            },
+            {
+              "construction_ms": 0.025666999999998552,
+              "edits_ms": 9.779915999999997,
+              "materialization_ms": 0.02570800000000162
+            },
+            {
+              "construction_ms": 0.020749999999999602,
+              "edits_ms": 9.114666999999997,
+              "materialization_ms": 0.02179200000000492
+            },
+            {
+              "construction_ms": 0.021582999999999686,
+              "edits_ms": 9.298875000000002,
+              "materialization_ms": 0.024667000000000883
+            },
+            {
+              "construction_ms": 0.018958000000004915,
+              "edits_ms": 9.222042000000002,
+              "materialization_ms": 0.028291999999993322
+            }
+          ],
+          "construction_ms": 0.02791700000000219,
+          "edits_ms": 9.609791000000001,
+          "materialization_ms": 0.024124999999997954,
+          "storage_units": 100064,
+          "pipeline_ms": 9.661833000000001,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.015458999999999999,
+              "edits_ms": 8.075833,
+              "materialization_ms": 0.015167
+            },
+            {
+              "construction_ms": 0.003083,
+              "edits_ms": 8.261291,
+              "materialization_ms": 0.026375
+            },
+            {
+              "construction_ms": 0.003417,
+              "edits_ms": 8.457792000000001,
+              "materialization_ms": 0.021875
+            },
+            {
+              "construction_ms": 0.0050409999999999995,
+              "edits_ms": 8.17,
+              "materialization_ms": 0.015417000000000002
+            },
+            {
+              "construction_ms": 0.003208,
+              "edits_ms": 8.19,
+              "materialization_ms": 0.003791
+            }
+          ],
+          "construction_ms": 0.009082999999999999,
+          "edits_ms": 8.203999999999999,
+          "materialization_ms": 0.003167,
+          "storage_units": 100064,
+          "pipeline_ms": 8.216249999999999,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.014624999999999999,
+              "edits_ms": 8.21325,
+              "materialization_ms": 0.013959
+            },
+            {
+              "construction_ms": 0.0029170000000000003,
+              "edits_ms": 8.284208,
+              "materialization_ms": 0.025208
+            },
+            {
+              "construction_ms": 0.003792,
+              "edits_ms": 8.211542,
+              "materialization_ms": 0.018125
+            },
+            {
+              "construction_ms": 0.003375,
+              "edits_ms": 8.186499999999999,
+              "materialization_ms": 0.003417
+            },
+            {
+              "construction_ms": 0.003125,
+              "edits_ms": 8.168999999999999,
+              "materialization_ms": 0.00325
+            }
+          ],
+          "construction_ms": 0.003209,
+          "edits_ms": 8.179959,
+          "materialization_ms": 0.003417,
+          "storage_units": 100064,
+          "pipeline_ms": 8.186585000000001,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07012500000000088,
+              "edits_ms": 11.743208,
+              "materialization_ms": 0.053000000000000824
+            },
+            {
+              "construction_ms": 0.04416700000000162,
+              "edits_ms": 9.837834,
+              "materialization_ms": 0.03337499999999949
+            },
+            {
+              "construction_ms": 0.02229099999999562,
+              "edits_ms": 9.337125,
+              "materialization_ms": 0.025292000000000314
+            },
+            {
+              "construction_ms": 0.019958000000002585,
+              "edits_ms": 9.445667,
+              "materialization_ms": 0.007500000000000284
+            },
+            {
+              "construction_ms": 0.009000000000000341,
+              "edits_ms": 9.163124999999994,
+              "materialization_ms": 0.01962500000000489
+            }
+          ],
+          "construction_ms": 0.021917000000001963,
+          "edits_ms": 9.206082999999992,
+          "materialization_ms": 0.008333000000007473,
+          "storage_units": 100064,
+          "pipeline_ms": 9.236333000000002,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.09808400000000006,
+              "edits_ms": 11.532666000000003,
+              "materialization_ms": 0.05779199999999918
+            },
+            {
+              "construction_ms": 0.02441699999999969,
+              "edits_ms": 9.906041999999996,
+              "materialization_ms": 0.028874999999999318
+            },
+            {
+              "construction_ms": 0.020834000000000685,
+              "edits_ms": 9.330125000000002,
+              "materialization_ms": 0.026667000000003327
+            },
+            {
+              "construction_ms": 0.018499999999995964,
+              "edits_ms": 9.530874999999995,
+              "materialization_ms": 0.007165999999998007
+            },
+            {
+              "construction_ms": 0.007834000000002561,
+              "edits_ms": 9.255709000000003,
+              "materialization_ms": 0.011167000000000371
+            }
+          ],
+          "construction_ms": 0.020959000000004835,
+          "edits_ms": 9.28562500000001,
+          "materialization_ms": 0.01979200000000958,
+          "storage_units": 100064,
+          "pipeline_ms": 9.326376000000025,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.014917,
+              "edits_ms": 7.864959,
+              "materialization_ms": 0.014208
+            },
+            {
+              "construction_ms": 0.003375,
+              "edits_ms": 7.931834,
+              "materialization_ms": 0.003166
+            },
+            {
+              "construction_ms": 0.006833,
+              "edits_ms": 7.885375,
+              "materialization_ms": 0.0030410000000000003
+            },
+            {
+              "construction_ms": 0.005667,
+              "edits_ms": 8.111625,
+              "materialization_ms": 0.003
+            },
+            {
+              "construction_ms": 0.008624999999999999,
+              "edits_ms": 8.20475,
+              "materialization_ms": 0.003125
+            }
+          ],
+          "construction_ms": 0.00625,
+          "edits_ms": 8.065875,
+          "materialization_ms": 0.002959,
+          "storage_units": 100064,
+          "pipeline_ms": 8.075084,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.022167,
+              "edits_ms": 8.218459,
+              "materialization_ms": 0.015583999999999999
+            },
+            {
+              "construction_ms": 0.003333,
+              "edits_ms": 8.206833,
+              "materialization_ms": 0.003875
+            },
+            {
+              "construction_ms": 0.003625,
+              "edits_ms": 8.246875000000001,
+              "materialization_ms": 0.02025
+            },
+            {
+              "construction_ms": 0.003583,
+              "edits_ms": 8.073749999999999,
+              "materialization_ms": 0.00325
+            },
+            {
+              "construction_ms": 0.008333,
+              "edits_ms": 8.490792,
+              "materialization_ms": 0.027125
+            }
+          ],
+          "construction_ms": 0.003583,
+          "edits_ms": 8.185082999999999,
+          "materialization_ms": 0.021083,
+          "storage_units": 100064,
+          "pipeline_ms": 8.209749,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07733400000000046,
+              "edits_ms": 11.503167000000001,
+              "materialization_ms": 0.05316700000000196
+            },
+            {
+              "construction_ms": 0.019916000000002043,
+              "edits_ms": 9.390208000000001,
+              "materialization_ms": 0.02679200000000037
+            },
+            {
+              "construction_ms": 0.026208000000004006,
+              "edits_ms": 9.148291999999998,
+              "materialization_ms": 0.023209000000001367
+            },
+            {
+              "construction_ms": 0.017583000000001903,
+              "edits_ms": 9.241582999999999,
+              "materialization_ms": 0.023792000000000257
+            },
+            {
+              "construction_ms": 0.019417000000004236,
+              "edits_ms": 8.848249999999993,
+              "materialization_ms": 0.01841699999999946
+            }
+          ],
+          "construction_ms": 0.017333000000007814,
+          "edits_ms": 8.85904099999999,
+          "materialization_ms": 0.01808300000000429,
+          "storage_units": 100064,
+          "pipeline_ms": 8.894457000000003,
+          "fullOutputOracle": "PASS"
+        }
+      ]
+    },
+    {
+      "kind": "alternating-ends",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerFreshSampleProcess": 5,
+      "fixtureSha256": "9421e4d3382bebf0570986e1c6f34da7cd50d95203f4162b14c7064b80cf487f",
+      "fixtureBytes": 360020,
+      "finalUnits": 100000,
+      "checksum": 971030360,
+      "orders": [
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ]
+      ],
+      "rawSamples": [
+        {
+          "sample": 0,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.06820899999999952,
+              "edits_ms": 32.0195,
+              "materialization_ms": 0.1057090000000045
+            },
+            {
+              "construction_ms": 0.021917000000001963,
+              "edits_ms": 29.921124999999996,
+              "materialization_ms": 0.03883399999999426
+            },
+            {
+              "construction_ms": 0.02333299999999383,
+              "edits_ms": 29.157916,
+              "materialization_ms": 0.02720899999999915
+            },
+            {
+              "construction_ms": 0.02316599999998914,
+              "edits_ms": 29.678083,
+              "materialization_ms": 0.0297079999999994
+            },
+            {
+              "construction_ms": 0.020041999999989457,
+              "edits_ms": 29.249166000000002,
+              "materialization_ms": 0.026541000000008808
+            }
+          ],
+          "construction_ms": 0.020292000000011967,
+          "edits_ms": 29.474625000000003,
+          "materialization_ms": 0.011458000000004631,
+          "storage_units": 100064,
+          "pipeline_ms": 29.50637500000002,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 0,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.017167,
+              "edits_ms": 27.085083,
+              "materialization_ms": 0.023916
+            },
+            {
+              "construction_ms": 0.0038330000000000005,
+              "edits_ms": 27.082542,
+              "materialization_ms": 0.025332999999999998
+            },
+            {
+              "construction_ms": 0.0036669999999999997,
+              "edits_ms": 27.205625,
+              "materialization_ms": 0.023125
+            },
+            {
+              "construction_ms": 0.003708,
+              "edits_ms": 27.301292,
+              "materialization_ms": 0.0155
+            },
+            {
+              "construction_ms": 0.003292,
+              "edits_ms": 27.298625,
+              "materialization_ms": 0.026042
+            }
+          ],
+          "construction_ms": 0.004083,
+          "edits_ms": 26.35175,
+          "materialization_ms": 0.010375,
+          "storage_units": 100064,
+          "pipeline_ms": 26.366208,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.014333,
+              "edits_ms": 26.388416000000003,
+              "materialization_ms": 0.015667
+            },
+            {
+              "construction_ms": 0.003791,
+              "edits_ms": 26.616792,
+              "materialization_ms": 0.030959
+            },
+            {
+              "construction_ms": 0.004,
+              "edits_ms": 27.363292,
+              "materialization_ms": 0.033041
+            },
+            {
+              "construction_ms": 0.010625,
+              "edits_ms": 26.801708,
+              "materialization_ms": 0.021500000000000002
+            },
+            {
+              "construction_ms": 0.003958,
+              "edits_ms": 27.491208,
+              "materialization_ms": 0.031083
+            }
+          ],
+          "construction_ms": 0.00475,
+          "edits_ms": 27.049167,
+          "materialization_ms": 0.054041,
+          "storage_units": 100064,
+          "pipeline_ms": 27.107958000000004,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.08037500000000009,
+              "edits_ms": 33.523875,
+              "materialization_ms": 0.07187499999999858
+            },
+            {
+              "construction_ms": 0.02579099999999812,
+              "edits_ms": 30.378125000000004,
+              "materialization_ms": 0.03912499999999852
+            },
+            {
+              "construction_ms": 0.02283400000000313,
+              "edits_ms": 39.482958999999994,
+              "materialization_ms": 0.03695900000001018
+            },
+            {
+              "construction_ms": 0.025417000000004464,
+              "edits_ms": 31.569458999999995,
+              "materialization_ms": 0.034874999999999545
+            },
+            {
+              "construction_ms": 0.02400000000000091,
+              "edits_ms": 31.18837499999998,
+              "materialization_ms": 0.038624999999996135
+            }
+          ],
+          "construction_ms": 0.023249999999990223,
+          "edits_ms": 29.388791999999995,
+          "materialization_ms": 0.014499999999998181,
+          "storage_units": 100064,
+          "pipeline_ms": 29.426541999999984,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.09012500000000045,
+              "edits_ms": 33.197209,
+              "materialization_ms": 0.09958300000000264
+            },
+            {
+              "construction_ms": 0.07041699999999906,
+              "edits_ms": 30.570791000000007,
+              "materialization_ms": 0.038000000000010914
+            },
+            {
+              "construction_ms": 0.02579099999999812,
+              "edits_ms": 28.987375,
+              "materialization_ms": 0.03533399999999176
+            },
+            {
+              "construction_ms": 0.03945799999999622,
+              "edits_ms": 29.507958000000002,
+              "materialization_ms": 0.040541999999987866
+            },
+            {
+              "construction_ms": 0.02183300000001509,
+              "edits_ms": 30.36666599999998,
+              "materialization_ms": 0.017874999999975216
+            }
+          ],
+          "construction_ms": 0.024583000000006905,
+          "edits_ms": 30.739374999999995,
+          "materialization_ms": 0.01783299999999599,
+          "storage_units": 100064,
+          "pipeline_ms": 30.781791,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.015583999999999999,
+              "edits_ms": 27.015333,
+              "materialization_ms": 0.034959000000000004
+            },
+            {
+              "construction_ms": 0.004292,
+              "edits_ms": 27.482208,
+              "materialization_ms": 0.026916000000000002
+            },
+            {
+              "construction_ms": 0.004542,
+              "edits_ms": 27.403375,
+              "materialization_ms": 0.015000000000000001
+            },
+            {
+              "construction_ms": 0.003083,
+              "edits_ms": 27.026417000000002,
+              "materialization_ms": 0.030833000000000003
+            },
+            {
+              "construction_ms": 0.011875,
+              "edits_ms": 27.578458,
+              "materialization_ms": 0.022708
+            }
+          ],
+          "construction_ms": 0.004292,
+          "edits_ms": 27.228083,
+          "materialization_ms": 0.02675,
+          "storage_units": 100064,
+          "pipeline_ms": 27.259125,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.018125,
+              "edits_ms": 26.641417,
+              "materialization_ms": 0.026167
+            },
+            {
+              "construction_ms": 0.003583,
+              "edits_ms": 26.88025,
+              "materialization_ms": 0.026583
+            },
+            {
+              "construction_ms": 0.0036669999999999997,
+              "edits_ms": 27.662125,
+              "materialization_ms": 0.01975
+            },
+            {
+              "construction_ms": 0.0045000000000000005,
+              "edits_ms": 27.022583,
+              "materialization_ms": 0.004959
+            },
+            {
+              "construction_ms": 0.004292,
+              "edits_ms": 27.264208,
+              "materialization_ms": 0.004958
+            }
+          ],
+          "construction_ms": 0.011791,
+          "edits_ms": 27.005208,
+          "materialization_ms": 0.034375,
+          "storage_units": 100064,
+          "pipeline_ms": 27.051374,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.0673339999999989,
+              "edits_ms": 32.610959,
+              "materialization_ms": 0.08583399999999841
+            },
+            {
+              "construction_ms": 0.026249999999997442,
+              "edits_ms": 30.00575,
+              "materialization_ms": 0.0518340000000137
+            },
+            {
+              "construction_ms": 0.026459000000002675,
+              "edits_ms": 32.19024999999999,
+              "materialization_ms": 0.03929200000000321
+            },
+            {
+              "construction_ms": 0.07620799999999406,
+              "edits_ms": 32.54258300000001,
+              "materialization_ms": 0.03870900000001143
+            },
+            {
+              "construction_ms": 0.02375000000000682,
+              "edits_ms": 29.182625,
+              "materialization_ms": 0.024625000000014552
+            }
+          ],
+          "construction_ms": 0.01920800000002032,
+          "edits_ms": 29.657292000000012,
+          "materialization_ms": 0.0216660000000104,
+          "storage_units": 100064,
+          "pipeline_ms": 29.698166000000043,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.09312500000000057,
+              "edits_ms": 32.366875,
+              "materialization_ms": 0.08758399999999966
+            },
+            {
+              "construction_ms": 0.04879100000000136,
+              "edits_ms": 30.63474999999999,
+              "materialization_ms": 0.026750000000006935
+            },
+            {
+              "construction_ms": 0.019875000000013188,
+              "edits_ms": 29.891458,
+              "materialization_ms": 0.07150000000000034
+            },
+            {
+              "construction_ms": 0.017583999999999378,
+              "edits_ms": 31.336916000000002,
+              "materialization_ms": 0.021041999999994232
+            },
+            {
+              "construction_ms": 0.022916000000009262,
+              "edits_ms": 28.703416000000004,
+              "materialization_ms": 0.045040999999997666
+            }
+          ],
+          "construction_ms": 0.0257090000000062,
+          "edits_ms": 30.93712500000001,
+          "materialization_ms": 0.04445800000002009,
+          "storage_units": 100064,
+          "pipeline_ms": 31.007292000000035,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.015917,
+              "edits_ms": 28.2185,
+              "materialization_ms": 0.025792
+            },
+            {
+              "construction_ms": 0.003875,
+              "edits_ms": 27.512417,
+              "materialization_ms": 0.025415999999999998
+            },
+            {
+              "construction_ms": 0.003792,
+              "edits_ms": 27.580000000000002,
+              "materialization_ms": 0.021875
+            },
+            {
+              "construction_ms": 0.013375,
+              "edits_ms": 27.540042,
+              "materialization_ms": 0.030333
+            },
+            {
+              "construction_ms": 0.004958,
+              "edits_ms": 27.22825,
+              "materialization_ms": 0.025042
+            }
+          ],
+          "construction_ms": 0.006667,
+          "edits_ms": 26.699875000000002,
+          "materialization_ms": 0.018583000000000002,
+          "storage_units": 100064,
+          "pipeline_ms": 26.725125000000002,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.014541,
+              "edits_ms": 26.894542,
+              "materialization_ms": 0.043042
+            },
+            {
+              "construction_ms": 0.010291,
+              "edits_ms": 27.164542,
+              "materialization_ms": 0.042082999999999995
+            },
+            {
+              "construction_ms": 0.003917,
+              "edits_ms": 27.44625,
+              "materialization_ms": 0.026334
+            },
+            {
+              "construction_ms": 0.0037500000000000003,
+              "edits_ms": 27.413084,
+              "materialization_ms": 0.003834
+            },
+            {
+              "construction_ms": 0.009791,
+              "edits_ms": 27.532291999999998,
+              "materialization_ms": 0.034709000000000004
+            }
+          ],
+          "construction_ms": 0.009417,
+          "edits_ms": 27.396625,
+          "materialization_ms": 0.021625000000000002,
+          "storage_units": 100064,
+          "pipeline_ms": 27.427667,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07699999999999818,
+              "edits_ms": 32.787208,
+              "materialization_ms": 0.07954199999999645
+            },
+            {
+              "construction_ms": 0.022750000000002046,
+              "edits_ms": 29.935083000000006,
+              "materialization_ms": 0.03204200000000412
+            },
+            {
+              "construction_ms": 0.02383299999999622,
+              "edits_ms": 29.281084000000007,
+              "materialization_ms": 0.02941699999999514
+            },
+            {
+              "construction_ms": 0.02070799999999906,
+              "edits_ms": 30.960417000000007,
+              "materialization_ms": 0.010792000000009239
+            },
+            {
+              "construction_ms": 0.01125000000001819,
+              "edits_ms": 29.98233400000001,
+              "materialization_ms": 0.04187500000000455
+            }
+          ],
+          "construction_ms": 0.025166999999981954,
+          "edits_ms": 29.960250000000002,
+          "materialization_ms": 0.0644580000000019,
+          "storage_units": 100064,
+          "pipeline_ms": 30.049874999999986,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.09108399999999861,
+              "edits_ms": 37.193332999999996,
+              "materialization_ms": 0.09070799999999934
+            },
+            {
+              "construction_ms": 0.02354200000000617,
+              "edits_ms": 30.685333,
+              "materialization_ms": 0.027167000000005714
+            },
+            {
+              "construction_ms": 0.00924999999999443,
+              "edits_ms": 28.693707999999987,
+              "materialization_ms": 0.027457999999995764
+            },
+            {
+              "construction_ms": 0.01933400000000063,
+              "edits_ms": 29.939707999999996,
+              "materialization_ms": 0.02612499999997908
+            },
+            {
+              "construction_ms": 0.021708000000018046,
+              "edits_ms": 29.462249999999983,
+              "materialization_ms": 0.03324999999998113
+            }
+          ],
+          "construction_ms": 0.02400000000000091,
+          "edits_ms": 29.945041000000003,
+          "materialization_ms": 0.032958000000007814,
+          "storage_units": 100064,
+          "pipeline_ms": 30.001999000000012,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.016082999999999997,
+              "edits_ms": 27.727375,
+              "materialization_ms": 0.025417000000000002
+            },
+            {
+              "construction_ms": 0.004125,
+              "edits_ms": 27.043083,
+              "materialization_ms": 0.022667000000000003
+            },
+            {
+              "construction_ms": 0.0036669999999999997,
+              "edits_ms": 27.750041,
+              "materialization_ms": 0.025792
+            },
+            {
+              "construction_ms": 0.003875,
+              "edits_ms": 26.891917000000003,
+              "materialization_ms": 0.0049169999999999995
+            },
+            {
+              "construction_ms": 0.013042,
+              "edits_ms": 27.388917,
+              "materialization_ms": 0.030625
+            }
+          ],
+          "construction_ms": 0.004333,
+          "edits_ms": 27.664875,
+          "materialization_ms": 0.026375,
+          "storage_units": 100064,
+          "pipeline_ms": 27.695583,
+          "fullOutputOracle": "PASS"
+        }
+      ]
+    },
+    {
+      "kind": "cursor-local",
+      "seed": 192837465,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerFreshSampleProcess": 5,
+      "fixtureSha256": "8c97308e2f218b2192583498e0fbedbe15531e4db22ec9eca793570c572cb152",
+      "fixtureBytes": 360020,
+      "finalUnits": 100000,
+      "checksum": 3081390431,
+      "orders": [
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ]
+      ],
+      "rawSamples": [
+        {
+          "sample": 0,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.022667000000000003,
+              "edits_ms": 0.17925,
+              "materialization_ms": 0.015541
+            },
+            {
+              "construction_ms": 0.002792,
+              "edits_ms": 0.160958,
+              "materialization_ms": 0.003459
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.146042,
+              "materialization_ms": 0.00325
+            },
+            {
+              "construction_ms": 0.0025,
+              "edits_ms": 0.133666,
+              "materialization_ms": 0.003083
+            },
+            {
+              "construction_ms": 0.0024159999999999997,
+              "edits_ms": 0.128083,
+              "materialization_ms": 0.003042
+            }
+          ],
+          "construction_ms": 0.0024590000000000002,
+          "edits_ms": 0.125417,
+          "materialization_ms": 0.003166,
+          "storage_units": 100064,
+          "pipeline_ms": 0.131042,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 0,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.08199999999999719,
+              "edits_ms": 2.704457999999999,
+              "materialization_ms": 0.0379170000000002
+            },
+            {
+              "construction_ms": 0.02104100000000031,
+              "edits_ms": 1.6546249999999993,
+              "materialization_ms": 0.013208000000002329
+            },
+            {
+              "construction_ms": 0.07262499999999861,
+              "edits_ms": 1.083207999999999,
+              "materialization_ms": 0.019790999999997894
+            },
+            {
+              "construction_ms": 0.019375000000000142,
+              "edits_ms": 1.214417000000001,
+              "materialization_ms": 0.02358300000000213
+            },
+            {
+              "construction_ms": 0.021042000000001337,
+              "edits_ms": 0.8319580000000002,
+              "materialization_ms": 0.018875000000001307
+            }
+          ],
+          "construction_ms": 0.019167000000003043,
+          "edits_ms": 0.8262919999999987,
+          "materialization_ms": 0.018457999999998975,
+          "storage_units": 100064,
+          "pipeline_ms": 0.8639170000000007,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07316700000000154,
+              "edits_ms": 2.729458000000001,
+              "materialization_ms": 0.05450000000000088
+            },
+            {
+              "construction_ms": 0.02145799999999909,
+              "edits_ms": 1.595917,
+              "materialization_ms": 0.009707999999999828
+            },
+            {
+              "construction_ms": 0.025458000000000425,
+              "edits_ms": 1.1024580000000022,
+              "materialization_ms": 0.020750000000003155
+            },
+            {
+              "construction_ms": 0.030999999999998806,
+              "edits_ms": 1.1760420000000025,
+              "materialization_ms": 0.034250000000000114
+            },
+            {
+              "construction_ms": 0.022041999999999007,
+              "edits_ms": 0.9456249999999997,
+              "materialization_ms": 0.01870800000000017
+            }
+          ],
+          "construction_ms": 0.02108300000000085,
+          "edits_ms": 0.9874169999999971,
+          "materialization_ms": 0.01908300000000196,
+          "storage_units": 100064,
+          "pipeline_ms": 1.027583,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.015583,
+              "edits_ms": 0.177167,
+              "materialization_ms": 0.01425
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.153708,
+              "materialization_ms": 0.0030410000000000003
+            },
+            {
+              "construction_ms": 0.006417,
+              "edits_ms": 0.138958,
+              "materialization_ms": 0.003
+            },
+            {
+              "construction_ms": 0.005291,
+              "edits_ms": 0.131417,
+              "materialization_ms": 0.0030410000000000003
+            },
+            {
+              "construction_ms": 0.005292000000000001,
+              "edits_ms": 0.127417,
+              "materialization_ms": 0.0029579999999999997
+            }
+          ],
+          "construction_ms": 0.0052499999999999995,
+          "edits_ms": 0.12562500000000001,
+          "materialization_ms": 0.0029170000000000003,
+          "storage_units": 100064,
+          "pipeline_ms": 0.13379200000000002,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.019208,
+              "edits_ms": 0.1835,
+              "materialization_ms": 0.01525
+            },
+            {
+              "construction_ms": 0.0028339999999999997,
+              "edits_ms": 0.166834,
+              "materialization_ms": 0.003375
+            },
+            {
+              "construction_ms": 0.007125,
+              "edits_ms": 0.15304199999999998,
+              "materialization_ms": 0.003291
+            },
+            {
+              "construction_ms": 0.005875,
+              "edits_ms": 0.145542,
+              "materialization_ms": 0.003375
+            },
+            {
+              "construction_ms": 0.005917,
+              "edits_ms": 0.1415,
+              "materialization_ms": 0.00325
+            }
+          ],
+          "construction_ms": 0.005915999999999999,
+          "edits_ms": 0.13933399999999999,
+          "materialization_ms": 0.003334,
+          "storage_units": 100064,
+          "pipeline_ms": 0.148584,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.08387499999999903,
+              "edits_ms": 2.822666999999999,
+              "materialization_ms": 0.0470000000000006
+            },
+            {
+              "construction_ms": 0.0533340000000031,
+              "edits_ms": 1.7171249999999993,
+              "materialization_ms": 0.04129199999999855
+            },
+            {
+              "construction_ms": 0.02729100000000173,
+              "edits_ms": 1.1731249999999989,
+              "materialization_ms": 0.0208750000000002
+            },
+            {
+              "construction_ms": 0.018625000000000114,
+              "edits_ms": 1.1717079999999989,
+              "materialization_ms": 0.007958999999999605
+            },
+            {
+              "construction_ms": 0.007082999999997952,
+              "edits_ms": 0.8709170000000022,
+              "materialization_ms": 0.019041999999998893
+            }
+          ],
+          "construction_ms": 0.017334000000001737,
+          "edits_ms": 0.8562079999999987,
+          "materialization_ms": 0.018166000000000793,
+          "storage_units": 100064,
+          "pipeline_ms": 0.8917080000000013,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.0672920000000019,
+              "edits_ms": 2.6914589999999983,
+              "materialization_ms": 0.03249999999999886
+            },
+            {
+              "construction_ms": 0.01812500000000128,
+              "edits_ms": 1.6935839999999978,
+              "materialization_ms": 0.0254589999999979
+            },
+            {
+              "construction_ms": 0.022917000000003185,
+              "edits_ms": 1.072458000000001,
+              "materialization_ms": 0.01666699999999821
+            },
+            {
+              "construction_ms": 0.01620799999999889,
+              "edits_ms": 1.1317089999999972,
+              "materialization_ms": 0.029375000000001705
+            },
+            {
+              "construction_ms": 0.023709000000000202,
+              "edits_ms": 0.9550410000000014,
+              "materialization_ms": 0.06687499999999957
+            }
+          ],
+          "construction_ms": 0.08058300000000074,
+          "edits_ms": 0.9456249999999997,
+          "materialization_ms": 0.02541699999999736,
+          "storage_units": 100064,
+          "pipeline_ms": 1.0516249999999978,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.031708999999999994,
+              "edits_ms": 0.188209,
+              "materialization_ms": 0.016541999999999998
+            },
+            {
+              "construction_ms": 0.002875,
+              "edits_ms": 0.162125,
+              "materialization_ms": 0.003167
+            },
+            {
+              "construction_ms": 0.0027089999999999996,
+              "edits_ms": 0.148125,
+              "materialization_ms": 0.003541
+            },
+            {
+              "construction_ms": 0.00275,
+              "edits_ms": 0.163083,
+              "materialization_ms": 0.016834
+            },
+            {
+              "construction_ms": 0.0043749999999999995,
+              "edits_ms": 0.223542,
+              "materialization_ms": 0.004041
+            }
+          ],
+          "construction_ms": 0.008666,
+          "edits_ms": 0.17216700000000001,
+          "materialization_ms": 0.003375,
+          "storage_units": 100064,
+          "pipeline_ms": 0.184208,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.017792,
+              "edits_ms": 0.174875,
+              "materialization_ms": 0.013458000000000001
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.154583,
+              "materialization_ms": 0.003125
+            },
+            {
+              "construction_ms": 0.006375,
+              "edits_ms": 0.13966599999999998,
+              "materialization_ms": 0.003125
+            },
+            {
+              "construction_ms": 0.005334,
+              "edits_ms": 0.131,
+              "materialization_ms": 0.003125
+            },
+            {
+              "construction_ms": 0.0053750000000000004,
+              "edits_ms": 0.126375,
+              "materialization_ms": 0.003084
+            }
+          ],
+          "construction_ms": 0.00575,
+          "edits_ms": 0.12408300000000001,
+          "materialization_ms": 0.003167,
+          "storage_units": 100064,
+          "pipeline_ms": 0.133,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.10845899999999986,
+              "edits_ms": 2.75,
+              "materialization_ms": 0.07979199999999764
+            },
+            {
+              "construction_ms": 0.01950000000000074,
+              "edits_ms": 1.8105829999999976,
+              "materialization_ms": 0.045624999999997584
+            },
+            {
+              "construction_ms": 0.031124999999999403,
+              "edits_ms": 1.2540000000000013,
+              "materialization_ms": 0.023333000000000936
+            },
+            {
+              "construction_ms": 0.026042000000000343,
+              "edits_ms": 1.1063749999999999,
+              "materialization_ms": 0.0058749999999996305
+            },
+            {
+              "construction_ms": 0.006750000000000256,
+              "edits_ms": 0.9430409999999974,
+              "materialization_ms": 0.02049999999999841
+            }
+          ],
+          "construction_ms": 0.020040999999999087,
+          "edits_ms": 1.1614579999999997,
+          "materialization_ms": 0.020958000000000254,
+          "storage_units": 100064,
+          "pipeline_ms": 1.202456999999999,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07566700000000282,
+              "edits_ms": 2.8111250000000005,
+              "materialization_ms": 0.05904200000000159
+            },
+            {
+              "construction_ms": 0.02012500000000017,
+              "edits_ms": 2.0489159999999984,
+              "materialization_ms": 0.037207999999999686
+            },
+            {
+              "construction_ms": 0.02070799999999906,
+              "edits_ms": 1.113667000000003,
+              "materialization_ms": 0.017083000000003068
+            },
+            {
+              "construction_ms": 0.016791999999998808,
+              "edits_ms": 1.0919590000000028,
+              "materialization_ms": 0.006583999999996593
+            },
+            {
+              "construction_ms": 0.008791999999999689,
+              "edits_ms": 0.9281669999999984,
+              "materialization_ms": 0.022915999999998604
+            }
+          ],
+          "construction_ms": 0.019041999999998893,
+          "edits_ms": 1.0530000000000008,
+          "materialization_ms": 0.031708000000001846,
+          "storage_units": 100064,
+          "pipeline_ms": 1.1037500000000016,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.023791,
+              "edits_ms": 0.175209,
+              "materialization_ms": 0.013375
+            },
+            {
+              "construction_ms": 0.0026249999999999997,
+              "edits_ms": 0.15512499999999999,
+              "materialization_ms": 0.003208
+            },
+            {
+              "construction_ms": 0.006417,
+              "edits_ms": 0.139917,
+              "materialization_ms": 0.003083
+            },
+            {
+              "construction_ms": 0.005458,
+              "edits_ms": 0.1315,
+              "materialization_ms": 0.003167
+            },
+            {
+              "construction_ms": 0.0054589999999999994,
+              "edits_ms": 0.127208,
+              "materialization_ms": 0.003083
+            }
+          ],
+          "construction_ms": 0.005416000000000001,
+          "edits_ms": 0.12462500000000001,
+          "materialization_ms": 0.003083,
+          "storage_units": 100064,
+          "pipeline_ms": 0.13312400000000002,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.014667,
+              "edits_ms": 0.178125,
+              "materialization_ms": 0.014916
+            },
+            {
+              "construction_ms": 0.002541,
+              "edits_ms": 0.164375,
+              "materialization_ms": 0.003125
+            },
+            {
+              "construction_ms": 0.0067079999999999996,
+              "edits_ms": 0.155084,
+              "materialization_ms": 0.002959
+            },
+            {
+              "construction_ms": 0.005417,
+              "edits_ms": 0.14995899999999998,
+              "materialization_ms": 0.003125
+            },
+            {
+              "construction_ms": 0.005458,
+              "edits_ms": 0.147083,
+              "materialization_ms": 0.003042
+            }
+          ],
+          "construction_ms": 0.005458,
+          "edits_ms": 0.144792,
+          "materialization_ms": 0.003,
+          "storage_units": 100064,
+          "pipeline_ms": 0.15325,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.11174999999999713,
+              "edits_ms": 2.770792,
+              "materialization_ms": 0.054999999999999716
+            },
+            {
+              "construction_ms": 0.01970900000000242,
+              "edits_ms": 1.7660829999999983,
+              "materialization_ms": 0.035916999999997756
+            },
+            {
+              "construction_ms": 0.02345900000000256,
+              "edits_ms": 1.237416999999997,
+              "materialization_ms": 0.018000000000000682
+            },
+            {
+              "construction_ms": 0.03395800000000193,
+              "edits_ms": 1.064041999999997,
+              "materialization_ms": 0.0058749999999996305
+            },
+            {
+              "construction_ms": 0.007999999999999119,
+              "edits_ms": 0.9572920000000025,
+              "materialization_ms": 0.022708000000001505
+            }
+          ],
+          "construction_ms": 0.01854099999999903,
+          "edits_ms": 0.9657499999999999,
+          "materialization_ms": 0.02133399999999952,
+          "storage_units": 100064,
+          "pipeline_ms": 1.0056249999999984,
+          "fullOutputOracle": "PASS"
+        }
+      ]
+    },
+    {
+      "kind": "far-jump",
+      "seed": 192837465,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerFreshSampleProcess": 5,
+      "fixtureSha256": "fcde79abbe5ccc267e590c46adc21c62a8e6d682abcc6ccf178eaae21f5c1513",
+      "fixtureBytes": 360020,
+      "finalUnits": 100000,
+      "checksum": 2750389169,
+      "orders": [
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ]
+      ],
+      "rawSamples": [
+        {
+          "sample": 0,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.10087500000000205,
+              "edits_ms": 11.163416999999999,
+              "materialization_ms": 0.045583000000000595
+            },
+            {
+              "construction_ms": 0.021040999999996757,
+              "edits_ms": 9.593833000000004,
+              "materialization_ms": 0.0171670000000006
+            },
+            {
+              "construction_ms": 0.019624999999997783,
+              "edits_ms": 9.964334000000001,
+              "materialization_ms": 0.03779100000000568
+            },
+            {
+              "construction_ms": 0.038750000000000284,
+              "edits_ms": 10.210750000000004,
+              "materialization_ms": 0.02499999999999858
+            },
+            {
+              "construction_ms": 0.024292000000002645,
+              "edits_ms": 8.864791000000004,
+              "materialization_ms": 0.01883399999999824
+            }
+          ],
+          "construction_ms": 0.01695800000000247,
+          "edits_ms": 8.98975,
+          "materialization_ms": 0.042791999999991504,
+          "storage_units": 100064,
+          "pipeline_ms": 9.049499999999995,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 0,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.036333,
+              "edits_ms": 8.281500000000001,
+              "materialization_ms": 0.017499999999999998
+            },
+            {
+              "construction_ms": 0.004417,
+              "edits_ms": 8.618208000000001,
+              "materialization_ms": 0.0255
+            },
+            {
+              "construction_ms": 0.00475,
+              "edits_ms": 8.356959,
+              "materialization_ms": 0.034334
+            },
+            {
+              "construction_ms": 0.003,
+              "edits_ms": 8.368875,
+              "materialization_ms": 0.016208
+            },
+            {
+              "construction_ms": 0.003666,
+              "edits_ms": 8.7215,
+              "materialization_ms": 0.017416
+            }
+          ],
+          "construction_ms": 0.003958,
+          "edits_ms": 8.131,
+          "materialization_ms": 0.003166,
+          "storage_units": 100064,
+          "pipeline_ms": 8.138124000000001,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.016416,
+              "edits_ms": 8.126208,
+              "materialization_ms": 0.015375000000000002
+            },
+            {
+              "construction_ms": 0.003792,
+              "edits_ms": 8.141375,
+              "materialization_ms": 0.0027080000000000003
+            },
+            {
+              "construction_ms": 0.007709000000000001,
+              "edits_ms": 8.320041999999999,
+              "materialization_ms": 0.0265
+            },
+            {
+              "construction_ms": 0.0036669999999999997,
+              "edits_ms": 8.340041,
+              "materialization_ms": 0.036583
+            },
+            {
+              "construction_ms": 0.0053750000000000004,
+              "edits_ms": 8.256625,
+              "materialization_ms": 0.026542
+            }
+          ],
+          "construction_ms": 0.0037500000000000003,
+          "edits_ms": 8.338415999999999,
+          "materialization_ms": 0.015167,
+          "storage_units": 100064,
+          "pipeline_ms": 8.357332999999999,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07441599999999937,
+              "edits_ms": 11.760458,
+              "materialization_ms": 0.059124999999998096
+            },
+            {
+              "construction_ms": 0.026125000000000398,
+              "edits_ms": 9.774249999999999,
+              "materialization_ms": 0.04449999999999932
+            },
+            {
+              "construction_ms": 0.029291999999998097,
+              "edits_ms": 9.27975,
+              "materialization_ms": 0.03233300000000128
+            },
+            {
+              "construction_ms": 0.02912500000000051,
+              "edits_ms": 10.238374999999998,
+              "materialization_ms": 0.027250000000002217
+            },
+            {
+              "construction_ms": 0.01883299999999366,
+              "edits_ms": 9.073500000000003,
+              "materialization_ms": 0.03674999999999784
+            }
+          ],
+          "construction_ms": 0.037209000000004266,
+          "edits_ms": 9.246250000000003,
+          "materialization_ms": 0.031792000000010034,
+          "storage_units": 100064,
+          "pipeline_ms": 9.315251000000018,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.0846669999999996,
+              "edits_ms": 11.516834000000003,
+              "materialization_ms": 0.06466700000000003
+            },
+            {
+              "construction_ms": 0.026082999999999856,
+              "edits_ms": 10.056375000000003,
+              "materialization_ms": 0.03354200000000418
+            },
+            {
+              "construction_ms": 0.02429100000000517,
+              "edits_ms": 9.315791000000004,
+              "materialization_ms": 0.02058299999999491
+            },
+            {
+              "construction_ms": 0.024083999999994887,
+              "edits_ms": 9.202917,
+              "materialization_ms": 0.005375000000000796
+            },
+            {
+              "construction_ms": 0.005333000000000254,
+              "edits_ms": 8.915875,
+              "materialization_ms": 0.006708000000003267
+            }
+          ],
+          "construction_ms": 0.004958000000002016,
+          "edits_ms": 8.920457999999996,
+          "materialization_ms": 0.021707999999989624,
+          "storage_units": 100064,
+          "pipeline_ms": 8.947123999999988,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.017417,
+              "edits_ms": 8.170917,
+              "materialization_ms": 0.014
+            },
+            {
+              "construction_ms": 0.002833,
+              "edits_ms": 8.156125,
+              "materialization_ms": 0.002667
+            },
+            {
+              "construction_ms": 0.008667,
+              "edits_ms": 8.316041,
+              "materialization_ms": 0.002542
+            },
+            {
+              "construction_ms": 0.0065,
+              "edits_ms": 8.387749999999999,
+              "materialization_ms": 0.0026249999999999997
+            },
+            {
+              "construction_ms": 0.006541,
+              "edits_ms": 8.492375,
+              "materialization_ms": 0.029833000000000002
+            }
+          ],
+          "construction_ms": 0.004208,
+          "edits_ms": 7.892541,
+          "materialization_ms": 0.014334,
+          "storage_units": 100064,
+          "pipeline_ms": 7.911083,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.01525,
+              "edits_ms": 8.334209,
+              "materialization_ms": 0.030042000000000003
+            },
+            {
+              "construction_ms": 0.003875,
+              "edits_ms": 7.92675,
+              "materialization_ms": 0.018125
+            },
+            {
+              "construction_ms": 0.003083,
+              "edits_ms": 8.430958,
+              "materialization_ms": 0.003416
+            },
+            {
+              "construction_ms": 0.003959,
+              "edits_ms": 8.176457999999998,
+              "materialization_ms": 0.0027080000000000003
+            },
+            {
+              "construction_ms": 0.004958,
+              "edits_ms": 8.210958000000002,
+              "materialization_ms": 0.002791
+            }
+          ],
+          "construction_ms": 0.003583,
+          "edits_ms": 7.9017919999999995,
+          "materialization_ms": 0.0026249999999999997,
+          "storage_units": 100064,
+          "pipeline_ms": 7.9079999999999995,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.0716659999999969,
+              "edits_ms": 11.361709000000001,
+              "materialization_ms": 0.054291999999996676
+            },
+            {
+              "construction_ms": 0.02237500000000381,
+              "edits_ms": 9.465291999999998,
+              "materialization_ms": 0.03216699999999406
+            },
+            {
+              "construction_ms": 0.02116699999999838,
+              "edits_ms": 9.088000000000001,
+              "materialization_ms": 0.030334000000003414
+            },
+            {
+              "construction_ms": 0.030750000000004718,
+              "edits_ms": 9.257792000000002,
+              "materialization_ms": 0.007208000000005654
+            },
+            {
+              "construction_ms": 0.012791999999997472,
+              "edits_ms": 9.241750000000003,
+              "materialization_ms": 0.007791999999994914
+            }
+          ],
+          "construction_ms": 0.026708999999996763,
+          "edits_ms": 8.949832999999998,
+          "materialization_ms": 0.02254100000000392,
+          "storage_units": 100064,
+          "pipeline_ms": 8.999082999999999,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.08216699999999832,
+              "edits_ms": 11.748207999999998,
+              "materialization_ms": 0.09074999999999989
+            },
+            {
+              "construction_ms": 0.04379199999999983,
+              "edits_ms": 10.038041999999997,
+              "materialization_ms": 0.0344169999999977
+            },
+            {
+              "construction_ms": 0.021582999999999686,
+              "edits_ms": 9.543042,
+              "materialization_ms": 0.02258300000000446
+            },
+            {
+              "construction_ms": 0.01950000000000074,
+              "edits_ms": 9.608000000000004,
+              "materialization_ms": 0.02954199999999929
+            },
+            {
+              "construction_ms": 0.021499999999996078,
+              "edits_ms": 9.750625,
+              "materialization_ms": 0.045875000000009436
+            }
+          ],
+          "construction_ms": 0.03324999999999534,
+          "edits_ms": 10.690083999999999,
+          "materialization_ms": 0.023207999999996787,
+          "storage_units": 100064,
+          "pipeline_ms": 10.746541999999991,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.014708,
+              "edits_ms": 8.872833,
+              "materialization_ms": 0.034416999999999996
+            },
+            {
+              "construction_ms": 0.004208,
+              "edits_ms": 9.072833000000001,
+              "materialization_ms": 0.015958
+            },
+            {
+              "construction_ms": 0.006208,
+              "edits_ms": 9.284707999999998,
+              "materialization_ms": 0.003
+            },
+            {
+              "construction_ms": 0.0038330000000000005,
+              "edits_ms": 9.551083,
+              "materialization_ms": 0.027
+            },
+            {
+              "construction_ms": 0.0065,
+              "edits_ms": 9.488542,
+              "materialization_ms": 0.0048330000000000005
+            }
+          ],
+          "construction_ms": 0.005,
+          "edits_ms": 9.52375,
+          "materialization_ms": 0.003583,
+          "storage_units": 100064,
+          "pipeline_ms": 9.532333000000001,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.017334,
+              "edits_ms": 8.238917,
+              "materialization_ms": 0.015290999999999999
+            },
+            {
+              "construction_ms": 0.003583,
+              "edits_ms": 8.182333,
+              "materialization_ms": 0.0027080000000000003
+            },
+            {
+              "construction_ms": 0.008,
+              "edits_ms": 8.190792,
+              "materialization_ms": 0.0027089999999999996
+            },
+            {
+              "construction_ms": 0.006833,
+              "edits_ms": 8.218167,
+              "materialization_ms": 0.003167
+            },
+            {
+              "construction_ms": 0.008333,
+              "edits_ms": 8.157958,
+              "materialization_ms": 0.00275
+            }
+          ],
+          "construction_ms": 0.006625,
+          "edits_ms": 8.168791,
+          "materialization_ms": 0.002792,
+          "storage_units": 100064,
+          "pipeline_ms": 8.178208,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.07150000000000034,
+              "edits_ms": 11.585458,
+              "materialization_ms": 0.04666699999999935
+            },
+            {
+              "construction_ms": 0.022333000000003267,
+              "edits_ms": 10.058875,
+              "materialization_ms": 0.012541999999996278
+            },
+            {
+              "construction_ms": 0.02066599999999852,
+              "edits_ms": 9.475417,
+              "materialization_ms": 0.024332999999998606
+            },
+            {
+              "construction_ms": 0.02008299999999963,
+              "edits_ms": 9.826999999999998,
+              "materialization_ms": 0.02949999999999875
+            },
+            {
+              "construction_ms": 0.03583299999999667,
+              "edits_ms": 9.712125,
+              "materialization_ms": 0.03066599999999653
+            }
+          ],
+          "construction_ms": 0.020166000000003237,
+          "edits_ms": 9.445083000000011,
+          "materialization_ms": 0.02579099999999812,
+          "storage_units": 100064,
+          "pipeline_ms": 9.491040000000012,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.06937500000000085,
+              "edits_ms": 11.649999999999999,
+              "materialization_ms": 0.10883300000000062
+            },
+            {
+              "construction_ms": 0.025874999999999204,
+              "edits_ms": 10.148666000000002,
+              "materialization_ms": 0.03554099999999494
+            },
+            {
+              "construction_ms": 0.030291999999995767,
+              "edits_ms": 9.589166999999996,
+              "materialization_ms": 0.027166000000001134
+            },
+            {
+              "construction_ms": 0.021332999999998492,
+              "edits_ms": 9.719583,
+              "materialization_ms": 0.02341599999999744
+            },
+            {
+              "construction_ms": 0.0219589999999954,
+              "edits_ms": 9.461041999999992,
+              "materialization_ms": 0.03054199999999696
+            }
+          ],
+          "construction_ms": 0.02112499999999784,
+          "edits_ms": 9.411583000000007,
+          "materialization_ms": 0.03041600000000244,
+          "storage_units": 100064,
+          "pipeline_ms": 9.463124000000008,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.01825,
+              "edits_ms": 8.381417,
+              "materialization_ms": 0.021083
+            },
+            {
+              "construction_ms": 0.020792,
+              "edits_ms": 7.882208,
+              "materialization_ms": 0.023375
+            },
+            {
+              "construction_ms": 0.003042,
+              "edits_ms": 8.334084,
+              "materialization_ms": 0.021417
+            },
+            {
+              "construction_ms": 0.0038330000000000005,
+              "edits_ms": 8.031958000000001,
+              "materialization_ms": 0.027459
+            },
+            {
+              "construction_ms": 0.009917,
+              "edits_ms": 9.764333,
+              "materialization_ms": 0.029875000000000002
+            }
+          ],
+          "construction_ms": 0.004834,
+          "edits_ms": 8.221124999999999,
+          "materialization_ms": 0.030417,
+          "storage_units": 100064,
+          "pipeline_ms": 8.256376,
+          "fullOutputOracle": "PASS"
+        }
+      ]
+    },
+    {
+      "kind": "alternating-ends",
+      "seed": 192837465,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmupsPerFreshSampleProcess": 5,
+      "fixtureSha256": "a0aa3f52e467fc042599c35fd25e48f7387fd3196f77ba1274eabc8ea197113c",
+      "fixtureBytes": 360020,
+      "finalUnits": 100000,
+      "checksum": 184667837,
+      "orders": [
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ],
+        [
+          "node24-js-gap",
+          "rust-native"
+        ],
+        [
+          "rust-native",
+          "node24-js-gap"
+        ]
+      ],
+      "rawSamples": [
+        {
+          "sample": 0,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.0165,
+              "edits_ms": 26.824333999999997,
+              "materialization_ms": 0.01925
+            },
+            {
+              "construction_ms": 0.0045000000000000005,
+              "edits_ms": 26.646833,
+              "materialization_ms": 0.003583
+            },
+            {
+              "construction_ms": 0.008291000000000001,
+              "edits_ms": 26.463542,
+              "materialization_ms": 0.0030410000000000003
+            },
+            {
+              "construction_ms": 0.006209,
+              "edits_ms": 27.016833000000002,
+              "materialization_ms": 0.024166
+            },
+            {
+              "construction_ms": 0.004125,
+              "edits_ms": 26.921,
+              "materialization_ms": 0.084209
+            }
+          ],
+          "construction_ms": 0.005958000000000001,
+          "edits_ms": 27.228875,
+          "materialization_ms": 0.004292,
+          "storage_units": 100064,
+          "pipeline_ms": 27.239124999999998,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 0,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.109375,
+              "edits_ms": 36.78475,
+              "materialization_ms": 0.09487500000000182
+            },
+            {
+              "construction_ms": 0.02237500000000381,
+              "edits_ms": 31.686415999999994,
+              "materialization_ms": 0.11316700000000424
+            },
+            {
+              "construction_ms": 0.022582999999997355,
+              "edits_ms": 29.49433300000001,
+              "materialization_ms": 0.032707999999999515
+            },
+            {
+              "construction_ms": 0.020792000000000144,
+              "edits_ms": 32.189417000000006,
+              "materialization_ms": 0.019874999999984766
+            },
+            {
+              "construction_ms": 0.025541999999973086,
+              "edits_ms": 28.91470799999999,
+              "materialization_ms": 0.020041000000020404
+            }
+          ],
+          "construction_ms": 0.026249999999976126,
+          "edits_ms": 29.281958000000003,
+          "materialization_ms": 0.0332909999999913,
+          "storage_units": 100064,
+          "pipeline_ms": 29.34149899999997,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.063917,
+              "edits_ms": 32.267667,
+              "materialization_ms": 0.0678750000000008
+            },
+            {
+              "construction_ms": 0.025832999999998663,
+              "edits_ms": 30.594542000000004,
+              "materialization_ms": 0.03995800000001282
+            },
+            {
+              "construction_ms": 0.025624999999990905,
+              "edits_ms": 29.522042,
+              "materialization_ms": 0.040625000000005684
+            },
+            {
+              "construction_ms": 0.025791999999995596,
+              "edits_ms": 29.750832999999986,
+              "materialization_ms": 0.03904099999999744
+            },
+            {
+              "construction_ms": 0.037790999999998576,
+              "edits_ms": 29.500249999999994,
+              "materialization_ms": 0.08895799999999099
+            }
+          ],
+          "construction_ms": 0.02391699999998309,
+          "edits_ms": 30.818208,
+          "materialization_ms": 0.013625000000018872,
+          "storage_units": 100064,
+          "pipeline_ms": 30.85575,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 1,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.015667,
+              "edits_ms": 27.289416,
+              "materialization_ms": 0.017750000000000002
+            },
+            {
+              "construction_ms": 0.003542,
+              "edits_ms": 28.222250000000003,
+              "materialization_ms": 0.030583000000000003
+            },
+            {
+              "construction_ms": 0.004,
+              "edits_ms": 27.649916,
+              "materialization_ms": 0.026875
+            },
+            {
+              "construction_ms": 0.004125,
+              "edits_ms": 27.41325,
+              "materialization_ms": 0.005
+            },
+            {
+              "construction_ms": 0.011417,
+              "edits_ms": 27.302625,
+              "materialization_ms": 0.003791
+            }
+          ],
+          "construction_ms": 0.006333,
+          "edits_ms": 27.366875,
+          "materialization_ms": 0.022041,
+          "storage_units": 100064,
+          "pipeline_ms": 27.395249000000003,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.0145,
+              "edits_ms": 26.44475,
+              "materialization_ms": 0.0205
+            },
+            {
+              "construction_ms": 0.003167,
+              "edits_ms": 26.442833,
+              "materialization_ms": 0.038416
+            },
+            {
+              "construction_ms": 0.003541,
+              "edits_ms": 26.345042,
+              "materialization_ms": 0.015583
+            },
+            {
+              "construction_ms": 0.004209,
+              "edits_ms": 26.462042,
+              "materialization_ms": 0.030916
+            },
+            {
+              "construction_ms": 0.003916,
+              "edits_ms": 26.636792,
+              "materialization_ms": 0.021167
+            }
+          ],
+          "construction_ms": 0.003125,
+          "edits_ms": 26.537625,
+          "materialization_ms": 0.00325,
+          "storage_units": 100064,
+          "pipeline_ms": 26.544,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 2,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.0942079999999983,
+              "edits_ms": 31.760542,
+              "materialization_ms": 0.11299999999999955
+            },
+            {
+              "construction_ms": 0.03120799999999946,
+              "edits_ms": 29.632040999999994,
+              "materialization_ms": 0.037750000000002615
+            },
+            {
+              "construction_ms": 0.02174999999999727,
+              "edits_ms": 29.018125000000012,
+              "materialization_ms": 0.025166999999996165
+            },
+            {
+              "construction_ms": 0.019417000000004236,
+              "edits_ms": 29.331834000000015,
+              "materialization_ms": 0.011541999999991504
+            },
+            {
+              "construction_ms": 0.014833999999979142,
+              "edits_ms": 30.164500000000004,
+              "materialization_ms": 0.014457999999990534
+            }
+          ],
+          "construction_ms": 0.022999999999996135,
+          "edits_ms": 33.689750000000004,
+          "materialization_ms": 0.03504100000000676,
+          "storage_units": 100064,
+          "pipeline_ms": 33.74779100000001,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.098749999999999,
+              "edits_ms": 32.007041,
+              "materialization_ms": 0.057250000000003354
+            },
+            {
+              "construction_ms": 0.03129200000000054,
+              "edits_ms": 29.088083000000005,
+              "materialization_ms": 0.011833000000009974
+            },
+            {
+              "construction_ms": 0.02520900000000381,
+              "edits_ms": 28.860040999999995,
+              "materialization_ms": 0.03591600000000028
+            },
+            {
+              "construction_ms": 0.031832999999991785,
+              "edits_ms": 28.641625000000005,
+              "materialization_ms": 0.02287499999999909
+            },
+            {
+              "construction_ms": 0.019207999999991898,
+              "edits_ms": 28.113584000000003,
+              "materialization_ms": 0.08029200000001424
+            }
+          ],
+          "construction_ms": 0.025915999999995165,
+          "edits_ms": 28.429041000000012,
+          "materialization_ms": 0.01391599999999471,
+          "storage_units": 100064,
+          "pipeline_ms": 28.468873000000002,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 3,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.020541,
+              "edits_ms": 28.600167,
+              "materialization_ms": 0.026
+            },
+            {
+              "construction_ms": 0.0037500000000000003,
+              "edits_ms": 27.730999999999998,
+              "materialization_ms": 0.004167
+            },
+            {
+              "construction_ms": 0.009167,
+              "edits_ms": 27.27825,
+              "materialization_ms": 0.016875
+            },
+            {
+              "construction_ms": 0.00425,
+              "edits_ms": 27.194540999999997,
+              "materialization_ms": 0.0037500000000000003
+            },
+            {
+              "construction_ms": 0.0035,
+              "edits_ms": 26.966292,
+              "materialization_ms": 0.027875
+            }
+          ],
+          "construction_ms": 0.004667,
+          "edits_ms": 27.549833,
+          "materialization_ms": 0.023625,
+          "storage_units": 100064,
+          "pipeline_ms": 27.578125,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.016167,
+              "edits_ms": 27.299833,
+              "materialization_ms": 0.029833000000000002
+            },
+            {
+              "construction_ms": 0.004041,
+              "edits_ms": 27.691083,
+              "materialization_ms": 0.016458
+            },
+            {
+              "construction_ms": 0.003208,
+              "edits_ms": 27.43975,
+              "materialization_ms": 0.023958
+            },
+            {
+              "construction_ms": 0.004,
+              "edits_ms": 27.551625,
+              "materialization_ms": 0.024375
+            },
+            {
+              "construction_ms": 0.0037500000000000003,
+              "edits_ms": 27.376708,
+              "materialization_ms": 0.00425
+            }
+          ],
+          "construction_ms": 0.004333,
+          "edits_ms": 27.318917000000003,
+          "materialization_ms": 0.003541,
+          "storage_units": 100064,
+          "pipeline_ms": 27.326791,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 4,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.11595799999999912,
+              "edits_ms": 31.277417,
+              "materialization_ms": 0.03308300000000486
+            },
+            {
+              "construction_ms": 0.019209000000003584,
+              "edits_ms": 28.49145800000001,
+              "materialization_ms": 0.028957999999988715
+            },
+            {
+              "construction_ms": 0.021708000000003835,
+              "edits_ms": 27.663667000000004,
+              "materialization_ms": 0.019207999999991898
+            },
+            {
+              "construction_ms": 0.018999999999991246,
+              "edits_ms": 27.966375,
+              "materialization_ms": 0.009166999999990821
+            },
+            {
+              "construction_ms": 0.00899999999998613,
+              "edits_ms": 27.680166999999983,
+              "materialization_ms": 0.018583000000006678
+            }
+          ],
+          "construction_ms": 0.055582999999984395,
+          "edits_ms": 27.621250000000003,
+          "materialization_ms": 0.01887499999997999,
+          "storage_units": 100064,
+          "pipeline_ms": 27.695707999999968,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.09591700000000003,
+              "edits_ms": 31.489207999999998,
+              "materialization_ms": 0.059708999999998014
+            },
+            {
+              "construction_ms": 0.02008299999999963,
+              "edits_ms": 30.495250000000006,
+              "materialization_ms": 0.061042000000000485
+            },
+            {
+              "construction_ms": 0.022917000000006738,
+              "edits_ms": 31.474790999999996,
+              "materialization_ms": 0.024124999999997954
+            },
+            {
+              "construction_ms": 0.019249999999999545,
+              "edits_ms": 31.067624999999992,
+              "materialization_ms": 0.03420900000000415
+            },
+            {
+              "construction_ms": 0.026250000000004547,
+              "edits_ms": 34.071166000000005,
+              "materialization_ms": 0.023041000000006306
+            }
+          ],
+          "construction_ms": 0.02129199999998832,
+          "edits_ms": 31.535167,
+          "materialization_ms": 0.031666000000001304,
+          "storage_units": 100064,
+          "pipeline_ms": 31.58812499999999,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 5,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.01675,
+              "edits_ms": 26.578083,
+              "materialization_ms": 0.015542000000000002
+            },
+            {
+              "construction_ms": 0.0029170000000000003,
+              "edits_ms": 26.781791,
+              "materialization_ms": 0.030208
+            },
+            {
+              "construction_ms": 0.003459,
+              "edits_ms": 26.681667,
+              "materialization_ms": 0.023917
+            },
+            {
+              "construction_ms": 0.003541,
+              "edits_ms": 26.724208,
+              "materialization_ms": 0.022667000000000003
+            },
+            {
+              "construction_ms": 0.003416,
+              "edits_ms": 27.082208,
+              "materialization_ms": 0.016917
+            }
+          ],
+          "construction_ms": 0.003625,
+          "edits_ms": 26.669667,
+          "materialization_ms": 0.016166,
+          "storage_units": 100064,
+          "pipeline_ms": 26.689458,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "rust-native",
+          "warmup_times": [
+            {
+              "construction_ms": 0.016583,
+              "edits_ms": 27.07075,
+              "materialization_ms": 0.016249999999999997
+            },
+            {
+              "construction_ms": 0.005083000000000001,
+              "edits_ms": 27.012332999999998,
+              "materialization_ms": 0.025625
+            },
+            {
+              "construction_ms": 0.0037500000000000003,
+              "edits_ms": 27.386042,
+              "materialization_ms": 0.016583999999999998
+            },
+            {
+              "construction_ms": 0.003417,
+              "edits_ms": 27.492290999999998,
+              "materialization_ms": 0.004208
+            },
+            {
+              "construction_ms": 0.010750000000000001,
+              "edits_ms": 27.203667,
+              "materialization_ms": 0.003333
+            }
+          ],
+          "construction_ms": 0.006916,
+          "edits_ms": 26.776457999999998,
+          "materialization_ms": 0.025875,
+          "storage_units": 100064,
+          "pipeline_ms": 26.809248999999998,
+          "fullOutputOracle": "PASS"
+        },
+        {
+          "sample": 6,
+          "runtime": "node24-js-gap",
+          "warmup_times": [
+            {
+              "construction_ms": 0.0747080000000011,
+              "edits_ms": 32.870084,
+              "materialization_ms": 0.09141600000000238
+            },
+            {
+              "construction_ms": 0.02345900000000256,
+              "edits_ms": 31.356875000000002,
+              "materialization_ms": 0.03125
+            },
+            {
+              "construction_ms": 0.0227079999999944,
+              "edits_ms": 29.324624999999997,
+              "materialization_ms": 0.0749580000000094
+            },
+            {
+              "construction_ms": 0.023167000000000826,
+              "edits_ms": 28.711667000000006,
+              "materialization_ms": 0.013625000000018872
+            },
+            {
+              "construction_ms": 0.009459000000020978,
+              "edits_ms": 27.973250000000007,
+              "materialization_ms": 0.02195900000000961
+            }
+          ],
+          "construction_ms": 0.021874999999994316,
+          "edits_ms": 27.698375,
+          "materialization_ms": 0.019082999999994854,
+          "storage_units": 100064,
+          "pipeline_ms": 27.739332999999988,
+          "fullOutputOracle": "PASS"
+        }
+      ]
+    }
+  ],
+  "memory": {
+    "method": "Fresh separate subprocess per runtime/trace; parent observes ps -o rss= -p PID on Darwin in KiB while child pauses. Baseline is before trace loading. No forced GC. RSS snapshots are total process/runtime plus retained trace, not allocator heap or peak. Adjacent phase deltas are observed changes only. Released drops Gap and materialized output but retains parsed trace; GC/allocator may retain pages. Full-output JSON serialization occurs after materialized snapshot and before released snapshot. Node memoryUsage is supplementary bytes and not a cross-runtime comparator.",
+    "measurements": [
+      {
+        "kind": "cursor-local",
+        "seed": 305419896,
+        "fixtureSha256": "aaa94b1aee82fd45787e03369311decd6a2ad8fa37d79600527ad6d1b3e3c4b5",
+        "runtime": "node24-js-gap",
+        "pid": 64521,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 47296,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 48250880,
+              "heapTotal": 6651904,
+              "heapUsed": 5893744,
+              "external": 2213031,
+              "arrayBuffers": 137523
+            },
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 59776,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 60981248,
+              "heapTotal": 16089088,
+              "heapUsed": 8243088,
+              "external": 2773099,
+              "arrayBuffers": 763087
+            },
+            "observedDeltaFromPriorPhaseKiB": 12480
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 60016,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 61456384,
+              "heapTotal": 16089088,
+              "heapUsed": 8255296,
+              "external": 2973228,
+              "arrayBuffers": 963216
+            },
+            "observedDeltaFromPriorPhaseKiB": 240
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 64288,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 65241088,
+              "heapTotal": 16089088,
+              "heapUsed": 10150496,
+              "external": 3013229,
+              "arrayBuffers": 1003217
+            },
+            "observedDeltaFromPriorPhaseKiB": 4272
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 64560,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 66109440,
+              "heapTotal": 17137664,
+              "heapUsed": 8394776,
+              "external": 3213228,
+              "arrayBuffers": 1203216
+            },
+            "observedDeltaFromPriorPhaseKiB": 272
+          },
+          {
+            "phase": "released",
+            "rssKiB": 69568,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 73711616,
+              "heapTotal": 21086208,
+              "heapUsed": 11675984,
+              "external": 3213229,
+              "arrayBuffers": 2942910
+            },
+            "observedDeltaFromPriorPhaseKiB": 5008
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "cursor-local",
+        "seed": 305419896,
+        "fixtureSha256": "aaa94b1aee82fd45787e03369311decd6a2ad8fa37d79600527ad6d1b3e3c4b5",
+        "runtime": "rust-native",
+        "pid": 64639,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 1248,
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 2528,
+            "observedDeltaFromPriorPhaseKiB": 1280
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 2816,
+            "observedDeltaFromPriorPhaseKiB": 288
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 2816,
+            "observedDeltaFromPriorPhaseKiB": 0
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 3056,
+            "observedDeltaFromPriorPhaseKiB": 240
+          },
+          {
+            "phase": "released",
+            "rssKiB": 3056,
+            "observedDeltaFromPriorPhaseKiB": 0
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "far-jump",
+        "seed": 305419896,
+        "fixtureSha256": "199b9782f31dff4e658b1374ed4372f7f853039321f397f3e19274ecc60edc54",
+        "runtime": "node24-js-gap",
+        "pid": 64841,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 47088,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 48037888,
+              "heapTotal": 6651904,
+              "heapUsed": 5893744,
+              "external": 2213031,
+              "arrayBuffers": 137523
+            },
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 59264,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 60522496,
+              "heapTotal": 16089088,
+              "heapUsed": 8056936,
+              "external": 2773099,
+              "arrayBuffers": 763087
+            },
+            "observedDeltaFromPriorPhaseKiB": 12176
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 59520,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 60948480,
+              "heapTotal": 16089088,
+              "heapUsed": 8069144,
+              "external": 2973228,
+              "arrayBuffers": 963216
+            },
+            "observedDeltaFromPriorPhaseKiB": 256
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 63440,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 64274432,
+              "heapTotal": 16089088,
+              "heapUsed": 9962096,
+              "external": 3013229,
+              "arrayBuffers": 1003217
+            },
+            "observedDeltaFromPriorPhaseKiB": 3920
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 63680,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 65208320,
+              "heapTotal": 17399808,
+              "heapUsed": 8228368,
+              "external": 3213228,
+              "arrayBuffers": 1203216
+            },
+            "observedDeltaFromPriorPhaseKiB": 240
+          },
+          {
+            "phase": "released",
+            "rssKiB": 71280,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 72974336,
+              "heapTotal": 20824064,
+              "heapUsed": 11390256,
+              "external": 3213229,
+              "arrayBuffers": 2944443
+            },
+            "observedDeltaFromPriorPhaseKiB": 7600
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "far-jump",
+        "seed": 305419896,
+        "fixtureSha256": "199b9782f31dff4e658b1374ed4372f7f853039321f397f3e19274ecc60edc54",
+        "runtime": "rust-native",
+        "pid": 64959,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 1248,
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 2432,
+            "observedDeltaFromPriorPhaseKiB": 1184
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 2656,
+            "observedDeltaFromPriorPhaseKiB": 224
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 2688,
+            "observedDeltaFromPriorPhaseKiB": 32
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 2928,
+            "observedDeltaFromPriorPhaseKiB": 240
+          },
+          {
+            "phase": "released",
+            "rssKiB": 2928,
+            "observedDeltaFromPriorPhaseKiB": 0
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "alternating-ends",
+        "seed": 305419896,
+        "fixtureSha256": "9421e4d3382bebf0570986e1c6f34da7cd50d95203f4162b14c7064b80cf487f",
+        "runtime": "node24-js-gap",
+        "pid": 65131,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 47536,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 48513024,
+              "heapTotal": 6651904,
+              "heapUsed": 5126744,
+              "external": 2213031,
+              "arrayBuffers": 137523
+            },
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 59872,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 61046784,
+              "heapTotal": 16089088,
+              "heapUsed": 8152312,
+              "external": 2773099,
+              "arrayBuffers": 763087
+            },
+            "observedDeltaFromPriorPhaseKiB": 12336
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 60128,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 61571072,
+              "heapTotal": 16089088,
+              "heapUsed": 8164520,
+              "external": 2973228,
+              "arrayBuffers": 963216
+            },
+            "observedDeltaFromPriorPhaseKiB": 256
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 64064,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 65060864,
+              "heapTotal": 16089088,
+              "heapUsed": 10056904,
+              "external": 3013229,
+              "arrayBuffers": 1003217
+            },
+            "observedDeltaFromPriorPhaseKiB": 3936
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 64320,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 65863680,
+              "heapTotal": 16613376,
+              "heapUsed": 8234424,
+              "external": 3213228,
+              "arrayBuffers": 1203216
+            },
+            "observedDeltaFromPriorPhaseKiB": 256
+          },
+          {
+            "phase": "released",
+            "rssKiB": 70224,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 74153984,
+              "heapTotal": 21086208,
+              "heapUsed": 11587168,
+              "external": 3213229,
+              "arrayBuffers": 2936751
+            },
+            "observedDeltaFromPriorPhaseKiB": 5904
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "alternating-ends",
+        "seed": 305419896,
+        "fixtureSha256": "9421e4d3382bebf0570986e1c6f34da7cd50d95203f4162b14c7064b80cf487f",
+        "runtime": "rust-native",
+        "pid": 65246,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 1248,
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 2432,
+            "observedDeltaFromPriorPhaseKiB": 1184
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 2656,
+            "observedDeltaFromPriorPhaseKiB": 224
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 2688,
+            "observedDeltaFromPriorPhaseKiB": 32
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 2928,
+            "observedDeltaFromPriorPhaseKiB": 240
+          },
+          {
+            "phase": "released",
+            "rssKiB": 2960,
+            "observedDeltaFromPriorPhaseKiB": 32
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "cursor-local",
+        "seed": 192837465,
+        "fixtureSha256": "8c97308e2f218b2192583498e0fbedbe15531e4db22ec9eca793570c572cb152",
+        "runtime": "node24-js-gap",
+        "pid": 65387,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 47680,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 48644096,
+              "heapTotal": 6651904,
+              "heapUsed": 5893744,
+              "external": 2213031,
+              "arrayBuffers": 137523
+            },
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 60016,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 61259776,
+              "heapTotal": 16089088,
+              "heapUsed": 8118640,
+              "external": 2773099,
+              "arrayBuffers": 763087
+            },
+            "observedDeltaFromPriorPhaseKiB": 12336
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 60256,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 61702144,
+              "heapTotal": 16089088,
+              "heapUsed": 8130848,
+              "external": 2973228,
+              "arrayBuffers": 963216
+            },
+            "observedDeltaFromPriorPhaseKiB": 240
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 64464,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 65404928,
+              "heapTotal": 16089088,
+              "heapUsed": 10026240,
+              "external": 3013229,
+              "arrayBuffers": 1003217
+            },
+            "observedDeltaFromPriorPhaseKiB": 4208
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 64720,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 66273280,
+              "heapTotal": 17137664,
+              "heapUsed": 8210344,
+              "external": 3213228,
+              "arrayBuffers": 1203216
+            },
+            "observedDeltaFromPriorPhaseKiB": 256
+          },
+          {
+            "phase": "released",
+            "rssKiB": 71936,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 73646080,
+              "heapTotal": 20824064,
+              "heapUsed": 11432792,
+              "external": 3213229,
+              "arrayBuffers": 2944584
+            },
+            "observedDeltaFromPriorPhaseKiB": 7216
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "cursor-local",
+        "seed": 192837465,
+        "fixtureSha256": "8c97308e2f218b2192583498e0fbedbe15531e4db22ec9eca793570c572cb152",
+        "runtime": "rust-native",
+        "pid": 65504,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 1248,
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 2464,
+            "observedDeltaFromPriorPhaseKiB": 1216
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 2752,
+            "observedDeltaFromPriorPhaseKiB": 288
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 2752,
+            "observedDeltaFromPriorPhaseKiB": 0
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 2960,
+            "observedDeltaFromPriorPhaseKiB": 208
+          },
+          {
+            "phase": "released",
+            "rssKiB": 2960,
+            "observedDeltaFromPriorPhaseKiB": 0
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "far-jump",
+        "seed": 192837465,
+        "fixtureSha256": "fcde79abbe5ccc267e590c46adc21c62a8e6d682abcc6ccf178eaae21f5c1513",
+        "runtime": "node24-js-gap",
+        "pid": 65680,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 47552,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 48513024,
+              "heapTotal": 6651904,
+              "heapUsed": 5893744,
+              "external": 2213031,
+              "arrayBuffers": 137523
+            },
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 60592,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 61636608,
+              "heapTotal": 16089088,
+              "heapUsed": 8195944,
+              "external": 2773099,
+              "arrayBuffers": 763087
+            },
+            "observedDeltaFromPriorPhaseKiB": 13040
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 60880,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 62341120,
+              "heapTotal": 16089088,
+              "heapUsed": 8208152,
+              "external": 2973228,
+              "arrayBuffers": 963216
+            },
+            "observedDeltaFromPriorPhaseKiB": 288
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 64864,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 65880064,
+              "heapTotal": 16089088,
+              "heapUsed": 10101192,
+              "external": 3013229,
+              "arrayBuffers": 1003217
+            },
+            "observedDeltaFromPriorPhaseKiB": 3984
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 65104,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 66666496,
+              "heapTotal": 16875520,
+              "heapUsed": 8271888,
+              "external": 3213228,
+              "arrayBuffers": 1203216
+            },
+            "observedDeltaFromPriorPhaseKiB": 240
+          },
+          {
+            "phase": "released",
+            "rssKiB": 72944,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 74694656,
+              "heapTotal": 20824064,
+              "heapUsed": 11613376,
+              "external": 3213229,
+              "arrayBuffers": 2943963
+            },
+            "observedDeltaFromPriorPhaseKiB": 7840
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "far-jump",
+        "seed": 192837465,
+        "fixtureSha256": "fcde79abbe5ccc267e590c46adc21c62a8e6d682abcc6ccf178eaae21f5c1513",
+        "runtime": "rust-native",
+        "pid": 65798,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 1248,
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 2432,
+            "observedDeltaFromPriorPhaseKiB": 1184
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 2720,
+            "observedDeltaFromPriorPhaseKiB": 288
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 2752,
+            "observedDeltaFromPriorPhaseKiB": 32
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 2992,
+            "observedDeltaFromPriorPhaseKiB": 240
+          },
+          {
+            "phase": "released",
+            "rssKiB": 2992,
+            "observedDeltaFromPriorPhaseKiB": 0
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "alternating-ends",
+        "seed": 192837465,
+        "fixtureSha256": "a0aa3f52e467fc042599c35fd25e48f7387fd3196f77ba1274eabc8ea197113c",
+        "runtime": "node24-js-gap",
+        "pid": 65971,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 47120,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 48070656,
+              "heapTotal": 6651904,
+              "heapUsed": 5893744,
+              "external": 2213031,
+              "arrayBuffers": 137523
+            },
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 59248,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 60522496,
+              "heapTotal": 16089088,
+              "heapUsed": 8045112,
+              "external": 2773099,
+              "arrayBuffers": 763087
+            },
+            "observedDeltaFromPriorPhaseKiB": 12128
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 59504,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 60932096,
+              "heapTotal": 16089088,
+              "heapUsed": 8057320,
+              "external": 2973228,
+              "arrayBuffers": 963216
+            },
+            "observedDeltaFromPriorPhaseKiB": 256
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 63600,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 64421888,
+              "heapTotal": 16089088,
+              "heapUsed": 9949736,
+              "external": 3013229,
+              "arrayBuffers": 1003217
+            },
+            "observedDeltaFromPriorPhaseKiB": 4096
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 63616,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 65142784,
+              "heapTotal": 17399808,
+              "heapUsed": 8210248,
+              "external": 3213228,
+              "arrayBuffers": 1203216
+            },
+            "observedDeltaFromPriorPhaseKiB": 16
+          },
+          {
+            "phase": "released",
+            "rssKiB": 71184,
+            "supplementaryNodeMemoryUsageBytes": {
+              "rss": 72892416,
+              "heapTotal": 20824064,
+              "heapUsed": 11333080,
+              "external": 3213229,
+              "arrayBuffers": 2936748
+            },
+            "observedDeltaFromPriorPhaseKiB": 7568
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      },
+      {
+        "kind": "alternating-ends",
+        "seed": 192837465,
+        "fixtureSha256": "a0aa3f52e467fc042599c35fd25e48f7387fd3196f77ba1274eabc8ea197113c",
+        "runtime": "rust-native",
+        "pid": 66088,
+        "phases": [
+          {
+            "phase": "baseline",
+            "rssKiB": 1248,
+            "observedDeltaFromPriorPhaseKiB": null
+          },
+          {
+            "phase": "loaded",
+            "rssKiB": 2432,
+            "observedDeltaFromPriorPhaseKiB": 1184
+          },
+          {
+            "phase": "constructed",
+            "rssKiB": 2656,
+            "observedDeltaFromPriorPhaseKiB": 224
+          },
+          {
+            "phase": "edited",
+            "rssKiB": 2656,
+            "observedDeltaFromPriorPhaseKiB": 0
+          },
+          {
+            "phase": "materialized",
+            "rssKiB": 2928,
+            "observedDeltaFromPriorPhaseKiB": 272
+          },
+          {
+            "phase": "released",
+            "rssKiB": 2928,
+            "observedDeltaFromPriorPhaseKiB": 0
+          }
+        ],
+        "fullOutputOracle": "PASS"
+      }
+    ]
+  },
+  "sourceFreeze": {
+    "status": "PASS",
+    "before": {
+      "scripts/native-gap-compare.mjs": "117f4890c09a417a8a1a5dbef2bcf425df90abb643869da54b85803f9daf6025",
+      "scripts/native-gap-node.mjs": "6a0d21b4d31c7b9bbf6ccb64d249aaa8477bd2832345d7df67d35c872fd57197",
+      "scripts/js-gap.mjs": "62b1b12e9e8b011d69c8dea39b7049a95bbc0a90de800102c8d68313d81e5808",
+      "scripts/storage-workload.mjs": "189b94fa812715f76406326b9fbf632b100d46bb30690e10232f8f4cb26a1619",
+      "src/native_gap_compare.rs": "aa745772247ce3eef7238430500c81fcc790e1904478da2277bd14e5a2d69490",
+      "src/gap.rs": "834cdbad968a3be0e4d5dcd468a7ed2f08a7d09a97ca3a4789d6b8973dc0998a",
+      "src/lib.rs": "cb3857dbac29a3241cebe2461ef3c06a48f2cb0dc2d0867f175de81d8b85398a",
+      "Cargo.toml": "99049b63cb1612fd16a833e7738489c0db44de0cbb583e01882c05a9f0350e19",
+      "Cargo.lock": "1f3c2e05a1520a535c5e5d1443da44be2cb13441594676b8adcc84f07987078a"
+    },
+    "after": {
+      "scripts/native-gap-compare.mjs": "117f4890c09a417a8a1a5dbef2bcf425df90abb643869da54b85803f9daf6025",
+      "scripts/native-gap-node.mjs": "6a0d21b4d31c7b9bbf6ccb64d249aaa8477bd2832345d7df67d35c872fd57197",
+      "scripts/js-gap.mjs": "62b1b12e9e8b011d69c8dea39b7049a95bbc0a90de800102c8d68313d81e5808",
+      "scripts/storage-workload.mjs": "189b94fa812715f76406326b9fbf632b100d46bb30690e10232f8f4cb26a1619",
+      "src/native_gap_compare.rs": "aa745772247ce3eef7238430500c81fcc790e1904478da2277bd14e5a2d69490",
+      "src/gap.rs": "834cdbad968a3be0e4d5dcd468a7ed2f08a7d09a97ca3a4789d6b8973dc0998a",
+      "src/lib.rs": "cb3857dbac29a3241cebe2461ef3c06a48f2cb0dc2d0867f175de81d8b85398a",
+      "Cargo.toml": "99049b63cb1612fd16a833e7738489c0db44de0cbb583e01882c05a9f0350e19",
+      "Cargo.lock": "1f3c2e05a1520a535c5e5d1443da44be2cb13441594676b8adcc84f07987078a"
+    },
+    "binaryBefore": "4f6ab18ba51a58820ba4276217abe8564e16032a8acfeaab2cd213abd5b450c6",
+    "binaryAfter": "4f6ab18ba51a58820ba4276217abe8564e16032a8acfeaab2cd213abd5b450c6"
+  }
+}

@@ -4,12 +4,29 @@ Choose an editor binding, give it a `SyncClient`, and keep `doc.edit()` as the s
 
 | Editor | Public entry point | Guide |
 | --- | --- | --- |
-| ProseMirror | `@barocss/doc-sync/prosemirror`: `PmBinding`, schema builder, conversion helpers | [ProseMirror](./prosemirror) |
-| Slate | `@barocss/doc-sync/slate`: `SlateBinding`, schema codec, selection helpers | [Slate](./slate) |
-| Lexical | `@barocss/doc-sync/lexical`: `LexicalBinding`, schema builder, codecs, selection helpers | [Lexical](./lexical) |
-| Custom editor | `@barocss/doc-sync`: `doc.edit()` and model operations | [Editing](./editing) and [blocks](./blocks) |
+| ProseMirror | `@barocss/doc-sync-prosemirror`: `PmBinding`, schema builder, conversion helpers | [ProseMirror](./prosemirror) |
+| Tiptap | `@barocss/doc-sync-tiptap`: `DocSync` extension and `createTiptapExtensions` | [Tiptap](./tiptap) |
+| Slate | `@barocss/doc-sync-slate`: `SlateBinding`, schema codec, selection helpers | [Slate](./slate) |
+| Lexical | `@barocss/doc-sync-lexical`: `LexicalBinding`, schema builder, codecs, selection helpers | [Lexical](./lexical) |
+| Custom editor | `@barocss/doc-sync-core`: `doc.edit()` and model operations | [Editing](./editing) and [blocks](./blocks) |
 
-These are subpaths of one library, not separate packages. Editor dependencies are optional peers. Install only the peers needed by the entry points you use. The core CRDT, synchronization client, and server do not depend on native editors.
+Each binding is a separate npm package. Use built repository workspaces or local tarballs until registry release. The old `@barocss/doc-sync/<editor>` imports remain compatibility exports and require the selected binding peer. See [Packages and engines](./packages) for the dependency graph and release workflow.
+
+Install each selected binding with its required editor peers. Core provides the shared CRDT, synchronization client, and server without native editor dependencies.
+
+## Choose the client engine
+
+The current `SyncClient` uses the TypeScript engine. All four bindings can use
+its shared `EditorHost` path. Selecting a binding package selects an editor
+integration; it does not select another document engine. There is no
+`engine: 'wasm'` client option.
+
+For an application that directly owns a document engine, Core also exports the
+draft `typescriptEngine` factory. See the [factory example and capability
+matrix](./packages#engine-selection-is-a-separate-milestone) and the
+[host binding examples](./packages#connect-prosemirror-through-an-editor-host).
+The native [Rust SDK](./rust#use-the-native-rust-sdk) and [WASM storage
+adapter](./rust#use-the-storage-only-wasm-adapter) have separate APIs.
 
 ## What the bindings handle
 
@@ -19,7 +36,7 @@ Slate and Lexical include composition drafts. Native input edits the draft while
 
 The application still supplies its schema, native rendering, toolbar, editor plugins, transport, and lifecycle. A codec's ability to retain data does not supply every native editing gesture for that data.
 
-When the server accepts a compatible schema change, a mounted editor must rebuild its native schema and binding. The [open-editor transition guide](./schema-transition) shows the shared lifecycle and selection conversions for all three editors. Follow the [runnable examples](./runnable-examples) to try each editor in the product demo.
+When the server accepts a compatible schema change, a mounted editor must rebuild its native schema and binding. The [open-editor transition guide](./schema-transition) shows the tested lifecycle and selection conversions for ProseMirror, Slate, and Lexical. Tiptap must also destroy and recreate its extensions; its open-schema transition host has not been qualified. Follow the [runnable examples](./runnable-examples) to try the original three editors, or the [Tiptap demo](./tiptap#run-the-two-editor-demo) for its dedicated integration.
 
 Slate and Lexical retain unchanged root blocks during remote projection. They replace the interval between the common prefix and suffix, using the existing schema codecs. Slate checks its immutable child array and verifies normalization. Lexical invalidates its cache on native content updates and reads back projected content before caching an editor state. Composition, unknown native states and cell restoration keep their recovery paths.
 
@@ -50,3 +67,53 @@ The comparison app's browser scripts check native/client/server equality and inp
 CDP composition is simulated browser input. Actual OS IME acceptance, product performance targets, production authorization, and separate document capability work require their own evidence. See [status and limits](../status).
 
 [Start with one editing API →](./editing)
+
+## Rust experiment
+
+Call the native SDK from a Rust host. Read its projected model after each accepted edit. The host must supply an editor renderer and input adapter.
+
+Use the [native SDK crate setup](./rust#use-the-native-rust-sdk) to run this complete Rust program.
+
+```rust
+use doc_sync_native_sdk::{Attributes, Document, EditOptions, Key, Result, SchemaPreset};
+
+fn main() -> Result<()> {
+    let mut doc = Document::new("editor-host", SchemaPreset::Text)?;
+    let change = doc.insert_text(
+        &Key::root(),
+        "Hi",
+        Attributes::new(),
+        EditOptions::default(),
+        0.0,
+    )?;
+    assert_eq!(change.ops.len(), 1);
+    let model = doc.model()?;
+    assert_eq!(model.children[0].node_type, "paragraph");
+    let doc_sync_native_sdk::ModelRun::Text(run) = &model.children[0].runs[0] else {
+        panic!("expected text")
+    };
+    assert_eq!(run.units.to_string().expect("valid example UTF-16"), "Hi");
+    Ok(())
+}
+```
+
+The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+
+<details>
+<summary>Raw protocol probe and reference checks</summary>
+
+All four editor bindings above still use TypeScript. The [native Rust SDK](./rust#use-the-native-rust-sdk) provides a callable Rust API; it is not a browser binding. To inspect the lower engine boundary, send a text operation directly to the native process. This example uses its base paragraph fixture; it does not start an editor.
+
+Build the private executable with the commands in [the Rust guide](./rust#run-the-private-experiment). Run the following command from the repository root. Each input line produces one JSON response.
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"A","actor":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"A"},"origin":{"lamport":0,"actor":"~root"},"units":[72,105]}]}
+{"cmd":"state","replica":"A"}
+JSONL
+```
+
+The last response contains UTF-16 units `[72,105]` (`Hi`). This checks native application and state inspection. A Rust binding must separately connect native input, remote projection, composition, selection and disposal. No public Rust editor binding or full WASM CRDT client exists. See [the adapter boundary](./rust#what-runs-where).
+
+</details>

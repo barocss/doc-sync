@@ -1,0 +1,458 @@
+{
+  "status": "PASS",
+  "scope": "isolated UTF-16 storage; no production CRDT/editor integration",
+  "costs": "Construction includes input copy. WASM edits include per-operation JS validation, input copy, and ABI calls. Materialization includes WASM read and fresh JS copy. Trace generation, correctness checks, hash, and drops are outside timers.",
+  "tracePattern": "src/storage_trace.rs exact xorshift32 seed 305419896; one draw per edit; even delete1 insert[low16,d83d,de00], odd delete3 insert[low16]; positions local +/-16, random far jump, alternating ends",
+  "differential": {
+    "status": "PASS",
+    "operations": 30538,
+    "invalid": 29,
+    "fullStateAfterEveryOperation": true,
+    "oracle": "independent JavaScript UTF-16 string slice",
+    "memoryGrowth": {
+      "oldBytes": 6356992,
+      "newBytes": 6422528,
+      "detachedOldBuffer": true
+    },
+    "traces": [
+      {
+        "kind": "cursor-local",
+        "operations": 10000,
+        "checksum": 1250648887,
+        "finalUnits": 100000
+      },
+      {
+        "kind": "far-jump",
+        "operations": 10000,
+        "checksum": 3733865730,
+        "finalUnits": 100000
+      },
+      {
+        "kind": "alternating-ends",
+        "operations": 10000,
+        "checksum": 971030360,
+        "finalUnits": 100000
+      }
+    ]
+  },
+  "benchmarks": [
+    {
+      "kind": "cursor-local",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmups": 1,
+      "finalUnits": 100000,
+      "checksum": 1250648887,
+      "orders": [
+        [
+          "javascript-string",
+          "wasm-vec",
+          "wasm-gap"
+        ],
+        [
+          "wasm-vec",
+          "javascript-string",
+          "wasm-gap"
+        ],
+        [
+          "wasm-gap",
+          "javascript-string",
+          "wasm-vec"
+        ],
+        [
+          "javascript-string",
+          "wasm-gap",
+          "wasm-vec"
+        ],
+        [
+          "wasm-vec",
+          "wasm-gap",
+          "javascript-string"
+        ],
+        [
+          "wasm-gap",
+          "wasm-vec",
+          "javascript-string"
+        ],
+        [
+          "javascript-string",
+          "wasm-vec",
+          "wasm-gap"
+        ]
+      ],
+      "results": [
+        {
+          "runtime": "javascript-string",
+          "construction_ms": [
+            1.2999999523162842,
+            1.7000000476837158,
+            1.5,
+            1.5,
+            1.5,
+            1.3999998569488525,
+            1.5
+          ],
+          "edits_ms": [
+            58.700000047683716,
+            75.09999990463257,
+            58.59999990463257,
+            58.90000009536743,
+            64.69999980926514,
+            67.90000009536743,
+            58
+          ],
+          "materialization_ms": [
+            2.4000000953674316,
+            2.4000000953674316,
+            2,
+            2,
+            2.1000001430511475,
+            2.4000000953674316,
+            2.0999999046325684
+          ]
+        },
+        {
+          "runtime": "wasm-vec",
+          "construction_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            59.30000019073486,
+            60.700000047683716,
+            57,
+            58,
+            58.40000009536743,
+            58.40000009536743,
+            56.200000047683716
+          ],
+          "materialization_ms": [
+            0,
+            0,
+            0.10000014305114746,
+            0.10000014305114746,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "runtime": "wasm-gap",
+          "construction_ms": [
+            0,
+            0.09999990463256836,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            1,
+            1,
+            1.1000001430511475,
+            1.0999999046325684,
+            1.0999999046325684,
+            1,
+            1.1000001430511475
+          ],
+          "materialization_ms": [
+            0.10000014305114746,
+            0.10000014305114746,
+            0.09999990463256836,
+            0,
+            0,
+            0.09999990463256836,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "far-jump",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmups": 1,
+      "finalUnits": 100000,
+      "checksum": 3733865730,
+      "orders": [
+        [
+          "javascript-string",
+          "wasm-vec",
+          "wasm-gap"
+        ],
+        [
+          "wasm-vec",
+          "javascript-string",
+          "wasm-gap"
+        ],
+        [
+          "wasm-gap",
+          "javascript-string",
+          "wasm-vec"
+        ],
+        [
+          "javascript-string",
+          "wasm-gap",
+          "wasm-vec"
+        ],
+        [
+          "wasm-vec",
+          "wasm-gap",
+          "javascript-string"
+        ],
+        [
+          "wasm-gap",
+          "wasm-vec",
+          "javascript-string"
+        ],
+        [
+          "javascript-string",
+          "wasm-vec",
+          "wasm-gap"
+        ]
+      ],
+      "results": [
+        {
+          "runtime": "javascript-string",
+          "construction_ms": [
+            1.5999999046325684,
+            1.4000000953674316,
+            1.4000000953674316,
+            1.5,
+            1.2999999523162842,
+            1.7000000476837158,
+            1.4000000953674316
+          ],
+          "edits_ms": [
+            69.79999995231628,
+            61,
+            64.79999995231628,
+            67.29999995231628,
+            61.60000014305115,
+            61.5,
+            61.5
+          ],
+          "materialization_ms": [
+            2.1000001430511475,
+            2.0999999046325684,
+            2,
+            2.3999998569488525,
+            2,
+            2,
+            2.4000000953674316
+          ]
+        },
+        {
+          "runtime": "wasm-vec",
+          "construction_ms": [
+            0.09999990463256836,
+            0,
+            0.09999990463256836,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            73,
+            69.59999990463257,
+            71.70000004768372,
+            69.79999995231628,
+            68.70000004768372,
+            78.29999995231628,
+            70.90000009536743
+          ],
+          "materialization_ms": [
+            0.09999990463256836,
+            0,
+            0,
+            0.10000014305114746,
+            0,
+            0,
+            0.09999990463256836
+          ]
+        },
+        {
+          "runtime": "wasm-gap",
+          "construction_ms": [
+            0,
+            0.09999990463256836,
+            0,
+            0,
+            0.10000014305114746,
+            0,
+            0.09999990463256836
+          ],
+          "edits_ms": [
+            46.700000047683716,
+            47.700000047683716,
+            48,
+            47.39999985694885,
+            45.89999985694885,
+            48.200000047683716,
+            46.700000047683716
+          ],
+          "materialization_ms": [
+            0,
+            0.09999990463256836,
+            0,
+            0.10000014305114746,
+            0,
+            0,
+            0.09999990463256836
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "alternating-ends",
+      "seed": 305419896,
+      "initialUnits": 100000,
+      "rounds": 10000,
+      "samples": 7,
+      "warmups": 1,
+      "finalUnits": 100000,
+      "checksum": 971030360,
+      "orders": [
+        [
+          "javascript-string",
+          "wasm-vec",
+          "wasm-gap"
+        ],
+        [
+          "wasm-vec",
+          "javascript-string",
+          "wasm-gap"
+        ],
+        [
+          "wasm-gap",
+          "javascript-string",
+          "wasm-vec"
+        ],
+        [
+          "javascript-string",
+          "wasm-gap",
+          "wasm-vec"
+        ],
+        [
+          "wasm-vec",
+          "wasm-gap",
+          "javascript-string"
+        ],
+        [
+          "wasm-gap",
+          "wasm-vec",
+          "javascript-string"
+        ],
+        [
+          "javascript-string",
+          "wasm-vec",
+          "wasm-gap"
+        ]
+      ],
+      "results": [
+        {
+          "runtime": "javascript-string",
+          "construction_ms": [
+            1.3999998569488525,
+            1.6000001430511475,
+            1.3999998569488525,
+            1.5,
+            1.4000000953674316,
+            1.6000001430511475,
+            1.5
+          ],
+          "edits_ms": [
+            55.700000047683716,
+            72.69999980926514,
+            59.40000009536743,
+            59.69999980926514,
+            66.59999990463257,
+            63.59999990463257,
+            62.90000009536743
+          ],
+          "materialization_ms": [
+            2,
+            2.8000001907348633,
+            2,
+            2.1000001430511475,
+            2.5,
+            2.4000000953674316,
+            2.1999998092651367
+          ]
+        },
+        {
+          "runtime": "wasm-vec",
+          "construction_ms": [
+            0,
+            0.09999990463256836,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "edits_ms": [
+            69.09999990463257,
+            72.70000004768372,
+            71.59999990463257,
+            68.90000009536743,
+            68.90000009536743,
+            72.59999990463257,
+            72.70000004768372
+          ],
+          "materialization_ms": [
+            0.10000014305114746,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.09999990463256836
+          ]
+        },
+        {
+          "runtime": "wasm-gap",
+          "construction_ms": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.09999990463256836,
+            0
+          ],
+          "edits_ms": [
+            149.20000004768372,
+            143.40000009536743,
+            140.90000009536743,
+            141,
+            141.20000004768372,
+            147,
+            144.79999995231628
+          ],
+          "materialization_ms": [
+            0.09999990463256836,
+            0,
+            0.09999990463256836,
+            0.09999990463256836,
+            0,
+            0.10000014305114746,
+            0.09999990463256836
+          ]
+        }
+      ]
+    }
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+}

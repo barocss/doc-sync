@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-01",
+  "platform": "aarch64-apple-darwin",
+  "node": "v24.22.1",
+  "executable": "/Users/user/.volta/tools/image/node/24.22.1/bin/node",
+  "wasm_rustc": "1.86.0 (05f9846f8 2025-03-31)",
+  "checks": {
+    "cargo_test_rust_1_87": "PASS: 4 tests",
+    "native_release_build_rustup_stable": "PASS",
+    "wasm_release_build_rustup_stable": "PASS",
+    "differential_native_rust_js_string": "PASS: full state after each operation",
+    "javascript_wasm_batch_checksum": "PASS: 719347296",
+    "wasm_invalid_round_count": "PASS: 100001 returns 0",
+    "browser": "NOT_RUN in this receipt",
+    "production_engine_integration": "NOT_RUN"
+  },
+  "differential": {
+    "operations": 265,
+    "valid": 142,
+    "invalid": 123,
+    "oracle": "JavaScript UTF-16 string slice with explicit range validation",
+    "random_seed": "0x72f09a31",
+    "coverage": ["deterministic random edits", "surrogate pair split", "isolated surrogates", "empty text", "end insertion", "invalid offset", "invalid deletion", "atomic rejection"]
+  },
+  "workload": {
+    "initial_utf16_units": 100000,
+    "rounds": 1000,
+    "warmups": 3,
+    "samples": 7,
+    "checksum": 719347296,
+    "timing_includes": ["allocation", "initialization", "edits", "checksum"],
+    "timing_excludes": ["WASM loading", "WASM compilation", "text transfer", "per-edit WASM calls"]
+  },
+  "milliseconds": {
+    "javascript_typed_array": [1.857999999999997, 1.7638329999999982, 1.7318329999999946, 1.7879579999999962, 1.7590000000000003, 1.7547499999999943, 1.7528329999999954],
+    "rust_wasm": [7.983208000000005, 8.054374999999993, 8.034834000000004, 8.059875000000005, 8.025500000000008, 8.049709000000007, 8.056667000000004]
+  },
+  "scope": "Isolated UTF-16 splice experiment. No full CRDT equivalence, production integration, or editor latency claim. WASM was slower in this run."
+}

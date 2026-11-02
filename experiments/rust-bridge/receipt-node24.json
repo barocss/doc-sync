@@ -1,0 +1,166 @@
+{
+  "timestamp": "2026-11-01T03:35:07.393Z",
+  "runtime": "v24.22.1",
+  "platform": "darwin",
+  "arch": "arm64",
+  "wasmBytes": 33715,
+  "wasmSha256": "76aa6dc0e07df754c8c190da5fe6dcb8da94b5d8152eb1df2116a1394512b68f",
+  "sourceHashes": {
+    "bridge.mjs": "06726ae09e9025f7ad81918b793dc8aaf318a3486e15fcddfe76433fa6187323",
+    "suite.mjs": "a56a323573558fe83b70ec9b9fcacf4a14a7c06c6b262509e8c062af65cbd5dd"
+  },
+  "startup": {
+    "instantiateMs": 0.20362499999999883,
+    "firstWrapperInitMs": 1.766333999999997,
+    "boundary": "One cold instantiate from bytes, then first wrapper including fixed scratch allocation; file I/O excluded; single sample"
+  },
+  "differential": {
+    "status": "PASS",
+    "randomEdits": 4000,
+    "exactReadAndHashChecks": 4018,
+    "coverage": [
+      "UTF16 raw surrogates",
+      "numeric integer bounds",
+      "raw ABI bounds",
+      "failure atomicity",
+      "immutable scratch capacity",
+      "capacity limit",
+      "handle limit",
+      "stale handle rejection",
+      "dispose",
+      "memory growth"
+    ]
+  },
+  "benchmark": {
+    "initialUnits": 100000,
+    "rounds": 2000,
+    "repeats": 5,
+    "warmups": 1,
+    "expectedChecksum": 2292064925,
+    "insertionUnitsCopiedPerRun": 4000,
+    "outputUnitsCopiedPerRun": 200002000,
+    "methods": {
+      "jsString": {
+        "samplesMs": [
+          43.64012500000001,
+          60.460959,
+          58.17399999999998,
+          42.188833000000045,
+          49.9654579999999
+        ],
+        "medianMs": 49.9654579999999,
+        "minMs": 42.188833000000045,
+        "maxMs": 60.460959
+      },
+      "wasmPerEditInputCopy": {
+        "samplesMs": [
+          14.811042000000043,
+          14.651958000000036,
+          14.581542000000013,
+          14.111167000000023,
+          14.53708400000005
+        ],
+        "medianMs": 14.581542000000013,
+        "minMs": 14.111167000000023,
+        "maxMs": 14.811042000000043
+      },
+      "wasmPerEditInputAndFullOutputCopy": {
+        "samplesMs": [
+          83.44158300000004,
+          75.50304199999994,
+          85.20329099999992,
+          79.25162499999999,
+          83.12191699999994
+        ],
+        "medianMs": 83.12191699999994,
+        "minMs": 75.50304199999994,
+        "maxMs": 85.20329099999992
+      },
+      "wasmWholeBatch": {
+        "samplesMs": [
+          14.342750000000024,
+          14.293042000000014,
+          14.015041999999994,
+          13.780708000000004,
+          14.873417000000018
+        ],
+        "medianMs": 14.293042000000014,
+        "minMs": 13.780708000000004,
+        "maxMs": 14.873417000000018
+      }
+    },
+    "lifecycle": {
+      "units": 100000,
+      "samples": {
+        "encode": {
+          "samplesMs": [
+            0.12070799999992232,
+            0.13425000000006548,
+            0.1427920000000995,
+            0.14041599999995924,
+            0.13191699999993034
+          ],
+          "medianMs": 0.13425000000006548,
+          "minMs": 0.12070799999992232,
+          "maxMs": 0.1427920000000995
+        },
+        "createAndInputCopy": {
+          "samplesMs": [
+            0.026834000000008018,
+            0.02312500000016371,
+            0.02045799999996234,
+            0.018708000000060565,
+            0.0204999999998563
+          ],
+          "medianMs": 0.0204999999998563,
+          "minMs": 0.018708000000060565,
+          "maxMs": 0.026834000000008018
+        },
+        "readAndOutputCopy": {
+          "samplesMs": [
+            0.03587500000003274,
+            0.040334000000029846,
+            0.03712500000006003,
+            0.03904199999988123,
+            0.03745900000012625
+          ],
+          "medianMs": 0.03745900000012625,
+          "minMs": 0.03587500000003274,
+          "maxMs": 0.040334000000029846
+        },
+        "decode": {
+          "samplesMs": [
+            2.236458000000084,
+            2.1838749999999436,
+            2.2836670000001504,
+            2.465458000000126,
+            2.3093340000000353
+          ],
+          "medianMs": 2.2836670000001504,
+          "minMs": 2.1838749999999436,
+          "maxMs": 2.465458000000126
+        },
+        "close": {
+          "samplesMs": [
+            0.0025000000000545697,
+            0.0010839999999916472,
+            0.001125000000001819,
+            0.0061670000000049185,
+            0.001875000000154614
+          ],
+          "medianMs": 0.001875000000154614,
+          "minMs": 0.0010839999999916472,
+          "maxMs": 0.0061670000000049185
+        }
+      },
+      "boundary": "Independent initial-document encode, create+input copy, materialize+output copy, decode and single-handle close phases; no edits; instance and buffers already initialized"
+    },
+    "timingBoundary": {
+      "jsString": "string edits only; initial text, operation preparation and final hash excluded",
+      "wasmPerEditInputCopy": "one wrapper call, integer checks, input UTF16 copy and Rust splice per edit; initial create and final read/hash excluded",
+      "wasmPerEditInputAndFullOutputCopy": "same per-edit input path plus Rust output copy, read call and JS-owned Uint16Array copy per edit; string conversion excluded",
+      "wasmWholeBatch": "one call including Rust initial allocation, PRNG, edits and final hash; no text crosses ABI"
+    },
+    "limitation": "TextTape Vec baseline, no CRDT/editor integration. Cross-path times have different boundaries; no isolated estimate of ABI overhead or production speedup."
+  }
+}

@@ -260,7 +260,7 @@ test("recovery reservation survives peer lease expiry and a killed server, witho
 });
 
 test("MCP restart restores edit history across server restart, undo, another restart, and redo", {
-    timeout: 45000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 45000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-history-restart-"));
     const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");
@@ -301,7 +301,7 @@ test("MCP restart restores edit history across server restart, undo, another res
 
 for (const action of ["undo", "redo"] as const) for (const mode of ["before-send", "after-accept"] as const) {
     test(`MCP killed during ${action} ${mode}: exact receipt controls automatic recovery`, {
-        timeout: 45000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+        timeout: 45000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
     }, async () => {
         const root = await mkdtemp(join(tmpdir(), `doc-sync-undo-${mode}-`));
         const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");
@@ -369,7 +369,7 @@ for (const action of ["undo", "redo"] as const) for (const mode of ["before-send
 }
 
 test("unavailable atomic recovery keeps the pending checkpoint and blocks edits until a later restart", {
-    timeout: 45000, skip: process.platform !== "darwin" ? "The journal requires the macOS kernel lock" : false,
+    timeout: 45000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
 }, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-undo-unavailable-"));
     const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");

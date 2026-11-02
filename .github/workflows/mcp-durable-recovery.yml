@@ -1,0 +1,31 @@
+name: MCP durable recovery
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Verify Linux kernel lock helper
+        run: /usr/bin/flock --version
+      - run: npm ci
+      - run: npm run typecheck
+      # Runner /tmp is Linux-local. Do not substitute an NFS or host-shared
+      # journal directory. Run as the unprivileged runner, not root.
+      - run: npm test --workspace @doc-sync/mcp
+      - run: npm test --workspace @doc-sync/bot
+      - run: node --test apps/demo/test/bot-recovery-start.test.ts
+      - run: npm test --workspace @barocss/doc-sync-core

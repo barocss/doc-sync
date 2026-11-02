@@ -1,74 +1,104 @@
 {
-  "name": "@barocss/doc-sync",
   "version": "0.0.0",
   "private": true,
-  "description": "Schema-defined document CRDT with sync, server, and editor bindings",
   "type": "module",
   "engines": {
     "node": ">=22.18"
   },
-  "exports": {
-    ".": "./src/index.ts",
-    "./sync": "./src/sync/index.ts",
-    "./node": "./src/node.ts",
-    "./server": "./src/server/index.ts",
-    "./prosemirror": "./src/pm/index.ts",
-    "./slate": "./src/slate/index.ts",
-    "./lexical": "./src/lexical/index.ts"
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
+    "build": "node ../../scripts/build-package.mjs",
+    "typecheck": "tsc -p tsconfig.json",
     "test": "node --test test/*.test.ts",
-    "typecheck": "tsc -p tsconfig.json"
+    "prepack": "npm run build"
+  },
+  "name": "@barocss/doc-sync",
+  "description": "Compatibility facade for DocSync core and independent editor bindings",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./sync": {
+      "types": "./dist/sync.d.ts",
+      "import": "./dist/sync.js",
+      "default": "./dist/sync.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "import": "./dist/node.js",
+      "default": "./dist/node.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "default": "./dist/server.js"
+    },
+    "./prosemirror": {
+      "types": "./dist/prosemirror.d.ts",
+      "import": "./dist/prosemirror.js",
+      "default": "./dist/prosemirror.js"
+    },
+    "./tiptap": {
+      "types": "./dist/tiptap.d.ts",
+      "import": "./dist/tiptap.js",
+      "default": "./dist/tiptap.js"
+    },
+    "./slate": {
+      "types": "./dist/slate.d.ts",
+      "import": "./dist/slate.js",
+      "default": "./dist/slate.js"
+    },
+    "./lexical": {
+      "types": "./dist/lexical.d.ts",
+      "import": "./dist/lexical.js",
+      "default": "./dist/lexical.js"
+    }
+  },
+  "dependencies": {
+    "@barocss/doc-sync-core": ">=0.0.0 <0.1.0"
   },
   "peerDependencies": {
-    "prosemirror-model": "^1.25.0",
-    "prosemirror-state": "^1.4.0",
-    "prosemirror-transform": "^1.12.0",
-    "prosemirror-view": "^1.42.0",
-    "slate": "^0.146.0",
-    "lexical": "^0.52.0",
-    "@lexical/rich-text": "^0.52.0",
-    "@lexical/table": "^0.52.0"
+    "@barocss/doc-sync-prosemirror": ">=0.0.0 <0.1.0",
+    "@barocss/doc-sync-tiptap": ">=0.0.0 <0.1.0",
+    "@barocss/doc-sync-slate": ">=0.0.0 <0.1.0",
+    "@barocss/doc-sync-lexical": ">=0.0.0 <0.1.0"
   },
   "peerDependenciesMeta": {
-    "prosemirror-model": {
+    "@barocss/doc-sync-prosemirror": {
       "optional": true
     },
-    "prosemirror-state": {
+    "@barocss/doc-sync-tiptap": {
       "optional": true
     },
-    "prosemirror-transform": {
+    "@barocss/doc-sync-slate": {
       "optional": true
     },
-    "prosemirror-view": {
-      "optional": true
-    },
-    "slate": {
-      "optional": true
-    },
-    "lexical": {
-      "optional": true
-    },
-    "@lexical/rich-text": {
-      "optional": true
-    },
-    "@lexical/table": {
+    "@barocss/doc-sync-lexical": {
       "optional": true
     }
   },
   "devDependencies": {
+    "@lexical/rich-text": "0.52.0",
+    "@lexical/table": "0.52.0",
+    "@tiptap/core": "3.32.2",
+    "@tiptap/pm": "3.32.2",
+    "@types/jsdom": "^21.1.7",
+    "jsdom": "^26.1.0",
+    "lexical": "0.52.0",
     "prosemirror-commands": "^1.7.2",
     "prosemirror-model": "^1.25.12",
     "prosemirror-state": "^1.4.4",
     "prosemirror-tables": "^1.8.5",
     "prosemirror-transform": "^1.12.2",
     "prosemirror-view": "^1.42.6",
-    "slate": "0.146.0",
-    "lexical": "0.52.0",
-    "@lexical/rich-text": "0.52.0",
-    "@lexical/table": "0.52.0"
-  },
-  "files": [
-    "src"
-  ]
+    "slate": "0.146.0"
+  }
 }

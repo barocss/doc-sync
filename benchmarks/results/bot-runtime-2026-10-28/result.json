@@ -1,0 +1,252 @@
+{
+  "fox": {
+    "id": "10585c34-1168-4066-a225-fa5c927613b4",
+    "url": "http://127.0.0.1:58073/profiles/word",
+    "document": "bot-design-live",
+    "actor": "duo-fox",
+    "mission": "Append exactly \" [FOX]\" to the paragraph with Opening text; preserve everything else and finish.",
+    "name": "Mori",
+    "color": "#175bb5",
+    "character": "fox",
+    "personality": "curious",
+    "expression": "happy",
+    "status": "completed",
+    "createdAt": "2026-10-28T10:44:27.182Z",
+    "updatedAt": "2026-10-28T10:44:42.280Z",
+    "steps": [
+      "insert confirmed"
+    ],
+    "history": [
+      {
+        "kind": "confirmed",
+        "base": {
+          "epoch": "1036cd2a-b9ca-4d18-9c6a-cb7f87aea41d",
+          "serverSeq": 1,
+          "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+        },
+        "plan": {
+          "action": "insert",
+          "at": [
+            1,
+            0,
+            12
+          ],
+          "text": " [FOX]",
+          "count": 0,
+          "message": ""
+        },
+        "revision": {
+          "epoch": "1036cd2a-b9ca-4d18-9c6a-cb7f87aea41d",
+          "serverSeq": 2,
+          "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+        }
+      }
+    ],
+    "pending": null,
+    "result": "The Opening text paragraph already ends with \" [FOX]\"."
+  },
+  "owl": {
+    "id": "2c5c23cf-2400-4e4f-aa2d-3f0631cf3c89",
+    "url": "http://127.0.0.1:58073/profiles/word",
+    "document": "bot-design-live",
+    "actor": "duo-owl",
+    "mission": "Append exactly \" [OWL]\" to the paragraph with Opening text; preserve everything else and finish.",
+    "name": "Nuri",
+    "color": "#b12b62",
+    "character": "owl",
+    "personality": "careful",
+    "expression": "happy",
+    "status": "completed",
+    "createdAt": "2026-10-28T10:44:27.181Z",
+    "updatedAt": "2026-10-28T10:44:51.569Z",
+    "steps": [
+      "Stale revision rejected; read again and replan.",
+      "insert confirmed"
+    ],
+    "history": [
+      {
+        "kind": "stale",
+        "base": {
+          "epoch": "1036cd2a-b9ca-4d18-9c6a-cb7f87aea41d",
+          "serverSeq": 1,
+          "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+        },
+        "plan": {
+          "action": "insert",
+          "at": [
+            1,
+            0,
+            12
+          ],
+          "text": " [OWL]",
+          "count": 0,
+          "message": ""
+        }
+      },
+      {
+        "kind": "confirmed",
+        "base": {
+          "epoch": "1036cd2a-b9ca-4d18-9c6a-cb7f87aea41d",
+          "serverSeq": 2,
+          "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+        },
+        "plan": {
+          "action": "insert",
+          "at": [
+            1,
+            0,
+            18
+          ],
+          "text": " [OWL]",
+          "count": 0,
+          "message": ""
+        },
+        "revision": {
+          "epoch": "1036cd2a-b9ca-4d18-9c6a-cb7f87aea41d",
+          "serverSeq": 3,
+          "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+        }
+      }
+    ],
+    "pending": null,
+    "result": "The Opening text paragraph already ends with \" [OWL]\"."
+  },
+  "browser": {
+    "equal": true,
+    "text": "Opening text [FOX] [OWL]",
+    "seen": {
+      "Slate": [
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "thinking",
+          "at": 1793184267561
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "thinking",
+          "at": 1793184267577
+        },
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "editing",
+          "at": 1793184275923
+        },
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "happy",
+          "at": 1793184282302
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "editing",
+          "at": 1793184284823
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "happy",
+          "at": 1793184291588
+        }
+      ],
+      "Lexical": [
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "thinking",
+          "at": 1793184267563
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "thinking",
+          "at": 1793184267577
+        },
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "editing",
+          "at": 1793184275927
+        },
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "happy",
+          "at": 1793184282302
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "editing",
+          "at": 1793184284824
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "happy",
+          "at": 1793184291588
+        }
+      ],
+      "ProseMirror": [
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "thinking",
+          "at": 1793184267563
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "thinking",
+          "at": 1793184267577
+        },
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "editing",
+          "at": 1793184275926
+        },
+        {
+          "actor": "duo-fox",
+          "character": "fox",
+          "expression": "happy",
+          "at": 1793184282302
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "editing",
+          "at": 1793184284824
+        },
+        {
+          "actor": "duo-owl",
+          "character": "owl",
+          "expression": "happy",
+          "at": 1793184291588
+        }
+      ]
+    },
+    "peers": [
+      {
+        "name": "Slate",
+        "online": true,
+        "pending": 0
+      },
+      {
+        "name": "Lexical",
+        "online": true,
+        "pending": 0
+      },
+      {
+        "name": "ProseMirror",
+        "online": true,
+        "pending": 0
+      }
+    ],
+    "errors": []
+  }
+}

@@ -21,7 +21,7 @@ import type {Schema} from "@barocss/doc-sync";
  *   GET  /                          데모 페이지
  *   GET  /multi?n=10&doc=이름        여러 창 시험 (창마다 a.localhost, b.localhost … 로 연다)
  *   GET  /pm?doc=이름                데모 편집기와 ProseMirror 편집기가 같은 문서를 편집
- *   GET  /packages/doc-sync/src/**.ts, /apps/demo/ui/**.ts    TypeScript 를 타입만 벗겨 브라우저에 내준다 (번들러 없음)
+ *   GET  /packages/<named-doc-sync-package>/src/**.ts (allowlist), /apps/demo/ui/**.ts    TypeScript 를 타입만 벗겨 브라우저에 내준다 (번들러 없음)
  *   GET  /api/docs/:doc/stream      SSE — hello(스냅숏) → 밀린 변경 → 이후 변경·presence
  *   POST /api/docs/:doc/changes     Change 하나
  *   POST /api/docs/:doc/ack         여기까지 받았다 + 되돌리기 핀
@@ -110,6 +110,7 @@ function invalidateHub(doc: string, hub: DocHub): void {
 
 const logPath = (doc: string) => join(DATA, `${doc}.jsonl`);
 
+type ConditionalSeal = Parameters<DocHub["replayConditionalSeal"]>[0];
 type GenerationHeader = {format: "doc-sync-log-v1"; generation: string; initialSchemaVersion: string | null};
 class StorageUncertainError extends Error {}
 
@@ -197,10 +198,12 @@ const loadHub = async (doc: string, create: boolean, job: ColdJob): Promise<DocH
         for (let i = 0; i < lines.length; i++) {
                 if (i > 0 && i % 128 === 0) await new Promise<void>(resolve => setImmediate(resolve));
                 const line = lines[i];
-                const entry = JSON.parse(line) as {gc?: number; change?: Change; recoveryPin?: {actor: string; reservationId: string; pin: number | null}; recoveryState?: {era: number; active: Array<{actor: string; reservationId: string; pin: number}>}; conditionalBase?: {epoch: string; serverSeq: number; schemaVersion: string | null}; schema?: {from: string; to: string; schema: Schema}} & Partial<Change>;
+                const entry = JSON.parse(line) as {conditionalSeal?: ConditionalSeal; gc?: number; change?: Change; recoveryPin?: {actor: string; reservationId: string; pin: number | null}; recoveryState?: {era: number; active: Array<{actor: string; reservationId: string; pin: number}>}; conditionalBase?: {epoch: string; serverSeq: number; schemaVersion: string | null}; schema?: {from: string; to: string; schema: Schema}} & Partial<Change>;
 
                 try {
-                    if (entry.recoveryPin) {
+                    if (entry.conditionalSeal) {
+                        hub.replayConditionalSeal(entry.conditionalSeal);
+                    } else if (entry.recoveryPin) {
                         recoveryCount++;
                         hub.replayRecoveryPin(entry.recoveryPin);
                     } else if (entry.recoveryState) {
@@ -272,6 +275,7 @@ const loadHub = async (doc: string, create: boolean, job: ColdJob): Promise<DocH
     recoveryCounts.set(hub, recoveryCount);
     hub.onRecoveryPin = entry => { persist({recoveryPin: entry}); recoveryCounts.set(hub, (recoveryCounts.get(hub) ?? 0) + 1); };
     hub.onSchemaChange = entry => persist({schema: entry});
+    hub.onConditionalSeal = entry => persist({conditionalSeal: entry});
     hub.onPostPersistError = () => invalidateHub(doc, hub);
     await fd.close(); closed = true;
     assertColdSource(doc, hub);
@@ -548,6 +552,34 @@ async function durableMutation<T>(doc: string, hub: DocHub, apply: () => T): Pro
     } finally { current.pending = false; }
 }
 
+/** A cached fence is evidence only after a fresh file and directory durability barrier. */
+async function syncConditionalFence(doc: string, hub: DocHub): Promise<void> {
+    const expected = integrity.get(hub);
+    try {
+        if (!expected || expected.pending || hubs.get(doc) !== hub) throw new Error("Conditional fence storage is unavailable");
+        const path = logPath(doc), before = fileIdentity(path);
+        const same = (value: FileIdentity) => value.dev === expected.dev && value.ino === expected.ino && value.size === expected.size &&
+            value.mtimeMs === expected.mtimeMs && value.ctimeMs === expected.ctimeMs;
+        if (!same(before)) throw new Error("Conditional fence source changed before sync");
+        const fd = await openAsync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+        try {
+            const opened = await fd.stat();
+            if (opened.dev !== before.dev || opened.ino !== before.ino || opened.size !== before.size ||
+                opened.mtimeMs !== before.mtimeMs || opened.ctimeMs !== before.ctimeMs) throw new Error("Conditional fence source changed while opening");
+            await fd.sync();
+            const directory = await openAsync(DATA, "r");
+            try { await directory.sync(); } finally { await directory.close(); }
+            const after = await fd.stat();
+            if (after.dev !== opened.dev || after.ino !== opened.ino || after.size !== opened.size ||
+                after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs || !same(fileIdentity(path)) ||
+                hubs.get(doc) !== hub || integrity.get(hub) !== expected) throw new Error("Conditional fence source changed during sync");
+        } finally { await fd.close(); }
+    } catch (error) {
+        invalidateHub(doc, hub);
+        throw new StorageUncertainError(`Conditional fence durability unknown: ${(error as Error).message}`);
+    }
+}
+
 async function replaceTextAsync(path: string, content: string): Promise<FileIdentity> {
     const temporary = `${path}.${crypto.randomUUID()}.tmp`;
     let created = false;
@@ -639,7 +671,7 @@ const serveStatic = (res: ServerResponse, urlPath: string) => {
     const file = normalize(join(ROOT, relative));
     // 라이브러리·데모 UI·공유 스키마, 그리고 node_modules 의 js·css 만 (ProseMirror 를 import map 으로 바로 읽는다 — 번들러 없음)
     const within = (directory: string) => file.startsWith(join(ROOT, directory) + sep);
-    const allowed = within("packages/doc-sync/src") || within("apps/demo/ui") || file === join(ROOT, "fixtures/demo-schema.ts") || (within("node_modules") && /\.(m?js|css)$/.test(file));
+    const allowed = ["doc-sync", "doc-sync-core", "doc-sync-prosemirror", "doc-sync-tiptap", "doc-sync-slate", "doc-sync-lexical"].some(name => within(`packages/${name}/src`)) || within("apps/demo/ui") || file === join(ROOT, "fixtures/demo-schema.ts") || (within("node_modules") && /\.(m?js|css)$/.test(file));
 
     if (!allowed || !existsSync(file)) {
         return send(res, 404, "없음", "text/plain; charset=utf-8");
@@ -706,7 +738,7 @@ const state = (hub: DocHub) => ({
     log: hub.log.slice(-50),
 });
 
-const ACTIONS = "stream|changes|conditional|receipt|change-receipt|schema|ack|presence|leave|gc|state|recovery-state|recovery-lease|recover-change|compaction-state|compaction-test-release|receipt-state|receipt-test-release|cold-state|cold-test-release|fsync-state|fsync-test-release|reset-state|reset-test-release|reset";
+const ACTIONS = "stream|changes|conditional|settle-conditional|receipt|change-receipt|schema|ack|presence|leave|gc|state|recovery-state|recovery-lease|recover-change|compaction-state|compaction-test-release|receipt-state|receipt-test-release|cold-state|cold-test-release|fsync-state|fsync-test-release|reset-state|reset-test-release|reset";
 
 const server = createServer(async (req, res) => {
     try {
@@ -792,6 +824,32 @@ const server = createServer(async (req, res) => {
             // missing document. Verify a live durable source off-thread first.
             const result = await verifiedReceipt(doc, verified => verified?.findConditionalReceipt(generation, base, change) ?? {status: "unknown"});
             return send(res, 200, JSON.stringify(result));
+        }
+        if (action === "settle-conditional") {
+            if (req.method !== "POST") return send(res, 405, "{}");
+            if (req.headers["x-doc-sync-protocol"] !== String(PROTOCOL_VERSION)) return send(res, 426, "{}");
+            const {generation, base, change} = JSON.parse(await readBody(req)) as {generation?: unknown; base?: {epoch: string; serverSeq: number; schemaVersion: string | null}; change?: Change};
+            if (typeof generation !== "string" || !base || typeof base.epoch !== "string" || !Number.isSafeInteger(base.serverSeq) || base.serverSeq < 0 ||
+                !(typeof base.schemaVersion === "string" || base.schemaVersion === null) || !change || typeof change.actor !== "string" || !change.actor ||
+                !Number.isSafeInteger(change.seq) || change.seq < 1 || !Array.isArray(change.ops)) return send(res, 400, JSON.stringify({status: "unknown"}));
+            try {
+                // Source verification is read-only. The fence append and the body
+                // acceptance share the same per-document mutation queue.
+                await verifiedReceipt(doc, () => undefined);
+                return await serializeDoc(doc, async () => {
+                    let settlementHub = hubs.get(doc);
+                    if (!settlementHub) {
+                        const cold = await sharedColdLoad(doc, false);
+                        if (!cold) return send(res, 200, JSON.stringify({status: "unknown"}));
+                        assertColdSource(doc, cold);
+                        settlementHub = hubs.get(doc) ?? cold;
+                        hubs.set(doc, settlementHub);
+                    }
+                    const result = await durableMutation(doc, settlementHub, () => settlementHub!.settleConditional(generation, base, change));
+                    if (result.status === "not_applied") await syncConditionalFence(doc, settlementHub);
+                    return send(res, 200, JSON.stringify(result));
+                });
+            } catch { return send(res, 200, JSON.stringify({status: "unknown"})); }
         }
         const hub = await hubOf(doc);
 

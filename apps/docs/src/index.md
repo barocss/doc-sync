@@ -36,7 +36,7 @@ console.log(doc.toJSON());
 - [Model operations](./guide/editing) connect an editor to stable CRDT operations, including block movement.
 - [Editor integration paths](./guide/editors) include ProseMirror, Slate, Lexical, and the custom demo editor.
 - [Change an open editor's schema](./guide/schema-transition) explains selection restoration and pending changes.
-- [AI and headless clients](./guide/ai) describes Node synchronization and MCP editing.
+- [AI and bots](./ai/) has a separate path for [document server connection](./ai/server), MCP editing, bot missions, and recovery.
 - [Runnable editor examples](./guide/runnable-examples) and the [Codex walkthrough](./guide/ai-walkthrough) show complete local exercises.
 - [Troubleshooting](./guide/troubleshooting) and [operations and performance](./guide/operations-performance) cover recovery and measurement limits.
 - [Collaboration intent](./reference/collaboration-intent) defines deletion, formatting, insertion, and undo outcomes.
@@ -44,6 +44,6 @@ console.log(doc.toJSON());
 
 ## Know the current limits
 
-The package is a source workspace with `private: true`. It is not yet an npm release. The macOS MCP app has bounded restart and lease-expiry recovery with the demo server; production recovery, authorization, incompatible schema migration and long-term deployment validation remain open. Convergence does not guarantee every user's semantic intent.
+The six packages export compiled JavaScript and declarations but remain `private: true`. They are not yet npm releases. The macOS MCP app has bounded restart and lease-expiry recovery with the demo server; production recovery, authorization, incompatible schema migration and long-term deployment validation remain open. Convergence does not guarantee every user's semantic intent.
 
 [Read status and limits →](./status)

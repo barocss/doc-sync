@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import {test} from "node:test";
 import {AllSelection, TextSelection} from "prosemirror-state";
 import {DecorationSet} from "prosemirror-view";
-import {PmBinding} from "../src/pm/binding.ts";
-import {anchorAt} from "../src/crdt/edit.ts";
-import * as cmd from "../src/crdt/commands.ts";
+import {PmBinding} from "../../doc-sync-prosemirror/dist/binding.js";
+import {anchorAt} from "../../doc-sync-core/dist/crdt/edit.js";
+import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
 import {MemoryNet} from "./harness.ts";
 import {INFO} from "./pm-fuzz.ts";
-import type {Presence} from "../src/sync/protocol.ts";
-import type {GridBlock} from "../src/crdt/doc.ts";
+import type {Presence} from "../../doc-sync-core/dist/sync/protocol.js";
+import type {GridBlock} from "../../doc-sync-core/dist/crdt/doc.js";
 
 const start = async () => {
     const net = new MemoryNet();

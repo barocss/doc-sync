@@ -1,0 +1,29 @@
+[package]
+name = "doc-sync-rust-experiment"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[[bin]]
+name = "splice-bench"
+path = "src/main.rs"
+
+[[bin]]
+name = "splice-cases"
+path = "src/cases.rs"
+
+[[bin]]
+name = "storage-compare"
+path = "src/storage_compare.rs"
+
+[[bin]]
+name = "native-gap-compare"
+path = "src/native_gap_compare.rs"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"

@@ -51,6 +51,23 @@ test('composition cancellation and reset discard drafts without resurrecting tex
   session.begin();native(session,model('abcd한efgh'));client.doc=new Doc(client.actor,schema);session.cancel();
   assert.deepEqual(session.end(),[]);assert.equal(text(client.doc),'');
 });
+test('recovery pause preserves a composition until the live client can accept it',()=>{
+  const {session,client,receive}=setup();
+  const resumeBefore=client.pauseLocalMutations();
+  assert.throws(()=>session.begin(),/paused/);
+  assert.equal(session.active,false);
+  resumeBefore();session.begin();native(session,model('abcd한efgh'));
+  receive([{op:'insert',at:[1,0],content:'remote-'}]);
+  const resume=client.pauseLocalMutations(),before=client.doc.toJSON();
+  assert.throws(()=>session.end(),/paused/);
+  assert.equal(session.active,true);
+  assert.deepEqual(client.doc.toJSON(),before);
+  assert.equal(client.pending.length,0);
+  resume();session.end();
+  assert.equal(text(client.doc),'abcd한efgh\nremote-tail');
+  assert.equal(client.pending.length,1);
+  client.undo();assert.equal(text(client.doc),'abcdefgh\nremote-tail');
+});
 test('local composition IDs observe later remote clocks and facade keeps transport state live',()=>{
   const {session,client,receive}=setup(),facade=session.bindingClient();session.begin();
   receive([{op:'insert',at:[1,0],content:'x'.repeat(40)}]);

@@ -1,0 +1,3340 @@
+{
+  "schema": "r3-boundary-v1",
+  "status": "PASS",
+  "timestamp": "2026-11-01T04:03:25.324Z",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "wasmBytes": 40325,
+  "wasmSha256": "047cbee64965a7e4826210486350e29041d2b2eb06a509a77b8525501dc97306",
+  "sourceHashes": {
+    "Cargo.toml": "3d57c36095689375d27a0ca553057448676176ae67e0671c7947c3e900bb9ec4",
+    "Cargo.lock": "09371060df5023d4a35937d0439d114b8f2cea81ea717fbae0ac86393d7a655d",
+    "src/lib.rs": "be7e796cc8be77e068dc9dd9603393017c5f476ea24329e995bc27c6ad5d6bc6",
+    "scripts/bridge.mjs": "a46fef15fdd611cd2fc5c3b502f48570fb0d352af404270515dafedf089c692e",
+    "scripts/suite.mjs": "a56a323573558fe83b70ec9b9fcacf4a14a7c06c6b262509e8c062af65cbd5dd",
+    "scripts/lifetime.mjs": "0ed13ac25ae7992f72b855a02eefd6f26abb9792b1b93fb59a4549d71c2addcd",
+    "scripts/boundary-suite.mjs": "b788a529735f606eb66bc0002481f12b51bc80b168f55effb47eef9c742862f0",
+    "scripts/boundary-check.mjs": "c745b2017dbe0857fcdb18a52b96d5dd8e36a3b9c5690b9098dfa22cfc61f9e4",
+    "boundary-browser.html": "bd26246ee4608ddd8b2bb90d99987c12b4e9b87de6ed1dd6285f236d36d24f10",
+    "../rust-core/Cargo.toml": "6d9a490e82d178600cac8e0b992334c70ad2b792bb502bec42910fc1328cb111",
+    "../rust-core/src/lib.rs": "cb3857dbac29a3241cebe2461ef3c06a48f2cb0dc2d0867f175de81d8b85398a",
+    "../rust-core/src/gap.rs": "834cdbad968a3be0e4d5dcd468a7ed2f08a7d09a97ca3a4789d6b8973dc0998a",
+    "../rust-core/src/storage_wasm.rs": "f8183f66c98f1dfbc319835c9818b8c80c079262521157a98ab455e0b423e00a"
+  },
+  "startup": {
+    "firstCompileMs": 2.0999999046325684,
+    "firstInstantiateCompiledModuleMs": 0.7000000476837158,
+    "wrapperImportMs": 0.7000000476837158,
+    "firstWrapperInitAndDisposeMs": 2.4000000953674316,
+    "cachedCompiledModule": {
+      "repeats": 7,
+      "instancesPerBatch": 8,
+      "samples": [
+        {
+          "calls": 8,
+          "instantiateMs": 0.09999990463256836,
+          "wrapperInitAndDisposeMs": 5.299999952316284,
+          "instantiateMsPerCall": 0.012499988079071045,
+          "wrapperInitAndDisposeMsPerCall": 0.6624999940395355
+        },
+        {
+          "calls": 8,
+          "instantiateMs": 0.20000004768371582,
+          "wrapperInitAndDisposeMs": 5.700000047683716,
+          "instantiateMsPerCall": 0.025000005960464478,
+          "wrapperInitAndDisposeMsPerCall": 0.7125000059604645
+        },
+        {
+          "calls": 8,
+          "instantiateMs": 0.7000000476837158,
+          "wrapperInitAndDisposeMs": 7.299999952316284,
+          "instantiateMsPerCall": 0.08750000596046448,
+          "wrapperInitAndDisposeMsPerCall": 0.9124999940395355
+        },
+        {
+          "calls": 8,
+          "instantiateMs": 0.2999999523162842,
+          "wrapperInitAndDisposeMs": 13,
+          "instantiateMsPerCall": 0.03749999403953552,
+          "wrapperInitAndDisposeMsPerCall": 1.625
+        },
+        {
+          "calls": 8,
+          "instantiateMs": 0.2999999523162842,
+          "wrapperInitAndDisposeMs": 19.200000047683716,
+          "instantiateMsPerCall": 0.03749999403953552,
+          "wrapperInitAndDisposeMsPerCall": 2.4000000059604645
+        },
+        {
+          "calls": 8,
+          "instantiateMs": 0.20000004768371582,
+          "wrapperInitAndDisposeMs": 6.799999952316284,
+          "instantiateMsPerCall": 0.025000005960464478,
+          "wrapperInitAndDisposeMsPerCall": 0.8499999940395355
+        },
+        {
+          "calls": 8,
+          "instantiateMs": 0.5,
+          "wrapperInitAndDisposeMs": 6.400000095367432,
+          "instantiateMsPerCall": 0.0625,
+          "wrapperInitAndDisposeMsPerCall": 0.800000011920929
+        }
+      ]
+    },
+    "boundary": "Byte fetch/file I/O excluded. First explicit compile in this run (engine cache state unknown), then first instantiate from compiled module. Wrapper init includes Rust fixed scratch setup and dispose. Cached-module batches instantiate fresh memories; wrapper init timed as separate batch. Repeated instantiation includes async Promise overhead; no claim of cold engine cache."
+  },
+  "differential": {
+    "status": "PASS",
+    "randomEdits": 4000,
+    "exactReadAndHashChecks": 4018,
+    "coverage": [
+      "UTF16 raw surrogates",
+      "numeric integer bounds",
+      "raw ABI bounds",
+      "failure atomicity",
+      "immutable scratch capacity",
+      "capacity limit",
+      "handle limit",
+      "stale handle rejection",
+      "dispose",
+      "memory growth"
+    ]
+  },
+  "lifetime": {
+    "status": "PASS",
+    "cycles": 2000,
+    "staleRejections": 5997,
+    "hostileGetterReads": 0,
+    "peakHandles": 8,
+    "peakLogicalUnits": 10,
+    "finalLiveHandles": 0,
+    "finalLiveLogicalUnits": 0,
+    "memoryBytes": {
+      "before": 7667712,
+      "afterCycles": 7667712,
+      "afterExplicitGrow": 7733248
+    },
+    "coverage": [
+      "repeated create/edit/read/close",
+      "caller and read copy ownership",
+      "monotonic stale handles",
+      "terminal idempotent dispose",
+      "simultaneous wrapper ownership",
+      "failure cleanup and retry",
+      "hostile typed-array metadata and forged brands",
+      "detached caller inputs",
+      "scratch view refresh after memory.grow"
+    ],
+    "boundary": "Synchronous single-threaded wrapper use. Raw exports are trusted instance-level access, not an owner security boundary. Counters measure live documents and logical UTF-16 units. Linear memory can retain allocator capacity; no allocator, GC, RSS, or production leak claim."
+  },
+  "boundary": {
+    "status": "PASS",
+    "repeats": 7,
+    "targetBatchMs": 10,
+    "warmup": "doubling calibration plus one full batch per case",
+    "units": "UTF-16 code units; 2 bytes per unit",
+    "sampleTimeUnit": "ms",
+    "normalizedTimeUnit": "ns/call",
+    "controls": [
+      "owned Uint16Array inputs; no caller accessors",
+      "identical payload pattern across JS and WASM cases",
+      "arguments and return values accumulated",
+      "payload checksum after each batch outside timing",
+      "fresh output allocation plus copy reported separately from reused destination copy",
+      "length rejection and u32 echo edge checked",
+      "repeat order rotated"
+    ],
+    "order": [
+      [
+        "jsScalarEcho",
+        "wasmScalarEcho",
+        "jsLengthProbe_0u16",
+        "wasmLengthProbe_0u16",
+        "jsInputCopyReused_0u16",
+        "wasmInputCopyReused_0u16",
+        "jsOutputCopyReused_0u16",
+        "wasmOutputCopyReused_0u16",
+        "jsOutputCopyFresh_0u16",
+        "wasmOutputCopyFresh_0u16",
+        "jsInternalCopyReused_0u16",
+        "rustInternalTransfer_0u16",
+        "jsLengthProbe_16u16",
+        "wasmLengthProbe_16u16",
+        "jsInputCopyReused_16u16",
+        "wasmInputCopyReused_16u16",
+        "jsOutputCopyReused_16u16",
+        "wasmOutputCopyReused_16u16",
+        "jsOutputCopyFresh_16u16",
+        "wasmOutputCopyFresh_16u16",
+        "jsInternalCopyReused_16u16",
+        "rustInternalTransfer_16u16",
+        "jsLengthProbe_1024u16",
+        "wasmLengthProbe_1024u16",
+        "jsInputCopyReused_1024u16",
+        "wasmInputCopyReused_1024u16",
+        "jsOutputCopyReused_1024u16",
+        "wasmOutputCopyReused_1024u16",
+        "jsOutputCopyFresh_1024u16",
+        "wasmOutputCopyFresh_1024u16",
+        "jsInternalCopyReused_1024u16",
+        "rustInternalTransfer_1024u16",
+        "jsLengthProbe_100000u16",
+        "wasmLengthProbe_100000u16",
+        "jsInputCopyReused_100000u16",
+        "wasmInputCopyReused_100000u16",
+        "jsOutputCopyReused_100000u16",
+        "wasmOutputCopyReused_100000u16",
+        "jsOutputCopyFresh_100000u16",
+        "wasmOutputCopyFresh_100000u16",
+        "jsInternalCopyReused_100000u16",
+        "rustInternalTransfer_100000u16"
+      ],
+      [
+        "wasmScalarEcho",
+        "jsLengthProbe_0u16",
+        "wasmLengthProbe_0u16",
+        "jsInputCopyReused_0u16",
+        "wasmInputCopyReused_0u16",
+        "jsOutputCopyReused_0u16",
+        "wasmOutputCopyReused_0u16",
+        "jsOutputCopyFresh_0u16",
+        "wasmOutputCopyFresh_0u16",
+        "jsInternalCopyReused_0u16",
+        "rustInternalTransfer_0u16",
+        "jsLengthProbe_16u16",
+        "wasmLengthProbe_16u16",
+        "jsInputCopyReused_16u16",
+        "wasmInputCopyReused_16u16",
+        "jsOutputCopyReused_16u16",
+        "wasmOutputCopyReused_16u16",
+        "jsOutputCopyFresh_16u16",
+        "wasmOutputCopyFresh_16u16",
+        "jsInternalCopyReused_16u16",
+        "rustInternalTransfer_16u16",
+        "jsLengthProbe_1024u16",
+        "wasmLengthProbe_1024u16",
+        "jsInputCopyReused_1024u16",
+        "wasmInputCopyReused_1024u16",
+        "jsOutputCopyReused_1024u16",
+        "wasmOutputCopyReused_1024u16",
+        "jsOutputCopyFresh_1024u16",
+        "wasmOutputCopyFresh_1024u16",
+        "jsInternalCopyReused_1024u16",
+        "rustInternalTransfer_1024u16",
+        "jsLengthProbe_100000u16",
+        "wasmLengthProbe_100000u16",
+        "jsInputCopyReused_100000u16",
+        "wasmInputCopyReused_100000u16",
+        "jsOutputCopyReused_100000u16",
+        "wasmOutputCopyReused_100000u16",
+        "jsOutputCopyFresh_100000u16",
+        "wasmOutputCopyFresh_100000u16",
+        "jsInternalCopyReused_100000u16",
+        "rustInternalTransfer_100000u16",
+        "jsScalarEcho"
+      ],
+      [
+        "jsLengthProbe_0u16",
+        "wasmLengthProbe_0u16",
+        "jsInputCopyReused_0u16",
+        "wasmInputCopyReused_0u16",
+        "jsOutputCopyReused_0u16",
+        "wasmOutputCopyReused_0u16",
+        "jsOutputCopyFresh_0u16",
+        "wasmOutputCopyFresh_0u16",
+        "jsInternalCopyReused_0u16",
+        "rustInternalTransfer_0u16",
+        "jsLengthProbe_16u16",
+        "wasmLengthProbe_16u16",
+        "jsInputCopyReused_16u16",
+        "wasmInputCopyReused_16u16",
+        "jsOutputCopyReused_16u16",
+        "wasmOutputCopyReused_16u16",
+        "jsOutputCopyFresh_16u16",
+        "wasmOutputCopyFresh_16u16",
+        "jsInternalCopyReused_16u16",
+        "rustInternalTransfer_16u16",
+        "jsLengthProbe_1024u16",
+        "wasmLengthProbe_1024u16",
+        "jsInputCopyReused_1024u16",
+        "wasmInputCopyReused_1024u16",
+        "jsOutputCopyReused_1024u16",
+        "wasmOutputCopyReused_1024u16",
+        "jsOutputCopyFresh_1024u16",
+        "wasmOutputCopyFresh_1024u16",
+        "jsInternalCopyReused_1024u16",
+        "rustInternalTransfer_1024u16",
+        "jsLengthProbe_100000u16",
+        "wasmLengthProbe_100000u16",
+        "jsInputCopyReused_100000u16",
+        "wasmInputCopyReused_100000u16",
+        "jsOutputCopyReused_100000u16",
+        "wasmOutputCopyReused_100000u16",
+        "jsOutputCopyFresh_100000u16",
+        "wasmOutputCopyFresh_100000u16",
+        "jsInternalCopyReused_100000u16",
+        "rustInternalTransfer_100000u16",
+        "jsScalarEcho",
+        "wasmScalarEcho"
+      ],
+      [
+        "wasmLengthProbe_0u16",
+        "jsInputCopyReused_0u16",
+        "wasmInputCopyReused_0u16",
+        "jsOutputCopyReused_0u16",
+        "wasmOutputCopyReused_0u16",
+        "jsOutputCopyFresh_0u16",
+        "wasmOutputCopyFresh_0u16",
+        "jsInternalCopyReused_0u16",
+        "rustInternalTransfer_0u16",
+        "jsLengthProbe_16u16",
+        "wasmLengthProbe_16u16",
+        "jsInputCopyReused_16u16",
+        "wasmInputCopyReused_16u16",
+        "jsOutputCopyReused_16u16",
+        "wasmOutputCopyReused_16u16",
+        "jsOutputCopyFresh_16u16",
+        "wasmOutputCopyFresh_16u16",
+        "jsInternalCopyReused_16u16",
+        "rustInternalTransfer_16u16",
+        "jsLengthProbe_1024u16",
+        "wasmLengthProbe_1024u16",
+        "jsInputCopyReused_1024u16",
+        "wasmInputCopyReused_1024u16",
+        "jsOutputCopyReused_1024u16",
+        "wasmOutputCopyReused_1024u16",
+        "jsOutputCopyFresh_1024u16",
+        "wasmOutputCopyFresh_1024u16",
+        "jsInternalCopyReused_1024u16",
+        "rustInternalTransfer_1024u16",
+        "jsLengthProbe_100000u16",
+        "wasmLengthProbe_100000u16",
+        "jsInputCopyReused_100000u16",
+        "wasmInputCopyReused_100000u16",
+        "jsOutputCopyReused_100000u16",
+        "wasmOutputCopyReused_100000u16",
+        "jsOutputCopyFresh_100000u16",
+        "wasmOutputCopyFresh_100000u16",
+        "jsInternalCopyReused_100000u16",
+        "rustInternalTransfer_100000u16",
+        "jsScalarEcho",
+        "wasmScalarEcho",
+        "jsLengthProbe_0u16"
+      ],
+      [
+        "jsInputCopyReused_0u16",
+        "wasmInputCopyReused_0u16",
+        "jsOutputCopyReused_0u16",
+        "wasmOutputCopyReused_0u16",
+        "jsOutputCopyFresh_0u16",
+        "wasmOutputCopyFresh_0u16",
+        "jsInternalCopyReused_0u16",
+        "rustInternalTransfer_0u16",
+        "jsLengthProbe_16u16",
+        "wasmLengthProbe_16u16",
+        "jsInputCopyReused_16u16",
+        "wasmInputCopyReused_16u16",
+        "jsOutputCopyReused_16u16",
+        "wasmOutputCopyReused_16u16",
+        "jsOutputCopyFresh_16u16",
+        "wasmOutputCopyFresh_16u16",
+        "jsInternalCopyReused_16u16",
+        "rustInternalTransfer_16u16",
+        "jsLengthProbe_1024u16",
+        "wasmLengthProbe_1024u16",
+        "jsInputCopyReused_1024u16",
+        "wasmInputCopyReused_1024u16",
+        "jsOutputCopyReused_1024u16",
+        "wasmOutputCopyReused_1024u16",
+        "jsOutputCopyFresh_1024u16",
+        "wasmOutputCopyFresh_1024u16",
+        "jsInternalCopyReused_1024u16",
+        "rustInternalTransfer_1024u16",
+        "jsLengthProbe_100000u16",
+        "wasmLengthProbe_100000u16",
+        "jsInputCopyReused_100000u16",
+        "wasmInputCopyReused_100000u16",
+        "jsOutputCopyReused_100000u16",
+        "wasmOutputCopyReused_100000u16",
+        "jsOutputCopyFresh_100000u16",
+        "wasmOutputCopyFresh_100000u16",
+        "jsInternalCopyReused_100000u16",
+        "rustInternalTransfer_100000u16",
+        "jsScalarEcho",
+        "wasmScalarEcho",
+        "jsLengthProbe_0u16",
+        "wasmLengthProbe_0u16"
+      ],
+      [
+        "wasmInputCopyReused_0u16",
+        "jsOutputCopyReused_0u16",
+        "wasmOutputCopyReused_0u16",
+        "jsOutputCopyFresh_0u16",
+        "wasmOutputCopyFresh_0u16",
+        "jsInternalCopyReused_0u16",
+        "rustInternalTransfer_0u16",
+        "jsLengthProbe_16u16",
+        "wasmLengthProbe_16u16",
+        "jsInputCopyReused_16u16",
+        "wasmInputCopyReused_16u16",
+        "jsOutputCopyReused_16u16",
+        "wasmOutputCopyReused_16u16",
+        "jsOutputCopyFresh_16u16",
+        "wasmOutputCopyFresh_16u16",
+        "jsInternalCopyReused_16u16",
+        "rustInternalTransfer_16u16",
+        "jsLengthProbe_1024u16",
+        "wasmLengthProbe_1024u16",
+        "jsInputCopyReused_1024u16",
+        "wasmInputCopyReused_1024u16",
+        "jsOutputCopyReused_1024u16",
+        "wasmOutputCopyReused_1024u16",
+        "jsOutputCopyFresh_1024u16",
+        "wasmOutputCopyFresh_1024u16",
+        "jsInternalCopyReused_1024u16",
+        "rustInternalTransfer_1024u16",
+        "jsLengthProbe_100000u16",
+        "wasmLengthProbe_100000u16",
+        "jsInputCopyReused_100000u16",
+        "wasmInputCopyReused_100000u16",
+        "jsOutputCopyReused_100000u16",
+        "wasmOutputCopyReused_100000u16",
+        "jsOutputCopyFresh_100000u16",
+        "wasmOutputCopyFresh_100000u16",
+        "jsInternalCopyReused_100000u16",
+        "rustInternalTransfer_100000u16",
+        "jsScalarEcho",
+        "wasmScalarEcho",
+        "jsLengthProbe_0u16",
+        "wasmLengthProbe_0u16",
+        "jsInputCopyReused_0u16"
+      ],
+      [
+        "jsOutputCopyReused_0u16",
+        "wasmOutputCopyReused_0u16",
+        "jsOutputCopyFresh_0u16",
+        "wasmOutputCopyFresh_0u16",
+        "jsInternalCopyReused_0u16",
+        "rustInternalTransfer_0u16",
+        "jsLengthProbe_16u16",
+        "wasmLengthProbe_16u16",
+        "jsInputCopyReused_16u16",
+        "wasmInputCopyReused_16u16",
+        "jsOutputCopyReused_16u16",
+        "wasmOutputCopyReused_16u16",
+        "jsOutputCopyFresh_16u16",
+        "wasmOutputCopyFresh_16u16",
+        "jsInternalCopyReused_16u16",
+        "rustInternalTransfer_16u16",
+        "jsLengthProbe_1024u16",
+        "wasmLengthProbe_1024u16",
+        "jsInputCopyReused_1024u16",
+        "wasmInputCopyReused_1024u16",
+        "jsOutputCopyReused_1024u16",
+        "wasmOutputCopyReused_1024u16",
+        "jsOutputCopyFresh_1024u16",
+        "wasmOutputCopyFresh_1024u16",
+        "jsInternalCopyReused_1024u16",
+        "rustInternalTransfer_1024u16",
+        "jsLengthProbe_100000u16",
+        "wasmLengthProbe_100000u16",
+        "jsInputCopyReused_100000u16",
+        "wasmInputCopyReused_100000u16",
+        "jsOutputCopyReused_100000u16",
+        "wasmOutputCopyReused_100000u16",
+        "jsOutputCopyFresh_100000u16",
+        "wasmOutputCopyFresh_100000u16",
+        "jsInternalCopyReused_100000u16",
+        "rustInternalTransfer_100000u16",
+        "jsScalarEcho",
+        "wasmScalarEcho",
+        "jsLengthProbe_0u16",
+        "wasmLengthProbe_0u16",
+        "jsInputCopyReused_0u16",
+        "wasmInputCopyReused_0u16"
+      ]
+    ],
+    "sink": 2176339446,
+    "cases": {
+      "jsScalarEcho": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS identity call with changing u32 argument and accumulated return",
+        "samples": [
+          {
+            "elapsedMs": 10.5,
+            "calls": 2000000,
+            "nsPerCall": 5.25,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 11.200000047683716,
+            "calls": 2000000,
+            "nsPerCall": 5.600000023841858,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.799999952316284,
+            "calls": 2000000,
+            "nsPerCall": 5.399999976158142,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 5.149999976158142,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.599999904632568,
+            "calls": 2000000,
+            "nsPerCall": 5.299999952316284,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.5,
+            "calls": 2000000,
+            "nsPerCall": 5.25,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 11.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 5.649999976158142,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.149999976158142,
+          "median": 5.299999952316284,
+          "max": 5.649999976158142
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmScalarEcho": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "raw WASM identity call with changing u32 argument and accumulated return",
+        "samples": [
+          {
+            "elapsedMs": 10.5,
+            "calls": 2000000,
+            "nsPerCall": 5.25,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.399999856948853,
+            "calls": 2000000,
+            "nsPerCall": 5.199999928474426,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 5.850000023841858,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.399999856948853,
+            "calls": 2000000,
+            "nsPerCall": 5.199999928474426,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.799999952316284,
+            "calls": 2000000,
+            "nsPerCall": 5.399999976158142,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 11.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 5.800000071525574,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 12.200000047683716,
+            "calls": 2000000,
+            "nsPerCall": 6.100000023841858,
+            "returnChecksum": 574283200,
+            "contentChecksum": 0
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.199999928474426,
+          "median": 5.399999976158142,
+          "max": 6.100000023841858
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsLengthProbe_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS length bound check and scalar return",
+        "samples": [
+          {
+            "elapsedMs": 14.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 7.149999976158142,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 11.099999904632568,
+            "calls": 2000000,
+            "nsPerCall": 5.549999952316284,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.399999856948853,
+            "calls": 2000000,
+            "nsPerCall": 5.199999928474426,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 10.899999856948853,
+            "calls": 2000000,
+            "nsPerCall": 5.449999928474426,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 13.900000095367432,
+            "calls": 2000000,
+            "nsPerCall": 6.950000047683716,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 14.200000047683716,
+            "calls": 2000000,
+            "nsPerCall": 7.100000023841858,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.199999928474426,
+          "median": 6.950000047683716,
+          "max": 7.25
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmLengthProbe_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "raw WASM length bound check and scalar return; no payload copy",
+        "samples": [
+          {
+            "elapsedMs": 11.300000190734863,
+            "calls": 2000000,
+            "nsPerCall": 5.650000095367432,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 11.5,
+            "calls": 2000000,
+            "nsPerCall": 5.75,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 12.100000143051147,
+            "calls": 2000000,
+            "nsPerCall": 6.050000071525574,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 13.5,
+            "calls": 2000000,
+            "nsPerCall": 6.75,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 5.850000023841858,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 13.599999904632568,
+            "calls": 2000000,
+            "nsPerCall": 6.799999952316284,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          },
+          {
+            "elapsedMs": 12.5,
+            "calls": 2000000,
+            "nsPerCall": 6.25,
+            "returnChecksum": 0,
+            "contentChecksum": 0
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.650000095367432,
+          "median": 6.050000071525574,
+          "max": 6.799999952316284
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsInputCopyReused_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS-owned source to reused JS Uint16Array via set; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 14.699999809265137,
+            "calls": 2000000,
+            "nsPerCall": 7.349999904632568,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.799999952316284,
+            "calls": 2000000,
+            "nsPerCall": 7.399999976158142,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.200000047683716,
+            "calls": 2000000,
+            "nsPerCall": 7.600000023841858,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.100000143051147,
+            "calls": 2000000,
+            "nsPerCall": 7.050000071525574,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14,
+            "calls": 2000000,
+            "nsPerCall": 7,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.100000143051147,
+            "calls": 2000000,
+            "nsPerCall": 7.550000071525574,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          }
+        ],
+        "nsPerCall": {
+          "min": 7,
+          "median": 7.349999904632568,
+          "max": 7.600000023841858
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmInputCopyReused_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS-owned source to reused WASM-memory view via set; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 15,
+            "calls": 2000000,
+            "nsPerCall": 7.5,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.900000095367432,
+            "calls": 2000000,
+            "nsPerCall": 7.950000047683716,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.699999809265137,
+            "calls": 2000000,
+            "nsPerCall": 7.849999904632568,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.399999856948853,
+            "calls": 2000000,
+            "nsPerCall": 7.199999928474426,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 2000000,
+            "nsPerCall": 7.5,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 2000000,
+            "nsPerCall": 7.5,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.599999904632568,
+            "calls": 2000000,
+            "nsPerCall": 7.799999952316284,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          }
+        ],
+        "nsPerCall": {
+          "min": 7.199999928474426,
+          "median": 7.5,
+          "max": 7.950000047683716
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsOutputCopyReused_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS source to reused JS destination via set; no allocation",
+        "samples": [
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.099999904632568,
+            "calls": 2000000,
+            "nsPerCall": 7.549999952316284,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.300000190734863,
+            "calls": 2000000,
+            "nsPerCall": 7.650000095367432,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.100000143051147,
+            "calls": 2000000,
+            "nsPerCall": 7.050000071525574,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 7.300000071525574,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          }
+        ],
+        "nsPerCall": {
+          "min": 7.050000071525574,
+          "median": 7.25,
+          "max": 7.650000095367432
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmOutputCopyReused_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "WASM-memory source to reused JS destination via set; no WASM call or allocation",
+        "samples": [
+          {
+            "elapsedMs": 14.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 7.300000071525574,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.5,
+            "calls": 2000000,
+            "nsPerCall": 7.75,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 7.649999976158142,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.699999809265137,
+            "calls": 2000000,
+            "nsPerCall": 7.349999904632568,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 7.649999976158142,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.399999856948853,
+            "calls": 2000000,
+            "nsPerCall": 7.199999928474426,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          }
+        ],
+        "nsPerCall": {
+          "min": 7.199999928474426,
+          "median": 7.349999904632568,
+          "max": 7.75
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsOutputCopyFresh_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 262144,
+        "maxCalls": 2000000,
+        "boundary": "JS source slice: fresh JS allocation plus output copy",
+        "samples": [
+          {
+            "elapsedMs": 14.299999952316284,
+            "calls": 262144,
+            "nsPerCall": 54.55017071653856,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.700000047683716,
+            "calls": 262144,
+            "nsPerCall": 56.07604998658644,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.700000047683716,
+            "calls": 262144,
+            "nsPerCall": 56.07604998658644,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.100000143051147,
+            "calls": 262144,
+            "nsPerCall": 53.78723199100932,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 13.200000047683716,
+            "calls": 262144,
+            "nsPerCall": 50.35400408814894,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 262144,
+            "nsPerCall": 55.3131103515625,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.400000095367432,
+            "calls": 262144,
+            "nsPerCall": 54.93164098879788,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          }
+        ],
+        "nsPerCall": {
+          "min": 50.35400408814894,
+          "median": 54.93164098879788,
+          "max": 56.07604998658644
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmOutputCopyFresh_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 262144,
+        "maxCalls": 2000000,
+        "boundary": "WASM-memory source slice: fresh JS allocation plus output copy; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 14.099999904632568,
+            "calls": 262144,
+            "nsPerCall": 53.78723108151462,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.700000047683716,
+            "calls": 262144,
+            "nsPerCall": 56.07604998658644,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.099999904632568,
+            "calls": 262144,
+            "nsPerCall": 53.78723108151462,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 13.5,
+            "calls": 262144,
+            "nsPerCall": 51.4984130859375,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 13.299999952316284,
+            "calls": 262144,
+            "nsPerCall": 50.73547345091356,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.400000095367432,
+            "calls": 262144,
+            "nsPerCall": 54.93164098879788,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 13.700000047683716,
+            "calls": 262144,
+            "nsPerCall": 52.26135272096144,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          }
+        ],
+        "nsPerCall": {
+          "min": 50.73547345091356,
+          "median": 53.78723108151462,
+          "max": 56.07604998658644
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsInternalCopyReused_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS input scratch to reused JS output scratch via set",
+        "samples": [
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 2000000,
+            "nsPerCall": 7.5,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 2000000,
+            "nsPerCall": 7.5,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.799999952316284,
+            "calls": 2000000,
+            "nsPerCall": 7.399999976158142,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 14.399999856948853,
+            "calls": 2000000,
+            "nsPerCall": 7.199999928474426,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          }
+        ],
+        "nsPerCall": {
+          "min": 7.199999928474426,
+          "median": 7.25,
+          "max": 7.5
+        },
+        "batchesBelowTarget": 0
+      },
+      "rustInternalTransfer_0u16": {
+        "payloadUnitsPerCall": 0,
+        "payloadBytesPerCall": 0,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "one raw WASM call plus Rust input-scratch to output-scratch copy; no host payload copy",
+        "samples": [
+          {
+            "elapsedMs": 17.100000143051147,
+            "calls": 2000000,
+            "nsPerCall": 8.550000071525574,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 17.40000009536743,
+            "calls": 2000000,
+            "nsPerCall": 8.700000047683716,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 17.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 8.850000023841858,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 16.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 8.350000023841858,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 17.40000009536743,
+            "calls": 2000000,
+            "nsPerCall": 8.700000047683716,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 17.5,
+            "calls": 2000000,
+            "nsPerCall": 8.75,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          },
+          {
+            "elapsedMs": 16.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 8.300000071525574,
+            "returnChecksum": 0,
+            "contentChecksum": 2166136261
+          }
+        ],
+        "nsPerCall": {
+          "min": 8.300000071525574,
+          "median": 8.700000047683716,
+          "max": 8.850000023841858
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsLengthProbe_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS length bound check and scalar return",
+        "samples": [
+          {
+            "elapsedMs": 10.599999904632568,
+            "calls": 2000000,
+            "nsPerCall": 5.299999952316284,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 11,
+            "calls": 2000000,
+            "nsPerCall": 5.5,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 12.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 6.149999976158142,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 10.699999809265137,
+            "calls": 2000000,
+            "nsPerCall": 5.349999904632568,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 11.5,
+            "calls": 2000000,
+            "nsPerCall": 5.75,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 11.099999904632568,
+            "calls": 2000000,
+            "nsPerCall": 5.549999952316284,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.299999952316284,
+          "median": 5.549999952316284,
+          "max": 7.25
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmLengthProbe_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "raw WASM length bound check and scalar return; no payload copy",
+        "samples": [
+          {
+            "elapsedMs": 13.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 6.800000071525574,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 11.899999856948853,
+            "calls": 2000000,
+            "nsPerCall": 5.949999928474426,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 11.599999904632568,
+            "calls": 2000000,
+            "nsPerCall": 5.799999952316284,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 13.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 6.850000023841858,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 2000000,
+            "nsPerCall": 7.25,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 14.300000190734863,
+            "calls": 2000000,
+            "nsPerCall": 7.150000095367432,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          },
+          {
+            "elapsedMs": 13.599999904632568,
+            "calls": 2000000,
+            "nsPerCall": 6.799999952316284,
+            "returnChecksum": 32000000,
+            "contentChecksum": 16
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.799999952316284,
+          "median": 6.800000071525574,
+          "max": 7.25
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsInputCopyReused_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 1048576,
+        "maxCalls": 2000000,
+        "boundary": "JS-owned source to reused JS Uint16Array via set; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 11.599999904632568,
+            "calls": 1048576,
+            "nsPerCall": 11.06262197936303,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12,
+            "calls": 1048576,
+            "nsPerCall": 11.444091796875,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 1048576,
+            "nsPerCall": 11.15798954742786,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.100000143051147,
+            "calls": 1048576,
+            "nsPerCall": 11.53945936493983,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.5,
+            "calls": 1048576,
+            "nsPerCall": 11.920928955078125,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.699999809265137,
+            "calls": 1048576,
+            "nsPerCall": 12.111663636460435,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.599999904632568,
+            "calls": 1048576,
+            "nsPerCall": 11.06262197936303,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          }
+        ],
+        "nsPerCall": {
+          "min": 11.06262197936303,
+          "median": 11.444091796875,
+          "max": 12.111663636460435
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmInputCopyReused_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 1048576,
+        "maxCalls": 2000000,
+        "boundary": "JS-owned source to reused WASM-memory view via set; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 11.5,
+            "calls": 1048576,
+            "nsPerCall": 10.967254638671875,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.100000143051147,
+            "calls": 1048576,
+            "nsPerCall": 11.53945936493983,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.600000143051147,
+            "calls": 1048576,
+            "nsPerCall": 11.062622206736705,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.299999952316284,
+            "calls": 1048576,
+            "nsPerCall": 11.73019404632214,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.599999904632568,
+            "calls": 1048576,
+            "nsPerCall": 12.01629629576928,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 13,
+            "calls": 1048576,
+            "nsPerCall": 12.39776611328125,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.600000143051147,
+            "calls": 1048576,
+            "nsPerCall": 11.062622206736705,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          }
+        ],
+        "nsPerCall": {
+          "min": 10.967254638671875,
+          "median": 11.53945936493983,
+          "max": 12.39776611328125
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsOutputCopyReused_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 1048576,
+        "maxCalls": 2000000,
+        "boundary": "JS source to reused JS destination via set; no allocation",
+        "samples": [
+          {
+            "elapsedMs": 11.299999952316284,
+            "calls": 1048576,
+            "nsPerCall": 10.77651972991589,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.799999952316284,
+            "calls": 1048576,
+            "nsPerCall": 11.253356888119015,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.299999952316284,
+            "calls": 1048576,
+            "nsPerCall": 10.77651972991589,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.399999856948853,
+            "calls": 1048576,
+            "nsPerCall": 10.871887070607045,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.200000047683716,
+            "calls": 1048576,
+            "nsPerCall": 11.634826705630985,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 13,
+            "calls": 1048576,
+            "nsPerCall": 12.39776611328125,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.299999952316284,
+            "calls": 1048576,
+            "nsPerCall": 10.77651972991589,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          }
+        ],
+        "nsPerCall": {
+          "min": 10.77651972991589,
+          "median": 10.871887070607045,
+          "max": 12.39776611328125
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmOutputCopyReused_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 1048576,
+        "maxCalls": 2000000,
+        "boundary": "WASM-memory source to reused JS destination via set; no WASM call or allocation",
+        "samples": [
+          {
+            "elapsedMs": 11.200000047683716,
+            "calls": 1048576,
+            "nsPerCall": 10.681152389224735,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.799999952316284,
+            "calls": 1048576,
+            "nsPerCall": 11.253356888119015,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.399999856948853,
+            "calls": 1048576,
+            "nsPerCall": 10.871887070607045,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.5,
+            "calls": 1048576,
+            "nsPerCall": 10.967254638671875,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.099999904632568,
+            "calls": 1048576,
+            "nsPerCall": 11.539459137566155,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 13.400000095367432,
+            "calls": 1048576,
+            "nsPerCall": 12.77923593079322,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.400000095367432,
+            "calls": 1048576,
+            "nsPerCall": 10.87188729798072,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          }
+        ],
+        "nsPerCall": {
+          "min": 10.681152389224735,
+          "median": 10.967254638671875,
+          "max": 12.77923593079322
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsOutputCopyFresh_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 262144,
+        "maxCalls": 2000000,
+        "boundary": "JS source slice: fresh JS allocation plus output copy",
+        "samples": [
+          {
+            "elapsedMs": 16.799999952316284,
+            "calls": 262144,
+            "nsPerCall": 64.08691388060106,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 17.09999990463257,
+            "calls": 262144,
+            "nsPerCall": 65.23132287838962,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 16.5,
+            "calls": 262144,
+            "nsPerCall": 62.9425048828125,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 16.600000143051147,
+            "calls": 262144,
+            "nsPerCall": 63.32397515507182,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 17.90000009536743,
+            "calls": 262144,
+            "nsPerCall": 68.28308141848538,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 19.09999990463257,
+            "calls": 262144,
+            "nsPerCall": 72.86071740963962,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 16.5,
+            "calls": 262144,
+            "nsPerCall": 62.9425048828125,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          }
+        ],
+        "nsPerCall": {
+          "min": 62.9425048828125,
+          "median": 64.08691388060106,
+          "max": 72.86071740963962
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmOutputCopyFresh_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 262144,
+        "maxCalls": 2000000,
+        "boundary": "WASM-memory source slice: fresh JS allocation plus output copy; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 15.799999952316284,
+            "calls": 262144,
+            "nsPerCall": 60.27221661497606,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 16.100000143051147,
+            "calls": 262144,
+            "nsPerCall": 61.41662652225932,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 16,
+            "calls": 262144,
+            "nsPerCall": 61.03515625,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 16,
+            "calls": 262144,
+            "nsPerCall": 61.03515625,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 17.299999952316284,
+            "calls": 262144,
+            "nsPerCall": 65.99426251341356,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 18.40000009536743,
+            "calls": 262144,
+            "nsPerCall": 70.19043005129788,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 16.09999990463257,
+            "calls": 262144,
+            "nsPerCall": 61.41662561276462,
+            "returnChecksum": 4194304,
+            "contentChecksum": 4243450309
+          }
+        ],
+        "nsPerCall": {
+          "min": 60.27221661497606,
+          "median": 61.41662561276462,
+          "max": 70.19043005129788
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsInternalCopyReused_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 1048576,
+        "maxCalls": 2000000,
+        "boundary": "JS input scratch to reused JS output scratch via set",
+        "samples": [
+          {
+            "elapsedMs": 11.5,
+            "calls": 1048576,
+            "nsPerCall": 10.967254638671875,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 10.899999856948853,
+            "calls": 1048576,
+            "nsPerCall": 10.39504991240392,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.300000190734863,
+            "calls": 1048576,
+            "nsPerCall": 10.776519957289565,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.5,
+            "calls": 1048576,
+            "nsPerCall": 10.967254638671875,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 12.299999952316284,
+            "calls": 1048576,
+            "nsPerCall": 11.73019404632214,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.900000095367432,
+            "calls": 1048576,
+            "nsPerCall": 11.348724456183845,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 11.400000095367432,
+            "calls": 1048576,
+            "nsPerCall": 10.87188729798072,
+            "returnChecksum": 16777216,
+            "contentChecksum": 4243450309
+          }
+        ],
+        "nsPerCall": {
+          "min": 10.39504991240392,
+          "median": 10.967254638671875,
+          "max": 11.73019404632214
+        },
+        "batchesBelowTarget": 0
+      },
+      "rustInternalTransfer_16u16": {
+        "payloadUnitsPerCall": 16,
+        "payloadBytesPerCall": 32,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "one raw WASM call plus Rust input-scratch to output-scratch copy; no host payload copy",
+        "samples": [
+          {
+            "elapsedMs": 18.300000190734863,
+            "calls": 2000000,
+            "nsPerCall": 9.150000095367432,
+            "returnChecksum": 32000000,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 18.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 9.300000071525574,
+            "returnChecksum": 32000000,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 18.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 9.149999976158142,
+            "returnChecksum": 32000000,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 18.5,
+            "calls": 2000000,
+            "nsPerCall": 9.25,
+            "returnChecksum": 32000000,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 19.90000009536743,
+            "calls": 2000000,
+            "nsPerCall": 9.950000047683716,
+            "returnChecksum": 32000000,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 19.199999809265137,
+            "calls": 2000000,
+            "nsPerCall": 9.599999904632568,
+            "returnChecksum": 32000000,
+            "contentChecksum": 4243450309
+          },
+          {
+            "elapsedMs": 18.59999990463257,
+            "calls": 2000000,
+            "nsPerCall": 9.299999952316284,
+            "returnChecksum": 32000000,
+            "contentChecksum": 4243450309
+          }
+        ],
+        "nsPerCall": {
+          "min": 9.149999976158142,
+          "median": 9.299999952316284,
+          "max": 9.950000047683716
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsLengthProbe_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS length bound check and scalar return",
+        "samples": [
+          {
+            "elapsedMs": 10.699999809265137,
+            "calls": 2000000,
+            "nsPerCall": 5.349999904632568,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 12.099999904632568,
+            "calls": 2000000,
+            "nsPerCall": 6.049999952316284,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 11.899999856948853,
+            "calls": 2000000,
+            "nsPerCall": 5.949999928474426,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 10.799999952316284,
+            "calls": 2000000,
+            "nsPerCall": 5.399999976158142,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 11.5,
+            "calls": 2000000,
+            "nsPerCall": 5.75,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 5.850000023841858,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 12,
+            "calls": 2000000,
+            "nsPerCall": 6,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.349999904632568,
+          "median": 5.850000023841858,
+          "max": 6.049999952316284
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmLengthProbe_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "raw WASM length bound check and scalar return; no payload copy",
+        "samples": [
+          {
+            "elapsedMs": 11.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 5.800000071525574,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 11.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 5.800000071525574,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 13.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 6.800000071525574,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 11.900000095367432,
+            "calls": 2000000,
+            "nsPerCall": 5.950000047683716,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 12.400000095367432,
+            "calls": 2000000,
+            "nsPerCall": 6.200000047683716,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 12.100000143051147,
+            "calls": 2000000,
+            "nsPerCall": 6.050000071525574,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          },
+          {
+            "elapsedMs": 12.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 6.149999976158142,
+            "returnChecksum": 2048000000,
+            "contentChecksum": 1024
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.800000071525574,
+          "median": 6.050000071525574,
+          "max": 6.800000071525574
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsInputCopyReused_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 488281,
+        "maxCalls": 488281,
+        "boundary": "JS-owned source to reused JS Uint16Array via set; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 15.599999904632568,
+            "calls": 488281,
+            "nsPerCall": 31.948816162481375,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 488281,
+            "nsPerCall": 30.720015728648054,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 488281,
+            "nsPerCall": 30.720015728648054,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.5,
+            "calls": 488281,
+            "nsPerCall": 29.696015204359785,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 16.299999952316284,
+            "calls": 488281,
+            "nsPerCall": 33.38241699414125,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.5,
+            "calls": 488281,
+            "nsPerCall": 31.744016252936323,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 16.200000047683716,
+            "calls": 488281,
+            "nsPerCall": 33.1776170845962,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          }
+        ],
+        "nsPerCall": {
+          "min": 29.696015204359785,
+          "median": 31.744016252936323,
+          "max": 33.38241699414125
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmInputCopyReused_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 488281,
+        "maxCalls": 488281,
+        "boundary": "JS-owned source to reused WASM-memory view via set; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 14.599999904632568,
+            "calls": 488281,
+            "nsPerCall": 29.900815113904837,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.799999952316284,
+            "calls": 488281,
+            "nsPerCall": 30.310415421276446,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.700000047683716,
+            "calls": 488281,
+            "nsPerCall": 30.105615511731393,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 16,
+            "calls": 488281,
+            "nsPerCall": 32.76801677722459,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.5,
+            "calls": 488281,
+            "nsPerCall": 31.744016252936323,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.399999856948853,
+            "calls": 488281,
+            "nsPerCall": 29.491214806533232,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.099999904632568,
+            "calls": 488281,
+            "nsPerCall": 30.924815638193106,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          }
+        ],
+        "nsPerCall": {
+          "min": 29.491214806533232,
+          "median": 30.310415421276446,
+          "max": 32.76801677722459
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsOutputCopyReused_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 488281,
+        "maxCalls": 488281,
+        "boundary": "JS source to reused JS destination via set; no allocation",
+        "samples": [
+          {
+            "elapsedMs": 14.400000095367432,
+            "calls": 488281,
+            "nsPerCall": 29.49121529481473,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 488281,
+            "nsPerCall": 30.720015728648054,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.699999809265137,
+            "calls": 488281,
+            "nsPerCall": 30.105615023449893,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 17.200000047683716,
+            "calls": 488281,
+            "nsPerCall": 35.22561813317274,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.899999856948853,
+            "calls": 488281,
+            "nsPerCall": 32.563216379398035,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.900000095367432,
+            "calls": 488281,
+            "nsPerCall": 30.515215819103,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.400000095367432,
+            "calls": 488281,
+            "nsPerCall": 31.539216343391267,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          }
+        ],
+        "nsPerCall": {
+          "min": 29.49121529481473,
+          "median": 30.720015728648054,
+          "max": 35.22561813317274
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmOutputCopyReused_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 488281,
+        "maxCalls": 488281,
+        "boundary": "WASM-memory source to reused JS destination via set; no WASM call or allocation",
+        "samples": [
+          {
+            "elapsedMs": 14,
+            "calls": 488281,
+            "nsPerCall": 28.672014680071516,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.700000047683716,
+            "calls": 488281,
+            "nsPerCall": 32.15361656030793,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.400000095367432,
+            "calls": 488281,
+            "nsPerCall": 29.49121529481473,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.5,
+            "calls": 488281,
+            "nsPerCall": 31.744016252936323,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.400000095367432,
+            "calls": 488281,
+            "nsPerCall": 31.539216343391267,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.799999952316284,
+            "calls": 488281,
+            "nsPerCall": 30.310415421276446,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.5,
+            "calls": 488281,
+            "nsPerCall": 31.744016252936323,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          }
+        ],
+        "nsPerCall": {
+          "min": 28.672014680071516,
+          "median": 31.539216343391267,
+          "max": 32.15361656030793
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsOutputCopyFresh_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 32768,
+        "maxCalls": 488281,
+        "boundary": "JS source slice: fresh JS allocation plus output copy",
+        "samples": [
+          {
+            "elapsedMs": 12.5,
+            "calls": 32768,
+            "nsPerCall": 381.4697265625,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 13.099999904632568,
+            "calls": 32768,
+            "nsPerCall": 399.78027052711695,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 12.400000095367432,
+            "calls": 32768,
+            "nsPerCall": 378.41797166038305,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 16,
+            "calls": 32768,
+            "nsPerCall": 488.28125,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 12.700000047683716,
+            "calls": 32768,
+            "nsPerCall": 387.5732436426915,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 12.200000047683716,
+            "calls": 32768,
+            "nsPerCall": 372.3144545801915,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 12.5,
+            "calls": 32768,
+            "nsPerCall": 381.4697265625,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          }
+        ],
+        "nsPerCall": {
+          "min": 372.3144545801915,
+          "median": 381.4697265625,
+          "max": 488.28125
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmOutputCopyFresh_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 32768,
+        "maxCalls": 488281,
+        "boundary": "WASM-memory source slice: fresh JS allocation plus output copy; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 12.099999904632568,
+            "calls": 32768,
+            "nsPerCall": 369.26269240211695,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 12.200000047683716,
+            "calls": 32768,
+            "nsPerCall": 372.3144545801915,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 11.5,
+            "calls": 32768,
+            "nsPerCall": 350.9521484375,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 12.5,
+            "calls": 32768,
+            "nsPerCall": 381.4697265625,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 11.799999952316284,
+            "calls": 32768,
+            "nsPerCall": 360.1074204198085,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 13.299999952316284,
+            "calls": 32768,
+            "nsPerCall": 405.8837876073085,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 11.299999952316284,
+            "calls": 32768,
+            "nsPerCall": 344.8486313573085,
+            "returnChecksum": 33554432,
+            "contentChecksum": 409664965
+          }
+        ],
+        "nsPerCall": {
+          "min": 344.8486313573085,
+          "median": 369.26269240211695,
+          "max": 405.8837876073085
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsInternalCopyReused_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 488281,
+        "maxCalls": 488281,
+        "boundary": "JS input scratch to reused JS output scratch via set",
+        "samples": [
+          {
+            "elapsedMs": 14.5,
+            "calls": 488281,
+            "nsPerCall": 29.696015204359785,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 16.799999952316284,
+            "calls": 488281,
+            "nsPerCall": 34.40641751842952,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 488281,
+            "nsPerCall": 30.720015728648054,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 16.200000047683716,
+            "calls": 488281,
+            "nsPerCall": 33.1776170845962,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15.200000047683716,
+            "calls": 488281,
+            "nsPerCall": 31.12961603601966,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 488281,
+            "nsPerCall": 30.720015728648054,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 14.299999952316284,
+            "calls": 488281,
+            "nsPerCall": 29.286414896988177,
+            "returnChecksum": 499999744,
+            "contentChecksum": 409664965
+          }
+        ],
+        "nsPerCall": {
+          "min": 29.286414896988177,
+          "median": 30.720015728648054,
+          "max": 34.40641751842952
+        },
+        "batchesBelowTarget": 0
+      },
+      "rustInternalTransfer_1024u16": {
+        "payloadUnitsPerCall": 1024,
+        "payloadBytesPerCall": 2048,
+        "callsPerBatch": 65536,
+        "maxCalls": 488281,
+        "boundary": "one raw WASM call plus Rust input-scratch to output-scratch copy; no host payload copy",
+        "samples": [
+          {
+            "elapsedMs": 10.299999952316284,
+            "calls": 65536,
+            "nsPerCall": 157.16552661615424,
+            "returnChecksum": 67108864,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 11.600000143051147,
+            "calls": 65536,
+            "nsPerCall": 177.00195530778728,
+            "returnChecksum": 67108864,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 10.199999809265137,
+            "calls": 65536,
+            "nsPerCall": 155.63964552711695,
+            "returnChecksum": 67108864,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 10.799999952316284,
+            "calls": 65536,
+            "nsPerCall": 164.79492114740424,
+            "returnChecksum": 67108864,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 10.399999856948853,
+            "calls": 65536,
+            "nsPerCall": 158.69140406721272,
+            "returnChecksum": 67108864,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 10.5,
+            "calls": 65536,
+            "nsPerCall": 160.21728515625,
+            "returnChecksum": 67108864,
+            "contentChecksum": 409664965
+          },
+          {
+            "elapsedMs": 9.800000190734863,
+            "calls": 65536,
+            "nsPerCall": 149.53613572288305,
+            "returnChecksum": 67108864,
+            "contentChecksum": 409664965
+          }
+        ],
+        "nsPerCall": {
+          "min": 149.53613572288305,
+          "median": 158.69140406721272,
+          "max": 177.00195530778728
+        },
+        "batchesBelowTarget": 1
+      },
+      "jsLengthProbe_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "JS length bound check and scalar return",
+        "samples": [
+          {
+            "elapsedMs": 10.900000095367432,
+            "calls": 2000000,
+            "nsPerCall": 5.450000047683716,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 13.399999856948853,
+            "calls": 2000000,
+            "nsPerCall": 6.699999928474426,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 5.850000023841858,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 5.850000023841858,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 11,
+            "calls": 2000000,
+            "nsPerCall": 5.5,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 11.099999904632568,
+            "calls": 2000000,
+            "nsPerCall": 5.549999952316284,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 11.200000047683716,
+            "calls": 2000000,
+            "nsPerCall": 5.600000023841858,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.450000047683716,
+          "median": 5.600000023841858,
+          "max": 6.699999928474426
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmLengthProbe_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 2000000,
+        "maxCalls": 2000000,
+        "boundary": "raw WASM length bound check and scalar return; no payload copy",
+        "samples": [
+          {
+            "elapsedMs": 11.599999904632568,
+            "calls": 2000000,
+            "nsPerCall": 5.799999952316284,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 13.300000190734863,
+            "calls": 2000000,
+            "nsPerCall": 6.650000095367432,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 2000000,
+            "nsPerCall": 5.850000023841858,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 12.299999952316284,
+            "calls": 2000000,
+            "nsPerCall": 6.149999976158142,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 11.600000143051147,
+            "calls": 2000000,
+            "nsPerCall": 5.800000071525574,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 12,
+            "calls": 2000000,
+            "nsPerCall": 6,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          },
+          {
+            "elapsedMs": 11.5,
+            "calls": 2000000,
+            "nsPerCall": 5.75,
+            "returnChecksum": 2431504384,
+            "contentChecksum": 100000
+          }
+        ],
+        "nsPerCall": {
+          "min": 5.75,
+          "median": 5.850000023841858,
+          "max": 6.650000095367432
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsInputCopyReused_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 4096,
+        "maxCalls": 5000,
+        "boundary": "JS-owned source to reused JS Uint16Array via set; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 10,
+            "calls": 4096,
+            "nsPerCall": 2441.40625,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 12.399999856948853,
+            "calls": 4096,
+            "nsPerCall": 3027.3437150754035,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.400000095367432,
+            "calls": 4096,
+            "nsPerCall": 2539.0625232830644,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.899999856948853,
+            "calls": 4096,
+            "nsPerCall": 2661.1327775754035,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.399999856948853,
+            "calls": 4096,
+            "nsPerCall": 2539.0624650754035,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11,
+            "calls": 4096,
+            "nsPerCall": 2685.546875,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.899999856948853,
+            "calls": 4096,
+            "nsPerCall": 2661.1327775754035,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          }
+        ],
+        "nsPerCall": {
+          "min": 2441.40625,
+          "median": 2661.1327775754035,
+          "max": 3027.3437150754035
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmInputCopyReused_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 4096,
+        "maxCalls": 5000,
+        "boundary": "JS-owned source to reused WASM-memory view via set; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 11.299999952316284,
+            "calls": 4096,
+            "nsPerCall": 2758.789050858468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 12.299999952316284,
+            "calls": 4096,
+            "nsPerCall": 3002.929675858468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11.299999952316284,
+            "calls": 4096,
+            "nsPerCall": 2758.789050858468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11.899999856948853,
+            "calls": 4096,
+            "nsPerCall": 2905.2734025754035,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11.299999952316284,
+            "calls": 4096,
+            "nsPerCall": 2758.789050858468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11.799999952316284,
+            "calls": 4096,
+            "nsPerCall": 2880.859363358468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 4096,
+            "nsPerCall": 2856.445324141532,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          }
+        ],
+        "nsPerCall": {
+          "min": 2758.789050858468,
+          "median": 2856.445324141532,
+          "max": 3002.929675858468
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsOutputCopyReused_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 4096,
+        "maxCalls": 5000,
+        "boundary": "JS source to reused JS destination via set; no allocation",
+        "samples": [
+          {
+            "elapsedMs": 10.299999952316284,
+            "calls": 4096,
+            "nsPerCall": 2514.648425858468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10,
+            "calls": 4096,
+            "nsPerCall": 2441.40625,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.200000047683716,
+            "calls": 4096,
+            "nsPerCall": 2490.234386641532,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.799999952316284,
+            "calls": 4096,
+            "nsPerCall": 2636.718738358468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.300000190734863,
+            "calls": 4096,
+            "nsPerCall": 2514.6484840661287,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11,
+            "calls": 4096,
+            "nsPerCall": 2685.546875,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11,
+            "calls": 4096,
+            "nsPerCall": 2685.546875,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          }
+        ],
+        "nsPerCall": {
+          "min": 2441.40625,
+          "median": 2514.6484840661287,
+          "max": 2685.546875
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmOutputCopyReused_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 4096,
+        "maxCalls": 5000,
+        "boundary": "WASM-memory source to reused JS destination via set; no WASM call or allocation",
+        "samples": [
+          {
+            "elapsedMs": 10.699999809265137,
+            "calls": 4096,
+            "nsPerCall": 2612.3046409338713,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.899999856948853,
+            "calls": 4096,
+            "nsPerCall": 2661.1327775754035,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11,
+            "calls": 4096,
+            "nsPerCall": 2685.546875,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11.700000047683716,
+            "calls": 4096,
+            "nsPerCall": 2856.445324141532,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.700000047683716,
+            "calls": 4096,
+            "nsPerCall": 2612.304699141532,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.700000047683716,
+            "calls": 4096,
+            "nsPerCall": 2612.304699141532,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11.800000190734863,
+            "calls": 4096,
+            "nsPerCall": 2880.8594215661287,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          }
+        ],
+        "nsPerCall": {
+          "min": 2612.3046409338713,
+          "median": 2661.1327775754035,
+          "max": 2880.8594215661287
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsOutputCopyFresh_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 1024,
+        "maxCalls": 5000,
+        "boundary": "JS source slice: fresh JS allocation plus output copy",
+        "samples": [
+          {
+            "elapsedMs": 11.399999856948853,
+            "calls": 1024,
+            "nsPerCall": 11132.812360301614,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.299999952316284,
+            "calls": 1024,
+            "nsPerCall": 10058.593703433871,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.900000095367432,
+            "calls": 1024,
+            "nsPerCall": 10644.531343132257,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 12.5,
+            "calls": 1024,
+            "nsPerCall": 12207.03125,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 12.599999904632568,
+            "calls": 1024,
+            "nsPerCall": 12304.687406867743,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 13.899999856948853,
+            "calls": 1024,
+            "nsPerCall": 13574.218610301614,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 12.100000143051147,
+            "calls": 1024,
+            "nsPerCall": 11816.406389698386,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          }
+        ],
+        "nsPerCall": {
+          "min": 10058.593703433871,
+          "median": 11816.406389698386,
+          "max": 13574.218610301614
+        },
+        "batchesBelowTarget": 0
+      },
+      "wasmOutputCopyFresh_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 2048,
+        "maxCalls": 5000,
+        "boundary": "WASM-memory source slice: fresh JS allocation plus output copy; no WASM call",
+        "samples": [
+          {
+            "elapsedMs": 16,
+            "calls": 2048,
+            "nsPerCall": 7812.5,
+            "returnChecksum": 204800000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 15.299999952316284,
+            "calls": 2048,
+            "nsPerCall": 7470.703101716936,
+            "returnChecksum": 204800000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 15.799999952316284,
+            "calls": 2048,
+            "nsPerCall": 7714.843726716936,
+            "returnChecksum": 204800000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 14.099999904632568,
+            "calls": 2048,
+            "nsPerCall": 6884.765578433871,
+            "returnChecksum": 204800000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 15.599999904632568,
+            "calls": 2048,
+            "nsPerCall": 7617.187453433871,
+            "returnChecksum": 204800000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 16.200000047683716,
+            "calls": 2048,
+            "nsPerCall": 7910.156273283064,
+            "returnChecksum": 204800000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 14.899999856948853,
+            "calls": 2048,
+            "nsPerCall": 7275.390555150807,
+            "returnChecksum": 204800000,
+            "contentChecksum": 1662545093
+          }
+        ],
+        "nsPerCall": {
+          "min": 6884.765578433871,
+          "median": 7617.187453433871,
+          "max": 7910.156273283064
+        },
+        "batchesBelowTarget": 0
+      },
+      "jsInternalCopyReused_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 4096,
+        "maxCalls": 5000,
+        "boundary": "JS input scratch to reused JS output scratch via set",
+        "samples": [
+          {
+            "elapsedMs": 10.299999952316284,
+            "calls": 4096,
+            "nsPerCall": 2514.648425858468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11,
+            "calls": 4096,
+            "nsPerCall": 2685.546875,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.900000095367432,
+            "calls": 4096,
+            "nsPerCall": 2661.1328357830644,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10,
+            "calls": 4096,
+            "nsPerCall": 2441.40625,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 10.299999952316284,
+            "calls": 4096,
+            "nsPerCall": 2514.648425858468,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 9.700000047683716,
+            "calls": 4096,
+            "nsPerCall": 2368.164074141532,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 11.199999809265137,
+            "calls": 4096,
+            "nsPerCall": 2734.3749534338713,
+            "returnChecksum": 409600000,
+            "contentChecksum": 1662545093
+          }
+        ],
+        "nsPerCall": {
+          "min": 2368.164074141532,
+          "median": 2514.648425858468,
+          "max": 2734.3749534338713
+        },
+        "batchesBelowTarget": 1
+      },
+      "rustInternalTransfer_100000u16": {
+        "payloadUnitsPerCall": 100000,
+        "payloadBytesPerCall": 200000,
+        "callsPerBatch": 1024,
+        "maxCalls": 5000,
+        "boundary": "one raw WASM call plus Rust input-scratch to output-scratch copy; no host payload copy",
+        "samples": [
+          {
+            "elapsedMs": 14.200000047683716,
+            "calls": 1024,
+            "nsPerCall": 13867.187546566129,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 15,
+            "calls": 1024,
+            "nsPerCall": 14648.4375,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 14.900000095367432,
+            "calls": 1024,
+            "nsPerCall": 14550.781343132257,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 14,
+            "calls": 1024,
+            "nsPerCall": 13671.875,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 14.400000095367432,
+            "calls": 1024,
+            "nsPerCall": 14062.500093132257,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 14.400000095367432,
+            "calls": 1024,
+            "nsPerCall": 14062.500093132257,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          },
+          {
+            "elapsedMs": 15.900000095367432,
+            "calls": 1024,
+            "nsPerCall": 15527.343843132257,
+            "returnChecksum": 102400000,
+            "contentChecksum": 1662545093
+          }
+        ],
+        "nsPerCall": {
+          "min": 13671.875,
+          "median": 14062.500093132257,
+          "max": 15527.343843132257
+        },
+        "batchesBelowTarget": 0
+      }
+    },
+    "limitation": "Observed standalone path costs. JS optimization, call loop, JIT, GC, typed-array machinery and copies remain in the stated boundaries. No subtraction estimates pure ABI overhead or allocator cost. Reused copies exclude payload allocation; fresh output includes allocation plus copy. No editor or CRDT claim."
+  },
+  "lifecycleBatches": {
+    "status": "PASS",
+    "unitsPerCycle": 100000,
+    "repeats": 7,
+    "cyclesPerBatch": 1000,
+    "warmupBatches": 1,
+    "samples": [
+      {
+        "cycles": 1000,
+        "wasmCalls": 3000,
+        "elapsedMs": 45.60000014305115,
+        "nsPerCycle": 45600.00014305115,
+        "contentChecksum": 1662545093
+      },
+      {
+        "cycles": 1000,
+        "wasmCalls": 3000,
+        "elapsedMs": 44.89999985694885,
+        "nsPerCycle": 44899.99985694885,
+        "contentChecksum": 1662545093
+      },
+      {
+        "cycles": 1000,
+        "wasmCalls": 3000,
+        "elapsedMs": 45.39999985694885,
+        "nsPerCycle": 45399.99985694885,
+        "contentChecksum": 1662545093
+      },
+      {
+        "cycles": 1000,
+        "wasmCalls": 3000,
+        "elapsedMs": 40.799999952316284,
+        "nsPerCycle": 40799.999952316284,
+        "contentChecksum": 1662545093
+      },
+      {
+        "cycles": 1000,
+        "wasmCalls": 3000,
+        "elapsedMs": 40.69999980926514,
+        "nsPerCycle": 40699.99980926514,
+        "contentChecksum": 1662545093
+      },
+      {
+        "cycles": 1000,
+        "wasmCalls": 3000,
+        "elapsedMs": 41.09999990463257,
+        "nsPerCycle": 41099.99990463257,
+        "contentChecksum": 1662545093
+      },
+      {
+        "cycles": 1000,
+        "wasmCalls": 3000,
+        "elapsedMs": 41.19999980926514,
+        "nsPerCycle": 41199.99980926514,
+        "contentChecksum": 1662545093
+      }
+    ],
+    "boundary": "Complete raw create/read/close cycle batches with one live handle at a time. Includes host input copy, Rust document allocation/copy, Rust read materialization, fresh host output allocation/copy, Rust drop, assertions and view creation. Prepared UTF-16 input and checksum excluded. Phase observations remain in combinedTextTape.lifecycle; these aggregate cycles avoid interpreting short single-operation times as zero. No pure allocator estimate."
+  },
+  "combinedTextTape": {
+    "initialUnits": 100000,
+    "rounds": 2000,
+    "repeats": 5,
+    "warmups": 1,
+    "expectedChecksum": 2292064925,
+    "insertionUnitsCopiedPerRun": 4000,
+    "outputUnitsCopiedPerRun": 200002000,
+    "methods": {
+      "jsString": {
+        "samplesMs": [
+          11.400000095367432,
+          11.700000047683716,
+          12.799999952316284,
+          11.699999809265137,
+          12.600000143051147
+        ],
+        "medianMs": 11.700000047683716,
+        "minMs": 11.400000095367432,
+        "maxMs": 12.799999952316284
+      },
+      "wasmPerEditInputCopy": {
+        "samplesMs": [
+          14.5,
+          14.5,
+          14.200000047683716,
+          14.599999904632568,
+          14.600000143051147
+        ],
+        "medianMs": 14.5,
+        "minMs": 14.200000047683716,
+        "maxMs": 14.600000143051147
+      },
+      "wasmPerEditInputAndFullOutputCopy": {
+        "samplesMs": [
+          63.799999952316284,
+          64,
+          61.39999985694885,
+          64.39999985694885,
+          67.29999995231628
+        ],
+        "medianMs": 64,
+        "minMs": 61.39999985694885,
+        "maxMs": 67.29999995231628
+      },
+      "wasmWholeBatch": {
+        "samplesMs": [
+          14.399999856948853,
+          14.299999952316284,
+          14.200000047683716,
+          14.100000143051147,
+          15
+        ],
+        "medianMs": 14.299999952316284,
+        "minMs": 14.100000143051147,
+        "maxMs": 15
+      }
+    },
+    "lifecycle": {
+      "units": 100000,
+      "samples": {
+        "encode": {
+          "samplesMs": [
+            0.10000014305114746,
+            0.10000014305114746,
+            0,
+            0.09999990463256836,
+            0.10000014305114746
+          ],
+          "medianMs": 0.10000014305114746,
+          "minMs": 0,
+          "maxMs": 0.10000014305114746
+        },
+        "createAndInputCopy": {
+          "samplesMs": [
+            0,
+            0,
+            0.09999990463256836,
+            0,
+            0
+          ],
+          "medianMs": 0,
+          "minMs": 0,
+          "maxMs": 0.09999990463256836
+        },
+        "readAndOutputCopy": {
+          "samplesMs": [
+            0,
+            0,
+            0,
+            0,
+            0.19999980926513672
+          ],
+          "medianMs": 0,
+          "minMs": 0,
+          "maxMs": 0.19999980926513672
+        },
+        "decode": {
+          "samplesMs": [
+            1.6999998092651367,
+            1.7999999523162842,
+            1.8000001907348633,
+            1.7000000476837158,
+            1.5
+          ],
+          "medianMs": 1.7000000476837158,
+          "minMs": 1.5,
+          "maxMs": 1.8000001907348633
+        },
+        "close": {
+          "samplesMs": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "medianMs": 0,
+          "minMs": 0,
+          "maxMs": 0
+        }
+      },
+      "boundary": "Independent initial-document encode, create+input copy, materialize+output copy, decode and single-handle close phases; no edits; instance and buffers already initialized"
+    },
+    "timingBoundary": {
+      "jsString": "string edits only; initial text, operation preparation and final hash excluded",
+      "wasmPerEditInputCopy": "one wrapper call, integer checks, input UTF16 copy and Rust splice per edit; initial create and final read/hash excluded",
+      "wasmPerEditInputAndFullOutputCopy": "same per-edit input path plus Rust output copy, read call and JS-owned Uint16Array copy per edit; string conversion excluded",
+      "wasmWholeBatch": "one call including Rust initial allocation, PRNG, edits and final hash; no text crosses ABI"
+    },
+    "limitation": "TextTape Vec baseline, no CRDT/editor integration. Cross-path times have different boundaries; no isolated estimate of ABI overhead or production speedup."
+  }
+}

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import {Doc} from "../src/crdt/doc.ts";
-import {DocHub} from "../src/server/hub.ts";
-import type {Schema} from "../src/crdt/schema.ts";
-import type {Change} from "../src/sync/protocol.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {DocHub} from "../../doc-sync-core/dist/server/hub.js";
+import type {Schema} from "../../doc-sync-core/dist/crdt/schema.js";
+import type {Change} from "../../doc-sync-core/dist/sync/protocol.js";
 
 function base(hub: DocHub) {
     return {epoch: hub.epoch, serverSeq: hub.serverSeq, schemaVersion: hub.schemaVersion};

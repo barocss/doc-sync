@@ -1,0 +1,42 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>R3 boundary cost and lifetime check</title>
+<style>body { font: 16px system-ui; margin: 2rem; max-width: 72rem; } pre { white-space: pre-wrap; }</style>
+<h1>R3 boundary cost and lifetime check</h1>
+<p>Standalone UTF-16 bridge. Each timing states its measured work. No CRDT or editor integration.</p>
+<pre id="result">Running…</pre>
+<script type="module">
+import { differential, benchmark } from './scripts/suite.mjs';
+import { boundaryBenchmark, startupMeasurement, lifecycleBenchmark } from './scripts/boundary-suite.mjs';
+import { lifetime } from './scripts/lifetime.mjs';
+window.boundaryStatus = 'RUNNING';
+document.documentElement.dataset.status = 'RUNNING';
+try {
+  const fetchBytes = async path => {
+    const response = await fetch(path, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Fetch failed ${path}: ${response.status}`);
+    return response.arrayBuffer();
+  };
+  const hash = async bytes => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), byte => byte.toString(16).padStart(2, '0')).join('');
+  const bytes = await fetchBytes('./target/wasm32-unknown-unknown/release/doc_sync_rust_bridge.wasm');
+  const { instance, startup } = await startupMeasurement(bytes);
+  const manifest = ['Cargo.toml', 'Cargo.lock', 'src/lib.rs', 'scripts/bridge.mjs', 'scripts/suite.mjs',
+    'scripts/lifetime.mjs', 'scripts/boundary-suite.mjs', 'scripts/boundary-check.mjs', 'boundary-browser.html',
+    '../rust-core/Cargo.toml', '../rust-core/src/lib.rs', '../rust-core/src/gap.rs', '../rust-core/src/storage_wasm.rs'];
+  const sourceHashes = Object.fromEntries(await Promise.all(manifest.map(async path => [path, await hash(await fetchBytes(path))])));
+  window.boundaryReceipt = {
+    schema: 'r3-boundary-v1', status: 'PASS', timestamp: new Date().toISOString(), userAgent: navigator.userAgent,
+    wasmBytes: bytes.byteLength, wasmSha256: await hash(bytes), sourceHashes,
+    startup, differential: differential(instance, 4000), lifetime: lifetime(instance),
+    boundary: boundaryBenchmark(instance), lifecycleBatches: lifecycleBenchmark(instance), combinedTextTape: benchmark(instance),
+  };
+  window.boundaryStatus = 'PASS';
+  document.documentElement.dataset.status = 'PASS';
+  document.querySelector('#result').textContent = JSON.stringify(window.boundaryReceipt, null, 2);
+} catch (error) {
+  window.boundaryFailure = String(error.stack || error);
+  window.boundaryStatus = 'FAIL';
+  document.documentElement.dataset.status = 'FAIL';
+  document.querySelector('#result').textContent = window.boundaryFailure;
+}
+</script>

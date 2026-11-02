@@ -1,12 +1,12 @@
 # Operations and performance
 
-The demo server and MCP app provide a working integration reference. They do not provide a complete hosted service.
+The demo server and private hosted MCP service provide integration references. Static grants and single-host recovery do not provide a complete production deployment.
 
 | Area | What to plan for |
 | --- | --- |
-| Access | Add authentication, document authorization, transport security, and tenant isolation before exposing a service to untrusted clients. |
+| Access | The [private hosted MCP service](../ai/hosted) has static bearer grants. Application document-server authorization, transport security, and tenant isolation remain deployment responsibilities. |
 | Storage | Select and operate durable storage, backups, restore procedures, and retention policies. Test failure modes on the actual storage system. |
-| Recovery | The MCP journal is currently macOS-only and has a 16 MiB limit per record. Use a stable, separate journal directory for each participant. Protect its document contents. |
+| Recovery | The MCP journal supports macOS and Linux on private local storage; Linux requires `/usr/bin/flock`. Each journal record is limited to 16 MiB. Use a stable, separate journal directory for each participant. Protect its document contents. |
 | Lifecycle | Monitor pending edits, recovery reservations, garbage collection, reconnects, and unresolved outcomes. Never interpret an unknown receipt as rejection. |
 | Capacity | Measure with your own document sizes, edit history, concurrent clients, network, editor, and hardware. Include browser rendering and memory, not only core operations. |
 

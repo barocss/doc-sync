@@ -1,0 +1,9 @@
+{
+  "name": "@doc-sync/bot",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22.18"},
+  "scripts": {"start": "node src/main.ts", "test": "node --test test/*.test.ts"},
+  "dependencies": {"@barocss/doc-sync": "0.0.0", "@modelcontextprotocol/sdk": "^1.29.0"}
+}
