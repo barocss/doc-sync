@@ -30,6 +30,22 @@ transport is in-page; HTTP/restart performance is not measured. Raw failures,
 partial setup runs, repeated samples and source/bundle hashes remain in the
 report. The performance result is **INVESTIGATE**, not a uniform PASS.
 
+## Input-tail diagnostics
+
+The [bounded diagnostic report](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/input-tail-diagnostics/report.md)
+keeps the original Node and Chrome investigation flags. A new CPU-profiled
+5.395 ms input overlaps 3.788 ms of major GC, after fresh-fixture/oracle setup
+increases the heap substantially. This explains that captured sample. The
+original 4.481–4.962 ms samples have no GC trace, so their cause is not established.
+Operation proof cloning and commit take only tens of microseconds in the capture.
+
+A separate 80-input Chrome trace pair passes content/History checks but does not
+reproduce the original 9.6/9.7 ms events. Both API routes include Slate callbacks
+and React work. Instrumented timing is not used as acceptance, and no runtime
+optimization was justified by these traces. Do not remove old flags, exclude
+samples, force GC or widen guards to call them a PASS. These captures use the
+compiled Client checkpoint before the separate local save/open implementation.
+
 ## Memory-only client
 
 The [LocalClient comparison](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/local-client/report.md)
