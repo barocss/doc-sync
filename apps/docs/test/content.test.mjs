@@ -67,3 +67,24 @@ client.dispose();
     });
     assert.equal(result.status, 0, result.stderr);
 });
+
+test('the local save/open guide preserves JSON state and History through public Client', () => {
+    const source = readFileSync(new URL('../src/guide/local-storage.md', import.meta.url), 'utf8');
+    const code = /<!-- local-state-example -->\s*```ts\n([\s\S]*?)\n```/.exec(source)?.[1];
+    assert.ok(code);
+    const result = spawnSync(process.execPath, ['--input-type=module', '-'], {
+        cwd: root, encoding: 'utf8', timeout: 10000,
+        input: stripTypeScriptTypes(code) + `
+import assert from 'node:assert/strict';
+assert.equal(restored.actor, client.actor);
+assert.equal(restored.sync, null);
+assert.equal(restored.model().children[0].runs[0].marks.bold, true);
+restored.undo();
+assert.deepEqual(restored.model(), client.model());
+restored.undo();
+assert.equal(restored.historyStatus().canUndo, false);
+restored.dispose();client.dispose();
+`,
+    });
+    assert.equal(result.status, 0, result.stderr);
+});

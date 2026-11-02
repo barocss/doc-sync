@@ -19,6 +19,6 @@ create per-view hosts internally and accept both legacy clients. `edit()` applie
 records and (in sync mode) queues once. `client.sync` exposes sync-only recovery
 and schema APIs; it is null locally. The unified entry imports sync code; `/local`
 remains the narrower module entry. See the repository Client guide for lifecycle
-and limits. No Rust/WASM factory or local persistence is supplied.
+and limits. `captureState()` and `Client.fromState(state, {schema})` support explicit local save/open through caller storage. No Rust/WASM factory is supplied.
 
-`/local` exports `LocalClient`, `LocalEditorHost` and `createLocalEditorHost` for memory-only editing with the production TS engine. Each native editor view needs its own host. Storage, refresh recovery and automatic server attachment are separate features. See the repository local editing guide.
+`/local` exports `LocalClient`, `LocalEditorHost` and `createLocalEditorHost` for memory-only editing with the production TS engine. Each native editor view needs its own host. LocalClient also provides captureState/fromState with saved actor, IDs and History. Capture rejects pending operations and active drafts. Storage media, successful writes, background saving and automatic server attachment belong to the application. See the repository local editing guide.

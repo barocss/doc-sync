@@ -12,3 +12,7 @@ The draft internal compatibility range is `>=0.0.0 <0.1.0`. A binding patch can 
 a transport and the existing SyncClient with one. The same four client-facing
 bindings accept either mode and create hosts internally. Existing constructors
 and low-level hosts remain supported. See the repository Client guide.
+
+Client(local) supports captureState/fromState for explicit JSON save/open through
+caller storage, including document identities, actor, clock and History. Sync
+recovery remains separate. See the repository local storage guide.

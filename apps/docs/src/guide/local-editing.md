@@ -115,7 +115,7 @@ users, editors or agents must exchange changes through a document server.
 | Selection | Identity anchors for local selection; no remote presence | Identity anchors plus peer cursors and selection ranges |
 | Undo and redo | One client History, shared by views using that client | Per-client History; independent participant changes are preserved under the collaboration rules |
 | Connection and pending work | No connection, pending transport queue or server acknowledgments | Connect/disconnect, pending changes, acknowledgments and reconnect |
-| Storage and restart | Memory-only; no save/open or restart recovery API | Ordinary client state is also in memory; durable recovery requires application storage and the documented server/GC protection |
+| Storage and restart | Explicit captureState/fromState with document, IDs and History; caller writes storage, no automatic background saving | Ordinary client state is also in memory; durable recovery requires application storage and the documented server/GC protection |
 | Schema changes | No local schema-transition API yet | Compatible server/client transition and editor rebuilding within the documented scope |
 | Host connection status | Always offline and unsynchronized; local editing still works | Reports the client's current connection and synchronization state |
 
@@ -133,7 +133,9 @@ rules. LocalClient has no server session to reconnect and no queue to submit.
 Use it for an in-memory editor, a document preview with editing, or local
 document transformations.
 
-Neither ordinary client automatically makes an edit durable across a page
+Local captureState/fromState supplies an explicit save/open value; see
+[local storage](./local-storage). Neither ordinary client automatically makes
+every edit durable across a page
 refresh or process exit. A server log alone does not restore a participant's
 pending changes and undo History. SyncClient checkpoint capture is only part of
 recovery; valid generation, schema and GC protection must also be established.
@@ -297,9 +299,11 @@ cancellation remains safe during later binding cleanup.
 
 ## Scope
 
-This API is memory-only. Closing or refreshing the application does not save the
-document. Storage adapters, restart recovery, local schema transitions, automatic
-conversion to a synchronized session and a Rust/WASM backend are separate work.
+The active engine is memory-only. captureState/fromState can save and open its
+document and History through caller-managed storage. Closing or refreshing does
+not save edits automatically. The opt-in unified demo reopens the last successful
+explicit Save. Background saving, synchronized recovery, local schema transitions,
+automatic conversion to a synchronized session and a Rust/WASM backend are separate work.
 It retains CRDT identities and metadata; it is not a compact JSON-only model.
 
 The existing SyncClient path and concurrent editing rules remain unchanged.

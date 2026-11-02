@@ -19,11 +19,16 @@ import {PmBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@b
 import {SlateBinding, fromSlate, slateRangeToModel, modelRangeToSlate} from '@barocss/doc-sync-slate';
 import {LexicalBinding, buildLexicalSchema, readLexicalModel, $lexicalSelection, $setLexicalSelection} from '@barocss/doc-sync-lexical';
 import {CLIENT_SCHEMA, seedEditsForSize, textOf} from './model.js';
+import {DEFAULT_STORAGE_KEY, saveLocal, openLocal, forgetLocal} from './local-storage.mjs';
 
 const query = new URLSearchParams(location.search);
 const mode = query.get('mode') === 'sync' ? 'sync' : 'local';
 const api = query.get('api') === 'legacy' ? 'legacy' : 'unified';
 const size = ['10000', '100000'].includes(query.get('size')) ? Number(query.get('size')) : 'sample';
+const persistenceRequested = query.get('persist') === '1';
+const persistenceEnabled = persistenceRequested && mode === 'local' && api === 'unified';
+const storageKey = query.get('storageKey') || DEFAULT_STORAGE_KEY;
+let persistenceStatus = '', lastFocusedPeer = null;
 const syncOf = client => client instanceof SyncClient ? client : client instanceof Client ? client.sync : null;
 const modelOf = client => client instanceof SyncClient ? client.engine.model() : client.model();
 const edit = (client, edits, record) => { if (!(client instanceof SyncClient)) return client.edit(edits, record); const ops = client.engine.apply(edits); client.commit(ops, record); return ops; };
@@ -38,7 +43,22 @@ const report = error => {
 };
 window.addEventListener('error', event => report(event.error ?? event.message));
 window.addEventListener('unhandledrejection', event => report(event.reason));
-const settle = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+// Mount readiness must also finish when the browser suspends hidden-tab frames.
+// Native rendering has completed before mount() reaches this lifecycle wait.
+const settle = () => new Promise(resolve => {
+    let frame, timer, done = false;
+    const finish = () => {
+        if (done) return;
+        done = true; cancelAnimationFrame(frame); clearTimeout(timer);
+        document.removeEventListener('visibilitychange', visibility);
+        resolve();
+    };
+    const visibility = () => { if (document.hidden) finish(); };
+    const checkHidden = () => { if (document.hidden) finish(); else timer = setTimeout(checkHidden, 100); };
+    document.addEventListener('visibilitychange', visibility);
+    frame = requestAnimationFrame(() => { frame = requestAnimationFrame(finish); });
+    timer = setTimeout(checkHidden, 100);
+});
 function shortcut(event, peer) {
     if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
     const key = event.key.toLowerCase();
@@ -173,6 +193,61 @@ async function reset() {
     for (const client of clients) { client.clearHistory(); disconnect(client); client.dispose(); }
     await initialize(); ready = true;
 }
+function storageStatus(message) {
+    persistenceStatus = message;
+    document.querySelector('#storage-status').textContent = message;
+}
+function requirePersistence() {
+    if (!persistenceEnabled) throw Error('Local saving requires persist=1, mode=local and api=unified.');
+}
+function saveDocument() {
+    requirePersistence();
+    const client = peers[0].client;
+    const selections = Object.fromEntries(peers.map(peer => [peer.name, client.captureSelection(peer.range())]));
+    saveLocal(window.localStorage, storageKey, client, selections);
+    storageStatus('Saved document and undo history in this browser.');
+}
+async function openDocument() {
+    requirePersistence();
+    const previous = peers[0].client;
+    // Refuse to discard pending operations or an active composition.
+    previous.captureState();
+    // Parsing, schema checks and anchor resolution finish before any view detaches.
+    const previousSelections = peers.map(peer => peer.range());
+    const saved = openLocal(window.localStorage, storageKey, state => Client.fromState(state, {schema: CLIENT_SCHEMA}));
+    if (!saved) { storageStatus('No saved document in this browser.'); return; }
+    const focused = lastFocusedPeer;
+    ready = false; releaseMeasurement();
+    try {
+        peers.forEach(detach);
+        for (const peer of peers) peer.client = saved.client;
+        for (const peer of peers) await mount(peer);
+        for (const peer of peers) if (saved.selections[peer.name]) peer.select(saved.selections[peer.name]);
+        if (focused && saved.selections[focused.name]) focused.select(saved.selections[focused.name]);
+    } catch (error) {
+        // Keep the original live client until every replacement view mounts.
+        try {
+            peers.forEach(detach);
+            for (const peer of peers) peer.client = previous;
+            for (const peer of peers) await mount(peer);
+            for (const [index, peer] of peers.entries()) if (previousSelections[index]) peer.select(previousSelections[index]);
+            if (focused && previousSelections[peers.indexOf(focused)]) focused.select(previousSelections[peers.indexOf(focused)]);
+            ready = true;
+        } catch (rollbackError) { report(rollbackError); }
+        saved.client.dispose();
+        throw error;
+    }
+    previous.dispose(); ready = true;
+    storageStatus('Opened saved document and undo history.');
+}
+function forgetDocument() {
+    requirePersistence();
+    forgetLocal(window.localStorage, storageKey);
+    storageStatus('Forgot the saved copy. The open document is unchanged.');
+}
+function persistenceAction(action) {
+    return exclusive(action).catch(error => { storageStatus(`Local storage failed: ${error.message ?? error}. The saved copy was not replaced.`); });
+}
 function makePeer(name) {
     const section = document.createElement('section'); section.className = 'panel'; section.dataset.editor = name;
     const heading = document.createElement('h2'); heading.textContent = name;
@@ -180,6 +255,7 @@ function makePeer(name) {
     const mountElement = document.createElement('div'); mountElement.className = 'mount';
     section.append(heading, tools, mountElement); document.querySelector('#editors').append(section);
     const peer = {name, section, mount: mountElement, schema: CLIENT_SCHEMA}; peers.push(peer);
+    if (persistenceEnabled) mountElement.addEventListener('focusin', () => { lastFocusedPeer = peer; });
     const actions = [['Undo', () => peer.binding.undo()], ['Redo', () => peer.binding.redo()], ['Insert prefix', () => edit(peer.client, [{op: 'insert', at: [0, 0], content: 'x'}])], ['Remount', () => exclusive(() => mount(peer))]];
     if (mode === 'sync') actions.push(['Disconnect / Reconnect', () => syncOf(peer.client).online ? disconnect(peer.client) : connect(peer.client)]);
     for (const [label, action] of actions) {
@@ -232,6 +308,8 @@ window.__clientDemo = {
         return {name: peer.name, mode: client instanceof Client ? client.mode : syncOf(client) ? 'sync' : 'local', syncNull: syncOf(client) === null, actor: client.actor, model, native, text: textOf(model), nativeText: textOf(native), selection: peer.range(), history: client.historyStatus(), notifications: client.notificationErrors ?? [],
             localBackendIsLocal: owner instanceof LocalClient, backendFields: Object.keys(owner), ...(syncOf(client) ? {pending: syncOf(client).pending.length, online: syncOf(client).online, synchronized: syncOf(client).synchronized} : {})};
     })}),
+    get persistence() { return {enabled: persistenceEnabled, requested: persistenceRequested, key: storageKey, status: persistenceStatus}; },
+    saveLocal: () => persistenceAction(saveDocument), openLocal: () => persistenceAction(openDocument), forgetLocal: () => persistenceAction(forgetDocument),
     select: (name, range) => named(name).select(range),
     insertPrefix: name => edit(named(name).client, [{op: 'insert', at: [0, 0], content: 'x'}]),
     undo: name => named(name).binding.undo(), redo: name => named(name).binding.redo(),
@@ -248,9 +326,28 @@ document.querySelector('#transport-description').textContent = mode === 'local'
     ? 'Local runtime: no sync backend, no document hub, no transport subscriptions or sends. This two-mode bundle includes sync code.'
     : 'Sync runtime: document messages stay in this page. The loopback server serves static files only. This demo does not use an HTTP document server.';
 document.querySelector('#reset').addEventListener('click', () => exclusive(reset).catch(report));
+if (persistenceRequested) {
+    document.querySelector('#local-storage').hidden = false;
+    if (persistenceEnabled) {
+        document.querySelectorAll('#local-storage button').forEach(button => button.addEventListener('mousedown', event => event.preventDefault()));
+        document.querySelector('#refresh-description').textContent = 'Refresh opens the last saved copy. Reset creates the sample without changing the saved copy. Changes are saved only when you select Save locally.';
+        document.querySelector('#save-local').addEventListener('click', () => persistenceAction(saveDocument));
+        document.querySelector('#open-local').addEventListener('click', () => persistenceAction(openDocument));
+        document.querySelector('#forget-local').addEventListener('click', () => persistenceAction(forgetDocument));
+    } else {
+        document.querySelector('#local-storage > p').textContent = 'Browser storage is available only for the unified local Client.';
+        document.querySelectorAll('#local-storage button').forEach(button => { button.hidden = true; });
+        storageStatus('Local saving is disabled. Use mode=local and api=unified.');
+    }
+}
 try {
     ['ProseMirror', 'Slate', 'Lexical', 'Tiptap'].forEach(makePeer);
-    await exclusive(initialize); ready = true;
+    await exclusive(async () => {
+        await initialize(); ready = true;
+        if (persistenceEnabled) {
+            try { await openDocument(); } catch (error) { storageStatus(`Could not open saved document: ${error.message ?? error}. The sample remains open.`); }
+        }
+    });
 } catch (error) { report(error); }
 window.addEventListener('pagehide', event => {
     if (event.persisted) return;

@@ -5,8 +5,14 @@ import type {Schema} from "../crdt/schema.ts";
 import type {ClientEngine, EngineEditingView} from "../engine/client-contract.ts";
 import type {EngineSelection, EngineAnchoredSelection} from "../engine/contract.ts";
 import {typescriptClientEngineFactory} from "../engine/typescript-client.ts";
+import type {TypeScriptClientCompatibility} from "../engine/client-contract.ts";
+import type {Snapshot} from "../crdt/doc.ts";
+import {schemaVersion} from "../crdt/schema-version.ts";
+import {copyLocalState, validateLocalState} from "./state.ts";
+import type {LocalClientState} from "./state.ts";
 
 export interface LocalClientOptions {schema: Schema; actor?: string; onNotificationError?: (error: LocalNotificationError) => void}
+export type LocalClientRestoreOptions = Pick<LocalClientOptions, "schema" | "onNotificationError">;
 export interface LocalNotificationError {readonly phase: "modelEvents" | "update" | "onNotificationError"; readonly cause: LocalEventCause; readonly message: string}
 export type LocalEventCause = "local" | "undo" | "redo";
 export interface LocalObserver {
@@ -47,6 +53,7 @@ export class LocalClient {
     private captured: EditOp[] | null = null;
     private notifying = false;
     private disposed = false;
+    private activeCompositions = 0;
     private errors: LocalNotificationError[] = [];
     onNotificationError?: (error: LocalNotificationError) => void;
     get notificationErrors(): readonly LocalNotificationError[] { return this.errors.slice(); }
@@ -58,6 +65,25 @@ export class LocalClient {
         this.engine = typescriptClientEngineFactory.create(actor, options.schema);
         this.schema = this.engine.schema();
         this.hooks();
+    }
+    /** Open a detached state as a new client. Existing clients and views are never changed. */
+    static fromState(state: unknown, options: LocalClientRestoreOptions): LocalClient {
+        const value = copyLocalState(state) as LocalClientState;
+        if (!value || value.format !== "doc-sync-local-state-v1" || typeof value.actor !== "string" || value.schemaVersion !== schemaVersion(options.schema)) throw new Error("Invalid local state format, actor or schema");
+        const client = new LocalClient({...options, actor: value.actor});
+        try {
+            const prepared = client.engine.prepareCheckpoint(value.engine);
+            client.engine.installCheckpoint(prepared);
+            const engine = client.engine as ClientEngine & TypeScriptClientCompatibility;
+            validateLocalState(engine.typescriptDocument(), engine.typescriptHistory().snapshot(), value.engine.document as Snapshot, value.actor);
+            return client;
+        } catch (error) { client.dispose(); throw error; }
+    }
+    /** Capture committed state only. The caller chooses storage and its durable write boundary. */
+    captureState(): LocalClientState {
+        this.settled();
+        if (this.activeCompositions) throw new Error("End or cancel active composition before capturing local state");
+        return copyLocalState({format: "doc-sync-local-state-v1" as const, actor: this.actor, schemaVersion: schemaVersion(this.schema), engine: this.engine.checkpoint()});
     }
     private alive(): void { if (this.disposed) throw new Error("LocalClient is disposed"); }
     private mutable(): void { this.alive(); if (this.notifying) throw new Error("Local observer mutation is not allowed"); }
@@ -162,6 +188,11 @@ export class LocalClient {
     }
     createSession(origin?: object): LocalSession {
         this.mutable(); const input = this.engine.createSession(), client = this;
+        const track = <T>(run: () => T): T => {
+            const before = input.active;
+            try { return run(); }
+            finally { if (before !== input.active) client.activeCompositions += input.active ? 1 : -1; }
+        };
         let pending: Batch[] = [];
         let collected: Array<{ops: Op[]; record: RecordOptions | null}> = [];
         const applied = (run: () => Op[] | null): Op[] | null => {
@@ -179,7 +210,7 @@ export class LocalClient {
             deleteRange: (from, to) => applied(() => input.deleteRange(from, to)),
             captureAnchor: path => { client.alive(); return input.captureAnchor(path); },
             locateAnchor: (key, visibility) => { client.alive(); return input.locateAnchor(key, visibility); },
-            begin() { client.settled(); if (!input.active) collected = []; input.begin(); }, reserveClock() { client.alive(); input.reserveClock(); },
+            begin() { client.settled(); if (!input.active) collected = []; track(() => input.begin()); }, reserveClock() { client.alive(); input.reserveClock(); },
             commit(ops, record) {
                 client.mutable(); if (!input.active) { client.commit(ops, record, origin); return; }
                 client.verify(ops, pending);
@@ -192,7 +223,7 @@ export class LocalClient {
                 client.settled(); if (pending.length) throw new Error("Commit pending composition operations first");
                 if (!input.active) return [];
                 const capture = client.wantsEvents(origin) ? client.engine.beginEvents() : null;
-                const result = input.publish();
+                const result = track(() => input.publish());
                 const events = capture ? client.engine.finishEvents(capture) : {events: [], fallback: false};
                 if (!result) return [];
                 freeze(result.ops);
@@ -213,7 +244,7 @@ export class LocalClient {
             },
             cancel() {
                 if (!client.disposed) client.mutable();
-                input.cancel(); pending = []; collected = [];
+                track(() => input.cancel()); pending = []; collected = [];
             },
             capture: range => { client.alive(); return input.capture(range); }, resolve: range => { client.alive(); return input.resolve(range); },
         };
@@ -221,6 +252,6 @@ export class LocalClient {
     }
     dispose(): void {
         if (this.disposed) return; this.mutable();
-        this.engine.dispose(); this.pending = []; this.observers.clear(); this.captured = null; this.errors = []; this.onNotificationError = undefined; this.disposed = true;
+        this.engine.dispose(); this.activeCompositions = 0; this.pending = []; this.observers.clear(); this.captured = null; this.errors = []; this.onNotificationError = undefined; this.disposed = true;
     }
 }

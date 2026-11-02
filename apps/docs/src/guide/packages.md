@@ -49,6 +49,14 @@ server, or Node entry does not load editor packages.
 For a memory-only document, use the [local editing guide](./local-editing).
 The `/local` entry belongs to Core and imports no native editor package.
 
+## Save a local document
+
+Core Client and LocalClient expose captureState/fromState. The first local state
+format retains schema identity, actor, CRDT state and History. A caller supplies
+storage and mounts a new restored client after validation. This is part of Core,
+not a new storage package or a SyncClient recovery adapter. See
+[Save and open locally](./local-storage).
+
 ## Build and use local packages
 
 From the repository root:

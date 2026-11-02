@@ -1,7 +1,8 @@
 # Handoff — @barocss/doc-sync
 
-The unified Client API, four-editor demo, input-ownership corrections and current
-verification are in **§5.113**. This working-tree change is not a new publication.
+The input-tail diagnostics and explicit local save/open are in **§5.114**.
+The unified Client API, four-editor demo and input-ownership corrections are
+in **§5.113**. This working-tree change is not a new publication.
 Latest publication review is in **§5.112**. Selected TypeScript client engines
 and their verification limits are described in **§5.104**.
 The numbered Rust/WASM delivery queue is in **§5.103**.
@@ -4967,3 +4968,155 @@ existing verification receipts remain valid; no long test suite was repeated.
 Performance remains **INVESTIGATE** for the five Chrome local 10k p95 cells and
 the Node Slate 10k insert p95 cell above. No push or release is part of this
 checkpoint.
+
+
+### 5.114 Input-tail diagnostics and explicit local save/open
+
+**Checkpoint and task boundary.** The previously verified Client work was committed
+as `409ee2abc5add5bf611b7070fe90da39bc484f39` before new implementation. The 45
+frozen source hashes and 91 preserved artifact triples matched. No push or registry
+release was made. The new performance work below is diagnostic; the local-state
+implementation is a separate source change. Three agents owned profiling, Core
+state and the browser demo, with builds/correctness work outside profiling captures.
+
+**Performance result stays INVESTIGATE.** The original Node Slate 10k p95 flag and
+five local 10k Chrome p95 flags remain unchanged. A separate fixed A-B-B-A trace
+run keeps all 64 semantic/count/History checks. CPU-profile A/B captures a new
+5.395ms input, including major GC 3.788ms; fixture/oracle preparation raises heap
+from 57.45 to 91.61MB before that input, then GC leaves 40.64MB. This explains the
+captured sample; the old B2/B3 captures have no GC trace, so their cause remains
+unproven. Driver operation cloning and runtime commit take tens of microseconds,
+not milliseconds. Both API routes include Slate callbacks and React work.
+
+An 80-input local10k Chrome trace pair preserves native/model and History checks
+but does not reproduce the old 9.6/9.7ms events. Instrumented times are not latency
+acceptance. No runtime optimization was justified, no sample was excluded, and no
+guard/warmup was changed to manufacture PASS. See
+`benchmarks/results/input-tail-diagnostics/{report.md,summary.json,manifest.json}`.
+31 raw files (118.8MB) are preserved as 11.1MB deterministic gzip with hashes.
+Those captures use compiled 409ee2 before the separate local persistence build.
+
+**Local API.** LocalClient and Client(local) now expose `captureState()` and
+`fromState(unknown, {schema})`. LocalClient restore options also accept its
+notification-error callback. LocalClientState is exported by Core/local,
+Core/client and package roots; facade/client mirrors Core/client. Its envelope
+`doc-sync-local-state-v1` carries actor, schema fingerprint and the production
+TypeScript engine checkpoint. Restore returns a new LocalClient-backed instance,
+not a live reset. Client uses an internal Symbol path without allocating a dummy
+engine. It has no SyncClient, transport metadata or automatic server attachment.
+
+The saved state preserves CRDT IDs, clock, document, hidden content, undo and redo.
+Cache generation/revision stamps regenerate; byte-identical revision stamps are
+not promised. The caller supplies the exact schema. Finite plain JSON is copied
+without invoking property getters, then engine state is prepared/installed into
+an unexposed candidate. Local-only known-field checks validate token/placement
+references, History ownership and the original saved allocation floor; arbitrary
+user JSON is not interpreted as internal History. Required-child deterministic
+identities are not ordinary clock allocations. Errors dispose the candidate and
+leave the caller's existing client unchanged. These checks are structural, not
+signatures/authenticity proof. SyncClient and engine contracts are unchanged.
+
+Capture refuses uncommitted host operations, active composition (including empty
+or multiple drafts), notification reentry and disposed clients. Rejection does
+not discard drafts or operations. Active composition uses a counter, not a strong
+collection of inactive view sessions. Sync facade capture directs applications
+to the existing SyncClient recovery API; no server epoch/GC proof is bypassed.
+
+**Regression discovered.** Nested move→split→move→undo state initially failed to
+open because History.after may identify an old movement operation, not a token.
+The local validator now permits only a stored movement anchor whose parent
+matches. Arbitrary missing anchors/parents still reject. Membership uses stored
+tokens and does not materialize implicit storage. New tests reopen after repeated
+move/split undo/redo, including root and nested moves.
+
+**Browser storage demo.** `npm run dev:client`, then `?persist=1`, enables explicit
+Save locally, Open saved and Forget saved for unified local mode. Startup reopens
+the last successful Save; later typing is not auto-saved. Core supplies data only;
+the demo owns one atomic localStorage key and its separate per-view selection
+wrapper. `storageKey` isolates a slot. Schema/JSON/selection validation and the
+current client's settled-state guard run before views detach. The old client stays
+available until all four replacement mounts succeed. Mount failure rolls back.
+Quota/open failure preserves the previous saved bytes and live model/History.
+Forget removes the saved copy and keeps the live document. Default routes stay
+ephemeral; legacy and sync routes disable this storage feature. Multiple tabs,
+background durability, large-storage policies and power-loss survival are not
+provided by this demo.
+
+Hidden reload exposed an existing readiness problem: mount waited for two RAFs,
+which can suspend in a hidden tab. Lifecycle settle now has a visibility/timer
+fallback while still awaiting Slate's effect. The measurement RAF2 code is
+unchanged. Final Chrome proves visibility=hidden with ready=true, busy=false and
+all four native/client models equal before activating the owned tab.
+
+**Final verification.** Fresh whole-workspace run: **1,325 cases, 1,323 PASS,
+two platform SKIPs, zero FAIL**. Groups: library 793, Core 163, Lexical 7, Slate 4,
+bot 53, demo 88, docs 36, MCP 181 (179 PASS, two SKIPs). Core local-state tests
+11/11 and app storage+demo focused7/7 pass; root/app/Core tsc pass. Default fuzz
+settings ran. Six rebuilt tarballs/seven isolated consumers pass with explicit
+public capture/open runtime and type checks. The first new package type fixture
+used an unbound alias; that fixture was corrected, with no production change.
+
+Fresh Chrome storage proof covers 10 scenarios plus all four native editor
+save/reload/cross-view undo/redo roundtrips. Fresh unchanged default checker runs
+all eight local/sync cases, ranges, History, remount/reset/refresh and reconnect
+with no skips or errors. Both use bundle
+`ae00354b17bc503611889d7589f83639c4a676bf66d55c33a6584456b948b604`.
+Receipts: `output/local-persistence/chrome-final-frozen/receipt.json` and
+`chrome-default-final-frozen/receipt.json`. Earlier focus/poll failures and the
+hidden-RAF stall are retained separately. Synthetic composition guard checks are
+separate from real OS IME acceptance. Quota is simulated; no OS crash, power-loss,
+server restart or new latency certification is claimed. The repeated current
+32-cell PM count comparison passes with the original baseline/harness: no extra
+ordinary snapshots, model/native conversions or changed model/History results.
+
+**Documentation and next work.** The new local-storage guide provides public API,
+write boundaries, restore/rebuild order, errors, schemas and opt-in demo setup.
+README, package/API, Client/local comparison, Rust boundary, status and roadmap
+are updated. Remaining work includes persistent-session tail profiling, scheduled
+background saving/storage providers and multi-tab ownership, local schema
+transitions, identity-preserving session handoff and Rust/WASM production factories.
+
+
+A separate final synthetic-composition Chrome receipt proves that Open and Save
+both reject an empty active Slate draft without changing any live model, History,
+actor or saved byte; after synthetic compositionend, both actions succeed.
+Receipt: `output/local-persistence/chrome-composition-guard/receipt.json`. Events
+are untrusted and this does not qualify actual OS IME. Only the optional checker
+branch changed after the broad Chrome receipts; runtime bundle stayed fixed.
+
+Final docs: **36/36 PASS**, build PASS, **44 pages / 2,011 internal links**, English
+and local-path checks PASS. The local state evidence is archived under
+`benchmarks/results/local-state/` with a human report, summary, source seal and
+raw gzip artifacts. Input-tail evidence remains in its separate diagnostic lane.
+The current preview is `http://127.0.0.1:58326/?persist=1`; docs are available at
+`http://127.0.0.1:5415/doc-sync/guide/local-storage.html`. URLs are local/temporary.
+
+At the end of this implementation checkpoint, the initial source was committed
+at 409ee2 and the later diagnostics/local-state changes were verified but
+uncommitted. No push or release had occurred at that point. See §5.115 for the
+subsequent publication review and remote confirmation.
+
+
+### 5.115 Publication review for local state and diagnostics
+
+The user authorized commit and push to main. Before staging, all 18 final
+runtime/test/demo source-seal hashes matched. The 38 local-state artifacts and
+31 input-tail artifacts passed compressed/decompressed SHA-256 integrity checks;
+the four diagnostic script hashes also matched. No runtime changes were made
+during publication review. Existing source-bound results are reused: full
+workspace 1,325 cases (1,323 PASS, two platform SKIPs), root/Core/app type checks,
+six packages/seven consumers, current 32 count rows, fresh default Chrome8,
+local-state Chrome10 plus four native roundtrips, synthetic composition guard,
+and docs36/build44pages/2,011 links. Passing checks were not repeated merely for
+Git acknowledgement.
+
+Fetched origin/main was 0bc37f9 and local main was 409ee2, ahead one and behind
+zero. The work is limited to the documented Client/local-state, demo, tests,
+docs and preserved diagnostics; no unrelated paths were found. Planned atomic
+commits separate input-tail diagnostics from local save/open. The original
+Node one-cell and Chrome five-cell p95 investigation flags remain. These are
+not blanket performance PASS results. There is no registry release.
+
+Publication target: `https://github.com/barocss/doc-sync.git`, branch `main`.
+Remote confirmation is appended after a successful non-force push. GitHub Pages
+workflow/deployment status is separate from Git push success.

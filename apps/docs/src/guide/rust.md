@@ -22,7 +22,8 @@ for the constructor option and current boundary.
 For browser integration, [Client](./client) selects local or synchronized
 session behavior through its optional transport. It still uses the production
 TypeScript engine. `syncOptions.engineFactory` applies only to the sync backend;
-no Rust/WASM factory ships. The native SDK and storage-only WASM API below do
+no Rust/WASM factory ships. TypeScript local capture/open uses its own
+[versioned local state](./local-storage); it cannot restore native Rust checkpoints. The native SDK and storage-only WASM API below do
 not implement the Client or editor binding contracts.
 
 ## Use the native Rust SDK

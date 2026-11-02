@@ -21,8 +21,9 @@ client-facing bindings accept it and create per-view hosts internally. Existing
 LocalClient, SyncClient and host constructors remain supported. The dedicated
 four-editor demo uses one shared client locally and independent actors in sync
 mode. See [Client](./guide/client) for setup and current verification boundaries.
-The final integration passes 1,308 tests with two platform SKIPs; Chrome passes
-all four editors in both modes. All 100k Chrome timing cells meet the guard,
+The current integration passes 1,323 tests with two platform SKIPs; fresh Chrome passes
+all four editors in both modes and explicit saved-copy reload. In the preceding
+Client checkpoint, all 100k Chrome timing cells meet the guard,
 but five local 10k p95 cells and one Node Slate tail remain under investigation.
 See [the measured boundaries](./performance#unified-client-and-native-input).
 
@@ -30,12 +31,14 @@ Next in this lane:
 
 1. Profile the retained Slate/local 10k early-input tails and separate cold
    setup, JIT, allocation and event-delivery costs before choosing a fix.
-2. Define local save/open formats and failure behavior, including History.
+2. Extend the implemented local save/open API with application storage providers,
+   auto-save scheduling, quota handling and multi-tab ownership.
 3. Define local schema transitions and identity-preserving session handoff.
 4. Deliver Rust/WASM production factories through the existing engine roadmap.
 
-Local persistence, local schema transitions, live session conversion and a
-Rust/WASM production factory remain open.
+Explicit local capture/open is implemented with actor, IDs, clock and History;
+see [local storage](./guide/local-storage). Automatic background durability, local
+schema transitions, live session conversion and a Rust/WASM factory remain open.
 
 ## Local editing delivery
 
@@ -52,9 +55,16 @@ Rust/WASM production factory remain open.
    all three native editors also pass shared-document Chrome checks, including
    per-view selection, shared History and plain paragraph operations. Tiptap now also accepts Client and LocalClient directly. Broader composition, rich-schema browser behavior,
    actual BFCache navigation, mobile editing and actual OS IME remain open.
-3. **L3: Explicit persistence and recovery — open.** Define save/open formats,
-   failures, migrations and History retention. A refresh currently loses local
-   state; synchronized recovery is not a local persistence API.
+3. **L3: Explicit persistence — implemented within the tested local scope.**
+   LocalClient and Client(local) capture a versioned JSON state and restore a new
+   validated client with the same actor, CRDT identities, clock and undo/redo.
+   Pending operations and active composition block capture. The opt-in four-editor
+   demo saves one browser slot explicitly and reopens that copy after reload.
+   Failed capture/open preserves the current document and previous saved bytes;
+   mounting failure rolls back the old views. Hidden-tab startup does not depend
+   on animation frames. Background durability, production storage providers,
+   quota policies, migrations and multi-tab ownership remain open. See
+   [Save and open locally](./guide/local-storage).
 4. **L4: Local schema transitions and synchronized-session handoff — open.**
    Define identity, pending work, History and conflict behavior before converting
    sessions. Rust/WASM local engines depend on the separate engine delivery gates.

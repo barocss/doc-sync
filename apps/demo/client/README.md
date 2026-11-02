@@ -36,3 +36,44 @@ mean a timing guard was crossed; they do not mean the correctness checks failed.
 See [the final report](../../../benchmarks/results/unified-client/report.md).
 All medians and 100k cells pass; five local 10k p95 cells remain unqualified.
 OS IME, physical display latency and an HTTP document backend are not measured.
+
+## Save and open a local document
+
+Use `?mode=local&persist=1` to enable browser storage. The default route remains
+ephemeral. `persist=1` with sync mode or the legacy API displays a disabled
+message and does not access storage.
+
+Select **Save locally** to store the document, actor, exact CRDT identities, undo
+and redo history, and anchored selections for the four views. Select **Open saved**
+to replace the open document with that saved copy. Refresh opens the saved copy
+automatically. Unsaved edits are not saved on refresh. **Reset document** creates
+the sample without changing storage. **Forget saved** removes only the saved copy.
+It keeps the open document and its history. There is no automatic save.
+
+The application owns one `localStorage` key, `doc-sync:client-demo:local:v1`. Use
+`&storageKey=YOUR_KEY` to select a separate key. Each save uses one atomic
+`setItem`; it does not remove the old value first. Storage denial, quota errors,
+malformed JSON and schema mismatch display a status message. A failed save keeps
+the previous bytes. A failed open keeps the current client. The application
+rejects an open operation while current native work or composition is pending. It
+validates a new Client and its selections before it detaches any view, then
+retains the old Client until all replacement views mount. If a mount fails, it
+attempts to remount the old Client. Core stores document and history; the demo
+envelope stores view selections. This browser storage is separate from sync
+recovery. Browser data removal can remove saved documents.
+
+`__clientDemo.saveLocal()`, `openLocal()` and `forgetLocal()` run the same manual
+actions. `__clientDemo.persistence` reports enablement, key and status.
+
+Run the separate persistence check after builds and performance captures finish:
+
+```sh
+node apps/demo/client/check-local-storage.mjs --url http://127.0.0.1:PORT --output output/local-persistence/chrome
+```
+
+The checker uses a unique storage key and an owned browser session. It checks
+hidden-tab startup before activating the tab, then trusted input in all four
+restored views and shared undo/redo. Mount lifecycle waits use a hidden-tab
+visibility/timer fallback because browsers can suspend animation frames. The
+measurement API retains its original two-frame observations. The checker does
+not clear other browser data.

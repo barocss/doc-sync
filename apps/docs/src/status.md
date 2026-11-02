@@ -9,7 +9,7 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 - Schema-defined text, inline content, lists, nested flows, tables, spans, and attributes.
 - Local-first editing, validated changes, HTTP/SSE demo transport, and snapshot/GC support.
 - A Client facade with fixed local/sync mode selected by its optional transport, common binding construction and advanced SyncClient access.
-- A memory-only TypeScript LocalClient and per-view LocalEditorHost, with edits, anchored selections, undo/redo and composition drafts. All four client-facing bindings accept LocalClient or the unified Client and create per-view hosts internally. Local persistence and restart recovery remain open.
+- A memory-only TypeScript LocalClient and per-view LocalEditorHost, with edits, anchored selections, undo/redo and composition drafts. All four client-facing bindings accept LocalClient or the unified Client and create per-view hosts internally. Explicit local capture/open now preserves document, actor, IDs, clock and History through caller storage. Automatic background durability and synchronized recovery remain separate.
 - Per-user undo and redo that retain independent changes under the stated ownership rules.
 - Remote cursors and selection ranges, including backward and overlapping selection.
 - Independent ProseMirror, Tiptap, Slate and Lexical binding packages, with the original compatibility subpaths.
@@ -25,9 +25,30 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 - An opt-in proposal HTTP/CLI service with separate creator and owner grants, bounded plain-text previews, durable records, inspection, rejection, explicit exact approval, and receipt-based restart reconciliation. Approval applies only a supported stored root text range; it requires an additional feature flag and `proposal_accept`. Planner integration and editor review UI remain open.
 - A host-based open-editor schema transition with text selection restoration. The product demo uses it with Slate, Lexical and ProseMirror after a compatible server transition.
 
+## Explicit local save/open
+
+The final save/open integration passes **1,325 cases: 1,323 PASS, two platform
+SKIPs, zero FAIL**, with default fuzz settings. Root type checking and six
+package/seven consumer checks pass. Core has 163 cases, including 11 local-state
+cases for JSON/History/clock, rich structures, hidden cells and movement chains.
+Fresh Chrome checks pass the four-editor saved-copy flow and all eight default
+local/sync cases on one final bundle. Quota, malformed/schema data, mount rollback,
+and hidden-tab startup are covered; this is not OS crash or power-loss proof.
+
+
+LocalClient and Client(local) provide captureState/fromState with a versioned
+plain JSON envelope. Opening validates a new client and retains actor, IDs, clock
+and undo/redo, including hidden content. Capture rejects pending batches and
+active composition. The opt-in demo supplies explicit browser Save/Open and
+saved-copy reload; default routes remain ephemeral. No automatic background
+saving or synchronized-session conversion is supplied. See
+[save and open locally](./guide/local-storage) for storage and failure boundaries.
+
+[Local state validation report](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/local-state/report.md) retains final source hashes, failures and raw receipts.
+
 ## Unified Client verification
 
-The current whole-workspace confirmation passes **1,310 cases on macOS:
+The preceding Client checkpoint confirmation passed **1,310 cases on macOS:
 1,308 PASS, two platform SKIPs, zero FAIL**. The groups are library 793, Core 152,
 Lexical 7, Slate 4, bot 53, demo 85, documentation 35 and MCP 181. Root type
 checking and six-tarball/seven-consumer checks pass. An earlier MCP process test

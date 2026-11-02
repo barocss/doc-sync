@@ -8,6 +8,8 @@ import {createSyncClientEditorHost} from "../editor/sync-client-host.ts";
 import type {SyncClientEditorInput} from "../editor/sync-client-host.ts";
 import {subscribeClient} from "../editor/index.ts";
 import {LocalClient} from "../local/client.ts";
+import type {LocalClientState} from "../local/state.ts";
+export type {LocalClientState} from "../local/state.ts";
 import {createLocalEditorHost} from "../local/editor-host.ts";
 import {SyncClient} from "../sync/client.ts";
 import type {ClientOptions as SyncOptions} from "../sync/client.ts";
@@ -24,6 +26,8 @@ export interface ClientNotificationError {readonly phase: keyof EditorObserver; 
 type Entry = {observer: EditorObserver; origin?: object};
 const bridges = new WeakMap<SyncClient, SyncBridge>();
 const clientBackends = new WeakMap<Client, LocalClient | SyncClient>();
+const restoredLocal = Symbol("restored local backend");
+type InternalClientOptions = ClientOptions & {[restoredLocal]?: LocalClient};
 
 /** One observer fan-out per sync backend. Legacy callbacks keep their own semantics. */
 class SyncBridge {
@@ -162,9 +166,11 @@ export class Client {
     get mode(): "local" | "sync" { return this.#backend instanceof LocalClient ? "local" : "sync"; }
     private readonly host: EditorHost;
     constructor(options: ClientOptions) {
+        const restored = (options as InternalClientOptions)[restoredLocal];
         if (Object.hasOwn(options, "engineFactory")) throw new Error("Put engineFactory in syncOptions with a transport");
         if (options.syncOptions && Object.keys(options.syncOptions).some(key => !["engineFactory", "ackDelay", "beforeSend"].includes(key))) throw new Error("Unsupported syncOptions");
-        if (options.transport !== undefined) {
+        if (restored) this.#backend = restored;
+        else if (options.transport !== undefined) {
             if (!options.transport || typeof options.transport.subscribe !== "function" || typeof options.transport.send !== "function" || typeof options.transport.sendPresence !== "function") throw new Error("Invalid transport");
             if (typeof options.actor !== "string" || !/^[\w~-]+$/.test(options.actor) || options.actor === "~root") throw new Error("Sync mode requires a valid actor");
             this.#backend = new SyncClient(options.actor, options.transport, {...options.syncOptions, schema: options.schema});
@@ -174,6 +180,17 @@ export class Client {
         }
         clientBackends.set(this, this.#backend);
         this.host = createEditorHost(this.#backend);
+    }
+    static fromState(state: unknown, options: {schema: Schema}): Client {
+        const backend = LocalClient.fromState(state, options);
+        try {
+            const internal: InternalClientOptions = {schema: backend.schema, [restoredLocal]: backend};
+            return new Client(internal);
+        } catch (error) { backend.dispose(); throw error; }
+    }
+    captureState(): LocalClientState {
+        if (!(this.#backend instanceof LocalClient)) throw new Error("Local state capture requires local mode; use SyncClient.captureState with its recovery proof in sync mode");
+        return this.#backend.captureState();
     }
     get actor() { return this.#backend.actor; }
     get schema() { return this.#backend.schema; }

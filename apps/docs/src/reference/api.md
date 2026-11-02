@@ -6,7 +6,7 @@ Six packages provide Core, four editor bindings, and a compatibility facade. All
 
 | Import | Main exports |
 |---|---|
-| `@barocss/doc-sync` | `Doc`, `History`, `commands`, model/schema/position helpers, and shared types. |
+| `@barocss/doc-sync` | `Client`, `LocalClientState`, `Doc`, `History`, `commands`, model/schema/position helpers, and shared types. |
 | `@barocss/doc-sync/client` | `Client`, `createEditorHost`, `BindingClient`, client options and types. |
 | `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `typescriptClientEngineFactory`, `ClientEngineFactory`, `upgradeOpenEditorSchema`, `OpenEditorSchemaHost`, `ModelRange`, protocol constants and types. |
 | `@barocss/doc-sync/node` | `NodeHttpTransport`, `NodeHttpTransportOptions` for Node.js HTTP and SSE synchronization. |
@@ -35,7 +35,8 @@ Common methods cover History, anchors, selections, observers, status, connection
 and presence. Local status remains offline/unsynchronized and presence empty.
 `client.sync` is null locally and is the actual SyncClient in sync mode. Use it
 for advanced conditional editing, recovery and schema transition APIs. The
-facade adds no storage, live mode conversion or Rust/WASM backend. See the
+facade supplies local capture/open values but writes no storage and adds no
+live mode conversion or Rust/WASM backend. See the
 [Client guide](../guide/client) for complete usage, disposal and limits.
 
 ## Memory-only client
@@ -45,8 +46,12 @@ facade adds no storage, live mode conversion or Rust/WASM backend. See the
 `new LocalClient({schema, actor?})` owns a production TS engine without a
 transport. `edit` applies and records once; low-level `apply`/`commit` split those
 steps. Selection anchors, history, composition and origin-filtered subscriptions
-share the editor host contract. This stage has no storage or server-attachment
-API. See [local editing](../guide/local-editing) for complete usage and limits.
+share the editor host contract. LocalClient and Client(local) expose `captureState()` and
+`fromState(unknown, {schema})`, preserving actor/IDs/clock/History in a detached
+versioned JSON envelope. Capture rejects pending operations and active drafts.
+Restoration validates a new client before returning it. The caller supplies
+storage and owns replacement of native views; server attachment remains separate.
+See [save and open locally](../guide/local-storage). See [local editing](../guide/local-editing) for complete usage and limits.
 
 ## Editor host
 
@@ -57,6 +62,9 @@ The independent binding packages export `PmHostBinding`, `SlateHostBinding`, and
 `OpenEditorSchemaHost` below is the application-owned native editor rebuild lifecycle. It is separate from the backend-facing `EditorHost` interface.
 
 ## Production engine and client state
+
+The client in this section is SyncClient. Access it as `client.sync` when using
+the facade. Its server recovery envelopes differ from the local save/open format.
 
 `@barocss/doc-sync-core/engine` exports `ClientEngineFactory`, `ClientEngine`,
 `EngineEditingView`, `EngineInputSession`, and `typescriptClientEngineFactory`.

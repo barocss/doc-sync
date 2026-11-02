@@ -56,7 +56,7 @@ with transport it constructs SyncClient and forwards syncOptions.engineFactory.
 Each binding creates a private view host. Legacy clients and explicit hosts remain
 supported. Client.sync exposes the actual sync backend for recovery and schema
 lifecycle operations. A facade does not convert checkpoints, enable Rust/WASM, or
-provide local persistence. Its local edit path adds no sync queues or model fork.
+perform storage writes. Local captureState/fromState wrap the production engine checkpoint with actor/schema identity and History. Its ordinary local edit path adds no sync queues or model fork.
 
 ## Memory-only client
 
@@ -72,7 +72,7 @@ original owned operations once. Recorded batches form one undo group;
 `record: null` batches remain outside History. Cancellation preserves live edits.
 Post-commit notification errors are reported without reversing accepted edits.
 See the [local guide](../../apps/docs/src/guide/local-editing.md) for ownership,
-lifecycle and error handling. Saving, restart recovery, live schema transitions,
+lifecycle and error handling. Explicit local capture/open is available through caller-managed storage; background saving, synchronized restart recovery, live schema transitions,
 automatic synchronized-session conversion and Rust/WASM local engines are not
 provided by this entry point.
 

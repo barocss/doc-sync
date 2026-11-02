@@ -111,7 +111,8 @@ In sync mode, `client.sync` exposes the actual `SyncClient` for conditional
 editing, checkpoint/recovery and compatible schema transitions. Check it for
 null before calling sync-only APIs. Use `upgradeOpenEditorSchema(client.sync,
 nextSchema, host)` with the [documented rebuild lifecycle](./schema-transition).
-This facade adds no local schema transition or durable-storage mechanism.
+For explicit local capture/open, use [Save and open locally](./local-storage).
+The facade writes no storage and adds no local schema transition.
 Finish each view's apply/commit batch before using underlying SyncClient APIs.
 Do not mix direct engine mutations with an unfinished host batch.
 
@@ -136,7 +137,8 @@ mode does not exercise HTTP, server persistence or server restart recovery.
 
 Try input, ranges, undo/redo, Insert prefix and Remount. Sync mode also has
 Disconnect/Reconnect controls. Refresh and Reset recreate the sample; local
-edits are not saved. Use `?size=10000` or `?size=100000` for larger text.
+edits are not saved by default. Append `?persist=1` for explicit saved-copy Save/Open
+and reload in the local unified route; see [local storage](./local-storage). Use `?size=10000` or `?size=100000` for larger text.
 
 ```sh
 npm run check:client -- --url http://127.0.0.1:PORT --output output/unified-client/chrome
@@ -147,11 +149,25 @@ Replace `PORT` with the printed port. See the
 for the browser checks and measurement limits. The existing
 [local host demo](./local-editing#run-the-local-editor-demo) remains available.
 
+## Save and open a local client
+
+```ts
+const saved = JSON.stringify(client.captureState()); // Local mode only.
+const replacement = Client.fromState(JSON.parse(saved), {schema: client.schema});
+```
+
+This preserves the actor, document identities, clock and undo/redo History.
+It returns a new client. Your application writes the bytes and replaces views
+only after validation succeeds. Pending operations and active composition block
+capture. Sync mode retains its separate recovery protocol. Read
+[Save and open locally](./local-storage) for errors, schemas and demo controls.
+
 ## Verification
 
-The final whole-workspace run has 1,308 PASS and two platform SKIPs. Chrome
+The current save/open integration has 1,323 PASS and two platform SKIPs. Fresh Chrome
 passes input, selections, History, lifecycle and offline/reconnect checks for
-all four editors in both modes. The 320-input timing run has all medians and
+all four editors in both modes, plus explicit saved-copy reload and History.
+The preceding Client checkpoint’s 320-input timing run has all medians and
 100k cells within the guard, but five local 10k p95 crossings remain. The
 [performance report](../performance#unified-client-and-native-input) also retains
 one Node Slate tail. This is bounded acceptance; it is not a uniform latency PASS.
@@ -164,7 +180,8 @@ only production client engine. Sync mode accepts the existing factory through
 and rejects `syncOptions`. There is no `engine: 'wasm'` option. The private
 [native Rust SDK and storage-only WASM adapter](./rust) are separate APIs.
 
-Local refresh recovery, local schema transitions, live engine switching and
+Explicit local save/open is available, with an opt-in saved-copy reload demo.
+Automatic background saving, local schema transitions, live engine switching and
 local-to-sync handoff remain open. Existing Node/MCP durable recovery still uses
 its synchronized session and server/GC evidence. Omitting a transport does not
 turn that recovery protocol into local persistence.

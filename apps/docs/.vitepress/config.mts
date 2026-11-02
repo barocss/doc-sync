@@ -14,6 +14,7 @@ const guideSidebar = [
         {text: "Client: local or synchronized", link: "/guide/client"},
         {text: "Model operations", link: "/guide/editing"},
         {text: "Local editing and host APIs", link: "/guide/local-editing"},
+        {text: "Save and open locally", link: "/guide/local-storage"},
         {text: "Schema-driven block operations", link: "/guide/blocks"},
         {text: "Document rules and annotations", link: "/guide/document-rules"},
         {text: "Synchronization", link: "/guide/sync"},

@@ -1,0 +1,965 @@
+{
+  "checkpoint": "409ee2abc5add5bf611b7070fe90da39bc484f39",
+  "workspace": {
+    "total": 1325,
+    "pass": 1323,
+    "skip": 2,
+    "fail": 0
+  },
+  "groups": {
+    "library": 793,
+    "core": 163,
+    "lexical": 7,
+    "slate": 4,
+    "bot": 53,
+    "demo": 88,
+    "docs": 36,
+    "mcp": 181
+  },
+  "coreStateCases": 11,
+  "functional": {
+    "result": "PASS",
+    "modes": [
+      {
+        "mode": "local",
+        "result": "PASS"
+      },
+      {
+        "mode": "sync",
+        "result": "PASS"
+      }
+    ],
+    "servedArtifacts": {
+      "bundle.js": {
+        "sha256": "ae00354b17bc503611889d7589f83639c4a676bf66d55c33a6584456b948b604",
+        "bytes": 4028118
+      },
+      "metafile.json": {
+        "sha256": "a2f09bd8442f972a4fa0f13d6a279fc2cc6c7ee4316138c35801add5bd050e69",
+        "bytes": 107517
+      },
+      "bundle-proof.json": {
+        "sha256": "1d19269320e1dfdcbb3651edd73da5eb3a89b1effcd2fc7e12ab9e29ada0ee5a",
+        "bytes": 20933
+      }
+    }
+  },
+  "storage": {
+    "result": "PASS",
+    "cases": [
+      {
+        "name": "trusted input, save, refresh, shared undo and redo",
+        "result": "PASS"
+      },
+      {
+        "name": "all four native views remain editable after save and reload",
+        "result": "PASS"
+      },
+      {
+        "name": "manual open replaces unsaved edits and restores selections",
+        "result": "PASS"
+      },
+      {
+        "name": "quota failure preserves prior saved bytes and live edits",
+        "result": "PASS"
+      },
+      {
+        "name": "malformed and schema-mismatched opens retain live client and saved bytes",
+        "result": "PASS"
+      },
+      {
+        "name": "mount failure rolls back to the previous client",
+        "result": "PASS"
+      },
+      {
+        "name": "forget keeps the open document and refresh restores the sample",
+        "result": "PASS"
+      },
+      {
+        "name": "default local route remains ephemeral",
+        "result": "PASS"
+      },
+      {
+        "name": "mode=local&api=legacy&persist=1: storage disabled",
+        "result": "PASS"
+      },
+      {
+        "name": "mode=sync&persist=1: storage disabled",
+        "result": "PASS"
+      }
+    ],
+    "nativeRoundtrips": [
+      {
+        "name": "ProseMirror",
+        "historyView": "Slate",
+        "result": "PASS"
+      },
+      {
+        "name": "Slate",
+        "historyView": "Lexical",
+        "result": "PASS"
+      },
+      {
+        "name": "Lexical",
+        "historyView": "Tiptap",
+        "result": "PASS"
+      },
+      {
+        "name": "Tiptap",
+        "historyView": "ProseMirror",
+        "result": "PASS"
+      }
+    ],
+    "hiddenStartup": {
+      "visibility": "hidden",
+      "state": {
+        "api": "unified",
+        "busy": false,
+        "clientCount": 1,
+        "counters": {
+          "hubs": 0,
+          "presence": 0,
+          "sends": 0,
+          "subscriptions": 0
+        },
+        "errors": [],
+        "measurement": null,
+        "mode": "local",
+        "payloadCharacters": 50,
+        "peers": [
+          {
+            "actor": "local-1",
+            "backendFields": [
+              "actor",
+              "schema",
+              "engine",
+              "observers",
+              "pending",
+              "captured",
+              "notifying",
+              "disposed",
+              "activeCompositions",
+              "errors",
+              "onNotificationError"
+            ],
+            "history": {
+              "canRedo": false,
+              "canUndo": true
+            },
+            "localBackendIsLocal": true,
+            "mode": "local",
+            "model": {
+              "children": [
+                {
+                  "runs": [
+                    {
+                      "marks": {},
+                      "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document."
+                    }
+                  ],
+                  "type": "paragraph"
+                },
+                {
+                  "runs": [
+                    {
+                      "marks": {
+                        "bold": true
+                      },
+                      "text": "Keep"
+                    },
+                    {
+                      "marks": {},
+                      "text": " your notes here."
+                    }
+                  ],
+                  "type": "paragraph"
+                }
+              ],
+              "type": "content"
+            },
+            "name": "ProseMirror",
+            "native": {
+              "children": [
+                {
+                  "runs": [
+                    {
+                      "marks": {},
+                      "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document."
+                    }
+                  ],
+                  "type": "paragraph"
+                },
+                {
+                  "runs": [
+                    {
+                      "marks": {
+                        "bold": true
+                      },
+                      "text": "Keep"
+                    },
+                    {
+                      "marks": {},
+                      "text": " your notes here."
+                    }
+                  ],
+                  "type": "paragraph"
+                }
+              ],
+              "type": "content"
+            },
+            "nativeText": "saved\ud83d\ude00\ud55c\uae00 Edit this document.\nKeep your notes here.",
+            "notifications": [],
+            "selection": {
+              "anchor": [
+                0,
+                10
+              ],
+              "focus": [
+                0,
+                10
+              ]
+            },
+            "syncNull": true,
+            "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document.\nKeep your notes here."
+          },
+          {
+            "actor": "local-1",
+            "backendFields": [
+              "actor",
+              "schema",
+              "engine",
+              "observers",
+              "pending",
+              "captured",
+              "notifying",
+              "disposed",
+              "activeCompositions",
+              "errors",
+              "onNotificationError"
+            ],
+            "history": {
+              "canRedo": false,
+              "canUndo": true
+            },
+            "localBackendIsLocal": true,
+            "mode": "local",
+            "model": {
+              "children": [
+                {
+                  "runs": [
+                    {
+                      "marks": {},
+                      "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document."
+                    }
+                  ],
+                  "type": "paragraph"
+                },
+                {
+                  "runs": [
+                    {
+                      "marks": {
+                        "bold": true
+                      },
+                      "text": "Keep"
+                    },
+                    {
+                      "marks": {},
+                      "text": " your notes here."
+                    }
+                  ],
+                  "type": "paragraph"
+                }
+              ],
+              "type": "content"
+            },
+            "name": "Slate",
+            "native": {
+              "children": [
+                {
+                  "runs": [
+                    {
+                      "marks": {},
+                      "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document."
+                    }
+                  ],
+                  "type": "paragraph"
+                },
+                {
+                  "runs": [
+                    {
+                      "marks": {
+                        "bold": true
+                      },
+                      "text": "Keep"
+                    },
+                    {
+                      "marks": {},
+                      "text": " your notes here."
+                    }
+                  ],
+                  "type": "paragraph"
+                }
+              ],
+              "type": "content"
+            },
+            "nativeText": "saved\ud83d\ude00\ud55c\uae00 Edit this document.\nKeep your notes here.",
+            "notifications": [],
+            "selection": null,
+            "syncNull": true,
+            "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document.\nKeep your notes here."
+          },
+          {
+            "actor": "local-1",
+            "backendFields": [
+              "actor",
+              "schema",
+              "engine",
+              "observers",
+              "pending",
+              "captured",
+              "notifying",
+              "disposed",
+              "activeCompositions",
+              "errors",
+              "onNotificationError"
+            ],
+            "history": {
+              "canRedo": false,
+              "canUndo": true
+            },
+            "localBackendIsLocal": true,
+            "mode": "local",
+            "model": {
+              "children": [
+                {
+                  "runs": [
+                    {
+                      "marks": {},
+                      "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document."
+                    }
+                  ],
+                  "type": "paragraph"
+                },
+                {
+                  "runs": [
+                    {
+                      "marks": {
+                        "bold": true
+                      },
+                      "text": "Keep"
+                    },
+                    {
+                      "marks": {},
+                      "text": " your notes here."
+                    }
+                  ],
+                  "type": "paragraph"
+                }
+              ],
+              "type": "content"
+            },
+            "name": "Lexical",
+            "native": {
+              "children": [
+                {
+                  "runs": [
+                    {
+                      "marks": {},
+                      "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document."
+                    }
+                  ],
+                  "type": "paragraph"
+                },
+                {
+                  "runs": [
+                    {
+                      "marks": {
+                        "bold": true
+                      },
+                      "text": "Keep"
+                    },
+                    {
+                      "marks": {},
+                      "text": " your notes here."
+                    }
+                  ],
+                  "type": "paragraph"
+                }
+              ],
+              "type": "content"
+            },
+            "nativeText": "saved\ud83d\ude00\ud55c\uae00 Edit this document.\nKeep your notes here.",
+            "notifications": [],
+            "selection": null,
+            "syncNull": true,
+            "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document.\nKeep your notes here."
+          },
+          {
+            "actor": "local-1",
+            "backendFields": [
+              "actor",
+              "schema",
+              "engine",
+              "observers",
+              "pending",
+              "captured",
+              "notifying",
+              "disposed",
+              "activeCompositions",
+              "errors",
+              "onNotificationError"
+            ],
+            "history": {
+              "canRedo": false,
+              "canUndo": true
+            },
+            "localBackendIsLocal": true,
+            "mode": "local",
+            "model": {
+              "children": [
+                {
+                  "runs": [
+                    {
+                      "marks": {},
+                      "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document."
+                    }
+                  ],
+                  "type": "paragraph"
+                },
+                {
+                  "runs": [
+                    {
+                      "marks": {
+                        "bold": true
+                      },
+                      "text": "Keep"
+                    },
+                    {
+                      "marks": {},
+                      "text": " your notes here."
+                    }
+                  ],
+                  "type": "paragraph"
+                }
+              ],
+              "type": "content"
+            },
+            "name": "Tiptap",
+            "native": {
+              "children": [
+                {
+                  "runs": [
+                    {
+                      "marks": {},
+                      "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document."
+                    }
+                  ],
+                  "type": "paragraph"
+                },
+                {
+                  "runs": [
+                    {
+                      "marks": {
+                        "bold": true
+                      },
+                      "text": "Keep"
+                    },
+                    {
+                      "marks": {},
+                      "text": " your notes here."
+                    }
+                  ],
+                  "type": "paragraph"
+                }
+              ],
+              "type": "content"
+            },
+            "nativeText": "saved\ud83d\ude00\ud55c\uae00 Edit this document.\nKeep your notes here.",
+            "notifications": [],
+            "selection": {
+              "anchor": [
+                0,
+                0
+              ],
+              "focus": [
+                0,
+                0
+              ]
+            },
+            "syncNull": true,
+            "text": "saved\ud83d\ude00\ud55c\uae00 Edit this document.\nKeep your notes here."
+          }
+        ],
+        "ready": true,
+        "size": "sample"
+      }
+    }
+  },
+  "composition": {
+    "result": "PASS",
+    "scope": "Synthetic Slate empty-draft browser composition guard only; not OS IME. Owned session and dedicated storage key.",
+    "cases": [
+      {
+        "name": "empty Slate composition rejects save/open without changing live or saved state, then resumes",
+        "result": "PASS"
+      }
+    ]
+  },
+  "countComparisons": {
+    "local": {
+      "format": 1,
+      "inputs": [
+        "/Users/user/github/doc-sync/output/unified-client-delivery/bench/baseline-local-counts.json",
+        "/Users/user/github/doc-sync/output/local-persistence/local-counts.json"
+      ],
+      "harnessHash": "aa8d5c42591503770de32cb82d55e7a3dc8acd87d1a6ee17cc853dda248ae85b",
+      "budget": {
+        "ordinarySnapshots": 0,
+        "ordinaryNativeFromJSON": "no increase over paired SyncClient baseline",
+        "median": {
+          "relative": 0.1,
+          "absoluteMs": 0.1
+        },
+        "p95": {
+          "relative": 0.15,
+          "absoluteMs": 0.2
+        },
+        "rule": "Investigate regression above max(relative baseline, absolute); no timing claim from counts mode."
+      },
+      "rows": [
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 10000,
+          "scenario": "insert",
+          "baselineP50": 2.2847909999999985,
+          "candidateP50": 2.744166000000007,
+          "baselineP95": 2.2847909999999985,
+          "candidateP95": 2.744166000000007,
+          "medianBudgetMs": 0.22847909999999985,
+          "p95BudgetMs": 0.34271864999999974,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 10000,
+          "scenario": "delete",
+          "baselineP50": 0.8794579999999996,
+          "candidateP50": 0.6800829999999962,
+          "baselineP95": 0.8794579999999996,
+          "candidateP95": 0.6800829999999962,
+          "medianBudgetMs": 0.1,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 10000,
+          "scenario": "mark",
+          "baselineP50": 1.2585840000000132,
+          "candidateP50": 1.3069590000000062,
+          "baselineP95": 1.2585840000000132,
+          "candidateP95": 1.3069590000000062,
+          "medianBudgetMs": 0.12585840000000134,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 10000,
+          "scenario": "selection",
+          "baselineP50": 0.1283329999999978,
+          "candidateP50": 0.164874999999995,
+          "baselineP95": 0.1283329999999978,
+          "candidateP95": 0.164874999999995,
+          "medianBudgetMs": 0.1,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 10000,
+          "scenario": "composition",
+          "baselineP50": 18.071249999999992,
+          "candidateP50": 14.858041999999983,
+          "baselineP95": 18.071249999999992,
+          "candidateP95": 14.858041999999983,
+          "medianBudgetMs": 1.8071249999999992,
+          "p95BudgetMs": 2.710687499999999,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 10000,
+          "scenario": "external",
+          "baselineP50": 0.9984589999999685,
+          "candidateP50": 0.7894999999999754,
+          "baselineP95": 0.9984589999999685,
+          "candidateP95": 0.7894999999999754,
+          "medianBudgetMs": 0.1,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 10000,
+          "scenario": "undo",
+          "baselineP50": 3.05012499999998,
+          "candidateP50": 2.019375000000025,
+          "baselineP95": 3.05012499999998,
+          "candidateP95": 2.019375000000025,
+          "medianBudgetMs": 0.305012499999998,
+          "p95BudgetMs": 0.457518749999997,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 10000,
+          "scenario": "redo",
+          "baselineP50": 2.3881249999999454,
+          "candidateP50": 1.9152499999999577,
+          "baselineP95": 2.3881249999999454,
+          "candidateP95": 1.9152499999999577,
+          "medianBudgetMs": 0.23881249999999454,
+          "p95BudgetMs": 0.3582187499999918,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 100000,
+          "scenario": "insert",
+          "baselineP50": 2.8830410000000484,
+          "candidateP50": 3.8503339999999753,
+          "baselineP95": 2.8830410000000484,
+          "candidateP95": 3.8503339999999753,
+          "medianBudgetMs": 0.28830410000000484,
+          "p95BudgetMs": 0.43245615000000726,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 100000,
+          "scenario": "delete",
+          "baselineP50": 2.8457910000000766,
+          "candidateP50": 2.569250000000011,
+          "baselineP95": 2.8457910000000766,
+          "candidateP95": 2.569250000000011,
+          "medianBudgetMs": 0.2845791000000077,
+          "p95BudgetMs": 0.42686865000001145,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 100000,
+          "scenario": "mark",
+          "baselineP50": 2.670332999999914,
+          "candidateP50": 3.5260829999999714,
+          "baselineP95": 2.670332999999914,
+          "candidateP95": 3.5260829999999714,
+          "medianBudgetMs": 0.2670332999999914,
+          "p95BudgetMs": 0.4005499499999871,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 100000,
+          "scenario": "selection",
+          "baselineP50": 0.2540839999999207,
+          "candidateP50": 0.2935829999998987,
+          "baselineP95": 0.2540839999999207,
+          "candidateP95": 0.2935829999998987,
+          "medianBudgetMs": 0.1,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 100000,
+          "scenario": "composition",
+          "baselineP50": 132.85191699999996,
+          "candidateP50": 139.625542,
+          "baselineP95": 132.85191699999996,
+          "candidateP95": 139.625542,
+          "medianBudgetMs": 13.285191699999997,
+          "p95BudgetMs": 19.927787549999994,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 100000,
+          "scenario": "external",
+          "baselineP50": 2.548041000000012,
+          "candidateP50": 2.1937920000000304,
+          "baselineP95": 2.548041000000012,
+          "candidateP95": 2.1937920000000304,
+          "medianBudgetMs": 0.2548041000000012,
+          "p95BudgetMs": 0.3822061500000018,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 100000,
+          "scenario": "undo",
+          "baselineP50": 14.902082999999948,
+          "candidateP50": 14.64104199999997,
+          "baselineP95": 14.902082999999948,
+          "candidateP95": 14.64104199999997,
+          "medianBudgetMs": 1.4902082999999948,
+          "p95BudgetMs": 2.235312449999992,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/local-counts.json",
+          "size": 100000,
+          "scenario": "redo",
+          "baselineP50": 19.616915999999947,
+          "candidateP50": 21.80249999999978,
+          "baselineP95": 19.616915999999947,
+          "candidateP95": 21.80249999999978,
+          "medianBudgetMs": 1.9616915999999947,
+          "p95BudgetMs": 2.942537399999992,
+          "timingStatus": "NOT_RUN"
+        }
+      ]
+    },
+    "sync": {
+      "format": 1,
+      "inputs": [
+        "/Users/user/github/doc-sync/output/unified-client-delivery/bench/baseline-sync-counts.json",
+        "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json"
+      ],
+      "harnessHash": "aa8d5c42591503770de32cb82d55e7a3dc8acd87d1a6ee17cc853dda248ae85b",
+      "budget": {
+        "ordinarySnapshots": 0,
+        "ordinaryNativeFromJSON": "no increase over paired SyncClient baseline",
+        "median": {
+          "relative": 0.1,
+          "absoluteMs": 0.1
+        },
+        "p95": {
+          "relative": 0.15,
+          "absoluteMs": 0.2
+        },
+        "rule": "Investigate regression above max(relative baseline, absolute); no timing claim from counts mode."
+      },
+      "rows": [
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 10000,
+          "scenario": "insert",
+          "baselineP50": 2.2317919999999987,
+          "candidateP50": 4.095457999999994,
+          "baselineP95": 2.2317919999999987,
+          "candidateP95": 4.095457999999994,
+          "medianBudgetMs": 0.22317919999999988,
+          "p95BudgetMs": 0.3347687999999998,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 10000,
+          "scenario": "delete",
+          "baselineP50": 0.7044580000000025,
+          "candidateP50": 1.6207500000000152,
+          "baselineP95": 0.7044580000000025,
+          "candidateP95": 1.6207500000000152,
+          "medianBudgetMs": 0.1,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 10000,
+          "scenario": "mark",
+          "baselineP50": 1.2489999999999952,
+          "candidateP50": 1.3814999999999884,
+          "baselineP95": 1.2489999999999952,
+          "candidateP95": 1.3814999999999884,
+          "medianBudgetMs": 0.12489999999999953,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 10000,
+          "scenario": "selection",
+          "baselineP50": 0.11945800000000872,
+          "candidateP50": 0.178875000000005,
+          "baselineP95": 0.11945800000000872,
+          "candidateP95": 0.178875000000005,
+          "medianBudgetMs": 0.1,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 10000,
+          "scenario": "composition",
+          "baselineP50": 15.960250000000002,
+          "candidateP50": 20.50758300000001,
+          "baselineP95": 15.960250000000002,
+          "candidateP95": 20.50758300000001,
+          "medianBudgetMs": 1.5960250000000002,
+          "p95BudgetMs": 2.3940375,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 10000,
+          "scenario": "external",
+          "baselineP50": 0.6765000000000043,
+          "candidateP50": 0.4712499999999977,
+          "baselineP95": 0.6765000000000043,
+          "candidateP95": 0.4712499999999977,
+          "medianBudgetMs": 0.1,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 10000,
+          "scenario": "undo",
+          "baselineP50": 2.492290999999966,
+          "candidateP50": 1.2802919999999745,
+          "baselineP95": 2.492290999999966,
+          "candidateP95": 1.2802919999999745,
+          "medianBudgetMs": 0.24922909999999662,
+          "p95BudgetMs": 0.3738436499999949,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 10000,
+          "scenario": "redo",
+          "baselineP50": 3.060957999999971,
+          "candidateP50": 2.2444169999999986,
+          "baselineP95": 3.060957999999971,
+          "candidateP95": 2.2444169999999986,
+          "medianBudgetMs": 0.30609579999999714,
+          "p95BudgetMs": 0.4591436999999956,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 100000,
+          "scenario": "insert",
+          "baselineP50": 3.0051670000000286,
+          "candidateP50": 2.7886250000000246,
+          "baselineP95": 3.0051670000000286,
+          "candidateP95": 2.7886250000000246,
+          "medianBudgetMs": 0.30051670000000286,
+          "p95BudgetMs": 0.4507750500000043,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 100000,
+          "scenario": "delete",
+          "baselineP50": 3.530791000000022,
+          "candidateP50": 3.4997909999999592,
+          "baselineP95": 3.530791000000022,
+          "candidateP95": 3.4997909999999592,
+          "medianBudgetMs": 0.3530791000000022,
+          "p95BudgetMs": 0.5296186500000033,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 100000,
+          "scenario": "mark",
+          "baselineP50": 3.841458999999986,
+          "candidateP50": 2.957540999999992,
+          "baselineP95": 3.841458999999986,
+          "candidateP95": 2.957540999999992,
+          "medianBudgetMs": 0.38414589999999865,
+          "p95BudgetMs": 0.576218849999998,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 100000,
+          "scenario": "selection",
+          "baselineP50": 0.26591700000017227,
+          "candidateP50": 0.3627079999998841,
+          "baselineP95": 0.26591700000017227,
+          "candidateP95": 0.3627079999998841,
+          "medianBudgetMs": 0.1,
+          "p95BudgetMs": 0.2,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 100000,
+          "scenario": "composition",
+          "baselineP50": 121.3733749999999,
+          "candidateP50": 134.61758400000008,
+          "baselineP95": 121.3733749999999,
+          "candidateP95": 134.61758400000008,
+          "medianBudgetMs": 12.13733749999999,
+          "p95BudgetMs": 18.206006249999984,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 100000,
+          "scenario": "external",
+          "baselineP50": 2.7297500000001946,
+          "candidateP50": 2.770082999999886,
+          "baselineP95": 2.7297500000001946,
+          "candidateP95": 2.770082999999886,
+          "medianBudgetMs": 0.27297500000001945,
+          "p95BudgetMs": 0.4094625000000292,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 100000,
+          "scenario": "undo",
+          "baselineP50": 11.084916999999905,
+          "candidateP50": 10.660249999999905,
+          "baselineP95": 11.084916999999905,
+          "candidateP95": 10.660249999999905,
+          "medianBudgetMs": 1.1084916999999905,
+          "p95BudgetMs": 1.6627375499999857,
+          "timingStatus": "NOT_RUN"
+        },
+        {
+          "candidate": "/Users/user/github/doc-sync/output/local-persistence/sync-counts.json",
+          "size": 100000,
+          "scenario": "redo",
+          "baselineP50": 21.080083000000286,
+          "candidateP50": 18.350540999999794,
+          "baselineP95": 21.080083000000286,
+          "candidateP95": 18.350540999999794,
+          "medianBudgetMs": 2.1080083000000287,
+          "p95BudgetMs": 3.162012450000043,
+          "timingStatus": "NOT_RUN"
+        }
+      ]
+    }
+  },
+  "performanceStatus": "INVESTIGATE: original Node1 and Chrome5 tail flags retained; diagnostics are not acceptance",
+  "sourceFreeze": {
+    "checkpoint": "409ee2abc5add5bf611b7070fe90da39bc484f39",
+    "sourceSha256": {
+      "apps/demo/client/README.md": "8379ccad0b002e4afaf7f55553cea66238275f1fe360aef7560021957cd6bf40",
+      "apps/demo/client/check-local-storage.mjs": "371d5559cc6a5be043c4a9f1b5b17f6fa6b54284cdc3b75f5ed4da644dcfdfdb",
+      "apps/demo/client/index.html": "0ad40dc7cb5cb218be12d03fc25f4e0e1c1c005ed479380c50de5dea419aa449",
+      "apps/demo/client/local-storage.d.mts": "808370f94d691835e0e66b4e84090ecf904662cb5cf23e0ade627087bd005593",
+      "apps/demo/client/local-storage.mjs": "e6858c9120e3bdb1695843556825801acc0577bcd99bebaf096b49abb3012be4",
+      "apps/demo/client/main.jsx": "8a3a5d1eec1373122a65d7d4cbfa3a589cd4c4edac4b662e48dc1ea03b8174fd",
+      "apps/demo/client/style.css": "b5bdfeb201a1c61621422d62bcbf205bd48ea7bcf24b0a241578f1db35ef8013",
+      "apps/demo/test/local-storage.test.ts": "54b15059adbc7e8d80115fd923ab25049e431c50718d7af9c4a12f5e1337c0c1",
+      "packages/doc-sync-core/ENGINE-CONTRACT.md": "8d3b14ae3e5cf566145010a824d396c1c85d06f2aabe9b09925eab92c429a91f",
+      "packages/doc-sync-core/README.md": "823bed9cdedc4e6b2978fd1369d7e5f007b4b7714b66e86a795b204c0a8e15ad",
+      "packages/doc-sync-core/src/client/index.ts": "7078380531e333ec37b7709a11362034fe58603f8e39583a598659fac336681b",
+      "packages/doc-sync-core/src/index.ts": "b938b01667540f03157e9207c0dc51287375a0c9ff3ca5502ad588de0c4c69ab",
+      "packages/doc-sync-core/src/local/client.ts": "d0bfe4b1e4b9193080eb3bb95fc094b7280d7d1d0fa05e5b7b15051761e670e9",
+      "packages/doc-sync-core/src/local/index.ts": "03f837061e41bd90cd24df4f80ea324b6584661f6ac4eb93824b438cdc390444",
+      "packages/doc-sync-core/src/local/state.ts": "41b6096a118b00129771670627ce69f08dab020da9f8b121cc6367a902ca1340",
+      "packages/doc-sync-core/test/local-state.test.ts": "ca6d3f0fdf013bff0ef9d9635d459d09de448310ac454bc2cab6b0b99ceb49b8",
+      "packages/doc-sync/README.md": "7b831dd897bc98c16971a44f5131be5ebda4ddd7fc4e32568ac4447f6530ccc6",
+      "scripts/check-package-artifacts.mjs": "b0618319426e3524942713533d2d2973e62a41787ffc8c2af25b82448122574f"
+    },
+    "scope": "Current local-state runtime/tests/demo; timing diagnostics were captured from compiled checkpoint before these changes."
+  }
+}

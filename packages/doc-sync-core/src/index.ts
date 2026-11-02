@@ -34,4 +34,4 @@ export {readDocumentSlice, validateSliceQuery, SLICE_LIMITS} from "./crdt/read.t
 export type {SliceQuery, DocumentSlice} from "./crdt/read.ts";
 
 export {Client} from "./client/index.ts";
-export type {ClientOptions, BindingClient} from "./client/index.ts";
+export type {ClientOptions, BindingClient, LocalClientState} from "./client/index.ts";
