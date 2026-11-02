@@ -1,6 +1,6 @@
-# Editor integration
+# Editor integrations {#editor-integration}
 
-Choose an editor binding, give it a `SyncClient`, and keep `doc.edit()` as the shared document interface. All bindings use the same document engine and collaboration history.
+Choose a binding for an existing editor, or build a custom editor with Core. Use a `SyncClient` for server synchronization. Use a `LocalClient` and an editor host for supported in-memory integrations. All four editor bindings use the same TypeScript document engine.
 
 | Editor | Public entry point | Guide |
 | --- | --- | --- |
@@ -8,11 +8,35 @@ Choose an editor binding, give it a `SyncClient`, and keep `doc.edit()` as the s
 | Tiptap | `@barocss/doc-sync-tiptap`: `DocSync` extension and `createTiptapExtensions` | [Tiptap](./tiptap) |
 | Slate | `@barocss/doc-sync-slate`: `SlateBinding`, schema codec, selection helpers | [Slate](./slate) |
 | Lexical | `@barocss/doc-sync-lexical`: `LexicalBinding`, schema builder, codecs, selection helpers | [Lexical](./lexical) |
-| Custom editor | `@barocss/doc-sync-core`: `doc.edit()` and model operations | [Editing](./editing) and [blocks](./blocks) |
+| Custom editor | `@barocss/doc-sync-core/local`: `LocalClient`; Core `EditorHost` contract for structured bindings | [Custom editor](./custom-editor) |
+
+Choose an editor guide above for its setup and binding examples. For shared model operations, read the [Guide](./editing).
 
 Each binding is a separate npm package. Use built repository workspaces or local tarballs until registry release. The old `@barocss/doc-sync/<editor>` imports remain compatibility exports and require the selected binding peer. See [Packages and engines](./packages) for the dependency graph and release workflow.
 
 Install each selected binding with its required editor peers. Core provides the shared CRDT, synchronization client, and server without native editor dependencies.
+
+## LocalClient examples
+
+Use `LocalClient` to edit in memory without a server.
+
+Read [LocalClient and SyncClient](./local-editing#localclient-and-syncclient)
+to compare client setup, editor hosts, selection, History, offline editing and recovery.
+
+Start with one of these examples:
+
+| Example | What it shows |
+| --- | --- |
+| [Create and edit a document](./local-editing#create-and-edit-a-document) | Define a schema, insert text, apply formatting, undo and redo. |
+| [Connect a native editor](./local-editing#connect-a-native-editor) | Connect ProseMirror through `LocalEditorHost` and receive application edits. |
+| [Capture a selection](./local-editing#capture-a-selection) | Capture and resolve an anchored selection after editing. |
+| [Build a textarea editor](./custom-editor#mount-a-plain-textarea) | A complete `mountTextArea()` adapter with input, selection and cleanup. |
+
+The API guide is also available under **Guide → Local editing (LocalClient)**.
+For an interactive example, [run the LocalClient demo](./local-editing#run-the-local-editor-demo).
+It opens independent ProseMirror, Slate and Lexical documents without a document
+server. Local state is not saved after a refresh. The separate product demo uses
+synchronized clients.
 
 ## Choose the client engine
 
@@ -36,7 +60,7 @@ Slate and Lexical include composition drafts. Native input edits the draft while
 
 The application still supplies its schema, native rendering, toolbar, editor plugins, transport, and lifecycle. A codec's ability to retain data does not supply every native editing gesture for that data.
 
-When the server accepts a compatible schema change, a mounted editor must rebuild its native schema and binding. The [open-editor transition guide](./schema-transition) shows the tested lifecycle and selection conversions for ProseMirror, Slate, and Lexical. Tiptap must also destroy and recreate its extensions; its open-schema transition host has not been qualified. Follow the [runnable examples](./runnable-examples) to try the original three editors, or the [Tiptap demo](./tiptap#run-the-two-editor-demo) for its dedicated integration.
+When the server accepts a compatible schema change, a mounted editor must rebuild its native schema and binding. The [open-editor transition guide](./schema-transition) shows the tested lifecycle and selection conversions for ProseMirror, Slate, and Lexical. Tiptap must also destroy and recreate its extensions; its open-schema transition host has not been qualified. Its [dedicated demo](./tiptap#run-the-two-editor-demo) covers the current Tiptap integration.
 
 Slate and Lexical retain unchanged root blocks during remote projection. They replace the interval between the common prefix and suffix, using the existing schema codecs. Slate checks its immutable child array and verifies normalization. Lexical invalidates its cache on native content updates and reads back projected content before caching an editor state. Composition, unknown native states and cell restoration keep their recovery paths.
 

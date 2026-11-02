@@ -43,7 +43,11 @@ export class LexicalHostBinding {
         try {
             this.pull();
             this.cleanup.push(editor.registerUpdateListener(({editorState, prevEditorState, tags, dirtyElements, dirtyLeaves}) => {
-                if (this.disposed || tags.has(LEXICAL_REMOTE_TAG) || (!dirtyElements.size && !dirtyLeaves.size)) return;
+                if (this.disposed || tags.has(LEXICAL_REMOTE_TAG)) return;
+                // Local hosts do not send a beforeEvent notification. Save native
+                // selection-only changes before a later application edit changes
+                // token positions. These updates do not create document history.
+                if (!dirtyElements.size && !dirtyLeaves.size) { this.captureSelection(); return; }
                 try {
                     this.native = null;
                     const next = editorState.read(() => $fromLexical(this.info), {editor});

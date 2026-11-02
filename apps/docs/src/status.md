@@ -1,4 +1,4 @@
-# Status and limits
+# Verification and limits {#status-and-limits}
 
 This documentation describes the current implementation and its verification limits. A passing bounded test is not a production release or a guarantee for every editor and workload.
 
@@ -8,6 +8,7 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 
 - Schema-defined text, inline content, lists, nested flows, tables, spans, and attributes.
 - Local-first editing, validated changes, HTTP/SSE demo transport, and snapshot/GC support.
+- A memory-only TypeScript LocalClient and per-view LocalEditorHost, with edits, anchored selections, undo/redo and composition drafts. ProseMirror, Slate and Lexical accept local hosts; the current Tiptap extension requires SyncClient. Local persistence and restart recovery remain open.
 - Per-user undo and redo that retain independent changes under the stated ownership rules.
 - Remote cursors and selection ranges, including backward and overlapping selection.
 - Independent ProseMirror, Tiptap, Slate and Lexical binding packages, with the original compatibility subpaths.
@@ -24,6 +25,54 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 - A host-based open-editor schema transition with text selection restoration. The product demo uses it with Slate, Lexical and ProseMirror after a compatible server transition.
 
 ## Regression coverage
+
+The final local-editing integration passes **1,244 full-workspace cases on
+macOS: 1,242 PASS, two platform SKIPs, zero FAIL**, with default fuzz settings.
+The groups are library 758, Core 136, Lexical 7, Slate 4, bot 53, demo 71,
+documentation 34 and MCP 181. This is a fresh main-worktree run of the combined
+changes, separate from earlier enhanced-fuzz checkpoints. A direct headless
+ProseMirror/Slate integration also verifies that two per-view hosts can share one
+LocalClient, exchange native edits and use one shared undo/redo History. That
+shared-document check is separate from the independent-client Chrome demo.
+
+The dedicated [LocalClient demo](./guide/local-editing#run-the-local-editor-demo)
+passes Chrome 156 checks in ProseMirror, Slate and Lexical for native Unicode
+input/delete, forward/backward/collapsed selection, toolbar and keyboard History,
+independent documents, application selection restoration through repeated
+prefixes, remount, reset and refresh. Logical and DOM ranges are checked. Editing
+works with networking disabled after static assets load; document requests and
+notification/console/page errors are zero. The bundle emits no synchronization
+client, transport or document-server implementation. A mobile screenshot/overflow
+check and synthetic persisted-pagehide guard pass; broad mobile behavior,
+actual BFCache navigation, OS IME and rendering latency remain unqualified.
+
+This browser work fixes two binding defects: Lexical now captures selection-only
+updates, and ProseMirror restores text selections by token identity when text
+diffs are ambiguous. New regressions fail on the old builds and pass after the
+fixes. Core runtime and collaboration operations are unchanged. The earlier
+LocalClient performance comparison predates these selection fixes; no new timing
+or memory result is claimed for this demo.
+
+The local-client checkpoint passes **1,226 full-workspace cases on macOS:
+1,224 PASS, two platform SKIPs, zero FAIL**, with the default 500 fuzz seeds.
+It adds memory-only editing without changing existing synchronized runtime
+JavaScript. Later focused runs pass all **136 Core cases**, including six added
+Word/Notion/presentation structure and hidden-content cases, and the current
+documentation tests. Four actual headless binding tests cover ProseMirror,
+Slate and Lexical input, external edits, selection, History and draft publication.
+Type checking and six-package/seven-consumer verification pass. These are
+headless local API results, not new local-browser or OS IME acceptance.
+
+At that earlier checkpoint, all 68 existing JavaScript files in the frozen
+Core/PM/Slate/Lexical/facade scope matched main `12da94d`. The offline PM count comparison passes 48 size/scenario
+checks without added ordinary-edit snapshots or conversion calls. Original
+full timing retains 14 investigation flags out of 32 comparisons; seven also
+occur in the unchanged Sync control. Same-process ABBA retains two flags out of
+16; focused repeated-input profiles place both within the original guards.
+No persistent Local-only hotspot was established. These narrower results do
+not turn every original timing into a PASS. See the
+[local comparison report](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/local-client/report.md).
+
 
 The selected-TypeScript engine checkpoint passes **1,199 full-workspace cases
 on macOS: 1,197 PASS, two platform SKIPs, zero FAIL** with `FUZZ_SEEDS=3000` and

@@ -17,6 +17,16 @@ Six packages provide Core, four editor bindings, and a compatibility facade. All
 
 These eight compatibility entry points re-export the independent packages. Current package exports resolve compiled ESM JavaScript and declarations. Local tarball installation is verified; registry publication and release policy remain separate gates.
 
+## Memory-only client
+
+`@barocss/doc-sync-core/local` exports `LocalClient`, `LocalEditorHost`,
+`createLocalEditorHost`, and their option, session, observer and error types.
+`new LocalClient({schema, actor?})` owns a production TS engine without a
+transport. `edit` applies and records once; low-level `apply`/`commit` split those
+steps. Selection anchors, history, composition and origin-filtered subscriptions
+share the editor host contract. This stage has no storage or server-attachment
+API. See [local editing](../guide/local-editing) for complete usage and limits.
+
 ## Editor host
 
 `@barocss/doc-sync-core/editor` exports `EditorHost`, `EditorSession`, and `createSyncClientEditorHost(client)`. The adapter uses the selected production SyncClient engine and its input sessions. The TypeScript implementation keeps ordinary single-text edits on an incremental path. Model values are borrowed immutable views with generation/revision stamps.

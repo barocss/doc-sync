@@ -127,3 +127,24 @@ test("Lexical binding refreshes a received model while recovery pauses local inp
         assert.deepEqual(model(), before);
     } finally { release?.(); binding.dispose(); stop(); a.disconnect(); b.disconnect(); }
 });
+
+import {LocalClient, createLocalEditorHost} from "../../doc-sync-core/dist/local/index.js";
+
+for (const [label, anchor, focus] of [["forward", 1, 3], ["backward", 3, 1], ["collapsed", 3, 3]] as const) {
+    test(`Lexical local host retains ${label} native selection across an application insert`, () => {
+        const schema = {root: "content", marks: [], nodes: {content: {shape: "flow" as const, children: ["paragraph"], default: "paragraph"}, paragraph: {shape: "text" as const}}};
+        const client = new LocalClient({schema, actor: `local-selection-${label}`});
+        client.edit([{op: "insert", at: [0, 0], content: "A😀BC"}], null);
+        const info = buildLexicalSchema(schema), editor = createEditor({nodes: info.nodes, onError: error => {throw error;}});
+        const stop = registerRichText(editor), binding = new LexicalHostBinding(createLocalEditorHost(client), editor, info);
+        try {
+            // This changes selection only. It must not create a history entry.
+            editor.update(() => { assert.ok($setLexicalSelection(info, {anchor: [0, anchor], focus: [0, focus]})); }, {discrete: true});
+            assert.deepEqual(client.historyStatus(), {canUndo: false, canRedo: false});
+            client.edit([{op: "insert", at: [0, 0], content: "Local "}]);
+            assert.deepEqual(readLexicalModel(editor, info), client.model());
+            assert.deepEqual(editor.getEditorState().read(() => $lexicalSelection(info)), {anchor: [0, anchor + 6], focus: [0, focus + 6]});
+            assert.deepEqual(client.notificationErrors, []);
+        } finally { binding.dispose(); stop(); client.dispose(); }
+    });
+}

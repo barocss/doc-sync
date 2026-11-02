@@ -48,6 +48,24 @@ Doc-based input sessions and inherited document facades use a named TypeScript
 compatibility adapter. They are optional escape paths, not portable backend APIs.
 No shadow Doc mirrors a selected backend.
 
+## Memory-only client
+
+`@barocss/doc-sync-core/local` exports `LocalClient`, `LocalEditorHost` and
+`createLocalEditorHost`. The local client owns the production TypeScript engine
+and has no transport or `SyncClient`. Convenience `edit()` applies and records
+once; native adapters use apply followed by one complete ordered commit. Each
+editor view needs its own host origin. External local edits notify other views.
+Local host status is offline/unsynchronized and presence is empty.
+
+Selections use engine anchors. Composition drafts reserve clocks and publish
+original owned operations once. Recorded batches form one undo group;
+`record: null` batches remain outside History. Cancellation preserves live edits.
+Post-commit notification errors are reported without reversing accepted edits.
+See the [local guide](../../apps/docs/src/guide/local-editing.md) for ownership,
+lifecycle and error handling. Saving, restart recovery, live schema transitions,
+automatic synchronized-session conversion and Rust/WASM local engines are not
+provided by this entry point.
+
 ## Mutation and session ownership
 
 - `engine.apply()` and `applyModelEdits()` compile and apply local edits. They

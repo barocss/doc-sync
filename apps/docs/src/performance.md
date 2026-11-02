@@ -2,6 +2,17 @@
 
 Measure the layer you need. Core application time, client notification time, and visible editor latency cover different work.
 
+## Memory-only client
+
+The [LocalClient comparison](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/local-client/report.md)
+checks real headless ProseMirror at 10k and 100k UTF-16 units against an offline
+SyncClient host on main `12da94d`. All 48 count cells match without extra ordinary
+snapshots or conversion calls. The original full timing keeps 14 investigation
+flags out of 32 comparisons. Same-process ABBA keeps two out of 16; focused
+repeated-input profiles place those two within the original guards. No persistent
+Local-only hotspot was established. These are scoped Node results, not browser
+latency acceptance or zero-overhead proof.
+
 ## Receive model materialization
 
 Text projection now accumulates adjacent equal-format characters in temporary string chunks. Normalization keeps each existing text run whole instead of expanding it again. A shared private reference per text block also avoids rewriting every character's membership entry after one insertion. Public blocks remain immutable, span-value identity is preserved, and editing/diff offsets still use the existing unit conversion. Live Items, logical IDs, history ownership, snapshots and wire format are unchanged.

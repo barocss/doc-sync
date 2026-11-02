@@ -50,6 +50,7 @@ export class PmHostBinding {
     /** Binding-only snapshots. Conversion and position helpers read these values without mutating them. */
     private cached: {generation: number; revision: number; model: NodeJSON; pm: PmNode | null} | null = null;
     private unsubscribe: (() => void) | null = null;
+    private textSelection: {generation: number; doc: PmNode; native: TextSelection; anchor: string; head: string} | null = null;
 
     constructor(host: EditorHost, info: PmSchemaInfo, plugins: Plugin[] = [], external?: {state: EditorState; dispatch: (tr: Transaction) => void}) {
         this.host = host;
@@ -334,6 +335,21 @@ export class PmHostBinding {
             tr = this.state.tr.replaceWith(0, doc.content.size, target.content);
         }
 
+        // A text diff can place an identical inserted prefix at the wrong end.
+        // Resolve the existing token identities in the new document instead.
+        const saved = this.textSelection;
+        if (saved && saved.generation === this.host.stamp().generation && saved.doc === doc && saved.native === this.state.selection) {
+            const anchor = this.host.locateAnchor(saved.anchor, "visible");
+            const head = this.host.locateAnchor(saved.head, "visible");
+            if (anchor && head) {
+                try {
+                    tr.setSelection(TextSelection.create(tr.doc,
+                        pathToPmPos(this.schema, tr.doc, anchor, this.model()),
+                        pathToPmPos(this.schema, tr.doc, head, this.model())));
+                } catch { /* Keep ProseMirror's mapped selection if an endpoint is no longer text. */ }
+            }
+        }
+
         tr.setMeta(REMOTE_META, "remote");
         tr.setMeta("addToHistory", false);
         if (this.externalDispatch) this.externalDispatch(tr);
@@ -434,6 +450,9 @@ export class PmHostBinding {
         const {anchor, head} = this.state.selection;
         const a = this.anchorOfPm(this.state.doc, head);
         const f = anchor !== head ? this.anchorOfPm(this.state.doc, anchor) : null;
+        this.textSelection = this.state.selection instanceof TextSelection && a && (anchor === head || f)
+            ? {generation: this.host.stamp().generation, doc: this.state.doc, native: this.state.selection, anchor: f ?? a, head: a}
+            : null;
 
         this.onSelection?.(a, f);
         this.onChange?.();

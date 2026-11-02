@@ -2,6 +2,10 @@
 
 `SyncClient` manages a local document, pending changes, acknowledgments, model events, history, and presence. `DocHub` validates and orders changes for one document. A `Transport` connects them.
 
+For an editor that needs no server session, see the
+[LocalClient and SyncClient comparison](./local-editing#localclient-and-syncclient).
+It explains the shared editing model, offline behavior, bindings and storage limits.
+
 ## HTTP and SSE
 
 ```ts
