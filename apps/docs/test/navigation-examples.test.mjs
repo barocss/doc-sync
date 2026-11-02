@@ -11,6 +11,8 @@ test('the custom-editor destination runs its textarea adapter against public Cor
     const page = readFileSync(new URL('../src/guide/custom-editor.md', import.meta.url), 'utf8');
     const source = /<!-- custom-editor-example -->\s*```ts\n([\s\S]*?)\n```/.exec(page)?.[1];
     assert.ok(source, 'the integration page must contain the example under test');
+    const executable = source.replace("from './custom-editor.mjs'",
+        `from ${JSON.stringify(new URL('../../demo/local/custom-editor.mjs', import.meta.url).href)}`);
     const check = `
 import assert from 'node:assert/strict';
 class TextArea extends EventTarget {
@@ -59,13 +61,27 @@ editor.client.undo();
 assert.equal(textarea.value, 'XAHello😀');
 editor.client.redo();
 assert.equal(textarea.value, 'XAHEAllo😀');
+// Newlines split and merge document paragraphs, including history replay.
+textarea.value = 'XAHEA\\nllo😀';
+textarea.setSelectionRange(6, 6, 'forward');
+textarea.dispatchEvent(new Event('input'));
+assert.deepEqual(editor.client.model().children.map(node => node.runs.map(run => run.text).join('')), ['XAHEA', 'llo😀']);
+editor.binding.undo();
+assert.equal(textarea.value, 'XAHEAllo😀');
+editor.binding.redo();
+assert.equal(textarea.value, 'XAHEA\\nllo😀');
+textarea.value = 'XAHEAllo😀';
+textarea.setSelectionRange(5, 5, 'forward');
+textarea.dispatchEvent(new Event('input'));
+assert.equal(editor.client.model().children.length, 1);
+assert.equal(editor.client.model().children[0].runs[0].text, 'XAHEAllo😀');
 editor.dispose();
 textarea.value = 'after cleanup';
 textarea.dispatchEvent(new Event('input'));
 assert.throws(() => editor.client.model(), /disposed/);
 `;
     const result = spawnSync(process.execPath, ['--input-type=module', '-'], {
-        cwd: root, input: stripTypeScriptTypes(source) + check, encoding: 'utf8', timeout: 10000,
+        cwd: root, input: stripTypeScriptTypes(executable) + check, encoding: 'utf8', timeout: 10000,
     });
     assert.ifError(result.error);
     assert.equal(result.status, 0, result.stdout + result.stderr);

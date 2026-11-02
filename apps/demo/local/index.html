@@ -3,9 +3,9 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Local document editors</title><link rel="stylesheet" href="/style.css"></head>
 <body>
 <main>
-<header><p class="eyebrow">DOC SYNC / LOCAL</p><h1>Local document editors</h1><p>Each editor has its own document. Type, select text, and use Undo or Redo.</p></header>
+<header><p class="eyebrow">DOC SYNC / LOCAL</p><h1>Local document editors</h1><p id="mode-description">Each editor has its own document. Type, select text, and use Undo or Redo.</p><nav aria-label="Document mode"><a href="/" data-mode="independent">Independent documents</a><a href="/?mode=shared" data-mode="shared">Shared document</a></nav><button id="reset-shared" type="button" hidden>Reset shared document</button></header>
 <div class="workbench" id="editors" aria-label="Document editors"></div>
-<footer><p>Memory only. Refresh restores the sample. Reset restores one editor.</p><p>Use ⌘Z or Ctrl+Z to undo. Use ⇧⌘Z, Ctrl+Shift+Z, or Ctrl+Y to redo.</p><p>Insert prefix adds “Local ” at the start and keeps the current selection.</p></footer>
+<footer><p id="reset-description">Memory only. Refresh restores the sample. Reset restores one editor.</p><p>Use ⌘Z or Ctrl+Z to undo. Use ⇧⌘Z, Ctrl+Shift+Z, or Ctrl+Y to redo.</p><p>Insert prefix adds “Local ” at the start and keeps the current selection.</p></footer>
 <pre id="errors" role="alert" hidden></pre>
 </main>
 <script type="module" src="/bundle.js"></script>

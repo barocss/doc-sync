@@ -12,7 +12,12 @@ import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync-core/local';
 import {PmHostBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@barocss/doc-sync-prosemirror';
 import {SlateHostBinding, fromSlate, slateRangeToModel, modelRangeToSlate} from '@barocss/doc-sync-slate';
 import {LexicalHostBinding, buildLexicalSchema, readLexicalModel, $lexicalSelection, $setLexicalSelection} from '@barocss/doc-sync-lexical';
-import {LOCAL_SCHEMA as schema, seedEdits, textOf} from './model.js';
+import {LOCAL_SCHEMA, SHARED_SCHEMA, seedEdits, sharedSeedEdits, textOf} from './model.js';
+import {mountCustomEditor} from './custom-editor.mjs';
+
+const shared = new URLSearchParams(location.search).get('mode') === 'shared';
+const mode = shared ? 'shared' : 'independent';
+let sharedClient, busy = false;
 
 const peers = [], errors = [];
 const report = error => {
@@ -31,6 +36,7 @@ function shortcut(event, peer) {
     }
 }
 function slate(peer) {
+    const schema = peer.schema;
     const editor = withReact(createSlateEditor());
     const binding = new SlateHostBinding(peer.host, editor, {element: peer.mount, groupTyping: false, onError: report});
     peer.editor = editor; peer.binding = binding;
@@ -50,6 +56,7 @@ function slate(peer) {
     return ready;
 }
 function lexical(peer) {
+    const schema = peer.schema;
     const element = document.createElement('div'); element.className = 'editor'; element.contentEditable = 'true';
     element.setAttribute('role', 'textbox'); element.setAttribute('aria-label', 'Lexical'); element.spellcheck = false; peer.mount.append(element);
     const info = buildLexicalSchema(schema);
@@ -64,6 +71,7 @@ function lexical(peer) {
     peer.cleanup = () => { binding.dispose(); rich(); element.removeEventListener('keydown', key, true); editor.setRootElement(null); };
 }
 function prosemirror(peer) {
+    const schema = peer.schema;
     const info = buildPmSchema(schema, {paragraph: () => ['p', 0], heading: () => ['h2', 0]});
     const binding = new PmHostBinding(peer.host, info, [keymap(baseKeymap)]);
     const view = new EditorView(peer.mount, {state: binding.state, dispatchTransaction: tr => binding.dispatch(tr),
@@ -79,18 +87,41 @@ function prosemirror(peer) {
     const key = event => shortcut(event, peer); view.dom.addEventListener('keydown', key, true);
     peer.cleanup = () => { binding.dispose(); view.dom.removeEventListener('keydown', key, true); view.destroy(); };
 }
+function custom(peer) {
+    const textarea = document.createElement('textarea'); textarea.className = 'editor custom-editor';
+    textarea.setAttribute('aria-label', 'Custom'); textarea.spellcheck = false; peer.mount.append(textarea);
+    const binding = mountCustomEditor(textarea, peer.host, {onError: report});
+    peer.binding = binding; peer.read = () => binding.readModel();
+    peer.range = () => binding.selection(); peer.select = range => { textarea.focus(); binding.setSelection(range); };
+    peer.cleanup = () => binding.dispose();
+}
+function newClient(peer) {
+    const client = new LocalClient({schema: peer.schema, actor: shared ? 'local-shared' : `local-${peer.name.toLowerCase()}`, onNotificationError: report});
+    client.edit(peer.seed(), null); client.clearHistory(); return client;
+}
+function detach(peer) { peer.cleanup?.(); peer.cleanup = null; peer.mount.replaceChildren(); }
 async function mount(peer, reset = false) {
-    peer.cleanup?.(); peer.mount.replaceChildren();
-    if (!peer.client || reset) {
-        peer.client?.dispose();
-        peer.client = new LocalClient({schema, actor: `local-${peer.name.toLowerCase()}`, onNotificationError: report});
-        peer.client.edit(seedEdits(), null); peer.client.clearHistory();
-        peer.host = createLocalEditorHost(peer.client);
-    }
-    if (peer.name === 'Slate') await slate(peer);
+    detach(peer);
+    if (shared) peer.client = sharedClient;
+    else if (!peer.client || reset) { peer.client?.dispose(); peer.client = newClient(peer); }
+    // Each view needs its own host origin, including views that borrow one client.
+    peer.host = createLocalEditorHost(peer.client);
+    if (peer.name === 'Custom') custom(peer);
+    else if (peer.name === 'Slate') await slate(peer);
     else if (peer.name === 'Lexical') lexical(peer);
     else prosemirror(peer);
     await settle();
+}
+async function exclusive(action) {
+    if (busy) throw Error('Editors are mounting. Try again when ready.');
+    busy = true; document.querySelectorAll('button').forEach(button => { button.disabled = true; });
+    try { return await action(); }
+    finally { busy = false; document.querySelectorAll('button').forEach(button => { button.disabled = false; }); }
+}
+async function resetShared() {
+    // Detach every observer before replacing or disposing the shared client.
+    peers.forEach(detach); sharedClient?.dispose(); sharedClient = newClient(peers[0]);
+    for (const peer of peers) await mount(peer);
 }
 function makePeer(name) {
     const section = document.createElement('section'); section.className = 'panel'; section.dataset.editor = name;
@@ -98,9 +129,9 @@ function makePeer(name) {
     const tools = document.createElement('div'); tools.className = 'tools'; tools.setAttribute('aria-label', `${name} actions`);
     const mount = document.createElement('div'); mount.className = 'mount';
     section.append(heading, tools, mount); document.querySelector('#editors').append(section);
-    const peer = {name, section, mount}; peers.push(peer);
+    const peer = {name, section, mount, schema: shared ? SHARED_SCHEMA : LOCAL_SCHEMA, seed: shared ? sharedSeedEdits : seedEdits}; peers.push(peer);
     for (const [label, action] of [['Undo', () => peer.binding.undo()], ['Redo', () => peer.binding.redo()],
-        ['Insert prefix', () => peer.client.edit([{op: 'insert', at: [0, 0], content: 'Local '}])], ['Reset', () => mountPeer(peer)]]) {
+        ['Insert prefix', () => peer.client.edit([{op: 'insert', at: [0, 0], content: 'Local '}])], [shared ? 'Remount' : 'Reset', () => shared ? exclusive(() => mount(peer)) : mountPeer(peer)]]) {
         const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
         button.addEventListener('mousedown', event => event.preventDefault());
         button.addEventListener('click', () => { try { Promise.resolve(action()).catch(report); } catch (error) { report(error); } }); tools.append(button);
@@ -108,19 +139,40 @@ function makePeer(name) {
     return peer;
 }
 const named = name => { const peer = peers.find(value => value.name === name); if (!peer) throw Error('Unknown editor'); return peer; };
-const mountPeer = peer => mount(peer, true);
+const mountPeer = peer => exclusive(() => shared ? resetShared() : mount(peer, true));
 window.__localDemo = {
     ready: false,
-    snapshot: () => ({ready: window.__localDemo.ready, errors: [...errors], peers: peers.map(peer => {
+    get busy() { return busy; },
+    snapshot: () => ({ready: window.__localDemo.ready, mode, shared, busy, clientCount: new Set(peers.map(peer => peer.client)).size, hostCount: new Set(peers.map(peer => peer.host)).size, sameClient: peers.length > 0 && peers.every(peer => peer.client === peers[0].client), actor: sharedClient?.actor ?? null, errors: [...errors], peers: peers.map(peer => {
         const model = peer.client.model(), native = peer.read();
-        return {name: peer.name, model, native, text: textOf(model), nativeText: textOf(native), selection: peer.range(), history: peer.client.historyStatus(), notificationErrors: peer.client.notificationErrors};
+        return {name: peer.name, actor: peer.client.actor, model, native, text: textOf(model), nativeText: textOf(native), selection: peer.range(), history: peer.client.historyStatus(), notificationErrors: peer.client.notificationErrors};
     })}),
     reset: name => mountPeer(named(name)),
-    remount: name => mount(named(name)),
+    remount: name => exclusive(() => mount(named(name))),
     insertPrefix: name => named(name).client.edit([{op: 'insert', at: [0, 0], content: 'Local '}]),
     select: (name, range) => named(name).select(range),
     undo: name => named(name).binding.undo(), redo: name => named(name).binding.redo(),
 };
-try { for (const name of ['ProseMirror', 'Slate', 'Lexical']) await mount(makePeer(name)); window.__localDemo.ready = true; }
-catch (error) { report(error); }
-window.addEventListener('pagehide', event => { if (event.persisted) return; for (const peer of peers) { peer.cleanup?.(); peer.client?.dispose(); } });
+document.body.dataset.mode = mode;
+for (const link of document.querySelectorAll('[data-mode]')) {
+    if (link.dataset.mode === mode) link.setAttribute('aria-current', 'page');
+}
+if (shared) {
+    document.querySelector('#mode-description').textContent = 'Four native views share one document, one local actor, and one Undo history. Each view keeps its own selection.';
+    document.querySelector('#reset-description').textContent = 'Memory only. Refresh restores the sample. Reset shared document restores all four views. Remount keeps the document and history.';
+    const reset = document.querySelector('#reset-shared'); reset.hidden = false;
+    reset.addEventListener('click', () => exclusive(resetShared).catch(report));
+}
+try {
+    for (const name of shared ? ['Custom', 'ProseMirror', 'Slate', 'Lexical'] : ['ProseMirror', 'Slate', 'Lexical']) makePeer(name);
+    await exclusive(async () => {
+        if (shared) sharedClient = newClient(peers[0]);
+        for (const peer of peers) await mount(peer);
+    });
+    window.__localDemo.ready = true;
+} catch (error) { report(error); }
+window.addEventListener('pagehide', event => {
+    if (event.persisted) return;
+    peers.forEach(detach);
+    for (const client of new Set(peers.map(peer => peer.client))) client?.dispose();
+});

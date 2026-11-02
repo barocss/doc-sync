@@ -26,7 +26,25 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 
 ## Regression coverage
 
-The final local-editing integration passes **1,244 full-workspace cases on
+The final shared-custom-editor integration passes **1,254 full-workspace cases
+on macOS: 1,252 PASS, two platform SKIPs, zero FAIL**, with default fuzz settings.
+The groups are library 758, Core 136, Lexical 7, Slate 4, bot 53, demo 81,
+documentation 34 and MCP 181. Root type checking passes. The existing shared
+15-scenario and independent three-editor Chrome proofs use identical runtime
+inputs and are reused; this publication does not claim a new browser run.
+
+The host-based custom-editor checkpoint adds a shared plain-text LocalClient
+mode with Custom, ProseMirror, Slate and Lexical. Its separate 15-scenario Chrome
+run verifies native edits in all directions, per-view stable selections, shared
+toolbar/keyboard undo/redo, paragraph split/join/range deletion, remount, shared
+reset and refresh. All four native models match; document requests and
+notification/console/page errors are zero with networking disabled. Focused demo
+tests pass 13/13, Core 136/136, native bindings 18/18 and documentation 34/34;
+root type checking passes. All 146 generated package files match the preceding
+main publication. This is bounded plaintext shared-view proof, not rich-schema,
+network collaboration, Chrome composition or actual OS IME acceptance.
+
+The preceding local-editing main publication passed **1,244 full-workspace cases on
 macOS: 1,242 PASS, two platform SKIPs, zero FAIL**, with default fuzz settings.
 The groups are library 758, Core 136, Lexical 7, Slate 4, bot 53, demo 71,
 documentation 34 and MCP 181. This is a fresh main-worktree run of the combined

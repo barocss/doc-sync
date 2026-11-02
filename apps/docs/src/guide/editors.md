@@ -34,9 +34,10 @@ Start with one of these examples:
 
 The API guide is also available under **Guide → Local editing (LocalClient)**.
 For an interactive example, [run the LocalClient demo](./local-editing#run-the-local-editor-demo).
-It opens independent ProseMirror, Slate and Lexical documents without a document
-server. Local state is not saved after a refresh. The separate product demo uses
-synchronized clients.
+Choose independent ProseMirror, Slate and Lexical documents, or Shared document
+to connect a host-based custom textarea and all three native editors to one
+LocalClient. No document server is required. Local state is not saved after a
+refresh. The separate product demo uses synchronized clients.
 
 ## Choose the client engine
 

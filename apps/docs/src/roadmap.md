@@ -25,8 +25,10 @@ The local document bot has a separate ordered [bot roadmap](https://github.com/b
    The dedicated [local demo](./guide/local-editing#run-the-local-editor-demo)
    passes Chrome input, selection, undo/redo, application-edit selection
    restoration, remount, reset and refresh checks in ProseMirror, Slate and
-   Lexical with document networking disabled. The current Tiptap extension still
-   requires SyncClient. Broader composition, rich-schema browser behavior,
+   Lexical with document networking disabled. A host-based custom textarea and
+   all three native editors also pass shared-document Chrome checks, including
+   per-view selection, shared History and plain paragraph operations. The
+   current Tiptap extension still requires SyncClient. Broader composition, rich-schema browser behavior,
    actual BFCache navigation, mobile editing and actual OS IME remain open.
 3. **L3: Explicit persistence and recovery — open.** Define save/open formats,
    failures, migrations and History retention. A refresh currently loses local

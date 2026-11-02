@@ -24,6 +24,7 @@
     "dev:products": "node apps/demo/products/start.mjs",
     "dev:local": "node apps/demo/local/start.mjs",
     "check:local": "node apps/demo/local/check-browser.mjs",
+    "check:local:shared": "node apps/demo/local/check-shared-browser.mjs",
     "build": "node scripts/build-packages.mjs",
     "pretest": "npm run build",
     "pretypecheck": "npm run build",

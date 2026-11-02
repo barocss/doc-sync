@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {LocalClient} from '@barocss/doc-sync-core/local';
+import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync-core/local';
 import {bundleLocalDemo} from '../local/build.mjs';
 import {startLocalPreview} from '../local/serve.mjs';
-import {LOCAL_SCHEMA, seedEdits, SEED_TEXT, textOf} from '../local/model.js';
+import {LOCAL_SCHEMA, SHARED_SCHEMA, seedEdits, sharedSeedEdits, SEED_TEXT, textOf} from '../local/model.js';
 
 test('local demo seed has independent documents, rich marks and empty history', () => {
     const clients = ['one', 'two', 'three'].map(actor => new LocalClient({schema: LOCAL_SCHEMA, actor}));
@@ -20,6 +20,41 @@ test('local demo seed has independent documents, rich marks and empty history', 
         clients[0].undo(); assert.deepEqual(clients[0].model(), initial);
         clients[0].redo(); assert.match(textOf(clients[0].model()), /^Local /);
     } finally { clients.forEach(client => client.dispose()); }
+});
+
+test('shared plain-text seed supports separate host origins, one history, and full document replacement', () => {
+    let client = new LocalClient({schema: SHARED_SCHEMA, actor: 'shared-test'});
+    const initialize = () => { client.edit(sharedSeedEdits(), null); client.clearHistory(); };
+    initialize();
+    let hosts = Array.from({length: 4}, () => createLocalEditorHost(client));
+    let releases: (() => void)[] = [];
+    try {
+        const seed = structuredClone(client.model());
+        assert.equal(textOf(seed), `${SEED_TEXT}\nKeep your notes here.`);
+        assert.deepEqual(SHARED_SCHEMA.marks, []);
+        for (const paragraph of seed.children!) {
+            assert.equal(paragraph.type, 'paragraph');
+            for (const run of paragraph.runs!) {
+                assert.ok('text' in run);
+                assert.ok(!run.marks || Object.keys(run.marks).length === 0);
+            }
+        }
+        const updates = [0, 0, 0, 0];
+        releases = hosts.map((host, index) => host.subscribe({modelEvents() { updates[index]++; }}));
+        const ops = hosts[0].apply([{op: 'insert', at: [1, 4], content: ' shared'}]); hosts[0].commit(ops);
+        assert.equal(updates[0], 0); // Native author already applied its edit.
+        assert.ok(updates.slice(1).every(count => count > 0));
+        assert.ok(hosts.every(host => host.historyStatus().canUndo));
+        hosts[3].undo(); assert.deepEqual(client.model(), seed);
+        hosts[2].redo(); assert.match(textOf(client.model()), /Keep shared/);
+        // Reset releases all old views before disposal; all new hosts borrow one fresh client.
+        releases.forEach(release => release()); releases = []; client.dispose();
+        client = new LocalClient({schema: SHARED_SCHEMA, actor: 'shared-test'}); initialize();
+        hosts = Array.from({length: 4}, () => createLocalEditorHost(client));
+        assert.ok(hosts.every(host => host.client === client));
+        assert.deepEqual(client.model(), seed);
+        assert.deepEqual(client.historyStatus(), {canUndo: false, canRedo: false});
+    } finally { releases.forEach(release => release()); client.dispose(); }
 });
 
 test('browser bundle uses public built local entry and emits no sync client, transport or document server', async () => {

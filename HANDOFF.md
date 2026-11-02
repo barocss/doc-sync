@@ -4628,3 +4628,154 @@ Workflow entry points are
 [documentation](https://github.com/barocss/doc-sync/actions/workflows/docs-pages.yml)
 and [MCP recovery](https://github.com/barocss/doc-sync/actions/workflows/mcp-durable-recovery.yml).
 Local PASS alone is not proof of remote push, CI or deployment completion.
+
+### 5.111 Host-based custom editor and shared LocalClient Chrome demo
+
+The local demo now has a Shared document mode (`?mode=shared`) alongside the
+existing independent mode. Custom textarea, ProseMirror, Slate and Lexical use
+exactly one LocalClient and four distinct LocalEditorHosts. They share one actor,
+document and undo/redo History. Selection remains per view rather than being
+copied as a global caret. Existing independent mode keeps its three separate
+clients and rich seed.
+
+`apps/demo/local/custom-editor.mjs` exports the reusable demo adapter
+`mountCustomEditor(textarea, host, {onError})`. The adapter reads and edits through
+the public EditorHost contract only; it does not access LocalClient internals,
+Doc, History, transport or server. It is a demo module, not a new Core export.
+Its declaration is adjacent in custom-editor.d.mts. The primary custom-editor
+guide now mounts it through createLocalEditorHost and includes a shared native
+ProseMirror example with explicit borrowed-client ownership. The executable guide
+test loads this actual adapter rather than the earlier direct-client toy code.
+
+The renderer supports a flow root with one plain text paragraph type, no marks
+or attributes. Textarea newlines map to paragraph boundaries. Rich shapes,
+text:false, inline children and child rules are rejected at mount before model,
+History, textarea or listener mutation. Supported native edits compute the
+changed UTF-16 interval, preserve unchanged identities, collect original
+apply/deleteRange/split operations in order, and commit once. DOM-derived
+readModel reconstructs the native paragraph model from textarea.value; it does
+not return the authoritative model to manufacture equality. Anchors retain
+forward/backward/collapsed ranges across other views' edits without taking focus.
+Composition uses an isolated host session and reserves clocks during foreign
+updates. Headless tests cover draft publication and concurrent application input;
+Chrome composition and actual OS IME remain NOT_RUN.
+
+Remount recreates one view while retaining the shared client and History.
+Reset shared document detaches all observers before disposing that client and
+mounts all four views against a new seeded client with empty History. Controls
+are disabled while mounting; a live busy getter lets probes avoid stale/disposed
+view state. Page teardown disposes each unique client once and keeps the existing
+persisted-page guard. Refresh clears local edits. There is still no persistence,
+automatic tab/process synchronization or network collaboration in this demo.
+
+Fresh Node 24.22.1 checks pass focused demo/adapter 13/13 (four demo and nine
+adapter cases), Core 136/136, native local/Slate/Lexical bindings 18/18, docs
+34/34 and root type checking. The docs production build and English checks pass
+42 pages and 1,856 internal links. All 146 generated package files are
+byte-identical to main bfbcc28e38a33106445b1d9bbc98ceaa41c83554. No Core, native
+binding, wire or collaboration rule implementation is changed in this phase.
+The earlier 1,244-case full-workspace run keeps its publication scope; a new full
+workspace/MCP/Rust/package-consumer/performance run is not claimed here.
+
+Actual Google Chrome 156 proof is indexed in
+`output/custom-shared/validation-summary.json`:
+
+- Shared `shared-20261102-caret/receipt.json`: 15 scenario groups PASS. Trusted
+  Unicode input/delete from each of four views updates all native/client models.
+  Toolbar and keyboard undo/redo from other views act on the shared History.
+  Custom inactive forward/backward/caret ranges track native PM inserts with no
+  focus steal; each active editor keeps ranges through identical prefix inserts.
+  Native paragraph split, join and cross-paragraph deletion pass in all four.
+  Remount, shared reset and refresh preserve or clear state as specified.
+- Independent `independent-20261102-final/receipt.json`: the unchanged three-editor
+  browser checker passes on the new bundle, including its native input,
+  selection, History, application edits and lifecycle regressions.
+- Both checks archive and use the same served bundle SHA-256:
+  b4e3220e8d6e1c8fa3fce372fa053be9bf28a98bafb67d7d7381836c7d02d49c.
+  Client count is one and distinct-host count is four in shared mode. Emitted
+  forbidden modules, document network attempts/requests, notification errors,
+  console errors and page errors are zero. Editing is checked after network
+  access is disabled. Static files are still served by a loopback preview.
+- Desktop and 390x844 screenshot/overflow smoke checks pass. Broader mobile
+  editing, actual BFCache, shared Chrome composition, OS IME, physical display
+  latency and backend collaboration remain outside this proof.
+
+Three original shared failures are retained. The initial and fixed runs recorded
+an intended Slate Redo click that actually landed elsewhere because its toolbar
+was below the viewport. The checker now scrolls the inspected target into view,
+uses a unique selector and verifies the trusted click's pane and label. It does
+not call a model helper to substitute for the button. The third run required
+none/forward direction equality for a collapsed textarea caret; the final check
+keeps exact caret positions and compares direction only for noncollapsed ranges.
+The actual missing busy probe and unsupported-schema guards were also corrected.
+No engine or native binding change was needed to make cross-view History pass.
+
+Run `npm run dev:local`, select Shared document, then use
+`npm run check:local:shared -- --url http://127.0.0.1:PORT --output output/custom-shared/chrome`
+to reproduce the shared proof with the installed agent-browser CLI. Root README,
+local demo README, integration/custom/local guides, status and L2 roadmap now
+explain both modes and their limits. Detailed source hashes and check scopes are
+in `output/custom-shared/final-verification.json`.
+
+The new static preview stays running at http://127.0.0.1:49231/?mode=shared and
+is open in a new in-app browser tab. The user's earlier 50832 demo, documentation
+service, tabs and prior evidence are preserved. Only the task's superseded
+64289 preview and validation-owned Chrome sessions were closed. Changes remain
+uncommitted; no push, Pages deployment, registry release or domain change was
+performed in this task.
+
+### 5.112 Final shared-custom-editor review and main publication
+
+This checkpoint publishes the reviewed host-based custom textarea, the shared
+four-view LocalClient mode, strict plain-text schema boundary, lifecycle/reset
+controls, reproducible Chrome checker, focused regressions and current English
+guides. It changes no Core/native-binding implementation, public package export,
+lockfile, wire rule or registry release configuration.
+
+The fresh Node 24.22.1 full-workspace run passes 1,254 cases: 1,252 PASS, two
+expected platform SKIPs, zero FAIL. Groups are library 758, Core 136, Lexical 7,
+Slate 4, bot 53, demo 81, docs 34 and MCP 181. The demo group includes all
+13 focused custom/local cases. Default fuzz settings are used; no new enhanced
+3,000-seed or nightly session result is claimed. The macOS SKIPs cover
+unsupported-platform lock rejection and Linux-helper error handling.
+
+Fresh root type checking, final documentation 34/34, production build and
+42-page/1,856-internal-link English checks pass. The full test prebuild reproduces
+all 146 generated package files exactly. The preceding six-tarball/seven-consumer
+result retains its existing scope: package sources, manifests, declarations,
+build/check scripts and dependency lock are unchanged, and no new package-consumer
+run is claimed for this demo-only publication. Native local-view behavior is
+covered by the browser and workspace regressions, not reclassified tarball tests.
+
+Independent read-only source review found no remaining blocker in operation
+ownership, selection, composition sessions, schema rejection, shared reset,
+unique-client disposal, borrowed-client lifecycle or guide claims. Current
+20-file source and 146-file runtime hashes matched section 5.111's verification
+receipt before final publication prose was added. No runtime or test code
+changes follow the full suite. The status page now records this fresh combined
+run separately from the preceding 1,244-case publication.
+
+The existing shared 15-scenario and independent three-editor Chrome proofs from
+section 5.111 are reused with identical runtime/demo inputs. This is not a new
+Chrome run. Their actual Google Chrome, trusted input, model/DOM comparison,
+network-blocking, error, lifecycle and schema limits remain unchanged. Actual
+OS IME, shared browser composition, broad mobile behavior, actual BFCache,
+network collaboration, Rust and performance acceptance are not added by this
+publication. Initial failed browser records and their harness explanations are
+preserved.
+
+Git preflight found exactly the intended 20 changed files, an empty index,
+clean diff checks and no tracked build/dependency/output artifacts. Main and
+fetched origin/main both pointed to bfbcc28e38a33106445b1d9bbc98ceaa41c83554 before
+staging. Publication uses one cohesive normal main commit and push. No package
+release, domain change, worktree cleanup or user tab/service reset is included.
+The existing 49231 shared demo and earlier 50832 demo remain available.
+
+Exact reviewed hashes and final local checks are recorded in
+`output/custom-shared-publication/final-verification.json`. The final commit,
+remote ref, documentation/MCP workflow runs and public Pages byte checks are
+recorded after publication in `publication.json` in that same ignored directory.
+Workflow entry points are
+[documentation](https://github.com/barocss/doc-sync/actions/workflows/docs-pages.yml)
+and [MCP recovery](https://github.com/barocss/doc-sync/actions/workflows/mcp-durable-recovery.yml).
+A local test PASS does not by itself establish push, CI or deployment success.

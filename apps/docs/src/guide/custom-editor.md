@@ -7,21 +7,27 @@ adapter can handle them.
 
 Choose the session type with the
 [LocalClient and SyncClient comparison](./local-editing#localclient-and-syncclient).
-The textarea example below uses LocalClient and keeps its document in memory.
-To try native editors first, [run the LocalClient demo](./local-editing#run-the-local-editor-demo)
-with ProseMirror, Slate and Lexical.
+The textarea example below uses a LocalClient through an EditorHost and keeps
+its document in memory. To try it with native editors,
+[run the local editor demo](./local-editing#run-the-local-editor-demo), then add
+`?mode=shared` to the demo URL. Shared mode shows Custom, ProseMirror, Slate and
+Lexical views of one document.
 
 ## Mount a plain textarea
 
-This example uses `LocalClient` and one plain-text paragraph. It runs in memory.
-Put a `<textarea>` in your page and call `mountTextArea(textarea)` from your
-application. Build the Core workspace first, as described in
-[Packages and engines](./packages).
+The reusable `mountCustomEditor(textarea, host, {onError})` adapter is a demo
+module. It is not an export of the Core package. Copy
+[`custom-editor.mjs`](https://github.com/barocss/doc-sync/blob/main/apps/demo/local/custom-editor.mjs)
+and its [TypeScript declaration](https://github.com/barocss/doc-sync/blob/main/apps/demo/local/custom-editor.d.mts)
+into your application beside the example below. Put a `<textarea>` in your page
+and call `mountTextArea(textarea)`. Build the Core workspace first, as described
+in [Packages and engines](./packages).
 
 <!-- custom-editor-example -->
 ```ts
-import {type EditOp, type Schema} from '@barocss/doc-sync-core';
-import {LocalClient} from '@barocss/doc-sync-core/local';
+import type {Schema} from '@barocss/doc-sync-core';
+import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync-core/local';
+import {mountCustomEditor} from './custom-editor.mjs';
 
 export function mountTextArea(textarea: HTMLTextAreaElement) {
     const schema: Schema = {
@@ -33,90 +39,84 @@ export function mountTextArea(textarea: HTMLTextAreaElement) {
         },
     };
     const client = new LocalClient({schema});
-    let saved: ReturnType<typeof client.captureSelection> = null;
-    let nativeInput = false;
-    const text = () => (client.model().children?.[0]?.runs ?? [])
-        .map(run => 'text' in run ? run.text : '').join('');
-
-    function capture() {
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const backward = textarea.selectionDirection === 'backward';
-        saved = client.captureSelection({
-            anchor: [0, backward ? end : start],
-            focus: [0, backward ? start : end],
-        });
-    }
-    function render() {
-        textarea.value = text();
-        const range = client.resolveSelection(saved);
-        if (!range) return;
-        const anchor = range.anchor[1];
-        const focus = range.focus[1];
-        textarea.setSelectionRange(Math.min(anchor, focus), Math.max(anchor, focus),
-            anchor > focus ? 'backward' : 'forward');
-    }
-    function input() {
-        const previous = text();
-        const next = textarea.value;
-        if (previous === next) { capture(); return; }
-        // Keep unchanged UTF-16 units and their document identities.
-        let start = 0;
-        const limit = Math.min(previous.length, next.length);
-        while (start < limit && previous[start] === next[start]) start++;
-        let beforeEnd = previous.length;
-        let afterEnd = next.length;
-        while (beforeEnd > start && afterEnd > start
-            && previous[beforeEnd - 1] === next[afterEnd - 1]) {
-            beforeEnd--;
-            afterEnd--;
-        }
-        const edits: EditOp[] = [];
-        if (beforeEnd > start) edits.push({op: 'delete', at: [0, start], count: beforeEnd - start});
-        if (afterEnd > start) edits.push({op: 'insert', at: [0, start], content: next.slice(start, afterEnd)});
-        nativeInput = true;
-        try { client.edit(edits); }
-        finally { nativeInput = false; }
-        capture();
-    }
-    const stop = client.subscribe({modelEvents() { if (!nativeInput) render(); }});
-    textarea.value = text();
-    capture();
-    textarea.addEventListener('input', input);
-    textarea.addEventListener('select', capture);
-    textarea.addEventListener('keyup', capture);
-    textarea.addEventListener('pointerup', capture);
-
+    const host = createLocalEditorHost(client);
+    const binding = mountCustomEditor(textarea, host, {
+        onError(error: unknown) { console.error('Textarea edit failed', error); },
+    });
     return {
-        client, // Application edits, undo() and redo() also update the textarea.
+        client,
+        host,
+        binding,
         dispose() {
-            textarea.removeEventListener('input', input);
-            textarea.removeEventListener('select', capture);
-            textarea.removeEventListener('keyup', capture);
-            textarea.removeEventListener('pointerup', capture);
-            stop();
-            client.dispose();
+            binding.dispose();
+            client.dispose(); // This function created and owns the client.
         },
     };
 }
 ```
 
-Both textarea selection offsets and document text offsets use UTF-16 units.
-A backward selection has its anchor at `selectionEnd` and focus at
-`selectionStart`. Keep that direction when you restore the range. Captured
-endpoints can become unavailable after deletion; this example leaves the
-browser's collapsed selection when resolution returns null.
+The flow root can contain multiple plain-text paragraphs. A newline in the
+textarea separates two paragraphs. The adapter rejects rich text, attributes,
+child rules, inline nodes and text nodes with `text: false`. Use a different
+binding for these shapes.
 
-The adapter compares the common prefix and suffix, then deletes or inserts only
-in the changed range. Unchanged text keeps its document identities. The
-comparison can scan the paragraph; this is a small integration example, not a
-large-document performance result.
+The adapter compares the common prefix and suffix. It deletes or inserts only
+the changed range and uses split or merge operations for paragraph boundaries.
+Unchanged text keeps its document identities. Each native input collects the
+operations from host apply calls and commits them as one batch. The comparison
+can scan the text; this example does not establish large-document performance.
 
-The example supports one plain-text paragraph. It does not preserve rich text,
-inline nodes, tables, multiple blocks or native history. Composition and actual
-OS IME behavior are not qualified. A production adapter needs composition
-handling, error recovery and browser tests. Call `dispose()` when you remove the
-editor.
+Both textarea offsets and document text offsets use UTF-16 units. The adapter
+maps offsets to paragraph paths, captures selection anchors and restores
+backward ranges. It uses an EditorHost composition session for composition
+drafts. Actual OS IME behavior is **NOT_RUN**; fake EventTarget tests do not
+qualify browser input behavior.
+
+Call `binding.undo()` and `binding.redo()` for adapter history actions. Application
+edits through `client.edit()` also update the textarea. Call `dispose()` when
+you remove the editor. The binding removes its listeners and cancels its draft;
+it does not dispose the borrowed client. The wrapper above disposes the binding
+first, then its owned client. The error callback reports failures. It does not
+provide save, recovery or automatic merging between clients.
+
+## Share one client with a native editor
+
+Use one host per view. This example borrows a LocalClient that uses the plain
+schema above, and mounts a textarea beside a native ProseMirror view:
+
+```ts
+import type {LocalClient} from '@barocss/doc-sync-core/local';
+import {createLocalEditorHost} from '@barocss/doc-sync-core/local';
+import {PmHostBinding, buildPmSchema} from '@barocss/doc-sync-prosemirror';
+import {EditorView} from 'prosemirror-view';
+import {mountCustomEditor} from './custom-editor.mjs';
+
+function mountShared(client: LocalClient, textarea: HTMLTextAreaElement, mount: HTMLElement) {
+    const customHost = createLocalEditorHost(client);
+    const pmHost = createLocalEditorHost(client);
+    const custom = mountCustomEditor(textarea, customHost, {onError: console.error});
+    const pm = new PmHostBinding(pmHost, buildPmSchema(client.schema));
+    const view = new EditorView(mount, {
+        state: pm.state,
+        dispatchTransaction: tr => pm.dispatch(tr),
+    });
+    pm.view = view;
+    pm.onChange = () => view.updateState(pm.state);
+    return () => {
+        custom.dispose();
+        pm.dispose();
+        view.destroy();
+        // The caller owns client and disposes it after all views detach.
+    };
+}
+```
+
+Both views share one model, one actor and one undo/redo history. Each view keeps
+its own selection; the client does not supply a global caret. An edit in either
+view updates the other through model notifications in the same JavaScript
+runtime. LocalClient supplies no transport. Two independent clients do not
+exchange or merge edits. See [local editing](./local-editing#share-a-document-between-local-editors)
+for the shared-client lifecycle.
 
 ## Build a structured binding
 

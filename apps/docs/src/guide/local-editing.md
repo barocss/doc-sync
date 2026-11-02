@@ -10,9 +10,11 @@ use the built workspace or local tarballs described in [Packages and engines](./
 
 ## Run the local editor demo
 
-The dedicated demo opens ProseMirror, Slate and Lexical. Each editor owns an
-independent LocalClient document and undo stack. Edits do not move between the
-three panels.
+The dedicated demo has two modes. **Independent documents** opens ProseMirror,
+Slate and Lexical with separate LocalClients and undo stacks. **Shared document**
+opens a custom textarea plus those three editors on one LocalClient. Each shared
+view has its own host and selection; all four views use the same document,
+actor and undo stack.
 
 From a repository checkout with Node 22.18 or later. The verified workflow uses
 Node 24.22.1 and Chrome 156:
@@ -28,26 +30,30 @@ a loopback static preview for HTML and JavaScript. It starts no document server,
 SyncClient, transport or MCP service. Editing runs in the browser's memory.
 
 Type in each editor, select a forward or backward range, and use its Undo and
-Redo controls. Use the application-edit control to check that a local edit can
-update the native view while retaining its selection. Each editor has its own
-reset control. Reloading the page starts again from the sample document; it does
-not recover your edits.
+Redo controls. Use Insert prefix to check that an application edit can update
+the native view while retaining its selection. Independent mode has a reset
+control for each document. Shared mode has Reset shared document for all views
+and Remount for each view. Reloading starts again from the sample; it does not
+recover your edits.
 
 To repeat the Chrome checks while the preview is running:
 
 ```sh
 npm run check:local -- --url http://127.0.0.1:PORT --output output/local-demo/chrome
+npm run check:local:shared -- --url http://127.0.0.1:PORT --output output/custom-shared/chrome
 ```
 
 Replace `PORT` with the printed port. The check uses an isolated Google Chrome
 session and the installed `agent-browser` CLI. See the
 [demo source and setup](https://github.com/barocss/doc-sync/tree/main/apps/demo/local)
-for the exact controls and verification scope. This small text demo includes a
-formatted sample. It does not qualify every schema shape, product layout or actual OS IME.
+for the exact controls and verification scope. Independent mode includes a
+formatted sample. Shared mode uses plain-text paragraphs without marks or
+attributes so the custom renderer can represent the complete model. Neither
+mode qualifies every schema shape, product layout or actual OS IME.
 
 ### Verified browser behavior
 
-Chrome 156 passes the following checks in all three native editors:
+In independent mode, Chrome 156 passes the following checks in all three native editors:
 
 - Unicode input and deletion with native/client model equality.
 - Forward, backward and collapsed selections.
@@ -69,6 +75,22 @@ check confirms that cached-page teardown is skipped and editing remains usable.
 Actual BFCache navigation, actual OS IME, broad mobile editing and rendering
 latency are not qualified by these checks. Receipts retain the first failures
 and the final run; see HANDOFF section 5.109 in the repository for their locations.
+
+Shared mode has a separate 15-scenario Chrome check. It verifies one client and
+four distinct hosts, trusted input from every view, cross-view toolbar and
+keyboard undo/redo, and exact native/shared model equality. Custom selections
+retain their positions and direction after another native view edits, without
+stealing focus. Each active editor also preserves forward/backward ranges after
+repeated identical application prefixes. Native paragraph split, join and
+cross-paragraph deletion pass in all four views.
+
+The shared check also covers remount retaining document/History, shared reset,
+refresh, blocked document networking and a mobile screenshot/overflow smoke
+check. Selection remains per view; it is not copied as a global caret. The
+adapter uses composition sessions, with focused headless tests for concurrent
+application input; shared Chrome composition and actual OS IME are **NOT_RUN**.
+See [the host-based custom editor](./custom-editor) for the implementation and
+schema limits. Current shared-mode receipts are recorded in HANDOFF section 5.111.
 
 ## LocalClient and SyncClient
 
@@ -212,8 +234,9 @@ either view acts on that shared History.
 This works within one JavaScript runtime. Two independent LocalClient instances
 do not exchange or merge edits, even if they use the same actor. Separate tabs,
 workers or processes require an explicit communication and synchronization
-design; LocalClient supplies no such transport. The executable demo above uses
-three independent clients, so its panels intentionally do not share edits.
+design; LocalClient supplies no such transport. The demo's default independent
+mode keeps its panels separate. Select Shared document, or append `?mode=shared`
+to the printed preview URL, to try four views of one local document.
 
 ## Capture a selection
 
