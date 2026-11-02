@@ -7,6 +7,7 @@ Six packages provide Core, four editor bindings, and a compatibility facade. All
 | Import | Main exports |
 |---|---|
 | `@barocss/doc-sync` | `Doc`, `History`, `commands`, model/schema/position helpers, and shared types. |
+| `@barocss/doc-sync/client` | `Client`, `createEditorHost`, `BindingClient`, client options and types. |
 | `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `typescriptClientEngineFactory`, `ClientEngineFactory`, `upgradeOpenEditorSchema`, `OpenEditorSchemaHost`, `ModelRange`, protocol constants and types. |
 | `@barocss/doc-sync/node` | `NodeHttpTransport`, `NodeHttpTransportOptions` for Node.js HTTP and SSE synchronization. |
 | `@barocss/doc-sync/server` | `DocHub`, `HubOptions`. |
@@ -15,7 +16,27 @@ Six packages provide Core, four editor bindings, and a compatibility facade. All
 | `@barocss/doc-sync/slate` | `SlateBinding`, schema codecs and selection conversion. |
 | `@barocss/doc-sync/lexical` | `LexicalBinding`, `buildLexicalSchema`, schema nodes and selection conversion. |
 
-These eight compatibility entry points re-export the independent packages. Current package exports resolve compiled ESM JavaScript and declarations. Local tarball installation is verified; registry publication and release policy remain separate gates.
+These compatibility entry points (including the new `/client` entry) re-export the independent packages. Current package exports resolve compiled ESM JavaScript and declarations. Local tarball installation is verified; registry publication and release policy remain separate gates.
+
+## Client
+
+Core `/client` exports `Client`, `BindingClient`, `ClientOptions`,
+`createEditorHost`, `clientOwner`, `isBindingClient` and `ClientNotificationError`.
+`Client` is also exported at the Core and facade roots and the facade `/client`
+entry. `BindingClient` is `Client | LocalClient | SyncClient`.
+
+`new Client({schema, actor?, transport?, syncOptions?})` fixes the mode at
+construction. No transport creates only a LocalClient. A transport requires an
+actor and selects the existing SyncClient. `edit(edits, record?)` applies and
+records once; sync mode also queues the exact operations. Do not commit its
+return value again. `model()` returns a borrowed immutable model.
+
+Common methods cover History, anchors, selections, observers, status, connection
+and presence. Local status remains offline/unsynchronized and presence empty.
+`client.sync` is null locally and is the actual SyncClient in sync mode. Use it
+for advanced conditional editing, recovery and schema transition APIs. The
+facade adds no storage, live mode conversion or Rust/WASM backend. See the
+[Client guide](../guide/client) for complete usage, disposal and limits.
 
 ## Memory-only client
 
@@ -31,7 +52,7 @@ API. See [local editing](../guide/local-editing) for complete usage and limits.
 
 `@barocss/doc-sync-core/editor` exports `EditorHost`, `EditorSession`, and `createSyncClientEditorHost(client)`. The adapter uses the selected production SyncClient engine and its input sessions. The TypeScript implementation keeps ordinary single-text edits on an incremental path. Model values are borrowed immutable views with generation/revision stamps.
 
-The independent binding packages export `PmHostBinding`, `SlateHostBinding`, and `LexicalHostBinding`. Legacy client constructors share those implementations and preserve `.client`; Lexical preserves its original `.input` session. Tiptap uses the shared PM implementation. See [host integration](../guide/packages#connect-prosemirror-through-an-editor-host) for examples. Only the TypeScript production factory ships; a Rust/WASM adapter is not selectable.
+The independent binding packages export `PmHostBinding`, `SlateHostBinding`, and `LexicalHostBinding`. Client constructors accept Client, LocalClient or SyncClient and preserve `.client`. Raw SyncClient keeps its legacy path; Lexical preserves its original `.input` session in that path. Tiptap uses the shared PM implementation. See [host integration](../guide/packages#connect-prosemirror-through-an-editor-host) for examples. Only the TypeScript production factory ships; a Rust/WASM adapter is not selectable.
 
 `OpenEditorSchemaHost` below is the application-owned native editor rebuild lifecycle. It is separate from the backend-facing `EditorHost` interface.
 

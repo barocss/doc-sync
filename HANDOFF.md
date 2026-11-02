@@ -1,6 +1,8 @@
 # Handoff — @barocss/doc-sync
 
-Latest publication review is in **§5.105**. Selected TypeScript client engines
+The unified Client API, four-editor demo, input-ownership corrections and current
+verification are in **§5.113**. This working-tree change is not a new publication.
+Latest publication review is in **§5.112**. Selected TypeScript client engines
 and their verification limits are described in **§5.104**.
 The numbered Rust/WASM delivery queue is in **§5.103**.
 Final review, Rust SDK/WASM usage, and the main publication checkpoint
@@ -4779,3 +4781,189 @@ Workflow entry points are
 [documentation](https://github.com/barocss/doc-sync/actions/workflows/docs-pages.yml)
 and [MCP recovery](https://github.com/barocss/doc-sync/actions/workflows/mcp-durable-recovery.yml).
 A local test PASS does not by itself establish push, CI or deployment success.
+
+
+### 5.113 Unified local and synchronized Client
+
+**API and ownership.** Core `/client` exports `Client`, `BindingClient`, the host
+factory and client helpers. The facade adds `/client`; both roots export Client.
+`new Client({schema, actor?})` constructs only a LocalClient. Supplying a valid
+actor and transport constructs the existing SyncClient. Mode is fixed. The local
+backend has no SyncClient, server sequence, transport outbox, ACK timer or remote
+presence. The unified module graph does include sync code; the existing `/local`
+entry remains the narrower module boundary. Neither local mode nor a disconnected
+sync backend makes pending work durable.
+
+`edit()` applies, records and queues once as appropriate; do not commit its return
+value. Common methods cover immutable model reads, History, anchors, selections,
+subscriptions, status and presence. `client.sync` is null locally and exposes the
+actual synchronized backend for advanced conditional, recovery and schema APIs.
+Local persistence, local schema transitions, local-to-sync handoff, live engine
+switching and a Rust/WASM production factory remain open. `syncOptions` forwards
+the existing TypeScript engine factory, ACK delay and before-send persistence hook.
+
+**Bindings.** PmBinding, SlateBinding, LexicalBinding and DocSync accept Client or
+the legacy clients directly and create a distinct host per view. Existing explicit
+HostBindings remain available. Raw and structural SyncClient arguments retain the
+legacy route; Lexical retains its original InputSession in that route. The new
+sync bridge suppresses native self-echo and checks exact staged operation objects,
+origin and order. Composition completion rejects sibling uncommitted operations
+without discarding the active draft. Observer errors are isolated and bounded.
+Own change echoes do not recapture old native coordinates against the new model.
+The CRDT, History, sync, local backend, engine and server implementations are
+unchanged relative to main `0bc37f9af7ed41b2d268ebff51bc0e75e5b69f46`.
+
+**Defects exposed and fixed.** The first full run found the structural SyncClient
+fallback and missing old-demo import maps. The old synthetic cursor test was kept;
+all three unbundled pages now map Core `/client` and `/local` and facade `/client`.
+A Chrome Remount failure came from a DOM variable shadowing its mount function.
+
+Chrome then exposed a pre-existing Slate ownership bug, reproduced with raw and
+unified APIs. After Alice inserted `actorA ` and Bob inserted `actorB ` before it,
+JSON converged but a prefix diff reused Alice's `actor` tokens. Undo Alice produced
+`B actorEdit...`. Lexical reproduced the same defect. Slate now uses native text
+operation positions, validates the changed block, and replays complex leaf batches
+only within that block. Lexical uses a validated native selection splice and
+unchanged prefix/suffix and sibling checks. Other structures retain the guarded
+model fallback. These fixes preserve native input ownership without changing CRDT
+merge/History policy. Sixteen new cases cover raw/unified APIs, actual bold input,
+astral emoji, selected-range replacement, exact carets, retained identities and
+both participants' undo/redo.
+
+A separate review found Tiptap teardown could leave a dead callback under a later
+Client subscription. Retired owned hooks now forward application callbacks and
+resolve the live predecessor during restoration. Six lifecycle cases cover both
+mount/subscription orders, both disposal orders, exact restored callback identity,
+stopped observers, cancelled queued editor callbacks and unrelated replacement
+hooks. This changes Core's editor callback adapter, not the sync protocol.
+
+**Demo and Chrome.** Run `npm run dev:client` after installing the documented compat
+dependencies. Default `?mode=local` shares one Client across ProseMirror, Slate,
+Lexical and Tiptap. `?mode=sync` creates four actors on a queued in-browser DocHub
+transport. The server is a static asset preview, not an HTTP document backend.
+Use `?size=10000` or `?size=100000` for exact text payloads. `?api=legacy` is a
+current-code control; its local Tiptap route is newly supported, not a historical
+Tiptap local implementation.
+
+Final Chrome 156 default checks pass all eight binding/mode cases, unchanged
+shared/per-actor History assertions, offline edits plus a foreign participant,
+reconnect with pending zero and equal native/client models, trusted Unicode input,
+delete, forward/back/caret ranges, application prefix selection restoration,
+Remount, Reset and refresh. Local counters for hubs, subscriptions, sends and
+presence remain zero. Networking is blocked after static assets load; request,
+notification, console and page-error gates pass. Desktop and 390px screenshots
+have no horizontal overflow. OS IME, browser composition, physical display latency,
+HTTP document-server restart and rich-schema browser qualification are not supplied
+by this new demo. Existing bounded regression suites retain their own scopes.
+
+Functional receipt: `output/unified-client-delivery/chrome-functional-final-attempt-1/receipt.json`.
+All earlier failed attempts and the raw/unified native-ownership reproductions
+remain under the same directory. `source-freeze.json` records runtime/test source
+hashes. Existing user servers, tabs and other worktrees were preserved. The
+baseline worktree `doc-sync-client-baseline` is isolated at the original main SHA.
+
+**Packages and documentation.** Six rebuilt tarballs and seven isolated consumers
+pass. Checks include Core/facade Client root/subpath identity, compiled types,
+Core-only absence of editor dependencies, three direct Client native-binding
+consumers, legacy host and client types, Tiptap typing/native tests, and an
+independent Slate patch through the unchanged facade. Receipt:
+`output/binding-packages/pack-consumers.json`. Private package flags remain set;
+this is not registry publication.
+
+The new Client guide is the primary setup path. README, all four editor guides,
+custom adapter, local/sync comparison, packages, API, schema-transition, Rust,
+editing/block/rule introductions, AI server guide, editor lessons and roadmap
+explain the same boundaries. Low-level Doc examples and advanced HostBinding
+constructors remain valid. The custom wrapper creates its host internally.
+
+**Verification history.** The initial workspace run had 1,288 cases with two
+failures (structural compatibility and import maps), now fixed. A later full run
+passed the library, Core, native, bot, demo and docs groups but had one MCP
+SIGKILL-after-accept failure: an unexpected HTML response could not be parsed as
+JSON. No runtime cause was established. The isolated two-case recovery run and
+then the full MCP suite passed (179 PASS, two platform SKIPs). The failed log is
+retained as `full-tests-final.log`; focused and MCP rerun logs are adjacent.
+The final confirmation run and separate performance results are recorded below.
+
+
+**Final confirmation.** `full-tests-confirmation.log` is a fresh full-workspace
+run with **1,310 cases: 1,308 PASS, two platform SKIPs, zero FAIL**. Groups:
+library 793, Core 152, Lexical 7, Slate 4, bot 53, demo 85, docs 35 and MCP 181
+(179 PASS, two platform SKIPs). The default 500-seed fuzz suites ran. Root tsc and
+all six package/seven consumer checks pass. No source was changed to conceal the
+intermittent MCP failure above. Its cause remains unestablished.
+
+**Performance.** `benchmarks/results/unified-client/report.md` and its JSON/gzip
+artifacts preserve original captures, failures, repeated runs and hashes. The PM
+comparison uses isolated baseline/current package graphs, 10k/100k text, eight
+scenarios and disconnected sync. All 32 count/semantic pairs pass with no extra
+ordinary snapshots, restores or model/native reconstruction calls. First timing
+retains 8/32 flags. Focused ABBA passes all local rows, leaves two sync flags,
+and a final matched 60-sample-per-side investigation puts those two inside the
+original guards. Do not relabel the first timing as PASS.
+
+The independent native-input comparison uses raw SyncClient on both checkouts,
+so it measures the Slate/Lexical fixes separately from Client. All 16 semantic,
+History and count cells pass. Basic input uses zero snapshots/restores; marked
+replacement uses one of each in both versions. Internal codec conversion counts
+are not instrumented. A six-capture A-B-B-A-A-B run pools 24 samples per side.
+At 100k, insert medians are Slate 19.170 to 5.985 ms and Lexical 31.259 to
+18.450 ms. It retains one Slate 10k insert p95 flag: 2.123 to 4.481 ms, while
+median improves 1.333 to 0.947 ms. High candidate values occur in the first
+measured sample of two captures; a warmup/JIT or allocation cause is only a
+hypothesis. The tail is not qualified. Node guards remain median max(10%,0.1ms),
+p95 max(15%,0.2ms).
+
+Chrome timing completes **320 trusted inputs** (64 warmup, 256 measured), with
+all four target views observed. Functional/correctness assertions pass. All 64
+paired DOM medians, every sync cell and every 100k cell meet the declared guards.
+**59/64 full DOM cells pass**. Five local 10k p95 cells cross: PM→Slate 6.4→9.6ms;
+Slate→PM 3.1→5.2ms; Slate→Slate 6.0→9.7ms; Slate→Lexical 3.1→5.2ms;
+Slate→Tiptap 3.1→5.3ms. Overall timing remains **INVESTIGATE**. The DOM guards,
+declared before timing, are median max(10%,1ms) and p95 max(15%,2ms). Raw RAF2
+medians span 6.7–57.6ms and p95 13.6–71.8ms; these are rendering opportunities,
+not physical display latency or a strict performance PASS.
+
+The timed interval starts at trusted beforeinput, reads only the measurement
+object until all DOM/frame observations finish, and performs no diagnostic model
+snapshot in that interval. Selection setup is outside the clock. The full run
+uses a trusted first-block click and a selection helper, then asserts both native
+DOM and logical caret at zero. Native-key setup and trusted Tiptap input/undo
+pass all eight mode/API/size routes; helper/DOM setup passes all 32 editor/route
+combinations. Earlier selector/cursor failures and an interrupted partial run
+are retained separately and excluded from the final samples. The final functional
+and timing bundles both hash to
+`0e4983478afb6cc898342ac46209f729645a61b782413a8cbc70b9f57f08d31c`.
+
+Receipt: `output/unified-client-delivery/chrome-performance-final-attempt-4/receipt.json`.
+The control uses the same current native fixes; it is not an old-source Tiptap
+local implementation. Chrome's sync transport remains in-page. There is no new
+HTTP server-restart, actual OS IME, rich-schema browser, memory-saving, Rust/WASM
+or physical display acceptance claim.
+
+**Next bounded work.** Profile the retained Slate/local 10k early-input tails
+before changing algorithms or widening any guard. Local save/open and History
+retention, local schema transitions, explicit session handoff and Rust/WASM
+factory delivery remain separate roadmap items. The unified Client changes are saved in the local checkpoint commit described
+below; this task does not publish a package or update remote main.
+
+
+Final documentation checks: **35/35 PASS**, VitePress build PASS, **43 pages and
+1,942 internal links** checked, English prose and absence of local paths PASS.
+The final source freeze permits only the documented timing-harness setup change
+and demo README update after runtime verification; production code remains fixed.
+`benchmarks/results/unified-client/artifacts.json` binds preserved raw gzip files
+to their original byte counts and SHA-256 values. The local four-editor preview
+is running at `http://127.0.0.1:63439/`; docs remain at
+`http://127.0.0.1:5415/doc-sync/guide/client.html`. These are temporary local URLs.
+No user-owned server, tab, data directory or other worktree was removed.
+
+
+**Local checkpoint (2026-11-03).** The unified Client implementation, tests,
+documentation and preserved benchmark artifacts are committed together before
+performance follow-up. All 45 final source-freeze hashes match. All 91 preserved
+artifacts match their compressed, original-content and source-file hashes. The
+existing verification receipts remain valid; no long test suite was repeated.
+Performance remains **INVESTIGATE** for the five Chrome local 10k p95 cells and
+the Node Slate 10k insert p95 cell above. No push or release is part of this
+checkpoint.

@@ -22,7 +22,8 @@ re-exports the same implementations; it does not contain a second engine.
 Use the independent names in new applications:
 
 ```ts
-import {Doc, type Schema} from '@barocss/doc-sync-core';
+import {Doc, Client, type Schema} from '@barocss/doc-sync-core';
+// Client is also available from @barocss/doc-sync-core/client.
 import {SyncClient, HttpTransport} from '@barocss/doc-sync-core/sync';
 import {LocalClient, LocalEditorHost} from '@barocss/doc-sync-core/local';
 import {NodeHttpTransport} from '@barocss/doc-sync-core/node';
@@ -36,7 +37,8 @@ import {LexicalBinding} from '@barocss/doc-sync-lexical';
 This list shows available imports. Install only the bindings that your
 application uses, together with their required peers.
 
-The eight existing facade imports remain available: `@barocss/doc-sync`,
+The `/client` facade entry and root `Client` export provide the unified API.
+The eight existing facade imports also remain available: `@barocss/doc-sync`,
 `@barocss/doc-sync/sync`, `@barocss/doc-sync/node`,
 `@barocss/doc-sync/server`, `@barocss/doc-sync/prosemirror`,
 `@barocss/doc-sync/tiptap`, `@barocss/doc-sync/slate`, and
@@ -91,10 +93,19 @@ A compatible binding patch does not require source changes or a new version in
 Core, sibling bindings, or the facade. Registry publication still requires a
 separate release step and removal of the selected package's private flag.
 
+## Bind a client directly
+
+Prefer `new Client({schema})` for memory-only editing, or supply `actor` and
+`transport` for synchronization. Pass it directly to PmBinding, SlateBinding,
+LexicalBinding or `DocSync.configure({client})`. Each view gets its own host
+internally. See [Client](./client) and the [editor guides](./editors).
+The explicit host APIs below are available for advanced adapter ownership.
+
 ## Connect ProseMirror through an editor host
 
 `EditorHost` is the in-process interface between a binding and its document
-backend. The current adapter delegates to the existing TypeScript `SyncClient`.
+backend. `createEditorHost(client)` selects the local or sync adapter. The
+explicit sync adapter below delegates to the existing TypeScript `SyncClient`.
 It preserves pending edits, transport ownership, and actor-owned history:
 
 ```ts

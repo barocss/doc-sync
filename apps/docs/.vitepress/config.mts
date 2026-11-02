@@ -11,8 +11,9 @@ const guideSidebar = [
         {text: "Word, Notion and presentation schemas", link: "/guide/product-schemas"},
     ]},
     {text: "Build an editor", items: [
+        {text: "Client: local or synchronized", link: "/guide/client"},
         {text: "Model operations", link: "/guide/editing"},
-        {text: "Local editing (LocalClient)", link: "/guide/local-editing"},
+        {text: "Local editing and host APIs", link: "/guide/local-editing"},
         {text: "Schema-driven block operations", link: "/guide/blocks"},
         {text: "Document rules and annotations", link: "/guide/document-rules"},
         {text: "Synchronization", link: "/guide/sync"},

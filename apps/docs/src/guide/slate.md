@@ -2,9 +2,9 @@
 
 Use the built repository workspaces or local tarballs. These package names are not yet published on npm. See [Packages and engines](./packages) for Core, binding, and editor peer requirements.
 
-Use `SlateBinding` from **`@barocss/doc-sync-slate`**. It connects a Slate editor to a `SyncClient`. The binding handles local edits, remote updates, selection restoration, composition drafts, and collaboration history.
+Use `SlateBinding` from **`@barocss/doc-sync-slate`**. It connects a Slate editor to a [Client](./client). Omit the transport for local editing, or add an actor and transport for synchronization. The binding handles local edits, remote updates, selection restoration, composition drafts, and collaboration history.
 
-This is a subpath of the same library. It is not a separate adapter package. The library is still unpublished; the examples resolve through the repository workspace.
+This is a separate binding package. The old `@barocss/doc-sync/slate` subpath remains a compatibility export. The examples use built repository workspaces.
 
 ## Dependencies
 
@@ -18,12 +18,12 @@ For a React UI, also install your compatible React, React DOM, and `slate-react`
 
 ## Create the binding
 
-Start with a schema and one client per editor. This example creates an editor without mounting a UI. `HttpTransport` connects only after `client.connect()` is called.
+Start with a schema and a local client. This example creates an editor without mounting a UI. Several local views can share the same client and history.
 
 ```ts
 import {createEditor} from "slate";
 import {type Schema} from "@barocss/doc-sync-core";
-import {HttpTransport, SyncClient} from "@barocss/doc-sync-core/sync";
+import {Client} from "@barocss/doc-sync-core/client";
 import {SlateBinding} from "@barocss/doc-sync-slate";
 
 const schema: Schema = {
@@ -34,14 +34,15 @@ const schema: Schema = {
         paragraph: {shape: "text"},
     },
 };
-const actor = crypto.randomUUID();
-const client = new SyncClient(actor, new HttpTransport("slate-example", actor), {schema});
+const client = new Client({schema}); // Local editing; no transport.
 const editor = createEditor();
 const binding = new SlateBinding(client, editor, {
     onError: error => console.error(error),
     onChange: model => console.log(model),
 });
 ```
+
+The binding creates its own editor host for each view. For synchronization, construct `new Client({actor, schema, transport})` and connect it. Existing `LocalClient` and `SyncClient` arguments remain supported. Advanced integrations can use `SlateHostBinding` with an explicit `EditorHost`. See [Client](./client) for mode and lifecycle rules.
 
 The constructor initializes `editor.children` from the current client document. `binding.initialValue` provides that initial value for a Slate React provider. Local edits are applied once and committed automatically. Do not add another model-diff/commit handler to the same editor.
 
@@ -68,7 +69,7 @@ import {Slate, Editable} from "slate-react";
 </Slate>
 ```
 
-After the native editor is mounted, call `client.connect()`. Provide `renderElement` and `renderLeaf` implementations for the types and marks your UI supports. The binding preserves schema data; it does not supply the application's toolbar or renderers.
+For a synchronized client, call `client.connect()` after mounting. Provide `renderElement` and `renderLeaf` implementations for the types and marks your UI supports. The binding preserves schema data; it does not supply the application's toolbar or renderers.
 
 Instead of composition props, pass an existing editable container as `options.element` when constructing the binding. It installs removable `compositionstart` and `compositionend` listeners there. Use one composition wiring method for an editor.
 
@@ -79,7 +80,7 @@ Instead of composition props, pass an existing editable container as `options.el
 ```ts
 import {fromSlate, toSlate} from "@barocss/doc-sync-slate";
 
-const children = toSlate(schema, client.doc.toJSON());
+const children = toSlate(schema, client.model());
 const model = fromSlate(schema, children);
 ```
 
@@ -131,7 +132,7 @@ binding.dispose(); // Alias of destroy(); repeated disposal is safe.
 client.disconnect();
 ```
 
-Disposal removes the binding's listeners and restores its wrapped editor callbacks when they are still installed. It cancels an uncommitted composition draft. The caller owns the network client, React root, and other editor plugins.
+Disposal removes the binding's listeners and restores its wrapped editor callbacks when they are still installed. It cancels an uncommitted composition draft. The caller owns the client, React root, and other editor plugins.
 
 Remote changes currently rebuild the native tree. That has a cost for large documents. A native update containing only `move_node` operations and selection changes maps to document `move` edits. The binding verifies the resulting model. Perform moves in a separate native update: mixed moves and other mutations are rejected, and the shared model is restored. The core move restrictions still apply; this does not provide arbitrary text-range or table-axis movement.
 

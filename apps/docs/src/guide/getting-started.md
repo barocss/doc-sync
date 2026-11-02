@@ -17,6 +17,15 @@ The demo runs at `http://localhost:5410`. Open `/pm?doc=example` to connect the 
 
 The six packages are not published on npm yet. They remain `private: true` at version `0.0.0`. The imports in these guides resolve through the installed and built repository workspaces. See [Packages and engines](./packages) for local tarballs, editor peers, and independent binding release preparation.
 
+## Start an editor
+
+Use [Client](./client) for both local and synchronized browser editors.
+`new Client({schema})` runs in memory. Add `actor` and `transport` at construction
+to use the existing synchronization backend. Pass either client to the same
+editor binding; no host construction is required in ordinary application code.
+Run `npm run dev:client` for all four editors. Existing low-level and legacy
+client APIs remain supported.
+
 ## Choose a runtime
 
 - For a networked browser editor, use the TypeScript client and an editor binding. See [editor integration](./editors).

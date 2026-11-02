@@ -32,7 +32,7 @@ test('four primary destinations lead to separate reader categories', () => {
 
 test('VitePress marks exactly one primary category active for current pages', () => {
     const fixtures = {
-        'Guide': ['index.md', 'guide/getting-started.md', 'guide/local-editing.md', 'guide/schema-transition.md'],
+        'Guide': ['index.md', 'guide/getting-started.md', 'guide/client.md', 'guide/local-editing.md', 'guide/schema-transition.md'],
         'Editor integrations': ['guide/editors.md', 'guide/slate.md', 'guide/lexical.md', 'guide/custom-editor.md', 'guide/runnable-examples.md'],
         'AI & bots': ['ai/index.md', 'ai/server.md', 'guide/ai.md', 'guide/ai-walkthrough.md', 'guide/bots.md'],
         'Reference': ['reference/api.md', 'reference/recovery-plan.md', 'status.md', 'guide/rust.md', 'roadmap.md'],

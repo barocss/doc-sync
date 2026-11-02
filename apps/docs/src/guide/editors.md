@@ -1,6 +1,6 @@
 # Editor integrations {#editor-integration}
 
-Choose a binding for an existing editor, or build a custom editor with Core. Use a `SyncClient` for server synchronization. Use a `LocalClient` and an editor host for supported in-memory integrations. All four editor bindings use the same TypeScript document engine.
+Choose a binding for an existing editor, or build a custom editor with Core. Use [Client](./client) for both local editing and synchronization. `new Client({schema})` creates a local document. Add `actor` and `transport` to enable synchronization. Pass the client directly to each binding; each view creates its own internal editor host. All four editor bindings use the same TypeScript document engine.
 
 | Editor | Public entry point | Guide |
 | --- | --- | --- |
@@ -8,7 +8,7 @@ Choose a binding for an existing editor, or build a custom editor with Core. Use
 | Tiptap | `@barocss/doc-sync-tiptap`: `DocSync` extension and `createTiptapExtensions` | [Tiptap](./tiptap) |
 | Slate | `@barocss/doc-sync-slate`: `SlateBinding`, schema codec, selection helpers | [Slate](./slate) |
 | Lexical | `@barocss/doc-sync-lexical`: `LexicalBinding`, schema builder, codecs, selection helpers | [Lexical](./lexical) |
-| Custom editor | `@barocss/doc-sync-core/local`: `LocalClient`; Core `EditorHost` contract for structured bindings | [Custom editor](./custom-editor) |
+| Custom editor | `@barocss/doc-sync-core/client`: `Client`; Core `EditorHost` contract for structured bindings | [Custom editor](./custom-editor) |
 
 Choose an editor guide above for its setup and binding examples. For shared model operations, read the [Guide](./editing).
 
@@ -16,32 +16,17 @@ Each binding is a separate npm package. Use built repository workspaces or local
 
 Install each selected binding with its required editor peers. Core provides the shared CRDT, synchronization client, and server without native editor dependencies.
 
-## LocalClient examples
+## Local and synchronized documents
 
-Use `LocalClient` to edit in memory without a server.
+Start with the [Client guide](./client). The same `PmBinding`, `SlateBinding`, `LexicalBinding`, and `DocSync.configure({client})` calls accept local and synchronized clients. In local mode, several views can share one client, model, actor, and undo history. Each view keeps its own selection. Local mode does not publish presence.
 
-Read [LocalClient and SyncClient](./local-editing#localclient-and-syncclient)
-to compare client setup, editor hosts, selection, History, offline editing and recovery.
+For separate synchronized actors, create separate clients with an actor and transport. A sync backend supports one mounted Tiptap editor. Destroy the editor before mounting a replacement on that backend.
 
-Start with one of these examples:
-
-| Example | What it shows |
-| --- | --- |
-| [Create and edit a document](./local-editing#create-and-edit-a-document) | Define a schema, insert text, apply formatting, undo and redo. |
-| [Connect a native editor](./local-editing#connect-a-native-editor) | Connect ProseMirror through `LocalEditorHost` and receive application edits. |
-| [Capture a selection](./local-editing#capture-a-selection) | Capture and resolve an anchored selection after editing. |
-| [Build a textarea editor](./custom-editor#mount-a-plain-textarea) | A complete `mountTextArea()` adapter with input, selection and cleanup. |
-
-The API guide is also available under **Guide → Local editing (LocalClient)**.
-For an interactive example, [run the LocalClient demo](./local-editing#run-the-local-editor-demo).
-Choose independent ProseMirror, Slate and Lexical documents, or Shared document
-to connect a host-based custom textarea and all three native editors to one
-LocalClient. No document server is required. Local state is not saved after a
-refresh. The separate product demo uses synchronized clients.
+The existing `LocalClient`, `SyncClient`, and explicit `*HostBinding` APIs remain available. Use [local editing](./local-editing) for the lower-level local API and the original local demo. Use the [custom editor guide](./custom-editor) to build an adapter with an internal host, or implement the advanced `EditorHost` contract directly.
 
 ## Choose the client engine
 
-The current `SyncClient` uses the TypeScript engine. All four bindings can use
+The current `Client`, `LocalClient`, and `SyncClient` use the TypeScript engine. All four bindings can use
 its shared `EditorHost` path. Selecting a binding package selects an editor
 integration; it does not select another document engine. There is no
 `engine: 'wasm'` client option.
@@ -59,7 +44,7 @@ The bindings convert native changes into model edits, apply them locally once, a
 
 Slate and Lexical include composition drafts. Native input edits the draft while the live client keeps receiving remote changes. Completion commits the original draft operations and displays the combined model. Both use CRDT undo/redo and provide explicit disposal. Read each guide for its composition wiring and history policy.
 
-The application still supplies its schema, native rendering, toolbar, editor plugins, transport, and lifecycle. A codec's ability to retain data does not supply every native editing gesture for that data.
+The application supplies its schema, native rendering, toolbar, editor plugins, and lifecycle. Synchronization also requires a transport. A codec's ability to retain data does not supply every native editing gesture for that data.
 
 When the server accepts a compatible schema change, a mounted editor must rebuild its native schema and binding. The [open-editor transition guide](./schema-transition) shows the tested lifecycle and selection conversions for ProseMirror, Slate, and Lexical. Tiptap must also destroy and recreate its extensions; its open-schema transition host has not been qualified. Its [dedicated demo](./tiptap#run-the-two-editor-demo) covers the current Tiptap integration.
 

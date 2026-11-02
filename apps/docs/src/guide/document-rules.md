@@ -2,6 +2,11 @@
 
 A shape describes how a node stores content. Rules describe how that content can appear. The same nine shapes support required children, field-level attributes, persistent annotations and block placement.
 
+For a client-backed editor, prefer [Client](./client) and call
+`client.edit(edits)` to apply and record one action (and queue it in sync mode).
+Do not commit that return value again. The lower-level `Doc.edit()` examples
+below return `{ops, normalize}` and retain their separate commit contract.
+
 ## Child counts
 
 Add `childRules` to a flow. Each key must name one of that flow's declared children. Bounds are integers from 0 to 1000. An omitted minimum means 0. An omitted maximum means no upper bound.

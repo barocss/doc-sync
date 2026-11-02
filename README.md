@@ -16,7 +16,9 @@ Representative [Word, Notion and presentation schemas](https://barocss.github.io
 
 **Native Rust SDK**: The private [SDK crate](experiments/rust-sdk/README.md) provides typed native document, operation, History, selection and checkpoint APIs over the experimental Rust core. Run its `two_actors` example for concurrency, retry and undo after restart. It supports six fixed schema presets. Runtime arbitrary schemas, browser/WASM bindings, Node adapters and Rust editor integration remain separate work. Start with the [Cargo path-dependency quickstart](apps/docs/src/guide/rust.md#use-the-native-rust-sdk), then the [selection, checkpoint, retry, acknowledgement and History recipe](apps/docs/src/guide/rust.md#checkpoint-retry-selection-and-history-recipe). The [Rust roadmap](docs/rust-roadmap.md) lists the remaining integration gates.
 
-**Local editing**: `@barocss/doc-sync-core/local` provides `LocalClient` and `LocalEditorHost` for in-memory schema editing, selection anchors, undo/redo and composition using the production TypeScript engine. Native ProseMirror, Slate and Lexical host bindings can use it without a transport. Each view needs its own host. Storage and restart recovery are separate work. See the [local editing guide](apps/docs/src/guide/local-editing.md).
+**Client API**: Use `new Client({schema})` from `@barocss/doc-sync-core/client` for memory-only editing. Supply `actor` and `transport` at construction for the existing synchronization backend. Pass either mode directly to ProseMirror, Tiptap, Slate or Lexical; each binding creates its host internally. Existing LocalClient, SyncClient and host APIs remain supported. Run `npm run dev:client` for the four-editor demo. Read the [Client guide](apps/docs/src/guide/client.md) for edits, selections, History, recovery boundaries and cleanup. Mode is fixed at construction; Rust/WASM is not selectable. [Before/after measurements](benchmarks/results/unified-client/report.md) retain all timing flags; all 100k Chrome cells meet the guard, while local 10k tails remain under investigation.
+
+**Local editing**: `@barocss/doc-sync-core/local` provides `LocalClient` and `LocalEditorHost` for in-memory schema editing, selection anchors, undo/redo and composition using the production TypeScript engine. All four client-facing bindings accept it without a transport and create a host per view. Explicit host APIs remain available. Storage and restart recovery are separate work. See the [local editing guide](apps/docs/src/guide/local-editing.md).
 
 Run `npm run dev:local` without a document server. Its independent mode has three separate editors; shared mode connects a custom textarea, ProseMirror, Slate and Lexical to one LocalClient. It serves static browser assets only. Setup and Chrome checks are in [apps/demo/local](apps/demo/local/README.md).
 
@@ -49,6 +51,8 @@ npm test                     # Scenarios + 500 random traces
 FUZZ_SEEDS=3000 npm test     # 3000 random traces × 2 and 4 participants
 npm run typecheck
 npm run bench:client         # SyncClient local edit benchmark
+npm run dev:client           # Unified Client, four editors, local/sync modes
+npm run bench:client-api -- --mode=counts # Client operation-count checks
 npm run bench                # Stage 0: the same trace with this library and Yjs (benchmarks/)
 npm run docs:dev              # Local English documentation
 npm run docs:build            # Static GitHub Pages build

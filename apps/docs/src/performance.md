@@ -2,6 +2,34 @@
 
 Measure the layer you need. Core application time, client notification time, and visible editor latency cover different work.
 
+## Unified Client and native input
+
+The [Client and native-input report](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/unified-client/report.md) compares an independently built
+main baseline with the source-frozen Client facade and native ownership fixes.
+All 32 PM scenario/count pairs pass without extra ordinary snapshots or model
+conversions. Original timing retains eight investigation flags; focused matched
+repeats put those cases inside the original guards. This is scoped headless PM
+evidence, not a zero-overhead or network-latency claim.
+
+The separate raw-Sync Slate/Lexical comparison isolates the native fix. At 100k,
+pooled single-character insert medians change from **19.170 to 5.985 ms** in Slate
+and **31.259 to 18.450 ms** in Lexical. All 16 count comparisons pass; marked range
+replacement retains its existing one snapshot/restore. Repeated timing retains
+one Slate 10k insert p95 flag (**2.123 to 4.481 ms**) while its median improves
+from 1.333 to 0.947 ms. That tail remains unqualified.
+
+Chrome records 320 trusted inputs across both sizes, modes, APIs and four source
+editors, observing all four views. **59/64 paired DOM cells** meet guards declared
+before timing. All medians, sync cells and 100k cells pass. Five local 10k p95
+cells exceed the guard. The current-code legacy control shares the native fixes;
+its local Tiptap path is new. It is not an old-source native-fix comparison.
+
+The clock covers trusted beforeinput to observed DOM equality. Two animation
+frame callbacks indicate a rendering opportunity, not physical display. The sync
+transport is in-page; HTTP/restart performance is not measured. Raw failures,
+partial setup runs, repeated samples and source/bundle hashes remain in the
+report. The performance result is **INVESTIGATE**, not a uniform PASS.
+
 ## Memory-only client
 
 The [LocalClient comparison](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/local-client/report.md)

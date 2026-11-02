@@ -8,7 +8,7 @@ import type {Extensions} from "@tiptap/core";
 import type {Schema as PmSchema} from "@tiptap/pm/model";
 import type {Transaction} from "@tiptap/pm/state";
 import type {Schema} from "@barocss/doc-sync-core";
-import type {SyncClient} from "@barocss/doc-sync-core/sync";
+import type {BindingClient} from "@barocss/doc-sync-core/client";
 import type {DomHints} from "@barocss/doc-sync-prosemirror";
 import type {Presence} from "@barocss/doc-sync-core/sync";
 
@@ -92,14 +92,14 @@ function validateSchema(actual: PmSchema, expected: PmSchema): void {
 }
 
 export interface DocSyncOptions {
-    client: SyncClient | null;
+    client: BindingClient | null;
     /** Name, color, and optional actor appearance. Selection endpoints come from the editor. */
     presence: Omit<Presence, "actor" | "anchor" | "focus"> | null;
     onSelection: ((anchor: string | null, focus: string | null) => void) | null;
     /** Host callbacks run after the native state is installed. Failures are reported here. */
     onError: ((error: unknown, callback: string) => void) | null;
 }
-export interface DocSyncStorage {binding: PmBinding | null}
+export interface DocSyncStorage {binding: PmBinding<BindingClient> | null}
 
 declare module "@tiptap/core" {
     interface Commands<ReturnType> {
@@ -153,7 +153,7 @@ export const DocSync = Extension.create<DocSyncOptions, DocSyncStorage>({
         const info = buildPmSchema(client.schema);
         validateSchema(this.editor.schema, info.pm);
         info.pm = this.editor.schema;
-        let binding: PmBinding | null = null;
+        let binding: PmBinding<BindingClient> | null = null;
         let appending = false;
         let correction: Transaction | null = null;
         let active = true;
@@ -185,8 +185,8 @@ export const DocSync = Extension.create<DocSyncOptions, DocSyncStorage>({
                     if (appending) correction = tr;
                     else view.dispatch(tr);
                 };
-                const compat = createTiptapClientCompat(client, options);
                 binding = new PmBinding(client, info, [], {state: view.state, dispatch: send});
+                const compat = createTiptapClientCompat(client, options, binding.host);
                 storage.binding = binding;
                 cursor = binding.cursorPlugin();
                 binding.onSelection = (anchor, focus) => compat.selection(anchor, focus, publishSelection);

@@ -6,16 +6,63 @@ import {$lexicalSelection, $setLexicalSelection} from "./selection.ts";
 import {$nativePlacements, nativeReparent} from "./movement.ts";
 import {applyEdits} from "@barocss/doc-sync-core";
 import {keyOf} from "@barocss/doc-sync-core";
-import {runsToUnits} from "@barocss/doc-sync-core";
+import {runsToUnits, unitsToRuns} from "@barocss/doc-sync-core";
 import type {EditorState, LexicalEditor} from "lexical";
-import type {EditorHost, EditorSession, AnchoredRange} from "@barocss/doc-sync-core/editor";
+import type {EditorHost, EditorSession, AnchoredRange, ModelRange} from "@barocss/doc-sync-core/editor";
 import type {LexicalSchemaInfo} from "./schema.ts";
 import type {Op} from "@barocss/doc-sync-core";
-import type {NodeJSON} from "@barocss/doc-sync-core";
+import type {NodeJSON, EditOp, Unit, Schema} from "@barocss/doc-sync-core";
 
 export const LEXICAL_REMOTE_TAG = "doc-sync-remote";
 export type LexicalBindingOptions = {info?: LexicalSchemaInfo; onError?: (error: Error) => void; groupTyping?: boolean};
 const owners = new WeakMap<LexicalEditor, LexicalHostBinding>();
+
+/** Preserve the native splice position when repeated text permits several model diffs. */
+function nativeTextEdits(schema: Schema, before: NodeJSON, next: NodeJSON, previous: ModelRange | null, current: ModelRange | null): EditOp[] | null {
+    if (!current || !sameModel(current.anchor, current.focus)) return null;
+    const path = current.focus.slice(0, -1);
+    let left = before, right = next;
+    for (const index of path) {
+        if (!left.children?.[index] || !right.children?.[index]) return null;
+        // Only this native text block may change; structural edits use modelEdits.
+        if (!sameModel({...left, children: undefined}, {...right, children: undefined}) || left.children.length !== right.children.length) return null;
+        if (left.children.some((node, at) => at !== index && !sameModel(node, right.children![at]))) return null;
+        left = left.children[index]; right = right.children[index];
+    }
+    if (!left.runs || !right.runs || !sameModel({...left, runs: undefined}, {...right, runs: undefined})) return null;
+    const a = runsToUnits(schema, left.runs), b = runsToUnits(schema, right.runs);
+    const unitIndex = (units: Unit[], offset: number): number | null => {
+        let at = 0;
+        for (let index = 0; index < units.length; index++) {
+            if (at === offset) return index;
+            const unit = units[index]; at += "ch" in unit ? unit.ch.length : 1;
+        }
+        return at === offset ? units.length : null;
+    };
+    const end = unitIndex(b, current.focus.at(-1)!);
+    if (end === null) return null;
+    const splice = (start: number, removed: number): EditOp[] | null => {
+        const added = b.length - a.length + removed;
+        if (start < 0 || removed < 0 || added < 0 || start + removed > a.length || start + added !== end) return null;
+        if (!sameModel(a.slice(0, start), b.slice(0, start)) || !sameModel(a.slice(start + removed), b.slice(end))) return null;
+        const at = [...path, start], edits: EditOp[] = [];
+        if (removed) edits.push({op: "delete", at, count: removed});
+        if (added) edits.push({op: "insert", at, content: unitsToRuns(schema, b.slice(start, end))});
+        return edits.length ? edits : null;
+    };
+    if (previous && sameModel(previous.anchor.slice(0, -1), path) && sameModel(previous.focus.slice(0, -1), path)) {
+        const anchor = unitIndex(a, previous.anchor.at(-1)!), focus = unitIndex(a, previous.focus.at(-1)!);
+        if (anchor !== null && focus !== null) {
+            const edits = splice(Math.min(anchor, focus), Math.abs(anchor - focus));
+            if (edits) return edits;
+        }
+    }
+    // A programmatic native update can set its selection and type in one update,
+    // so prevEditorState may not contain that selection. The resulting caret
+    // still fixes the position of a pure insertion or deletion.
+    const delta = b.length - a.length;
+    return delta > 0 ? splice(end - delta, 0) : delta < 0 ? splice(end, -delta) : null;
+}
 
 export class LexicalHostBinding {
     readonly host: EditorHost;
@@ -57,10 +104,11 @@ export class LexicalHostBinding {
                         prevEditorState.read(() => $nativePlacements(this.info), {editor}),
                         editorState.read(() => $nativePlacements(this.info), {editor}),
                     );
+                    const previousRange = prevEditorState.read(() => $lexicalSelection(this.info), {editor});
+                    const currentRange = editorState.read(() => $lexicalSelection(this.info), {editor});
                     const edits = reparent
                         ? [reparent, ...modelEdits(host.schema, applyEdits(host.schema, before, [reparent]), next)]
-                        : modelEdits(host.schema, before, next);
-                    const previousRange = prevEditorState.read(() => $lexicalSelection(this.info), {editor});
+                        : nativeTextEdits(host.schema, before, next, previousRange, currentRange) ?? modelEdits(host.schema, before, next);
                     let caretBefore = this.session.capture(previousRange)?.focus ?? "";
                     const first = edits[0];
                     const textInsertion = (edit: (typeof edits)[number]) => edit.op === "insert" && (typeof edit.content === "string"

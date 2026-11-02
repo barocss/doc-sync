@@ -48,6 +48,16 @@ Doc-based input sessions and inherited document facades use a named TypeScript
 compatibility adapter. They are optional escape paths, not portable backend APIs.
 No shadow Doc mirrors a selected backend.
 
+## Client facade
+
+Core `/client` provides a fixed local-or-sync Client. Optional transport selects
+session behavior, not an engine. Without transport it constructs only LocalClient;
+with transport it constructs SyncClient and forwards syncOptions.engineFactory.
+Each binding creates a private view host. Legacy clients and explicit hosts remain
+supported. Client.sync exposes the actual sync backend for recovery and schema
+lifecycle operations. A facade does not convert checkpoints, enable Rust/WASM, or
+provide local persistence. Its local edit path adds no sync queues or model fork.
+
 ## Memory-only client
 
 `@barocss/doc-sync-core/local` exports `LocalClient`, `LocalEditorHost` and

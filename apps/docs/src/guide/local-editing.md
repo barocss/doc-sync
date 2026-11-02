@@ -1,5 +1,10 @@
 # Local editing
 
+For a new editor, use `new Client({schema})` and pass it directly to `PmBinding`,
+`SlateBinding`, `LexicalBinding` or `DocSync.configure({client})`. Each binding
+creates its own host. Read [Client: local or synchronized](./client) for the
+preferred API and four-editor demo. The lower-level APIs below remain supported.
+
 Use `LocalClient` for a document that stays in memory in one application. It
 uses the production TypeScript engine without a transport, server, presence
 service or MCP connection. The same schema and editing operations apply.
@@ -106,7 +111,7 @@ users, editors or agents must exchange changes through a document server.
 | Schema and operations | Schema-defined text, blocks, tables and attributes | Same editing model and collaboration rules |
 | Apply one application edit | `client.edit(edits)` applies and records once | `client.commit(client.engine.apply(edits))` applies, records and queues once |
 | Editor host | `createLocalEditorHost(client)` | `createSyncClientEditorHost(client)` from the Core `/editor` entry |
-| Editor bindings | ProseMirror, Slate and Lexical accept the local host; the current Tiptap extension requires SyncClient | ProseMirror, Tiptap, Slate and Lexical |
+| Editor bindings | All four client-facing bindings accept LocalClient directly; PM, Slate and Lexical also expose explicit HostBinding constructors | ProseMirror, Tiptap, Slate and Lexical |
 | Selection | Identity anchors for local selection; no remote presence | Identity anchors plus peer cursors and selection ranges |
 | Undo and redo | One client History, shared by views using that client | Per-client History; independent participant changes are preserved under the collaboration rules |
 | Connection and pending work | No connection, pending transport queue or server acknowledgments | Connect/disconnect, pending changes, acknowledgments and reconnect |
@@ -206,8 +211,8 @@ for those views, so it is not supported.
 A host identifies native edits by origin. Its own binding already applied those
 edits, while other hosts receive model events. `client.edit()` represents an
 external edit and notifies subscribed views. This avoids applying native input
-twice. The current Tiptap extension still accepts SyncClient; a direct local-host
-option is not part of this step.
+twice. Tiptap accepts Client or LocalClient directly and creates its own host.
+It does not expose a separate HostBinding constructor.
 
 Local host status is `{online: false, synchronized: false}`. Its presence list
 is empty, and native selection reports do not send network messages. The false

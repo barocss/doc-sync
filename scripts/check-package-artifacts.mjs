@@ -75,11 +75,18 @@ function types(directory, text) {
 const core = consumer('core-only', ['doc-sync-core', 'doc-sync']);
 script(core, `import assert from 'node:assert/strict';
 import * as old from '@barocss/doc-sync'; import * as core from '@barocss/doc-sync-core';
-assert.equal(old.Doc, core.Doc); assert.equal(old.History, core.History);
-for (const entry of ['sync','server','node']) { const a=await import('@barocss/doc-sync/'+entry), b=await import('@barocss/doc-sync-core/'+entry); for(const key of Object.keys(a)) assert.equal(a[key],b[key]); }
+assert.equal(old.Doc, core.Doc); assert.equal(old.History, core.History); assert.equal(old.Client,core.Client);
+for (const entry of ['client','sync','server','node']) { const a=await import('@barocss/doc-sync/'+entry), b=await import('@barocss/doc-sync-core/'+entry); for(const key of Object.keys(a)) assert.equal(a[key],b[key]); }
 await import('@barocss/doc-sync-core/editor'); await import('@barocss/doc-sync-core/engine');
 const {LocalClient,LocalEditorHost,createLocalEditorHost}=await import('@barocss/doc-sync-core/local');
 const schema={root:'content',marks:[],nodes:{content:{shape:'flow',children:['p'],default:'p'},p:{shape:'text'}}};
+const {Client,clientOwner,createEditorHost,isBindingClient}=await import('@barocss/doc-sync-core/client');
+assert.equal(Client,core.Client);
+const unified=new Client({schema,actor:'package-unified'});
+assert.equal(unified.mode,'local');assert.equal(unified.sync,null);assert(clientOwner(unified) instanceof LocalClient);assert(isBindingClient(unified));
+unified.edit([{op:'insert',at:[0,0],content:'unified'}]);assert.equal(unified.model().children[0].runs[0].text,'unified');
+const firstHost=createEditorHost(unified),secondHost=createEditorHost(unified);assert.notEqual(firstHost,secondHost);
+unified.undo();assert.deepEqual(unified.model().children[0].runs,[]);unified.redo();assert.equal(unified.model().children[0].runs[0].text,'unified');unified.dispose();
 const originalFetch=globalThis.fetch;let network=0;
 globalThis.fetch=()=>{network++;throw Error('Local editing attempted network access');};
 try {
@@ -97,14 +104,59 @@ for (const name of ['@barocss/doc-sync-prosemirror','@barocss/doc-sync-tiptap','
 writeFileSync(join(core, 'loader.mjs'), `import {appendFileSync} from 'node:fs'; export async function load(url,context,next){ appendFileSync(new URL('./loads.log',import.meta.url),url+'\\n'); return next(url,context); }`);
 run(process.execPath, ['--loader', './loader.mjs', 'check.mjs'], core);
 assert(!/node_modules\/(?:prosemirror-|slate|lexical|@tiptap\/|@lexical\/|@barocss\/doc-sync-(?:prosemirror|tiptap|slate|lexical))/.test(readFileSync(join(core, 'loads.log'), 'utf8')));
-types(core, `import {Doc,History,type Schema,type HistorySnapshot} from '@barocss/doc-sync'; import {Doc as CoreDoc,typescriptEngine} from '@barocss/doc-sync-core'; import {SyncClient} from '@barocss/doc-sync/sync'; import {DocHub} from '@barocss/doc-sync/server'; import {NodeHttpTransport} from '@barocss/doc-sync/node'; import type * as Engine from '@barocss/doc-sync-core/engine'; import {LocalClient,LocalEditorHost,createLocalEditorHost,type LocalNotificationError} from '@barocss/doc-sync-core/local'; import type {EditorHost} from '@barocss/doc-sync-core/editor'; const ctor:typeof CoreDoc=Doc; const createLocal:(client:LocalClient)=>EditorHost=createLocalEditorHost; const notify=(error:LocalNotificationError)=>error.message; void [ctor,History,SyncClient,DocHub,NodeHttpTransport,typescriptEngine,LocalClient,LocalEditorHost,createLocal,notify];`);
-cases.push({name:'facade-core-only',status:'PASS',directory:core,noEditorInstalled:true,noEditorLoaded:true,types:'PASS'});
+types(core, `import {Client as FacadeClient,type ClientOptions} from '@barocss/doc-sync/client'; import {Client as CoreClient,clientOwner,createEditorHost,type BindingClient} from '@barocss/doc-sync-core/client'; import {Doc,History,type Schema,type HistorySnapshot} from '@barocss/doc-sync'; import {Doc as CoreDoc,typescriptEngine} from '@barocss/doc-sync-core'; import {SyncClient} from '@barocss/doc-sync/sync'; import {DocHub} from '@barocss/doc-sync/server'; import {NodeHttpTransport} from '@barocss/doc-sync/node'; import type * as Engine from '@barocss/doc-sync-core/engine'; import {LocalClient,LocalEditorHost,createLocalEditorHost,type LocalNotificationError} from '@barocss/doc-sync-core/local'; import type {EditorHost} from '@barocss/doc-sync-core/editor'; const clientCtor:typeof CoreClient=FacadeClient; const options:ClientOptions={schema:{} as Schema}; const unifiedClient=new FacadeClient(options); const bindingClient:BindingClient=unifiedClient; const owner=clientOwner(bindingClient); void [clientCtor,createEditorHost(bindingClient),owner]; const ctor:typeof CoreDoc=Doc; const createLocal:(client:LocalClient)=>EditorHost=createLocalEditorHost; const notify=(error:LocalNotificationError)=>error.message; void [ctor,History,SyncClient,DocHub,NodeHttpTransport,typescriptEngine,LocalClient,LocalEditorHost,createLocal,notify];`);
+cases.push({name:'facade-core-only',status:'PASS',directory:core,noEditorInstalled:true,noEditorLoaded:true,types:'PASS',unifiedClientEntryIdentity:'PASS',unifiedClientLocalRuntime:'PASS'});
 const editorPeers = {
     'doc-sync-prosemirror': ['prosemirror-model','prosemirror-state','prosemirror-transform','prosemirror-view'],
     'doc-sync-tiptap': ['@tiptap/core','@tiptap/pm'],
     'doc-sync-slate': ['slate'],
     'doc-sync-lexical': ['lexical','@lexical/rich-text','@lexical/table'],
 };
+// The same direct-client lifecycle runs inside each isolated editor consumer.
+function unifiedBindingSource(binding) {
+    const common = `import assert from 'node:assert/strict';
+import {Client} from '@barocss/doc-sync-core/client';
+const schema={root:'content',marks:[],nodes:{content:{shape:'flow',children:['p'],default:'p'},p:{shape:'text'}}};
+const client=new Client({schema,actor:'direct-package-client'});
+const flush=()=>new Promise(resolve=>setImmediate(resolve));
+`;
+    const bodies = {
+        'doc-sync-prosemirror': `import {PmBinding,buildPmSchema} from '@barocss/doc-sync-prosemirror';
+const info=buildPmSchema(schema),first=new PmBinding(client,info),second=new PmBinding(client,info);
+const read=binding=>binding.state.doc.textContent;
+const type=()=>first.dispatch(first.state.tr.insertText('A😀',1));
+const cleanup=()=>{};
+`,
+        'doc-sync-slate': `import {createEditor,Transforms} from 'slate';
+import {SlateBinding,fromSlate} from '@barocss/doc-sync-slate';
+const first=new SlateBinding(client,createEditor()),second=new SlateBinding(client,createEditor());
+const read=binding=>fromSlate(schema,binding.editor.children).children[0].runs.map(run=>run.text??'').join('');
+const type=()=>{Transforms.select(first.editor,{path:[0,0],offset:0});Transforms.insertText(first.editor,'A😀');};
+const cleanup=()=>{};
+`,
+        'doc-sync-lexical': `import {createEditor,$getSelection,$isRangeSelection} from 'lexical';
+import {registerRichText} from '@lexical/rich-text';
+import {LexicalBinding,buildLexicalSchema,readLexicalModel,$setLexicalSelection} from '@barocss/doc-sync-lexical';
+const info=buildLexicalSchema(schema),make=()=>createEditor({nodes:info.nodes,onError:error=>{throw error;}});
+const a=make(),b=make(),stopA=registerRichText(a),stopB=registerRichText(b);
+const first=new LexicalBinding(client,a,info),second=new LexicalBinding(client,b,info);
+assert.equal(first.input,first.session);
+const read=binding=>readLexicalModel(binding.editor,info).children[0].runs.map(run=>run.text??'').join('');
+const type=()=>a.update(()=>{assert($setLexicalSelection(info,{anchor:[0,0],focus:[0,0]}));const selection=$getSelection();assert($isRangeSelection(selection));selection.insertText('A😀');},{discrete:true});
+const cleanup=()=>{stopA();stopB();};
+`,
+    };
+    return common + bodies[binding] + `
+try {
+ assert.equal(first.client,client);assert.equal(second.client,client);assert.notEqual(first.host,second.host);
+ await flush();type();await flush();assert.equal(read(first),'A😀');assert.equal(read(second),'A😀');
+ client.edit([{op:'insert',at:[0,0],content:'X'}]);await flush();assert.equal(read(first),'XA😀');assert.equal(read(second),'XA😀');
+ first.undo();await flush();assert.equal(read(first),'A😀');assert.equal(read(second),'A😀');
+ second.undo();await flush();assert.equal(read(first),'');assert.equal(read(second),'');assert.equal(client.historyStatus().canUndo,false);
+ second.redo();await flush();assert.equal(read(first),'A😀');assert.equal(read(second),'A😀');
+} finally {first.dispose();second.dispose();cleanup();client.dispose();}
+`;
+}
 const lock = json(join(root, 'package-lock.json'));
 function versions(peers) {return Object.fromEntries(peers.map(key=>[key,lock.packages[`node_modules/${key}`]?.version ?? manifest['doc-sync'].devDependencies[key]]));}
 for (const binding of Object.keys(editorPeers)) {
@@ -161,17 +213,27 @@ binding.undo(); assert.deepEqual(client.doc.toJSON().children[0].runs,[]);
 binding.redo(); assert.equal(client.doc.toJSON().children[0].runs[0].text,'A😀'); binding.dispose(); stop();
 `, 'host.mjs');
     }
+    if (binding !== 'doc-sync-tiptap') {
+        script(directory, unifiedBindingSource(binding), 'unified-client.mjs');
+        const bindingName = {'doc-sync-prosemirror':'PmBinding','doc-sync-slate':'SlateBinding','doc-sync-lexical':'LexicalBinding'}[binding];
+        const construct = binding === 'doc-sync-prosemirror' ? 'new PmBinding(client,buildPmSchema(schema))' : binding === 'doc-sync-slate' ? 'new SlateBinding(client,createEditor())' : 'new LexicalBinding(client,createEditor(),buildLexicalSchema(schema))';
+        const legacyInput = binding === 'doc-sync-lexical' ? "import type {InputSession,EditorSession} from '@barocss/doc-sync-core/editor'; const oldInput:InputSession=legacy.input; const newInput:EditorSession=binding.input; void [oldInput,newInput];" : '';
+        const peers = binding === 'doc-sync-prosemirror' ? "import {buildPmSchema} from '@barocss/doc-sync-prosemirror';" : binding === 'doc-sync-slate' ? "import {createEditor} from 'slate';" : "import {createEditor} from 'lexical'; import {buildLexicalSchema} from '@barocss/doc-sync-lexical';";
+        types(directory, `import {Client} from '@barocss/doc-sync-core/client'; import type {Schema} from '@barocss/doc-sync-core'; import {${bindingName}} from '@barocss/${binding}'; ${peers} declare const schema:Schema; const client=new Client({schema}); const binding=${construct}; const exact:Client=binding.client; const legacy:${bindingName}=null as unknown as ${bindingName}; const raw:import('@barocss/doc-sync-core/sync').SyncClient=legacy.client; ${legacyInput} void [exact,legacy,raw];`);
+    } else {
+        types(directory, `import {Client} from '@barocss/doc-sync-core/client'; import type {Schema} from '@barocss/doc-sync-core'; import {DocSync,createTiptapExtensions} from '@barocss/doc-sync-tiptap'; declare const schema:Schema; const client=new Client({schema}); const extension=DocSync.configure({client}); void [extension,createTiptapExtensions(schema)];`);
+    }
     const forbidden = binding === 'doc-sync-slate' ? ['lexical','prosemirror-model','@tiptap/core'] : binding === 'doc-sync-lexical' ? ['slate','prosemirror-model','@tiptap/core'] : ['slate','lexical',...(binding === 'doc-sync-prosemirror'?['@tiptap/core']:[])];
     for (const peer of forbidden) assert(!existsSync(join(directory, 'node_modules', peer)), `${binding} installed unrelated ${peer}`);
     types(directory, `import * as binding from '@barocss/${binding}'; import {Doc,type Schema} from '@barocss/doc-sync-core'; void [binding,Doc];`);
-    cases.push({name:binding,status:'PASS',directory,types:'PASS',unrelatedEditorsAbsent:true});
+    cases.push({name:binding,status:'PASS',directory,types:'PASS',unrelatedEditorsAbsent:true,unifiedClientTypes:'PASS',...(binding !== 'doc-sync-tiptap' ? {unifiedClientNativeLifecycle:'PASS'} : {})});
 }
 const all = consumer('all-old-new', names, {...versions(Object.values(editorPeers).flat()),jsdom:'26.1.0'});
 script(all, `import assert from 'node:assert/strict';
 for (const name of ['prosemirror','tiptap','slate','lexical']) { const old=await import('@barocss/doc-sync/'+name), current=await import('@barocss/doc-sync-'+name); for(const key of Object.keys(old)) assert.equal(old[key],current[key]); }
 for(const part of ['model','state','transform','view']) { const upstream=await import('prosemirror-'+part), tiptap=await import('@tiptap/pm/'+part); for(const key of Object.keys(upstream)) if(typeof upstream[key]==='function') assert.equal(upstream[key],tiptap[key],part+'.'+key); }
 `);
-types(all, `import {Doc,type Schema} from '@barocss/doc-sync'; import {Doc as CoreDoc} from '@barocss/doc-sync-core'; import {SyncClient} from '@barocss/doc-sync/sync'; import {PmBinding as OldPm} from '@barocss/doc-sync/prosemirror'; import {PmBinding} from '@barocss/doc-sync-prosemirror'; import {SlateBinding} from '@barocss/doc-sync/slate'; import {LexicalBinding} from '@barocss/doc-sync/lexical'; import {DocSync,createTiptapExtensions} from '@barocss/doc-sync-tiptap'; import * as tiptap from '@barocss/doc-sync/tiptap'; const ctor:typeof CoreDoc=Doc; const pm:typeof PmBinding=OldPm; void [ctor,pm,SyncClient,SlateBinding,LexicalBinding,DocSync,createTiptapExtensions,tiptap];`);
+types(all, `import {Client as FacadeClient} from '@barocss/doc-sync/client'; import {Client as CoreClient,type BindingClient} from '@barocss/doc-sync-core/client'; const clientIdentity:typeof CoreClient=FacadeClient; const clientUnion:BindingClient=new FacadeClient({schema:{} as Schema}); void [clientIdentity,clientUnion]; import {Doc,type Schema} from '@barocss/doc-sync'; import {Doc as CoreDoc} from '@barocss/doc-sync-core'; import {SyncClient} from '@barocss/doc-sync/sync'; import {PmBinding as OldPm} from '@barocss/doc-sync/prosemirror'; import {PmBinding} from '@barocss/doc-sync-prosemirror'; import {SlateBinding} from '@barocss/doc-sync/slate'; import {LexicalBinding} from '@barocss/doc-sync/lexical'; import {DocSync,createTiptapExtensions} from '@barocss/doc-sync-tiptap'; import * as tiptap from '@barocss/doc-sync/tiptap'; const ctor:typeof CoreDoc=Doc; const pm:typeof PmBinding=OldPm; void [ctor,pm,SyncClient,SlateBinding,LexicalBinding,DocSync,createTiptapExtensions,tiptap];`);
 // Copy the real in-memory network helper and native Tiptap regression cases, then use only tarball public entries.
 cpSync(join(root, 'fixtures/demo-schema.ts'), join(all, 'schema.ts'));
 let harness = readFileSync(join(root, 'packages/doc-sync/test/harness.ts'), 'utf8');
@@ -187,7 +249,7 @@ for (const [name, pkg] of [['harness.ts','doc-sync-core'],['native.test.ts','doc
 }
 const nativeResult = run(process.execPath, ['--test','native.test.ts'], all);
 writeFileSync(join(output,'tarball-tiptap-tests.log'),nativeResult);
-cases.push({name:'all-eight-legacy-imports-and-six-packages',status:'PASS',directory:all,types:'PASS',singlePmClassGraph:true,nativeTiptapTests:'PASS'});
+cases.push({name:'all-eight-legacy-imports-and-six-packages',status:'PASS',directory:all,types:'PASS',singlePmClassGraph:true,nativeTiptapTests:'PASS',unifiedClientFacadeTypes:'PASS'});
 // Prove a binding patch can be packed independently without changing its siblings or facade.
 const before = Object.fromEntries(names.map(name=>[name,walk(join(root,'packages',name,'dist')).map(file=>[file,digest(file)])]));
 const releaseRoot = join(temp,'independent-release'); mkdirSync(join(releaseRoot,'packages'), {recursive:true});

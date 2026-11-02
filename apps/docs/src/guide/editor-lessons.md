@@ -100,6 +100,21 @@ Our browser cases fill nine distinct cells, merge horizontally, vertically and a
 
 Browser cases: [merged grids](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/checks-merged-grid.js) and [merged selections](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/checks-merged-selection.js).
 
+## Equal text can hide different authors
+
+A model comparison can produce the correct text and still lose input ownership.
+Suppose Alice inserts `actorA ` and Bob then inserts `actorB ` before it. A
+common-prefix diff can reuse Alice's existing `actor` tokens and insert only
+`B actor`. The display reads correctly, but Alice's later undo removes tokens
+that Bob's displayed prefix now depends on.
+
+Preserve native text operation coordinates or a verified before/after selection
+splice where available. Validate the resulting model and keep a guarded fallback
+for other native structures. Check author undo and redo after each edit, not only
+replica convergence or final JSON equality. The Client facade does not change
+these ownership rules. Its local views share one participant's History; separate
+synchronized clients have separate participant histories.
+
 ## Shared lessons for any editor
 
 | Failure | Why it happened here | Rule we now apply |

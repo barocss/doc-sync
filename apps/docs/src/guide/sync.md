@@ -6,6 +6,27 @@ For an editor that needs no server session, see the
 [LocalClient and SyncClient comparison](./local-editing#localclient-and-syncclient).
 It explains the shared editing model, offline behavior, bindings and storage limits.
 
+## Preferred client API
+
+For a new editor, use the [unified Client](./client). It accepts an optional
+transport and creates hosts inside the bindings. A supplied transport selects
+the existing SyncClient backend. The lower-level examples below retain direct
+SyncClient access for transport, engine and recovery integration.
+
+```ts
+import {Client} from "@barocss/doc-sync-core/client";
+import {HttpTransport} from "@barocss/doc-sync-core/sync";
+
+const actor = "alice-session-1";
+const client = new Client({schema, actor, transport: new HttpTransport("example", actor)});
+client.connect();
+client.edit([{op: "insert", at: [0, 0], content: "Hello"}]);
+```
+
+Without a transport, `new Client({schema})` creates a true memory-only backend.
+Disconnecting a synchronized client does not change its mode. Check
+`client.sync` before using sync-only checkpoint or schema-transition APIs.
+
 ## HTTP and SSE
 
 ```ts

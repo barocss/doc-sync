@@ -14,6 +14,29 @@ The opt-in product recovery mode saves origin-local checkpoints and exact recove
 
 The local document bot has a separate ordered [bot roadmap](https://github.com/barocss/doc-sync/blob/main/docs/bot-roadmap.md). Its structured brief includes exact text, node type, occurrence-count, and direct-child-type checks. Proposal flow and broader product verification remain open. The Rust storage experiment is a separate investigation, described below.
 
+## Unified client delivery
+
+The Client facade selects a local or sync backend at construction. All four
+client-facing bindings accept it and create per-view hosts internally. Existing
+LocalClient, SyncClient and host constructors remain supported. The dedicated
+four-editor demo uses one shared client locally and independent actors in sync
+mode. See [Client](./guide/client) for setup and current verification boundaries.
+The final integration passes 1,308 tests with two platform SKIPs; Chrome passes
+all four editors in both modes. All 100k Chrome timing cells meet the guard,
+but five local 10k p95 cells and one Node Slate tail remain under investigation.
+See [the measured boundaries](./performance#unified-client-and-native-input).
+
+Next in this lane:
+
+1. Profile the retained Slate/local 10k early-input tails and separate cold
+   setup, JIT, allocation and event-delivery costs before choosing a fix.
+2. Define local save/open formats and failure behavior, including History.
+3. Define local schema transitions and identity-preserving session handoff.
+4. Deliver Rust/WASM production factories through the existing engine roadmap.
+
+Local persistence, local schema transitions, live session conversion and a
+Rust/WASM production factory remain open.
+
 ## Local editing delivery
 
 1. **L1: Memory-only TypeScript client and host — implemented within the tested scope.**
@@ -27,8 +50,7 @@ The local document bot has a separate ordered [bot roadmap](https://github.com/b
    restoration, remount, reset and refresh checks in ProseMirror, Slate and
    Lexical with document networking disabled. A host-based custom textarea and
    all three native editors also pass shared-document Chrome checks, including
-   per-view selection, shared History and plain paragraph operations. The
-   current Tiptap extension still requires SyncClient. Broader composition, rich-schema browser behavior,
+   per-view selection, shared History and plain paragraph operations. Tiptap now also accepts Client and LocalClient directly. Broader composition, rich-schema browser behavior,
    actual BFCache navigation, mobile editing and actual OS IME remain open.
 3. **L3: Explicit persistence and recovery — open.** Define save/open formats,
    failures, migrations and History retention. A refresh currently loses local

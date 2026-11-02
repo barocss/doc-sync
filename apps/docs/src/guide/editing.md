@@ -2,6 +2,11 @@
 
 An editor describes changes with model paths. The document compiles those changes into stable token operations. Paths address the current `NodeJSON` model; they are not transmitted as persistent identities.
 
+For a client-backed editor, prefer [Client](./client) and call
+`client.edit(edits)` to apply and record one action (and queue it in sync mode).
+Do not commit that return value again. The lower-level `Doc.edit()` examples
+below return `{ops, normalize}` and retain their separate commit contract.
+
 ## Start with one API
 
 Use `doc.edit()` for text **and** blocks. You do not need a separate table, list, or container API. The schema determines how each operation is compiled.

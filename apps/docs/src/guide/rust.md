@@ -19,6 +19,12 @@ or live engine switch. Legacy TypeScript Doc/History access remains an optional
 compatibility extension. See [Packages and engines](./packages#engine-selection-is-a-separate-milestone)
 for the constructor option and current boundary.
 
+For browser integration, [Client](./client) selects local or synchronized
+session behavior through its optional transport. It still uses the production
+TypeScript engine. `syncOptions.engineFactory` applies only to the sync backend;
+no Rust/WASM factory ships. The native SDK and storage-only WASM API below do
+not implement the Client or editor binding contracts.
+
 ## Use the native Rust SDK
 
 The crate is `doc-sync-native-sdk` at `experiments/rust-sdk`. Another Rust crate

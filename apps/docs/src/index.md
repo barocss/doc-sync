@@ -7,12 +7,12 @@ title: Schema-defined collaborative documents
 <p class="lead">Define your document schema. Edit locally. Merge changes by stable token identity.</p>
 <p class="package-name">@barocss/doc-sync · TypeScript · Development workspace</p>
 
-doc-sync is a document CRDT with a synchronization client, a transport-independent server, and ProseMirror, Slate and Lexical bindings. The application provides the schema. The core works with document shapes rather than built-in paragraph or table names.
+doc-sync is a document CRDT with a synchronization client, a transport-independent server, and ProseMirror, Tiptap, Slate and Lexical bindings. The application provides the schema. The core works with document shapes rather than built-in paragraph or table names.
 
 ## Start with a small document
 
 ```ts
-import {Doc, type Schema} from "@barocss/doc-sync";
+import {Client, type Schema} from "@barocss/doc-sync-core";
 
 const schema: Schema = {
     root: "content",
@@ -23,12 +23,12 @@ const schema: Schema = {
     },
 };
 
-const doc = new Doc("alice", schema);
-doc.edit([{op: "insert", at: [0, 0], content: "Hello, shared document."}]);
-console.log(doc.toJSON());
+const client = new Client({schema});
+client.edit([{op: "insert", at: [0, 0], content: "Hello, shared document."}]);
+console.log(client.model());
 ```
 
-[Run the complete example →](./guide/getting-started)
+[Use the same Client with or without a transport →](./guide/client)
 
 ## Learn the contracts
 
@@ -37,7 +37,7 @@ console.log(doc.toJSON());
 - [Editor integration paths](./guide/editors) include ProseMirror, Slate, Lexical, and the custom demo editor.
 - [Change an open editor's schema](./guide/schema-transition) explains selection restoration and pending changes.
 - [AI and bots](./ai/) has a separate path for [document server connection](./ai/server), MCP editing, bot missions, and recovery.
-- [Runnable editor examples](./guide/runnable-examples) and the [Codex walkthrough](./guide/ai-walkthrough) show complete local exercises.
+- [Client demo](./guide/client#run-the-four-editor-demo) runs all four editors; the [Codex walkthrough](./guide/ai-walkthrough) covers headless collaboration.
 - [Troubleshooting](./guide/troubleshooting) and [operations and performance](./guide/operations-performance) cover recovery and measurement limits.
 - [Collaboration intent](./reference/collaboration-intent) defines deletion, formatting, insertion, and undo outcomes.
 - [State and wire contract](./reference/spec) describes ordering, validation, reconnect, and garbage collection.

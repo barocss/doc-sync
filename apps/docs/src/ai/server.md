@@ -2,6 +2,11 @@
 
 Connect the MCP bridge to the same application document server as the editor clients. Use the server's document ID and schema. The private `apps/mcp` workspace supplies the bridge; it is not a published hosted service.
 
+Browser applications can use the [Client facade](../guide/client) with a
+transport while agents keep the existing Node/MCP synchronized session. The
+facade adds no MCP tool, hosted service or recovery protocol. A Client without
+a transport is memory-only and does not join these server participants.
+
 ## Stdio connection
 
 An MCP host launches `apps/mcp/src/main.ts` as a stdio process. The process opens an outbound HTTP and SSE connection to the document server. The server can be remote. The bridge can run on the host machine or in a server environment where its MCP host launches it.

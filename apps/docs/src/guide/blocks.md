@@ -15,6 +15,11 @@ Each operation in a batch uses the state **after the preceding operation**. Inse
 
 Start with [one editing API](./editing). `doc.edit()` applies locally and returns `{ops, normalize}`. With a `SyncClient`, pass `ops` to `client.commit(ops)`. Do not apply those operations to the local document again. The examples below use a standalone document.
 
+For a client-backed editor, prefer [Client](./client) and call
+`client.edit(edits)` to apply and record one action (and queue it in sync mode).
+Do not commit that return value again. The lower-level `Doc.edit()` examples
+below return `{ops, normalize}` and retain their separate commit contract.
+
 ## Read a block path
 
 Paths contain child indices. The root itself is `[]`. Suppose root child 1 is a table:

@@ -7,9 +7,11 @@ The optional binding builds a ProseMirror schema from the document schema and co
 ## Create the binding
 
 ```ts
+import {Client} from "@barocss/doc-sync-core/client";
 import {EditorView} from "prosemirror-view";
 import {buildPmSchema, PmBinding} from "@barocss/doc-sync-prosemirror";
 
+const client = new Client({schema}); // Local editing; no transport.
 const info = buildPmSchema(schema);
 const binding = new PmBinding(client, info);
 const view = new EditorView(document.querySelector("#editor"), {
@@ -19,6 +21,8 @@ const view = new EditorView(document.querySelector("#editor"), {
 binding.view = view;
 binding.onChange = () => view.updateState(binding.state);
 ```
+
+See [Client](./client) for schema setup and synchronized construction with `{actor, schema, transport}`. The binding creates one internal host per view. It also accepts an existing `LocalClient` or `SyncClient`. Advanced integrations can still use `PmHostBinding(host, info)` with an explicit `EditorHost`.
 
 Use the CRDT client's history for collaboration-aware undo and redo. Do not add a separate ProseMirror history as the authority for shared changes.
 
@@ -40,10 +44,10 @@ If your application calls the conversion helper directly, pass the matching full
 import {canonical} from "@barocss/doc-sync-core";
 import {fromPmJSON} from "@barocss/doc-sync-prosemirror";
 
-const model = canonical(schema, fromPmJSON(info, schema, view.state.doc.toJSON(), client.doc.toJSON()));
+const model = canonical(schema, fromPmJSON(info, schema, view.state.doc.toJSON(), client.model()));
 ```
 
-A native document alone cannot reconstruct content that it does not contain. Returned covered-cell data is copied from the reference. Application commands that edit the core document directly should call `binding.pull()` after committing their operations to refresh the view.
+A native document alone cannot reconstruct content that it does not contain. Returned covered-cell data is copied from the reference. Application commands can use `client.edit()` to update mounted views through model notifications. Low-level code that bypasses the client notification path must call `binding.pull()` after committing its operations.
 
 ## Change the schema while open
 

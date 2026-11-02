@@ -116,6 +116,22 @@ function notifyObservers<T>(prior: ((value: T) => void) | null, observers: Set<O
     if (errors.length > 1) throw new AggregateError(errors, "Editor observers failed", {cause: errors[0]});
 }
 
+type ClientCallback = (...args: never[]) => unknown;
+const retiredClientCallbacks = new WeakMap<ClientCallback, ClientCallback | null>();
+
+/** Callback adapters retain earlier hooks. Retire only an owned hook on disposal. */
+export function retireClientCallback(callback: ClientCallback, prior: ClientCallback | null): void {
+    const live = resolveClientCallback(prior);
+    if (live !== callback) retiredClientCallbacks.set(callback, live);
+}
+
+/** Restore the live predecessor after another adapter removed an inner hook. */
+export function resolveClientCallback<T extends ClientCallback>(callback: T | null): T | null {
+    let current: ClientCallback | null = callback;
+    while (current && retiredClientCallbacks.has(current)) current = retiredClientCallbacks.get(current)!;
+    return current as T | null;
+}
+
 /** Preserve application callbacks and remove only this observer on disposal. */
 export function subscribeClient(client: SyncClient, observer: Observer): () => void {
     let state = subscriptions.get(client);
@@ -130,9 +146,12 @@ export function subscribeClient(client: SyncClient, observer: Observer): () => v
         const updateHook = () => notifyObservers(update, observers, item => item.update?.(), undefined);
         client.onEvent = eventHook; client.onModelEvents = modelHook; client.onUpdate = updateHook;
         state = {observers, restore: () => {
-            if (client.onEvent === eventHook) client.onEvent = event;
-            if (client.onModelEvents === modelHook) client.onModelEvents = model;
-            if (client.onUpdate === updateHook) client.onUpdate = update;
+            retireClientCallback(eventHook, event);
+            retireClientCallback(modelHook, model);
+            retireClientCallback(updateHook, update);
+            if (client.onEvent === eventHook) client.onEvent = resolveClientCallback(event);
+            if (client.onModelEvents === modelHook) client.onModelEvents = resolveClientCallback(model);
+            if (client.onUpdate === updateHook) client.onUpdate = resolveClientCallback(update);
         }};
         subscriptions.set(client, state);
     }

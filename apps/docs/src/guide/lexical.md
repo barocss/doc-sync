@@ -2,9 +2,9 @@
 
 Use the built repository workspaces or local tarballs. These package names are not yet published on npm. See [Packages and engines](./packages) for Core, binding, and editor peer requirements.
 
-Use `LexicalBinding` from **`@barocss/doc-sync-lexical`**. It connects a Lexical editor to a `SyncClient`. Build the schema information first, register its node classes, and then construct the binding.
+Use `LexicalBinding` from **`@barocss/doc-sync-lexical`**. It connects a Lexical editor to a [Client](./client). Omit the transport for local editing, or add an actor and transport for synchronization. Build the schema information first, register its node classes, and then construct the binding.
 
-This is a subpath of the same library. The library is still unpublished; the examples resolve through the repository workspace.
+This is a separate binding package. The old `@barocss/doc-sync/lexical` subpath remains a compatibility export. The examples use built repository workspaces.
 
 ## Dependencies
 
@@ -23,7 +23,7 @@ This example creates a headless editor. A browser editor can attach its root ele
 ```ts
 import {createEditor} from "lexical";
 import {type Schema} from "@barocss/doc-sync-core";
-import {HttpTransport, SyncClient} from "@barocss/doc-sync-core/sync";
+import {Client} from "@barocss/doc-sync-core/client";
 import {buildLexicalSchema, LexicalBinding} from "@barocss/doc-sync-lexical";
 
 const schema: Schema = {
@@ -40,17 +40,18 @@ const editor = createEditor({
     nodes: info.nodes,
     onError: error => { throw error; },
 });
-const actor = crypto.randomUUID();
-const client = new SyncClient(actor, new HttpTransport("lexical-example", actor), {schema});
+const client = new Client({schema}); // Local editing; no transport.
 const binding = new LexicalBinding(client, editor, {
     info,
     onError: error => console.error(error),
 });
 ```
 
+The binding creates its own editor host for each view. For synchronization, construct `new Client({actor, schema, transport})` and connect it. Existing `LocalClient` and `SyncClient` arguments remain supported. Advanced integrations can use `LexicalHostBinding` with an explicit `EditorHost`. See [Client](./client) for mode and lifecycle rules.
+
 The constructor initializes the editor from the current client document. It checks that the schema information matches the client's schema and that the required node classes are registered. You can also pass `info` directly as the third argument.
 
-For a browser editor, set `editor.setRootElement(element)` and install the native plugins your UI needs, such as `registerRichText(editor)`. Install table plugins if you expose native table commands. After mounting, call `client.connect()`. The binding does not provide toolbar controls or replace the application's plugin setup.
+For a browser editor, set `editor.setRootElement(element)` and install the native plugins your UI needs, such as `registerRichText(editor)`. Install table plugins if you expose native table commands. For a synchronized client, call `client.connect()` after mounting. The binding does not provide toolbar controls or replace the application's plugin setup.
 
 Local update listeners send edits automatically. Do not add a second converter/commit listener for the same editor. The binding tags remote updates with `LEXICAL_REMOTE_TAG` to prevent an echo.
 

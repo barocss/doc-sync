@@ -8,10 +8,15 @@ Install this package with `@barocss/doc-sync-core` and its required editor peers
 
 The draft internal compatibility range is `>=0.0.0 <0.1.0`. A binding patch can advance within this range without changing facade or sibling package versions. This is a local artifact policy, not registry release evidence. A future 0.1 minor release must set and verify its own supported ranges.
 
-`LexicalHostBinding` accepts the shared `EditorHost` contract. Use
-`createSyncClientEditorHost(client)` from `@barocss/doc-sync-core/editor`
-for the current TypeScript backend. The legacy binding constructor and exact
-`.client` reference remain supported. Call `dispose()` on unmount.
-The legacy Lexical `.input` remains the same original InputSession; the
-Host session delegates to it and does not create another composition fork.
-This interface does not provide a selectable Rust/WASM backend.
+`new LexicalBinding(client, editor, info)` accepts `Client` from
+`@barocss/doc-sync-core/client`, `LocalClient`, or the legacy `SyncClient`.
+The binding keeps the exact `.client` reference and creates a separate host for
+each view. A `Client` without a transport edits in memory. Add a transport to
+use synchronization with the same binding constructor.
+
+`LexicalHostBinding` still accepts an explicit `EditorHost`. Call `dispose()` on
+unmount to remove that view's observer. The client can remain in use by other
+views.
+
+For a legacy `SyncClient`, `.input` remains the original `InputSession`.
+For `Client` and `LocalClient`, `.input` is the binding's `EditorSession`.

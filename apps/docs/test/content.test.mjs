@@ -46,3 +46,24 @@ test("reference preparation uses the authoritative documents without internal ha
         assert.doesNotMatch(generated, /\.\.\/apps\/docs\/src\/roadmap\.md/);
     }
 });
+
+// Verify the public application route rather than a copied helper.
+test('the Client guide local example uses public exports and records once', () => {
+    const source = readFileSync(new URL('../src/guide/client.md', import.meta.url), 'utf8');
+    const code = /```ts\n([\s\S]*?)\n```/.exec(source)?.[1];
+    assert.ok(code);
+    const result = spawnSync(process.execPath, ['--input-type=module', '-'], {
+        cwd: root, encoding: 'utf8', timeout: 10000,
+        input: stripTypeScriptTypes(code) + `
+import assert from 'node:assert/strict';
+assert.equal(client.mode, 'local');
+assert.equal(client.sync, null);
+assert.equal(client.model().children[0].runs[0].text, 'Hello');
+client.undo();
+assert.equal(client.historyStatus().canUndo, false);
+client.redo();
+client.dispose();
+`,
+    });
+    assert.equal(result.status, 0, result.stderr);
+});

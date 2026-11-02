@@ -1,5 +1,9 @@
 # Local document editors
 
+This demo retains explicit LocalClient/LocalEditorHost setup. For the preferred
+Client API with all four bindings in local and sync modes, run `npm run dev:client`
+and see [the unified demo](../client/README.md).
+
 Run ProseMirror, Slate, and Lexical with three independent, memory-only documents. Open `/?mode=shared` to use Custom (a textarea), ProseMirror, Slate, and Lexical on one document. Each native editor uses `LocalClient` through `LocalEditorHost`. The browser does not use a document server or persistent storage. A loopback static preview serves the HTML, CSS, and JavaScript assets.
 
 Use Node 24.22.1 for the tested workflow. From the repository root:

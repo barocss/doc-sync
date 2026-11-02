@@ -25,6 +25,9 @@
     "dev:local": "node apps/demo/local/start.mjs",
     "check:local": "node apps/demo/local/check-browser.mjs",
     "check:local:shared": "node apps/demo/local/check-shared-browser.mjs",
+    "dev:client": "node apps/demo/client/start.mjs",
+    "check:client": "node apps/demo/client/check-browser.mjs",
+    "bench:client-api": "node benchmarks/client-api.mjs",
     "build": "node scripts/build-packages.mjs",
     "pretest": "npm run build",
     "pretypecheck": "npm run build",
@@ -32,7 +35,8 @@
     "predev": "npm run build",
     "predocs:build": "npm run build",
     "predev:products": "npm run build",
-    "predev:local": "npm run build"
+    "predev:local": "npm run build",
+    "predev:client": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

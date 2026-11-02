@@ -8,10 +8,12 @@ Install this package with `@barocss/doc-sync-core` and its required editor peers
 
 The draft internal compatibility range is `>=0.0.0 <0.1.0`. A binding patch can advance within this range without changing facade or sibling package versions. This is a local artifact policy, not registry release evidence. A future 0.1 minor release must set and verify its own supported ranges.
 
-`PmBinding(client, info)` preserves the existing API and exact `.client`
-reference. `PmHostBinding(host, info)` uses the shared implementation through
-`EditorHost`, exported by `@barocss/doc-sync-core/editor`. Use
-`createSyncClientEditorHost(client)` for the current TypeScript backend.
-Call `binding.dispose()` when unmounting to remove its observer. This does not
-disconnect the client or clear pending edits. A selectable Rust/WASM backend
-is not implemented by this interface.
+`new PmBinding(client, info)` accepts `Client` from
+`@barocss/doc-sync-core/client`, `LocalClient`, or the legacy `SyncClient`.
+The binding keeps the exact `.client` reference and creates a separate host for
+each view. A `Client` without a transport edits in memory. Add a transport to
+use synchronization with the same binding constructor.
+
+`PmHostBinding` still accepts an explicit `EditorHost`. Call `dispose()` on
+unmount to remove that view's observer. The client can remain in use by other
+views.

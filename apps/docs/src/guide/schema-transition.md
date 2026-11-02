@@ -9,6 +9,12 @@ does not yet load arbitrary runtime schemas or transition an open document.
 Its planned schema compiler and compatible transition have separate gates;
 see [Rust schema delivery](./rust#can-a-document-use-a-dynamic-schema).
 
+With the unified `Client`, first check `client.sync` and pass that actual
+SyncClient to the helpers below. Keep the unified Client attached to the binding;
+it reads the same backend and updated schema. Local mode has no schema-transition
+API. The rebuild host in this guide is the application lifecycle contract, not
+the per-view EditorHost created internally by a binding.
+
 ## What changes
 
 <div class="operation-figure" tabindex="0" role="region" aria-label="Open editor schema transition diagram">

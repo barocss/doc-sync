@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>One Client, four editors</title><link rel="stylesheet" href="/style.css"></head>
+<body><main>
+<header><p class="eyebrow">DOC SYNC / CLIENT</p><h1>One Client, four editors</h1><p id="mode-description"></p><p id="diagnostics"></p><nav aria-label="Document mode"><a href="/?mode=local" data-mode="local">Local document</a><a href="/?mode=sync" data-mode="sync">Memory synchronization</a></nav><button id="reset" type="button">Reset document</button></header>
+<div class="workbench" id="editors" aria-label="Document editors"></div>
+<footer><p id="transport-description"></p><p>Refresh or Reset restores the sample. Remount keeps the document and history.</p><p>Use ⌘Z or Ctrl+Z to undo. Use ⇧⌘Z, Ctrl+Shift+Z, or Ctrl+Y to redo.</p><p>Insert prefix adds “x” at the start.</p></footer>
+<pre id="errors" role="alert" hidden></pre></main><script type="module" src="/bundle.js"></script></body></html>

@@ -8,7 +8,8 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 
 - Schema-defined text, inline content, lists, nested flows, tables, spans, and attributes.
 - Local-first editing, validated changes, HTTP/SSE demo transport, and snapshot/GC support.
-- A memory-only TypeScript LocalClient and per-view LocalEditorHost, with edits, anchored selections, undo/redo and composition drafts. ProseMirror, Slate and Lexical accept local hosts; the current Tiptap extension requires SyncClient. Local persistence and restart recovery remain open.
+- A Client facade with fixed local/sync mode selected by its optional transport, common binding construction and advanced SyncClient access.
+- A memory-only TypeScript LocalClient and per-view LocalEditorHost, with edits, anchored selections, undo/redo and composition drafts. All four client-facing bindings accept LocalClient or the unified Client and create per-view hosts internally. Local persistence and restart recovery remain open.
 - Per-user undo and redo that retain independent changes under the stated ownership rules.
 - Remote cursors and selection ranges, including backward and overlapping selection.
 - Independent ProseMirror, Tiptap, Slate and Lexical binding packages, with the original compatibility subpaths.
@@ -23,6 +24,31 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 - Bot brief checks for exact UTF-16 text occurrences and ordered direct-child types, separate from model-reported completion.
 - An opt-in proposal HTTP/CLI service with separate creator and owner grants, bounded plain-text previews, durable records, inspection, rejection, explicit exact approval, and receipt-based restart reconciliation. Approval applies only a supported stored root text range; it requires an additional feature flag and `proposal_accept`. Planner integration and editor review UI remain open.
 - A host-based open-editor schema transition with text selection restoration. The product demo uses it with Slate, Lexical and ProseMirror after a compatible server transition.
+
+## Unified Client verification
+
+The current whole-workspace confirmation passes **1,310 cases on macOS:
+1,308 PASS, two platform SKIPs, zero FAIL**. The groups are library 793, Core 152,
+Lexical 7, Slate 4, bot 53, demo 85, documentation 35 and MCP 181. Root type
+checking and six-tarball/seven-consumer checks pass. An earlier MCP process test
+received unexpected HTML; its cause was not established. Isolated recovery,
+the full MCP rerun and the final whole-workspace confirmation passed. The failed
+receipt remains in the report.
+
+Chrome 156 passes all four bindings in both local and sync modes with the same
+Client-facing API. It checks trusted input/delete, forward/back/caret selections,
+application selection restoration, shared/per-participant History, remount,
+reset, refresh and offline/foreign editing followed by reconnect. Native/client
+models converge, pending reaches zero, and network/notification/console/page-error
+gates pass. The sync demo uses an in-page DocHub transport, not HTTP persistence.
+
+The 320-input Chrome timing run has **59/64 paired DOM cells within the declared
+guards**. All medians, all sync cells and all 100k cells pass; five local 10k p95
+cells exceed the guard. Node native-input repeats retain one Slate 10k p95 flag,
+although median and 100k timings improve. A uniform performance PASS is not
+established. [Performance evidence](./performance#unified-client-and-native-input)
+keeps original and repeated results. OS IME, browser composition, physical paint,
+rich-schema browser performance and local persistence remain outside this proof.
 
 ## Regression coverage
 
