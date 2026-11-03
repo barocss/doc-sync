@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {test} from "node:test";
 import {createServer} from "node:http";
 import {once} from "node:events";
-import {NodeHttpTransport} from "../../../packages/doc-sync-core/src/sync/node-http-transport.ts";
+import {NodeHttpTransport} from "../../../packages/doc-sync/src/sync/node-http-transport.ts";
 const change = {actor: "fixed", seq: 1, ops: []};
 const base = {epoch: "e", serverSeq: 0, schemaVersion: null};
 test("all upstream requests use only configured credentials and refuse redirects", async () => {

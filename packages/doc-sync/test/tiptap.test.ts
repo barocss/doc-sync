@@ -3,9 +3,9 @@ import {after, test} from "node:test";
 import {JSDOM} from "jsdom";
 import {Editor, Extension} from "@tiptap/core";
 import {Plugin, PluginKey} from "@tiptap/pm/state";
-import {DocSync, createTiptapExtensions} from "@barocss/doc-sync/tiptap";
+import {DocSync, createTiptapExtensions} from "@barocss/doc-sync-tiptap";
 import {buildPmSchema, fromPmJSON} from "../../doc-sync-prosemirror/dist/index.js";
-import {canonical} from "../../doc-sync-core/dist/crdt/model.js";
+import {canonical} from "../../doc-sync/dist/crdt/model.js";
 import {MemoryNet} from "./harness.ts";
 
 const dom = new JSDOM("<!doctype html><html><body></body></html>", {pretendToBeVisual: true});
@@ -214,7 +214,7 @@ test("Tiptap presence broadcast settles without a selection feedback loop", asyn
     const s = await setup("abcdef"); t.after(() => s.dispose());
     s.editors[0].destroy();
     let sends = 0;
-    s.clients[0].setPresence = value => { sends++; if (sends > 20) throw new Error("presence feedback loop"); s.net.hub.setPresence({actor: s.clients[0].actor, ...value}); };
+    s.clients[0].setPresence = value => { sends++; if (sends > 20) throw new Error("presence feedback loop"); s.net.hub.setPresence({...s.clients[0].profile, ...value, name: value.name ?? s.clients[0].profile.name, color: value.color ?? s.clients[0].profile.color, actor: s.clients[0].actor}); };
     const editor = new Editor({element: document.body.appendChild(document.createElement("div")), extensions: [
         ...createTiptapExtensions(s.clients[0].schema), DocSync.configure({client: s.clients[0], presence: {name: "Alice", color: "#2274a5"}}),
     ]});

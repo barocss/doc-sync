@@ -1,31 +1,64 @@
 # Public API
 
-Six packages provide Core, four editor bindings, and a compatibility facade. All remain private before registry release. The demo, documentation, and benchmark workspaces are private. See [packages and engines](../guide/packages) for independent imports and peer dependencies.
+Five packages provide the dependency-free Core and four editor bindings. All remain private before registry release. The demo, documentation, and benchmark workspaces are private. See [packages and engines](../guide/packages) for independent imports and peer dependencies.
 
 ## Entry points
 
 | Import | Main exports |
 |---|---|
-| `@barocss/doc-sync` | `Client`, `LocalClientState`, `Doc`, `History`, `commands`, model/schema/position helpers, and shared types. |
+| `@barocss/doc-sync` | `Client`, `LocalClientState`, `Doc`, `History`, `commands`, model/schema/position helpers, `createGraphicHelpers`, `SpreadsheetSchema`, `SparseSheet`, and shared types. |
 | `@barocss/doc-sync/client` | `Client`, `createEditorHost`, `BindingClient`, client options and types. |
 | `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `typescriptClientEngineFactory`, `ClientEngineFactory`, `upgradeOpenEditorSchema`, `OpenEditorSchemaHost`, `ModelRange`, protocol constants and types. |
 | `@barocss/doc-sync/node` | `NodeHttpTransport`, `NodeHttpTransportOptions` for Node.js HTTP and SSE synchronization. |
+| `@barocss/doc-sync/editor` | Editor host contracts, `inspectEditorSchema`, `inspectSpreadsheetSchema` and capability declarations. |
 | `@barocss/doc-sync/server` | `DocHub`, `HubOptions`. |
-| `@barocss/doc-sync/prosemirror` | `PmBinding`, `buildPmSchema`, model/position conversion. |
-| `@barocss/doc-sync/tiptap` | `DocSync`, `createTiptapExtensions`, Tiptap options and storage types. |
-| `@barocss/doc-sync/slate` | `SlateBinding`, schema codecs and selection conversion. |
-| `@barocss/doc-sync/lexical` | `LexicalBinding`, `buildLexicalSchema`, schema nodes and selection conversion. |
+| `@barocss/doc-sync-prosemirror` | `PmBinding`, `buildPmSchema`, model/position conversion. |
+| `@barocss/doc-sync-tiptap` | `DocSync`, `createTiptapExtensions`, Tiptap options and storage types. |
+| `@barocss/doc-sync-slate` | `SlateBinding`, schema codecs and selection conversion. |
+| `@barocss/doc-sync-lexical` | `LexicalBinding`, `buildLexicalSchema`, schema nodes and selection conversion. |
 
-These compatibility entry points (including the new `/client` entry) re-export the independent packages. Current package exports resolve compiled ESM JavaScript and declarations. Local tarball installation is verified; registry publication and release policy remain separate gates.
+The core entry points and independent binding packages form the public API. Current package exports resolve compiled ESM JavaScript and declarations. Local tarball installation is verified; registry publication and release policy remain separate gates.
+
+## Schema domains
+
+The root package exports `Schema`, `DocumentSchema`, `GraphicSchema`,
+`ContainerSpec`, `OrderedSpec`, and `SchemaDomain` as types. `Schema` remains the
+shared input type accepted by Doc, Client, and DocHub. An omitted domain means
+`document`. Explicit document markers have the same fingerprint as equivalent
+legacy definitions. Graphic schemas require `domain: 'graphic'` and a container
+root. `checkSchema` enforces the domain and child rules; containers have no
+`default` or `childRules` and can stay empty.
+
+`container` is a stored object collection. `group` remains a computed document
+list wrapper. Nested flow text boxes retain default paragraphs and document
+list behavior inside a graphic schema. Graphic root attributes are currently
+unsupported and rejected; put editable properties on stored objects.
+
+Schema compatibility permits append-only child additions under containers but
+rejects changing document/graphic domains. `/sync` exports `CONTAINER_CAPABILITY`
+(`containers-v1`), required in addition to the unchanged document capability set
+for graphic synchronization. See [the domain guide](../guide/graphic-schema).
+
+## Custom schema preflight and sheets
+
+`createGraphicHelpers(schema)` binds Doc-level object IDs and edits to a custom
+container/text/atom graphic descriptor. `/editor` preflight functions report
+missing or opaque view handling; they do not register renderers.
+
+`createSpreadsheetSchema`, `assertSpreadsheetSchema`,
+`spreadsheetSchemaVersion`, `DEFAULT_SPREADSHEET_SCHEMA` and `SparseSheet` are
+experimental root exports. Custom sheets validate scalar fields and bind
+operations/checkpoints to the descriptor identity. They do not use tree Schema,
+Client, DocHub or the public sync wire. Read [custom schema recipes](../schemas/custom).
 
 ## Client
 
 Core `/client` exports `Client`, `BindingClient`, `ClientOptions`,
 `createEditorHost`, `clientOwner`, `isBindingClient` and `ClientNotificationError`.
-`Client` is also exported at the Core and facade roots and the facade `/client`
-entry. `BindingClient` is `Client | LocalClient | SyncClient`.
+`ActorProfile`, `ResolvedActorProfile`, and `ProfileJSON` are exported from the root, `/client`, `/local`, and `/sync`; `/sync` also exports `PresenceInput`.
+`Client` is also exported at the Core root and its `/client` entry. `BindingClient` is `Client | LocalClient | SyncClient`.
 
-`new Client({schema, actor?, transport?, syncOptions?})` fixes the mode at
+`new Client({schema, actor?, profile?, transport?, syncOptions?})` fixes the mode at
 construction. No transport creates only a LocalClient. A transport requires an
 actor and selects the existing SyncClient. `edit(edits, record?)` applies and
 records once; sync mode also queues the exact operations. Do not commit its
@@ -35,15 +68,18 @@ Common methods cover History, anchors, selections, observers, status, connection
 and presence. Local status remains offline/unsynchronized and presence empty.
 `client.sync` is null locally and is the actual SyncClient in sync mode. Use it
 for advanced conditional editing, recovery and schema transition APIs. The
-facade supplies local capture/open values but writes no storage and adds no
+client supplies local capture/open values but writes no storage and adds no
 live mode conversion or Rust/WASM backend. See the
-[Client guide](../guide/client) for complete usage, disposal and limits.
+[Client guide](../guide/client) for complete usage, disposal and limits. `actor` stays the replica ID; the optional read-only
+`profile` supplies display name, color, avatar, userId, human/bot kind and JSON
+metadata. Profiles do not grant authority or enter saved document/History state.
+See [participant profiles](../guide/presence#participant-profiles).
 
 ## Memory-only client
 
-`@barocss/doc-sync-core/local` exports `LocalClient`, `LocalEditorHost`,
+`@barocss/doc-sync/local` exports `LocalClient`, `LocalEditorHost`,
 `createLocalEditorHost`, and their option, session, observer and error types.
-`new LocalClient({schema, actor?})` owns a production TS engine without a
+`new LocalClient({schema, actor?, profile?})` owns a production TS engine without a
 transport. `edit` applies and records once; low-level `apply`/`commit` split those
 steps. Selection anchors, history, composition and origin-filtered subscriptions
 share the editor host contract. LocalClient and Client(local) expose `captureState()` and
@@ -55,7 +91,7 @@ See [save and open locally](../guide/local-storage). See [local editing](../guid
 
 ## Editor host
 
-`@barocss/doc-sync-core/editor` exports `EditorHost`, `EditorSession`, and `createSyncClientEditorHost(client)`. The adapter uses the selected production SyncClient engine and its input sessions. The TypeScript implementation keeps ordinary single-text edits on an incremental path. Model values are borrowed immutable views with generation/revision stamps.
+`@barocss/doc-sync/editor` exports `EditorHost`, `EditorSession`, and `createSyncClientEditorHost(client)`. The adapter uses the selected production SyncClient engine and its input sessions. The TypeScript implementation keeps ordinary single-text edits on an incremental path. Model values are borrowed immutable views with generation/revision stamps.
 
 The independent binding packages export `PmHostBinding`, `SlateHostBinding`, and `LexicalHostBinding`. Client constructors accept Client, LocalClient or SyncClient and preserve `.client`. Raw SyncClient keeps its legacy path; Lexical preserves its original `.input` session in that path. Tiptap uses the shared PM implementation. See [host integration](../guide/packages#connect-prosemirror-through-an-editor-host) for examples. Only the TypeScript production factory ships; a Rust/WASM adapter is not selectable.
 
@@ -64,9 +100,9 @@ The independent binding packages export `PmHostBinding`, `SlateHostBinding`, and
 ## Production engine and client state
 
 The client in this section is SyncClient. Access it as `client.sync` when using
-the facade. Its server recovery envelopes differ from the local save/open format.
+the unified Client. Its server recovery envelopes differ from the local save/open format.
 
-`@barocss/doc-sync-core/engine` exports `ClientEngineFactory`, `ClientEngine`,
+`@barocss/doc-sync/engine` exports `ClientEngineFactory`, `ClientEngine`,
 `EngineEditingView`, `EngineInputSession`, and `typescriptClientEngineFactory`.
 Pass the factory as `new SyncClient(actor, transport, {schema, engineFactory})`.
 Omit it for the TypeScript default. The constructor validates methods, identity,
@@ -141,9 +177,9 @@ Core exports `readDocumentSlice`, `SliceQuery`, `DocumentSlice`, and `SLICE_LIMI
 
 ## Authoritative source
 
-- [Core exports](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-core/src/index.ts)
-- [Client and protocol](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-core/src/sync)
-- [Server](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-core/src/server)
+- [Core exports](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/index.ts)
+- [Client and protocol](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/sync)
+- [Server](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/server)
 - [ProseMirror binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-prosemirror/src)
 
 - [Slate binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-slate/src)

@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import {test} from "node:test";
 import {createEditor, $getRoot, $isElementNode, $isTextNode} from "lexical";
 import {registerTablePlugin, $isTableNode, $isTableCellNode, $computeTableMapSkipCellCheck, $unmergeCellNode} from "@lexical/table";
-import {canonical} from "../../doc-sync-core/dist/crdt/model.js";
+import {canonical} from "../../doc-sync/dist/crdt/model.js";
 import {buildLexicalSchema, $toLexical, $fromLexical, $setLexicalSelection, $lexicalSelection, fromLexicalJSON, $createModelNode, $setModelData} from "../../doc-sync-lexical/dist/index.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
+import type {NodeJSON} from "../../doc-sync/dist/crdt/model.js";
 
 const p = (text: string): NodeJSON => ({type: "paragraph", runs: [{text, marks: {}}]});
 const cell = (text: string): NodeJSON => ({type: "table-cell", children: [{type: "table-cell-body", children: [p(text)]}]});

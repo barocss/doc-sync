@@ -7,7 +7,7 @@ The optional binding builds a ProseMirror schema from the document schema and co
 ## Create the binding
 
 ```ts
-import {Client} from "@barocss/doc-sync-core/client";
+import {Client} from "@barocss/doc-sync/client";
 import {EditorView} from "prosemirror-view";
 import {buildPmSchema, PmBinding} from "@barocss/doc-sync-prosemirror";
 
@@ -41,7 +41,7 @@ ProseMirror contains only visible table cells. The shared document retains cover
 If your application calls the conversion helper directly, pass the matching full model as its fourth argument:
 
 ```ts
-import {canonical} from "@barocss/doc-sync-core";
+import {canonical} from "@barocss/doc-sync";
 import {fromPmJSON} from "@barocss/doc-sync-prosemirror";
 
 const model = canonical(schema, fromPmJSON(info, schema, view.state.doc.toJSON(), client.model()));
@@ -102,7 +102,7 @@ fn main() -> Result<()> {
 
 The existing TypeScript adapter uses `pmPosToPath` and `pathToPmPos` in `packages/doc-sync-prosemirror/src/convert.ts`. A Rust-backed adapter must connect that editor conversion to `capture_selection` and `resolve_selection`, and project `model()` into the ProseMirror document. The example does not install or test that adapter.
 
-The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
 <details>
 <summary>Raw protocol probe and reference checks</summary>

@@ -2,7 +2,7 @@
 import {mkdir, writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {dirname} from 'node:path';
-import {createBotAvatar} from '../../../packages/doc-sync-core/dist/sync/character.js';
+import {createBotAvatar} from '../../../packages/doc-sync/dist/sync/character.js';
 const oldDocument = globalThis.document;
 globalThis.document = {createElement(){return {dataset:{},setAttribute(){},append(child){this.svg=child;}};},createElementNS(){return {setAttribute(){},innerHTML:''};}};
 const characters=['fox','owl','cat','robot'];

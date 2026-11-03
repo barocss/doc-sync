@@ -14,8 +14,8 @@ the existing SyncClient backend. The lower-level examples below retain direct
 SyncClient access for transport, engine and recovery integration.
 
 ```ts
-import {Client} from "@barocss/doc-sync-core/client";
-import {HttpTransport} from "@barocss/doc-sync-core/sync";
+import {Client} from "@barocss/doc-sync/client";
+import {HttpTransport} from "@barocss/doc-sync/sync";
 
 const actor = "alice-session-1";
 const client = new Client({schema, actor, transport: new HttpTransport("example", actor)});
@@ -51,7 +51,7 @@ This transport expects the API served by the demo server. It does not add authen
 
 Pass `engineFactory: typescriptClientEngineFactory` in the constructor options
 to select the production TypeScript engine explicitly. Both exports are
-available from `@barocss/doc-sync-core/sync`. The default uses that same factory.
+available from `@barocss/doc-sync/sync`. The default uses that same factory.
 `client.engine` is the selected authoritative engine; common editor hosts and
 input sessions use it without a Doc-based interface. Factory and capability
 checks finish before connection. Only TypeScript ships; Rust/WASM selection and
@@ -146,7 +146,7 @@ fn main() -> Result<()> {
 }
 ```
 
-The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
 <details>
 <summary>Raw protocol probe and reference checks</summary>

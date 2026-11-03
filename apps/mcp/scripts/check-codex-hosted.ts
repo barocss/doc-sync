@@ -61,8 +61,8 @@ try {
     report.cli = spawnSync("codex", ["--version"], {encoding: "utf8"}).stdout.trim();
     report.node = {version: process.version, executable: process.execPath};
     report.dependencies = {sdk: JSON.parse(await readFile(join(repo, "node_modules/@modelcontextprotocol/sdk/package.json"), "utf8")).version,
-        core: import.meta.resolve("@barocss/doc-sync-core"), sync: import.meta.resolve("@barocss/doc-sync/sync"), sdkClient: import.meta.resolve("@modelcontextprotocol/sdk/client/index.js"), coreRoot: await realpath(join(repo, "packages/doc-sync-core"))};
-    const sourcePaths = [...await tree("packages/doc-sync-core/src"), ...await tree("packages/doc-sync-core/dist"), ...await tree("apps/mcp/src"), ...await tree("packages/doc-sync/dist"),
+        core: import.meta.resolve("@barocss/doc-sync"), sync: import.meta.resolve("@barocss/doc-sync/sync"), sdkClient: import.meta.resolve("@modelcontextprotocol/sdk/client/index.js"), coreRoot: await realpath(join(repo, "packages/doc-sync"))};
+    const sourcePaths = [...await tree("packages/doc-sync/src"), ...await tree("packages/doc-sync/dist"), ...await tree("apps/mcp/src"), ...await tree("packages/doc-sync/dist"),
         "apps/mcp/scripts/check-codex-hosted.ts", "apps/demo/server.ts", "fixtures/demo-schema.ts", "fixtures/product-schemas.ts", "fixtures/product-documents.ts"];
     for (const path of sourcePaths.sort()) sources[path] = await digestFile(path);
     report.sourceHashes = sources;

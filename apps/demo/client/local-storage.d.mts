@@ -1,4 +1,4 @@
-import type {Client} from '@barocss/doc-sync-core/client';
+import type {Client} from '@barocss/doc-sync/client';
 export const DEFAULT_STORAGE_KEY: string;
 type Selection = ReturnType<Client['captureSelection']>;
 type Storage = {getItem(key: string): string | null; setItem(key: string, value: string): void; removeItem(key: string): void};

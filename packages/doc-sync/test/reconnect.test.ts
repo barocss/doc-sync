@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import {DocHub} from "../../doc-sync-core/dist/server/hub.js";
-import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
-import type {Op} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {ServerEvent, Transport} from "../../doc-sync-core/dist/sync/protocol.js";
+import {Doc} from "../../doc-sync/dist/crdt/doc.js";
+import {DocHub} from "../../doc-sync/dist/server/hub.js";
+import {SyncClient} from "../../doc-sync/dist/sync/client.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
+import type {Op} from "../../doc-sync/dist/crdt/doc.js";
+import type {ServerEvent, Transport} from "../../doc-sync/dist/sync/protocol.js";
 
 Doc.verifyBlocks = true;
 

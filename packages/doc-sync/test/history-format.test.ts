@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
-import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import {History} from "../../doc-sync-core/dist/crdt/history.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
+import {Doc} from "../../doc-sync/dist/crdt/doc.js";
+import {History} from "../../doc-sync/dist/crdt/history.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import {MemoryNet} from "./harness.ts";
-import type {NodeJSON} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
-import type {Ticket} from "../../doc-sync-core/dist/crdt/ticket.js";
+import type {NodeJSON} from "../../doc-sync/dist/crdt/doc.js";
+import type {SyncClient} from "../../doc-sync/dist/sync/client.js";
+import type {Ticket} from "../../doc-sync/dist/crdt/ticket.js";
 
 type Run = NonNullable<NodeJSON["runs"]>[number];
 const r = (text: string, marks: Record<string, boolean> = {}): Run => ({text, marks});

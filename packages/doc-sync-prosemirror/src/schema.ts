@@ -1,7 +1,7 @@
 import {Schema} from "prosemirror-model";
-import {gridParts, storedTypes} from "@barocss/doc-sync-core";
+import {gridParts, storedTypes} from "@barocss/doc-sync";
 import type {DOMOutputSpec, MarkSpec, Node as PmNode, NodeSpec as PmNodeSpec} from "prosemirror-model";
-import type {FlowSpec, NodeSpec, Schema as DocSchema} from "@barocss/doc-sync-core";
+import type {FlowSpec, NodeSpec, Schema as DocSchema} from "@barocss/doc-sync";
 
 /**
  * 우리 스키마 → ProseMirror 스키마. 모양마다 ProseMirror 노드 꼴이 정해진다.
@@ -29,6 +29,21 @@ export type PmSchemaInfo = {
 export type DomHints = Record<string, (node: PmNode) => DOMOutputSpec>;
 
 export const buildPmSchema = (schema: DocSchema, dom: DomHints = {}): PmSchemaInfo => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
+    // Validate before constructing native descriptors. Normalization must be injective.
+    const nativeNames = new Map<string, string>();
+    for (const type of Object.keys(schema.nodes)) {
+        const name = pmName(type);
+        if (name === "text") throw new Error(`Invalid ProseMirror node name: ${type}`);
+        const prior = nativeNames.get(name);
+        if (prior !== undefined) throw new Error(`ProseMirror node name collision: ${prior} and ${type}`);
+        nativeNames.set(name, type);
+    }
+    const markNames = new Set<string>();
+    for (const name of [...schema.marks, ...Object.keys(schema.markValues ?? {})]) {
+        if (markNames.has(name)) throw new Error(`ProseMirror mark name collision: ${name}`);
+        markNames.add(name);
+    }
     const ours = new Map<string, string>();
     const nodes: Record<string, PmNodeSpec> = {};
     const flowContent = (flow: FlowSpec) => `(${storedTypes(schema, flow).map(pmName).join(" | ")})+`;

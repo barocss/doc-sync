@@ -38,7 +38,7 @@ try{
     receipt.servedBundleProof=JSON.parse(await readFile(resolve(output,'bundle-proof.json'),'utf8'));assert.deepEqual(receipt.servedBundleProof.forbidden,[]);
     const meta=JSON.parse(await readFile(resolve(output,'metafile.json'),'utf8'));
     const inputs=[...new Set(Object.values(meta.outputs??{}).flatMap(o=>Object.entries(o.inputs??{}).filter(([,v])=>v.bytesInOutput>0).map(([path])=>path)))];
-    receipt.bundle={inputs,forbidden:inputs.filter(p=>/transport|sync-client|websocket|node-http|\/sync\/client\.|doc-sync-core\/dist\/server\//i.test(p)),scope:'Emitted contributing modules; unused barrel inputs allowed.'};assert.deepEqual(receipt.bundle.forbidden,[]);
+    receipt.bundle={inputs,forbidden:inputs.filter(p=>/transport|sync-client|websocket|node-http|\/sync\/client\.|doc-sync\/dist\/server\//i.test(p)),scope:'Emitted contributing modules; unused barrel inputs allowed.'};assert.deepEqual(receipt.bundle.forbidden,[]);
     run('open',String(url));run('wait','--fn','!!window.__localDemo?.ready');run('snapshot','-i');
     receipt.browser=evaluate('({userAgent:navigator.userAgent,platform:navigator.platform})');
     receipt.initial=await settle();assert.equal(receipt.initial.sameClient,true);assert.equal(receipt.initial.clientCount,1);assert.equal(receipt.initial.hostCount,4);assert.deepEqual(receipt.initial.peers.map(p=>p.name).sort(),[...names].sort());

@@ -160,7 +160,7 @@ Reproduce from the repository root. The final output must be plain `ab` with no 
 ```sh
 node --input-type=module <<'JS'
 import {MemoryNet} from './packages/doc-sync/test/harness.ts';
-import {commands as cmd} from '@barocss/doc-sync-core';
+import {commands as cmd} from '@barocss/doc-sync';
 const net = new MemoryNet(), a = net.add('A'), b = net.add('B');
 a.connect(); b.connect();
 try {

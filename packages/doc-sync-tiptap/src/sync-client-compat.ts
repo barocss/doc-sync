@@ -1,8 +1,8 @@
-import {createEditorHost, clientOwner} from "@barocss/doc-sync-core/client";
-import type {BindingClient} from "@barocss/doc-sync-core/client";
-import {retireClientCallback, resolveClientCallback} from "@barocss/doc-sync-core/editor";
-import type {EditorHost} from "@barocss/doc-sync-core/editor";
-import {SyncClient} from "@barocss/doc-sync-core/sync";
+import {createEditorHost, clientOwner} from "@barocss/doc-sync/client";
+import type {BindingClient} from "@barocss/doc-sync/client";
+import {retireClientCallback, resolveClientCallback} from "@barocss/doc-sync/editor";
+import type {EditorHost} from "@barocss/doc-sync/editor";
+import {SyncClient} from "@barocss/doc-sync/sync";
 import type {DocSyncOptions} from "./index.ts";
 
 const owners = new WeakMap<object, object>();

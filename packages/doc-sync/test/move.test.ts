@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, History, MAIN, slotKey, ticketOf, type Schema, type Op, type Ticket, commands} from "../../doc-sync-core/dist/index.js";
+import {Doc, History, MAIN, slotKey, ticketOf, type Schema, type Op, type Ticket, commands} from "../../doc-sync/dist/index.js";
 
 const schema: Schema = {root: "content", marks: [], nodes: {
     content: {shape: "flow", children: ["paragraph", "box", "rule"], default: "paragraph"},
@@ -105,7 +105,7 @@ test("move validates immutable target types and placement-anchor membership", ()
     assert.equal(doc.check(doc.edit([{op: "move", from: [0], at: [1]}]).ops), null);
 });
 
-const textOf = (node: {runs?: import("../../doc-sync-core/dist/index.js").Run[]}) => (node.runs ?? []).map(run => "text" in run ? run.text : "").join("");
+const textOf = (node: {runs?: import("../../doc-sync/dist/index.js").Run[]}) => (node.runs ?? []).map(run => "text" in run ? run.text : "").join("");
 test("paragraph cross-parent movement preserves tokens and supports split, join, and resplit", () => {
     const doc = new Doc("A", schema);
     doc.edit([{op: "insert", at: [0], content: [paragraph("abc"), paragraph("DEF"), box("inside")]}]);

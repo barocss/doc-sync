@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
 import {MemoryNet, show} from "./harness.ts";
 
 const setup = async (text: string) => {

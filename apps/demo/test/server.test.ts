@@ -6,11 +6,29 @@ import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test} from "node:test";
 import {fileURLToPath} from "node:url";
+import * as ts from "typescript";
 import {Doc} from "@barocss/doc-sync";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import type {ServerEvent} from "@barocss/doc-sync/sync";
 
 const serverFile = fileURLToPath(new URL("../server.ts", import.meta.url));
+
+function moduleSpecifiers(source: string): string[] {
+    const specifiers: string[] = [];
+    const file = ts.createSourceFile("module.js", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
+
+    function visit(node: ts.Node) {
+        if ((ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
+            specifiers.push(node.moduleSpecifier.text);
+        } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword && node.arguments[0] && ts.isStringLiteral(node.arguments[0])) {
+            specifiers.push(node.arguments[0].text);
+        }
+        ts.forEachChild(node, visit);
+    }
+
+    visit(file);
+    return specifiers;
+}
 
 /** Each process uses its own data directory. The repository's data is never opened. */
 async function start(data: string) {
@@ -111,9 +129,9 @@ test("데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경�
             const html = await response.text();
             const imports = JSON.parse(html.match(/<script type="importmap">\s*([\s\S]*?)<\/script>/)![1]).imports as Record<string, string>;
 
-            assert.equal(imports["@barocss/doc-sync"], "/packages/doc-sync-core/src/index.ts");
-            assert.equal(imports["@barocss/doc-sync/sync"], "/packages/doc-sync-core/src/sync/index.ts");
-            assert.equal(imports["@barocss/doc-sync/prosemirror"], "/packages/doc-sync-prosemirror/src/index.ts");
+            assert.equal(imports["@barocss/doc-sync"], "/packages/doc-sync/src/index.ts");
+            assert.equal(imports["@barocss/doc-sync/sync"], "/packages/doc-sync/src/sync/index.ts");
+            assert.equal(imports["@barocss/doc-sync-prosemirror"], "/packages/doc-sync-prosemirror/src/index.ts");
             const queue = [...html.matchAll(/(?:src|href)="([^"?]+)(?:\?[^"]*)?"/g)]
                 .map(match => new URL(match[1], server.base + page).href);
             const visited = new Set<string>();
@@ -130,9 +148,7 @@ test("데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경�
 
                 if (!url.endsWith(".css")) {
                     assert.match(moduleResponse.headers.get("content-type")!, /javascript/);
-                    for (const match of source.matchAll(/(?:\bfrom\s*|\bimport\s*)["']([^"']+)["']/g)) {
-                        const specifier = match[1];
-
+                    for (const specifier of moduleSpecifiers(source)) {
                         assert.ok(specifier.startsWith(".") || specifier.startsWith("/") || imports[specifier], `import map: ${specifier}`);
                         queue.push(new URL(imports[specifier] ?? specifier, url).href);
                     }
@@ -142,7 +158,7 @@ test("데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경�
         }
         assert.equal((await fetch(`${server.base}/HANDOFF.md`)).status, 404);
         assert.equal((await fetch(`${server.base}/packages/doc-sync/src-other/index.ts`)).status, 404);
-        for (const path of ["/packages/doc-sync-core/package.json", "/packages/doc-sync-core/tsconfig.build.json", "/packages/doc-sync-prosemirror/package.json", "/scripts/build-packages.mjs"]) {
+        for (const path of ["/packages/doc-sync/package.json", "/packages/doc-sync/tsconfig.build.json", "/packages/doc-sync-prosemirror/package.json", "/scripts/build-packages.mjs"]) {
             assert.equal((await fetch(server.base + path)).status, 404, path);
         }
     } finally {

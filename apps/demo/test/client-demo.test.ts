@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {readFile} from 'node:fs/promises';
-import {Client, clientOwner} from '@barocss/doc-sync-core/client';
-import {LocalClient} from '@barocss/doc-sync-core/local';
+import {Client, clientOwner} from '@barocss/doc-sync/client';
+import {LocalClient} from '@barocss/doc-sync/local';
 import {bundleClientDemo} from '../client/build.mjs';
 import {startClientPreview} from '../client/serve.mjs';
 import {CLIENT_SCHEMA, seedEdits, seedEditsForSize, SEED_TEXT, textOf} from '../client/model.js';
@@ -25,7 +25,7 @@ test('Client demo bundles all public client bindings without a caller host facto
     const emitted = bundle.proof.emittedInputs.map(({input}) => input);
     for (const name of ['prosemirror', 'slate', 'lexical', 'tiptap']) assert.ok(emitted.some(input => input.includes(`packages/doc-sync-${name}/dist/`)), name);
     assert.ok(emitted.some(input => input.endsWith('/dist/client/index.js')));
-    assert.ok(!emitted.some(input => /packages\/doc-sync-core\/src\//.test(input)));
+    assert.ok(!emitted.some(input => /packages\/doc-sync\/src\//.test(input)));
     const source = await readFile(new URL('../client/main.jsx', import.meta.url), 'utf8');
     assert.doesNotMatch(source, /create(?:Local|SyncClient)?EditorHost|HostBinding/);
     for (const binding of ['PmBinding', 'SlateBinding', 'LexicalBinding']) assert.match(source, new RegExp(`new ${binding}\\(peer.client`));

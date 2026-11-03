@@ -2,6 +2,52 @@
 
 Presence is transient state. It does not change the document model or its version. It carries user identity, color, an active caret token, and an optional opposite selection endpoint.
 
+## Participant profiles
+
+Configure a profile on `Client`, `LocalClient`, or `SyncClient`. The unified
+client example is in [Actor identity and display profile](./client#actor-identity-and-display-profile).
+`SyncClient` keeps its existing positional actor ID:
+
+```ts
+const client = new SyncClient('replica-42', transport, {
+    schema,
+    profile: {name: 'Review bot', color: '#7c3aed', kind: 'bot', userId: 'bot-7'},
+});
+client.setPresence({anchor: null, focus: null});
+```
+
+Here `schema` and `transport` are the application-owned values from the
+[synchronization setup](./sync). No document edit is required to publish presence.
+
+| Option | Purpose | Constructor limit |
+| --- | --- | --- |
+| `name` | Display name; defaults to the actor ID | 256 characters, non-empty |
+| `color` | Application-rendered color; defaults to a stable HSL color | 128 characters, non-empty |
+| `avatar` | Optional application-rendered avatar reference | 2,048 characters, non-empty |
+| `userId` | Application user identity shared across replicas | 256 characters, non-empty |
+| `kind` | Participant category | `human` or `bot` |
+| `metadata` | Application-defined JSON object | Eight nested levels, 1,024 visited values, 16,384 serialized characters |
+
+The client copies and freezes profile values. JSON metadata permits finite
+numbers, strings, booleans, null, arrays, and plain objects. Cycles, undefined,
+class instances, and values above the limits are rejected. All fields are
+optional. `client.profile` exposes resolved `name` and `color` as required strings.
+Profile defaults are fixed for the client lifetime. Supply explicit display
+fields to `setPresence()` when publishing a changed name or color; this does not
+replace the defaults or change the actor ID.
+
+Presence updates can omit name and color and use the profile defaults. Existing
+updates with explicit name/color still work. Optional avatar, userId, kind, and
+metadata fields travel with presence; older clients can ignore them. They are
+not operation IDs, schema fields, authorization rules, or durable document data.
+Two replicas must keep distinct actor IDs even when their userId is the same.
+
+An avatar value does not install an avatar renderer. The application decides how
+to display it and which avatar sources to load. The existing caret and range
+renderers continue to use their supported fields. `LocalClient` has a profile but
+no remote presence channel. Stored local state keeps its original actor ID;
+profiles are supplied separately on restore.
+
 ## Endpoint convention
 
 - `anchor` is the active caret or selection head.
@@ -60,7 +106,7 @@ fn main() -> Result<()> {
 }
 ```
 
-The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
 <details>
 <summary>Raw protocol probe and reference checks</summary>

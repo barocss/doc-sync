@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, slotTicket} from "../../doc-sync-core/dist/crdt/doc.js";
-import {ROOT, keyOf} from "../../doc-sync-core/dist/crdt/ticket.js";
-import {createAnnotation, updateAnnotation, deleteAnnotation, getAnnotations, annotationEndpointKeys, validateAnnotationEndpoint, validateAnnotationAttribute, validateAnnotationAttributes, ANNOTATION_HEAD, ANNOTATION_HEAD_KEY, ANNOTATION_SLOT, ANNOTATION_TYPE} from "../../doc-sync-core/dist/crdt/annotations.js";
+import {Doc, slotTicket} from "../../doc-sync/dist/crdt/doc.js";
+import {ROOT, keyOf} from "../../doc-sync/dist/crdt/ticket.js";
+import {createAnnotation, updateAnnotation, deleteAnnotation, getAnnotations, annotationEndpointKeys, validateAnnotationEndpoint, validateAnnotationAttribute, validateAnnotationAttributes, ANNOTATION_HEAD, ANNOTATION_HEAD_KEY, ANNOTATION_SLOT, ANNOTATION_TYPE} from "../../doc-sync/dist/crdt/annotations.js";
 import {MemoryNet} from "./harness.ts";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {AnnotationExpansion} from "../../doc-sync-core/dist/crdt/annotations.js";
-import type {NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
-import type {Schema} from "../../doc-sync-core/dist/crdt/schema.js";
-import type {Op} from "../../doc-sync-core/dist/crdt/doc.js";
+import type {AnnotationExpansion} from "../../doc-sync/dist/crdt/annotations.js";
+import type {NodeJSON} from "../../doc-sync/dist/crdt/model.js";
+import type {Schema} from "../../doc-sync/dist/crdt/schema.js";
+import type {Op} from "../../doc-sync/dist/crdt/doc.js";
 
 const range = (anchor: number[], focus: number[]) => ({anchor, focus});
 const make = (text = "abcdef") => {

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {DocHub} from '../../doc-sync-core/dist/server/hub.js';
-import {Doc} from '../../doc-sync-core/dist/crdt/doc.js';
-import {BrowserRecovery, LiveRecovery, SyncClient, type BrowserRecoveryLocks, type LiveRecoveryTransport, type Transport} from '../../doc-sync-core/dist/sync/index.js';
+import {DocHub} from '../../doc-sync/dist/server/hub.js';
+import {Doc} from '../../doc-sync/dist/crdt/doc.js';
+import {BrowserRecovery, LiveRecovery, SyncClient, type BrowserRecoveryLocks, type LiveRecoveryTransport, type Transport} from '../../doc-sync/dist/sync/index.js';
 import {DEMO_SCHEMA} from '../../../fixtures/demo-schema.ts';
 
 class MemoryStorage {

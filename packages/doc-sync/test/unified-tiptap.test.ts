@@ -2,14 +2,14 @@ import assert from "node:assert/strict";
 import {after, test} from "node:test";
 import {JSDOM} from "jsdom";
 import {Editor} from "@tiptap/core";
-import {Client} from "@barocss/doc-sync-core/client";
-import {LocalClient} from "@barocss/doc-sync-core/local";
-import {DocSync, createTiptapExtensions} from "@barocss/doc-sync/tiptap";
+import {Client} from "@barocss/doc-sync/client";
+import {LocalClient} from "@barocss/doc-sync/local";
+import {DocSync, createTiptapExtensions} from "@barocss/doc-sync-tiptap";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import {MemoryNet} from "./harness.ts";
-import type {BindingClient} from "@barocss/doc-sync-core/client";
-import type {Transport} from "@barocss/doc-sync-core/sync";
-import type {DocSyncOptions} from "@barocss/doc-sync/tiptap";
+import type {BindingClient} from "@barocss/doc-sync/client";
+import type {Transport} from "@barocss/doc-sync/sync";
+import type {DocSyncOptions} from "@barocss/doc-sync-tiptap";
 
 const dom = new JSDOM("<!doctype html><html><body></body></html>", {pretendToBeVisual: true});
 for (const name of ["window", "document", "navigator", "HTMLElement", "Element", "Node", "MutationObserver", "DOMParser", "getComputedStyle", "requestAnimationFrame", "cancelAnimationFrame"]) {

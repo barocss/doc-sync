@@ -5,24 +5,24 @@ import {createInterface} from 'node:readline';
 import {createHash} from 'node:crypto';
 import {readFileSync, writeFileSync, readdirSync} from 'node:fs';
 import {resolve} from 'node:path';
-import {Doc, isAlive} from '../../packages/doc-sync-core/dist/crdt/doc.js';
-import {History} from '../../packages/doc-sync-core/dist/crdt/history.js';
-import {InputSession} from '../../packages/doc-sync-core/dist/editor/index.js';
-import {anchorAt,pathAt} from '../../packages/doc-sync-core/dist/crdt/edit.js';
-import type {SyncClient} from '../../packages/doc-sync-core/dist/sync/client.js';
-import {keyOf} from '../../packages/doc-sync-core/dist/crdt/ticket.js';
-import * as cmd from '../../packages/doc-sync-core/dist/crdt/commands.js';
+import {Doc, isAlive} from '../../packages/doc-sync/dist/crdt/doc.js';
+import {History} from '../../packages/doc-sync/dist/crdt/history.js';
+import {InputSession} from '../../packages/doc-sync/dist/editor/index.js';
+import {anchorAt,pathAt} from '../../packages/doc-sync/dist/crdt/edit.js';
+import type {SyncClient} from '../../packages/doc-sync/dist/sync/client.js';
+import {keyOf} from '../../packages/doc-sync/dist/crdt/ticket.js';
+import * as cmd from '../../packages/doc-sync/dist/crdt/commands.js';
 import {MemoryNet} from '../../packages/doc-sync/test/harness.ts';
-import type {Op} from '../../packages/doc-sync-core/dist/crdt/doc.js';
-import type {RecordOptions} from '../../packages/doc-sync-core/dist/crdt/history.js';
-import type {Schema} from '../../packages/doc-sync-core/dist/crdt/schema.js';
+import type {Op} from '../../packages/doc-sync/dist/crdt/doc.js';
+import type {RecordOptions} from '../../packages/doc-sync/dist/crdt/history.js';
+import type {Schema} from '../../packages/doc-sync/dist/crdt/schema.js';
 
 const SCHEMA = 'flow-root-paragraph:boolean-marks:bold,italic:v1';
 const schema: Schema = {root:'content',marks:['bold','italic'],nodes:{content:{shape:'flow',children:['paragraph'],default:'paragraph'},paragraph:{shape:'text'}}};
 const units = (text:string) => Array.from({length:text.length},(_,i)=>text.charCodeAt(i));
 const wire = (ops:Op[]) => ops.map(op => op.t==='text' ? (({text,...rest})=>({...rest,units:units(text)}))(op) : structuredClone(op));
 // This is the full state contract of the bounded paragraph-flow native Doc interpreter.
-const state = (doc:Doc) => ({clock:doc.clock.lamport,items:doc.items.map(item=>({id:item.id,origin:item.origin,kind:item.kind,born:item.born,boundary:item.boundary,unit:item.kind==='char'?item.ch.charCodeAt(0):null,visible:isAlive(item),dels:[...item.dels].sort(),cancels:[...item.cancels].sort(),attrs:Object.fromEntries([...item.attrs].sort(([a],[b])=>a<b?-1:a>b?1:0))})),model:{...doc.toJSON(),children:doc.toJSON().children!.map(child=>({...child,runs:child.runs!.map(run=>{assert.ok('text' in run);return {units:units(run.text),marks:run.marks};})}))},blocks:doc.blocks().map(block=>{assert.equal(block.kind,'text');const b=block as import('../../packages/doc-sync-core/dist/crdt/doc.js').TextBlock;return {kind:b.kind,marker:b.marker.key,type:b.type,attrs:b.attrs,aliases:b.aliases.map(x=>x.key),virtual:b.virtual,chars:b.chars.map(x=>x.key),textUnits:units(b.text)};}),counts:{tokens:doc.items.length-1,visible:doc.items.slice(1).filter(isAlive).length,tombstones:doc.items.slice(1).filter(i=>!isAlive(i)).length}});
+const state = (doc:Doc) => ({clock:doc.clock.lamport,items:doc.items.map(item=>({id:item.id,origin:item.origin,kind:item.kind,born:item.born,boundary:item.boundary,unit:item.kind==='char'?item.ch.charCodeAt(0):null,visible:isAlive(item),dels:[...item.dels].sort(),cancels:[...item.cancels].sort(),attrs:Object.fromEntries([...item.attrs].sort(([a],[b])=>a<b?-1:a>b?1:0))})),model:{...doc.toJSON(),children:doc.toJSON().children!.map(child=>({...child,runs:child.runs!.map(run=>{assert.ok('text' in run);return {units:units(run.text),marks:run.marks};})}))},blocks:doc.blocks().map(block=>{assert.equal(block.kind,'text');const b=block as import('../../packages/doc-sync/dist/crdt/doc.js').TextBlock;return {kind:b.kind,marker:b.marker.key,type:b.type,attrs:b.attrs,aliases:b.aliases.map(x=>x.key),virtual:b.virtual,chars:b.chars.map(x=>x.key),textUnits:units(b.text)};}),counts:{tokens:doc.items.length-1,visible:doc.items.slice(1).filter(isAlive).length,tombstones:doc.items.slice(1).filter(i=>!isAlive(i)).length}});
 const binary=resolve(process.env.RUST_SHADOW_BINARY ?? 'experiments/rust-shadow/target/debug/doc-sync-rust-shadow');
 const provenance=runtimeProvenance(Doc,History);
 const hashes=()=>collectFingerprints(binary);
@@ -112,7 +112,7 @@ async function structuralRestart(){for(const kind of ['split','merge'] as const)
 
 async function randomStructure(seedValue:number){let rng=seedValue>>>0;const next=()=>rng=(Math.imul(rng,1664525)+1013904223)>>>0;const peers=[await fresh('structureRandomA'+seedValue),await fresh('structureRandomB'+seedValue),await fresh('structureRandomC'+seedValue)];const initial=await seed(peers[0],'ab😀한cd');await deliverAll(peers,peers[0],initial,'random structure seed');for(const p of peers)await captureSelections(p);
  for(let round=0;round<10;round++){const batches:Op[][]=[];
-  for(let actor=0;actor<3;actor++){const p=peers[actor],blocks=p.doc.blocks() as import('../../packages/doc-sync-core/dist/crdt/doc.js').TextBlock[];const action=next()%6,b=next()%blocks.length,length=blocks[b].chars.length;const label=`structural seed ${seedValue} round ${round} actor ${actor}`;let ops:Op[];
+  for(let actor=0;actor<3;actor++){const p=peers[actor],blocks=p.doc.blocks() as import('../../packages/doc-sync/dist/crdt/doc.js').TextBlock[];const action=next()%6,b=next()%blocks.length,length=blocks[b].chars.length;const label=`structural seed ${seedValue} round ${round} actor ${actor}`;let ops:Op[];
    if(action===0)ops=await local(p,()=>cmd.splitBlock(p.doc,{b,o:next()%(length+1)}),label+' split');
    else if(action===1&&blocks.length>1)ops=await local(p,()=>cmd.backspace(p.doc,{b:1+next()%(blocks.length-1),o:0}).ops,label+' merge');
    else if(action===2||action===1)ops=await local(p,()=>cmd.insertText(p.doc,{b,o:next()%(length+1)},['x','한','😀'][next()%3]),label+' insert');

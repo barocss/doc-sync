@@ -1,3 +1,4 @@
+import {corePackagePath} from './core-package.mjs';
 /** Headless Node PM host gate. Run with Node 24; no TS/source loader. */
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
@@ -15,7 +16,7 @@ const reps = Number(args.reps || 8), warmups = Number(args.warmups || 2);
 const sizes = String(args.sizes || '10000,100000').split(',').map(Number);
 const imp = p => import(pathToFileURL(join(target,p)).href);
 const [{Doc,schemaVersion,applyEdits}, {SyncClient,DOCUMENT_CAPABILITIES,PROTOCOL_VERSION}, {InputSession}, {PmBinding}, {buildPmSchema}, convert] = await Promise.all([
- imp('packages/doc-sync-core/dist/index.js'),imp('packages/doc-sync-core/dist/sync/index.js'),imp('packages/doc-sync-core/dist/editor/index.js'),
+ imp(`${corePackagePath(target)}/dist/index.js`),imp(`${corePackagePath(target)}/dist/sync/index.js`),imp(`${corePackagePath(target)}/dist/editor/index.js`),
  imp('packages/doc-sync-prosemirror/dist/binding.js'),imp('packages/doc-sync-prosemirror/dist/schema.js'),imp('packages/doc-sync-prosemirror/dist/convert.js')]);
 // Resolve peers from the target binding, then import the ESM entry (require would create a second PM class identity).
 const peerRequire = createRequire(join(target,'packages/doc-sync-prosemirror/dist/binding.js'));
@@ -30,7 +31,7 @@ async function fingerprint() {
  async function walk(dir) {for (const ent of (await readdir(join(target,dir),{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))) {
  const path=join(dir,ent.name); if(ent.isDirectory()) await walk(path); else if(/\.(?:ts|js|json)$/.test(path)) files[path]=hash(await readFile(join(target,path),'utf8'));
  }}
- for(const dir of ['packages/doc-sync-core/src','packages/doc-sync-core/dist','packages/doc-sync-prosemirror/src','packages/doc-sync-prosemirror/dist']) await walk(dir);
+ for(const dir of [`${corePackagePath(target)}/src`,`${corePackagePath(target)}/dist`,'packages/doc-sync-prosemirror/src','packages/doc-sync-prosemirror/dist']) await walk(dir);
  for(const p of ['package-lock.json','scripts/build-package.mjs','scripts/build-packages.mjs']) files[p]=hash(await readFile(join(target,p),'utf8'));
  return {aggregate:hash(files),files,head:execFileSync('git',['rev-parse','HEAD'],{cwd:target,encoding:'utf8'}).trim()};
 }

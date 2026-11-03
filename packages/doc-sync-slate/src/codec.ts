@@ -1,8 +1,8 @@
-import {canonical} from "@barocss/doc-sync-core";
-import {attrValueOk, checkSchema} from "@barocss/doc-sync-core";
-import type {NodeJSON, Run} from "@barocss/doc-sync-core";
-import type {Schema} from "@barocss/doc-sync-core";
-import type {ModelRange} from "@barocss/doc-sync-core/editor";
+import {canonical} from "@barocss/doc-sync";
+import {attrValueOk, checkSchema} from "@barocss/doc-sync";
+import type {NodeJSON, Run} from "@barocss/doc-sync";
+import type {Schema} from "@barocss/doc-sync";
+import type {ModelRange} from "@barocss/doc-sync/editor";
 import type {Descendant, Point, Range} from "slate";
 
 export type SlateText = {text: string; [mark: string]: unknown};
@@ -86,9 +86,13 @@ const converter = (schema: Schema) => {
 };
 
 /** Internal projection of an already canonical authoritative block. */
-export const projectSlateBlock = (schema: Schema, model: NodeJSON): Descendant => converter(schema)(model) as Descendant;
+export const projectSlateBlock = (schema: Schema, model: NodeJSON): Descendant => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
+    return converter(schema)(model) as Descendant;
+};
 
 export const toSlate = (schema: Schema, model: NodeJSON): Descendant[] => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     schemaOk(schema);
     if (model.type !== schema.root) fail(`expected root "${schema.root}"`);
     if (model.attrs && Object.keys(model.attrs).length) fail("root attributes are not part of the document model");
@@ -104,6 +108,7 @@ export const toSlate = (schema: Schema, model: NodeJSON): Descendant[] => {
 
 /** Reject unknown native types/marks instead of silently dropping editor content. */
 export const fromSlate = (schema: Schema, children: readonly Descendant[]): NodeJSON => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     schemaOk(schema);
     const runs = (items: readonly SlateNode[], owner: string): Run[] => {
         const ownerSpec = specOf(schema, owner);
@@ -165,6 +170,7 @@ const hidden = (children: readonly Descendant[], path: readonly number[]): boole
 
 /** Native offsets and returned model offsets are UTF-16; each inline node counts as one. */
 export const slatePointToModel = (schema: Schema, children: readonly Descendant[], point: Point): number[] | null => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     if (!Number.isInteger(point.offset) || point.offset < 0 || hidden(children, point.path)) return null;
     for (let depth = 1; depth < point.path.length; depth += 1) {
         const blockPath = point.path.slice(0, depth);
@@ -184,6 +190,7 @@ export const slatePointToModel = (schema: Schema, children: readonly Descendant[
 };
 
 export const modelPointToSlate = (schema: Schema, children: readonly Descendant[], path: readonly number[]): Point | null => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const blockPath = path.slice(0, -1);
     const offset = path.at(-1);
     const block = at(children, blockPath);
@@ -204,12 +211,14 @@ export const modelPointToSlate = (schema: Schema, children: readonly Descendant[
     return found ? {path: found.path, offset: offset - found.start} : null;
 };
 export const slateRangeToModel = (schema: Schema, children: readonly Descendant[], range: Range | null): ModelRange | null => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     if (!range) return null;
     const anchor = slatePointToModel(schema, children, range.anchor);
     const focus = slatePointToModel(schema, children, range.focus);
     return anchor && focus ? {anchor, focus} : null;
 };
 export const modelRangeToSlate = (schema: Schema, children: readonly Descendant[], range: ModelRange | null): Range | null => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     if (!range) return null;
     const anchor = modelPointToSlate(schema, children, range.anchor);
     const focus = modelPointToSlate(schema, children, range.focus);

@@ -4,15 +4,15 @@ import {Node as PmNode} from "prosemirror-model";
 import {TextSelection} from "prosemirror-state";
 import {DecorationSet} from "prosemirror-view";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
-import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import {schemaVersion} from "../../doc-sync-core/dist/crdt/schema-version.js";
-import {canonical} from "../../doc-sync-core/dist/crdt/model.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
+import {Doc} from "../../doc-sync/dist/crdt/doc.js";
+import {schemaVersion} from "../../doc-sync/dist/crdt/schema-version.js";
+import {canonical} from "../../doc-sync/dist/crdt/model.js";
 import {PmBinding} from "../../doc-sync-prosemirror/dist/binding.js";
 import {fromPmJSON, toPmJSON} from "../../doc-sync-prosemirror/dist/convert.js";
-import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import {SyncClient} from "../../doc-sync/dist/sync/client.js";
 import {INFO} from "./pm-fuzz.ts";
-import type {ServerEvent} from "../../doc-sync-core/dist/sync/protocol.js";
+import type {ServerEvent} from "../../doc-sync/dist/sync/protocol.js";
 
 const snapshotDoc = (text: string): Doc => {
     const seed = new Doc("seed", DEMO_SCHEMA);

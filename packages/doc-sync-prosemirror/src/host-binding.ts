@@ -2,16 +2,16 @@ import {Node as PmNode} from "prosemirror-model";
 import {EditorState, Plugin, TextSelection} from "prosemirror-state";
 import {AddMarkStep, RemoveMarkStep, ReplaceStep} from "prosemirror-transform";
 import {Decoration, DecorationSet} from "prosemirror-view";
-import {botFace, createBotAvatar} from "@barocss/doc-sync-core/sync";
-import {canonical, diffModels} from "@barocss/doc-sync-core";
+import {botFace, createBotAvatar} from "@barocss/doc-sync/sync";
+import {canonical, diffModels} from "@barocss/doc-sync";
 import {fromPmJSON, pathToPmPos, pmPosToPath, toPmJSON} from "./convert.ts";
 import type {Mark, Slice} from "prosemirror-model";
 import type {Transaction} from "prosemirror-state";
 import type {Step} from "prosemirror-transform";
 import type {EditorView} from "prosemirror-view";
-import type {Op} from "@barocss/doc-sync-core";
-import type {EditOp, NodeJSON, Run} from "@barocss/doc-sync-core";
-import type {EditorHost} from "@barocss/doc-sync-core/editor";
+import type {Op} from "@barocss/doc-sync";
+import type {EditOp, NodeJSON, Run} from "@barocss/doc-sync";
+import type {EditorHost} from "@barocss/doc-sync/editor";
 import type {PmSchemaInfo} from "./schema.ts";
 
 /**
@@ -53,6 +53,7 @@ export class PmHostBinding {
     private textSelection: {generation: number; doc: PmNode; native: TextSelection; anchor: string; head: string} | null = null;
 
     constructor(host: EditorHost, info: PmSchemaInfo, plugins: Plugin[] = [], external?: {state: EditorState; dispatch: (tr: Transaction) => void}) {
+        if (host.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
         this.host = host;
         this.info = info;
         this.state = external?.state ?? EditorState.create({doc: this.crdtDoc(), plugins: [...plugins, this.cursorPlugin()]});

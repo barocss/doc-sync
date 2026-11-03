@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {TextSelection} from "prosemirror-state";
-import {Doc, History, MAIN, pathAt, slotKey, type NodeJSON, type Schema} from "../../doc-sync-core/dist/index.js";
-import {InputSession} from "../../doc-sync-core/dist/editor/index.js";
+import {Doc, History, MAIN, pathAt, slotKey, type NodeJSON, type Schema} from "../../doc-sync/dist/index.js";
+import {InputSession} from "../../doc-sync/dist/editor/index.js";
 import {PmBinding} from "../../doc-sync-prosemirror/dist/binding.js";
 import {buildPmSchema} from "../../doc-sync-prosemirror/dist/schema.js";
-import type {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import type {SyncClient} from "../../doc-sync/dist/sync/client.js";
 
 const schema: Schema = {root: "content", marks: [], nodes: {
     content: {shape: "flow", children: ["paragraph", "box"], default: "paragraph"},

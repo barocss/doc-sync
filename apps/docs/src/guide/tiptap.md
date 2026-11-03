@@ -10,7 +10,7 @@ Install `@tiptap/core` and `@tiptap/pm` at the same supported version. A local c
 
 ```ts
 import {Editor} from '@tiptap/core';
-import {Client} from '@barocss/doc-sync-core/client';
+import {Client} from '@barocss/doc-sync/client';
 import {DocSync, createTiptapExtensions} from '@barocss/doc-sync-tiptap';
 
 const client = new Client({schema}); // Local editing; no transport.

@@ -1,10 +1,10 @@
 import {Editor} from '@tiptap/core';
-import {DocSync, createTiptapExtensions} from '@barocss/doc-sync/tiptap';
+import {DocSync, createTiptapExtensions} from '@barocss/doc-sync-tiptap';
 import {SyncClient, typescriptClientEngineFactory} from '@barocss/doc-sync/sync';
 import type {ClientEngineFactory} from '@barocss/doc-sync/sync';
 import {DocHub} from '@barocss/doc-sync/server';
 import {canonical} from '@barocss/doc-sync';
-import {buildPmSchema, fromPmJSON} from '@barocss/doc-sync/prosemirror';
+import {buildPmSchema, fromPmJSON} from '@barocss/doc-sync-prosemirror';
 import type {Schema} from '@barocss/doc-sync';
 import type {ServerEvent, Transport} from '@barocss/doc-sync/sync';
 

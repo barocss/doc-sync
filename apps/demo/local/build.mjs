@@ -25,7 +25,7 @@ export async function bundleLocalDemo({write = false, outdir = defaultOutdir} = 
 }
 export function inspectBundle(metafile) {
     const emittedInputs = Object.entries(metafile.outputs).flatMap(([output, entry]) => Object.entries(entry.inputs).filter(([, info]) => info.bytesInOutput > 0).map(([input, info]) => ({input, bytes: info.bytesInOutput, output})));
-    const forbidden = emittedInputs.filter(({input}) => /packages\/doc-sync-core\/dist\/(?:server\/|sync\/(?:client|http(?:-transport)?|transport|node-http(?:-transport)?|browser-recovery|live-recovery|recovery|index)\.)/.test(input)).map(({input}) => input);
+    const forbidden = emittedInputs.filter(({input}) => /packages\/doc-sync\/dist\/(?:server\/|sync\/(?:client|http(?:-transport)?|transport|node-http(?:-transport)?|browser-recovery|live-recovery|recovery|index)\.)/.test(input)).map(({input}) => input);
     return {emittedInputs, forbidden, note: 'Unused barrel references may remain in metafile.inputs. Only emitted bytes are counted.'};
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

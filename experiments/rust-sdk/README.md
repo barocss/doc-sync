@@ -52,7 +52,7 @@ See the [Rust guide](../../apps/docs/src/guide/rust.md#checkpoint-retry-selectio
 
 ## Supported presets
 
-Only these six engine presets are supported. The enum is closed. A document cannot register an arbitrary schema or change its preset.
+`Document` keeps these six fixed presets. Its enum is closed, and an instance cannot change its preset. Use the separate `RuntimeSchema` and `RuntimeDocument` API below for supported custom schemas.
 
 | SDK preset | Native schema identity | Native capability |
 | --- | --- | --- |
@@ -64,6 +64,68 @@ Only these six engine presets are supported. The enum is closed. A document cann
 | `Movement` | `movement-logical-storage:json-attrs:value-marks:v1` | `movement-logical-storage-v1` |
 
 The native preset validates node types, attributes, marks, boundaries, and moves. `Mark::Link` requires a preset that supports links. A typed operation can still be invalid for its preset. The engine rejects invalid input.
+
+## Runtime schemas
+
+`RuntimeSchema::compile(serde_json::Value)` compiles and owns a pure JSON tree schema.
+`RuntimeDocument::new(actor, schema)` creates its native storage. Custom names are
+strings supplied at runtime. The native binary does not contain a registry of
+those names. Compilation checks the complete schema before it creates a replica.
+
+| Domain | Native runtime rules | Explicit limits |
+| --- | --- | --- |
+| Document | One root `flow`, declared `text` and `atom` children, custom root/default/type names, scalar attribute defaults and constraints, Boolean marks | Nested flows, grids, groups, inline nodes, spans, value marks, structured attributes, and child cardinality rules are unavailable |
+| Graphic | Root and nested `container` nodes, `text` and `atom` nodes, declared child membership, custom root/type/attribute/mark names, scalar and one-level field attributes | Flow/grid nodes, inline children, value marks, and computed attributes are unavailable |
+| Spreadsheet | `SpreadsheetSchema::compile` plus `RuntimeSheet`, 1–128 arbitrary declared field names, scalar defaults, type/enum/range/string-length constraints | Fixed axes; no formulas, structural axes, or renderer |
+
+Unsupported tree rules return `UnsupportedSchema at <JSON path>: <reason>`.
+The native string-pattern grammar supports anchored ASCII literals, the declared
+six/eight-digit hex color patterns, and the control-free bounded string pattern
+`^[^\\u0000-\\u001f\\u007f]{0,N}$` with `N <= 1000000`. Other regex syntax
+fails compilation. No callback or executable schema rule is accepted.
+
+Tree identities use the same canonical JSON SHA-256 as TypeScript
+`schemaVersion`. Explicit `domain: "document"` has the identity of the omitted
+legacy document domain. UI metadata is included in the fingerprint. Native tree compilation rejects JSON integer values that JavaScript cannot represent exactly, including values in UI metadata.
+`SpreadsheetSchema::identity` matches `spreadsheetSchemaVersion`.
+
+`RuntimeDocument` provides generic `insert`, `set_attribute`, `set_field`,
+`insert_label_text`, and `reparent` methods for graphics. For the flat Document
+profile, use `insert_block` and `insert_text`. `record` accepts typed wire
+operations. `model` returns JSON because custom schemas define their own names.
+Both domains use the existing native LWW, deletion, and selective History rules.
+
+`RuntimeSheet` takes `RuntimeSheetOptions {actor, sheet_id, rows, columns, schema}`.
+Patches are `BTreeMap<String, RuntimeValue>`. `get_cell` returns stored non-null
+values. `get_cell_value` resolves an unwritten or cleared field to its default
+without creating a register. Custom operations carry the exact `schemaVersion`.
+Legacy `SparseSheet` retains its existing v1 format and field order.
+
+Runtime checkpoints retain the descriptor, its fingerprint, document or sheet
+state, History, and exact pending queue. Restore recompiles the descriptor and
+replays the journal before it commits state. Live checkpoint replacement requires
+the same actor and schema identity. Checkpoints require trusted host storage.
+
+Run the complete custom Graphic peer/checkpoint and Spreadsheet default/checkpoint
+example from the repository root:
+
+```sh
+CARGO_TARGET_DIR=output/runtime-quickstart-target cargo +stable run --offline --locked \
+  --manifest-path experiments/rust-sdk/Cargo.toml --example runtime_quickstart
+```
+
+Run the independent six-schema differential trace:
+
+```sh
+node experiments/runtime-schema-native/compare.mjs
+```
+
+The trace builds one native binary and supplies two schemas per domain to one
+process. It compares normalized Document/Graphic models and History availability.
+Spreadsheet comparisons include exact operations, pending queues, journals,
+History, and checkpoints. The receipt lists its exact scope and excluded work.
+This does not qualify the full arbitrary Document schema surface or a browser,
+WASM, renderer, transport, or release.
 
 ## API and ownership
 

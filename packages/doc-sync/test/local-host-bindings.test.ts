@@ -4,7 +4,7 @@ import {createEditor as createSlateEditor, Transforms} from "slate";
 import {createEditor as createLexicalEditor, $getSelection, $isRangeSelection} from "lexical";
 import {registerRichText} from "@lexical/rich-text";
 import {TextSelection} from "prosemirror-state";
-import {LocalClient, createLocalEditorHost} from "../../doc-sync-core/dist/local/index.js";
+import {LocalClient, createLocalEditorHost} from "../../doc-sync/dist/local/index.js";
 import {PmHostBinding, buildPmSchema} from "../../doc-sync-prosemirror/dist/index.js";
 import {SlateHostBinding, fromSlate} from "../../doc-sync-slate/dist/index.js";
 import {LexicalHostBinding, buildLexicalSchema, readLexicalModel, $setLexicalSelection} from "../../doc-sync-lexical/dist/index.js";

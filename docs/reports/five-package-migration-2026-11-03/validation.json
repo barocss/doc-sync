@@ -1,0 +1,130 @@
+{
+  "base": "d624a56d7ea5389fd9f67d1277637838bb343475",
+  "source": "uncommitted candidate, source-seal.json",
+  "packages": 5,
+  "coreDependencies": 0,
+  "workspace": {
+    "cases": 1328,
+    "pass": 1326,
+    "skip": 2,
+    "fail": 0,
+    "boundary": "Full run had one docs example-selector failure; unchanged non-doc groups passed. Corrected docs suite rerun36/36. Two platform lock tests skipped on macOS."
+  },
+  "rootTypecheck": "PASS",
+  "artifactConsumers": {
+    "packages": 5,
+    "cases": 7,
+    "status": "PASS",
+    "publicProfileTypes": "PASS"
+  },
+  "releaseRehearsal": "PASS",
+  "chrome": {
+    "status": "PASS",
+    "cases": 8,
+    "scope": "four native bindings, local and in-page queued sync, trusted input/selection/undo/redo/history ownership/reconnect/refresh; no HTTP document server proof",
+    "bundleSha256": "13ca5adf71a3a993f381b4215068b2b2262664403c177faf2eb1b31f5e049f23",
+    "firstAttempt": "automation timeout, retained",
+    "freshStorageBrowser": "NOT_RUN/incomplete automation",
+    "performance": "NOT_RUN",
+    "osIME": "NOT_RUN"
+  },
+  "counts": {
+    "pairedRows": 32,
+    "modelHistoryCountsNativeStats": "PASS",
+    "generatedPairs": 28,
+    "externalGeneratedExcluded": 4,
+    "timing": "NOT_RUN",
+    "boundary": "same candidate legacy/unified API routes, disconnected stub sync, not before-after timing"
+  },
+  "crdtUnchangedFiles": 17,
+  "docs": {
+    "tests": 36,
+    "pages": 45,
+    "links": 2072,
+    "english": true
+  },
+  "registryPublish": "NOT_RUN",
+  "commitPush": "NOT_RUN",
+  "priorTimingFlags": "INVESTIGATE, unchanged",
+  "artifacts": {
+    "workspace-tests-initial.log.gz": {
+      "sha256": "b9f3a0cca638690d5f94b020221216dcab501abd7ba3907fceaf31325a3c9b99",
+      "rawSha256": "807f482731c3f446231aaf332b9759e9396798843cdbf0876c34b0ee5d0d21f2",
+      "rawBytes": 135823
+    },
+    "docs-tests-final.log.gz": {
+      "sha256": "d98c5de0c5cc37c8532f5e2402d75779b81b9d608ec76777ce3203e2782d4e1a",
+      "rawSha256": "57d411c94d1c3b12b15adb3b62cc5f2fade74583e1bacf8a8b881b515b4b322d",
+      "rawBytes": 3782
+    },
+    "root-typecheck.log.gz": {
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawBytes": 0
+    },
+    "docs-build.log.gz": {
+      "sha256": "12c2d37e57a3abd034a1afa5670f597c9890696f667822ee758712e84cd92f9a",
+      "rawSha256": "9d8c8948714162e8e036839da8a2eb54181c9b26094ecbeed6c17f6d6df37849",
+      "rawBytes": 997
+    },
+    "docs-check.log.gz": {
+      "sha256": "e7f40006c4db380bfdc10e2bc5c0d0a001f858ff20b84737b028735afed0c0c1",
+      "rawSha256": "37510f6fce8487af792911bcd2534185aa29a15e30afc2cefa5a53a25a9be27e",
+      "rawBytes": 239
+    },
+    "pack-consumers.json.gz": {
+      "sha256": "17e6ef56fe07907e2127e85d56ddd08dfbf7571b8407b09629971524ac2ecc55",
+      "rawSha256": "0c19876190bd72c51a92b081cff56b24341cfb2490dea2e4ed7f5c6ae699c2a9",
+      "rawBytes": 9253
+    },
+    "release-rehearsal.json.gz": {
+      "sha256": "2b957401d552f32528784f01d7284d86ac719b9fed7152dd9cca60481c7bf701",
+      "rawSha256": "2a66432533b02dbb0acae3499486afdd0fe0874d369c6ed9ef2b6ef0a4679abc",
+      "rawBytes": 1590
+    },
+    "chrome-retry.json.gz": {
+      "sha256": "39c4276305f7f7a33f0269bda0fa95c37bd571f9c957a0f64e6fadc7d2088eb1",
+      "rawSha256": "a48dbae776cd99827c8287bfcb5fd1155984818c127a839457b9fa5a9359c2ad",
+      "rawBytes": 844090
+    },
+    "chrome-first-attempt.json.gz": {
+      "sha256": "3c621160e72287d170a146a2bff0360ca1bf1e63c1dbad86d0211393acce38f1",
+      "rawSha256": "a6d900f6ce6d4baea8fe2974c08fe855251ba861a07212565ff236d29ff918f2",
+      "rawBytes": 229117
+    },
+    "count-summary.json.gz": {
+      "sha256": "e041b6073666b6466bb0cda5cdcd753401d7dcc6448551140414517fe214e835",
+      "rawSha256": "711de35b8b08cfb79c69d87b6f33c31c55ef151e81367735879b34ccabbd396c",
+      "rawBytes": 13711
+    },
+    "crdt-source-audit.json.gz": {
+      "sha256": "4f48b7d7ec5aa5a9591ad641619afdc3f5f2006f39b3bad04fa76640923bed05",
+      "rawSha256": "98c52056e1b88f0959f74c0ec4799a9c7a1a115dec03b68e58e1bd5813e33328",
+      "rawBytes": 5797
+    },
+    "counts-legacy-local.json.gz": {
+      "sha256": "d67db55fd722ec0b2c6478e6a32de1e488472e475b5a2ed45bbb1228a68358a0",
+      "rawSha256": "efb286986a6cfce367b779f58e74f4989badff741213d55e851744a191e0a62a",
+      "rawBytes": 45639
+    },
+    "counts-legacy-sync.json.gz": {
+      "sha256": "bfddf724a8c039b948d8931cdc3867c59ac1348f8216abf4446ab05e5b92221f",
+      "rawSha256": "70804d2cd16fc26e12c71171bc45d30758f0e3fde3d5ca57f5d1a8b45a5b3d38",
+      "rawBytes": 45630
+    },
+    "counts-unified-local.json.gz": {
+      "sha256": "615a0122658cd5d4abaabbfc50b7fb7a773cb778cea948f7ce6d9be7eb8b8d60",
+      "rawSha256": "c23ec30bc9991a6872d7498f447429f824147de62c7524d827adfc862b65df74",
+      "rawBytes": 45624
+    },
+    "counts-unified-sync.json.gz": {
+      "sha256": "812d9956cd415c2c67c8779ad6a8c57d5fda123acfb34ef19b98971e50e25ed5",
+      "rawSha256": "50d3327e62ffd260866ce4c3ef59688b2685b6c383097536d86704e0be9d157c",
+      "rawBytes": 45648
+    }
+  },
+  "sourceSealFiles": 79,
+  "sourceSealCheck": "PASS",
+  "artifactIntegrity": "PASS",
+  "activeOldImports": 0
+}

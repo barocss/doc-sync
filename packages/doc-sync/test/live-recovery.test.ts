@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {Doc} from '../../doc-sync-core/dist/crdt/doc.js';
-import {DocHub} from '../../doc-sync-core/dist/server/hub.js';
-import {SyncClient, LiveRecovery, type LiveRecoveryTransport, type Transport} from '../../doc-sync-core/dist/sync/index.js';
+import {Doc} from '../../doc-sync/dist/crdt/doc.js';
+import {DocHub} from '../../doc-sync/dist/server/hub.js';
+import {SyncClient, LiveRecovery, type LiveRecoveryTransport, type Transport} from '../../doc-sync/dist/sync/index.js';
 import {DEMO_SCHEMA} from '../../../fixtures/demo-schema.ts';
 
 function setup() {
@@ -195,7 +195,7 @@ test('retirement blocks every local mutation while the durable intent is being s
 test('lost release reply keeps the same durable release retryable after reload', async () => {
     const {hub, client, transport, recovery} = setup();
     await recovery.establish(); insert(client, 'settled'); await tick();
-    let stored: import('../../doc-sync-core/dist/sync/live-recovery.js').LiveRecoveryRelease | undefined;
+    let stored: import('../../doc-sync/dist/sync/live-recovery.js').LiveRecoveryRelease | undefined;
     const release = transport.releaseRecovery, ids: string[] = [];
     transport.releaseRecovery = async (...args) => {
         ids.push(args[1]); await release(...args);
@@ -261,7 +261,7 @@ test('checkpoint hooks save offline edits and stop sends when persistence fails'
 test('dispose after durable retirement save retains the edit freeze and release intent', async () => {
     const {hub, client, recovery} = setup();
     await recovery.establish(); insert(client, 'settled'); await tick();
-    let finish!: () => void, stored: import('../../doc-sync-core/dist/sync/live-recovery.js').LiveRecoveryRelease | null = null;
+    let finish!: () => void, stored: import('../../doc-sync/dist/sync/live-recovery.js').LiveRecoveryRelease | null = null;
     const gate = new Promise<void>(resolve => { finish = resolve; });
     const retiring = recovery.retire(async record => { stored = record; await gate; }, () => {});
     while (!stored) await tick();

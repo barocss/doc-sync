@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {createEditor, Transforms} from "slate";
-import {Client} from "../../doc-sync-core/dist/client/index.js";
-import {SyncClient} from "../../doc-sync-core/dist/sync/index.js";
-import type {Transport} from "../../doc-sync-core/dist/sync/index.js";
-import {DocHub} from "../../doc-sync-core/dist/server/index.js";
+import {Client} from "../../doc-sync/dist/client/index.js";
+import {SyncClient} from "../../doc-sync/dist/sync/index.js";
+import type {Transport} from "../../doc-sync/dist/sync/index.js";
+import {DocHub} from "../../doc-sync/dist/server/index.js";
 import {PmBinding, buildPmSchema} from "../../doc-sync-prosemirror/dist/index.js";
 import {SlateBinding, fromSlate, slateRangeToModel} from "../../doc-sync-slate/dist/index.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";

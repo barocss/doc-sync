@@ -5,12 +5,12 @@ import {
 import {$createHeadingNode, $createQuoteNode, $isHeadingNode, $isQuoteNode} from "@lexical/rich-text";
 import {$createTableNode, $createTableRowNode, $createTableCellNode, $isTableNode, $isTableRowNode, $isTableCellNode} from "@lexical/table";
 import {$modelChildren} from "./grid.ts";
-import {canonical} from "@barocss/doc-sync-core";
-import {attrValueOk, gridParts} from "@barocss/doc-sync-core";
+import {canonical} from "@barocss/doc-sync";
+import {attrValueOk, gridParts} from "@barocss/doc-sync";
 import {$modelData, $setModelData, modelDataFor, SchemaElementNode, SchemaLeafNode} from "./nodes.ts";
 import type {ElementNode, LexicalEditor, LexicalNode, SerializedEditorState, TextFormatType} from "lexical";
 import type {HeadingTagType} from "@lexical/rich-text";
-import type {Marks, NodeJSON, Run} from "@barocss/doc-sync-core";
+import type {Marks, NodeJSON, Run} from "@barocss/doc-sync";
 import type {LexicalSchemaInfo, LexicalCodecContext} from "./schema.ts";
 
 const formats: Record<string, TextFormatType> = {bold: "bold", italic: "italic", underline: "underline", strike: "strikethrough", code: "code", subscript: "subscript", superscript: "superscript", highlight: "highlight"};
@@ -20,6 +20,7 @@ const context = (info: LexicalSchemaInfo): LexicalCodecContext => ({schema: info
 
 /** Build a native node inside editor.update(). All schema data is retained in NodeState. */
 export function $createModelNode(info: LexicalSchemaInfo, model: NodeJSON | Run): LexicalNode {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     for (const codec of info.codecs) {
         const custom = codec.toLexical?.(model, context(info));
         if (custom) return custom;
@@ -108,6 +109,7 @@ function inferredType(info: LexicalSchemaInfo, node: LexicalNode): string {
 
 /** Read inside editorState.read() or editor.update(). Unknown native nodes fail explicitly. */
 export function $readModelNode(info: LexicalSchemaInfo, node: LexicalNode): NodeJSON | Run {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     for (const codec of info.codecs) {
         const custom = codec.fromLexical?.(node, context(info));
         if (custom) return custom;
@@ -167,6 +169,7 @@ export function $readModelNode(info: LexicalSchemaInfo, node: LexicalNode): Node
 }
 
 export function $toLexical(info: LexicalSchemaInfo, model: NodeJSON): void {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     if (model.type !== info.schema.root) throw new Error(`Expected model root ${info.schema.root}`);
     if (model.attrs && Object.keys(model.attrs).length) throw new Error("Root attributes are not represented by the core canonical model");
     $setModelData($getRoot(), modelDataFor(model, "flow"));
@@ -174,6 +177,7 @@ export function $toLexical(info: LexicalSchemaInfo, model: NodeJSON): void {
 }
 /** Replace only a changed root interval when its previous projection is known. */
 export function $projectLexical(info: LexicalSchemaInfo, before: NodeJSON, after: NodeJSON): void {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const old = before.children ?? [], next = after.children ?? [];
     const root = $getRoot(), nodes = root.getChildren();
     if (nodes.length !== old.length) { $toLexical(info, after); return; }
@@ -189,20 +193,24 @@ export function $projectLexical(info: LexicalSchemaInfo, before: NodeJSON, after
 }
 
 export function $fromLexical(info: LexicalSchemaInfo): NodeJSON {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const root = $getRoot();
     return canonical(info.schema, {...withAttrs(info.schema.root, attrsOf(root)), children: root.getChildren().map(child => $readModelNode(info, child) as NodeJSON)});
 }
 export function toLexicalJSON(info: LexicalSchemaInfo, model: NodeJSON): SerializedEditorState {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const editor = createEditor({nodes: info.nodes, onError: error => { throw error; }});
     editor.update(() => $toLexical(info, model), {discrete: true});
     return editor.getEditorState().toJSON();
 }
 export function fromLexicalJSON(info: LexicalSchemaInfo, json: SerializedEditorState): NodeJSON {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const editor = createEditor({nodes: info.nodes, onError: error => { throw error; }});
     const state = editor.parseEditorState(json);
     return state.read(() => $fromLexical(info), {editor});
 }
 export function readLexicalModel(editor: LexicalEditor, info: LexicalSchemaInfo): NodeJSON {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     return editor.getEditorState().read(() => $fromLexical(info), {editor});
 }
 
@@ -265,6 +273,7 @@ function readGrid(info: LexicalSchemaInfo, table: import("@lexical/table").Table
 
 /** Refresh canonical metadata and restored content without replacing selections. */
 export function $syncLexicalCells(info: LexicalSchemaInfo, model: NodeJSON): void {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const columns = new Map();
     const visit = (node: LexicalNode, current: NodeJSON | undefined, r = 0, c = 0) => {
         if (!current || !$isElementNode(node)) return;

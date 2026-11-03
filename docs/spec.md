@@ -1,5 +1,39 @@
 # Doc Sync State and Synchronization Specification
 
+## Schema domains and stored containers
+
+`Schema` remains the shared engine schema contract. An omitted domain means
+`document`; `DocumentSchema` can explicitly use `domain: 'document'` without
+changing the equivalent legacy schema fingerprint. `GraphicSchema` requires
+`domain: 'graphic'` and a root with `shape: 'container'`.
+
+A container stores ordered children and may be empty. It accepts stored
+container, flow, text, grid and atom children declared by its schema. It does
+not create leading, interstitial or trailing text blocks. A frame or object
+group is an application node name with container shape. The existing computed
+`group` shape remains a document list wrapper inside a flow. Root graphic
+attributes, default children and container childRules are rejected in this
+initial contract. Nested object attributes use existing LWW or field registers.
+
+Container objects use the existing node, body slot, placement, deletion and
+History storage rules. Object deletion can hide concurrently inserted child
+text while retaining its storage for undo. Explicit text split/merge retains
+text according to existing History rules. Reparenting keeps object identity;
+paths express the current projection rather than permanent identity.
+
+Protocol 3 and the four legacy document capabilities remain unchanged. A
+schema-aware graphic hub additionally advertises `containers-v1`; graphic
+clients require this capability and a matching non-null schema fingerprint.
+A schema-free or older peer is rejected before replacing the local document or
+pending changes. Cross-domain schema transitions are incompatible. Compatible
+container child additions remain subject to the same snapshot/recovery checks.
+
+The native Rust SDK, text-editor bindings, and canvas rendering do not gain a
+graphic backend through these schema declarations. Text binding entry points
+reject graphic schemas before constructing a native view. See the graphic
+schema guide for headless editing and current API boundaries.
+
+
 This document records the current contract and known limits. It does not establish independent review, product integration approval, release approval, or two consecutive weeks of successful operation. `@barocss/doc-sync` is the only public library. Its editor bindings use subpaths of the same library. The demo and benchmarks are private workspaces.
 
 ## 1. Scope and Terms
@@ -11,7 +45,7 @@ This document records the current contract and known limits. It does not establi
 - `Envelope`: an entry in the server log. `serverSeq` increases from 1 for each document. It contains an edit or a GC frontier.
 - Model: `NodeJSON` that interprets stored state through a schema. It is distinct from the stored token list.
 
-Implementation references are `packages/doc-sync-core/src/crdt/{doc,ticket,history,model}.ts`, `packages/doc-sync-core/src/sync/{protocol,client}.ts`, and `packages/doc-sync-core/src/server/hub.ts`. Consumers supply the schema. The core does not embed the demo's specific paragraph or table types.
+Implementation references are `packages/doc-sync/src/crdt/{doc,ticket,history,model}.ts`, `packages/doc-sync/src/sync/{protocol,client}.ts`, and `packages/doc-sync/src/server/hub.ts`. Consumers supply the schema. The core does not embed the demo's specific paragraph or table types.
 
 ## 2. State and Order
 
@@ -54,7 +88,7 @@ Storage and `Pos.o` use UTF-16 token units. `runsToUnits` in `model.ts` iterates
 
 ### Attribute Fields and Child Counts
 
-An `AttrSpec.fields` declaration opts a fixed recursive object into independent per-leaf LWW registers. Omitted patch fields remain unchanged; null resets a leaf or declared branch to defaults. Explicit same-value writes receive new Tickets. Model diffs emit only changed leaves. Fields are supported on text, inline, grid, atom, and cell types, plus stored flow container types that are neither the root nor cell-body flow types. List item fields belong to their text type. Schema validation rejects fields on the root, rows, cell-body flow types, groups, spans, and `markValues`. Other attributes remain atomic. Reserved field keys encode canonical JSON paths; unsafe names and non-JSON field values are rejected. Each leaf has independent undo ownership and survives snapshots.
+An `AttrSpec.fields` declaration opts a fixed recursive object into independent per-leaf LWW registers. Omitted patch fields remain unchanged; null resets a leaf or declared branch to defaults. Explicit same-value writes receive new Tickets. Model diffs emit only changed leaves. Fields are supported on text, inline, grid, atom, and cell types, plus stored flow and graphic container types that are neither the root nor cell-body flow types. List item fields belong to their text type. Schema validation rejects fields on the root, rows, cell-body flow types, groups, spans, and `markValues`. Other attributes remain atomic. Reserved field keys encode canonical JSON paths; unsafe names and non-JSON field values are rejected. Each leaf has independent undo ownership and survives snapshots.
 
 A flow's `childRules` supplies optional `min` and `max` per allowed child type. Bounds are integers from 0 to 1000; omitted bounds mean zero minimum and no maximum. Group counts follow model groups. Projection retains excess candidates as overflow instead of rejecting concurrent inserts by a mutable count. `doc.overflow(lineKey?)` reads those hidden candidates. Missing minimum children use deterministic editable slots. Required children cannot move or change type; deletion clears their content while retaining identity and attributes. Required cycles through flows and grid bodies are invalid. Cardinality does not add another wire operation.
 

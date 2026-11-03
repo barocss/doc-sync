@@ -8,11 +8,14 @@ Choose a binding for an existing editor, or build a custom editor with Core. Use
 | Tiptap | `@barocss/doc-sync-tiptap`: `DocSync` extension and `createTiptapExtensions` | [Tiptap](./tiptap) |
 | Slate | `@barocss/doc-sync-slate`: `SlateBinding`, schema codec, selection helpers | [Slate](./slate) |
 | Lexical | `@barocss/doc-sync-lexical`: `LexicalBinding`, schema builder, codecs, selection helpers | [Lexical](./lexical) |
-| Custom editor | `@barocss/doc-sync-core/client`: `Client`; Core `EditorHost` contract for structured bindings | [Custom editor](./custom-editor) |
+| Custom editor | `@barocss/doc-sync/client`: `Client`; Core `EditorHost` contract for structured bindings | [Custom editor](./custom-editor) |
+
+Define shared data rules first, then an editor-specific mapping. Run capability
+checks before mounting a custom view. Read [Custom schemas and editor mappings](../schemas/custom).
 
 Choose an editor guide above for its setup and binding examples. For shared model operations, read the [Guide](./editing).
 
-Each binding is a separate npm package. Use built repository workspaces or local tarballs until registry release. The old `@barocss/doc-sync/<editor>` imports remain compatibility exports and require the selected binding peer. See [Packages and engines](./packages) for the dependency graph and release workflow.
+Each binding is a separate npm package. Use built repository workspaces or local tarballs until registry release. Import bindings from their independent package names. See [Packages and engines](./packages) for the dependency graph and release workflow.
 
 Install each selected binding with its required editor peers. Core provides the shared CRDT, synchronization client, and server without native editor dependencies.
 
@@ -107,7 +110,7 @@ fn main() -> Result<()> {
 }
 ```
 
-The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
 <details>
 <summary>Raw protocol probe and reference checks</summary>
@@ -127,3 +130,12 @@ JSONL
 The last response contains UTF-16 units `[72,105]` (`Hi`). This checks native application and state inspection. A Rust binding must separately connect native input, remote projection, composition, selection and disposal. No public Rust editor binding or full WASM CRDT client exists. See [the adapter boundary](./rust#what-runs-where).
 
 </details>
+
+
+## Graphic editor
+
+The [PixiJS graphic editor](./graphic-editor) is a private runnable example over
+GraphicSchema. It is an application adapter, not a new exported binding package.
+It uses two real HTTP/SSE clients and revision-cached CRDT object IDs. Existing
+ProseMirror, Tiptap, Slate, and Lexical bindings continue to require document
+schemas.

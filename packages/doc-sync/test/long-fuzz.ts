@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import {mkdir, writeFile} from "node:fs/promises";
 import {dirname} from "node:path";
 import {pathToFileURL} from "node:url";
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import {MemoryNet, rng} from "./harness.ts";
-import type {Envelope} from "../../doc-sync-core/dist/sync/protocol.js";
+import type {Envelope} from "../../doc-sync/dist/sync/protocol.js";
 
 /** A bounded in-memory replay test. It does not claim disk durability or lease recovery. */
 export const runLongFuzz = async (options: {ops: number; peers: number; seed: number}) => {

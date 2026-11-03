@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {HttpTransport} from "../../../packages/doc-sync-core/src/sync/http-transport.ts";
-import {NodeHttpTransport} from "../../../packages/doc-sync-core/src/sync/node-http-transport.ts";
+import {HttpTransport} from "../../../packages/doc-sync/src/sync/http-transport.ts";
+import {NodeHttpTransport} from "../../../packages/doc-sync/src/sync/node-http-transport.ts";
 
 test("browser HttpTransport retains default and product-relative recovery fetch targets", async () => {
     const original = globalThis.fetch; const requests: string[] = [];

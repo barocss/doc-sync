@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
-import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import {compareTicket, keyOf} from "../../doc-sync-core/dist/crdt/ticket.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
+import {Doc} from "../../doc-sync/dist/crdt/doc.js";
+import {compareTicket, keyOf} from "../../doc-sync/dist/crdt/ticket.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import {MemoryNet} from "./harness.ts";
-import type {NodeJSON, Op} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {Ticket} from "../../doc-sync-core/dist/crdt/ticket.js";
-import type {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import type {NodeJSON, Op} from "../../doc-sync/dist/crdt/doc.js";
+import type {Ticket} from "../../doc-sync/dist/crdt/ticket.js";
+import type {SyncClient} from "../../doc-sync/dist/sync/client.js";
 
 // Independent edits are all authored before any delivery. Commit order changes
 // server acceptance order, without reordering an actor's sequence or dependencies.

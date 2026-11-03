@@ -195,6 +195,7 @@ impl Replica {
         Some(a)
     }
     fn validate_move(&self, m: &Move) -> Result<()> {
+        if self.graphic { return self.validate_graphic_move(m); }
         if !self.movement || m.t != "move" {
             return Err("movement capability required".into());
         }
@@ -334,6 +335,7 @@ impl Replica {
         )
     }
     fn placement_projection(&self) -> Projection {
+        if self.graphic { return self.graphic_projection(); }
         if let Some(p) = self.placement_cache.borrow().as_ref() {
             return p.clone();
         }
@@ -427,6 +429,9 @@ impl Replica {
                 }
             }
         }
+        self.project_placements(base, gaps)
+    }
+    fn project_placements(&self, base: Vec<Entry>, gaps: BTreeMap<String, Ticket>) -> Projection {
         let mut current: BTreeMap<String, Entry> =
             base.iter().map(|e| (e.target.clone(), e.clone())).collect();
         let mut all: BTreeMap<String, Entry> = base.into_iter().map(|e| (e.id.key(), e)).collect();
@@ -934,6 +939,7 @@ impl Replica {
 }
 impl Replica {
     pub(super) fn validate_history_placement(&self, target: &Ticket, p: &Placement) -> Result<()> {
+        if self.graphic { return self.validate_graphic_history_placement(target, p); }
         let i = self
             .index(target)
             .ok_or("history movement target missing")?;

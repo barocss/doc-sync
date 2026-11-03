@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, checkSchema} from "../../doc-sync-core/dist/index.js";
-import type {NodeJSON, Schema} from "../../doc-sync-core/dist/index.js";
+import {Doc, checkSchema} from "../../doc-sync/dist/index.js";
+import type {NodeJSON, Schema} from "../../doc-sync/dist/index.js";
 
 const settings = {default: {width: 10, layout: {x: 1}, tags: ["base"]}, fields: {
     width: {default: 10}, layout: {default: {x: 1}, fields: {x: {default: 1}}}, tags: {default: ["base"]},

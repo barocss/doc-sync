@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync-core/local';
-import type {Schema} from '@barocss/doc-sync-core';
+import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync/local';
+import type {Schema} from '@barocss/doc-sync';
 import {mountCustomEditor} from '../local/custom-editor.mjs';
 
 const firstText = (model: ReturnType<LocalClient['model']>) => model.children?.[0]?.runs?.map(run => 'text' in run ? run.text : '').join('');

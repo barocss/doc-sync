@@ -9,7 +9,7 @@ Use `LocalClient` for a document that stays in memory in one application. It
 uses the production TypeScript engine without a transport, server, presence
 service or MCP connection. The same schema and editing operations apply.
 
-The entry point is `@barocss/doc-sync-core/local`. It is part of Core, not a new
+The entry point is `@barocss/doc-sync/local`. It is part of Core, not a new
 package. Core and the binding packages remain private before registry release;
 use the built workspace or local tarballs described in [Packages and engines](./packages).
 
@@ -105,7 +105,7 @@ users, editors or agents must exchange changes through a document server.
 
 | Area | LocalClient | SyncClient |
 | --- | --- | --- |
-| Import | `@barocss/doc-sync-core/local` | `@barocss/doc-sync-core/sync` |
+| Import | `@barocss/doc-sync/local` | `@barocss/doc-sync/sync` |
 | Construction | `new LocalClient({schema})`; actor is optional | `new SyncClient(actor, transport, {schema})`; actor and transport are required |
 | Document engine | Production TypeScript engine | Same production TypeScript engine by default; only this backend currently ships |
 | Schema and operations | Schema-defined text, blocks, tables and attributes | Same editing model and collaboration rules |
@@ -157,8 +157,8 @@ general browser latency or a networked SyncClient speedup.
 ## Create and edit a document
 
 ```ts
-import {type Schema} from '@barocss/doc-sync-core';
-import {LocalClient} from '@barocss/doc-sync-core/local';
+import {type Schema} from '@barocss/doc-sync';
+import {LocalClient} from '@barocss/doc-sync/local';
 
 const schema: Schema = {
     root: 'document',
@@ -189,7 +189,7 @@ must be a nonempty identifier containing ASCII letters, digits, `_`, `~` or `-`;
 ## Connect a native editor
 
 ```ts
-import {LocalEditorHost} from '@barocss/doc-sync-core/local';
+import {LocalEditorHost} from '@barocss/doc-sync/local';
 import {PmHostBinding, buildPmSchema} from '@barocss/doc-sync-prosemirror';
 
 const host = new LocalEditorHost(client);
@@ -225,7 +225,7 @@ connection flags do not disable local editing.
 Two editor views can edit one LocalClient. Create a separate host for each view:
 
 ```ts
-import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync-core/local';
+import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync/local';
 
 const shared = new LocalClient({schema});
 const firstHost = createLocalEditorHost(shared);

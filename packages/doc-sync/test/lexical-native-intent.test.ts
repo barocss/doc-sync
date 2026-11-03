@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {createEditor, $getSelection, $isRangeSelection} from 'lexical';
 import {registerRichText} from '@lexical/rich-text';
-import {Client} from '@barocss/doc-sync-core/client';
+import {Client} from '@barocss/doc-sync/client';
 import {LexicalBinding, buildLexicalSchema, readLexicalModel, $setLexicalSelection, $lexicalSelection} from '../../doc-sync-lexical/dist/index.js';
 import {PmBinding, buildPmSchema} from '../../doc-sync-prosemirror/dist/index.js';
 import {MemoryNet} from './harness.ts';
-import type {Transport} from '@barocss/doc-sync-core/sync';
+import type {Transport} from '@barocss/doc-sync/sync';
 
 for (const unified of [false, true]) for (const bold of [false, true]) for (const replace of [false, true]) test(`Lexical ${unified ? 'Client' : 'SyncClient'} ${bold ? 'bold' : 'plain'} ${replace ? 'range replacement' : 'prefix'} retains foreign identities under undo`, async t => {
     const net = new MemoryNet();

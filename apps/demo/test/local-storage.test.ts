@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {Client} from '@barocss/doc-sync-core/client';
+import {Client} from '@barocss/doc-sync/client';
 import {saveLocal, openLocal, forgetLocal} from '../client/local-storage.mjs';
 import {CLIENT_SCHEMA, seedEdits, textOf} from '../client/model.js';
 

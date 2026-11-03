@@ -36,11 +36,30 @@
     "predocs:build": "npm run build",
     "predev:products": "npm run build",
     "predev:local": "npm run build",
-    "predev:client": "npm run build"
+    "predev:client": "npm run build",
+    "changeset": "changeset",
+    "release:status": "changeset status",
+    "release:version": "changeset version",
+    "check:release": "node scripts/check-release-preparation.mjs",
+    "dev:graphic": "node apps/demo/graphic/start.mjs",
+    "predev:graphic": "npm run build",
+    "check:graphic": "node apps/demo/graphic/check-browser.mjs",
+    "bench:graphic": "node apps/demo/graphic/check-performance.mjs",
+    "dev:spreadsheet": "node apps/demo/spreadsheet/start.mjs",
+    "predev:spreadsheet": "npm run build",
+    "check:spreadsheet": "node apps/demo/spreadsheet/check-browser.mjs",
+    "bench:spreadsheet": "node apps/demo/spreadsheet/check-performance.mjs"
   },
   "devDependencies": {
+    "@changesets/cli": "3.0.3",
     "@types/node": "^22.20.5",
     "esbuild": "^0.28.2",
     "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "@visactor/vtable": {
+      "lodash": "4.18.1",
+      "minimist": "1.2.8"
+    }
   }
 }

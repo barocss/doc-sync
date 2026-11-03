@@ -12,7 +12,7 @@ doc-sync is a document CRDT with a synchronization client, a transport-independe
 ## Start with a small document
 
 ```ts
-import {Client, type Schema} from "@barocss/doc-sync-core";
+import {Client, type Schema} from "@barocss/doc-sync";
 
 const schema: Schema = {
     root: "content",
@@ -44,6 +44,6 @@ console.log(client.model());
 
 ## Know the current limits
 
-The six packages export compiled JavaScript and declarations but remain `private: true`. They are not yet npm releases. The macOS MCP app has bounded restart and lease-expiry recovery with the demo server; production recovery, authorization, incompatible schema migration and long-term deployment validation remain open. Convergence does not guarantee every user's semantic intent.
+The five packages export compiled JavaScript and declarations but remain `private: true`. They are not yet npm releases. The macOS MCP app has bounded restart and lease-expiry recovery with the demo server; production recovery, authorization, incompatible schema migration and long-term deployment validation remain open. Convergence does not guarantee every user's semantic intent.
 
 [Read status and limits →](./status)

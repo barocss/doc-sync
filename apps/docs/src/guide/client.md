@@ -3,11 +3,54 @@
 Use `Client` for a new browser integration. Supply a schema and pass the client
 to an editor binding. The binding creates its own editor host internally.
 
-## Start without a server
+## Actor identity and display profile
+
+`actor` is a replica ID, not a display name. Each simultaneously active client
+needs its own actor ID. Two tabs for the same person can share `profile.userId`
+and `profile.name`, but must use different actor IDs. Use a new ID for a new
+replica, or restore the saved ID through `Client.fromState()`.
 
 ```ts
-import {Client} from '@barocss/doc-sync-core/client';
-import type {Schema} from '@barocss/doc-sync-core';
+const client = new Client({
+    schema,
+    actor: crypto.randomUUID(),
+    profile: {
+        userId: 'user-42',
+        name: 'Alex',
+        color: '#2563eb',
+        avatar: 'https://example.com/avatars/alex.png',
+        kind: 'human',
+        metadata: {team: 'Design', locale: 'en'},
+    },
+});
+console.log(client.actor);        // CRDT replica ID
+console.log(client.profile.name); // Alex
+```
+
+The profile is optional, copied, and read-only. The default name is the actor
+ID; the default color is stable for that ID. A bot can use `kind: 'bot'` with its
+own replica ID and display profile. These fields describe a participant; they do
+not grant document access or editing authority.
+
+In synchronized mode, `client.setPresence({anchor, focus})` uses these profile
+defaults. Explicit `name` and `color` in an update still override the defaults.
+In local mode, the profile is available to the application, but no remote
+presence is sent. See [Cursors and selections](./presence#participant-profiles)
+for fields, limits, and rendering responsibilities.
+
+Profiles are not stored in CRDT document or history checkpoints. Pass the
+current profile separately when opening saved local state:
+
+```ts
+const restored = Client.fromState(savedState, {schema, profile: {name: 'Alex'}});
+```
+
+## Start without a server
+
+<!-- client-local-example -->
+```ts
+import {Client} from '@barocss/doc-sync/client';
+import type {Schema} from '@barocss/doc-sync';
 
 const schema: Schema = {
     root: 'document',
@@ -37,8 +80,8 @@ is required. Both entry points use the production TypeScript engine.
 ## Add synchronization at construction
 
 ```ts
-import {Client} from '@barocss/doc-sync-core/client';
-import {HttpTransport} from '@barocss/doc-sync-core/sync';
+import {Client} from '@barocss/doc-sync/client';
+import {HttpTransport} from '@barocss/doc-sync/sync';
 
 const actor = 'alice-session-1';
 const client = new Client({
@@ -112,7 +155,7 @@ editing, checkpoint/recovery and compatible schema transitions. Check it for
 null before calling sync-only APIs. Use `upgradeOpenEditorSchema(client.sync,
 nextSchema, host)` with the [documented rebuild lifecycle](./schema-transition).
 For explicit local capture/open, use [Save and open locally](./local-storage).
-The facade writes no storage and adds no local schema transition.
+The client writes no storage and adds no local schema transition.
 Finish each view's apply/commit batch before using underlying SyncClient APIs.
 Do not mix direct engine mutations with an unfinished host batch.
 

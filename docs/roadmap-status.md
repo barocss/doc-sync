@@ -1,5 +1,31 @@
 # Roadmap Execution Status — 2026-10-23
 
+The previous domain baseline is recorded in HANDOFF §5.120 and
+`docs/reports/domain-delivery-2026-11-03/README.md`. The public TypeScript core
+now provides a 17-node built-in graphic data contract and typed ID helpers.
+Native Rust has fixed Document presets, Canvas/Builtins Graphic APIs and the
+fixed-axis SparseSheet primitive. The next scoped extension adds native
+runtime Graphic/flat-Document schemas and custom sheet field registries.
+Full arbitrary document schemas and a production WASM Client factory remain open. Native graphic parity compares
+normalized models/History; native sheet parity includes exact operations and
+checkpoint/History state. These are different proof boundaries.
+
+A private VTable spreadsheet demo uses two real HTTP/SSE actors over sparse
+storage and mounts at most 100 × 26 records per view. Final Chrome checks
+pass 21/21. Backend-only ABBA reduces10k peer p95 from285.9–287.0ms to33.7–33.8ms;
+removing a separate status range scan gives final26.8ms. Phase-specific source
+receipts preserve the boundary; no WAN/100k-populated-cell gate is claimed. The 17-node graphic
+contract is data support; the existing PixiJS demo still renders the earlier
+basic canvas profile. It does not render paths/gradients/instances yet.
+
+Spreadsheet S2 interval axes/stable IDs is the next structural priority; S3
+Client/protocol integration follows. Runtime custom field admission is
+implemented separately and does not complete the shared Client gate. The early S5a browser demo
+does not close either gate or full durable recovery. Formula calculation,
+compaction/GC, engine-neutral graphic object reads, rendering/layout/Boolean
+solvers, mixed-runtime wire exchange, and WASM/browser backends remain open.
+No commit, push, registry publish or hosted docs deployment is included.
+
 > Historical execution record. For the current ordered work and acceptance criteria, see the [roadmap](../apps/docs/src/roadmap.md) and the latest integration section in `HANDOFF.md`. The stage assessments and measurements below describe their original checkpoints and are not current-source acceptance results.
 
 The previous integration is main `6f15291`, recorded in [HANDOFF §5.13](../HANDOFF.md#513-final-checks-and-main-integration-of-all-changes-2026-10-23). Remote model-event comparison for multiple text blocks was extended on top of it. Final retesting and main integration follow [§5.15](../HANDOFF.md#515-final-checks-and-main-integration-of-multi-text-block-remote-comparison-2026-10-23). Implementation, measurements, and scope follow [§5.14](../HANDOFF.md#514-roadmap-priority-remote-comparison-of-multiple-text-blocks-2026-10-23). Earlier screen-latency improvements remain in §5.9–§5.10; intent preservation and History fixes remain in §5.11–§5.12. The single library package and private demo/benchmark structure remain.

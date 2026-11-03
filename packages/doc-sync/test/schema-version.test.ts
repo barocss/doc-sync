@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import {createHash} from "node:crypto";
 import {test} from "node:test";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import {assertCompatibleSchema, schemaVersion} from "../../doc-sync-core/dist/crdt/schema-version.js";
-import type {Schema} from "../../doc-sync-core/dist/crdt/schema.js";
+import {assertCompatibleSchema, schemaVersion} from "../../doc-sync/dist/crdt/schema-version.js";
+import type {Schema} from "../../doc-sync/dist/crdt/schema.js";
 
 const minimal = (): Schema => ({root: "doc", nodes: {doc: {shape: "flow", children: ["p"], default: "p"}, p: {shape: "text"}}, marks: []});
 

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, History, anchorAt, pathAt} from "../../doc-sync-core/dist/index.js";
-import type {EditOp, NodeJSON, Op, Schema} from "../../doc-sync-core/dist/index.js";
+import {Doc, History, anchorAt, pathAt} from "../../doc-sync/dist/index.js";
+import type {EditOp, NodeJSON, Op, Schema} from "../../doc-sync/dist/index.js";
 
 const schema: Schema = {root: "content", marks: ["bold"], nodes: {
     content: {shape: "flow", children: ["p", "box"], default: "p"},

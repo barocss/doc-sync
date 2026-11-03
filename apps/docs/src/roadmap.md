@@ -127,9 +127,9 @@ The [recovery plan](./reference/recovery-plan) describes the implemented recover
 
 ### 9. Prepare the public release
 
-**Status: local package artifacts verified; not released.** Core and the ProseMirror, Tiptap, Slate, and Lexical bindings are separate packages. The compatibility facade keeps existing imports. All six packages remain private. Compiled JavaScript, declarations, and isolated tarball consumers are available. Define release versions, API/protocol compatibility, migrations, security, and release policy before registry publication. Plan the Protocol 2 to 3 upgrade for existing deployments.
+**Status: local package artifacts verified; not released.** Core and the ProseMirror, Tiptap, Slate, and Lexical bindings are separate packages. `@barocss/doc-sync` contains the dependency-free core. All five packages remain private. Compiled JavaScript, declarations, and isolated tarball consumers are available. Define release versions, API/protocol compatibility, migrations, security, and release policy before registry publication. Plan the Protocol 2 to 3 upgrade for existing deployments.
 
-**Done when:** a clean consumer can install and use the package, the selected release checks pass, compatibility and migration instructions are available, and the release gates are approved. The six packages remain private and export compiled ESM JavaScript and declarations. See [packages and engines](./guide/packages).
+**Done when:** a clean consumer can install and use the package, the selected release checks pass, compatibility and migration instructions are available, and the release gates are approved. The five packages remain private and export compiled ESM JavaScript and declarations. See [packages and engines](./guide/packages).
 
 ## Bot delivery sequence
 
@@ -142,9 +142,24 @@ Bot work has its own acceptance gates and does not renumber engine items 1–9. 
 5. **B5: Coordination and persistent watcher — planned.** Add explicit assignments, restart-safe triggers, cancellation, deduplication, and separate actor history.
 6. **B6: Operations, sources, and memory — private hosted foundation implemented; broader stage planned.** Static grants, upstream credentials, capacity limits, and journals do not complete production access, retention, deletion, budgets, recovery, or external retrieval gates.
 
+## Graphic and spreadsheet delivery
+
+The TypeScript [built-in graphic contract](./guide/graphic-schema#use-the-built-in-graphic-contract)
+provides standard nodes, properties and ID helpers without application custom
+attributes. The PixiJS demo renders a smaller basic profile. The
+[graphic roadmap](https://github.com/barocss/doc-sync/blob/main/docs/graphic-roadmap.md)
+orders data primitives, reference/override semantics, geometry/layout/rendering,
+native profile coverage, then WASM and performance qualification.
+
+The [sparse spreadsheet guide](./schemas/spreadsheets) describes the private S1
+primitive and its early collaborative grid demo. The
+[spreadsheet roadmap](https://github.com/barocss/doc-sync/blob/main/docs/spreadsheet-roadmap.md)
+keeps stable axes and public Client integration open. An early S5a browser demo
+can proceed beside those stages; it does not complete them.
+
 ## Separate Rust experiment
 
-See the [Rust engine overview](./guide/rust) for the current contract, evidence, and remaining gates. The [ordered D1–D9 delivery queue](./guide/rust#ordered-delivery-work) turns the remaining R4–R6 gates into client-boundary, schema/compiler, recovery, native SDK, full WASM, binding and release work. D1 now provides the selected TypeScript client and binding boundary, with passing routing/regression/count checks and bounded client timing evidence. Broader Chrome end-to-end latency remains open. D2 runtime schemas are the next Rust implementation lane; the native server remains optional.
+See the [Rust engine overview](./guide/rust) for the current contract, evidence, and remaining gates. The [ordered D1–D9 delivery queue](./guide/rust#ordered-delivery-work) turns the remaining R4–R6 gates into client-boundary, schema/compiler, recovery, native SDK, full WASM, binding and release work. D1 now provides the selected TypeScript client and binding boundary, with passing routing/regression/count checks and bounded client timing evidence. Broader Chrome end-to-end latency remains open. D2 now has a partial runtime subset: custom Graphic container/text/atom, flat Document flow/text/atom and custom sparse fields. Full nested schemas and product fixtures remain open; the native server remains optional. See [custom schemas](./schemas/custom).
 
 The [Rust engine roadmap](https://github.com/barocss/doc-sync/blob/main/docs/rust-roadmap.md) defines a separate R1–R6 sequence. R1 has bounded UTF-16 contract and baseline evidence. R2 passed its declared [storage comparison gate](https://github.com/barocss/doc-sync/blob/main/experiments/rust-core/STORAGE-RESULTS.md) with independent JavaScript, native Rust, and WASM checks; the alternating-end regression remains recorded. R3 passed its declared boundary and lifetime gate in Node 24 and Chrome. These results do not approve a production migration.
 
@@ -157,9 +172,16 @@ Strict hidden editor ranges remain null. These remain bounded semantic checks,
 not production Rust integration evidence.
 
 Runtime schema loading and live schema replacement are separate next steps.
-The initial native Rust SDK now provides direct typed document, operation,
-History, selection and checkpoint calls for six fixed presets. Its 14 tests
-and 20-action TypeScript comparison passed. It has no browser/WASM, Node,
+The native Rust SDK provides direct typed Document calls for six fixed presets.
+It now also provides `GraphicDocument` for fixed Canvas and 17-node Builtins profiles and
+`SparseSheet` for the private fixed-axis S1 primitive. The Canvas comparison
+covers 20 actions and 40 states; Builtins covers 35 independently authored
+actions and 70 actor states, with normalized model/History and exact manifest
+equality. The sheet
+comparison covers 31 actions and 62 states with exact operations, models, full
+History, pending queues and checkpoints. The native Builtins profile implements the frozen TypeScript data contract.
+The SDK has 42 passing tests; the shadow core has 75. These checks do not qualify
+exact graphic wire encoding or mixed-runtime network exchange. It has no browser/WASM, Node,
 editor or MCP adapter. The new Tiptap extension uses the TypeScript engine.
 Rust can support them, but its current experimental schemas are compiled in.
 The planned per-document compiled schema must replace fixed type rules before

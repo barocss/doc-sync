@@ -1,0 +1,127 @@
+{
+  "baseHead": "d624a56d7ea5389fd9f67d1277637838bb343475",
+  "candidate": "uncommitted; includes inherited five-package/profile changes",
+  "baselineSourceSeal": "../five-package-migration-2026-11-03/source-seal.json",
+  "workspace": {
+    "tests": 1401,
+    "pass": 1399,
+    "fail": 0,
+    "skipped": 2
+  },
+  "coreTests": 1031,
+  "newCoreRegressions": 72,
+  "graphicModelStateSyncCases": 31,
+  "schemaDomainCases": 7,
+  "schemaCapabilityCases": 5,
+  "bindingGuardCases": 29,
+  "docsTests": 37,
+  "compatTests": 33,
+  "rootTypes": "PASS",
+  "build": "PASS",
+  "packedConsumers": {
+    "packages": 5,
+    "cases": 7,
+    "status": "PASS",
+    "schemaDomainTypes": "PASS",
+    "emptyGraphicClientRuntime": "PASS"
+  },
+  "releaseRehearsal": "PASS",
+  "docs": {
+    "pages": 46,
+    "internalLinks": 2134,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "review": {
+    "schemaArchitectureSecurity": "APPROVE",
+    "functional": "APPROVE",
+    "crdtHigh": "APPROVE",
+    "sourceOnlyAdditionalPermutations": 24,
+    "boundary": "Additional source-only review observations are not extra committed test-case counts."
+  },
+  "compatibility": {
+    "legacySchemaIdentity": "unchanged",
+    "explicitDocumentIdentity": "same as unmarked definition",
+    "legacyDocumentCapabilities": 4,
+    "graphicCapability": "containers-v1",
+    "protocolVersion": 3,
+    "legacyDocumentHistory": "unchanged; first-birth placement exception graphic-only"
+  },
+  "limits": [
+    "Headless library model and sync scope only; no graphic canvas renderer or browser UI acceptance",
+    "No direct ID edit convenience API; stable stored block IDs and numeric paths are supported",
+    "Graphic root attributes and container default/childRules rejected",
+    "Inherited text merge vs concurrent reparent can display joined text outside the former container",
+    "Timing, browser paint latency, new live Codex, new real-process graphic restart and new Rust differential NOT_RUN",
+    "Existing timing investigation flags remain open"
+  ],
+  "commitPush": "NOT_RUN",
+  "registryPublish": "NOT_RUN",
+  "changedBaselineSealedFiles": [
+    "packages/doc-sync/src/crdt/cardinality.ts",
+    "packages/doc-sync/src/crdt/doc.ts",
+    "packages/doc-sync/src/crdt/edit.ts",
+    "packages/doc-sync/src/crdt/history.ts",
+    "packages/doc-sync/src/crdt/model.ts",
+    "packages/doc-sync/src/crdt/schema-version.ts",
+    "packages/doc-sync/src/crdt/schema.ts",
+    "packages/doc-sync/src/index.ts",
+    "packages/doc-sync/src/server/hub.ts",
+    "packages/doc-sync/src/sync/client.ts",
+    "packages/doc-sync/src/sync/index.ts",
+    "packages/doc-sync/src/sync/protocol.ts",
+    "packages/doc-sync-lexical/src/binding.ts",
+    "packages/doc-sync-lexical/src/convert.ts",
+    "packages/doc-sync-lexical/src/host-binding.ts",
+    "packages/doc-sync-lexical/src/schema.ts",
+    "packages/doc-sync-lexical/src/selection.ts",
+    "packages/doc-sync-prosemirror/src/binding.ts",
+    "packages/doc-sync-prosemirror/src/convert.ts",
+    "packages/doc-sync-prosemirror/src/host-binding.ts",
+    "packages/doc-sync-prosemirror/src/schema.ts",
+    "packages/doc-sync-slate/src/binding.ts",
+    "packages/doc-sync-slate/src/codec.ts",
+    "packages/doc-sync-slate/src/host-binding.ts",
+    "scripts/check-package-artifacts.mjs"
+  ],
+  "sourceSealFiles": 190,
+  "artifacts": {
+    "workspace-tests.log.gz": {
+      "sha256": "9fd1c466b2c8f2ed0dcc3e40bdbc1293e830ff97d098bb79fcab112dd3c2863c",
+      "rawSha256": "3f0a4431a382169ec268faf303ab7c2993deefb6946b7551744d7951dbb79e86",
+      "rawBytes": 141047
+    },
+    "root-typecheck.log.gz": {
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawBytes": 0
+    },
+    "compat-tests.log.gz": {
+      "sha256": "9e4248f486594910fade99f7d5a77c5cfe9ad5923d77a421feba5f28aec8273f",
+      "rawSha256": "a6cf3021fc3cbc99cd3d0f21e42901b42f5dd3e1d978a14c2df330bff8579ffd",
+      "rawBytes": 2794
+    },
+    "docs-build.log.gz": {
+      "sha256": "686eaf97391d762d83924fdde176260c885a3e1b35a980c3a9f7ada01995d309",
+      "rawSha256": "620b6dbb38c9e0414f1bc817bbc64e16f8000d2e0c6716f10dddfca765e5db42",
+      "rawBytes": 997
+    },
+    "docs-check.log.gz": {
+      "sha256": "ae386588e0cf4999bbeb62aa7f344ff13025f037eca85cbe36d1ed91f66b58f1",
+      "rawSha256": "299389ff28e3e686e29feb4bbf3dd4e67e17a886126b5dd325c5776c32834427",
+      "rawBytes": 239
+    },
+    "pack-consumers.json.gz": {
+      "sha256": "66b7bd76aa14805a9f52f201ff3d92193c0893f9c7f2d960d5fff1b8c410c818",
+      "rawSha256": "8e21037fe4cb32742a983acfcc38d00683d32e679c804e28d0b14691532b5c2e",
+      "rawBytes": 9331
+    },
+    "release-rehearsal.json.gz": {
+      "sha256": "a2d05b7a206d1e8dce7dc6f0adbf09c0c08197659a93088895bb32a4edb4f8b2",
+      "rawSha256": "14fea6c5f2ae2ecab7ef5d35c1e9b8c7299cc97250646f73e1f68d9172881c08",
+      "rawBytes": 1590
+    }
+  },
+  "sourceSealCheck": "PASS",
+  "artifactIntegrity": "PASS"
+}

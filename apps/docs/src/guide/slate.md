@@ -4,7 +4,7 @@ Use the built repository workspaces or local tarballs. These package names are n
 
 Use `SlateBinding` from **`@barocss/doc-sync-slate`**. It connects a Slate editor to a [Client](./client). Omit the transport for local editing, or add an actor and transport for synchronization. The binding handles local edits, remote updates, selection restoration, composition drafts, and collaboration history.
 
-This is a separate binding package. The old `@barocss/doc-sync/slate` subpath remains a compatibility export. The examples use built repository workspaces.
+This is a separate binding package. The old `@barocss/doc-sync-slate` subpath remains a compatibility export. The examples use built repository workspaces.
 
 ## Dependencies
 
@@ -22,8 +22,8 @@ Start with a schema and a local client. This example creates an editor without m
 
 ```ts
 import {createEditor} from "slate";
-import {type Schema} from "@barocss/doc-sync-core";
-import {Client} from "@barocss/doc-sync-core/client";
+import {type Schema} from "@barocss/doc-sync";
+import {Client} from "@barocss/doc-sync/client";
 import {SlateBinding} from "@barocss/doc-sync-slate";
 
 const schema: Schema = {
@@ -175,7 +175,7 @@ fn main() -> Result<()> {
 
 The existing TypeScript adapter uses `slateRangeToModel` and `modelRangeToSlate` in `packages/doc-sync-slate/src/codec.ts`. A Rust-backed adapter must connect these conversions to `capture_selection` and `resolve_selection`, and project `model()` into Slate children. The example does not install or test that adapter.
 
-The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
 <details>
 <summary>Raw protocol probe and reference checks</summary>

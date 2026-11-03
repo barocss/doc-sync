@@ -405,7 +405,7 @@ impl History {
         }
         // Discard released arena nodes. This also bounds retained ownership metadata
         // by retained groups/targets rather than lifetime edit count.
-        *self = Self::restore(&self.snapshot())?;
+        *self = Self::restore_with_runtime(&self.snapshot(), doc.runtime.is_some())?;
         Ok(())
     }
     fn next(doc: &mut Replica) -> Result<Ticket> {
@@ -633,7 +633,7 @@ impl History {
             current_moves
         })
     }
-    pub fn restore(value: &Value) -> Result<Self> {
+    pub fn restore_with_runtime(value: &Value, runtime: bool) -> Result<Self> {
         let saved: Saved = decode(value)?;
         if saved.version != 1 || saved.undo.len() + saved.redo.len() > DEPTH {
             return Err("unsupported history snapshot".into());
@@ -702,7 +702,8 @@ impl History {
                         }
                     }
                     Step::Set { key, targets } => {
-                        if !general::history_key(key)
+                        if !(runtime && runtime_schema::safe_name(key)) && !nested::graphic_history_key(key)
+                            && !general::history_key(key)
                             && !nested::history_key(key)
                             && key != "link"
                             && key != "listType"

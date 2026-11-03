@@ -1,10 +1,10 @@
 import {createEditor, Editor, Text, Transforms} from "slate";
-import {modelEdits, sameModel} from "@barocss/doc-sync-core/editor";
-import {applyEdit, applyEdits, runsToUnits, unitsToRuns} from "@barocss/doc-sync-core";
+import {modelEdits, sameModel} from "@barocss/doc-sync/editor";
+import {applyEdit, applyEdits, runsToUnits, unitsToRuns} from "@barocss/doc-sync";
 import {fromSlate, modelRangeToSlate, slatePointToModel, slateRangeToModel, toSlate, projectSlateBlock} from "./codec.ts";
 import type {BaseEditor, Descendant, Operation} from "slate";
-import type {EditOp, NodeJSON, Schema} from "@barocss/doc-sync-core";
-import type {EditorHost, EditorSession, AnchoredRange} from "@barocss/doc-sync-core/editor";
+import type {EditOp, NodeJSON, Schema} from "@barocss/doc-sync";
+import type {EditorHost, EditorSession, AnchoredRange} from "@barocss/doc-sync/editor";
 import type {SlateElement} from "./codec.ts";
 
 export type SlateBindingOptions = {
@@ -118,6 +118,7 @@ export class SlateHostBinding {
     private native: {children: Descendant[]; model: NodeJSON; projected: boolean} | null = null;
 
     constructor(host: EditorHost, editor: BaseEditor, options: SlateBindingOptions = {}) {
+        if (host.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
         if (owners.has(editor)) throw new Error("SlateBinding: the editor already has a binding");
         this.host = host;
         this.editor = editor;

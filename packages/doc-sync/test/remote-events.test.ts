@@ -1,16 +1,16 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, MAIN} from "../../doc-sync-core/dist/crdt/doc.js";
-import {schemaVersion} from "../../doc-sync-core/dist/crdt/schema-version.js";
-import {insertText, setSpan} from "../../doc-sync-core/dist/crdt/commands.js";
-import {applyEdits, diffModels} from "../../doc-sync-core/dist/crdt/model.js";
-import {keyOf} from "../../doc-sync-core/dist/crdt/ticket.js";
-import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
-import {textEventScopes} from "../../doc-sync-core/dist/sync/model-events.js";
+import {Doc, MAIN} from "../../doc-sync/dist/crdt/doc.js";
+import {schemaVersion} from "../../doc-sync/dist/crdt/schema-version.js";
+import {insertText, setSpan} from "../../doc-sync/dist/crdt/commands.js";
+import {applyEdits, diffModels} from "../../doc-sync/dist/crdt/model.js";
+import {keyOf} from "../../doc-sync/dist/crdt/ticket.js";
+import {SyncClient} from "../../doc-sync/dist/sync/client.js";
+import {textEventScopes} from "../../doc-sync/dist/sync/model-events.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {EditOp, NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
-import type {Op} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {ServerEvent} from "../../doc-sync-core/dist/sync/protocol.js";
+import type {EditOp, NodeJSON} from "../../doc-sync/dist/crdt/model.js";
+import type {Op} from "../../doc-sync/dist/crdt/doc.js";
+import type {ServerEvent} from "../../doc-sync/dist/sync/protocol.js";
 
 const setup = (content?: NodeJSON[]) => {
     const seed = new Doc("seed", DEMO_SCHEMA);

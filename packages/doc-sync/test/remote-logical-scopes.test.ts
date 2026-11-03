@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, MAIN, commands, schemaVersion} from "../../doc-sync-core/dist/index.js";
-import {applyEdits, diffModels} from "../../doc-sync-core/dist/crdt/model.js";
-import {textEventScopes} from "../../doc-sync-core/dist/sync/model-events.js";
-import {blockPath, posOfPath} from "../../doc-sync-core/dist/crdt/edit.js";
-import {SyncClient, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../../doc-sync-core/dist/sync/index.js";
+import {Doc, MAIN, commands, schemaVersion} from "../../doc-sync/dist/index.js";
+import {applyEdits, diffModels} from "../../doc-sync/dist/crdt/model.js";
+import {textEventScopes} from "../../doc-sync/dist/sync/model-events.js";
+import {blockPath, posOfPath} from "../../doc-sync/dist/crdt/edit.js";
+import {SyncClient, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../../doc-sync/dist/sync/index.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import {MemoryNet} from "./harness.ts";
-import type {Schema, NodeJSON, EditOp, Op} from "../../doc-sync-core/dist/index.js";
-import type {ServerEvent} from "../../doc-sync-core/dist/sync/index.js";
+import type {Schema, NodeJSON, EditOp, Op} from "../../doc-sync/dist/index.js";
+import type {ServerEvent} from "../../doc-sync/dist/sync/index.js";
 
 const schema: Schema = {root: "content", marks: ["bold", "italic"], nodes: {
     content: {shape: "flow", children: ["paragraph", "box", "rule", "caption", "list"], default: "paragraph"},

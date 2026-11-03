@@ -5,10 +5,7 @@ const guideSidebar = [
         {text: "Overview", link: "/"},
         {text: "Getting started", link: "/guide/getting-started"},
         {text: "Packages and engines", link: "/guide/packages"},
-        {text: "Define a schema", link: "/guide/schema"},
-        {text: "Change an open editor's schema", link: "/guide/schema-transition"},
-        {text: "Complete example schema", link: "/guide/full-schema"},
-        {text: "Word, Notion and presentation schemas", link: "/guide/product-schemas"},
+        {text: "Release preparation", link: "/guide/releasing"},
     ]},
     {text: "Build an editor", items: [
         {text: "Client: local or synchronized", link: "/guide/client"},
@@ -21,6 +18,25 @@ const guideSidebar = [
         {text: "Cursors and selections", link: "/guide/presence"},
     ]},
 ];
+const schemaSidebar = [
+    {text: "Schemas", items: [
+        {text: "Overview", link: "/schemas/"},
+        {text: "Custom schemas and editor mappings", link: "/schemas/custom"},
+    ]},
+    {text: "Document", items: [
+        {text: "Overview", link: "/schemas/document"},
+        {text: "Define a schema", link: "/guide/schema"},
+        {text: "Complete example schema", link: "/guide/full-schema"},
+        {text: "Word, Notion and presentation schemas", link: "/guide/product-schemas"},
+        {text: "Change an open editor's schema", link: "/guide/schema-transition"},
+    ]},
+    {text: "Graphic", items: [
+        {text: "Overview", link: "/guide/graphic-schema"},
+    ]},
+    {text: "Spreadsheet", items: [
+        {text: "Sparse spreadsheets", link: "/schemas/spreadsheets"},
+    ]},
+];
 const editorSidebar = [
     {text: "Editor integrations", items: [
         {text: "Choose an integration", link: "/guide/editors"},
@@ -29,6 +45,7 @@ const editorSidebar = [
         {text: "Slate", link: "/guide/slate"},
         {text: "Lexical", link: "/guide/lexical"},
         {text: "Custom editor", link: "/guide/custom-editor"},
+        {text: "PixiJS graphic editor", link: "/guide/graphic-editor"},
         {text: "Editor design lessons", link: "/guide/editor-lessons"},
     ]},
 ];
@@ -93,6 +110,7 @@ export default defineConfig({
         siteTitle: "doc-sync",
         nav: [
             {text: "Guide", link: "/guide/getting-started", activeMatch: activeMatch(guideSidebar)},
+            {text: "Schemas", link: "/schemas/", activeMatch: activeMatch(schemaSidebar)},
             {text: "Editor integrations", link: "/guide/editors", activeMatch: activeMatch(editorSidebar, ["/guide/runnable-examples"])},
             {text: "AI & bots", link: "/ai/", activeMatch: activeMatch(aiSidebar)},
             {text: "Reference", link: "/reference/api", activeMatch: activeMatch(referenceSidebar)},
@@ -101,12 +119,19 @@ export default defineConfig({
         search: {provider: "local"},
         outline: {level: [2, 3], label: "On this page"},
         sidebar: {
+            "/schemas/": schemaSidebar,
+            "/guide/schema": schemaSidebar,
+            "/guide/graphic-schema": schemaSidebar,
+            "/guide/schema-transition": schemaSidebar,
+            "/guide/full-schema": schemaSidebar,
+            "/guide/product-schemas": schemaSidebar,
             "/guide/editors": editorSidebar,
             "/guide/prosemirror": editorSidebar,
             "/guide/tiptap": editorSidebar,
             "/guide/slate": editorSidebar,
             "/guide/lexical": editorSidebar,
             "/guide/custom-editor": editorSidebar,
+            "/guide/graphic-editor": editorSidebar,
             "/guide/runnable-examples": editorSidebar,
             "/guide/editor-lessons": editorSidebar,
             "/ai/": aiSidebar,

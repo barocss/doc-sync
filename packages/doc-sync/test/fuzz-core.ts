@@ -1,9 +1,9 @@
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
-import {MAIN} from "../../doc-sync-core/dist/crdt/doc.js";
-import {applyEdits} from "../../doc-sync-core/dist/crdt/model.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
+import {MAIN} from "../../doc-sync/dist/crdt/doc.js";
+import {applyEdits} from "../../doc-sync/dist/crdt/model.js";
 import {MemoryNet, rng, show} from "./harness.ts";
-import type {GridBlock, Pos, Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import type {GridBlock, Pos, Doc} from "../../doc-sync/dist/crdt/doc.js";
+import type {SyncClient} from "../../doc-sync/dist/sync/client.js";
 
 /**
  * 무작위 동시편집 한 판. 참여자마다 무작위 편집을 하고, 네트워크는 무작위로 일부만 흘리며, 끊고 잇기와

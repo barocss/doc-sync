@@ -6,12 +6,12 @@ import {registerRichText} from "@lexical/rich-text";
 import {PmBinding, buildPmSchema} from "../../doc-sync-prosemirror/dist/index.js";
 import {SlateBinding, fromSlate} from "../../doc-sync-slate/dist/index.js";
 import {LexicalBinding, buildLexicalSchema, readLexicalModel, $setLexicalSelection} from "../../doc-sync-lexical/dist/index.js";
-import {typescriptClientEngineFactory} from "../../doc-sync-core/dist/engine/index.js";
-import type {ClientEngineFactory} from "../../doc-sync-core/dist/engine/index.js";
-import {SyncClient} from "../../doc-sync-core/dist/sync/index.js";
-import {DocHub} from "../../doc-sync-core/dist/server/index.js";
-import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {Transport} from "../../doc-sync-core/dist/sync/index.js";
+import {typescriptClientEngineFactory} from "../../doc-sync/dist/engine/index.js";
+import type {ClientEngineFactory} from "../../doc-sync/dist/engine/index.js";
+import {SyncClient} from "../../doc-sync/dist/sync/index.js";
+import {DocHub} from "../../doc-sync/dist/server/index.js";
+import {Doc} from "../../doc-sync/dist/crdt/doc.js";
+import type {Transport} from "../../doc-sync/dist/sync/index.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 
 /** Hide concrete TS access so a host cannot silently bypass the selected port. */

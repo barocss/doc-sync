@@ -1,9 +1,51 @@
 # Handoff — @barocss/doc-sync
 
+The custom-schema and editor-mapping checkpoint is in **§5.121**. Experimental
+public SpreadsheetSchema/SparseSheet, custom Graphic ID helpers, editor
+capability preflight and native runtime schema subsets are implemented.
+Final suite aggregate: **1,464 cases / 1,462 PASS / two expected SKIPs / zero FAIL**
+after correcting and rerunning the docs suite. Chrome default/custom profiles
+pass 21/21 and 29/29; native SDK/shadow pass 48/48 and 78/78. Full native nested
+Document schemas, live Rust transitions, shared sheet Client integration and
+WASM remain open. All inherited work is preserved and remains uncommitted.
+
+The collaborative VTable spreadsheet demo, built-in graphic data APIs and native
+Rust Document/Graphic/Spreadsheet delivery are in **§5.120**. Final workspace:
+**1,445 cases / 1,443 PASS / two platform SKIPs / zero FAIL**. Chrome sheet
+functional 21/21 passes; final 10k remote p95 is 26.8 ms. Backend-only ABBA
+repeats improve p95 by about 8.5× under an identical UI bundle. Native SDK 42 and
+shadow 75 pass; graphic and sheet differential proof boundaries differ.
+Public SpreadsheetSchema/Client integration and a full WASM backend remain open.
+All changes are uncommitted; no publication or push is included.
+
+Schema navigation, explicit native Rust/WASM graphic support limits and the
+private sparse-sheet S1 experiment are in **§5.119**. Schemas now has its own
+menu. Sparse tests pass 18/18, docs 40/40, and native SDK 13/13. This is not a
+public SpreadsheetSchema/Client/server integration. Interval axes, formulas,
+virtual sheet UI, compaction and Rust/WASM sheet support remain open.
+
+The private PixiJS graphic editor and real HTTP/SSE verification are in
+**§5.118**. Chrome functional checks pass 20/20. The full workspace has 1,419 PASS
+and two platform SKIPs. Large-scene latency remains INVESTIGATE; stable cached
+ID lookup is fast, but whole-model staging and cold seeding remain expensive.
+The manual demo is open in a new browser tab. Nothing is committed or published.
+
+The DocumentSchema/GraphicSchema implementation and current verification are in
+**§5.117**. Existing unmarked Schema and explicit document schemas share the same
+identity. Graphic schemas use stored empty containers for canvases, frames and
+object groups. This is headless model/sync support, not a canvas renderer.
+The source checkout is still uncommitted and npm publication is deferred.
+
+The five-package consolidation, actor profiles, release preparation, and fresh
+verification are in **§5.116**. `@barocss/doc-sync` now owns the actual core;
+there is no separate core package or binding facade. All five library packages
+remain private at `0.0.0`. npm publication is deferred. Current changes are
+uncommitted; the last confirmed main push is in **§5.115**.
+
 The input-tail diagnostics and explicit local save/open are in **§5.114**.
 The unified Client API, four-editor demo and input-ownership corrections are
 in **§5.113**. This working-tree change is not a new publication.
-Latest publication review is in **§5.112**. Selected TypeScript client engines
+Latest publication review is in **§5.115**. Selected TypeScript client engines
 and their verification limits are described in **§5.104**.
 The numbered Rust/WASM delivery queue is in **§5.103**.
 Final review, Rust SDK/WASM usage, and the main publication checkpoint
@@ -11,9 +53,9 @@ are in **§5.102**. Safe conditional rejection settlement is in **§5.101**;
 owner approval and accepted-request recovery are in **§5.100**.
 Unknown outcomes remain blocked; a refreshed change requires a new approval.
 
-The six-package extraction, independently consumable JS/type artifacts, and
-draft TypeScript engine contract are in **§5.93**. The original facade imports
-remain supported. This is not a TS/WASM backend selector.
+The historical six-package extraction and draft TypeScript engine contract
+are in **§5.93**. Its core/facade layout and compatibility imports are superseded
+by **§5.116**. This is not a TS/WASM backend selector.
 
 The dedicated TypeScript Tiptap extension and first typed native Rust SDK are
 in **§5.92**. Tiptap uses the production TypeScript engine. Native SDK calls do
@@ -54,7 +96,7 @@ See [`README.md`](README.md) for the concepts, [`docs/edit-api.md`](docs/edit-ap
 
 - **Purpose**: A **document CRDT** library with an externally injected schema. It does not know block types. It knows only schema shapes: text, inline, flow, group, grid, row, cell, atom, and span.
 - **Supported scope**: Concurrent text, formatting, links, lists, tables, images, nested flows and atoms; ProseMirror, Tiptap, Slate and Lexical bindings; identity-preserving paragraph/block/group placement; required-child projection; persistent annotations; declared nested attribute fields. Earlier scope is in §5.19; Tiptap scope and limits are in §5.92.
-- **Current structure**: `packages/doc-sync-core` owns the production core, sync, server and shared editor support. Four `packages/doc-sync-{prosemirror,tiptap,slate,lexical}` workspaces own bindings. `packages/doc-sync` is the compatibility facade. All six remain private until release preparation; real pack artifacts are independently tested (§5.93). Apps and benchmarks remain private. The native Rust SDK is a separate private Cargo crate. Original single-package monorepo evidence is retained in §5.4.
+- **Monorepo**: `packages/doc-sync` owns the dependency-free core, local/sync clients, server, and editor contracts. Four `packages/doc-sync-{prosemirror,tiptap,slate,lexical}` workspaces own bindings. These five are private at `0.0.0`; apps and benchmarks stay private. Changesets prepares independent versions without publication (§5.116). Rust remains a private Cargo experiment. Historical extraction evidence is retained in §5.93.
 - **Input preservation**: Fixed 22 caret/IME failures in the Slate/Lexical/PM comparison demo, `apps/demo/compat`. Causes, composition drafts, and Chrome validation scope are in §5.6. This is separate from the default `/pm` IME implementation.
 - **Current stage**: Expanded stage 0 measurements. Improved stage 1 safe single-block receive comparison and large-string cache copying. Added stage 2 specifications, property tests, and a long-run CI foundation (§5.7). Actual editor latency, G0/G1, lease-expiry recovery, and long-run exit criteria remain open. Improved paragraph model recalculation and demo Paint/PrePaint costs (§5.9–§5.10). Core timing alone does not establish product performance acceptance. Added intent-preservation case specifications and 41 regressions (§5.11). Fixed consecutive formatting undo and added regressions that preserve other users' writes (§5.12). Extended safe remote comparison to at most 8 text blocks (§5.14). Broader batches, structure and undo/redo retain whole-model reads; eligible large-document cases now use guarded structural comparison/verification windows (§5.23). Structural paragraph cache reuse was improved in §5.16.
 - **Next**: Review baseline timeouts, trace speed, and semantic differences between engines. Set targets and G0. Remote root-block projection is improved in §5.28. Narrow remaining local conversion, Lexical readback, large changed containers, multi-block/structural costs and screen costs. Keep the existing decisions on contiguous storage and binary formats. Use §5.20 measurements to profile the remaining logical projection and structural costs (§6).
@@ -70,13 +112,15 @@ Remote `origin`: `https://github.com/barocss/doc-sync.git`. The first commit pre
 
 ```bash
 npm install --cache <writable-temporary-folder>/npm-cache   # ~/.npm gives EACCES; do not fix with sudo
-npm test                     # Builds first; latest exact counts and limits are in §5.102
-npm test --prefix apps/demo/compat  # 31 comparison-demo conversion, input, and probe tests
+npm test                     # Builds first; latest exact counts and limits are in §5.117
+npm test --prefix apps/demo/compat  # 33 comparison-demo conversion, input, and probe tests
 FUZZ_SEEDS=3000 npm test     # Large random run (several minutes)
 PM_SEEDS=300 npm test        # More ProseMirror random traces
 npm run typecheck            # tsc (project typescript 5.8)
-npm run build                # Six ESM/declaration packages, in dependency order
-npm run check:packages       # Real independent tarball consumers and prepack freshness checks
+npm run build                # Five ESM/declaration packages, in dependency order
+npm run check:packages       # Real independent tarball consumers; run separately from tests
+npm run release:status       # Read the five-package Changesets plan
+npm run check:release        # Temporary-copy version rehearsal, no publish
 npm run docs:dev              # English documentation, loopback URL printed by VitePress
 npm run docs:build            # Static site in apps/docs/dist
 npm run docs:check            # Built pages, links, fragments, assets, and English prose
@@ -91,7 +135,7 @@ node --cpu-prof --cpu-prof-dir=<folder> benchmarks/profile.ts 10000   # CPU prof
 ```
 
 - Requires Node 22.18 or later. Runs `.ts` directly with type stripping. Use **erasable TS syntax only** (`erasableSyntaxOnly`). Do not use enum, namespace, or constructor parameter properties.
-- There is no build step. `package.json` `exports` points directly to `.ts`. Add a build before npm publication (stage 7).
+- Public package exports point to compiled ESM `.js` and `.d.ts` declarations. `npm test` builds first. Source tests use direct `.ts` execution; packed consumers use public imports. The release tools support Node 22.18+ in the 22.x line or Node 24.x.
 - Demo pages:
   - `/`: three demo editors and a token inspector.
   - `/multi?n=10&doc=name`: multiple frames.
@@ -106,31 +150,28 @@ Root `package.json` is a private npm workspace. Run `npm run dev`, `npm test`, `
 ## 2. Structure
 
 ```text
-packages/doc-sync/           Single library @barocss/doc-sync (existing private setting retained)
-  src/index.ts              Core: Doc, commands, History, model, schema
-  src/crdt/                 Tokens, validation, application, editing API, model, compaction
-  src/sync/                 SyncClient, HttpTransport, protocol
-  src/server/               DocHub (transport-independent)
-  src/pm/                   ProseMirror schema, conversion, binding
-  src/slate/                Public Slate binding, codec and selection conversion
-  src/lexical/              Public Lexical binding, schema nodes, codec and selection conversion
-  src/editor/               Shared composition draft, model mapping and subscriptions
-  test/                     Existing collaboration, table, editing API, PM, and random tests
-apps/demo/                  Private @doc-sync/demo
-  server.ts                 HTTP, SSE, static files, JSONL storage
-  ui/                       Demo, multi-window, and ProseMirror UI
-  test/                     HTTP, snapshot, restart, reset, and Presence tests
-apps/docs/                  Private @doc-sync/docs (VitePress, GitHub Pages)
-  src/, .vitepress/          English guides, generated references, theme, navigation
-  scripts/, test/           Content preparation, built-link checks, executable examples
-apps/mcp/                   Private @doc-sync/mcp; stdio MCP server and integration tests
-benchmarks/                 Private @doc-sync/benchmarks
-  trace.ts, engines.ts      Traces and comparison engines
-  run.ts, client.ts         Core and local-client measurements
-  profile.ts, results/      CPU profiling and raw measurements
-fixtures/demo-schema.ts     Shared demo and test schema
-docs/                      Design, reports, roadmap
-data/                      Existing logs (do not move or delete)
+packages/doc-sync/           Actual dependency-free @barocss/doc-sync core
+  src/index.ts              Doc, commands, History, model, schema, Client
+  src/crdt/                 Tokens, validation, editing, model, compaction
+  src/client/, src/local/   Unified/local clients and actor profiles
+  src/sync/, src/server/    SyncClient, transports, protocol, DocHub
+  src/editor/, src/engine/  Shared editor contracts and TypeScript engine
+  test/                     Consolidated core/integration/regression suites
+packages/doc-sync-prosemirror/  ProseMirror schema, conversion, binding
+packages/doc-sync-tiptap/       Tiptap extension, ProseMirror binding peer
+packages/doc-sync-slate/        Slate binding and codec
+packages/doc-sync-lexical/      Lexical nodes, conversion, binding
+apps/demo/                  Private demo server, local/client/product UIs, tests
+apps/docs/                  Private English VitePress documentation and tests
+apps/mcp/                   Private stdio/HTTP MCP service and recovery tests
+apps/bot/                   Private document bot runtime and tests
+benchmarks/                 Private measurements; results/ retains old evidence
+fixtures/                   Shared example and representative product schemas
+experiments/                Private Rust/native/WASM experiments
+.changeset/                 Independent release plans; no npm publication
+scripts/                    Builds, packed consumers, isolated version rehearsal
+docs/                       Design, reports, roadmap
+data/                       Existing logs (do not move or delete)
 ```
 
 Layer dependencies:
@@ -166,8 +207,9 @@ demo ─▶ pm ─▶ sync ─▶ crdt ◀─ server
 9. **Model**: `toJSON()` returns a tree in the schema-based document editor's document JSON form.
    - Groups such as list > list-item are stored flat and grouped during calculation.
    - A flow always starts with a text block.
+   - Graphic container roots and stored frame/group containers may be empty and never add default text. DocumentSchema keeps flow defaults; GraphicSchema uses the same CRDT with explicit domain/capability checks (§5.117).
    - Tables use a full grid with covered cells; colspan/rowspan are calculated.
-10. **Editing API**: `doc.edit(EditOp[])`; EditOp is insert, delete, update, split, or merge.
+10. **Editing API**: `doc.edit(EditOp[])`; EditOp is insert, delete, update, split, merge, or move.
     - Paths are model-tree child indices, in the same numeric-array form as schema-based editor paths.
     - The compiler converts by shape to wire operations. Per-row cell insertion folds into one column.
     - If editor and CRDT models differ, `normalize` returns the difference.
@@ -5133,3 +5175,694 @@ receipt; it changes no runtime source or verification artifact. Original timing
 remains **INVESTIGATE** for one Node Slate 10k p95 cell and five Chrome local
 10k p95 cells. Remote push success does not establish CI or Pages deployment
 success. No registry publication or release was performed.
+
+
+### 5.116 Five library packages, actor profiles, and release preparation
+
+The user requested consolidation into five packages, unified active imports,
+regression verification, and HANDOFF updates. Actual npm publication is deferred.
+Sol Medium workers handled source/test consolidation, app/docs/harness migration,
+and actor profiles with separate file ownership. Root integrated and verified.
+
+**Current package graph.** `@barocss/doc-sync` now contains the actual dependency-free
+core from the former `packages/doc-sync-core`. The redundant package is removed.
+The four independent packages are `@barocss/doc-sync-prosemirror`,
+`@barocss/doc-sync-tiptap`, `@barocss/doc-sync-slate`, and
+`@barocss/doc-sync-lexical`. Bindings peer on core; Tiptap also peers on the PM
+binding. Core has eight exports: root, `/client`, `/local`, `/sync`, `/editor`,
+`/engine`, `/node`, `/server`. Binding subpaths under core are removed. Active
+source, docs, demos, test imports, and CI use the canonical package names. Core
+and former facade tests were merged without dropping their 956 existing cases.
+Historical receipts, reports, and benchmark hashes retain their old paths. The
+benchmark layout helper can still load a detached pre-migration core layout.
+
+**Actor options.** `actor` remains the string replica ID in operations, History,
+server ownership, and saved state. Optional `profile` supplies `name`, `color`,
+`avatar`, `userId`, `kind: 'human' | 'bot'`, and bounded JSON `metadata` on Client,
+LocalClient, or SyncClient. It is copied and frozen; resolved name/color have
+stable defaults. Presence can use those defaults or explicit display overrides.
+Concurrent replicas can share userId but must keep different actor IDs. Profile
+fields grant no permissions. Saved state stays unchanged and profiles are passed
+separately on local restore. Avatar metadata does not install a renderer. Public
+profile types compile from installed root/client/local/sync entries. Limits and
+examples are in the Client and Presence guides.
+
+**Changesets.** Root has the dev-only CLI 3.0.3, independent version configuration,
+an initial minor changeset for all five libraries, status/version commands, and
+`check:release`. The real CLI rehearsal operates on temporary manifest copies:
+initial 0.1.0 versions, supported peers, and a later Slate-only 0.1.1 patch pass;
+other library versions and private app versions remain unchanged. Source checkout
+versions/lock hashes are checked unchanged. All five stay private at 0.0.0. No
+publish command or auto-publish workflow was added. License, final metadata,
+first stable/beta choice, npm identity, and explicit publication approval remain
+release gates. The existing private MCP Zod 3.25.76 advisory is unchanged and needs
+separate compatibility work; none of the five core/binding packages adds it as a
+runtime dependency.
+
+**Verification.** See `docs/reports/five-package-migration-2026-11-03/README.md`,
+`validation.json`, `source-seal.json`, and compressed raw receipts with hashes.
+
+- Workspace coverage: 1,328 distinct cases; 1,326 PASS/two platform SKIPs/zero
+  unresolved failures. Full run initially found one docs extractor failure after
+  the new profile example became the first code block. An explicit local-example
+  marker fixed the extractor; affected docs rerun 36/36 PASS. All unchanged non-doc
+  groups passed the coordinated full run. Consolidated core 959/959 includes three
+  new profile regressions. Compatibility app separately 33/33 PASS.
+- Root types, five-package build, and packed consumers: PASS. Five tarballs/seven
+  isolated consumer cases include public profile types and independent binding
+  patching. Early concurrent prepack/test runs saw deleted-dist transients and
+  are not acceptance evidence; final coordinated results supersede them. Do not
+  run prepack consumers concurrently with tests loading shared dist.
+- Fresh Chrome retry: all eight native cases PASS across PM/Slate/Lexical/Tiptap
+  and local/queued in-page sync modes. Trusted input, forward/backward selection,
+  undo/redo, actor-owned history, remount, reconnect, refresh, zero local network
+  allocation, and no page/console errors pass. Bundle SHA256:
+  `13ca5adf71a3a993f381b4215068b2b2262664403c177faf2eb1b31f5e049f23`.
+  The first automation timeout is retained separately. Optional fresh storage
+  browser checking did not complete due automation timeouts; NOT_RUN/incomplete.
+  Local-state unit regressions passed, but are not fresh browser-storage proof.
+- Count mode:64 rows/32 legacy-unified pairs at 10k/100k have equal model, History,
+  call counts and native stats. Required generated operations 28/28 match. Four
+  external pairs retain the existing recorder-route exception (two sync hashes
+  differ). Sync is disconnected/stubbed in this count check. All 17 relocated CRDT
+  source files are byte-identical to base d624a56. Timing is NOT_RUN; old Node and
+  Chrome p95 flags remain INVESTIGATE, not cleared by count/source checks.
+- Docs 36 PASS; build 45 pages / 2,072 links; English/local-path checks PASS. Package,
+  Client, profiles, editor, Rust/WASM import examples, API, and release guides use
+  the current package structure. Documentation is local; no new remote deployment
+  is claimed. No new OS IME, HTTP-server Chrome restart, Codex, Rust differential,
+  or nightly million-op acceptance is claimed.
+
+The owned Chrome session is closed. Fresh static preview remains at
+`http://127.0.0.1:62170/` (exec session 28762); other user tabs/processes are preserved.
+
+**Graphic-schema discussion only.** The user clarified a future API distinction
+between DocumentSchema and GraphicSchema. Recommended direction: domain-specific
+public schemas sharing common primitives and the CRDT engine. Current Schema
+requires a flow root and default text; a real graphical scene needs empty
+containers, placement/transforms, object selection and a canvas binding. Existing
+presentation shape/frame samples are not full graphical document support. No
+DocumentSchema/GraphicSchema API or graphic engine was implemented in this task.
+
+Base main remains d624a56. These changes are uncommitted; no new commit, push,
+registry publication, or remote Pages result is claimed.
+
+
+### 5.117 DocumentSchema and GraphicSchema with stored empty containers
+
+The user requested implementation through multiple agents while preserving
+existing Schema compatibility, collaboration rules, and inherited WIP. Sol
+Medium agents owned schema/capability/binding contracts, core container logic,
+and new fixtures/regressions/docs. A separate Sol High agent reviewed the hard
+CRDT identity/placement/history cases. Schema/security, functional, and CRDT
+reviews all APPROVE. Source checkout base remains d624a56; the preceding
+five-package/profile changes were preserved rather than reset or committed.
+
+**Public schema contract.** `Schema` remains the shared input. `domain` is
+optional and defaults to document. `DocumentSchema` permits an explicit document
+marker. Original plain finite JSON validation runs before normalization; that
+marker is omitted from the fingerprint, keeping equivalent legacy identities
+and bidirectional additive compatibility. `GraphicSchema` requires
+`domain: 'graphic'` and a `container` root. Public `ContainerSpec`, `OrderedSpec`,
+and `SchemaDomain` types are exported from core. A graphic frame or object group
+is a named stored container. The existing `group` remains a computed list within
+a document flow. No new npm package or separate CRDT engine was added.
+
+**Empty and nested object semantics.** Containers have ordered children and no
+automatic leading/interstitial/trailing paragraph. They accept declared stored
+container/flow/text/grid/atom children; computed wrappers and inline/row/cell
+nodes cannot be direct container children. They have no default or childRules.
+Graphic root attributes are rejected; stored frame/group/object attributes use
+existing scalar/field rules. Nested text-box flows keep default paragraphs and
+computed lists. Direct Doc/canonical and selected Client engine paths reject
+invalid new domain/container combinations. Graphic edit batches are staged and
+causally checked before live mutation.
+
+**Concurrency and History.** The same token IDs, body slots, placement-v1, LWW
+fields, deletion ledger, and History are reused. Graphic schemas activate logical
+projection from the schema, without a no-op movement of the original object.
+The first placement of a newly born graphic object is retained as its birth
+rather than a separately replayed MoveStep; later real movements remain recorded.
+This exception is graphic-only; the legacy document History branch is unchanged.
+These decisions fix exact concurrent insertion rank after redo, original text
+tails after split/merge/object insertion, and split versus peer reparent intent.
+Deleted objects hide unobserved peer text without dropping its retained storage;
+undo restores it. Container-only cache invalidation prevents that text leaking
+into an earlier sibling. Text owner validation uses immutable causal lineage,
+including inline origins and text:false restrictions.
+
+Stable object IDs are available through readDocumentSlice blockId; regression
+checks preserve them through reorder, reparent, History and snapshots. Numeric
+paths still address edit operations. The user's ID-based lookup question was
+answered; a public getNode(id) or ID-edit convenience API was not added.
+
+**Fail-closed integrations.** Protocol 3 and the four document capabilities stay
+unchanged. A graphic hub adds `containers-v1`, and a graphic client requires that
+capability and a matching non-null schema identity before applying hello state.
+Failure preserves the local model, pending changes, and History. Document/graphic
+schema conversion is incompatible. Existing text binding builders, native and
+host constructors, converters, and selection/position helpers reject graphics
+before accessing native state or allocating sessions. Caller-supplied schema info
+cannot bypass these checks. Generic EditorHost remains available to a future
+canvas integration. Native Rust/WASM graphic support was not introduced.
+
+**Fresh verification.** Tracked receipts and tested source hashes are under
+`docs/reports/schema-domains-2026-11-03/` (README, validation.json,
+source-seal.json, compressed logs/receipts). The previous five-package report and
+historical benchmarks remain immutable.
+
+- One coordinated npm test with its final prebuild: 1,401 cases, 1,399 PASS,
+  two platform SKIPs, zero FAIL. Core is 1,031/1,031: previous 959 cases plus 72 new
+  regressions (31 graphic model/state/sync, seven schema-domain, five capability,
+  29 binding guard cases). Docs are 37/37 including the public graphic example.
+- Root types PASS; comparison-app regressions separately 33/33 PASS.
+- Five real tarballs and seven isolated consumers PASS. Packed core checks new
+  domain types, empty graphic Client, reparent/undo/reopen, stable document
+  identity, graphic hub capability, and no editor dependency. Existing independent
+  binding consumers/patch proof still pass. Packaging ran after shared tests;
+  prepack must not run concurrently with tests loading dist.
+- Changesets temporary-copy version/peer/independent patch rehearsal PASS.
+  All five library workspaces remain private at 0.0.0. No publish was invoked.
+- Docs build PASS: 46 pages / 2,134 internal links; English/local-path checks PASS.
+  Updated schema/domain/API/spec/package/Rust guides, navigation, README and
+  package README. Public guide: apps/docs/src/guide/graphic-schema.md.
+- Sol High source-only review additionally checked four three-actor scenarios in
+  all six delivery orders, snapshot/GC roundtrips, actor undo/redo, birth ranking
+  after a real move, and two later explicit movements. These are review observations,
+  not extra committed suite counts. Final built full-suite results above are the
+  acceptance evidence, superseding early stale-dist and pre-fix failures.
+
+**Limits and next work.** There is no canvas renderer, hit testing, drag/resize,
+transform math, or graphic browser UI acceptance. Large-scene throughput is not
+measured; graphic edits currently preflight complete batches. Root metadata and
+container cardinality need separate designed support. An inherited explicit text
+merge can display joined text with its receiver despite a concurrent reparent,
+leaving that destination frame empty; its placement/content is retained and this
+task does not introduce a new move-wins rule. New timing/paint/OS IME, live Codex,
+real-process graphic restart and Rust differential checks are NOT_RUN. Previous
+performance INVESTIGATE flags stay open.
+
+The existing five-package release gates still apply. No source commit, push,
+registry release, or new remote Pages deployment was performed.
+
+
+## 5.118 Private PixiJS graphic editor, stable ID adapter and Chrome evidence (2026-11-03)
+
+**Scope.** Continues the five-package and GraphicSchema WIP from §5.116–5.117.
+A Sol High worker implemented bounded uniform-transform geometry and matrix
+oracle tests; Sol Medium workers implemented the session/server, Pixi studio,
+and browser proof scripts. Root integrated, executed final Chrome checks and
+measurements, and documented proof limits. The prior schema section remains a
+historical headless checkpoint; a private canvas renderer now exists.
+
+**Implementation.** `fixtures/graphic-canvas-schema.ts` and
+`apps/demo/graphic/` provide stored canvas/frame/group nodes, rectangle/ellipse
+atoms, plain labels, keyed Pixi nodes, layers/name-or-ID search, inspector,
+selection/cursor presence, drag, reparent/reorder, delete and per-actor History.
+Geometry supports positive uniform scale; reparent preserves world transforms
+within schema bounds. Resize uses the inspector. Field updates and minimal
+UTF-16-safe text splices preserve unrelated peer edits. Stale text forms fail
+before mutation. IDs resolve against a revision-cached visible Map, with missing
+or hidden IDs rejected rather than rebound to an index. This is a demo adapter,
+not a public ID-edit API or published canvas binding. PixiJS 8.22.0 belongs only
+to the private demo; core retains zero runtime dependencies.
+
+The two browser peers own independent public Client/HttpTransport/History
+instances over real HTTP POST/SSE. The bounded loopback memory server validates
+protocol/schema/epoch and never resets an existing room. Presence does not
+create document edits. The core graphic-label event fix uses a scoped container
+root while preserving the existing projection/cardinality OR and CRDT rules.
+Queue overflow/lifecycle handling, unlock behavior, drag rollback, label fill,
+UTF-16 retained identities and controlled stale edits have focused coverage.
+
+**Checks.** Coordinated full workspace: **1,421 cases, 1,419 PASS, two platform
+SKIPs, zero FAIL** (core 1,032; Lexical 7; Slate 4; bot 53; demo 107; docs 37;
+MCP 181/179 PASS). New geometry/session/HTTP/core cases: 20/20 PASS. Selected
+remote/structural/graphic source regressions: 53/53 PASS. Final root TypeScript,
+seven packed consumers/five tarballs, and isolated Changesets rehearsal pass.
+The docs navigation mapping was corrected after an initial missing-route test
+failure; final docs tests pass 37/37. Documentation build/link output is archived
+in `docs/reports/graphic-demo-2026-11-03/`.
+
+Final Chrome functional proof: **20/20 PASS**, including trusted drag and forms,
+independent server/model equality, concurrent different fields, selective undo,
+stable IDs through reparent/delete/undo/redo, duplicate names, offline pending
+input and reconnect, actual Pixi label text/fill, remote presence, 390px layout,
+and zero session/app/console/page errors. The final emitted bundle SHA is
+`013d6c8c3451aceaf71aec1c66e3a5838064456a25b67391644430070a5bd6df`.
+The later HTML Source-link correction does not change that JavaScript.
+
+**Performance.** Chrome 156, Apple M3 Max, WebGL/ANGLE Metal, 1720 × 1080;
+three warmups and ten recorded attribute edits for each fresh room:
+
+| Objects | Client edit p50/p95 ms | Peer convergence p50/p95 ms | Cold ready wall s |
+| --- | --- | --- | --- |
+| 9 | 2.4 / 3.0 | 8.3 / 8.9 | 2.56 |
+| 100 | 13.8 / 14.9 | 21.2 / 22.5 | 0.66 |
+| 1,000 | 125.7 / 135.6 | 194.8 / 210.7 | 4.29 |
+| 5,000 | 649.7 / 686.4 | 1,570.3 / 1,686.2 | 113.84 |
+
+Correctness passes; **large-scene interactive performance is INVESTIGATE**.
+Cached 1,000 same-ID lookup batches take about 0.3 ms p50 at every size. Three
+complete 5,000-distinct-ID sweeps take 1.2/1.2/1.3 ms without reindexing. At 5k,
+index rebuild is 68.7 ms p50 and Pixi update CPU about 2 ms per view. Lookup
+cost excludes index creation. A Node-only 1k edit diagnostic counts three
+snapshots/restores and two model JSON reads. Next priorities are full-document
+staging/model allocation and cold bulk seeding, then incremental indexing.
+These are diagnostics, not a before/after optimization result.
+
+Client time includes synchronous engine/History/enqueue and excludes deferred
+views. Target-ID convergence is timed separately from whole-model equality.
+Cold wall includes seeding, startup and tools, not isolated first paint. Pixi
+CPU/rAF metrics do not establish GPU completion or physical display latency.
+
+**Execution and limits.** `npm run dev:graphic` starts the private server on
+loopback port 5420; `GRAPHIC_PORT=0` selects a free port. With the server running,
+use `GRAPHIC_URL=http://127.0.0.1:5420 npm run check:graphic` and
+`GRAPHIC_URL=http://127.0.0.1:5420 npm run bench:graphic`. Manual preview:
+`http://127.0.0.1:57215/?doc=graphic-studio-live&size=sample` (owned exec session
+98844), opened in a new IAB tab. Test server 56412 (session 83580) retains
+synthetic proof rooms. Other user services/tabs are preserved. Both servers are
+memory-only; no durable graphic server restart or unconfirmed-refresh recovery,
+production auth, local-only canvas mode, Rust/WASM canvas adapter, actual OS IME,
+or remote production networking acceptance is claimed. Current changes are
+uncommitted; no push, npm publication or hosted docs deployment was performed.
+
+**Spreadsheet clarification.** Current `grid` is a document table. Its JSON
+projection expands rows × columns, including blank/covered cells; this differs
+from internal token allocation. Large worksheets need sparse cells, implicit
+blank axes/ranges, non-default overrides, stable axis identities, and bounded
+queries. Virtual rendering and a `SpreadsheetSchema` alias are insufficient.
+No spreadsheet implementation is part of this change. The schema guide now
+explains this boundary.
+
+**Evidence.** New source seal, compressed raw functional/performance receipts,
+geometry/session tests, full-suite/types/package/release/docs logs, emitted build
+proof and diagnostic records are under
+`docs/reports/graphic-demo-2026-11-03/`. Original failed harness runs and earlier
+bundle timings remain under `output/graphic-demo-proof/`; earlier report folders
+are unchanged. Final screenshots were visually inspected. The independent
+follow-up Sol High review could not run due model capacity; this is not an
+independent final-review approval claim.
+
+
+## 5.119 Schema documentation category and experimental sparse-sheet S1 (2026-11-03)
+
+**Requests.** Explain graphic completion, new schema types, documentation,
+performance and Rust/WASM application. Add a Schemas category. In parallel,
+research and begin Excel-style collaboration without allocating every blank
+cell. Sol Medium handled navigation/examples and independent tests/measurements;
+Sol High handled the sparse representation, exact writer fences and validated
+state/history replay. Root reviewed source, checked native SDK and integrated
+reports. Existing uncommitted work and previous source seals remain intact.
+
+**Graphic/engine status.** `GraphicSchema`, stored `container`, minimal
+`fixtures/graphic-schema.ts` and complete `fixtures/graphic-canvas-schema.ts`
+exist in TypeScript. The private PixiJS editor supplies frames/groups,
+rectangle/ellipse/plain labels, transforms and independent peer editing. This
+is not a completed Figma engine: vector paths, layout constraints, nonuniform
+transforms and graphic Rust/WASM support are absent. The preceding 20 Chrome
+functional checks remain source-bound proof; graphic runtime did not change.
+The 5k client/convergence medians remain 649.7/1,570.3 ms, INVESTIGATE.
+
+`experiments/rust-sdk` supports six closed document presets. `Shapes` means
+document group/inline/span, not graphic shapes. Fresh isolated stable-toolchain
+SDK tests pass **13/13**. Initial Homebrew cargo/toolchain-cache attempts failed;
+no Rust source changed and no old target was cleaned. No complete WASM CRDT or
+ClientEngineFactory ships. WASM storage calls do not provide schemas, shared
+History, transport or editor integration. A new support matrix in the Rust guide
+states the runtime-schema/container, full engine, factory, scene adapter and
+mixed TS/WASM proof gates. No new Rust/WASM canvas benchmark is claimed.
+
+**Sparse implementation.** `experiments/sparse-sheet/src/sheet.ts` is a private
+standalone primitive using public Clock/Ticket comparison. Extent is two counts;
+blank axis/cell arrays are absent. Cell/field coordinates address the same
+register even on concurrent first writes. `value`, `formula`, `fill`, `bold`,
+`numberFormat` are independent LWW fields; explicit null retains clear metadata.
+Atomic receive validates IDs and batches, detects conflicting same-ticket
+payloads including losing writes, and accepts exact duplicate delivery. Local
+History checks exact stamps, including peer same-value fences, with linked
+states for consecutive undo/redo. Pending acknowledgement uses an exact prefix.
+State restoration validates/replays the journal and derived checkpoint before
+replacing live state. Own-actor forks are unsupported. Peers must pre-agree
+sheet identity/extent/policy; snapshots require trusted storage.
+
+This does **not** add a public SpreadsheetSchema domain, Client, DocHub, wire
+extension or editor binding. Existing document/graphic rules and production
+runtime files are unchanged. No formula calculation or axis editing is implied.
+The design avoids pretending current dense grid or graphic object insertion
+already solves coordinate identity. Numeric coordinates remain fixed until S2.
+
+**Checks.** Independent sparse tests **18/18 PASS**, including huge blank/far
+cells, deterministic first-write ties and shuffled delivery, field merge,
+exact retry and losing-ID conflicts, linked undo/redo, foreign same-value
+preservation, mixed invalid batch/state atomicity, clear tombstones, bounded
+ranges, pending prefix and restart/retry, and a three-replica ticket oracle.
+Standalone strict NodeNext source/test types pass (experiments are excluded
+from root tsconfig). Four benchmark correctness cases pass. Docs **40/40 PASS**,
+including the actual runnable repository-root sparse example. Production full
+workspace **1,419 PASS/two SKIPs** is the preceding unchanged-runtime checkpoint,
+not a fresh integrated spreadsheet run. Browser sheet/HTTP/restart durability,
+WASM and full Rust differential comparison are NOT_RUN for this primitive.
+
+**Allocation/performance.** A 1,000,000,000 × 1,000,000 blank extent captures as
+251 JSON bytes with zero registers. Four far/tiny writes use 2,940 bytes. With
+1,000/10,000 written cells, JSON captures use 693,799/7,204,800 bytes; 10,000
+point reads take 12.49/18.98 ms. At 10k writes, capture is 58.59 ms and a sparse
+full-range scan 8.06 ms. The observed 10k heap delta is 17,997,992 bytes. These
+are single Node 24/M3 Max samples, not distributions or performance acceptance.
+Small GC heap deltas can be negative noise. Range scans are O(retained field
+registers), captures copy full state, restores replay all history, and journal/
+ledger/tombstones/History grow without GC. JSON byte counts are not heap bytes.
+
+**Docs and queue.** Top navigation is Guide, Schemas, Editor integrations,
+AI & bots, Reference. Existing schema page URLs are preserved and assigned to
+the new sidebar. `schemas/index.md` distinguishes domains and fixtures;
+`schemas/spreadsheets.md` has the runnable S1 example, limitations and S1–S6
+queue. S2 interval axes/stable IDs and row/column edits is next; S3 shared
+Schema/Client/protocol/History integration; S4 formulas; S5 virtual sheet UI,
+HTTP/recovery and Chrome; S6 Rust/WASM and release gates. `performance.md`
+separates graphic latency from sparse allocation observations. The report at
+`docs/reports/sparse-sheet-2026-11-03/` retains source hashes and raw evidence.
+No commit, push, npm publish or hosted docs deployment was performed.
+
+Final §5.119 documentation check: **50 pages / 2,255 internal links PASS**, all
+English, local paths excluded. The built docs Chrome smoke passes five route/
+active-menu checks, Document/Graphic/Spreadsheet order and mobile 390px overflow, with zero page/console errors;
+this does not qualify a sheet editor. Screenshot was visually inspected. A first
+harness wait targeted an incorrect heading; its failure note is retained.
+Built preview: `http://127.0.0.1:62051/doc-sync/schemas/` (owned exec session
+11214). Existing dev docs port 5415, graphic previews and user tabs are preserved.
+The owned headless docs proof session is closed. All 163 package source/test
+hashes covered by the preceding graphic seal are unchanged. Its old full-suite
+and Chrome results remain evidence for those unchanged files, not new sheet
+integration checks.
+
+The final schema sidebar and landing content follow **Document → Graphic →
+Spreadsheet**. `schemas/document.md` adds the Document overview, while existing
+graphic and spreadsheet URLs remain unchanged. All three are under Schemas.
+The public schema union still has only document and graphic domains; the
+spreadsheet implementation remains the isolated S1 primitive.
+
+
+## 5.120 Intrinsic graphic data, native domain APIs and real spreadsheet collaboration (2026-11-03)
+
+**Scope and ownership.** Continues inherited WIP from §5.116–5.119. Sol High
+workers implemented/reviewed native graphic and sparse APIs plus standard TS
+graphic data/History constraints. Sol Medium implemented VTable HTTP/SSE demo,
+proof scripts, docs/examples and the static import harness correction. Root
+integrated exports, private dependencies/scripts, checks, source evidence and
+roadmaps. No production document merge/placement/history algorithm changed.
+The prior162 covered package source/test files are byte-identical; the common
+entry adds graphic exports and new files hold the opt-in helpers/schema.
+
+**Library graphic contract.** `packages/doc-sync/src/graphic/` exports
+`createGraphicSchema`, `BUILTIN_GRAPHIC_SCHEMA`, typed constructors and Doc-based
+stable-ID read/edit helpers. The 17 types cover canvas/frame/group,
+rectangle/ellipse/label/path/component/instance/boolean, vertex/segment,
+paint/gradient-stop/stroke/source-ref/instance-override. Standard attrs include
+six affine coefficients, size/visibility/locks/opacity, vertex/curve handles,
+solid/gradient/image paint data, strokes and reference records. Consumers do not
+need custom schema declarations for these standard data. Existing
+container/atom/text storage is reused; no new low-level Shape enum is claimed.
+
+Override assignment is one atomic `{property,value}` register, with targetId
+separate. This fixes the review's invalid concurrent property/value composition.
+Helpers validate exact payload/type/bounds; raw core AttrSpec only checks the
+outer atomic object. Native pinned validation follows the stricter helper
+contract. This is not a generic new wire validator. Helpers require Doc; an
+engine-neutral Client object-read/ID-edit port remains open. Layout attrs store
+intent, Boolean records store sources, and instance records store references;
+there is no new renderer/layout/Boolean solver/effective-instance expansion.
+The old PixiJS minimal canvas and its measurements are preserved separately.
+
+**Native Rust.** Existing Document six presets remain. `GraphicDocument` uses
+`GraphicPreset::Canvas` or `Builtins`; `with_preset` selects the pinned 17-node
+manifest that equals the frozen TS contract. Native Token/RGA/LWW/deletion,
+movement projection and History are reused. UTF-16 labels include surrogate
+units and declared marks. Positive-ticket actors use a checked ASCII profile;
+invalid births/moves fail without mutation. `SparseSheet` adds the independent
+fixed-axis sparse register/history/checkpoint API. All native checkpoints retain
+pending retry and actor ownership within their documented API. No arbitrary
+runtime schema, portable Client factory, graphic selections, exact graphic wire
+or cross-runtime network exchange is qualified. WASM is still storage-only.
+
+**Actual spreadsheet example.** `apps/demo/spreadsheet/` and scripts
+`dev:spreadsheet`, `check:spreadsheet`, `bench:spreadsheet` provide two independent
+TS sparse actors/Histories over HTTPPOST/SSE. Logical extent1,048,576×16,384
+uses no dense model; VTable gets at most 100 × 26 view records. UI supports native
+cell input, dirty-field inspector, rectangular presence and actual remote
+shading, local undo/redo, held inbound concurrency, far jump and live reconnect.
+Active native/inspector drafts survive remote updates. Actor/token/epoch/exact
+schema policy/request sequence checks and a 20,000-retained-op cap bound each
+room; exact accepted retries return their original receipt once. Epoch mismatch
+preserves pending state and blocks unsafe reuse. This is a private protocol,
+not public SpreadsheetSchema/Client/DocHub. The server is memory-only; no server
+restart/reload recovery, structural axes, formula evaluation or GC is claimed.
+
+**Dependency decision.** VTable 1.26.8 and editors 1.26.8 are private demo-only.
+Univer and Glide were considered; official model/editing docs informed the
+bounded adapter choice. Scoped overrides fix the new dependency chain to
+lodash 4.18.1 / minimist 1.2.8. Final named-demo production audit reports zero
+vulnerabilities. Core remains free of editor/Pixi/VTable runtime dependencies.
+Five tarballs and seven consumers pass. Changesets rehearsal passes in a copy;
+source versions and lock are unchanged by rehearsal. No release is performed.
+
+**Tests.** Final coordinated workspace: **1,445 cases, 1,443 PASS, two platform
+SKIPs, zero FAIL**. Core 1,044, Lexical 7, Slate 4, bot 53, demo 115, docs 41,
+MCP 181 / 179 PASS. New graphic 12/12, independent TS sparse 18/18, new demo 8/8 pass.
+Root types, packed consumers and isolated release rehearsal pass. A first full
+run failed only because an old regex import scanner interpreted the literal
+`from` as an import; AST parsing fixed the harness and fresh full rerun passes.
+An initial typecheck overlapped declaration rebuilding; stable rerun passes.
+
+Native SDK **42 PASS** (Document 13, Canvas 7, Builtins 7, sheet 14, unit 1); existing
+shadow **75/75 PASS**. Canvas comparison **20 actions/40 normalized states**;
+Builtins **35 actions/70 normalized model+History states**, with exact manifest.
+Sheet final-source comparison **31 actions/62 states** checks exact operations,
+models, full History/pending/journal/checkpoint. These are different boundaries;
+no graphic exact-wire or WASM claim follows. Printed native Canvas/Builtins/
+sheet examples compile and run. Independent P1/P2 focused closure observations
+were reported without saved raw repro logs; the report states this limitation.
+
+**Chrome.** Final functional **21/21 PASS**: trusted VTable edit and actual peer
+values/styles, focused/active draft preservation, deterministic held first-write
+conflicts and independent fields, consecutive own undo/redo, observed peer
+same-value fence, actual rectangular shading, XFD1048576 input/clear in a bounded
+window, offline pending/reconnect, independent Node state oracle, distinct actor
+HTTP submissions and separate SSE streams, zero page/console errors and 390px
+no horizontal overflow. Browser makes zero state-oracle GETs. Style-only refresh
+and option-preserving jump defects were found and fixed; earlier failed runs
+remain separate. Final emitted bundle SHA:
+`a8ecd1f914c8611d467450d185839b768de165de13168411f7c3e8126307045c`.
+Screenshots were visually inspected. Owned proof browsers are closed.
+
+**Receive performance correction.** Logical extent is not stored data. The
+benchmark's10k means10k populated cells, not10k blank coordinates. Requests
+already sent changed ops only, but the original server copied/replayed the full
+retained state for every batch. The UI also called full getRange merely for
+status counts. Both unnecessary hot paths are removed. A bounded ticket index
+preflights new request identities, then calls atomic SparseSheet.receive;
+exact prior request receipts remain first. Index/log/receipt changes occur only
+after successful validation. Tests at1k/10k prove zero capture/restore calls,
+invalid mixed/fresh-prefix collision atomicity, and preserved retry/epoch rules.
+View summary reads constant-size stats including pending count without cloning
+pendingChanges. Active edit/remote refresh getRange calls are zero.
+
+Backend-only ABBA holds the UI bundle and immutable harness/data fixed:
+
+| Run | Handler | 1k peer p95 ms | 10k peer p95 ms |
+| --- | --- | --- | --- |
+| A1 | full replay | 51.4 | 287.0 |
+| B1 | incremental preflight | 21.1 | 33.8 |
+| B2 | incremental preflight | 26.2 | 33.7 |
+| A2 | full replay | 38.8 | 285.9 |
+
+The paired10k reductions are88.2% (8.49×/8.48×). Original handler, rehosted
+import/HERE-only adapter and exact phase1 source/bundle hashes are retained.
+Workspace source metadata in the old raw harness is not the executed backend;
+the ABBA wrapper pins actual handlers. Phase1 optimized functional20/20 passes.
+The second phase changes UI summary only and has its own bundle/receipts:
+
+| Stored cells | Sparse edit p50/p95 ms | Peer convergence p50/p95 ms | Maximum view render CPU p95 ms |
+| --- | --- | --- | --- |
+| 0 | 0.1/0.3 | 12.1/23.8 | 5.9 |
+| 1,000 | 0.0/0.1 | 12.8/27.1 | 5.1 |
+| 10,000 | 0.1/0.2 | 17.9/26.8 | 5.4 |
+
+Chrome156/M3Max/1720×1080; fresh browser/room per size,3warmups+10samples.
+Convergence waits for sender ack and addressed peer value. Full sparse equality
+and Node oracle run after timing. Sparse edit includes History/pending; zero
+readings reflect timer resolution. GPU completion/physical paint are not
+measured. Cold wall2.41/1.49/1.96s includes Chrome/CLI startup;10k seeding276.6ms
+is separate. Final observations are not merged into the backend-only ratio.
+No production latency budget, WAN or100k-populated-cell gate is claimed.
+Initial joins/exports/ranges/retention still scale; GC/durability remain open.
+
+**Roadmaps and docs.** Document→Graphic→Spreadsheet category order remains.
+`docs/spreadsheet-roadmap.md` preserves S1–S6; S5a early real-transport preview
+does not close S2 interval/stable axes or S3 common schema/Client/wire. S2 is the
+next structural priority, then S3, formula/calculation, durable resource handling
+and full native/WASM client parity. `docs/graphic-roadmap.md` separates stored
+data, effective references, geometry/layout/rendering, pinned native profiles
+and WASM. Runtime arbitrary schemas remain D2 work. Docs 41/41 pass; build 50 pages /
+2,273 links passes English/local-path checks. Runtime API examples execute.
+No hosted deployment is performed.
+
+**Run and evidence.** `npm run dev:spreadsheet` defaults to 5422; use
+`SPREADSHEET_PORT=0` for an assigned port. Proof commands accept SPREADSHEET_URL.
+The original manual preview remains at
+`http://127.0.0.1:51497/?room=collaborative-sheet-live`(exec40650). A separate
+optimized preview is open at
+`http://127.0.0.1:58318/?room=collaborative-sheet-optimized`(exec60445), with twelve
+confirmed sample cells copied. Original pending edits and History remain in the
+original tab/server; no live migration or tab replacement is claimed. Baseline
+and proof services retain isolated synthetic rooms; user services/tabs remain.
+The new `docs/reports/domain-delivery-2026-11-03/` records raw compressed proofs,
+source seals, exact measured hashes, findings and unsupported gates. Historical
+reports are not rewritten. No commit, push, npm publication or release occurred.
+
+Final §5.120 built documentation Chrome smoke passes four routes (Schemas,
+graphic contract, Rust engine, sparse-sheet demo guide) and their active
+categories, with zero page/console errors. The source seal includes the final
+S1–S6 and graphic roadmaps. The manual sheet preview remains open in IAB.
+
+Final static UI cleanup for §5.120 removes explanatory intro/footer layers and
+keeps the Memory only badge. JavaScript and widget dimensions are byte-for-byte
+unchanged. A separate clean-UI functional receipt passes21/21, including zero
+normal-refresh full-range reads. Timings remain bound to the preserved phase2
+HTML/CSS and exact same JS/widget size; no post-cleanup timing rerun is claimed.
+The final optimized tab is a separate confirmed-data copy; original local
+History, draft and pending state remain in their original preserved tab.
+
+
+### 5.121 Custom schema definitions and editor-specific mappings (2026-11-03)
+
+**Request and design.** Define custom schemas without forcing every editor to
+have the same native model. Shared data descriptors define types, defaults,
+constraints and child rules; view profiles declare rendering/input/selection
+support separately. Existing schema.ui remains valid and fingerprint-bound.
+Tree Schema remains Document | Graphic; legacy document fingerprints and
+collaboration semantics remain unchanged.
+
+**TypeScript API.** Root core exports experimental SpreadsheetSchema,
+createSpreadsheetSchema, assertSpreadsheetSchema, spreadsheetSchemaVersion,
+DEFAULT_SPREADSHEET_SCHEMA and SparseSheet. The experiment path re-exports the
+same implementation. Fields accept string/number/boolean/scalar, bounds,
+non-null choices and UTF-16 maxLength. getCellValue resolves defaults without
+allocating. Null clears. Same-coordinate writes merge per field; linked own
+undo/redo fences foreign writes, including same-value writes. Arbitrary custom
+field names may reuse formula/bold with different types; public cell types no
+longer impose the old named field types. Legacy runtime validation stays exact.
+
+Omitting schema preserves legacy v1 ops/state. Supplying any descriptor opts
+into schema-bound v2 operations/checkpoints. Descriptor identity is canonical
+and key-order independent. Invalid local/remote/replay/schema batches reject
+before mutation. There is no live v1/v2 or schema transition. Sheets remain
+standalone: no Client, DocHub, public wire, axis edits, formulas or GC.
+
+createGraphicHelpers(schema) binds custom container/text/atom nodes to actual
+Doc IDs. It validates the supplied schema/node/content, resolves fresh paths
+and rejects missing IDs instead of rebinding. Built-in specialized helpers are
+unchanged. Custom ID lookup traverses visible objects, and some destination
+checks project a model; no indexed/O(1) object lookup or Client port is claimed.
+
+/editor exports inspectEditorSchema and inspectSpreadsheetSchema with explicit
+capability types. Missing mapping is an error; opaque/preserve is a warning.
+These are declaration preflights, not installed or verified renderers. A custom
+Document fixture roundtrips native ProseMirror, Slate and Lexical state and
+creates Tiptap extensions. PM/Tiptap reject normalized-name collisions and the
+reserved native text name before construction. These are headless checks,
+not browser qualification of all four custom-node interfaces.
+
+**Native subset.** RuntimeSchema/RuntimeDocument accept owned descriptors for
+Graphic container/text/atom and flat Document root-flow/text/atom with renamed
+nodes/attributes, scalar document attrs, boolean marks and supported graphic
+field registers. RuntimeSheet/SpreadsheetSchema own arbitrary scalar fields.
+The old preset/Canvas/Builtins/legacy-sheet APIs remain available. Unsupported
+nested document shapes, value marks and advanced rules reject with a path.
+This is partial D2, not its all-shape/product-schema gate. No native live schema
+transition, production Client/WASM factory, renderer or network adapter ships.
+
+Independent review found an integer identity collision. Native tree admission
+now rejects integer tokens not exactly representable by JavaScript Number,
+including UI/constraint positions, so distinct retained defaults cannot share
+a rounded identity. Regression covers unsafe signed/unsigned values and keeps
+representable boundaries. Canonical tests also cover float thresholds, -0 and
+UTF-16 key ordering. serde_json float_roundtrip is enabled; source versions and
+resolved toolchain paths are retained in the final native receipt.
+
+**Demo.** ?profile=tasks provides title/progress/archived; ?profile=sensors
+provides reading/unit. A separate view profile chooses the native primary field
+and typed inspector controls. Custom fields do not implicitly become CSS via
+legacy fill/bold names. Default protocol/META remain unchanged. A room's first
+valid descriptor and canonical identity bind its operations; later mismatches
+reject before server mutation and preserve local pending state. Normal refresh
+retains bounded viewport/constant-size summary and zero full-range reads.
+No live profile switch, reload durability or server persistence is provided.
+
+**Final verification.** Aggregate of latest applicable workspace suites:
+1,464 cases, 1,462 PASS, two expected platform SKIPs, zero FAIL. Core1059,
+Lexical7, Slate4, Bot53, Demo118, Docs42, MCP181/179PASS. The first full invocation
+failed only an obsolete docs navigation expectation; it was corrected and all
+42 docs rerun PASS. Other unaffected passing suites are reused, not relabeled
+as a new monolithic run. Final focused schema/editor/sheet-demo26/26 and sparse
+experiment23/23 pass. Root tsc and five-package consumer/artifact checks pass.
+Native SDK48/48 and shadow78/78 pass. Six independent runtime descriptors in one
+native build/process cover Graphic30+Document26+Sheet26 actions and164 actor
+states. Tree comparison normalizes models and History availability; no exact
+cross-runtime tree wire claim. Sheet comparison is exact for ops/model/stats/
+pending/journal/full History/checkpoints. Invalid Document op tests use TS
+Doc.check, because raw Doc.edit does not provide that preflight.
+
+Final Chrome156 default21/21 and custom29/29 pass on the exact same bundle:
+172f710a0c70b4980283d27ec27a56eb1ab243af482ccf8cfbe4fc48eb576095.
+Coverage includes trusted native keyboard/pointer input, typed controls, peer
+projection, active drafts, dirty-only foreign-field preservation, own History,
+pending/reconnect, mismatch atomicity and zero normal getRange calls. No page
+or console errors. Screenshots visually inspected. Early failed harness
+selection attempts with nonempty defaults are retained separately.
+
+Current default-profile Chrome observation (M3Max/1720x1080,3warmups+10samples):
+0/1k/10k populated cells have peerp95 18.2/18.9/18.8ms, sparse-editp95
+0.2/0.2/0.1ms, max-view-CPUp95 3.6/4.1/4.2ms. This is a regression observation,
+not paired speedup against §5.120. Physical paint, WAN,100k populated cells and
+custom long histories remain unqualified. Full equality/oracle run outside timing.
+
+**Docs and run.** Schemas→Custom schemas and editor mappings contains executable
+Document/Graphic/Spreadsheet examples and per-editor mapping guidance. Rust
+runtime_quickstart.rs runs directly through Cargo; guide includes the complete
+program and support matrix. Preset-only statements in editor guides were
+corrected. D2/S3 remain partial in roadmaps. Docs42PASS, final build51pages/
+2346links passes English/local-path checks; Chrome156 smoke passes three routes
+and correct categories with zero errors. No hosted deployment occurred.
+
+npm run dev:spreadsheet prints the loopback address. Choose a fresh room with
+?profile=tasks or ?profile=sensors. Native commands:
+cargo run --offline --locked --manifest-path experiments/rust-sdk/Cargo.toml
+--example runtime_quickstart; node experiments/runtime-schema-native/compare.mjs.
+The harness discovers rustup via PATH or RUSTUP, and uses stable by default or
+RUNTIME_SCHEMA_TOOLCHAIN. Production engine remains TypeScript.
+
+Evidence and source seal: docs/reports/custom-schemas-2026-11-03/. Final native
+raws: output/runtime-schema-native-final-20261103/. New isolated preview servers
+58545(exec65788) and62675(exec10133) remain available. Earlier user tabs, original
+pending/History and services remain untouched. No commit, push, registry
+publication, migration or release occurred.
+
+
+### 5.122 Tested checkpoint before Spreadsheet S2 (2026-11-03)
+
+At the user's request, inherited current changes are committed before S2 code
+starts. A fresh full workspace invocation passes 1,464 cases: 1,462 PASS, two
+expected SKIPs, zero FAIL. Root tsc and git diff --check pass. Source seal601
+matched before current Graphic/Rust roadmap wording was corrected. Package
+migration/inventory and evidence archive checks found no commit blocker.
+The checkpoint includes all inherited current changes; older reports remain
+immutable. The exact SHA is recorded by the subsequent S2 delivery section.
+No push or package publication is part of this request.
+
+S2 will be opt-in, with stable row/column IDs, compressed initial axis intervals,
+insert/delete/move, selective structural History, and unchanged legacy S1 paths.
+Before this checkpoint, S2 agents only performed read-only design work.
+Evidence: docs/reports/spreadsheet-s2-2026-11-03/baseline.md.

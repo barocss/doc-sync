@@ -1,3 +1,4 @@
+import {corePackageName, corePackagePath} from './core-package.mjs';
 /** Unified Client and legacy API comparison. Headless PM; disconnected sync; Node 24. */
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
@@ -38,16 +39,16 @@ const schema={root:'content',marks:['bold'],nodes:{content:{shape:'flow',childre
 const hash=value=>createHash('sha256').update(typeof value==='string'?value:JSON.stringify(value)).digest('hex');
 const imp=p=>import(pathToFileURL(join(target,p)).href);
 const [{Doc,applyEdits},{SyncClient},{createSyncClientEditorHost},{PmBinding,PmHostBinding,buildPmSchema,fromPmJSON}]=await Promise.all([
- imp('packages/doc-sync-core/dist/index.js'),imp('packages/doc-sync-core/dist/sync/index.js'),imp('packages/doc-sync-core/dist/editor/index.js'),imp('packages/doc-sync-prosemirror/dist/index.js')]);
-const local=isLocal?await imp('packages/doc-sync-core/dist/local/index.js'):null;
+ imp(`${corePackagePath(target)}/dist/index.js`),imp(`${corePackagePath(target)}/dist/sync/index.js`),imp(`${corePackagePath(target)}/dist/editor/index.js`),imp('packages/doc-sync-prosemirror/dist/index.js')]);
+const local=isLocal?await imp(`${corePackagePath(target)}/dist/local/index.js`):null;
 // The baseline has no /client module. Load it only for the unified candidate.
-const unifiedApi=unified?await imp('packages/doc-sync-core/dist/client/index.js'):null;
+const unifiedApi=unified?await imp(`${corePackagePath(target)}/dist/client/index.js`):null;
 const req=createRequire(join(target,'packages/doc-sync-prosemirror/dist/index.js'));
 const peer=name=>import(pathToFileURL(req.resolve(name).replace(/\/dist\/index\.cjs$/,'/dist/index.js')).href);
 const [{Node:PmNode},{TextSelection}]=await Promise.all([peer('prosemirror-model'),peer('prosemirror-state')]);
 const info=buildPmSchema(schema),counters={snapshot:0,fromSnapshot:0,toJSON:0,pmFromJSON:0};let tracing=false;
 for(const [obj,key,count]of [[Doc.prototype,'snapshot','snapshot'],[Doc,'fromSnapshot','fromSnapshot'],[Doc.prototype,'toJSON','toJSON'],[PmNode,'fromJSON','pmFromJSON']]){const original=obj[key];obj[key]=function(...values){if(tracing)counters[count]++;return original.apply(this,values);};}
-async function fingerprint(){const files={};async function walk(path){for(const e of (await readdir(join(target,path),{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))){const p=join(path,e.name);if(e.isDirectory())await walk(p);else files[p]=hash(await readFile(join(target,p),'utf8'));}}for(const pkg of ['doc-sync-core','doc-sync-prosemirror'])await walk(`packages/${pkg}/dist`);return {aggregate:hash(files),files};}
+async function fingerprint(){const files={};async function walk(path){for(const e of (await readdir(join(target,path),{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))){const p=join(path,e.name);if(e.isDirectory())await walk(p);else files[p]=hash(await readFile(join(target,p),'utf8'));}}for(const pkg of [corePackageName(target),'doc-sync-prosemirror'])await walk(`packages/${pkg}/dist`);return {aggregate:hash(files),files};}
 const before=await fingerprint();
 function setup(size){
  const transportCalls={subscribe:0,send:0,presence:0};

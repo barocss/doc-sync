@@ -9,7 +9,7 @@ Saving is explicit; ordinary editing does not write to storage.
 
 <!-- local-state-example -->
 ```ts
-import {Client, type Schema} from '@barocss/doc-sync-core';
+import {Client, type Schema} from '@barocss/doc-sync';
 
 const schema: Schema = {
     root: 'document',

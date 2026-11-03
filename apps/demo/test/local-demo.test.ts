@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync-core/local';
+import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync/local';
 import {bundleLocalDemo} from '../local/build.mjs';
 import {startLocalPreview} from '../local/serve.mjs';
 import {LOCAL_SCHEMA, SHARED_SCHEMA, seedEdits, sharedSeedEdits, SEED_TEXT, textOf} from '../local/model.js';
@@ -63,7 +63,7 @@ test('browser bundle uses public built local entry and emits no sync client, tra
     const emitted = bundle.proof.emittedInputs.map(({input}) => input);
     assert.ok(emitted.some(input => input.endsWith('/dist/local/client.js')));
     for (const framework of ['prosemirror', 'slate', 'lexical']) assert.ok(emitted.some(input => input.includes(`packages/doc-sync-${framework}/dist/host-binding.js`)));
-    assert.ok(!emitted.some(input => /packages\/doc-sync-core\/src\//.test(input)));
+    assert.ok(!emitted.some(input => /packages\/doc-sync\/src\//.test(input)));
     const code = bundle.outputFiles.find(output => output.path.endsWith('bundle.js'))!.text;
     assert.doesNotMatch(code, /new (?:SyncClient|HttpTransport|WebSocket|EventSource)\(/);
 });

@@ -4,7 +4,7 @@ Use the built repository workspaces or local tarballs. These package names are n
 
 Use `LexicalBinding` from **`@barocss/doc-sync-lexical`**. It connects a Lexical editor to a [Client](./client). Omit the transport for local editing, or add an actor and transport for synchronization. Build the schema information first, register its node classes, and then construct the binding.
 
-This is a separate binding package. The old `@barocss/doc-sync/lexical` subpath remains a compatibility export. The examples use built repository workspaces.
+This is a separate binding package. The old `@barocss/doc-sync-lexical` subpath remains a compatibility export. The examples use built repository workspaces.
 
 ## Dependencies
 
@@ -22,8 +22,8 @@ This example creates a headless editor. A browser editor can attach its root ele
 
 ```ts
 import {createEditor} from "lexical";
-import {type Schema} from "@barocss/doc-sync-core";
-import {Client} from "@barocss/doc-sync-core/client";
+import {type Schema} from "@barocss/doc-sync";
+import {Client} from "@barocss/doc-sync/client";
 import {buildLexicalSchema, LexicalBinding} from "@barocss/doc-sync-lexical";
 
 const schema: Schema = {
@@ -172,7 +172,7 @@ fn main() -> Result<()> {
 
 The existing TypeScript adapter uses `$lexicalSelection` and `$setLexicalSelection` in `packages/doc-sync-lexical/src/selection.ts`. A Rust-backed adapter must call the equivalent conversions inside Lexical read or update contexts, connect the Rust selection API, and project `model()` into Lexical nodes. The example does not install or test that adapter.
 
-The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
 <details>
 <summary>Raw protocol probe and reference checks</summary>

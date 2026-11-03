@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {HttpTransport} from "../../doc-sync-core/dist/sync/http-transport.js";
+import {HttpTransport} from "../../doc-sync/dist/sync/http-transport.js";
 
 test("browser transport carries its configured schema version on every request", async () => {
     const originalSource = Object.getOwnPropertyDescriptor(globalThis, "EventSource");

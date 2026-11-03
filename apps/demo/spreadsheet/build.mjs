@@ -1,0 +1,17 @@
+import {build} from 'esbuild';
+import {createHash} from 'node:crypto';
+import {mkdir, readFile, readdir, writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const directory = fileURLToPath(new URL('.', import.meta.url));
+const repository = resolve(directory, '../../..');
+const output = resolve(repository, 'output/spreadsheet-demo');
+await mkdir(output, {recursive: true});
+const result = await build({absWorkingDir: repository, entryPoints: [resolve(directory, 'main.ts')], outfile: resolve(output, 'main.js'), bundle: true, format: 'esm', platform: 'browser', target: 'es2022', sourcemap: true, metafile: true});
+await writeFile(resolve(output, 'metafile.json'), JSON.stringify(result.metafile, null, 2) + '\n');
+const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+const inputs = await Promise.all(Object.keys(result.metafile.inputs).sort().map(async path => ({path, sha256: hash(await readFile(resolve(repository, path)))})));
+const outputs = await Promise.all(Object.keys(result.metafile.outputs).sort().map(async path => ({path, sha256: hash(await readFile(resolve(repository, path)))})));
+const sourcePaths = (await readdir(directory)).filter(name => /\.(ts|css|html|mjs)$/.test(name)).map(name => 'apps/demo/spreadsheet/' + name).concat(['experiments/sparse-sheet/src/sheet.ts']).sort();
+const sources = await Promise.all(sourcePaths.map(async path => ({path, sha256: hash(await readFile(resolve(repository, path)))})));
+await writeFile(resolve(output, 'build-proof.json'), JSON.stringify({inputs, outputs, sources, inputFingerprint: hash(JSON.stringify(inputs)), sourceFingerprint: hash(JSON.stringify(sources))}, null, 2) + '\n');

@@ -1,10 +1,10 @@
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {MemoryNet, show} from "./harness.ts";
-import type {GridBlock, Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {Schema} from "../../doc-sync-core/dist/crdt/schema.js";
-import type {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import type {GridBlock, Doc} from "../../doc-sync/dist/crdt/doc.js";
+import type {Schema} from "../../doc-sync/dist/crdt/schema.js";
+import type {SyncClient} from "../../doc-sync/dist/sync/client.js";
 
 /**
  * 표와 스키마 주입.

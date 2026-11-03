@@ -145,7 +145,7 @@ try {
     const metafilePath=resolve(output,'metafile.json');
     const meta=JSON.parse(await readFile(metafilePath,'utf8'));
     const inputs=[...new Set(Object.values(meta.outputs??{}).flatMap(o=>Object.entries(o.inputs??{}).filter(([,v])=>v.bytesInOutput>0).map(([p])=>p)))];
-    receipt.bundle={metafile:metafilePath,inputs,transportInputs:inputs.filter(p=>/transport|sync-client|websocket|node-http|\/sync\/client\.|doc-sync-core\/dist\/server\//i.test(p)),scope:'Contributing emitted modules only; unused barrel imports have zero output bytes.'};
+    receipt.bundle={metafile:metafilePath,inputs,transportInputs:inputs.filter(p=>/transport|sync-client|websocket|node-http|\/sync\/client\.|doc-sync\/dist\/server\//i.test(p)),scope:'Contributing emitted modules only; unused barrel imports have zero output bytes.'};
     assert.deepEqual(receipt.bundle.transportInputs,[],'Transport implementation included in local bundle');
     receipt.result='PASS';
 } catch(error) {

@@ -4,7 +4,7 @@ import {$isTableCellNode} from "@lexical/table";
 import {$lexicalModelType} from "./convert.ts";
 import {$modelData, SchemaLeafNode} from "./nodes.ts";
 import type {ElementNode, LexicalNode, PointType} from "lexical";
-import type {ModelRange} from "@barocss/doc-sync-core/editor";
+import type {ModelRange} from "@barocss/doc-sync/editor";
 import type {LexicalSchemaInfo} from "./schema.ts";
 
 type Block = {node: ElementNode; path: number[]};
@@ -40,6 +40,7 @@ function offsetIn(node: LexicalNode, point: PointType): number | null {
     return null;
 }
 export function $lexicalSelection(info: LexicalSchemaInfo): ModelRange | null {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const selection = $getSelection();
     if (!$isRangeSelection(selection)) return null;
     const all = blocks(info);
@@ -75,9 +76,11 @@ function pointIn(all: Block[], path: number[]): NativePoint | null {
 }
 /** Resolve a model text position without changing the local selection. */
 export function $lexicalPoint(info: LexicalSchemaInfo, path: number[]): NativePoint | null {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     return pointIn(blocks(info), path);
 }
 export function $setLexicalSelection(info: LexicalSchemaInfo, range: ModelRange | null): boolean {
+    if (info.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     if (!range) return false;
     const all = blocks(info);
     const anchor = pointIn(all, range.anchor), focus = pointIn(all, range.focus);

@@ -3,6 +3,7 @@
 //! Authored legacy paragraph markers require an explicit native capability.
 //! Text crosses JSON as UTF-16 units, including unpaired surrogates. No TS state
 //! or TS document snapshot is accepted. GC is outside this slice.
+pub mod runtime_schema;
 mod general;
 mod history;
 mod nested;
@@ -35,6 +36,14 @@ pub const MOVE_SCHEMA: &str = "movement-logical-storage:json-attrs:value-marks:v
 pub const MOVE_CAPABILITY: &str = "movement-logical-storage-v1";
 pub const MOVE_FORMAT: &str = "doc-sync-rust-shadow-v6";
 pub const MOVE_MANIFEST: &str = include_str!("../schema-move.json");
+pub const GRAPHIC_SCHEMA: &str = "graphic-canvas-containers:perfield-attrs:utf16:v1";
+pub const GRAPHIC_BUILTIN_SCHEMA: &str = "graphic-builtins:affine-vector-paint-references:utf16:v1";
+pub const GRAPHIC_BUILTIN_CAPABILITY: &str = "graphic-builtins-v1";
+pub const GRAPHIC_BUILTIN_FORMAT: &str = "doc-sync-rust-graphic-builtins-v1";
+pub const GRAPHIC_BUILTIN_MANIFEST: &str = include_str!("../schema-graphic-builtins.json");
+pub const GRAPHIC_CAPABILITY: &str = "graphic-canvas-containers-v1";
+pub const GRAPHIC_FORMAT: &str = "doc-sync-rust-graphic-v1";
+pub const GRAPHIC_MANIFEST: &str = include_str!("../schema-graphic.json");
 pub const PARAGRAPH_CAPABILITY: &str = "paragraph-markers-v1";
 const MAX: u64 = 9_007_199_254_740_991;
 
@@ -145,6 +154,11 @@ pub struct Replica {
     general: bool,
     shapes: bool,
     movement: bool,
+    graphic: bool,
+    graphic_builtins: bool,
+    graphic_ops: Vec<Value>,
+    runtime: Option<runtime_schema::RuntimeSchema>,
+    runtime_ops: Vec<Value>,
     placement_cache: std::cell::RefCell<Option<nested::Projection>>,
     movement_cache: std::cell::RefCell<BTreeMap<String, Vec<nested::Block>>>,
     nested: Option<nested::Storage>,
@@ -162,6 +176,11 @@ impl Replica {
             general: false,
             shapes: false,
             movement: false,
+            graphic: false,
+            graphic_builtins: false,
+            graphic_ops: vec![],
+            runtime: None,
+            runtime_ops: vec![],
             placement_cache: std::cell::RefCell::new(None),
             movement_cache: std::cell::RefCell::new(BTreeMap::new()),
             nested: None,
@@ -179,6 +198,12 @@ impl Replica {
         self.clock = self.clock.max(ticket.lamport);
     }
     fn apply(&mut self, value: &Value) -> Result<()> {
+        self.apply_inner(value)?;
+        if self.runtime.is_some() && !self.runtime_ops.contains(value) { self.runtime_ops.push(value.clone()); }
+        Ok(())
+    }
+    fn apply_inner(&mut self, value: &Value) -> Result<()> {
+        if self.graphic { return self.apply_graphic(value); }
         if self.nested.is_some() {
             return self.apply_nested(value);
         }
@@ -205,7 +230,7 @@ impl Replica {
                 }
                 let marks: BTreeMap<String, Value> =
                     op.get("marks").map(decode).transpose()?.unwrap_or_default();
-                validate_marks(&marks)?;
+                self.validate_birth_marks(&marks)?;
                 // No partial mutation can escape: the Server applies a whole request
                 // to a clone before replacing its stored replica.
                 for (offset, unit) in units.iter().enumerate() {
@@ -280,9 +305,9 @@ impl Replica {
                 let origin = ticket(op, "origin")?;
                 origin.valid()?;
                 let born = string(op, "type")?.to_owned();
-                let text = general::text_type(&born);
+                let text = self.is_text_type(&born);
                 if (!self.general && born != "paragraph")
-                    || (self.general && !text && !general::atom_type(&born))
+                    || (self.general && !text && !self.is_atom_type(&born))
                 {
                     return Err("unsupported node type".into());
                 }
@@ -310,7 +335,7 @@ impl Replica {
                     op.get("attrs").map(decode).transpose()?.unwrap_or_default();
                 if self.general {
                     for (key, value) in &birth_attrs {
-                        general::validate_attr(&born, key, value)?;
+                        self.validate_node_attr(&born, key, value)?;
                     }
                 } else if !birth_attrs.is_empty() {
                     return Err("paragraph attributes unsupported".into());
@@ -408,7 +433,7 @@ impl Replica {
                 let mark = if kind == "set" {
                     let key = string(op, "key")?;
                     let value = required(op, "value")?.clone();
-                    if self.general && !general::history_key(key) {
+                    if self.general && !self.runtime_history_key(key) {
                         return Err("unsupported general attribute key".into());
                     }
                     if !self.general {
@@ -467,6 +492,7 @@ impl Replica {
         Ok(())
     }
     pub fn state(&self) -> Value {
+        if self.graphic { return self.graphic_state(); }
         if self.nested.is_some() {
             return self.nested_state();
         }
@@ -496,6 +522,8 @@ impl Replica {
         state
     }
     fn snapshot(&self) -> Value {
+        if self.runtime.is_some() { return self.runtime_snapshot(); }
+        if self.graphic { return self.graphic_snapshot(); }
         if self.nested.is_some() {
             return self.nested_snapshot();
         }
@@ -522,6 +550,8 @@ impl Replica {
         })
     }
     fn restore(actor: String, value: &Value) -> Result<Self> {
+        if value["format"] == runtime_schema::RUNTIME_FORMAT { return Self::restore_runtime(actor, value); }
+        if value["format"] == GRAPHIC_FORMAT || value["format"] == GRAPHIC_BUILTIN_FORMAT { return Self::restore_graphic(actor, value); }
         if value["format"] == NESTED_FORMAT
             || value["format"] == SHAPES_FORMAT
             || value["format"] == MOVE_FORMAT
@@ -794,6 +824,7 @@ impl Server {
                 "paragraph",
                 "line",
                 "capabilities",
+                "runtimeSchema",
             ],
         )?;
         let cmd = string(request, "cmd")?;
@@ -805,6 +836,14 @@ impl Server {
             .get("schema")
             .map(|v| v.as_str().ok_or("schema must be string"))
             .transpose()?;
+        let runtime = if let Some(manifest) = request.get("runtimeSchema") {
+            Some(runtime_schema::RuntimeSchema::compile(manifest.clone())?)
+        } else if matches!(cmd, "restore" | "history_restore") {
+            let snapshot = if cmd == "restore" { &value["snapshot"] } else { &value["checkpoint"]["document"] };
+            if snapshot["format"] == runtime_schema::RUNTIME_FORMAT {
+                Some(runtime_schema::RuntimeSchema::compile(snapshot["manifest"].clone())?)
+            } else { None }
+        } else { self.replicas.get(&name).and_then(|r| r.runtime.clone()) };
         let expected_schema = if matches!(cmd, "new" | "restore" | "history_restore") {
             requested_schema.unwrap_or(SCHEMA)
         } else {
@@ -813,21 +852,28 @@ impl Server {
                 .map(Replica::schema)
                 .unwrap_or(SCHEMA)
         };
-        if ![
+        if (!runtime.as_ref().is_some_and(|s| s.identity() == expected_schema) && ![
             SCHEMA,
             GENERAL_SCHEMA,
             NESTED_SCHEMA,
             SHAPES_SCHEMA,
             MOVE_SCHEMA,
+            GRAPHIC_SCHEMA,
+            GRAPHIC_BUILTIN_SCHEMA,
         ]
-        .contains(&expected_schema)
+        .contains(&expected_schema))
             || requested_schema.is_some_and(|s| s != expected_schema)
         {
             return Err("unsupported schema identity".into());
         }
+        if matches!(cmd, "restore" | "history_restore") && self.replicas.get(&name).is_some_and(|r| (r.runtime.is_some() || runtime.is_some()) && r.schema()!=expected_schema) { return Err("runtime checkpoint cannot replace schema identity".into()); }
         if let Some(supplied) = request.get("manifest") {
             if *supplied
-                != if expected_schema == MOVE_SCHEMA {
+                != if let Some(runtime) = &runtime { runtime.manifest().clone() } else if expected_schema == GRAPHIC_BUILTIN_SCHEMA {
+                    serde_json::from_str::<Value>(GRAPHIC_BUILTIN_MANIFEST).unwrap()
+                } else if expected_schema == GRAPHIC_SCHEMA {
+                    serde_json::from_str::<Value>(GRAPHIC_MANIFEST).unwrap()
+                } else if expected_schema == MOVE_SCHEMA {
                     serde_json::from_str::<Value>(MOVE_MANIFEST).unwrap()
                 } else if expected_schema == SHAPES_SCHEMA {
                     shapes::manifest()
@@ -857,10 +903,23 @@ impl Server {
                 if self.replicas.contains_key(&name) {
                     return Err("replica already exists".into());
                 }
-                let mut replica = Replica::new(string(request, "actor")?.into())?;
+                let mut replica = if let Some(schema) = runtime {
+                    if request.contains_key("capabilities") { return Err("runtime schemas do not accept preset capabilities".into()); }
+                    Replica::new_runtime(string(request, "actor")?.into(), schema)?
+                } else { Replica::new(string(request, "actor")?.into())? };
                 if let Some(capabilities) = request.get("capabilities") {
                     let capabilities: Vec<String> = decode(capabilities)?;
-                    if capabilities == [MOVE_CAPABILITY] && expected_schema == MOVE_SCHEMA {
+                    if capabilities == [GRAPHIC_CAPABILITY] && expected_schema == GRAPHIC_SCHEMA
+                        || capabilities == [GRAPHIC_BUILTIN_CAPABILITY] && expected_schema == GRAPHIC_BUILTIN_SCHEMA {
+                        if !replica.actor.bytes().all(|b| b.is_ascii_alphanumeric() || b"_~-".contains(&b)) {
+                            return Err("graphic actor must use ASCII letters, digits, underscore, tilde or hyphen".into());
+                        }
+                        replica.graphic = true;
+                        replica.graphic_builtins = expected_schema == GRAPHIC_BUILTIN_SCHEMA;
+                        replica.movement = true;
+                        replica.general = true;
+                        replica.nested = Some(nested::Storage::new());
+                    } else if capabilities == [MOVE_CAPABILITY] && expected_schema == MOVE_SCHEMA {
                         replica.movement = true;
                         replica.shapes = true;
                         replica.general = true;
@@ -1002,7 +1061,7 @@ impl Server {
                 if replica.schema() != expected_schema {
                     return Err("checkpoint/request schema mismatch".into());
                 }
-                let history = history::History::restore(&checkpoint.history)?;
+                let history = history::History::restore_with_runtime(&checkpoint.history, replica.runtime.is_some())?;
                 history.validate_document(&replica)?;
                 let response = json!({"ok":true,"state":replica.state(),"history":history.snapshot(),"status":history.status()});
                 self.replicas.insert(name.clone(), replica);

@@ -1,12 +1,12 @@
 import {ParagraphNode} from "lexical";
 import {HeadingNode, QuoteNode} from "@lexical/rich-text";
 import {TableNode, TableRowNode, TableCellNode} from "@lexical/table";
-import {checkSchema} from "@barocss/doc-sync-core";
+import {checkSchema} from "@barocss/doc-sync";
 import {SchemaElementNode, SchemaLeafNode} from "./nodes.ts";
 import type {Klass, LexicalNode} from "lexical";
 import type {HeadingTagType} from "@lexical/rich-text";
-import type {NodeJSON, Run} from "@barocss/doc-sync-core";
-import type {Schema} from "@barocss/doc-sync-core";
+import type {NodeJSON, Run} from "@barocss/doc-sync";
+import type {Schema} from "@barocss/doc-sync";
 
 export type LexicalCodecContext = {
     schema: Schema;
@@ -34,6 +34,7 @@ export type LexicalSchemaInfo = {
 
 /** Register info.nodes when creating the editor. Native names are optional mappings. */
 export function buildLexicalSchema(schema: Schema, options: LexicalSchemaOptions = {}): LexicalSchemaInfo {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const errors = checkSchema(schema);
     if (errors.length) throw new Error(`Invalid schema: ${errors.join("; ")}`);
     const root = schema.nodes[schema.root];

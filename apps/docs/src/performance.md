@@ -2,6 +2,162 @@
 
 Measure the layer you need. Core application time, client notification time, and visible editor latency cover different work.
 
+## Graphic canvas demo
+
+The [PixiJS editor](./guide/graphic-editor) uses two independent TypeScript
+clients over real loopback HTTP/SSE. Chrome functional checks pass 20/20.
+The size sweep passes convergence and model equality, but **large-scene
+interactive performance remains INVESTIGATE**.
+
+| Stored objects | Client edit p50 / p95 (ms) | Peer convergence p50 / p95 (ms) | Cold ready wall time (s) |
+| --- | --- | --- | --- |
+| 9 | 2.4 / 3.0 | 8.3 / 8.9 | 2.56 |
+| 100 | 13.8 / 14.9 | 21.2 / 22.5 | 0.66 |
+| 1,000 | 125.7 / 135.6 | 194.8 / 210.7 | 4.29 |
+| 5,000 | 649.7 / 686.4 | 1,570.3 / 1,686.2 | 113.84 |
+
+Each size uses a fresh room, three warmups, and ten recorded attribute edits.
+The environment is Chrome 156 on Apple M3 Max, WebGL through ANGLE Metal,
+1720 × 1080. Cold wall time includes room seeding, page startup, connections,
+and tool overhead; it is one observation, not an initial-render distribution.
+
+A batch of 1,000 cached same-ID lookups takes about 0.3 ms p50 at every size.
+Three separate sweeps over 5,000 distinct IDs take 1.2, 1.2, and 1.3 ms without
+reindexing. This excludes cache construction. At 5,000 objects the full index
+rebuild is 68.7 ms p50; Pixi view update CPU work is about 2 ms per view. Client
+editing still performs full staging and model work. The next investigation is
+whole-document snapshot/restore/model allocation and bulk room seeding, then
+incremental scene indexing.
+
+Client edit time includes synchronous engine, History, and enqueue work and
+excludes deferred view callbacks. Convergence polls the addressed ID and pending
+state; full-model equality is checked after timing. Pixi CPU timing excludes GPU
+completion. Animation-frame waits do not measure physical paint. There is no
+before/after optimization claim or production scene-size acceptance.
+The [source-bound report](https://github.com/barocss/doc-sync/blob/main/docs/reports/graphic-demo-2026-11-03/README.md)
+contains raw records, diagnostics, failures, and hashes. Existing text-editor
+performance flags below remain open.
+
+## Collaborative spreadsheet grid
+
+The private [VTable spreadsheet demo](./schemas/spreadsheets#run-the-collaborative-grid-demo)
+uses two independent sparse replicas over real loopback HTTP/SSE. Final Chrome
+functional checks pass 21/21: trusted native input, dirty inspector fields,
+active drafts, concurrent first writes, selective undo/redo, actual rectangular
+shading, far-cell edits and reconnect. An instrumented edit/remote-refresh check
+records zero full-range reads. A separate Node request checks server equality;
+the browser does not poll the state oracle.
+
+### Why sparse editing was slow
+
+Logical extent and stored data are different. The demo has 1,048,576 rows and
+16,384 columns, but creates no storage for blank coordinates. The original
+10,000-cell benchmark contains 10,000 cells with values. Each request sends only
+its changed operations. The original server nevertheless copied and replayed
+all retained state to validate each new batch. The view also built a full sparse
+cell list merely to display status counts. Neither was required for point edits.
+
+The server now checks fresh ticket IDs with a bounded index and calls the sparse
+primitive's atomic batch preflight directly. Exact accepted retries use their
+original receipt before those checks. Malformed batches and reused tickets fail
+without partial application. Accepted/rejected hot-path tests record zero full
+state captures/restores. View status uses a constant-size summary; full sparse
+reads remain explicit debug/oracle operations. Normal rendering reads only its
+bounded window.
+
+### Backend-only comparison
+
+An A–B–B–A run kept the exact UI bundle, benchmark script, sparse data and sample
+counts fixed. Each size uses three warmups and ten recorded point edits. Here
+are the per-run peer convergence p95 values; percentiles are not pooled:
+
+| Run | Server | 1,000 stored cells (ms) | 10,000 stored cells (ms) |
+| --- | --- | --- | --- |
+| A1 | Full state replay | 51.4 | 287.0 |
+| B1 | Incremental batch preflight | 21.1 | 33.8 |
+| B2 | Incremental batch preflight | 26.2 | 33.7 |
+| A2 | Full state replay | 38.8 | 285.9 |
+
+The paired 10k p95 reduction is about 88.2% in both repeats, or about 8.5×.
+Before/after handler snapshots, the rehosted baseline adapter, emitted bundle and
+all four raw runs are retained. Workspace source fingerprints in the old run
+are not substituted for the separately pinned executed baseline handler.
+
+### Final view with no status range scan
+
+A second phase also removes the view's full range read. It uses a different UI
+bundle, so these final observations are separate from the backend-only ratio.
+
+| Preseeded cells | Sparse edit p50 / p95 (ms) | Peer convergence p50 / p95 (ms) | Maximum per-view render CPU p95 (ms) |
+| --- | --- | --- | --- |
+| 0 | 0.1 / 0.3 | 12.1 / 23.8 | 5.9 |
+| 1,000 | 0.0 / 0.1 | 12.8 / 27.1 | 5.1 |
+| 10,000 | 0.1 / 0.2 | 17.9 / 26.8 | 5.4 |
+
+Chrome 156, Apple M3 Max, 1720 × 1080; three warmups and ten recorded edits per
+size, each with a fresh browser and room. The view mounts at most 100 × 26
+records. A zero reading reflects timer resolution. Sparse edit includes local
+History/pending bookkeeping. Timed edits use application actions; trusted input
+is a separate functional check. Convergence waits for sender acknowledgement
+and the addressed peer cell. Full sparse equality and the Node oracle run after
+timing. Render CPU and rAF exclude GPU completion and physical display time.
+
+Cold ready wall times of 2.41/1.49/1.96 s include browser/CLI startup and polling;
+they are single observations. Seeding 10,000 cells through 40 batches takes
+276.6 ms in the final run and is excluded from those times. No production timing
+budget is declared. These measurements do not qualify WAN latency, 100,000
+populated cells or long histories. Blank logical coordinates do not count as
+populated cells. The memory demo retains its 20,000-operation cap per room.
+Initial catch-up, explicit capture/range scans, history growth, GC, durable
+recovery, structural axes and public Client integration remain open.
+
+Raw records, phase boundaries and hashes are in the
+[domain delivery report](https://github.com/barocss/doc-sync/blob/main/docs/reports/domain-delivery-2026-11-03/README.md).
+
+### Custom-schema integration regression observation
+
+After adding custom field profiles, the default profile was measured again with
+its final bundle. Peer convergence p95 was 18.2/18.9/18.8 ms at 0/1,000/10,000
+populated cells. Sparse edit p95 was 0.2/0.2/0.1 ms and maximum view render CPU
+p95 was 3.6/4.1/4.2 ms. The fixed 100 × 26 view and three-warmup/ten-sample
+method are unchanged. This is a fresh regression observation, not a paired
+before/after speedup claim. It does not qualify custom-profile large histories,
+WAN, 100,000 populated cells or physical paint.
+
+The same final bundle passes 21 default-profile and 29 custom-profile Chrome
+functional checks. Tasks and Sensors support their declared typed fields;
+normal edit/remote refresh uses zero whole-range reads. See the
+[custom schema report](https://github.com/barocss/doc-sync/blob/main/docs/reports/custom-schemas-2026-11-03/README.md).
+
+
+## Sparse sheet primitive
+
+The [private sparse-sheet experiment](./schemas/spreadsheets) is a separate,
+headless TypeScript primitive. Its timings are not canvas or spreadsheet editor
+latency. One Node 24 sample on Apple M3 Max observes:
+
+| Logical extent | Written cells | Empty JSON checkpoint bytes | JSON checkpoint after writes | 10,000 point reads (ms) |
+| --- | --- | --- | --- | --- |
+| 100 × 100 | 4 | 241 | 2,880 bytes | 10.10 |
+| 1,000,000,000 × 1,000,000 | 4 | 251 | 2,940 bytes | 9.66 |
+| 1,000,000,000 × 1,000,000 | 1,000 | 250 | 693,799 bytes | 12.49 |
+| 1,000,000,000 × 1,000,000 | 10,000 | 251 | 7,204,800 bytes | 18.98 |
+
+The extent is two numbers; cell reads create no blank row, column, or cell
+records. Different sheet names and numeric lengths account for the small empty
+JSON size differences. This demonstrates sparse allocation, not production
+memory qualification. The 10,000-cell case retains about 18 MB of heap above its
+baseline in this observation. Heap deltas use explicit GC and can be noisy or
+negative in the small cases. JSON bytes are not heap bytes.
+
+The checkpoint contains a full journal, retained operations, pending queue and
+History. It grows with edits, and restore replays the journal. At 10,000 written
+cells, capture takes 58.59 ms and a full sparse range read takes 8.06 ms in this
+single run. There is no compaction, GC, formula calculation, network, or renderer.
+Four benchmark correctness cases pass, without timing thresholds or a matched
+baseline. See the [source-bound report](https://github.com/barocss/doc-sync/blob/main/docs/reports/sparse-sheet-2026-11-03/README.md)
+for raw values and limits.
+
 ## Unified Client and native input
 
 The [Client and native-input report](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/unified-client/report.md) compares an independently built

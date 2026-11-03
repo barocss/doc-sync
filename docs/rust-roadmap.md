@@ -5,6 +5,12 @@ This roadmap separates Rust research from production engine delivery and the
 client has a shared engine boundary with a TypeScript implementation. A storage result does not approve an engine
 migration. Each stage needs its own evidence and decision.
 
+The runtime custom-schema subset is now implemented as a **partial D2** slice.
+It covers Graphic container/text/atom, flat Document flow/text/atom, and
+arbitrary sparse scalar fields. Full nested document schemas, live transitions
+and a production WASM Client backend remain open. See D2 below and
+[custom schema recipes](../apps/docs/src/schemas/custom.md).
+
 ## Delivery goal and ordered work
 
 The delivery target is **the same editor bindings with a TypeScript or Rust/WASM
@@ -23,12 +29,49 @@ remain planned; they are not implemented configuration or new verification resul
 
 | Area | Current state and evidence pointer |
 | --- | --- |
-| Native SDK | Private typed API, History, anchors, pending prefix and checkpoints; six fixed presets. See [SchemaPreset](../experiments/rust-sdk/src/lib.rs#L26-L55). |
-| Runtime schemas | Native manifests are compiled in. Arbitrary node names/rules and live transitions are not implemented. See [native schema constants](../experiments/rust-shadow/src/lib.rs#L17-L37). |
-| Engine port | Production client ports cover editing, History, anchors, sessions, events, GC, schema changes and lifecycle. The immutable draft is separate. See [client contract](../packages/doc-sync-core/src/engine/client-contract.ts). |
-| Client selection | SyncClient and portable editor hosts call the selected engine. TypeScript is the default and the only production implementation. See [client](../packages/doc-sync-core/src/sync/client.ts) and [host adapter](../packages/doc-sync-core/src/editor/sync-client-host.ts). |
+| Native Document SDK | Private typed API, History, anchors, pending prefix and checkpoints; six fixed document presets. See [SchemaPreset](../experiments/rust-sdk/src/lib.rs). |
+| Native Graphic SDK | `GraphicDocument` implements fixed Canvas and 17-node Builtins manifests with stored objects, fields, moves, History and checkpoints. Runtime container/text/atom schemas use a separate API; complete rules and graphic selection remain open. |
+| Native Spreadsheet SDK | Private `SparseSheet` fixed-axis S1 primitive: sparse field registers, undo/redo, exact pending operations and checkpoints. Stable structural axes and public Client integration remain open. |
+| Runtime schemas | Partial D2: owned Graphic container/text/atom and flat Document flow/text/atom descriptors; custom scalar sheets. Full nested schemas and live transitions remain open. |
+| Engine port | Production client ports cover editing, History, anchors, sessions, events, GC, schema changes and lifecycle. The immutable draft is separate. See [client contract](../packages/doc-sync/src/engine/client-contract.ts). |
+| Client selection | SyncClient and portable editor hosts call the selected engine. TypeScript is the default and the only production implementation. See [client](../packages/doc-sync/src/sync/client.ts) and [host adapter](../packages/doc-sync/src/editor/sync-client-host.ts). |
 | Wire compatibility | Native Text uses UTF-16 units; TypeScript uses a string. Current comparison normalizes their values. A real wire codec and complete server snapshot import still need qualification. See [SDK comparison](../experiments/rust-sdk/scripts/compare-typescript.mjs#L38-L44). |
 | WASM | Current rust-core module is a UTF-16 storage experiment, not a CRDT document engine. See [module scope](../experiments/rust-core/src/lib.rs#L1). |
+
+### Native domain progress
+
+Document, Graphic and Spreadsheet now have separate native API surfaces.
+`SchemaPreset::Shapes` still means the document group/inline/span fixture.
+Graphic uses `GraphicDocument` with `GraphicPreset::Canvas` or
+`GraphicPreset::Builtins`. The latter has an exact manifest match with the
+frozen TypeScript `createGraphicSchema()` contract. Spreadsheet uses the private
+fixed-axis `SparseSheet` primitive, not a public `SpreadsheetSchema` or `Client`
+backend.
+
+The graphic Canvas receipt records seven focused tests and a 20-action,
+40-state normalized model/History comparison. Builtins adds seven focused tests
+and 35 independently authored actions with 70 normalized actor model/History
+states. The full native SDK has 42 passing tests; the shadow core has 75. These
+checks do not qualify exact graphic wire encoding or mixed-runtime exchange.
+The sheet receipt records 14 focused tests and a 31-action, 62-state exact comparison of operations, models,
+full History, pending queues and checkpoints. These checks add no browser,
+WASM, renderer, server durability or performance qualification.
+
+Evidence is in `output/rust-graphic-evidence-20261103/receipt.json`,
+`output/rust-graphic-builtins-evidence-20261103/receipt.json`, and
+`output/rust-sheet-proof-20261103/receipt.json` in the checkout. These are local
+receipts, not published release artifacts. See the
+[graphic roadmap](graphic-roadmap.md) and
+[spreadsheet roadmap](spreadsheet-roadmap.md) for their ordered work. D2 runtime
+schemas, D3 compiler completion and the later production gates remain open.
+
+Builtins overrides store one atomic `{property, value}` assignment attribute and
+an independent `targetId`. TypeScript graphic helpers validate the complete
+payload and typed value bounds. The raw generic TypeScript attribute rule only
+checks its outer object type. The native pinned checker enforces the stricter
+helper contract. This does not add a generic wire validator or claim universal
+invalid-input acceptance parity. References can remain dangling; effective
+instance expansion and Boolean solving remain separate work.
 
 ### D1. Shared client and engine boundary
 
@@ -68,6 +111,13 @@ cover omitted/null values, actor ordering, safe clocks, isolated text surrogates
 and operation/snapshot round trips without changing the existing wire contract.
 
 ### D2. Load a validated runtime schema in Rust
+
+**Partial implementation:** `RuntimeSchema`/`RuntimeDocument` compile owned
+Graphic container/text/atom and flat Document flow/text/atom descriptors.
+`SpreadsheetSchema`/`RuntimeSheet` compile arbitrary scalar field registries.
+Unsupported descriptors reject with paths; legacy preset behavior remains.
+Full nested document coverage and the D2 product-schema gate remain open.
+See [custom schema contracts](../apps/docs/src/schemas/custom.md).
 
 Replace preset/type-name branches with per-document compiled schema data.
 Support all nine shapes, allowed children, grouping, grid chains, defaults,
@@ -694,7 +744,7 @@ selection, coupled checkpoint restore, and exact pending-prefix acknowledgement.
 Its closed `SchemaPreset` enum selects the six existing native modes; it does
 not implement runtime arbitrary schemas or live transitions.
 
-The SDK passed 14 unit/integration tests, formatting, Clippy, the runnable
+The initial Document SDK checkpoint passed 14 unit/integration tests, formatting, Clippy, the runnable
 two-author/restart example, and a README doctest. Eight independent review cases
 checked preset/UTF-16 restore, tombstones, clock exhaustion and forged pending
 rejection. An independent TypeScript authoring comparison passed 20 actions and
@@ -719,8 +769,8 @@ the TypeScript engine; its Chrome evidence is not Rust browser evidence.
 ### Binding packages and backend seam
 
 Core, ProseMirror, Tiptap, Slate, and Lexical now have independent npm package
-boundaries, with the original package retained as a compatibility facade.
-All six remain private; local JavaScript/declaration tarballs and independent
+boundaries. `@barocss/doc-sync` contains the dependency-free core and the four
+editor bindings use independent packages. All five remain private; local JavaScript/declaration tarballs and independent
 consumer checks do not constitute registry publication.
 
 The production TypeScript `EditorHost` adapter delegates to existing

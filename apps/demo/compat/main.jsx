@@ -9,8 +9,8 @@ import {registerRichText, HeadingNode, QuoteNode, $createHeadingNode, $createQuo
 import {TableNode, TableRowNode, TableCellNode, $createTableNode, $createTableRowNode, $createTableCellNode, $createTableNodeWithDimensions, $insertTableColumnAtNode, $insertTableRowAtNode, registerTablePlugin, registerTableSelectionObserver} from '@lexical/table';
 import {createAnnotation, updateAnnotation, deleteAnnotation, getAnnotations} from '@barocss/doc-sync';
 import {SyncClient, HttpTransport} from '@barocss/doc-sync/sync';
-import {PmHostBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@barocss/doc-sync/prosemirror';
-import {createSyncClientEditorHost} from '@barocss/doc-sync-core/editor';
+import {PmHostBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@barocss/doc-sync-prosemirror';
+import {createSyncClientEditorHost} from '@barocss/doc-sync/editor';
 import {TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {keymap} from 'prosemirror-keymap';
@@ -19,8 +19,8 @@ import {addColumnAfter, addRowAfter, tableEditing} from 'prosemirror-tables';
 import {resetAndWait, createActionGuard} from '../ui/reset.ts';
 import {schema, canon, fromSlate, toSlate, fromLexical, editsFor, commitModelEdits} from './model.mjs';
 import {InputSession, slateModelPoint, slateNativePoint, lexicalBlocks, lexicalModelPoint, lexicalNativePoint} from './input-session.mjs';
-import {SlateBinding, fromSlate as readBoundSlate} from '@barocss/doc-sync/slate';
-import {LexicalBinding, buildLexicalSchema, readLexicalModel} from '@barocss/doc-sync/lexical';
+import {SlateBinding, fromSlate as readBoundSlate} from '@barocss/doc-sync-slate';
+import {LexicalBinding, buildLexicalSchema, readLexicalModel} from '@barocss/doc-sync-lexical';
 
 const DOC=new URLSearchParams(location.search).get('doc') ?? 'editor-compat-chrome';
 const peers=[], failures=[];

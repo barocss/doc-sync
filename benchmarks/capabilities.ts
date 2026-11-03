@@ -62,7 +62,7 @@ const rows = sizes.flatMap(chars => modes.map(mode => {
     const sorted = [...rawMs].sort((a, b) => a - b);
     return {chars, paragraphs, mode, samples, warmups, p50: sorted[Math.floor(samples * .5)], p95: sorted[Math.floor(samples * .95)], max: sorted.at(-1), rawMs, fullModelReads, correct: true, fallbacks: client.eventStats.fallbacks};
 }));
-const sourcePaths = ["benchmarks/capabilities.ts", "packages/doc-sync-core/dist/crdt/doc.js", "packages/doc-sync-core/dist/crdt/model.js", "packages/doc-sync-core/dist/sync/client.js", "packages/doc-sync-core/dist/sync/model-events.js"];
+const sourcePaths = ["benchmarks/capabilities.ts", "packages/doc-sync/dist/crdt/doc.js", "packages/doc-sync/dist/crdt/model.js", "packages/doc-sync/dist/sync/client.js", "packages/doc-sync/dist/sync/model-events.js"];
 const result = {startedAt, endedAt: new Date().toISOString(), node: process.version, startedLoad, endedLoad: loadavg(), metric: "synchronous change receipt through model-events callback; excludes initialization, mirror verification, annotation reads, network and DOM", rows, sourceHashes: sourcePaths.map(path => ({path, sha256: createHash("sha256").update(readFileSync(path)).digest("hex")}))};
 if (output) writeFileSync(output, JSON.stringify(result, null, 2) + "\n", {flag: "wx"});
 console.log(JSON.stringify(rows.map(({rawMs, fullModelReads, ...row}) => ({...row, fullModelReads: [...new Set(fullModelReads)]})), null, 2));

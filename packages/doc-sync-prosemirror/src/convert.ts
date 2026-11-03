@@ -1,8 +1,8 @@
-import {gridParts} from "@barocss/doc-sync-core";
+import {gridParts} from "@barocss/doc-sync";
 import {pmName} from "./schema.ts";
 import type {Node as PmNode} from "prosemirror-model";
-import type {ModelPath, NodeJSON, Run} from "@barocss/doc-sync-core";
-import type {GroupSpec, Schema as DocSchema} from "@barocss/doc-sync-core";
+import type {ModelPath, NodeJSON, Run} from "@barocss/doc-sync";
+import type {GroupSpec, Schema as DocSchema} from "@barocss/doc-sync";
 import type {PmSchemaInfo} from "./schema.ts";
 
 /**
@@ -34,7 +34,10 @@ const flat = (schema: DocSchema, children: NodeJSON[] = []): NodeJSON[] =>
 
 // ── 우리 → ProseMirror ──────────────────────────────────────────────────
 
-export const toPmJSON = (schema: DocSchema, model: NodeJSON): PmJSON => ({type: pmName(schema.root), content: flat(schema, model.children).map(n => blockToPm(schema, n))});
+export const toPmJSON = (schema: DocSchema, model: NodeJSON): PmJSON => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
+    return {type: pmName(schema.root), content: flat(schema, model.children).map(n => blockToPm(schema, n))};
+};
 
 const runsToPm = (schema: DocSchema, runs: Run[] = [], outer: Array<{type: string; attrs?: Record<string, unknown>}> = []): PmJSON[] =>
     runs.flatMap(run => {
@@ -95,10 +98,13 @@ const blockToPm = (schema: DocSchema, node: NodeJSON): PmJSON => {
  * ProseMirror 문서를 우리 날것의 모델로 (정리는 canonical 이 한다). 가려진 칸의 글은 ProseMirror 에 없으므로,
  * reference(바꾸기 전 우리 모델)의 같은 자리 칸에서 가져온다 — 숨은 글을 잃지 않게.
  */
-export const fromPmJSON = (info: PmSchemaInfo, schema: DocSchema, doc: PmJSON, reference?: NodeJSON): NodeJSON => ({
-    type: schema.root,
-    children: (doc.content ?? []).map((n, i) => blockFromPm(info, schema, n, flatRef(schema, reference?.children)[i])),
-});
+export const fromPmJSON = (info: PmSchemaInfo, schema: DocSchema, doc: PmJSON, reference?: NodeJSON): NodeJSON => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
+    return {
+        type: schema.root,
+        children: (doc.content ?? []).map((n, i) => blockFromPm(info, schema, n, flatRef(schema, reference?.children)[i])),
+    };
+};
 
 const flatRef = (schema: DocSchema, children?: NodeJSON[]): Array<NodeJSON | undefined> => flat(schema, children ?? []);
 
@@ -288,6 +294,7 @@ const cellIndexAt = (table: PmNode, r: number, c: number): number => {
  * model 은 ProseMirror 문서와 같은 내용의 우리 모델이어야 한다.
  */
 export const pmPosToPath = (schema: DocSchema, pmDoc: PmNode, pos: number, model: NodeJSON): ModelPath => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     const $pos = pmDoc.resolve(pos);
     const path: number[] = [];
     let ours: NodeJSON = model;
@@ -333,6 +340,7 @@ export const pmPosToPath = (schema: DocSchema, pmDoc: PmNode, pos: number, model
 
 /** 우리 모델 경로 → ProseMirror 위치 (pmPosToPath 의 반대) */
 export const pathToPmPos = (schema: DocSchema, pmDoc: PmNode, path: ModelPath, model: NodeJSON): number => {
+    if (schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
     let pm: PmNode = pmDoc;
     let ours: NodeJSON = model;
     let pos = 0;

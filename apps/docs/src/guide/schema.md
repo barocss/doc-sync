@@ -1,6 +1,28 @@
 # Define a schema
 
+See [Custom schemas and editor mappings](../schemas/custom) for per-editor
+capability checks and the separate sparse field contract.
+
+The current `grid` shape represents a document table. Its JSON model expands
+every row/column pair, including empty and covered cells. It is not a sparse
+spreadsheet store. See [Document tables and sparse sheets](#document-tables-and-sparse-sheets)
+before using it for a large worksheet.
+
 The core reads shapes. Your application assigns names such as `paragraph`, `note`, or `table`. A schema defines the root, allowed children, default blocks, attributes, marks, and inheritance.
+
+## Document and graphic domains
+
+Existing `Schema` values remain document schemas when `domain` is omitted.
+`DocumentSchema` names that contract explicitly; `domain: 'document'` is optional
+and has the same schema identity as the equivalent unmarked definition.
+`GraphicSchema` requires `domain: 'graphic'` and a root `container` that can be
+empty. Both use the same document engine, client, synchronization and History.
+
+Document flows keep their default text blocks. Graphic containers never create
+default text siblings. Use a container for a stored frame or object group; the
+existing `group` shape remains a computed list of adjacent text items.
+See [Document and graphic schemas](./graphic-schema) for executable examples,
+object IDs, capability checks, and current integration limits.
 
 ## Shapes
 
@@ -9,7 +31,8 @@ The core reads shapes. Your application assigns names such as `paragraph`, `note
 | `text` | A block with text runs and permitted inline content. |
 | `inline` | A node that occupies one position inside a text block. |
 | `span` | A model wrapper derived from a value mark, such as a link. |
-| `flow` | A sequence of document blocks. |
+| `flow` | A sequence of document blocks with a default text block. |
+| `container` | A stored, ordered object collection that may be empty; graphic schemas only. |
 | `group` | A model group of adjacent text items, such as a list. |
 | `grid` | A table with row and column token lines. |
 | `row`, `cell` | The schema structure of a grid. |
@@ -18,9 +41,9 @@ The core reads shapes. Your application assigns names such as `paragraph`, `note
 ## A text schema
 
 ```ts
-import {checkSchema, type Schema} from "@barocss/doc-sync";
+import {checkSchema, type DocumentSchema} from "@barocss/doc-sync";
 
-const schema: Schema = {
+const schema: DocumentSchema = {
     root: "content",
     marks: ["bold", "italic"],
     nodes: {
@@ -52,9 +75,9 @@ A flow starts with a text-shaped default block. That type can set `text: false`,
 
 ## Changing a schema
 
-Each client and the server use an application-supplied schema. The server sends its schema version during connection, and a client verifies it before sending changes. The version is the SHA-256 hash of the complete canonical schema JSON, including UI metadata. Object-key order does not change the hash; array order does. Schema values must be plain JSON data. A server started without a schema cannot verify clients or accept a schema transition.
+Each client and the server use an application-supplied schema. The server sends its schema version during connection, and a client verifies it before sending changes. The version is the SHA-256 hash of the canonical schema JSON, including UI metadata. The default `domain: 'document'` marker is omitted from that identity so existing schemas keep their versions. Object-key order does not change the hash; array order does. Schema values must be plain JSON data. A server started without a schema cannot verify clients or accept a schema transition. Graphic clients require a verified matching schema and `containers-v1`; they reject a schema-free server. Switching between document and graphic domains is incompatible and requires an application-managed migration.
 
-The server supports a **compatible, additive transition** while a document is in use. It can append new boolean marks, define new nodes, and append those new node types to the children of existing flow or text nodes. Existing marks and children keep their order. Existing node rules and other schema fields must remain unchanged. Some additions that would regroup or rewrap existing content are rejected. Adding a child that is already an existing node type is also rejected. For details, see `assertCompatibleSchema` in the library.
+The server supports a **compatible, additive transition** while a document is in use. It can append new boolean marks, define new nodes, and append those new node types to the children of existing flow, container, or text nodes. Existing marks and children keep their order. Existing node rules and other schema fields must remain unchanged. Some additions that would regroup or rewrap existing content are rejected. Adding a child that is already an existing node type is also rejected. For details, see `assertCompatibleSchema` in the library.
 
 The server also checks whether the existing snapshot can be restored under the proposed schema. A transition that introduces the document's first `fields-v1` or `cardinality-v1` capability is currently rejected if the snapshot does not already carry that capability. This can occur even when the additions pass `assertCompatibleSchema`. The server leaves the current schema and document unchanged. Adding capability metadata or converting such a document requires a separate migration; this transition does not perform one.
 
@@ -103,3 +126,30 @@ Changing existing rules, removing types, changing defaults, or converting stored
 Read the [full demo schema](./full-schema) for every type, child rule, default, attribute, and UI field used by the actual `DEMO_SCHEMA`. Its generated code preserves all runtime rules and translates UI display strings only. The separate [block operations guide](./blocks) uses a reduced teaching schema with an added paragraph alignment attribute.
 
 [Run schema-driven block operations →](./blocks)
+
+
+## Document tables and sparse sheets
+
+A document table and a spreadsheet have different storage requirements. The
+current `grid` model builds rows with all column cells. An N-row, M-column
+projection therefore contains N × M cells, even if most have no text. The
+internal token storage and the expanded JSON model are different layers;
+blank cells need not each have a stored text operation, but materializing the
+model still creates the full rectangular structure.
+
+A large worksheet needs a separate sparse model. Store cell records only where
+content or non-default properties exist. Describe the logical row/column extent
+without allocating one object for every possible blank row, column, or cell.
+Store width, height, style, and other overrides separately, preferably as ranges
+when their scope is shared. A viewport queries only the needed cells and derives
+empty defaults. Virtual rendering alone does not remove dense model allocation.
+
+Cell identity must survive row/column insertion and movement. Stable sheet,
+row, and column identities identify a cell; A1 labels and screen coordinates
+are derived from the current axis order and geometry. Formula references need
+that same identity and explicit copy/move semantics. Calculation, dependency
+tracking, ranges, and sparse history/GC need their own contracts.
+
+These are requirements for future spreadsheet support. Adding a
+`SpreadsheetSchema` name or cell attributes to today's grid does not implement
+them. Existing document table behavior remains unchanged.

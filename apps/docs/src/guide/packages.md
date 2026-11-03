@@ -1,33 +1,37 @@
 # Packages and engines
 
-The package split is complete in this checkout. Six npm packages have compiled
-JavaScript exports and type declarations. All six remain `private: true` at
+The package split is complete in this checkout. Five npm packages have compiled
+JavaScript exports and type declarations. All five remain `private: true` at
 version `0.0.0`. They have not been published to the npm registry.
+
+DocumentSchema and GraphicSchema are domain types inside the same core package.
+They do not add npm packages. The TypeScript core supports stored empty graphic
+containers. Existing text bindings require document schemas; a canvas binding
+is a separate integration. See [Document and graphic schemas](./graphic-schema).
 
 ## Choose packages
 
 | Package | Contents | Required package peers |
 | --- | --- | --- |
-| `@barocss/doc-sync-core` | CRDT, local/sync clients, editor hosts, server, Node transport, input session, engine contracts | None. No external runtime dependencies. |
+| `@barocss/doc-sync` | CRDT, local/sync clients, editor hosts, server, Node transport, input session, engine contracts | None. No external runtime dependencies. |
 | `@barocss/doc-sync-prosemirror` | ProseMirror schema, conversion, and binding | Core; `prosemirror-model`, `prosemirror-state`, `prosemirror-transform`, `prosemirror-view`. |
 | `@barocss/doc-sync-tiptap` | Tiptap extension and generated schema | Core; ProseMirror binding; `@tiptap/core` and `@tiptap/pm` at `3.32.2`. |
 | `@barocss/doc-sync-slate` | Slate binding and codec | Core; `slate`. |
 | `@barocss/doc-sync-lexical` | Lexical binding, node classes, and conversion | Core; `lexical`, `@lexical/rich-text`, `@lexical/table`. |
-| `@barocss/doc-sync` | Compatibility exports for existing applications | Core dependency; optional binding package peers for the editor subpaths used. |
 
 Core does not import an editor binding. Each binding can be maintained and
-packed separately. Tiptap uses the ProseMirror binding. The compatibility facade
-re-exports the same implementations; it does not contain a second engine.
+packed separately. Tiptap uses the ProseMirror binding. `@barocss/doc-sync`
+contains the core implementation and has no external runtime dependencies.
 
 Use the independent names in new applications:
 
 ```ts
-import {Doc, Client, type Schema} from '@barocss/doc-sync-core';
-// Client is also available from @barocss/doc-sync-core/client.
-import {SyncClient, HttpTransport} from '@barocss/doc-sync-core/sync';
-import {LocalClient, LocalEditorHost} from '@barocss/doc-sync-core/local';
-import {NodeHttpTransport} from '@barocss/doc-sync-core/node';
-import {DocHub} from '@barocss/doc-sync-core/server';
+import {Doc, Client, type Schema} from '@barocss/doc-sync';
+// Client is also available from @barocss/doc-sync/client.
+import {SyncClient, HttpTransport} from '@barocss/doc-sync/sync';
+import {LocalClient, LocalEditorHost} from '@barocss/doc-sync/local';
+import {NodeHttpTransport} from '@barocss/doc-sync/node';
+import {DocHub} from '@barocss/doc-sync/server';
 import {PmBinding} from '@barocss/doc-sync-prosemirror';
 import {DocSync} from '@barocss/doc-sync-tiptap';
 import {SlateBinding} from '@barocss/doc-sync-slate';
@@ -37,14 +41,10 @@ import {LexicalBinding} from '@barocss/doc-sync-lexical';
 This list shows available imports. Install only the bindings that your
 application uses, together with their required peers.
 
-The `/client` facade entry and root `Client` export provide the unified API.
-The eight existing facade imports also remain available: `@barocss/doc-sync`,
-`@barocss/doc-sync/sync`, `@barocss/doc-sync/node`,
-`@barocss/doc-sync/server`, `@barocss/doc-sync/prosemirror`,
-`@barocss/doc-sync/tiptap`, `@barocss/doc-sync/slate`, and
-`@barocss/doc-sync/lexical`. An editor subpath requires its selected binding
-package and that binding's editor peers. Importing the facade's core, sync,
-server, or Node entry does not load editor packages.
+The root and `/client` entries export `Client`. The core also provides `/local`,
+`/sync`, `/editor`, `/engine`, `/node`, and `/server`. Import each editor binding
+from its independent package. Editor subpaths under `@barocss/doc-sync` are not
+available.
 
 For a memory-only document, use the [local editing guide](./local-editing).
 The `/local` entry belongs to Core and imports no native editor package.
@@ -67,14 +67,14 @@ npm run build
 npm run check:packages
 ```
 
-The build processes Core first, then the bindings, then the facade. Each package
+The build processes Core first, then the four bindings. Each package
 exports `dist/*.js` and `dist/*.d.ts`. Application imports use the public package
 names. Do not import a package's source files.
 
-`check:packages` packs all six packages and installs the tarballs in isolated
+`check:packages` packs all five packages and installs the tarballs in isolated
 consumer directories. It checks runtime exports, type declarations, absence of
-unrelated editors, old and new imports, and the Tiptap transaction tests. It
-also packs a Slate `0.0.1` test copy and loads it through the unchanged facade.
+unrelated editors, public package imports, and the Tiptap transaction tests. It
+also packs a Slate `0.0.1` test copy and loads it with the unchanged core.
 The helper writes tarballs and `pack-consumers.json` to
 `output/binding-packages/`. This is local package evidence, not a registry release.
 
@@ -82,7 +82,7 @@ For example, after that check, a separate Slate application can install the
 local artifacts. Replace `/path/to/doc-sync` with the checkout's absolute path:
 
 ```sh
-npm install /path/to/doc-sync/output/binding-packages/barocss-doc-sync-core-0.0.0.tgz /path/to/doc-sync/output/binding-packages/barocss-doc-sync-slate-0.0.0.tgz slate@0.146.0
+npm install /path/to/doc-sync/output/binding-packages/barocss-doc-sync-0.0.0.tgz /path/to/doc-sync/output/binding-packages/barocss-doc-sync-slate-0.0.0.tgz slate@0.146.0
 ```
 
 A binding can also be packed directly from the checkout:
@@ -98,7 +98,7 @@ The package check verifies removal of stale JavaScript and orphan files.
 For a binding fix, change and test the selected binding, set its release version,
 and pack it for an isolated consumer. Check its peer ranges before a release.
 A compatible binding patch does not require source changes or a new version in
-Core, sibling bindings, or the facade. Registry publication still requires a
+Core or sibling bindings. Registry publication still requires a
 separate release step and removal of the selected package's private flag.
 
 ## Bind a client directly
@@ -117,8 +117,8 @@ explicit sync adapter below delegates to the existing TypeScript `SyncClient`.
 It preserves pending edits, transport ownership, and actor-owned history:
 
 ```ts
-import type {SyncClient} from '@barocss/doc-sync-core/sync';
-import {createSyncClientEditorHost} from '@barocss/doc-sync-core/editor';
+import type {SyncClient} from '@barocss/doc-sync/sync';
+import {createSyncClientEditorHost} from '@barocss/doc-sync/editor';
 import {PmHostBinding, buildPmSchema} from '@barocss/doc-sync-prosemirror';
 import {EditorView} from 'prosemirror-view';
 
@@ -163,8 +163,8 @@ Their legacy `SlateBinding(client, editor)` and
 ```ts
 import {createEditor as createSlateEditor} from 'slate';
 import {createEditor as createLexicalEditor} from 'lexical';
-import type {SyncClient} from '@barocss/doc-sync-core/sync';
-import {createSyncClientEditorHost} from '@barocss/doc-sync-core/editor';
+import type {SyncClient} from '@barocss/doc-sync/sync';
+import {createSyncClientEditorHost} from '@barocss/doc-sync/editor';
 import {SlateHostBinding} from '@barocss/doc-sync-slate';
 import {LexicalHostBinding, buildLexicalSchema} from '@barocss/doc-sync-lexical';
 
@@ -212,9 +212,9 @@ selected engine owns the document, History, and composition drafts. The common
 same ProseMirror implementation. Only TypeScript ships today:
 
 ```ts
-import {SyncClient, HttpTransport} from '@barocss/doc-sync-core/sync';
-import {typescriptClientEngineFactory} from '@barocss/doc-sync-core/engine';
-import {createSyncClientEditorHost} from '@barocss/doc-sync-core/editor';
+import {SyncClient, HttpTransport} from '@barocss/doc-sync/sync';
+import {typescriptClientEngineFactory} from '@barocss/doc-sync/engine';
+import {createSyncClientEditorHost} from '@barocss/doc-sync/editor';
 
 const actor = 'alice-session-1';
 const client = new SyncClient(actor, new HttpTransport('example', actor), {
@@ -250,12 +250,12 @@ remain reported; general product-latency acceptance remains open. See
 [status and limits](../status) for the evidence boundary.
 
 Core exports a draft value-based engine contract at
-`@barocss/doc-sync-core/engine`. Its TypeScript factory supports edit, receive,
+`@barocss/doc-sync/engine`. Its TypeScript factory supports edit, receive,
 actor-owned history, stable anchors, and checkpoints:
 
 ```ts
-import {type Schema} from '@barocss/doc-sync-core';
-import {typescriptEngine} from '@barocss/doc-sync-core/engine';
+import {type Schema} from '@barocss/doc-sync';
+import {typescriptEngine} from '@barocss/doc-sync/engine';
 
 const schema: Schema = {
     root: 'content',
@@ -284,7 +284,7 @@ a TypeScript checkpoint cannot be restored into the native Rust SDK.
 
 | Capability | Production TypeScript path | Native Rust SDK | Browser Rust/WASM path |
 | --- | --- | --- | --- |
-| Runtime schema data | Supported, with compatible transition rules | Six fixed presets | Not implemented as a full document adapter |
+| Runtime schema data | Supported, with compatible transition rules | Six presets plus limited runtime Document/Graphic and custom sparse fields; no live transition | Not implemented as a full document adapter |
 | Browser editor bindings and `SyncClient` | Selected production TypeScript factory and editor host | No adapter | No qualified adapter or selector |
 | Native text, operations, history, and anchors | Available in TypeScript | Available through a private Cargo path dependency | Not available as a full browser engine |
 | WASM storage experiment | Separate from the TypeScript engine | Separate from the native SDK | Vec/Gap UTF-16 buffers only; no CRDT or editor integration |

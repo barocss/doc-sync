@@ -1,0 +1,14 @@
+{
+  "graphics": [
+    {"schema":{"domain":"graphic","root":"board","marks":["accent"],"nodes":{"board":{"shape":"container","children":["layer","caption"]},"layer":{"shape":"container","children":["layer","caption"],"attrs":{"label":{"default":""},"pose":{"default":{"u":0,"v":0},"fields":{"u":{"default":0,"min":-100,"max":100},"v":{"default":0,"min":-100,"max":100}}}}},"caption":{"shape":"text","attrs":{"tone":{"default":"warm","values":["warm","cool"]}}}}},"container":"layer","text":"caption","attribute":"pose","x":"u","y":"v"},
+    {"schema":{"domain":"graphic","root":"workspace","marks":["strong"],"nodes":{"workspace":{"shape":"container","children":["rack","tag"]},"rack":{"shape":"container","children":["rack","tag"],"attrs":{"title":{"default":""},"offset":{"default":{"east":0,"north":0},"fields":{"east":{"default":0,"min":-100,"max":100},"north":{"default":0,"min":-100,"max":100}}}}},"tag":{"shape":"text","attrs":{"color":{"default":"green","values":["green","blue"]}}}}},"container":"rack","text":"tag","attribute":"offset","x":"east","y":"north"}
+  ],
+  "documents": [
+    {"schema":{"domain":"document","root":"article","marks":["emphasis"],"nodes":{"article":{"shape":"flow","children":["body","title","rule"],"default":"body"},"body":{"shape":"text","attrs":{"rank":{"default":1,"min":0,"max":5}}},"title":{"shape":"text","attrs":{"rank":{"default":2,"min":0,"max":5}}},"rule":{"shape":"atom","attrs":{"tone":{"default":"red","values":["red","blue"]}}}}},"text":"title","field":"rank"},
+    {"schema":{"root":"report","marks":["highlight"],"nodes":{"report":{"shape":"flow","children":["line","heading","divider"],"default":"line"},"line":{"shape":"text","attrs":{"priority":{"default":0,"min":0,"max":5}}},"heading":{"shape":"text","attrs":{"priority":{"default":1,"min":0,"max":5}}},"divider":{"shape":"atom","attrs":{"visible":{"default":true}}}}},"text":"heading","field":"priority"}
+  ],
+  "sheets": [
+    {"schema":{"domain":"spreadsheet","version":1,"fields":{"title":{"type":"string","default":"Untitled","maxLength":30},"progress":{"type":"number","default":0,"min":0,"max":100},"archived":{"type":"boolean","default":false}}},"text":"title","number":"progress","textValue":"task"},
+    {"schema":{"domain":"spreadsheet","version":1,"fields":{"reading":{"type":"number","default":-1,"min":-100,"max":100},"unit":{"type":"string","default":"C","values":["C","F"]}}},"text":"unit","number":"reading","textValue":"F"}
+  ]
+}

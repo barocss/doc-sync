@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, History, slotKey, ticketOf, type Schema, type NodeJSON} from "../../doc-sync-core/dist/index.js";
+import {Doc, History, slotKey, ticketOf, type Schema, type NodeJSON} from "../../doc-sync/dist/index.js";
 
 const schema: Schema = {root: "content", marks: ["bold", "italic"], nodes: {
     content: {shape: "flow", children: ["paragraph", "box"], default: "paragraph"},

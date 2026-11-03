@@ -1,7 +1,7 @@
 import {$getState, $setState, createState, DecoratorNode, ElementNode} from "lexical";
 import type {EditorConfig, LexicalEditor, NodeKey, RangeSelection, SerializedElementNode, SerializedLexicalNode} from "lexical";
-import type {Marks, NodeJSON} from "@barocss/doc-sync-core";
-import type {Shape} from "@barocss/doc-sync-core";
+import type {Marks, NodeJSON} from "@barocss/doc-sync";
+import type {Shape} from "@barocss/doc-sync";
 
 export type LexicalModelData = {
     type: string;

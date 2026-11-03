@@ -1,6 +1,14 @@
 //! Experimental native SDK for the six pinned native engine presets.
 //! Hosts transport returned operations; this crate supplies no network or browser adapter.
 use doc_sync_rust_shadow as engine;
+pub mod sparse_sheet;
+pub use sparse_sheet::*;
+pub mod graphic;
+pub use graphic::{GraphicDocument, GraphicCheckpoint, GraphicKind, GraphicNode, GraphicPreset};
+pub mod runtime_schema;
+pub use runtime_schema::{RuntimeSchema, RuntimeDocument, RuntimeCheckpoint};
+pub mod runtime_sheet;
+pub use runtime_sheet::*;
 pub use engine::Ticket;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};

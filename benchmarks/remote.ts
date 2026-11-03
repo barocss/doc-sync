@@ -129,8 +129,8 @@ const rows = sizes.flatMap(chars => blockCounts.flatMap(changedBlocks => operati
         p50: sorted[Math.floor(samples * 0.5)], p95: sorted[Math.floor(samples * 0.95)], max: sorted.at(-1),
         fullModelReads, correct: true, fallbacks: client.eventStats.fallbacks, rawMs};
 })));
-const sources = ["packages/doc-sync-core/dist/sync/client.js", "packages/doc-sync-core/dist/sync/model-events.js",
-    "packages/doc-sync-core/dist/crdt/doc.js", "packages/doc-sync-core/dist/crdt/model.js", "benchmarks/remote.ts"];
+const sources = ["packages/doc-sync/dist/sync/client.js", "packages/doc-sync/dist/sync/model-events.js",
+    "packages/doc-sync/dist/crdt/doc.js", "packages/doc-sync/dist/crdt/model.js", "benchmarks/remote.ts"];
 const result = {
     at: new Date().toISOString(), startedAt, node: process.version, startedLoadAverage, endedLoadAverage: loadavg(),
     productImports: ["@barocss/doc-sync", "@barocss/doc-sync/sync"].map(specifier => ({specifier, resolved: import.meta.resolve(specifier)})),

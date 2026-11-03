@@ -3,8 +3,8 @@ import {test} from "node:test";
 import {createEditor, $getSelection, $isRangeSelection, INSERT_PARAGRAPH_COMMAND} from "lexical";
 import {registerRichText} from "@lexical/rich-text";
 import {LexicalBinding, LexicalHostBinding, buildLexicalSchema, readLexicalModel, $setLexicalSelection, $lexicalSelection} from "../dist/index.js";
-import {createSyncClientEditorHost, InputSession} from "../../doc-sync-core/dist/editor/index.js";
-import type {EditorHost} from "../../doc-sync-core/dist/editor/index.js";
+import {createSyncClientEditorHost, InputSession} from "../../doc-sync/dist/editor/index.js";
+import type {EditorHost} from "../../doc-sync/dist/editor/index.js";
 import {MemoryNet} from "../../doc-sync/test/harness.ts";
 
 function contractOnly(host: EditorHost): EditorHost {
@@ -68,7 +68,7 @@ test("LexicalBinding keeps the original InputSession object and creates one comp
     } finally { binding.dispose(); }
 });
 
-import {schemaVersion} from "../../doc-sync-core/dist/crdt/schema-version.js";
+import {schemaVersion} from "../../doc-sync/dist/crdt/schema-version.js";
 
 test("Lexical binding disconnects after a lost conditional response without a native callback error", async () => {
     const net = new MemoryNet(), a = net.add("conditional-lexical");
@@ -128,7 +128,7 @@ test("Lexical binding refreshes a received model while recovery pauses local inp
     } finally { release?.(); binding.dispose(); stop(); a.disconnect(); b.disconnect(); }
 });
 
-import {LocalClient, createLocalEditorHost} from "../../doc-sync-core/dist/local/index.js";
+import {LocalClient, createLocalEditorHost} from "../../doc-sync/dist/local/index.js";
 
 for (const [label, anchor, focus] of [["forward", 1, 3], ["backward", 3, 1], ["collapsed", 3, 3]] as const) {
     test(`Lexical local host retains ${label} native selection across an application insert`, () => {

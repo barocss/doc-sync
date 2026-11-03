@@ -19,8 +19,8 @@ in [Packages and engines](./packages).
 
 <!-- custom-editor-example -->
 ```ts
-import type {Schema} from '@barocss/doc-sync-core';
-import {Client, createEditorHost} from '@barocss/doc-sync-core/client';
+import type {Schema} from '@barocss/doc-sync';
+import {Client, createEditorHost} from '@barocss/doc-sync/client';
 import {mountCustomEditor} from './custom-editor.mjs';
 
 // This wrapper owns a per-view host, while the caller owns the client.
@@ -83,7 +83,7 @@ provide save, recovery or automatic merging between clients.
 The wrapper creates the textarea host internally. The native binding also creates its own host. This example borrows a local Client that uses the plain schema above, and mounts both views:
 
 ```ts
-import type {Client} from '@barocss/doc-sync-core/client';
+import type {Client} from '@barocss/doc-sync/client';
 import {PmBinding, buildPmSchema} from '@barocss/doc-sync-prosemirror';
 import {EditorView} from 'prosemirror-view';
 import {bindTextArea} from './textarea.ts';

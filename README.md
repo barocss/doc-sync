@@ -1,12 +1,12 @@
 # @barocss/doc-sync
 
 A document CRDT library with an injected schema. The production engine is written in TypeScript. The CRDT, sync client, and server have **no dependencies**. ProseMirror, Tiptap, Slate and Lexical each have a separate binding package with required editor peers. The repository contains the CRDT, a sync client, a server (DocHub), four editor bindings, and browser demos.
-It started with an idea tested in an earlier Yorkie experiment repository: "a document as one token sequence." It is now a standalone library, separate from Yorkie and the schema-based document editor. The original name `@barocss/doc-sync` remains as the compatibility facade.
+It started with an idea tested in an earlier Yorkie experiment repository: "a document as one token sequence." It is now a standalone library, separate from Yorkie and the schema-based document editor.
 **Read [`HANDOFF.md`](HANDOFF.md) first in a new session.**
 
-**Monorepo structure**: Six npm packages form the public API: `@barocss/doc-sync-core`, four independent editor bindings, and the existing `@barocss/doc-sync` compatibility facade. Core provides the CRDT, sync client, Node transport, server, input session, production editor-host adapter, and draft engine contract. Core has no external runtime dependencies. Each binding requires Core and its own editor peers; Tiptap also requires the ProseMirror binding. All six packages remain `private: true` at `0.0.0`; no registry publication has occurred. Apps and benchmarks are private workspaces. The shared example schema remains in `fixtures/demo-schema.ts`. Native Rust experiments remain separate private Cargo crates. Read [Packages and engines](apps/docs/src/guide/packages.md) for the package graph and local consumer workflow.
+**Monorepo structure**: Five library packages provide the API: the dependency-free `@barocss/doc-sync` engine and client, plus `@barocss/doc-sync-prosemirror`, `@barocss/doc-sync-tiptap`, `@barocss/doc-sync-slate`, and `@barocss/doc-sync-lexical`. Each binding requires the engine and its editor peers; Tiptap also requires the ProseMirror binding. There is no separate `doc-sync-core` package or binding facade. All five remain `private: true` at `0.0.0`; no registry publication has occurred. Apps and benchmarks are private workspaces. Changesets manages independent version plans and changelogs as a development tool. See [Packages and engines](apps/docs/src/guide/packages.md) and [Release preparation](apps/docs/src/guide/releasing.md).
 
-**Documentation**: Read the [public documentation site](https://barocss.github.io/doc-sync/) for schema-driven block operations, ProseMirror, Tiptap, Slate, and Lexical integration examples, collaboration rules, and verification limits. The site is built from `apps/docs` and deployed to GitHub Pages. Each editor has a separate package. The old binding subpaths remain compatibility exports and require the selected binding peer. The complete example schema has its own guide. [Editor design lessons](https://barocss.github.io/doc-sync/guide/editor-lessons.html) compare the bindings and explain the input, selection, history, table and rendering problems we solved.
+**Documentation**: Read the [public documentation site](https://barocss.github.io/doc-sync/) for schema-driven block operations, ProseMirror, Tiptap, Slate, and Lexical integration examples, collaboration rules, and verification limits. The site is built from `apps/docs` and deployed to GitHub Pages. Each editor has a separate package. Import bindings from their independent package names. The complete example schema has its own guide. [Editor design lessons](https://barocss.github.io/doc-sync/guide/editor-lessons.html) compare the bindings and explain the input, selection, history, table and rendering problems we solved.
 
 **AI and headless clients**: The private `apps/mcp` workspace exposes schema, document read, edit, undo, redo, and history discard tools to an MCP host. The stdio bridge and private authenticated HTTP service use `NodeHttpTransport` to connect to a configured document server over HTTP/SSE. The HTTP service binds bearer grants to fixed document/actor slots and supplies configured upstream credentials. It supports one host with private local storage on macOS or Linux; Linux requires `/usr/bin/flock`. OAuth, public TLS deployment, and distributed operation remain separate work. Bounded canonical child reads support revision-bound pagination and reject oversized or ambiguous projections. See the [hosted service guide](apps/docs/src/ai/hosted.md) and [bounded-read contract](apps/docs/src/ai/reading.md). The opt-in [proposal API and CLI](apps/docs/src/ai/proposals.md) stores bounded text previews and supports separate owner inspection, rejection, and exact approval. Application needs an additional disabled-by-default flag and `proposal_accept` authority. Exact request evidence and protected checkpoints support restart reconciliation without resubmitting an accepted change. A late submission race can settle as `not_applied` only after a durable server seal prevents delayed application and exact checkpoint cleanup finishes. Unknown or mismatched proof remains blocked. Conditional edits check the document epoch, server sequence, and schema identity atomically on the server. Compatible additive schema transitions retain the client session's pending changes and history. Start with the separate [AI and bots section](apps/docs/src/ai/index.md) and [document server connection guide](apps/docs/src/ai/server.md). See [MCP tools and recovery](apps/docs/src/guide/ai.md) for unknown outcomes and session limits, and the [schema guide](apps/docs/src/guide/schema.md#changing-a-schema) for transition rules.
 
@@ -14,25 +14,31 @@ Representative [Word, Notion and presentation schemas](https://barocss.github.io
 
 **Tiptap**: The `@barocss/doc-sync-tiptap` package provides `DocSync` and `createTiptapExtensions`. It preserves Tiptap transaction/plugin ownership and uses the shared actor-owned History. Read the [Tiptap guide](apps/docs/src/guide/tiptap.md), then run `node apps/demo/tiptap/start.mjs` for two editors on a shared in-memory hub. Use the generated schema; arbitrary StarterKit schemas are not supported.
 
-**Native Rust SDK**: The private [SDK crate](experiments/rust-sdk/README.md) provides typed native document, operation, History, selection and checkpoint APIs over the experimental Rust core. Run its `two_actors` example for concurrency, retry and undo after restart. It supports six fixed schema presets. Runtime arbitrary schemas, browser/WASM bindings, Node adapters and Rust editor integration remain separate work. Start with the [Cargo path-dependency quickstart](apps/docs/src/guide/rust.md#use-the-native-rust-sdk), then the [selection, checkpoint, retry, acknowledgement and History recipe](apps/docs/src/guide/rust.md#checkpoint-retry-selection-and-history-recipe). The [Rust roadmap](docs/rust-roadmap.md) lists the remaining integration gates.
+**Native Rust SDK**: The private [SDK crate](experiments/rust-sdk/README.md) provides typed native document, operation, History, selection and checkpoint APIs over the experimental Rust core. Run its `two_actors` example for concurrency, retry and undo after restart. It supports six fixed presets and separate experimental runtime APIs for a flat document subset, graphic container/text/atom schemas and custom sparse-sheet fields. Full arbitrary document schemas, live transitions, browser/WASM bindings, Node adapters and Rust editor integration remain separate work. Start with the [Cargo path-dependency quickstart](apps/docs/src/guide/rust.md#use-the-native-rust-sdk), then the [selection, checkpoint, retry, acknowledgement and History recipe](apps/docs/src/guide/rust.md#checkpoint-retry-selection-and-history-recipe). The [Rust roadmap](docs/rust-roadmap.md) lists the remaining integration gates.
 
-**Client API**: Use `new Client({schema})` from `@barocss/doc-sync-core/client` for memory-only editing. Supply `actor` and `transport` at construction for the existing synchronization backend. Pass either mode directly to ProseMirror, Tiptap, Slate or Lexical; each binding creates its host internally. Existing LocalClient, SyncClient and host APIs remain supported. Run `npm run dev:client` for the four-editor demo. Read the [Client guide](apps/docs/src/guide/client.md) for edits, selections, History, recovery boundaries and cleanup. Mode is fixed at construction; Rust/WASM is not selectable. [Before/after measurements](benchmarks/results/unified-client/report.md) retain all timing flags; all 100k Chrome cells meet the guard, while local 10k tails remain under investigation.
+**Document and graphic schemas**: Existing `Schema` objects keep their document behavior. `DocumentSchema` names that contract; `GraphicSchema` adds an explicit graphic domain and stored `container` nodes for empty canvases, frames, and object groups. Containers share the CRDT, edits, movement, History, and recovery engine and do not create placeholder paragraphs. Existing text-editor bindings reject graphic schemas; canvas rendering remains application work. See [Document and graphic schemas](apps/docs/src/guide/graphic-schema.md). Run `npm run dev:graphic` for the private PixiJS editor with two independent HTTP/SSE peers. It provides ID lookup, drag, stored frames/groups, per-actor History and a property inspector. See [the graphic editor guide](apps/docs/src/guide/graphic-editor.md); large-scene latency remains under investigation.
 
-**Local editing**: `@barocss/doc-sync-core/local` provides `LocalClient` and `LocalEditorHost` for in-memory schema editing, selection anchors, undo/redo and composition using the production TypeScript engine. All four client-facing bindings accept it without a transport and create a host per view. Explicit host APIs remain available. `captureState()` and `Client.fromState()` preserve local document IDs, schema identity and undo/redo through caller-managed storage. The opt-in `?persist=1` demo provides explicit Save/Open and saved-copy reload. Automatic background durability and server attachment remain separate work. Read [Save and open locally](apps/docs/src/guide/local-storage.md). See the [local editing guide](apps/docs/src/guide/local-editing.md).
+**Custom schemas**: Define document or graphic node rules once, then supply editor-specific mappings separately. `inspectEditorSchema` and `inspectSpreadsheetSchema` report missing handling before a view is mounted. Experimental `SpreadsheetSchema` and `SparseSheet` are exported from the core package; sheets do not yet use `Client` or `DocHub`. See [Custom schemas and editor mappings](apps/docs/src/schemas/custom.md).
+
+**Client API**: Use `new Client({schema})` from `@barocss/doc-sync/client` for memory-only editing. Supply `actor` and `transport` at construction for the existing synchronization backend. Pass either mode directly to ProseMirror, Tiptap, Slate or Lexical; each binding creates its host internally. Existing LocalClient, SyncClient and host APIs remain supported. Run `npm run dev:client` for the four-editor demo. Read the [Client guide](apps/docs/src/guide/client.md) for edits, selections, History, recovery boundaries and cleanup. Mode is fixed at construction; Rust/WASM is not selectable. [Before/after measurements](benchmarks/results/unified-client/report.md) retain all timing flags; all 100k Chrome cells meet the guard, while local 10k tails remain under investigation.
+
+**Local editing**: `@barocss/doc-sync/local` provides `LocalClient` and `LocalEditorHost` for in-memory schema editing, selection anchors, undo/redo and composition using the production TypeScript engine. All four client-facing bindings accept it without a transport and create a host per view. Explicit host APIs remain available. `captureState()` and `Client.fromState()` preserve local document IDs, schema identity and undo/redo through caller-managed storage. The opt-in `?persist=1` demo provides explicit Save/Open and saved-copy reload. Automatic background durability and server attachment remain separate work. Read [Save and open locally](apps/docs/src/guide/local-storage.md). See the [local editing guide](apps/docs/src/guide/local-editing.md).
 
 Run `npm run dev:local` without a document server. Its independent mode has three separate editors; shared mode connects a custom textarea, ProseMirror, Slate and Lexical to one LocalClient. It serves static browser assets only. Setup and Chrome checks are in [apps/demo/local](apps/demo/local/README.md).
 
-**Engine selection**: `SyncClient` accepts `engineFactory: typescriptClientEngineFactory` from `@barocss/doc-sync-core/engine`. The selected engine owns document and History state and handles editor input, remote operations, sessions, anchors, recovery state, GC and compatible schema changes. TypeScript remains the default. The separate draft `typescriptEngine` factory is not the production client adapter. Rust/WASM selection remains planned; there is no working `engine: 'wasm'` option. See the [client engine recipe](apps/docs/src/guide/sync.md) and [runtime capability comparison](apps/docs/src/guide/packages.md#engine-selection-is-a-separate-milestone). The [storage-only WASM examples](apps/docs/src/guide/rust.md#use-the-storage-only-wasm-adapter) operate on UTF-16 buffers; they do not synchronize documents or replace an editor engine.
+**Engine selection**: `SyncClient` accepts `engineFactory: typescriptClientEngineFactory` from `@barocss/doc-sync/engine`. The selected engine owns document and History state and handles editor input, remote operations, sessions, anchors, recovery state, GC and compatible schema changes. TypeScript remains the default. The separate draft `typescriptEngine` factory is not the production client adapter. Rust/WASM selection remains planned; there is no working `engine: 'wasm'` option. See the [client engine recipe](apps/docs/src/guide/sync.md) and [runtime capability comparison](apps/docs/src/guide/packages.md#engine-selection-is-a-separate-milestone). The [storage-only WASM examples](apps/docs/src/guide/rust.md#use-the-storage-only-wasm-adapter) operate on UTF-16 buffers; they do not synchronize documents or replace an editor engine.
+
+**Participant profiles**: Keep `actor` as the unique CRDT replica ID. Supply `profile: {name, color, avatar, userId, kind, metadata}` for optional display information. Names can repeat; concurrently active actor IDs cannot. Profiles are copied and frozen, and synchronized presence can use their defaults. Profiles do not grant permissions and are not part of document checkpoints. See [participant profiles](apps/docs/src/guide/presence.md#participant-profiles).
 
 **Remote user display**: The demo and ProseMirror show user-colored selection ranges and named carets. They support forward, backward, and multi-paragraph selections, position tracking after edits, and overlapping participants. Demo ranges stay within one CRDT sequence (slot). See [`HANDOFF.md` §5.5](HANDOFF.md#55-remote-user-selection-ranges-2026-10-22) for the rules and browser results.
 
 **Input preservation in the comparison demo**: [`apps/demo/compat`](apps/demo/compat/README.md) connects Slate, Lexical, and ProseMirror. It uses token-based selection restoration and an IME composition draft. Chrome CDP checks covered input and carets during remote edits. The default `/pm` IME implementation and OS Korean keyboard validation are separate scopes.
 
 ```ts
-import {Doc, commands} from "@barocss/doc-sync-core";     // Core: no dependencies
-import {SyncClient, HttpTransport} from "@barocss/doc-sync-core/sync";
-import {NodeHttpTransport} from "@barocss/doc-sync-core/node";
-import {DocHub} from "@barocss/doc-sync-core/server";
+import {Doc, commands} from "@barocss/doc-sync";     // Core: no dependencies
+import {SyncClient, HttpTransport} from "@barocss/doc-sync/sync";
+import {NodeHttpTransport} from "@barocss/doc-sync/node";
+import {DocHub} from "@barocss/doc-sync/server";
 import {PmBinding, buildPmSchema} from "@barocss/doc-sync-prosemirror";
 ```
 
@@ -41,7 +47,7 @@ The CRDT does not know block types. **Inject the schema from outside**, with a t
 
 ```bash
 npm ci                       # Install workspace and development dependencies
-npm run build                # Build six packages in dependency order
+npm run build                # Build five packages in dependency order
 npm run check:packages       # Pack and test isolated local consumers
 npm run dev                  # http://localhost:5410  (Node 22.18+, apps/demo/server.ts)
 npm run start --workspace @doc-sync/mcp  # MCP server over standard input/output
@@ -312,9 +318,8 @@ All 300 traces with 2 participants and 200 traces with 3 participants reached th
 Root commands delegate to workspaces. `npm run typecheck` checks the library, tests, demo, benchmarks, and shared schema. `npm test` runs the library and demo HTTP integration tests.
 
 ```text
-packages/doc-sync-core/  CRDT, sync, server, input session, and engine contract
+packages/doc-sync/  CRDT, clients, sync, server, editor host, and engine contract
 packages/doc-sync-{prosemirror,tiptap,slate,lexical}/  Independent bindings
-packages/doc-sync/  Compatibility facade and integration tests
 apps/demo/          Demo server, UI, and HTTP integration tests
 benchmarks/         Comparison engines, traces, measurements, and results/
 fixtures/           Shared demo and test schema
@@ -328,19 +333,19 @@ Use `DATA_DIR=/absolute/path PORT=5411 npm run dev` for a separate log folder an
 
 | File | Purpose |
 |---|---|
-| `packages/doc-sync-core/src/crdt/ticket.ts` | IDs and Lamport clock |
-| `packages/doc-sync-core/src/crdt/schema.ts` | Schema types (shapes, children, attributes) and schema validation |
-| `packages/doc-sync-core/src/index.ts` | Core entry: `Doc`, `commands`, `History`, schema and model types; `sync/index.ts`, `server/index.ts`, `editor/index.ts`, and `engine/index.ts` are also entry points; editor bindings are separate packages |
-| `packages/doc-sync-core/src/crdt/doc.ts` | Doc: sequences and slots, schema validation and operation application, model calculation (blocks, tables, spans), compaction, and `edit()` |
-| `packages/doc-sync-core/src/crdt/model.ts` | Pure model functions: normalization, edit application, and model comparison |
-| `packages/doc-sync-core/src/crdt/edit.ts` | Edit-to-wire compilation; path ↔ position ↔ token key |
-| `packages/doc-sync-core/src/crdt/commands.ts` | Editor commands → edit operations |
-| `packages/doc-sync-core/src/crdt/history.ts` | Participant-specific undo/redo: input grouping, carets, conditional attribute restoration, and pins |
+| `packages/doc-sync/src/crdt/ticket.ts` | IDs and Lamport clock |
+| `packages/doc-sync/src/crdt/schema.ts` | Schema types (shapes, children, attributes) and schema validation |
+| `packages/doc-sync/src/index.ts` | Core entry: `Doc`, `commands`, `History`, schema and model types; `sync/index.ts`, `server/index.ts`, `editor/index.ts`, and `engine/index.ts` are also entry points; editor bindings are separate packages |
+| `packages/doc-sync/src/crdt/doc.ts` | Doc: sequences and slots, schema validation and operation application, model calculation (blocks, tables, spans), compaction, and `edit()` |
+| `packages/doc-sync/src/crdt/model.ts` | Pure model functions: normalization, edit application, and model comparison |
+| `packages/doc-sync/src/crdt/edit.ts` | Edit-to-wire compilation; path ↔ position ↔ token key |
+| `packages/doc-sync/src/crdt/commands.ts` | Editor commands → edit operations |
+| `packages/doc-sync/src/crdt/history.ts` | Participant-specific undo/redo: input grouping, carets, conditional attribute restoration, and pins |
 | `fixtures/demo-schema.ts` | Demo editor schema; block types are defined only here; tests also use it |
-| `packages/doc-sync-core/src/sync/protocol.ts` | Change, Envelope (change or GC), Ack, events, and Transport |
-| `packages/doc-sync-core/src/sync/client.ts` | SyncClient: document, undo, connection, offline queue; acks and pins use the Change queue |
-| `packages/doc-sync-core/src/sync/http-transport.ts` | Browser transport (SSE + fetch) |
-| `packages/doc-sync-core/src/server/hub.ts` | DocHub: ordering, atomic application, broadcast, participant acks and pins, watermark and GC; transport-independent |
+| `packages/doc-sync/src/sync/protocol.ts` | Change, Envelope (change or GC), Ack, events, and Transport |
+| `packages/doc-sync/src/sync/client.ts` | SyncClient: document, undo, connection, offline queue; acks and pins use the Change queue |
+| `packages/doc-sync/src/sync/http-transport.ts` | Browser transport (SSE + fetch) |
+| `packages/doc-sync/src/server/hub.ts` | DocHub: ordering, atomic application, broadcast, participant acks and pins, watermark and GC; transport-independent |
 | `apps/demo/server.ts` | Demo server: Node http, JSONL persistence, `.ts` served to browsers after type stripping |
 | `apps/demo/ui/*` | Demo: small schema-aware editor (Korean IME, tables, images, lists), per-sequence token inspector, scenarios, automatic input, and multi-window tests (`multi.html`) |
 | `docs/edit-api.md` | Editing API: six model operations (insert, delete, update, split, merge, move), through schema-based editor integration |

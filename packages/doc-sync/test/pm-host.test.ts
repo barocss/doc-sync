@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import {test} from "node:test";
 import {TextSelection} from "prosemirror-state";
 import {PmHostBinding, PmBinding, buildPmSchema} from "../../doc-sync-prosemirror/dist/index.js";
-import {createSyncClientEditorHost} from "../../doc-sync-core/dist/editor/index.js";
-import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {EditorHost} from "../../doc-sync-core/dist/editor/index.js";
+import {createSyncClientEditorHost} from "../../doc-sync/dist/editor/index.js";
+import {Doc} from "../../doc-sync/dist/crdt/doc.js";
+import type {EditorHost} from "../../doc-sync/dist/editor/index.js";
 import {MemoryNet} from "./harness.ts";
 
 // A consumer sees only the public contract. Concrete backend fields are inaccessible.

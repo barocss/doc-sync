@@ -1,11 +1,52 @@
 # Rust engine
 
+The private native SDK has separate APIs for Document, Graphic and Spreadsheet.
+These are native Cargo APIs. They are not browser engines or public `Client`
+implementations. The WASM adapter still provides UTF-16 storage only.
+
+## Choose an engine for a graphic editor
+
+| Path | Available now | Integration limit |
+| --- | --- | --- |
+| TypeScript Client | Document and graphic schemas, built-in graphic nodes, local/synchronized History | The private PixiJS demo renders the earlier basic canvas profile. |
+| Native Rust `Document` | Six fixed document presets, peer operations, History, selection and checkpoints | Preset API; custom flat documents use `RuntimeDocument`. No editor binding. |
+| Native Rust `GraphicDocument` | Fixed `Canvas` and 17-node `Builtins` profiles, attributes, moves, History and checkpoints | Custom container/text/atom schemas use `RuntimeDocument`. No graphic selection, renderer, exact wire/exchange qualification or Client factory. |
+| Native Rust `SparseSheet` | Fixed numeric axes, sparse field registers, local undo/redo, pending operations and checkpoint restore | Private S1 experiment; no stable structural axes, formula engine or public Client integration. |
+| Native Rust `RuntimeDocument` / `RuntimeSheet` | Supported user-defined descriptors, owned schema identity, History and checkpoint replay | Limited runtime subset; no live transition, renderer, Client or WASM adapter. |
+| Storage-only WASM | UTF-16 storage initialization, splice, read and clear | No document/graphic/sheet CRDT, History or editor binding contract. |
+
+`SchemaPreset::Shapes` is the pinned **document** group/inline/span fixture.
+Graphic objects use `GraphicDocument`, not that preset. `GraphicPreset::Canvas`
+uses the earlier `fixtures/graphic-canvas-schema.ts` profile.
+`GraphicPreset::Builtins` uses a pinned manifest equal to the frozen TypeScript
+`createGraphicSchema()` contract. These are compiled profiles. The native SDK
+preset APIs do not accept runtime descriptors. Use the separate
+[runtime custom schema APIs](#runtime-custom-schemas) for the supported subset.
+
+The native Canvas comparison qualifies normalized models and History across
+20 actions and 40 states. The native Builtins comparison covers 35 independently
+authored actions and 70 actor states, with normalized model/History equality
+and exact manifest equality. The earlier domain checkpoint had 42 SDK tests and 75 shadow-core tests.
+The custom-schema checkpoint passes 48 SDK tests and 78 shadow-core tests.
+The sparse-sheet comparison qualifies exact operations,
+models, full History, pending queues and checkpoints across 31 actions and 62
+states. These bounded checks do not establish graphic exact wire compatibility,
+mixed-runtime network delivery, browser support or performance.
+
+A Rust browser backend still needs the remaining schema/compiler support, the full
+WASM document API, a production client factory and an engine-independent scene
+adapter. It then needs mixed-runtime peer, browser and performance checks. See
+[the delivery queue](#ordered-delivery-work). Current
+[graphic performance](../performance#graphic-canvas-demo) is a TypeScript baseline.
+No matched Rust/WASM canvas measurement is available.
+
+
 Rust now has an experimental **native SDK** that Rust applications can call
 directly. It is a private Cargo crate in this checkout, not a crates.io release.
 The production server, browser clients, MCP path, and editor bindings still use
 TypeScript. The native SDK does not yet replace those integrations.
 
-The six-package npm split and the production client/engine selection seam are
+The five-package npm layout and the production client/engine selection seam are
 implemented. `SyncClient` accepts `ClientEngineFactory` and uses
 `typescriptClientEngineFactory` by default. The selected engine drives the common
 editor host and input sessions. The older immutable `typescriptEngine` API is a
@@ -25,6 +66,117 @@ TypeScript engine. `syncOptions.engineFactory` applies only to the sync backend;
 no Rust/WASM factory ships. TypeScript local capture/open uses its own
 [versioned local state](./local-storage); it cannot restore native Rust checkpoints. The native SDK and storage-only WASM API below do
 not implement the Client or editor binding contracts.
+
+## Runtime custom schemas
+
+The private native SDK has separate runtime APIs. `RuntimeSchema::compile`
+loads a supported tree descriptor into immutable per-document tables.
+`RuntimeDocument` uses those tables for validation, projection, History and
+checkpoint restore. `SpreadsheetSchema::compile` and `RuntimeSheet` provide
+a separate sparse field registry. They do not use a fixed enum of cell fields.
+
+Add `serde_json = "1"` beside the Cargo path dependency above to run this
+complete program. It creates a custom graphic card, synchronizes two native
+actors, restores pending work, and edits a custom sheet field:
+
+<!-- runtime-custom-rust-example -->
+```rust
+use doc_sync_native_sdk::*;
+use serde_json::json;
+
+fn main() -> Result<()> {
+    let schema = RuntimeSchema::compile(json!({
+        "domain": "graphic", "root": "board", "marks": [],
+        "nodes": {
+            "board": {"shape": "container", "children": ["card"]},
+            "card": {"shape": "atom", "attrs": {
+                "title": {"default": "Untitled"},
+                "priority": {"default": 0, "min": 0, "max": 5}
+            }}
+        }
+    }))?;
+    let mut a = RuntimeDocument::new("A", schema.clone())?;
+    let mut b = RuntimeDocument::new("B", schema)?;
+    let (card, birth) = a.insert(
+        "card",
+        None,
+        None,
+        Attributes::new(),
+        EditOptions::default(),
+        1.0,
+    )?;
+    b.apply_remote(&birth.ops)?;
+    let change = a.set_attribute(&card, "priority", json!(3), EditOptions::default(), 2.0)?;
+    b.apply_remote(&change.ops)?;
+    let saved = a.checkpoint()?.to_json()?;
+    let mut restored = RuntimeDocument::restore(&RuntimeCheckpoint::from_json(&saved)?)?;
+    assert_eq!(restored.model()?, b.model()?);
+    assert_eq!(restored.pending_changes(), a.pending_changes());
+
+    let schema = SpreadsheetSchema::compile(json!({
+        "domain": "spreadsheet", "version": 1,
+        "fields": {"score": {"type": "number", "default": 0, "min": 0, "max": 100}}
+    }))?;
+    let mut sheet = RuntimeSheet::new(RuntimeSheetOptions {
+        actor: "A".into(),
+        sheet_id: "scores".into(),
+        rows: 100,
+        columns: 20,
+        schema,
+    })?;
+    assert_eq!(
+        sheet.get_cell_value(2, 3, "score")?,
+        RuntimeValue::Number(0.0)
+    );
+    sheet.set_cell(
+        2,
+        3,
+        RuntimeCellPatch::from([("score".into(), RuntimeValue::Number(42.0))]),
+    )?;
+    let restored = RuntimeSheet::from_state(sheet.checkpoint().to_value())?;
+    assert_eq!(
+        restored.get_cell_value(2, 3, "score")?,
+        RuntimeValue::Number(42.0)
+    );
+    assert_eq!(restored.pending_changes(), sheet.pending_changes());
+    println!("PASS: custom graphic peer/checkpoint; custom sheet defaults/checkpoint");
+    Ok(())
+}
+```
+
+From this repository, run the checked example with:
+
+```sh
+cargo run --offline --locked --manifest-path experiments/rust-sdk/Cargo.toml --example runtime_quickstart
+node experiments/runtime-schema-native/compare.mjs
+```
+
+The comparison harness independently authors TypeScript and Rust actions from
+six runtime descriptors in one native build/process. Tree comparison normalizes
+models and compares History availability; it does not prove exact tree wire
+exchange. Sheet comparison includes exact operations, pending, journal, History
+and checkpoints. Invalid Document operation tests call the TypeScript
+`Doc.check` preflight; raw low-level `Doc.edit` does not perform that same check.
+
+| Domain | Runtime support | Rejected or missing |
+| --- | --- | --- |
+| Document | Flat root flow, renamed text/atom types, scalar attributes, boolean marks | Nested flow/grid/group/inline/span, value marks, structured document attributes and advanced rules |
+| Graphic | Container/text/atom, names, supported attributes/field registers, boolean marks | Flow/grid children, value marks, renderers and graphic selection |
+| Spreadsheet | Arbitrary scalar fields, constraints, defaults, schema identity, History and checkpoint replay | Structural axes, formula calculation, GC and Client integration |
+
+Unsupported descriptors fail with a schema path before replica creation.
+Native tree descriptors also reject integer JSON tokens that JavaScript Number
+cannot represent exactly. This prevents different retained defaults from sharing
+a schema identity after numeric rounding.
+Schema descriptors and identities are retained in checkpoints; a foreign schema
+cannot be restored into an existing runtime document. JSON replay validation
+checks consistency, not storage authenticity. Protect stored checkpoints in
+your application. Restoring an actor must replace its old process; do not keep
+two active replicas with the same actor identity.
+
+These APIs do not change the production TypeScript client path, install browser
+bindings or provide a WASM engine. Live runtime schema transition remains open.
+See [custom data and editor mappings](../schemas/custom).
 
 ## Use the native Rust SDK
 
@@ -87,6 +239,108 @@ RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolc
 It prints `converged: BA`, `after alice undo and restart: B`, and
 `after alice redo: BA`. Offline commands require the locked dependencies in
 the local Cargo cache.
+
+### Native graphic example
+
+This separate program uses the fixed native canvas profile. Deliver each returned
+change through the host transport. The SDK does not provide a network server.
+
+<!-- native-graphic-example -->
+```rust
+use doc_sync_native_sdk::{Attributes, EditOptions, GraphicDocument, GraphicKind, Result};
+
+fn main() -> Result<()> {
+    let mut alice = GraphicDocument::new("alice")?;
+    let mut bob = GraphicDocument::new("bob")?;
+    let (_, change) = alice.insert(
+        GraphicKind::Rectangle, None, None, Attributes::new(),
+        EditOptions::default(), 0.0,
+    )?;
+    bob.apply_remote(&change.ops)?;
+    assert_eq!(alice.model()?, bob.model()?);
+    let checkpoint = alice.checkpoint()?;
+    let mut reopened = GraphicDocument::restore(&checkpoint)?;
+    assert_eq!(reopened.model()?, alice.model()?);
+    Ok(())
+}
+```
+
+### Native built-in graphic example
+
+Select the built-in profile explicitly. This example stores a path and a vertex,
+then edits one handle field. It does not render or evaluate that path.
+
+<!-- native-builtin-example -->
+```rust
+use doc_sync_native_sdk::{
+    Attributes, EditOptions, GraphicDocument, GraphicKind, GraphicPreset, Result,
+};
+
+fn main() -> Result<()> {
+    let mut doc = GraphicDocument::with_preset("alice", GraphicPreset::Builtins)?;
+    assert_eq!(doc.preset(), GraphicPreset::Builtins);
+    assert_eq!(doc.active_schema_identity(), GraphicPreset::Builtins.identity());
+    let (path, _) = doc.insert(
+        GraphicKind::Path, None, None, Attributes::new(),
+        EditOptions::default(), 0.0,
+    )?;
+    let (vertex, _) = doc.insert(
+        GraphicKind::Vertex, Some(&path), None, Attributes::new(),
+        EditOptions::default(), 1.0,
+    )?;
+    doc.set_field(&vertex, "handleOut", "x", 20.into(), EditOptions::default(), 2.0)?;
+    let model = doc.model()?;
+    assert_eq!(model.children[0].children[0].attrs["handleOut"]["x"], 20);
+    Ok(())
+}
+```
+
+`GraphicPreset::manifest()` returns that preset's compiled schema data.
+`GraphicDocument::new()` remains the basic Canvas constructor. Builtins also
+stores paints, strokes, components, instances, references, atomic override
+assignments and bold/italic label marks. References can remain dangling.
+
+For overrides, `assignment` is one atomic `{property, value}` attribute;
+`targetId` is independent. The TypeScript graphic helpers validate the complete
+payload and its typed value bounds. The generic raw TypeScript attribute rule
+checks only the outer object type. Use the graphic helpers for that opaque
+payload. The native pinned checker enforces the stricter helper contract. This
+does not introduce a generic nested wire validator or establish universal
+invalid-input acceptance parity.
+
+### Native sparse-sheet example
+
+This is the private fixed-axis S1 primitive. Formula source is stored text.
+It does not evaluate formulas or support row/column insertion.
+
+<!-- native-sheet-example -->
+```rust
+use doc_sync_native_sdk::{
+    Result, SparseField, SparseSheet, SparseSheetOptions, SparseValue,
+};
+
+fn main() -> Result<()> {
+    let options = |actor: &str| SparseSheetOptions {
+        actor: actor.into(), sheet_id: "example-sheet".into(),
+        rows: 1_000_000, columns: 16_384,
+    };
+    let mut alice = SparseSheet::new(options("alice"))?;
+    let mut bob = SparseSheet::new(options("bob"))?;
+    let ops = alice.set_cell(999_999, 16_383,
+        [(SparseField::Value, SparseValue::Number(42.0))].into_iter().collect())?;
+    bob.receive(&ops)?;
+    assert_eq!(alice.get_cell(999_999, 16_383)?, bob.get_cell(999_999, 16_383)?);
+    let checkpoint = alice.checkpoint();
+    let reopened = SparseSheet::from_state(checkpoint.to_value())?;
+    assert_eq!(reopened.pending_changes(), alice.pending_changes());
+    Ok(())
+}
+```
+
+Use the same Cargo path dependency as the Document example. Native checkpoints
+are not public TypeScript Client checkpoints. The sparse-sheet parity fixture
+checks its own private cross-language checkpoint format. It does not provide a
+production engine switch or recovery protocol.
 
 ### Checkpoint, retry, selection, and History recipe
 
@@ -180,7 +434,9 @@ decoded result and pending queue. Invalid input or checkpoint replacement
 preserves live state. Current staging restores a full native checkpoint for
 each History command, so this API has no performance acceptance result.
 
-The SDK passed 14 tests, formatting, Clippy, and the actual two-author example.
+The initial Document SDK checkpoint passed 14 tests, formatting, Clippy, and
+the actual two-author example. The later domain additions have separate
+graphic and sparse-sheet evidence described above.
 Eight independent review cases also checked preset/UTF-16 restore, deletion,
 clock exhaustion, and forged pending rejection. These are native SDK checks,
 separate from the engine's 75 tests and TypeScript differential evidence.
@@ -303,7 +559,7 @@ They are test examples, not instructions for connecting a browser to Rust.
 | --- | --- | --- |
 | Production synchronization server | TypeScript on Node.js | A native shadow adapter is planned after semantic qualification. |
 | Browser document engine | TypeScript | Isolated WASM storage and boundary experiments exist; a full engine adapter is planned. |
-| Native Rust application | Experimental `Document` SDK | Direct typed API over the same semantic core; the host supplies networking and storage. |
+| Native Rust application | Experimental `Document`, `GraphicDocument` and `SparseSheet` APIs | Fixed document, Canvas/Builtins profiles and private sparse cells; the host supplies networking and storage. |
 | CRDT semantic comparison | TypeScript is the reference | A separate native process applies the same operations and computes its own state, History, and selection results. |
 | ProseMirror, Slate, Lexical, and MCP | Existing TypeScript integrations | Rust integration has not been qualified. |
 
@@ -521,14 +777,14 @@ TypeScript binding examples earlier on those pages.
 The production TypeScript engine accepts schema data and supports a compatible
 open-editor transition. See [change an open editor's schema](./schema-transition).
 
-Rust can use the same design, but the current native engine and SDK have
-compiled-in manifests and fixed type rules. `SchemaPreset` chooses one of those
-manifests. It cannot accept an arbitrary schema at runtime or replace the schema
-of an open document.
+`SchemaPreset` still chooses a compiled fixture. The separate `RuntimeSchema`
+API compiles supported descriptors per document without rebuilding Rust.
+Custom sparse fields use `SpreadsheetSchema` and `RuntimeSheet`. These APIs do
+not replace the schema of an open document. See [runtime custom schemas](#runtime-custom-schemas).
 
 The work has two separate steps:
 
-1. Compile a supplied schema into immutable per-document tables. Validation,
+1. Complete the supplied-schema tables beyond the implemented runtime subset. Validation,
    projection, selection, History, and checkpoint checks must use those tables
    instead of fixed node names. Schema fingerprints must match TypeScript.
 2. Add compatible live transitions. Check the document revision and schema

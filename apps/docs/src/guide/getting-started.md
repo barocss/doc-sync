@@ -1,6 +1,6 @@
 # Getting started
 
-Use Node.js 22.18 or later. The repository has six library packages, demo apps, a documentation app, and private benchmarks. Public package exports use compiled JavaScript and type declarations.
+Use Node.js 22.18 or later. The repository has five library packages, demo apps, a documentation app, and private benchmarks. Public package exports use compiled JavaScript and type declarations.
 
 ## Run the repository
 
@@ -15,7 +15,7 @@ npm run dev
 
 The demo runs at `http://localhost:5410`. Open `/pm?doc=example` to connect the demo editor and ProseMirror to the same document. Use `?doc=` to isolate test documents. The demo saves its log in the local `data/` directory.
 
-The six packages are not published on npm yet. They remain `private: true` at version `0.0.0`. The imports in these guides resolve through the installed and built repository workspaces. See [Packages and engines](./packages) for local tarballs, editor peers, and independent binding release preparation.
+The five packages are not published on npm yet. They remain `private: true` at version `0.0.0`. The imports in these guides resolve through the installed and built repository workspaces. See [Packages and engines](./packages) for local tarballs, editor peers, and independent binding release preparation.
 
 ## Start an editor
 
@@ -40,7 +40,7 @@ before choosing a runtime. The current `SyncClient` has no Rust/WASM engine sele
 <!-- executable-example -->
 ```ts
 import assert from "node:assert/strict";
-import {Doc, type Schema} from "@barocss/doc-sync-core";
+import {Doc, type Schema} from "@barocss/doc-sync";
 
 const schema: Schema = {
     root: "content",

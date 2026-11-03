@@ -1,17 +1,17 @@
 import {COMMAND_PRIORITY_HIGH, INSERT_PARAGRAPH_COMMAND, REDO_COMMAND, SKIP_DOM_SELECTION_TAG, UNDO_COMMAND, $addUpdateTag, $getRoot} from "lexical";
-import {modelEdits, sameModel} from "@barocss/doc-sync-core/editor";
+import {modelEdits, sameModel} from "@barocss/doc-sync/editor";
 import {$fromLexical, $projectLexical, $syncLexicalCells, $toLexical, readLexicalModel} from "./convert.ts";
 import {buildLexicalSchema} from "./schema.ts";
 import {$lexicalSelection, $setLexicalSelection} from "./selection.ts";
 import {$nativePlacements, nativeReparent} from "./movement.ts";
-import {applyEdits} from "@barocss/doc-sync-core";
-import {keyOf} from "@barocss/doc-sync-core";
-import {runsToUnits, unitsToRuns} from "@barocss/doc-sync-core";
+import {applyEdits} from "@barocss/doc-sync";
+import {keyOf} from "@barocss/doc-sync";
+import {runsToUnits, unitsToRuns} from "@barocss/doc-sync";
 import type {EditorState, LexicalEditor} from "lexical";
-import type {EditorHost, EditorSession, AnchoredRange, ModelRange} from "@barocss/doc-sync-core/editor";
+import type {EditorHost, EditorSession, AnchoredRange, ModelRange} from "@barocss/doc-sync/editor";
 import type {LexicalSchemaInfo} from "./schema.ts";
-import type {Op} from "@barocss/doc-sync-core";
-import type {NodeJSON, EditOp, Unit, Schema} from "@barocss/doc-sync-core";
+import type {Op} from "@barocss/doc-sync";
+import type {NodeJSON, EditOp, Unit, Schema} from "@barocss/doc-sync";
 
 export const LEXICAL_REMOTE_TAG = "doc-sync-remote";
 export type LexicalBindingOptions = {info?: LexicalSchemaInfo; onError?: (error: Error) => void; groupTyping?: boolean};
@@ -78,6 +78,7 @@ export class LexicalHostBinding {
     private report: (error: Error) => void;
 
     constructor(host: EditorHost, editor: LexicalEditor, infoOrOptions: LexicalSchemaInfo | LexicalBindingOptions = {}) {
+        if (host.schema.domain === "graphic") throw new Error("Graphic schemas require a canvas binding");
         if (owners.has(editor)) throw new Error("A LexicalBinding already owns this editor");
         this.host = host; this.editor = editor;
         const options = "schema" in infoOrOptions ? {info: infoOrOptions} : infoOrOptions;

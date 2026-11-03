@@ -1,7 +1,7 @@
 import {pathAt} from '@barocss/doc-sync';
 import {botFace} from '@barocss/doc-sync/sync';
-import {modelPointToSlate} from '@barocss/doc-sync/slate';
-import {$lexicalPoint} from '@barocss/doc-sync/lexical';
+import {modelPointToSlate} from '@barocss/doc-sync-slate';
+import {$lexicalPoint} from '@barocss/doc-sync-lexical';
 import {ReactEditor} from 'slate-react';
 import {createBotAvatar} from './bot-avatar.js';
 

@@ -146,6 +146,8 @@ impl Replica {
             .born
             .as_str();
         let good = match name {
+            "children" if self.graphic => self.manifest()["nodes"][born]["shape"] == "container",
+            "text" if self.graphic => self.manifest()["nodes"][born]["shape"] == "text",
             "body" => born == "callout",
             "rows" | "cols" => born == "table",
             _ => {
@@ -1659,3 +1661,5 @@ impl Replica {
 }
 
 include!("movement.rs");
+
+include!("graphic.rs");

@@ -671,7 +671,7 @@ const serveStatic = (res: ServerResponse, urlPath: string) => {
     const file = normalize(join(ROOT, relative));
     // 라이브러리·데모 UI·공유 스키마, 그리고 node_modules 의 js·css 만 (ProseMirror 를 import map 으로 바로 읽는다 — 번들러 없음)
     const within = (directory: string) => file.startsWith(join(ROOT, directory) + sep);
-    const allowed = ["doc-sync", "doc-sync-core", "doc-sync-prosemirror", "doc-sync-tiptap", "doc-sync-slate", "doc-sync-lexical"].some(name => within(`packages/${name}/src`)) || within("apps/demo/ui") || file === join(ROOT, "fixtures/demo-schema.ts") || (within("node_modules") && /\.(m?js|css)$/.test(file));
+    const allowed = ["doc-sync", "doc-sync-prosemirror", "doc-sync-tiptap", "doc-sync-slate", "doc-sync-lexical"].some(name => within(`packages/${name}/src`)) || within("apps/demo/ui") || file === join(ROOT, "fixtures/demo-schema.ts") || (within("node_modules") && /\.(m?js|css)$/.test(file));
 
     if (!allowed || !existsSync(file)) {
         return send(res, 404, "없음", "text/plain; charset=utf-8");

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, ROOT, applyEdits, canonical, checkSchema, keyOf, type NodeJSON, type Op, type Schema} from "../../doc-sync-core/dist/index.js";
-import {requiredTicket} from "../../doc-sync-core/dist/crdt/cardinality.js";
+import {Doc, ROOT, applyEdits, canonical, checkSchema, keyOf, type NodeJSON, type Op, type Schema} from "../../doc-sync/dist/index.js";
+import {requiredTicket} from "../../doc-sync/dist/crdt/cardinality.js";
 import {MemoryNet} from "./harness.ts";
 
 const text = (type: string, value = ""): NodeJSON => ({type, runs: value ? [{text: value, marks: {}}] : []});

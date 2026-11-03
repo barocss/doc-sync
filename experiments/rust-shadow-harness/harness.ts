@@ -5,12 +5,12 @@ import {createInterface} from 'node:readline';
 import {createHash} from 'node:crypto';
 import {readFileSync, writeFileSync, readdirSync} from 'node:fs';
 import {resolve} from 'node:path';
-import {Doc, isAlive} from '../../packages/doc-sync-core/dist/crdt/doc.js';
-import {History} from '../../packages/doc-sync-core/dist/crdt/history.js';
-import * as cmd from '../../packages/doc-sync-core/dist/crdt/commands.js';
+import {Doc, isAlive} from '../../packages/doc-sync/dist/crdt/doc.js';
+import {History} from '../../packages/doc-sync/dist/crdt/history.js';
+import * as cmd from '../../packages/doc-sync/dist/crdt/commands.js';
 import {MemoryNet} from '../../packages/doc-sync/test/harness.ts';
-import type {Op} from '../../packages/doc-sync-core/dist/crdt/doc.js';
-import type {Schema} from '../../packages/doc-sync-core/dist/crdt/schema.js';
+import type {Op} from '../../packages/doc-sync/dist/crdt/doc.js';
+import type {Schema} from '../../packages/doc-sync/dist/crdt/schema.js';
 
 export const SCHEMA = 'flow-root-paragraph:boolean-marks:bold,italic:v1';
 export const schema: Schema = {root:'content',marks:['bold','italic'],nodes:{content:{shape:'flow',children:['paragraph'],default:'paragraph'},paragraph:{shape:'text'}}};

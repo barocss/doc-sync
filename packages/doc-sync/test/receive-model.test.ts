@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, MAIN} from "../../doc-sync-core/dist/crdt/doc.js";
-import {canonical, runsToUnits, unitsToRuns} from "../../doc-sync-core/dist/crdt/model.js";
-import type {NodeJSON, Run} from "../../doc-sync-core/dist/crdt/model.js";
+import {Doc, MAIN} from "../../doc-sync/dist/crdt/doc.js";
+import {canonical, runsToUnits, unitsToRuns} from "../../doc-sync/dist/crdt/model.js";
+import type {NodeJSON, Run} from "../../doc-sync/dist/crdt/model.js";
 import {DEMO_SCHEMA as schema} from "../../../fixtures/demo-schema.ts";
 import "./harness.ts";
 

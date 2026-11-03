@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, History, applyEdits, schemaVersion} from "../../doc-sync-core/dist/index.js";
-import {modelEventWindow} from "../../doc-sync-core/dist/sync/model-events.js";
-import {SyncClient, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../../doc-sync-core/dist/sync/index.js";
+import {Doc, History, applyEdits, schemaVersion} from "../../doc-sync/dist/index.js";
+import {modelEventWindow} from "../../doc-sync/dist/sync/model-events.js";
+import {SyncClient, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../../doc-sync/dist/sync/index.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {EditOp, NodeJSON, Op} from "../../doc-sync-core/dist/index.js";
-import type {ServerEvent} from "../../doc-sync-core/dist/sync/index.js";
+import type {EditOp, NodeJSON, Op} from "../../doc-sync/dist/index.js";
+import type {ServerEvent} from "../../doc-sync/dist/sync/index.js";
 
 const p = (text: string, type = "paragraph"): NodeJSON => ({type, runs: text ? [{text, marks: {}}] : []});
 const box = (...children: NodeJSON[]): NodeJSON => ({type: "callout", children});

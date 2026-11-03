@@ -25,45 +25,80 @@ function category(route) {
     return getSidebar(sidebar, route)[0]?.text;
 }
 
-test('four primary destinations lead to separate reader categories', () => {
-    assert.deepEqual(nav.map(item => item.text), ['Guide', 'Editor integrations', 'AI & bots', 'Reference']);
+test('five primary destinations lead to separate reader categories', () => {
+    assert.deepEqual(nav.map(item => item.text), ['Guide', 'Schemas', 'Editor integrations', 'AI & bots', 'Reference']);
     for (const item of nav) assert.equal(category(item.link), item.text);
 });
 
 test('VitePress marks exactly one primary category active for current pages', () => {
     const fixtures = {
-        'Guide': ['index.md', 'guide/getting-started.md', 'guide/client.md', 'guide/local-editing.md', 'guide/schema-transition.md'],
-        'Editor integrations': ['guide/editors.md', 'guide/slate.md', 'guide/lexical.md', 'guide/custom-editor.md', 'guide/runnable-examples.md'],
+        'Guide': ['index.md', 'guide/getting-started.md', 'guide/client.md', 'guide/local-editing.md'],
+        'Schemas': ['schemas/custom.md', 'schemas/index.md', 'schemas/document.md', 'schemas/spreadsheets.md', 'guide/schema.md', 'guide/graphic-schema.md', 'guide/schema-transition.md', 'guide/full-schema.md', 'guide/product-schemas.md'],
+        'Editor integrations': ['guide/editors.md', 'guide/slate.md', 'guide/lexical.md', 'guide/custom-editor.md', 'guide/runnable-examples.md', 'guide/graphic-editor.md'],
         'AI & bots': ['ai/index.md', 'ai/server.md', 'guide/ai.md', 'guide/ai-walkthrough.md', 'guide/bots.md'],
         'Reference': ['reference/api.md', 'reference/recovery-plan.md', 'status.md', 'guide/rust.md', 'roadmap.md'],
     };
     for (const [expected, pages] of Object.entries(fixtures)) {
         for (const page of pages) {
-            const active = nav.filter(item => isActive(page, '', item.activeMatch, true));
-            assert.deepEqual(active.map(item => item.text), [expected], page);
+            for (const path of [page, page.replace(/\.md$/, '.html')]) {
+                const active = nav.filter(item => isActive(path, '', item.activeMatch, true));
+                assert.deepEqual(active.map(item => item.text), [expected], path);
+            }
         }
     }
     for (const item of Object.values(sidebar).flatMap(links)) {
         const route = item.link.split('#')[0];
         const page = route.endsWith('/') ? `${route.slice(1)}index.md` : `${route.slice(1)}.md`;
-        const active = nav.filter(entry => isActive(page, '', entry.activeMatch, true));
-        assert.equal(active.length, 1, `one active category for ${item.link}`);
-        assert.equal(active[0].text, category(route), item.link);
+        for (const path of [page, page.replace(/\.md$/, '.html')]) {
+            const active = nav.filter(entry => isActive(path, '', entry.activeMatch, true));
+            assert.equal(active.length, 1, `one active category for ${path}`);
+            assert.equal(active[0].text, category(route), path);
+        }
     }
 });
 
 test('published editor and bot routes retain their category outside the guide namespace', () => {
-    for (const page of ['editors', 'prosemirror', 'tiptap', 'slate', 'lexical', 'custom-editor', 'runnable-examples', 'editor-lessons']) {
+    for (const page of ['editors', 'prosemirror', 'tiptap', 'slate', 'lexical', 'custom-editor', 'runnable-examples', 'editor-lessons', 'graphic-editor']) {
         assert.equal(category(`/guide/${page}.html`), 'Editor integrations');
     }
     for (const route of ['/ai/server.html', '/guide/ai.html', '/guide/ai-walkthrough.html', '/guide/bots.html', '/guide/bot-design.html']) {
         assert.equal(category(route), 'AI & bots');
     }
-    for (const page of ['schema', 'editing', 'local-editing', 'sync', 'presence', 'document-rules']) {
+    for (const page of ['editing', 'local-editing', 'sync', 'presence', 'document-rules']) {
         assert.equal(category(`/guide/${page}.html`), 'Guide');
     }
     assert.equal(category('/status.html'), 'Reference');
     assert.equal(links(sidebar['/status']).find(item => item.link === '/status')?.text, 'Verification and limits');
+});
+
+test('schema pages use the Schemas sidebar at their existing URLs', () => {
+    for (const page of ['schema', 'graphic-schema', 'schema-transition', 'full-schema', 'product-schemas']) {
+        for (const route of [`/guide/${page}`, `/guide/${page}.html`, `guide/${page}.md`]) {
+            assert.equal(category(route), 'Schemas', route);
+        }
+    }
+    for (const route of ['/schemas/', '/schemas/index.html', 'schemas/index.md', '/schemas/document', '/schemas/document.html', 'schemas/document.md', '/schemas/spreadsheets', '/schemas/spreadsheets.html', 'schemas/spreadsheets.md']) {
+        assert.equal(category(route), 'Schemas', route);
+    }
+    const schemaLinks = links(sidebar['/schemas/']).map(item => item.link);
+    const guideLinks = links(sidebar['/']).map(item => item.link);
+    for (const link of schemaLinks) assert.ok(!guideLinks.includes(link), link);
+    assert.ok(guideLinks.includes('/guide/document-rules'));
+});
+
+test('Schemas presents Document, Graphic and Spreadsheet in order', () => {
+    const groups = sidebar['/schemas/'];
+    assert.deepEqual(groups.map(group => group.text), ['Schemas', 'Document', 'Graphic', 'Spreadsheet']);
+    assert.deepEqual(groups.map(group => group.items.map(item => item.link)), [
+        ['/schemas/', '/schemas/custom'],
+        ['/schemas/document', '/guide/schema', '/guide/full-schema', '/guide/product-schemas', '/guide/schema-transition'],
+        ['/guide/graphic-schema'],
+        ['/schemas/spreadsheets'],
+    ]);
+    const source = readFileSync(new URL('../src/schemas/index.md', import.meta.url), 'utf8');
+    assert.deepEqual([...source.matchAll(/^## (.+)$/gm)].map(match => match[1]), ['Document', 'Graphic', 'Spreadsheet']);
+    const editorLinks = new Set(links(sidebar['/guide/editors']).map(item => item.link));
+    for (const item of links(groups)) assert.ok(!editorLinks.has(item.link), item.link);
 });
 
 test('VitePress resolves root-level reference pages before the Guide fallback', () => {

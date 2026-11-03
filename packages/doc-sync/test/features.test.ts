@@ -1,8 +1,8 @@
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {MemoryNet, show, showMarks} from "./harness.ts";
-import type {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import type {SyncClient} from "../../doc-sync/dist/sync/client.js";
 
 /**
  * 서식 · 리스트 · 되돌리기 다듬기 · GC · 서버 원자성.

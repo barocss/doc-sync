@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {createEditor, Editor} from "slate";
-import {canonical} from "../../doc-sync-core/dist/crdt/model.js";
+import {canonical} from "../../doc-sync/dist/crdt/model.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import {fromSlate, modelPointToSlate, modelRangeToSlate, slatePointToModel, slateRangeToModel, toSlate} from "../../doc-sync-slate/dist/codec.js";
-import type {NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
-import type {Schema} from "../../doc-sync-core/dist/crdt/schema.js";
+import type {NodeJSON} from "../../doc-sync/dist/crdt/model.js";
+import type {Schema} from "../../doc-sync/dist/crdt/schema.js";
 import type {Descendant} from "slate";
 
 const p = (text: string): NodeJSON => ({type: "paragraph", runs: [{text, marks: {}}]});

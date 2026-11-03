@@ -86,6 +86,7 @@ impl Replica {
         cmd: &str,
         request: &Map<String, Value>,
     ) -> Result<Value> {
+        if self.graphic { return Err("graphic selections are outside the pinned native API".into()); }
         if self.nested.is_some() {
             return self.nested_selection(cmd, request);
         }

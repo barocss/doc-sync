@@ -128,7 +128,7 @@ synchronized clients have separate participant histories.
 | Error reporting prevented recovery | A throwing callback ran before the replacement update completed | Restore shared content before reporting the conversion error |
 | Unmount left listeners behind | The binding removed too little or replaced another owner's hooks | Track owned registrations and restore hooks only while still owned |
 
-The shared [input session and model translation](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-core/src/editor/index.ts) implement reusable parts of these rules. The [comparison input tests](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/test/input-session.test.mjs) exercise draft cancellation, clock reservation and coordinate conversion.
+The shared [input session and model translation](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/editor/index.ts) implement reusable parts of these rules. The [comparison input tests](https://github.com/barocss/doc-sync/blob/main/apps/demo/compat/test/input-session.test.mjs) exercise draft cancellation, clock reservation and coordinate conversion.
 
 ## The custom demo: input and rendering are application code
 
@@ -183,7 +183,7 @@ fn main() -> Result<()> {
 }
 ```
 
-The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
 <details>
 <summary>Raw protocol probe and reference checks</summary>

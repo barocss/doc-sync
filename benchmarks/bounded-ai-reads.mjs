@@ -15,7 +15,7 @@ const output = resolve(process.env.BENCH_OUTPUT ?? join(root, 'benchmarks/result
 const warmSamples = Number(process.env.BENCH_SAMPLES ?? 21);
 assert.ok(Number.isSafeInteger(warmSamples) && warmSamples >= 2 && warmSamples <= 30);
 assert.equal(typeof global.gc, 'function', 'Use node --expose-gc; heap scope requires explicit GC');
-const {Doc, ROOT, readDocumentSlice} = await import(pathToFileURL(join(root, 'packages/doc-sync-core/dist/index.js')));
+const {Doc, ROOT, readDocumentSlice} = await import(pathToFileURL(join(root, 'packages/doc-sync/dist/index.js')));
 const schema = {root: 'doc', marks: ['bold'], nodes: {
     doc: {shape: 'flow', children: ['p', 'box', 'table'], default: 'p'},
     table: {shape:'grid', children:['row']}, row:{shape:'row', children:['cell']},
@@ -37,7 +37,7 @@ async function treeHash(dir) {
     await walk(dir); return hash.digest('hex');
 }
 async function hashes() {
-    return {source: await treeHash(join(root, 'packages/doc-sync-core/src')), dist: await treeHash(join(root, 'packages/doc-sync-core/dist'))};
+    return {source: await treeHash(join(root, 'packages/doc-sync/src')), dist: await treeHash(join(root, 'packages/doc-sync/dist'))};
 }
 const frozen = await hashes();
 const counters = {toJSONCalls: 0, projectionMethodCalls: 0};

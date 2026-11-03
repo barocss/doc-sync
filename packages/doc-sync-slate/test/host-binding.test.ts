@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import {test} from "node:test";
 import {createEditor, Transforms} from "slate";
 import {SlateBinding, SlateHostBinding, fromSlate} from "../dist/index.js";
-import {createSyncClientEditorHost} from "../../doc-sync-core/dist/editor/index.js";
-import type {EditorHost} from "../../doc-sync-core/dist/editor/index.js";
+import {createSyncClientEditorHost} from "../../doc-sync/dist/editor/index.js";
+import type {EditorHost} from "../../doc-sync/dist/editor/index.js";
 import {MemoryNet, tick} from "../../doc-sync/test/harness.ts";
 
 /** A consumer can expose only the public contract, without a client/document escape. */
@@ -63,7 +63,7 @@ test("SlateBinding keeps the exact legacy client identity", async () => {
     finally { binding.dispose(); }
 });
 
-import {schemaVersion} from "../../doc-sync-core/dist/crdt/schema-version.js";
+import {schemaVersion} from "../../doc-sync/dist/crdt/schema-version.js";
 
 test("Slate binding disconnects after a lost conditional response without a native callback error", async () => {
     const net = new MemoryNet(), a = net.add("conditional-slate");

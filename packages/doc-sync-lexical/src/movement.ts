@@ -3,7 +3,7 @@ import {$getRoot, $isElementNode} from "lexical";
 import {$isTableCellNode} from "@lexical/table";
 import {$lexicalModelType} from "./convert.ts";
 import type {LexicalNode} from "lexical";
-import type {EditOp} from "@barocss/doc-sync-core";
+import type {EditOp} from "@barocss/doc-sync";
 import type {LexicalSchemaInfo} from "./schema.ts";
 
 type Placement = {path: number[]; parent: string; index: number};

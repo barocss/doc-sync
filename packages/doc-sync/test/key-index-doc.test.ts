@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {Item, Op} from "../../doc-sync-core/dist/crdt/doc.js";
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import {Doc} from "../../doc-sync/dist/crdt/doc.js";
+import type {Item, Op} from "../../doc-sync/dist/crdt/doc.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
 import {DEMO_SCHEMA as schema} from "../../../fixtures/demo-schema.ts";
 import {MemoryNet} from "./harness.ts";
 

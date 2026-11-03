@@ -4,12 +4,12 @@ import {createHash} from 'node:crypto';
 import {readFileSync, readdirSync} from 'node:fs';
 import {isAbsolute, relative, resolve} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {Doc} from '../../packages/doc-sync-core/dist/crdt/doc.js';
-import {History} from '../../packages/doc-sync-core/dist/crdt/history.js';
-import {Doc as PackagedDoc, History as PackagedHistory} from '@barocss/doc-sync-core';
+import {Doc} from '../../packages/doc-sync/dist/crdt/doc.js';
+import {History} from '../../packages/doc-sync/dist/crdt/history.js';
+import {Doc as PackagedDoc, History as PackagedHistory} from '@barocss/doc-sync';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-const packageNames=['doc-sync','doc-sync-core','doc-sync-prosemirror','doc-sync-slate','doc-sync-lexical','doc-sync-tiptap'];
+const packageNames=['doc-sync','doc-sync-prosemirror','doc-sync-slate','doc-sync-lexical','doc-sync-tiptap'];
 const harnessNames=['shadow','history','selection','structure','blocks','nested','shapes','move'];
 const tree=(directory,accept)=>readdirSync(resolve(root,directory),{recursive:true}).filter(path=>accept(String(path))).map(path=>`${directory}/${path}`);
 export const hashFile=path=>createHash('sha256').update(readFileSync(resolve(root,path))).digest('hex');
@@ -19,7 +19,7 @@ export function runtimeProvenance(actualDoc,actualHistory){
     assert.equal(actualHistory,History,'oracle must execute the canonical compiled History');
     assert.equal(PackagedDoc,Doc,'package entry must export the executed compiled Doc');
     assert.equal(PackagedHistory,History,'package entry must export the executed compiled History');
-    const urls={corePackageEntry:import.meta.resolve('@barocss/doc-sync-core'),docModule:new URL('../../packages/doc-sync-core/dist/crdt/doc.js',import.meta.url).href,historyModule:new URL('../../packages/doc-sync-core/dist/crdt/history.js',import.meta.url).href};
+    const urls={corePackageEntry:import.meta.resolve('@barocss/doc-sync'),docModule:new URL('../../packages/doc-sync/dist/crdt/doc.js',import.meta.url).href,historyModule:new URL('../../packages/doc-sync/dist/crdt/history.js',import.meta.url).href};
     const modules=Object.fromEntries(Object.entries(urls).map(([name,url])=>{const path=relative(root,fileURLToPath(url));assert.ok(!path.startsWith('..')&&!isAbsolute(path),'runtime module must be inside this checkout');return [name,{url,path,sha256:hashFile(path)}];}));
     const typescript=JSON.parse(readFileSync(resolve(root,'node_modules/typescript/package.json'),'utf8'));
     assert.equal(typescript.version,'5.8.3','pinned build compiler');

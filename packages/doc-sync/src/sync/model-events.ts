@@ -1,0 +1,170 @@
+import {isAlive} from "../crdt/doc.ts";
+import {blockPath} from "../crdt/edit.ts";
+import {canonical, unitsToRuns} from "../crdt/model.ts";
+import {keyOf} from "../crdt/ticket.ts";
+import {groupOf} from "../crdt/schema.ts";
+import {parseTextStorage} from "../crdt/text-storage.ts";
+import type {Doc, Item, Op, TextBlock} from "../crdt/doc.ts";
+import type {NodeJSON} from "../crdt/model.ts";
+import type {Schema} from "../crdt/schema.ts";
+
+// 전후 측정으로 확인한 범위까지만 좁힌다. 많은 블록은 기존 전체 모델 캐시 경로를 유지한다.
+const MAX_TEXT_SCOPES = 8;
+
+/**
+ * 구조와 모델 경로가 그대로인 글 블록들만 읽는다. 하나라도 불확실하면 전체 경로에 맡긴다.
+ * 특히 오래된 동시 삽입은 origin 뒤의 표지를 건너뛸 수 있으므로 시계가 앞선 삽입만 좁힌다.
+ * undo/redo·되살리기·노드 변경·가상 블록·새 토큰을 다시 참조하는 묶음은 대상이 아니다.
+ */
+export const textEventScopes = (doc: Doc, ops: Op[]) => {
+    if (!doc.schema || !ops.length) {
+        return null;
+    }
+
+    const logical = doc.usesProjection || doc.hasCardinality;
+    const chosen = new Map<TextBlock, string>();
+    const members = new Map<Item, TextBlock>();
+    let clock = doc.clock.lamport;
+    const remember = (block: TextBlock): void => {
+        members.set(block.marker, block);
+        block.chars.forEach(item => members.set(item, block));
+    };
+
+    const include = (item: Item | undefined, origin: boolean): boolean => {
+        if (!item || !isAlive(item) || (!origin && item.kind !== "char")) {
+            return false;
+        }
+
+        if (logical && members.has(item)) return true;
+        let line = item.line.key;
+        if (logical) {
+            const physical = doc.sourceBlocks(line).find(b => b.kind === "text" &&
+                (b.chars.includes(item) || (origin && b.marker === item)));
+            if (!physical) return false;
+            // A joined fragment follows its retained head, rather than its own
+            // placement. Use the complete resolver for that less common case.
+            const location = physical.marker.attrs.get("$join")?.value ? doc.tokenLocation(item.key) : null;
+            if (location && !location.visible) return false;
+            line = location?.line ?? doc.logicalLineOf(physical.marker);
+        }
+        if (!doc.visible(line)) return false;
+        const block = members.get(item) ?? doc.blocks(line).find(b => b.kind === "text" &&
+            (b.chars.includes(item) || (origin && b.marker === item)));
+
+        if (block?.kind !== "text" || block.virtual) {
+            return false;
+        }
+
+        // Empty automatic paragraphs can disappear beside other text. Their
+        // physical fragments need a structural comparison, even for text Ops.
+        if (logical && (block.parts ?? [block]).some(part =>
+            parseTextStorage(part.marker.key) || parseTextStorage(part.marker.line.key))) return false;
+
+        if (!chosen.has(block)) {
+            if (chosen.size === MAX_TEXT_SCOPES) {
+                return false;
+            }
+
+            chosen.set(block, line);
+
+            // 한 블록은 기존 검색을 유지한다. 두 번째 블록부터 이미 찾은 글자들을 다시 검색하지 않는다.
+            if (logical) {
+                remember(block);
+            } else if (chosen.size === 2) {
+                chosen.forEach((_line, selected) => remember(selected));
+            } else if (chosen.size > 2) {
+                remember(block);
+            }
+        }
+
+        return true;
+    };
+
+    for (const op of ops) {
+        if (op.t === "text") {
+            // 알려진 모든 토큰보다 ID가 크면 RGA 삽입 위치는 origin 바로 뒤다.
+            if (!op.text.length || op.id.lamport <= clock || !include(doc.get(keyOf(op.origin)), true)) {
+                return null;
+            }
+
+            clock = op.id.lamport + op.text.length - 1;
+        } else if (op.t === "del" || op.t === "set") {
+            if (!op.ids.length || !op.ids.every(id => include(doc.get(keyOf(id)), false))) {
+                return null;
+            }
+
+            clock = Math.max(clock, op.at.lamport);
+        } else {
+            return null;
+        }
+    }
+
+    const blocks: Array<{block: TextBlock; line: string; b: number; path: number[]}> = [];
+
+    for (const [block, line] of chosen) {
+        const b = doc.blocks(line).indexOf(block);
+        const path = blockPath(doc, line, b);
+
+        if (!path) {
+            return null;
+        }
+
+        blocks.push({block, line, b, path});
+    }
+
+    const source = doc.schema;
+
+    // 모든 연산과 경로를 확인한 뒤 before를 읽는다. 글자만 바뀌므로 블록 번호와 모델 경로는 고정이다.
+    return blocks.map(({block, line, b, path}) => {
+        const schema: Schema = {...source, nodes: {...source.nodes,
+            [source.root]: source.domain === "graphic"
+                ? {shape: "container", children: [block.type]}
+                : {shape: "flow", children: [block.type], default: block.type}}};
+        const read = (): NodeJSON => {
+            const current = doc.blocks(line)[b] as TextBlock;
+            const node: NodeJSON = {type: current.type, runs: unitsToRuns(source, current.chars.map(c =>
+                c.kind === "char" ? {ch: c.ch, marks: doc.marksOf(c)} : {inline: c.born, attrs: doc.attrsOf(c, c.born)}))};
+
+            Object.keys(current.attrs).length && (node.attrs = {...current.attrs});
+
+            return canonical(schema, {type: source.root, children: [node]});
+        };
+
+        return {schema, path, read, before: read()};
+    });
+};
+
+// Guard nodes count toward the limit. Large changes keep whole-model verification.
+const MAX_EVENT_WINDOW = 8;
+
+/** Actual canonical models determine the changed range; no wire-op prediction. */
+export const modelEventWindow = (schema: Schema, before: NodeJSON, after: NodeJSON) => {
+    const flow = schema.nodes[schema.root];
+    if (flow?.shape !== "flow" || flow.childRules || before.type !== schema.root || after.type !== schema.root) return null;
+    const a = before.children ?? [], b = after.children ?? [];
+    if (Math.max(a.length, b.length) <= MAX_EVENT_WINDOW) return null;
+    const equal = (x: NodeJSON, y: NodeJSON) => JSON.stringify(x) === JSON.stringify(y);
+    let start = 0;
+    while (start < a.length && start < b.length && equal(a[start], b[start])) start += 1;
+    if (start === a.length && start === b.length) return null;
+    let endA = a.length, endB = b.length;
+    while (endA > start && endB > start && equal(a[endA - 1], b[endB - 1])) {endA -= 1; endB -= 1;}
+
+    // A retained plain-text guard prevents leading normalization or regrouping
+    // with the unchanged prefix. A group boundary keeps the existing full path.
+    const plainText = (node: NodeJSON) => schema.nodes[node.type]?.shape === "text" && !groupOf(schema, flow, node.type);
+    if (start > 0) start -= 1;
+    while (start > 0 && (!plainText(a[start]) || !plainText(b[start]))) {
+        if (schema.nodes[a[start].type]?.shape === "group" || schema.nodes[b[start].type]?.shape === "group") return null;
+        start -= 1;
+        if (Math.max(endA - start, endB - start) > MAX_EVENT_WINDOW) return null;
+    }
+    if (!a[start] || !b[start] || !plainText(a[start]) || !plainText(b[start])) return null;
+    // Retain an unchanged suffix guard when one exists. No text group may
+    // straddle the slice boundary, including transient regrouping during edits.
+    if (endA < a.length) {endA += 1; endB += 1;}
+    if (Math.max(endA - start, endB - start) > MAX_EVENT_WINDOW || start === 0 && endA === a.length && endB === b.length) return null;
+    const left = a.slice(start, endA), right = b.slice(start, endB);
+    if ([...left, ...right].some(node => schema.nodes[node.type]?.shape === "group" || schema.nodes[node.type]?.shape === "text" && !plainText(node))) return null;
+    return {start, before: {type: schema.root, children: left}, after: {type: schema.root, children: right}};
+};

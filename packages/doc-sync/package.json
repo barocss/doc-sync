@@ -7,7 +7,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "ENGINE-CONTRACT.md"
   ],
   "publishConfig": {
     "access": "public"
@@ -19,7 +20,7 @@
     "prepack": "npm run build"
   },
   "name": "@barocss/doc-sync",
-  "description": "Compatibility facade for DocSync core and independent editor bindings",
+  "description": "Dependency-free document CRDT, sync, server, and editor support",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -27,67 +28,39 @@
       "default": "./dist/index.js"
     },
     "./sync": {
-      "types": "./dist/sync.d.ts",
-      "import": "./dist/sync.js",
-      "default": "./dist/sync.js"
+      "types": "./dist/sync/index.d.ts",
+      "import": "./dist/sync/index.js",
+      "default": "./dist/sync/index.js"
     },
-    "./client": {
-      "types": "./dist/client.d.ts",
-      "import": "./dist/client.js",
-      "default": "./dist/client.js"
+    "./editor": {
+      "types": "./dist/editor/index.d.ts",
+      "import": "./dist/editor/index.js",
+      "default": "./dist/editor/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
     },
     "./node": {
       "types": "./dist/node.d.ts",
       "import": "./dist/node.js",
       "default": "./dist/node.js"
     },
-    "./server": {
-      "types": "./dist/server.d.ts",
-      "import": "./dist/server.js",
-      "default": "./dist/server.js"
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "import": "./dist/engine/index.js",
+      "default": "./dist/engine/index.js"
     },
-    "./prosemirror": {
-      "types": "./dist/prosemirror.d.ts",
-      "import": "./dist/prosemirror.js",
-      "default": "./dist/prosemirror.js"
+    "./local": {
+      "types": "./dist/local/index.d.ts",
+      "import": "./dist/local/index.js",
+      "default": "./dist/local/index.js"
     },
-    "./tiptap": {
-      "types": "./dist/tiptap.d.ts",
-      "import": "./dist/tiptap.js",
-      "default": "./dist/tiptap.js"
-    },
-    "./slate": {
-      "types": "./dist/slate.d.ts",
-      "import": "./dist/slate.js",
-      "default": "./dist/slate.js"
-    },
-    "./lexical": {
-      "types": "./dist/lexical.d.ts",
-      "import": "./dist/lexical.js",
-      "default": "./dist/lexical.js"
-    }
-  },
-  "dependencies": {
-    "@barocss/doc-sync-core": ">=0.0.0 <0.1.0"
-  },
-  "peerDependencies": {
-    "@barocss/doc-sync-prosemirror": ">=0.0.0 <0.1.0",
-    "@barocss/doc-sync-tiptap": ">=0.0.0 <0.1.0",
-    "@barocss/doc-sync-slate": ">=0.0.0 <0.1.0",
-    "@barocss/doc-sync-lexical": ">=0.0.0 <0.1.0"
-  },
-  "peerDependenciesMeta": {
-    "@barocss/doc-sync-prosemirror": {
-      "optional": true
-    },
-    "@barocss/doc-sync-tiptap": {
-      "optional": true
-    },
-    "@barocss/doc-sync-slate": {
-      "optional": true
-    },
-    "@barocss/doc-sync-lexical": {
-      "optional": true
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "import": "./dist/client/index.js",
+      "default": "./dist/client/index.js"
     }
   },
   "devDependencies": {

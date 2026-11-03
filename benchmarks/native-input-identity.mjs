@@ -1,3 +1,4 @@
+import {corePackageName, corePackagePath} from './core-package.mjs';
 /** Native Slate/Lexical splice cost, independently imported checkout distributions. */
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
@@ -18,7 +19,7 @@ assert.equal(Number(process.versions.node.split('.')[0]),24,'Use Node 24 for the
 const target=resolve(args.target||process.cwd()),output=resolve(args.output||'output/unified-client-delivery/native-identity/current.json');
 const mode=args.mode||'timing';assert.ok(['counts','timing'].includes(mode));const sizes=[10000,100000],warmups=mode==='timing'?2:0,repetitions=mode==='timing'?8:1;
 const imp=path=>import(pathToFileURL(join(target,path)).href);
-const [{Doc,applyEdits,canonical},{SyncClient},slateBinding,lexicalBinding]=await Promise.all([imp('packages/doc-sync-core/dist/index.js'),imp('packages/doc-sync-core/dist/sync/index.js'),imp('packages/doc-sync-slate/dist/index.js'),imp('packages/doc-sync-lexical/dist/index.js')]);
+const [{Doc,applyEdits,canonical},{SyncClient},slateBinding,lexicalBinding]=await Promise.all([imp(`${corePackagePath(target)}/dist/index.js`),imp(`${corePackagePath(target)}/dist/sync/index.js`),imp('packages/doc-sync-slate/dist/index.js'),imp('packages/doc-sync-lexical/dist/index.js')]);
 const requireSlate=createRequire(join(target,'packages/doc-sync-slate/dist/index.js')),requireLexical=createRequire(join(target,'packages/doc-sync-lexical/dist/index.js'));
 const slate= requireSlate('slate');
 // Lexical's require and import conditions may hold separate active-editor globals.
@@ -30,7 +31,7 @@ const {registerRichText}=await import(pathToFileURL(richPath).href);
 const schema={root:'content',marks:['bold'],nodes:{content:{shape:'flow',children:['paragraph'],default:'paragraph'},paragraph:{shape:'text'}}};
 const counters={snapshot:0,fromSnapshot:0,toJSON:0};let tracing=false;
 for(const [object,key]of [[Doc.prototype,'snapshot'],[Doc,'fromSnapshot'],[Doc.prototype,'toJSON']]){const original=object[key];object[key]=function(...values){if(tracing)counters[key]++;return original.apply(this,values)}}
-async function fingerprint(){const files={};async function walk(path){for(const entry of (await readdir(join(target,path),{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))){const p=join(path,entry.name);if(entry.isDirectory())await walk(p);else files[p]=hash(await readFile(join(target,p)))}}for(const name of ['doc-sync-core','doc-sync-slate','doc-sync-lexical'])await walk(`packages/${name}/dist`);return {aggregate:hash(files),files}}
+async function fingerprint(){const files={};async function walk(path){for(const entry of (await readdir(join(target,path),{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))){const p=join(path,entry.name);if(entry.isDirectory())await walk(p);else files[p]=hash(await readFile(join(target,p)))}}for(const name of [corePackageName(target),'doc-sync-slate','doc-sync-lexical'])await walk(`packages/${name}/dist`);return {aggregate:hash(files),files}}
 const flush=async()=>{await Promise.resolve();await Promise.resolve()};
 function setup(size,name){
  const transportCalls={subscribe:0,send:0,presence:0},transport={subscribe(){transportCalls.subscribe++;return()=>{}},async send(){transportCalls.send++},sendPresence(){transportCalls.presence++}};

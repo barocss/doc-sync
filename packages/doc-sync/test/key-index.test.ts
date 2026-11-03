@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {KeyIndex} from "../../doc-sync-core/dist/crdt/key-index.js";
+import {KeyIndex} from "../../doc-sync/dist/crdt/key-index.js";
 
 test("ID index matches Map for gaps, shuffled writes, replacement and unusual keys", () => {
     const index = new KeyIndex<object>();

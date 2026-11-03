@@ -50,7 +50,7 @@ test("reference preparation uses the authoritative documents without internal ha
 // Verify the public application route rather than a copied helper.
 test('the Client guide local example uses public exports and records once', () => {
     const source = readFileSync(new URL('../src/guide/client.md', import.meta.url), 'utf8');
-    const code = /```ts\n([\s\S]*?)\n```/.exec(source)?.[1];
+    const code = /<!-- client-local-example -->\s*```ts\n([\s\S]*?)\n```/.exec(source)?.[1];
     assert.ok(code);
     const result = spawnSync(process.execPath, ['--input-type=module', '-'], {
         cwd: root, encoding: 'utf8', timeout: 10000,

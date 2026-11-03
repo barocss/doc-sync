@@ -106,8 +106,13 @@ pub(super) fn json_group_key(v: &Value) -> String {
     norm(v).to_string()
 }
 impl Replica {
-    pub(super) fn schema(&self) -> &'static str {
-        if self.movement {
+    pub(super) fn schema(&self) -> &str {
+        if let Some(schema) = &self.runtime { return schema.identity(); }
+        if self.graphic_builtins {
+            GRAPHIC_BUILTIN_SCHEMA
+        } else if self.graphic {
+            GRAPHIC_SCHEMA
+        } else if self.movement {
             MOVE_SCHEMA
         } else if self.shapes {
             SHAPES_SCHEMA
@@ -120,7 +125,12 @@ impl Replica {
         }
     }
     pub(super) fn manifest(&self) -> Value {
-        if self.movement {
+        if let Some(schema) = &self.runtime { return schema.manifest().clone(); }
+        if self.graphic_builtins {
+            serde_json::from_str(GRAPHIC_BUILTIN_MANIFEST).unwrap()
+        } else if self.graphic {
+            serde_json::from_str(GRAPHIC_MANIFEST).unwrap()
+        } else if self.movement {
             serde_json::from_str(MOVE_MANIFEST).unwrap()
         } else if self.shapes {
             shapes::manifest()
@@ -140,16 +150,17 @@ impl Replica {
                 t.node
                     .as_ref()
                     .map(|n| n.born.as_str())
-                    .unwrap_or("paragraph")
+                    .unwrap_or_else(|| self.default_text_type())
             })
             .into()
     }
     pub(super) fn validate_set(&self, t: &Token, k: &str, v: &Value) -> Result<()> {
+        if self.graphic { return self.validate_graphic_set(t, k, v); }
         if self.nested.is_some() {
             return self.validate_nested_set(t, k, v);
         }
         if t.unit.is_some() {
-            validate_mark(k)?;
+            self.validate_runtime_mark(k)?;
             if v.is_null() || v.is_boolean() {
                 return Ok(());
             }
@@ -159,13 +170,17 @@ impl Replica {
             .node
             .as_ref()
             .map(|n| n.born.as_str())
-            .unwrap_or("paragraph");
+            .unwrap_or_else(|| self.default_text_type());
         if k == "$type" {
-            return if text_type(born) && (v.is_null() || v.as_str().is_some_and(text_type)) {
+            return if self.is_text_type(born) && (v.is_null() || v.as_str().is_some_and(|s|self.is_text_type(s))) {
                 Ok(())
             } else {
                 Err("type change requires supported text type".into())
             };
+        }
+        if let Some(schema)=&self.runtime {
+            let text=self.is_text_type(born);
+            return if schema.manifest()["nodes"].as_object().unwrap().keys().any(|name| (if text {self.is_text_type(name)} else {self.is_atom_type(name)}) && self.validate_node_attr(name,k,v).is_ok()) {Ok(())} else {Err(format!("unsupported runtime node attribute {k}"))};
         }
         let candidates = if text_type(born) {
             ["paragraph", "heading"]
@@ -207,7 +222,7 @@ impl Replica {
         Ok(())
     }
     fn projected_attrs(&self, t: &Token, type_: &str, virtual_: bool) -> Value {
-        let m = manifest();
+        let m = self.manifest();
         let mut out = Map::new();
         if let Some(attrs) = m["nodes"][type_]["attrs"].as_object() {
             for (k, s) in attrs {
@@ -231,7 +246,7 @@ impl Replica {
     pub(super) fn general_blocks(&self) -> Vec<Block> {
         let mut primary = BTreeMap::new();
         for (i, t) in self.items.iter().enumerate() {
-            if t.unit.is_none() && t.alive() && text_type(&self.type_of(t)) {
+            if t.unit.is_none() && t.alive() && self.is_text_type(&self.type_of(t)) {
                 primary
                     .entry(
                         t.node
@@ -255,7 +270,7 @@ impl Replica {
                 out.last_mut().unwrap().chars.push(i);
                 continue;
             }
-            if text_type(&self.type_of(t)) {
+            if self.is_text_type(&self.type_of(t)) {
                 let boundary = t
                     .node
                     .as_ref()
@@ -311,7 +326,7 @@ impl Replica {
         for b in &blocks {
             let t = &self.items[b.marker];
             let type_ = if b.virtual_ {
-                "paragraph".into()
+                self.default_text_type().into()
             } else {
                 self.type_of(t)
             };
@@ -328,6 +343,6 @@ impl Replica {
             }
         }
         let visible = self.items.iter().skip(1).filter(|t| t.alive()).count();
-        json!({"clock":self.clock,"items":items,"model":{"type":"content","children":children},"blocks":projected,"counts":{"tokens":self.items.len()-1,"visible":visible,"tombstones":self.items.len()-1-visible}})
+        json!({"clock":self.clock,"items":items,"model":{"type":self.root_type(),"children":children},"blocks":projected,"counts":{"tokens":self.items.len()-1,"visible":visible,"tombstones":self.items.len()-1-visible}})
     }
 }

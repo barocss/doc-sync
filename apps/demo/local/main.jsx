@@ -8,7 +8,7 @@ import {EditorView} from 'prosemirror-view';
 import {TextSelection} from 'prosemirror-state';
 import {baseKeymap} from 'prosemirror-commands';
 import {keymap} from 'prosemirror-keymap';
-import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync-core/local';
+import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync/local';
 import {PmHostBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@barocss/doc-sync-prosemirror';
 import {SlateHostBinding, fromSlate, slateRangeToModel, modelRangeToSlate} from '@barocss/doc-sync-slate';
 import {LexicalHostBinding, buildLexicalSchema, readLexicalModel, $lexicalSelection, $setLexicalSelection} from '@barocss/doc-sync-lexical';

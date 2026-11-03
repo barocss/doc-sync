@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
-import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import {Doc} from "../../doc-sync/dist/crdt/doc.js";
+import * as cmd from "../../doc-sync/dist/crdt/commands.js";
 import {MemoryNet, show} from "./harness.ts";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {GridBlock, Op} from "../../doc-sync-core/dist/crdt/doc.js";
-import type {EditOp, NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
+import type {GridBlock, Op} from "../../doc-sync/dist/crdt/doc.js";
+import type {EditOp, NodeJSON} from "../../doc-sync/dist/crdt/model.js";
 
 const paragraph = (text: string): NodeJSON => ({type: "paragraph", runs: [{text, marks: {}}]});
 const fresh = (doc: Doc) => Doc.fromSnapshot("fresh", doc.snapshot(), DEMO_SCHEMA).toJSON();

@@ -467,7 +467,7 @@ This checks operation exchange in memory. It does not test network delivery, rec
 
 Use `move` for identity-preserving block placement; see [model operations](./editing#move-an-existing-block). A text `split` divides a text block. It does not split an arbitrary subtree. Cell merging retains hidden text. Flow `childRules` provide required-child and maximum-count projection. Attribute `min` and `max` remain numeric value bounds. See [document rules and annotations](./document-rules).
 
-The optional [`commands` helpers](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-core/src/crdt/commands.ts) wrap these same edit operations for keyboard actions and add checks such as permitted types and numeric clamping. They are not required to position or edit blocks. These examples do not establish actual OS IME support, product performance targets, or release readiness.
+The optional [`commands` helpers](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/crdt/commands.ts) wrap these same edit operations for keyboard actions and add checks such as permitted types and numeric clamping. They are not required to position or edit blocks. These examples do not establish actual OS IME support, product performance targets, or release readiness.
 
 ## Rust experiment
 
@@ -532,7 +532,7 @@ fn main() -> Result<()> {
 }
 ```
 
-The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
 <details>
 <summary>Raw protocol probe and reference checks</summary>

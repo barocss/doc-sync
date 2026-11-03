@@ -1,4 +1,4 @@
-import {SchemaLeafNode,$modelData,$setModelData} from '@barocss/doc-sync/lexical';
+import {SchemaLeafNode,$modelData,$setModelData} from '@barocss/doc-sync-lexical';
 
 /** Application-owned labels; never interpret schema attributes as HTML or URLs. */
 export class ProductLeafNode extends SchemaLeafNode {

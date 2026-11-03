@@ -1,5 +1,5 @@
-import type {NodeJSON} from '@barocss/doc-sync-core';
-import type {EditorHost, ModelRange} from '@barocss/doc-sync-core/editor';
+import type {NodeJSON} from '@barocss/doc-sync';
+import type {EditorHost, ModelRange} from '@barocss/doc-sync/editor';
 export interface CustomEditor {
     readModel(): NodeJSON;
     selection(): ModelRange | null;
