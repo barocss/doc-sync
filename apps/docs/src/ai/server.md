@@ -13,6 +13,37 @@ An MCP host launches `apps/mcp/src/main.ts` as a stdio process. The process open
 
 Pointing `DOC_SYNC_URL` at an HTTPS server changes the **document connection**. It does not change the stdio MCP transport. For the separate authenticated Streamable HTTP listener, use [private hosted MCP](./hosted).
 
+## Startup and process lifetime
+
+Keep the process's stdin open while the MCP session is in use. A spawned process
+is not yet a ready participant. Wait for the MCP initialize response before
+sending tool calls.
+
+The bridge owns stdin before schema import or discovery and journal recovery.
+It buffers early protocol bytes with backpressure and keeps startup alive even
+when that input is paused. Tools become available only after session startup
+and the existing recovery checks complete. Async schema modules do not need to
+keep a separate event-loop handle alive to finish importing.
+
+EOF, stream closure, SIGINT and SIGTERM stop input admission and request cleanup.
+Cleanup waits for the current bootstrap step or admitted operation to settle,
+then closes the local stream and journal writer. It sends an ordinary participant
+leave only for a ready, settled session. Uncertain edits, checkpoints and recovery
+protection are retained. Startup failure does not retry an edit or delete a
+journal. Restart with the same identity and journal directory, and use the
+existing recovery tools to resolve an unknown result.
+
+A failed startup exits with a nonzero status and a bounded phase diagnostic on
+stderr, such as schema-discovery, journal-open, session-start or stdio-connect.
+Stdout remains reserved for MCP. The Bot runner can record a known startup phase
+without copying raw child stderr into a mission. Treat raw application stderr as
+private; an executable schema module can emit its own error text.
+
+Cancellation is checked between bootstrap steps. It does not interrupt executable
+schema code or the internal session-start sequence. Paused input can delay EOF
+observation until buffered bytes are consumed. A schema module that never settles
+can still require the MCP host's process deadline or termination policy.
+
 ## Configure the document connection
 
 Build the local packages before launching the source workspace. Use Node 22.18 or later:

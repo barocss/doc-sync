@@ -9,6 +9,13 @@ This private workspace exposes one document participant through stdio or a priva
 
 From the repository root, use `npm run start --workspace=@doc-sync/mcp` for a local stdio session. An MCP host should launch `node /absolute/path/to/apps/mcp/src/main.ts` directly to keep npm output out of its protocol stream.
 
+Keep stdin open through initialization and tool use. The bridge buffers early
+protocol bytes and owns startup lifetime before schema and journal recovery.
+EOF or a termination signal requests pending-safe cleanup. A failed startup
+reports its phase on stderr; it does not clear or retry an uncertain edit.
+See [startup and process lifetime](../docs/src/ai/server.md#startup-and-process-lifetime)
+for readiness, cleanup and cancellation limits.
+
 For hosted mode, supply a private, owned `0600` JSON configuration file:
 
 ```sh

@@ -27,6 +27,33 @@ const mcpFile = fileURLToPath(new URL("../../mcp/src/main.ts", import.meta.url))
 const env = Object.fromEntries(Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined));
 const validateId = (value: string, label: string) => {if (!/^[a-zA-Z0-9_-]{1,80}$/.test(value)) throw new Error(`Invalid ${label}`);};
 
+/** Keep only a bounded line prefix, then retain only a known startup phase. */
+function startupProvenance() {
+    const phases = new Set(["input", "schema-import", "schema-discovery", "journal-open", "journal-read", "session-create", "session-start", "stdio-connect", "ready"]);
+    let prefix = "", phase: string | undefined, active = true;
+    const inspect = () => {
+        const match = /^MCP startup failure \[([a-z-]+)\]: /.exec(prefix);
+        if (!phase && match && phases.has(match[1])) phase = match[1];
+        prefix = "";
+    };
+    return {
+        consume(chunk: Buffer) {
+            if (!active || phase) return;
+            let start = 0;
+            while (start < chunk.length) {
+                const newline = chunk.indexOf(10, start), end = newline < 0 ? chunk.length : newline;
+                const remaining = 96 - prefix.length;
+                if (remaining > 0) prefix += chunk.subarray(start, Math.min(end, start + remaining)).toString("latin1");
+                if (newline < 0) break;
+                inspect();
+                if (phase) break;
+                start = newline + 1;
+            }
+        },
+        finish() { inspect(); active = false; return phase; },
+    };
+}
+
 /** Atomic durable replacement. A failed or interrupted write is not treated as an acknowledgement. */
 async function save(path: string, state: Mission): Promise<void> {
     const dir = resolve(path, ".."), temp = `${path}.${randomUUID()}.tmp`;
@@ -218,9 +245,15 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
             DOC_SYNC_SCHEMA: "", DOC_SYNC_JOURNAL: options.ephemeral ? "off" : "on", DOC_SYNC_JOURNAL_DIR: journal,
             DOC_SYNC_MISSION_BRIDGE: options.profileId ? join(resolve(options.stateDir),"mission-evidence",id) : ""}});
         // Drain child stderr to prevent a blocked protocol process; do not expose document data in logs.
-        transport.stderr?.on("data", () => undefined);
+        const provenance = startupProvenance();
+        transport.stderr?.on("data", (chunk: Buffer) => provenance.consume(chunk));
         client = new Client({name: `bot-${id}`, version: "0.0.0"});
-        await client.connect(transport);
+        try { await client.connect(transport); }
+        catch (error) {
+            const phase = provenance.finish();
+            if (phase) throw new Error(`${error instanceof Error ? error.message : String(error)} (MCP startup phase: ${phase})`, {cause: error});
+            throw error;
+        } finally { provenance.finish(); }
         const call = async (tool: string, args: Record<string, unknown> = {}) => {
             const reply = await client!.callTool({name: tool, arguments: args}) as {isError?: boolean; content?: Array<{type: string; text?: string}>; structuredContent?: Record<string, unknown>};
             if (reply.isError) throw new Error(reply.content?.map(block => block.type === "text" ? block.text : "").join(" ") || `${tool} failed`);

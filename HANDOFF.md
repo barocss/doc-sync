@@ -1,5 +1,30 @@
 # Handoff — @barocss/doc-sync
 
+Latest **§5.133** qualifies the startup-lifetime checkpoint with a fresh full
+`npm test`:1650 cases/1648PASS/two expected platformSKIP/zeroFAIL/zeroCANCEL.
+Root typecheck and docs55pages/2601links PASS. All688 source hashes matched the
+reviewed checkpoint through the run; no additional runtime changes were needed.
+The async-schema/backpressure and cleanup fixes retain pending/foreign edits and
+actor History; the historical discovery-only trigger remains NOT_PROVEN.
+This checkpoint is for commit/push to main. No package versions or npm release,
+new Chrome/mobile/Rust or performance qualification are included. Source/evidence:
+docs/reports/mcp-startup-main-checkpoint-2026-11-03/.
+
+Earlier entries describe their own captured source and publication state.
+
+Latest **§5.132** fixes a reproduced stdio bootstrap lifetime gap and initialization
+cleanup leaks. Early protocol bytes use bounded backpressure; a startup-only
+reference remains until SDK readiness or observed closure. Supported async schema
+imports now connect with both small and saturated initialize input. EOF drains
+admitted work, closes local ownership and preserves uncertain recovery state.
+Bot failures retain only a known startup phase, not raw stderr. Final affected
+regressions: MCP190/188PASS/two expected SKIP, Bot56PASS, product restart1PASS;
+new lifecycle9PASS and Bot provenance3PASS are included. Build/root tsc/docs43/
+55pages/2601links PASS. No public Core/Schema/History/protocol source changed.
+The exact trigger of the earlier discovery-only failures remains NOT_PROVEN;
+the reachable async-schema/backpressure defect is separately proved and fixed.
+No new browser/mobile/Rust/performance or whole-workspace run; no commit/push.
+
 Latest **§5.131** consolidates the pending Spreadsheet S2, ephemeral Presence,
 shared DOM/framework views, Map/List server admission and Client.data work for
 the main checkpoint. Final full workspace run: 1638 cases/1636PASS/two expected
@@ -6758,3 +6783,134 @@ READMEs and getting-started/releasing/graphic guides. Core README lists /data an
 the exact-schema boundary. Presence guides describe TTL receipt refresh and
 the private Spreadsheet generation limit. Maintained source/evidence seal and
 final gate records: docs/reports/main-checkpoint-2026-11-03/.
+
+
+### 5.132 MCP bootstrap lifetime, safe cleanup and startup provenance (2026-11-03)
+
+**Request and baseline.** Diagnose and fix intermittent MCP initial closure with
+multiple agents, preserve pending/foreign edits, run restart regressions and
+update English docs/HANDOFF. Initial main HEAD was0de9f0f with a clean tree.
+Sol Medium CLI lanes separated source investigation, reproduction, production,
+tests and independent review. The prior collaboration transport was closed;
+OMX CLI/file evidence was used without deleting existing team/runtime state.
+User services, tabs and prior reports remain. This task has no commit/push or
+publication scope.
+
+**Causal proof and its limit.** Normal journal acquisition contains referenced
+filesystem work, not the initially suspected unref-only lock wait. Controlled
+unref injection reproduces schema-only exit0 but is not a normal-code or historical
+cause proof. Real writer contention rejects with exit1 and a lock error; writer
+exclusion was not weakened. The original failure lacks nested exit/stderr data,
+so its exact discovery-only trigger remains NOT_PROVEN.
+
+A reachable supported DOC_SYNC_SCHEMA module awaits an unreferenced timer before
+exporting a valid schema. With stdin not owned until after recovery, the actual
+MCP entry exits0 before SDK initialize. Early PassThrough ownership fixed a small
+initialize but still failed with a valid262144-byte client name: buffer saturation
+paused stdin, removing its active reference. An8-byte control connected. This
+second failure was caught during root review, not accepted as a passing fix.
+
+The final same-test matrix has9/9PASS. Archived0de9f0f fails7/9 and passes2/9.
+A source copy retaining all new cleanup and the proxy but removing only its
+startup lease fails1/9: large early initialize still exits0. The final fixture
+observes real64KiB saturation before schema export/SDK start without adding a
+data consumer, timer or reference. It verifies the exact parsed name length/hash,
+13 tools, read_document and unchanged upstream model/sequence. These are supported
+async-module proofs, not proof that the original discovery incident had that
+trigger.
+
+**Production change.** main.ts owns raw stdin through a64KiB PassThrough before
+bootstrap. A referenced interval holds only startup liveness while input may be
+paused; no code awaits a tick and it is not a timeout or retry. It is cleared on
+ready, failure, observed EOF/close/error, signal or final cleanup. SDK admission
+still occurs only after existing session.start/recovery gates. Early bytes are
+not parsed or dropped during startup. All former operation deadlines remain.
+
+One idempotent cleanup path covers acquired journal/session/server resources.
+Cancellation is sticky at bootstrap boundaries; cleanup waits for current startup
+work before closing late ownership. Startup failure/cancellation closes locally
+without uncertain leave. Ready closure uses existing drain and settled-only
+leave rules. A failed drain still attempts local disconnect/journal close. No
+intent clearing, checkpoint deletion, lock unlink, recovery-reservation release
+or automatic mission retry was added. Cleanup errors do not mask the primary
+startup phase diagnostic; stdout remains MCP only.
+
+Bot runner retains at most96 bytes of a stderr line prefix and stores only an
+allowlisted startup phase when connect fails. It discards raw stderr and preserves
+the original cause. Split markers, oversized/unknown text and private canaries
+are tested. Bot remote schema discovery and forced-empty DOC_SYNC_SCHEMA remain
+unchanged. An initial worker enabled ambient schema inheritance merely for its
+test; root rejected that scope change and restored the original policy. Final
+Bot tests use a test-only preload and assert ambient modules never execute.
+The earlier worker receipt does not qualify this final policy.
+
+**Pending/restart proof.** Actual SDK children and real HTTP/SSE servers exercise
+unknown and accepted durable intents across failed startup, EOF and restart.
+Unknown intent/checkpoint bytes remain exact, no conditional replay or leave is
+sent, new edits remain blocked and a foreign accepted edit survives. Accepted
+receipts reconcile once; actor undo/redo preserves the foreign edit. Ready EOF
+with an accepted response held upstream drains admitted work, exits naturally,
+closes SSE, releases the writer and restarts without duplicate application.
+Stdio-start rejection after live SSE now exits nonzero and releases local
+ownership; the archived entry retained its stream until the test deadline.
+
+**Final gates.** Node24.22.1: MCP190cases/188PASS/two expected platformSKIP/
+zeroFAIL/zeroCANCEL in34.37s; Bot56/56PASS; product server restart recovery1/1PASS.
+The9 lifecycle and3 Bot provenance cases are included, not additional counts.
+All focused and integration external watchdogs stayed inactive. Build and root
+TypeScript PASS. Docs43PASS; build55pages/2601internal links, English/local-path
+checks PASS. Final tested six-file source hashes remain unchanged. Public Core,
+Schema, History, engine/transport and fixtures match the baseline; their previous
+full-suite receipts remain historical, not new runs. No fresh whole-workspace,
+Chrome/mobile, Rust, benchmark, package publication or deployment result is claimed.
+
+**Limits and docs.** Executable schema code that never settles is not internally
+cancelled. Paused input can delay EOF observation; session.start remains atomic
+at this owner boundary. MCP hosts retain their own process deadline/escalation
+policy. Raw application stderr can contain private schema-thrown text even though
+Bot mission persistence excludes it. AI server guide and MCP README document
+readiness, lifetime, phase errors, pending-safe restart and cancellation limits.
+Report/source/evidence seal: docs/reports/mcp-startup-lifetime-2026-11-03/.
+
+
+### 5.133 Final startup-lifetime review and full-suite main checkpoint (2026-11-03)
+
+**Scope.** User authorized final review of all pending changes, a full test run,
+docs/HANDOFF updates, commit and push to main. Initial HEAD/origin main both
+0de9f0f. The final review used the code-reviewer workflow and existing independent
+review evidence. No new runtime edit was needed. The prior688-file source seal,
+report hash and188 evidence archives match. Historical source/control reports
+remain immutable.
+
+The pending code owns stdin before bootstrap, buffers raw initialize bytes with
+backpressure and holds a startup-only reference until SDK readiness or closure.
+Failure/EOF cleanup preserves unknown intent/checkpoint and foreign changes;
+ready shutdown drains admitted work and uses the existing settled-only leave
+gate. Bot retains only a known phase from bounded stderr prefixes. Remote schema
+discovery remains unchanged. Source review found no new blocker. The previously
+demonstrated supported async-schema gap is distinct from the old discovery-only
+failure, whose exact trigger remains NOT_PROVEN. Existing cancellation and
+private-stderr limits remain documented; no broader availability guarantee is
+claimed.
+
+**Fresh verification.** Node24.22.1 `npm test`, including its package build,
+exits0:1650cases/1648PASS/two expected platformSKIP/zeroFAIL/zeroCANCEL in133.22s.
+Core1194; Lexical7; React2; Solid3; Svelte2; UI4; Vue2; Slate4; Bot56; Demo143;
+Docs43; MCP190/188PASS. Nine lifecycle and three Bot provenance regressions are
+included. Pending/foreign preservation, exact recovery, process/server restart,
+duplicate prevention and undo/redo are exercised by these suites. The external
+360s watchdog did not fire and no failure was retried.
+
+Post-build root `npx tsc --noEmit` PASS. Docs workspace build and check PASS:
+55pages/2601internal links, English=true and localPathsExcluded=true. All688
+source hashes were unchanged after the full test and before this documentation
+summary. Public packages, fixtures, manifests and lock remain unchanged from
+the prior main checkpoint; no new tarball/release rehearsal was necessary for
+these private application changes. No fresh browser/mobile, native Rust or
+controlled performance run is claimed.
+
+**Publication.** Commit/push scope is main only; all ten library packages retain
+their existing private0.0.0 state. No npm publication, release tag, actor migration
+or data cleanup is part of this checkpoint. Remote commit, automatic Pages and
+Linux CI outcomes are checked after source commit and reported separately.
+Source/evidence report: docs/reports/mcp-startup-main-checkpoint-2026-11-03/.
