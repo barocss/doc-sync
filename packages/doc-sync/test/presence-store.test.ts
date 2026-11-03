@@ -244,3 +244,30 @@ test("new identical presence packets refresh receipt expiry and restore an expir
         assert.deepEqual(store.getSnapshot(), first);
     } finally { connection.dispose(); store.dispose(); a.client.disconnect(); a.client.dispose(); }
 });
+
+test("detached store methods isolate clocks, subscriptions and disposal between instances", () => {
+    const clockReceivers: unknown[] = [];
+    const a = createPresenceStore({actor: "A", now: function (this: void) { clockReceivers.push(this); return 10; }});
+    const b = createPresenceStore({actor: "B", now: () => 20});
+    const {getSnapshot, subscribe, updateLocal, receive, expire, dispose} = a;
+    const {getSnapshot: getB, updateLocal: updateB} = b;
+    let calls = 0;
+    const stop = subscribe(() => calls++);
+    updateLocal({activity: "active"}); updateB({activity: "idle"});
+    const held = getSnapshot();
+    receive(remote("C"));
+    assert.deepEqual(getSnapshot().map(s => s.actor), ["A", "C"]);
+    assert.deepEqual(held.map(s => s.actor), ["A"]);
+    assert.equal(getB()[0].updatedAt, 20);
+    assert.ok(clockReceivers.length > 0);
+    assert.ok(clockReceivers.every(receiver => receiver === undefined), "clock must be called without a receiver");
+    expire(30010);
+    assert.deepEqual(getSnapshot().map(s => s.actor), ["A"]);
+    dispose(); stop(); stop();
+    assert.equal(calls, 4);
+    assert.deepEqual(getSnapshot(), []);
+    assert.throws(() => updateLocal({activity: "away"}), /disposed/);
+    updateB({activity: "active"});
+    assert.equal(getB()[0].activity, "active");
+    b.dispose();
+});

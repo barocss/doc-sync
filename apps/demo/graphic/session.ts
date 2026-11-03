@@ -8,6 +8,12 @@ import type {CanvasKind, CanvasTransform, CanvasSize} from "../../../fixtures/gr
 import {reparentTransform, worldTransform} from "./geometry.ts";
 import {HeldTransport, browserTransport} from "./transport.ts";
 
+const splitsPair = (value: string, at: number) => at > 0 && at < value.length &&
+    value.charCodeAt(at - 1) >= 0xD800 && value.charCodeAt(at - 1) <= 0xDBFF &&
+    value.charCodeAt(at) >= 0xDC00 && value.charCodeAt(at) <= 0xDFFF;
+
+const GRAPHIC_CONTAINER_TYPES = Object.freeze(["frame", "object-group"]);
+
 export interface SceneObject {
     id: string; type: CanvasKind; parentId: string | null; transform: CanvasTransform;
     size?: CanvasSize; fill?: string; text?: string; locked?: boolean;
@@ -88,10 +94,10 @@ export class SceneSession {
     private edit(ops: EditOp[]) { const start = performance.now(); try { this.client.edit(ops); } finally { this.metrics.editMs = performance.now() - start; } }
     create(type: CanvasKind, attrs: Record<string, unknown> = {}, parentId: string | null = null): string {
         this.rebuild(); const parent = parentId === null ? null : this.editable(parentId);
-        if (parent && !["frame", "object-group"].includes(parent.object.type)) throw new Error("Target is not a container");
+        if (parent && !GRAPHIC_CONTAINER_TYPES.includes(parent.object.type)) throw new Error("Target is not a container");
         const children = parent ? parent.node.children ?? [] : this.raw.children ?? [];
         const {text, ...storedAttrs} = attrs;
-        const node: NodeJSON = {type, attrs: {transform: {...identity}, ...storedAttrs}, ...(type === "label" ? {runs: [{text: typeof text === "string" ? text : "Label", marks: {}}]} : {}), ...(["frame", "object-group"].includes(type) ? {children: []} : {})};
+        const node: NodeJSON = {type, attrs: {transform: {...identity}, ...storedAttrs}, ...(type === "label" ? {runs: [{text: typeof text === "string" ? text : "Label", marks: {}}]} : {}), ...(GRAPHIC_CONTAINER_TYPES.includes(type) ? {children: []} : {})};
         this.edit([{op: "insert", at: [...(parent?.path ?? []), children.length], content: [node]}]);
         this.rebuild(); const targetPath = [...(parent?.path ?? []), children.length];
         const result = [...this.index.values()].find(entry => entry.path.length === targetPath.length && entry.path.every((part, at) => part === targetPath[at]));
@@ -109,9 +115,7 @@ export class SceneSession {
             let start = 0, oldEnd = before.length, newEnd = text.length;
             while (start < oldEnd && start < newEnd && before[start] === text[start]) start++;
             // Model offsets count UTF-16 units. Never retain half of a surrogate pair.
-            const splitsPair = (value: string, at: number) => at > 0 && at < value.length &&
-                value.charCodeAt(at - 1) >= 0xD800 && value.charCodeAt(at - 1) <= 0xDBFF &&
-                value.charCodeAt(at) >= 0xDC00 && value.charCodeAt(at) <= 0xDFFF;
+
             if (splitsPair(before, start) || splitsPair(text, start)) start--;
             while (oldEnd > start && newEnd > start && before[oldEnd - 1] === text[newEnd - 1]) { oldEnd--; newEnd--; }
             if (splitsPair(before, oldEnd) || splitsPair(text, newEnd)) { oldEnd++; newEnd++; }
@@ -130,7 +134,7 @@ export class SceneSession {
     }
     reparent(id: string, parentId: string | null) {
         const entry = this.editable(id), parent = parentId === null ? null : this.editable(parentId);
-        if (parent && !["frame", "object-group"].includes(parent.object.type)) throw new Error("Target is not a container");
+        if (parent && !GRAPHIC_CONTAINER_TYPES.includes(parent.object.type)) throw new Error("Target is not a container");
         for (let cursor = parent; cursor; cursor = cursor.object.parentId ? this.get(cursor.object.parentId) : null) if (cursor.object.id === id) throw new Error("Cannot create a cycle");
         if (entry.object.parentId === parentId) return;
         const map = new Map(this.model().map(object => [object.id, object]));

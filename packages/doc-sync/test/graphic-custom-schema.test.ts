@@ -91,3 +91,27 @@ function typeContracts() {
     h.createNode("rectangle");
 }
 void typeContracts;
+
+test("detached graphic helpers keep their cloned schema and reject another factory's document", () => {
+    const input = structuredClone(scene) as GraphicSchema;
+    const {assertNode, createNode, insert, objectAt, findObject, update, delete: remove} = createGraphicHelpers(input);
+    const other = createGraphicHelpers(board);
+    const doc = new Doc("scene", scene), otherDoc = new Doc("board", board);
+    // Caller mutation must not alter the factory's validation schema or identity.
+    delete input.nodes.dot;
+    const node = createNode("dot", {radius: 7});
+    assertNode(node); doc.edit([insert(doc, null, 0, node)]);
+    const object = objectAt(doc, [0]);
+    assert.equal(findObject(doc, object.id)?.node.attrs?.radius, 7);
+    doc.edit([update(doc, object.id, "dot", {radius: 9})]);
+    assert.equal(objectAt(doc, [0]).node.attrs?.radius, 9);
+    otherDoc.edit([other.insert(otherDoc, null, 0, other.createNode("tile"))]);
+    const before = otherDoc.snapshot();
+    assert.throws(() => findObject(otherDoc, object.id), /identity/);
+    assert.throws(() => objectAt(otherDoc, [0]), /identity/);
+    assert.throws(() => remove(otherDoc, object.id), /identity/);
+    assert.throws(() => other.assertNode(node), /unknown object type/);
+    assert.deepEqual(otherDoc.snapshot(), before);
+    doc.edit([remove(doc, object.id)]);
+    assert.deepEqual(doc.toJSON().children, []);
+});

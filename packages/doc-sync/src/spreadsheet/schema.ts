@@ -1,5 +1,13 @@
 import {sha256} from "../crdt/schema-version.ts";
 
+const PLAIN_RECORD_PROTOTYPES = Object.freeze([null, Object.prototype]);
+
+const NUMERIC_ATTRIBUTE_BOUNDS = Object.freeze(["min", "max"] as const);
+
+const SHEET_ATTRIBUTE_SCHEMA_FIELDS = Object.freeze(["type", "default", "values", "min", "max", "maxLength"]);
+const SCALAR_ATTRIBUTE_TYPES = Object.freeze(["string", "number", "boolean", "scalar"]);
+
+
 export type SpreadsheetScalar = string | number | boolean | null;
 export interface SpreadsheetFieldSpec {
     type: "string" | "number" | "boolean" | "scalar";
@@ -17,7 +25,7 @@ export interface SpreadsheetSchema {
 const forbidden = new Set(["__proto__", "prototype", "constructor"]);
 function fail(): never { throw new Error("Invalid spreadsheet schema"); }
 function plain(value: unknown): value is Record<string, unknown> {
-    return !!value && typeof value === "object" && !Array.isArray(value) && [null, Object.prototype].includes(Object.getPrototypeOf(value));
+    return !!value && typeof value === "object" && !Array.isArray(value) && PLAIN_RECORD_PROTOTYPES.includes(Object.getPrototypeOf(value));
 }
 function json(value: unknown, active = new Set<object>(), depth = 0): void {
     if (value === null || typeof value === "boolean" || typeof value === "string") return;
@@ -55,13 +63,13 @@ export function assertSpreadsheetSchema(value: unknown): asserts value is Spread
         if (!/^[A-Za-z_][A-Za-z0-9_.-]{0,127}$/.test(name) || forbidden.has(name)) fail();
         const spec = value.fields[name];
         if (!plain(spec) || !Object.hasOwn(spec, "type") || !Object.hasOwn(spec, "default") ||
-            Object.keys(spec).some(key => !["type", "default", "values", "min", "max", "maxLength"].includes(key)) ||
-            !["string", "number", "boolean", "scalar"].includes(spec.type as string)) fail();
+            Object.keys(spec).some(key => !SHEET_ATTRIBUTE_SCHEMA_FIELDS.includes(key)) ||
+            !SCALAR_ATTRIBUTE_TYPES.includes(spec.type as string)) fail();
         if (Object.hasOwn(spec, "values")) {
             if (!Array.isArray(spec.values) || !spec.values.length || spec.values.length > 256 || new Set(spec.values).size !== spec.values.length) fail();
             if (!spec.values.every(item => item !== null && accepts({type: spec.type as SpreadsheetFieldSpec["type"], default: null}, item))) fail();
         }
-        for (const key of ["min", "max"] as const) if (Object.hasOwn(spec, key) &&
+        for (const key of NUMERIC_ATTRIBUTE_BOUNDS) if (Object.hasOwn(spec, key) &&
             (spec.type !== "number" || typeof spec[key] !== "number" || !Number.isFinite(spec[key]))) fail();
         if (spec.min !== undefined && spec.max !== undefined && (spec.min as number) > (spec.max as number)) fail();
         if (Object.hasOwn(spec, "maxLength") && (spec.type !== "string" || !Number.isSafeInteger(spec.maxLength) || (spec.maxLength as number) < 0 || (spec.maxLength as number) > 1_000_000)) fail();

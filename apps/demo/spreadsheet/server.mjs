@@ -6,6 +6,12 @@ import {fileURLToPath} from 'node:url';
 import {createSpreadsheetSchema,spreadsheetSchemaVersion,StructuralSheet} from '@barocss/doc-sync';
 import {SparseSheet} from '../../../experiments/sparse-sheet/src/sheet.ts';
 import {MAX_PREVIEW_TEXT,presenceIdentity,validTextSelection} from './presence.ts';
+
+const SHEET_HTML_ASSET = Object.freeze(['index.html','text/html']);
+const SHEET_STYLE_ASSET = Object.freeze(['style.css','text/css']);
+
+const EDITING_PRESENCE_FIELDS = Object.freeze(['target','field','text','composing','selection']);
+
 export const META = Object.freeze({protocol:'sparse-sheet-demo-v1', policy:'field-lww-fixed-axis-v1', sheetId:'sheet', rows:1048576, columns:16384});
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
@@ -23,7 +29,7 @@ export function createSpreadsheetServer({maxRooms=8,maxOps=20000,outputDir=proce
    if(req.headers.origin && req.headers.origin !== `http://${req.headers.host}`) return send(403,{error:'Same origin required'});
    const url=new URL(req.url,'http://127.0.0.1');
    const match=/^\/api\/sheets\/([\w-]{1,80})\/(join|changes|presence|presence-leave|stream|state)$/.exec(url.pathname);
-   if(!match){const files={'/':['index.html','text/html'],'/style.css':['style.css','text/css'],'/main.js':[resolve(HERE,'../../..',outputDir,'main.js'),'text/javascript']}; const file=files[url.pathname];if(!file||req.method!=='GET')return send(404,{error:'Not found'});res.writeHead(200,{'content-type':file[1]});res.end(await readFile(resolve(HERE,file[0])));return;}
+   if(!match){const files={'/':SHEET_HTML_ASSET,'/style.css':SHEET_STYLE_ASSET,'/main.js':[resolve(HERE,'../../..',outputDir,'main.js'),'text/javascript']}; const file=files[url.pathname];if(!file||req.method!=='GET')return send(404,{error:'Not found'});res.writeHead(200,{'content-type':file[1]});res.end(await readFile(resolve(HERE,file[0])));return;}
    const [,id,action]=match;
    if(action==='state'&&req.method==='GET'){const r=rooms.get(id);if(!r)return send(404,{error:'Unknown room'});return send(200,{meta:r.meta,epoch:r.epoch,serverSeq:r.log.length,log:r.log,cells:r.sheet.getRange({row:0,column:0,rowCount:stable(r.meta)?r.sheet.rows:META.rows,columnCount:stable(r.meta)?r.sheet.columns:META.columns,limit:20000}),stats:r.sheet.stats(),presence:[...r.presence.values()],storage:'memory'});}
    if(action==='stream'&&req.method==='GET'){
@@ -69,7 +75,7 @@ export function createSpreadsheetServer({maxRooms=8,maxOps=20000,outputDir=proce
     if(typeof name!=='string'||name.length<1||name.length>80||/[\x00-\x1f\x7f]/.test(name)||typeof color!=='string'||!/^#[0-9a-fA-F]{6}$/.test(color))return send(400,{error:'Invalid presence identity'});
     if(b.presenceSeq!==undefined&&(!Number.isSafeInteger(b.presenceSeq)||b.presenceSeq<1))return send(400,{error:'Invalid presence sequence'});
     const fields=r.schema?.fields??{value:1,formula:1,fill:1,bold:1};
-    if(editing!==undefined&&editing!==null&&(!editing||typeof editing!=='object'||Array.isArray(editing)||Object.keys(editing).some(k=>!['target','field','text','composing','selection'].includes(k))||!targetValid(editing.target)||Object.keys(editing.target).length!==2||typeof editing.field!=='string'||!Object.hasOwn(fields,editing.field)||typeof editing.text!=='string'||editing.text.length>MAX_PREVIEW_TEXT||typeof editing.composing!=='boolean'||Object.hasOwn(editing,'selection')&&!validTextSelection(editing.text,editing.selection)))return send(400,{error:'Invalid editing preview'});
+    if(editing!==undefined&&editing!==null&&(!editing||typeof editing!=='object'||Array.isArray(editing)||Object.keys(editing).some(k=>!EDITING_PRESENCE_FIELDS.includes(k))||!targetValid(editing.target)||Object.keys(editing.target).length!==2||typeof editing.field!=='string'||!Object.hasOwn(fields,editing.field)||typeof editing.text!=='string'||editing.text.length>MAX_PREVIEW_TEXT||typeof editing.composing!=='boolean'||Object.hasOwn(editing,'selection')&&!validTextSelection(editing.text,editing.selection)))return send(400,{error:'Invalid editing preview'});
     if(b.presenceSeq!==undefined&&b.presenceSeq<=a.presenceSeq)return send(200,{stale:true});
     a.presenceSeq=b.presenceSeq??a.presenceSeq+1;
     r.presence.set(b.actor,{actor:b.actor,name,color,range:p,...(editing?{editing}:{})});

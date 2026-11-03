@@ -3,6 +3,22 @@ import type {SpreadsheetSchema} from "./schema.ts";
 import {Clock, compareTicket, keyOf} from "../crdt/ticket.ts";
 import type {Ticket} from "../crdt/ticket.ts";
 
+const PLAIN_RECORD_PROTOTYPES = Object.freeze([Object.prototype, null]);
+
+const SCHEMA_SHEET_OPTION_FIELDS = Object.freeze(["actor", "sheetId", "rows", "columns", "schema"]);
+const SHEET_OPTION_FIELDS = Object.freeze(["actor", "sheetId", "rows", "columns"]);
+const SCHEMA_CELL_OPERATION_FIELDS = Object.freeze(["at", "sheetId", "row", "column", "field", "value", "schemaVersion"]);
+const CELL_OPERATION_FIELDS = Object.freeze(["at", "sheetId", "row", "column", "field", "value"]);
+const CELL_TICKET_FIELDS = Object.freeze(["lamport", "actor"]);
+const SCHEMA_SHEET_STATE_FIELDS = Object.freeze(["format", "schemaVersion", "options", "journal", "checkpoint"]);
+const SHEET_STATE_FIELDS = Object.freeze(["format", "options", "journal", "checkpoint"]);
+const CELL_JOURNAL_FIELDS = Object.freeze(["type", "row", "column", "patch", "ops"]);
+const HISTORY_JOURNAL_FIELDS = Object.freeze(["type", "ops"]);
+
+const UNSAFE_PROPERTY_NAMES = Object.freeze(["__proto__", "prototype", "constructor"]);
+const SHEET_QUERY_FIELDS = Object.freeze(["row", "column", "rowCount", "columnCount", "limit"]);
+
+
 export interface SparseSheetOptions {actor: string; sheetId: string; rows: number; columns: number; schema?: SpreadsheetSchema}
 /** Custom schemas can reuse any field name with their declared scalar type.
  * Runtime validation enforces the schema, including legacy field types.
@@ -42,11 +58,12 @@ export interface SparseSheetState {
 
 const fields = ["value", "formula", "fill", "bold", "numberFormat"] as const;
 const FORMAT = "doc-sync-sparse-sheet-experiment-v1" as const;
+const SNAPSHOT_FORMATS: readonly string[] = Object.freeze([FORMAT, "doc-sync-sparse-sheet-experiment-v2"]);
 const copy = <T>(value: T): T => structuredClone(value);
 function fail(message: string): never { throw new Error(`Sparse sheet: ${message}`); }
 const integer = (value: unknown, min = 0): value is number => Number.isSafeInteger(value) && (value as number) >= min;
 const record = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value) &&
-    [Object.prototype, null].includes(Object.getPrototypeOf(value));
+    PLAIN_RECORD_PROTOTYPES.includes(Object.getPrototypeOf(value));
 const exactKeys = (value: Record<string, unknown>, names: readonly string[]): boolean => {
     const keys = Object.keys(value);
     return keys.length === names.length && keys.every(key => names.includes(key));
@@ -62,7 +79,7 @@ const safeJson = (value: unknown, active = new Set<object>(), depth = 0): boolea
     const keys = Reflect.ownKeys(value);
     const ok = keys.every(key => {
         if (Array.isArray(value) && key === "length") return true;
-        if (typeof key !== "string" || ["__proto__", "prototype", "constructor"].includes(key)) return false;
+        if (typeof key !== "string" || UNSAFE_PROPERTY_NAMES.includes(key)) return false;
         const descriptor = descriptors[key];
         return !!descriptor && descriptor.enumerable && "value" in descriptor && safeJson(descriptor.value, active, depth + 1);
     }) && (!Array.isArray(value) || keys.length === value.length + 1 && Array.from({length: value.length}, (_, at) => String(at)).every(key => Object.hasOwn(descriptors, key)));
@@ -96,7 +113,7 @@ export class SparseSheet {
     private journal: JournalEntry[] = [];
 
     constructor(options: SparseSheetOptions) {
-        if (!safeJson(options) || !record(options) || !exactKeys(options, Object.hasOwn(options, "schema") ? ["actor", "sheetId", "rows", "columns", "schema"] : ["actor", "sheetId", "rows", "columns"]) ||
+        if (!safeJson(options) || !record(options) || !exactKeys(options, Object.hasOwn(options, "schema") ? SCHEMA_SHEET_OPTION_FIELDS : SHEET_OPTION_FIELDS) ||
             typeof options.actor !== "string" || !/^[\w~-]{1,128}$/.test(options.actor) || options.actor === "~root" ||
             typeof options.sheetId !== "string" || !options.sheetId.length || options.sheetId.length > 256 ||
             !integer(options.rows, 1) || !integer(options.columns, 1)) fail("invalid options");
@@ -118,9 +135,9 @@ export class SparseSheet {
     }
     private key(row: number, column: number, field: SparseField) { return slotKey(this.options.sheetId, row, column, field); }
     private validateOp(value: unknown): asserts value is SparseSheetOp {
-        if (!record(value) || !exactKeys(value, this.schemaIdentity ? ["at", "sheetId", "row", "column", "field", "value", "schemaVersion"] : ["at", "sheetId", "row", "column", "field", "value"]) ||
+        if (!record(value) || !exactKeys(value, this.schemaIdentity ? SCHEMA_CELL_OPERATION_FIELDS : CELL_OPERATION_FIELDS) ||
             value.schemaVersion !== this.schemaIdentity ||
-            !record(value.at) || !exactKeys(value.at, ["lamport", "actor"]) || !integer(value.at.lamport, 1) ||
+            !record(value.at) || !exactKeys(value.at, CELL_TICKET_FIELDS) || !integer(value.at.lamport, 1) ||
             typeof value.at.actor !== "string" || !/^[\w~-]{1,128}$/.test(value.at.actor) || value.at.actor === "~root" || value.sheetId !== this.options.sheetId ||
             typeof value.field !== "string" || !this.valid(value.field, value.value)) fail("invalid operation");
         this.coordinate(value.row, value.column);
@@ -186,7 +203,7 @@ export class SparseSheet {
         return this.registers.get(this.key(row, column, field))?.value ?? this.options.schema?.fields[field].default ?? null;
     }
     getRange(range: SparseRange): SparseRangeEntry[] {
-        if (!safeJson(range) || !record(range) || Object.keys(range).some(key => !["row", "column", "rowCount", "columnCount", "limit"].includes(key)) ||
+        if (!safeJson(range) || !record(range) || Object.keys(range).some(key => !SHEET_QUERY_FIELDS.includes(key)) ||
             !integer(range.rowCount) || !integer(range.columnCount) || !integer(range.row) || !integer(range.column) ||
             range.row > this.options.rows || range.column > this.options.columns ||
             range.rowCount > this.options.rows - range.row || range.columnCount > this.options.columns - range.column ||
@@ -243,25 +260,25 @@ export class SparseSheet {
         }});
     }
     static fromState(state: unknown): SparseSheet {
-        if (!safeJson(state) || !record(state) || !exactKeys(state, state.format === "doc-sync-sparse-sheet-experiment-v2" ? ["format", "schemaVersion", "options", "journal", "checkpoint"] : ["format", "options", "journal", "checkpoint"]) || ![FORMAT, "doc-sync-sparse-sheet-experiment-v2"].includes(state.format as string) || !Array.isArray(state.journal)) fail("invalid snapshot");
+        if (!safeJson(state) || !record(state) || !exactKeys(state, state.format === "doc-sync-sparse-sheet-experiment-v2" ? SCHEMA_SHEET_STATE_FIELDS : SHEET_STATE_FIELDS) || !SNAPSHOT_FORMATS.includes(state.format as string) || !Array.isArray(state.journal)) fail("invalid snapshot");
         const sheet = new SparseSheet(state.options as unknown as SparseSheetOptions);
         if (state.schemaVersion !== sheet.schemaIdentity || (state.format === FORMAT) !== !sheet.schemaIdentity) fail("snapshot schema differs");
         for (const entry of state.journal) {
             if (!record(entry) || typeof entry.type !== "string") fail("invalid snapshot journal entry");
             if (entry.type === "set") {
-                if (!exactKeys(entry, ["type", "row", "column", "patch", "ops"])) fail("invalid set journal entry");
+                if (!exactKeys(entry, CELL_JOURNAL_FIELDS)) fail("invalid set journal entry");
                 const ops = sheet.setCell(entry.row as number, entry.column as number, entry.patch as SparseCellPatch);
                 if (!equal(ops, entry.ops) || !ops.length) fail("invalid generated set operations");
             } else if (entry.type === "receive") {
-                if (!exactKeys(entry, ["type", "ops"])) fail("invalid receive journal entry");
+                if (!exactKeys(entry, HISTORY_JOURNAL_FIELDS)) fail("invalid receive journal entry");
                 const count = sheet.journal.length; sheet.receive(entry.ops as SparseSheetOp[]);
                 if (sheet.journal.length === count || !equal(sheet.journal.at(-1), entry)) fail("invalid receive replay");
             } else if (entry.type === "undo" || entry.type === "redo") {
-                if (!exactKeys(entry, ["type", "ops"])) fail("invalid history journal entry");
+                if (!exactKeys(entry, HISTORY_JOURNAL_FIELDS)) fail("invalid history journal entry");
                 const count = sheet.journal.length, ops = sheet[entry.type]();
                 if (sheet.journal.length === count || !equal(ops, entry.ops)) fail("invalid history replay");
             } else if (entry.type === "acknowledge") {
-                if (!exactKeys(entry, ["type", "ops"])) fail("invalid acknowledgement journal entry");
+                if (!exactKeys(entry, HISTORY_JOURNAL_FIELDS)) fail("invalid acknowledgement journal entry");
                 const count = sheet.journal.length; sheet.acknowledge(entry.ops as SparseSheetOp[]);
                 if (sheet.journal.length === count) fail("empty acknowledgement journal entry");
             } else fail("unknown snapshot journal entry");

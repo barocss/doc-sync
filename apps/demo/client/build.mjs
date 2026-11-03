@@ -1,3 +1,4 @@
+import {reactRuntimeAliases} from '../react-runtime-aliases.mjs';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
@@ -11,7 +12,7 @@ export async function bundleClientDemo({write = false, outdir = defaultOutdir} =
     const result = await build({entryPoints: [fileURLToPath(new URL('./main.jsx', import.meta.url))],
         outfile: resolve(outdir, 'bundle.js'), bundle: true, write: false, metafile: true,
         nodePaths: [resolve(root, 'apps/demo/compat/node_modules')], format: 'esm', platform: 'browser', sourcemap: true,
-        alias: {slate: resolve(root, 'node_modules/slate'), lexical: resolve(root, 'node_modules/lexical'), '@lexical/rich-text': resolve(root, 'node_modules/@lexical/rich-text')},
+        alias: {...reactRuntimeAliases, slate: resolve(root, 'node_modules/slate'), lexical: resolve(root, 'node_modules/lexical'), '@lexical/rich-text': resolve(root, 'node_modules/@lexical/rich-text')},
         jsx: 'automatic', define: {'process.env.NODE_ENV': '"development"'}});
     const proof = inspectBundle(result.metafile);
     if (write) {

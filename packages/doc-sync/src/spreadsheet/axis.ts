@@ -1,6 +1,15 @@
 import {compareTicket, keyOf} from "../crdt/ticket.ts";
 import type {Ticket} from "../crdt/ticket.ts";
 
+const AXIS_RECORD_PROTOTYPES = Object.freeze([Object.prototype, null]);
+const AXIS_TICKET_FIELDS = Object.freeze(["lamport", "actor"]);
+const AXIS_ID_FIELDS = Object.freeze(["source", "offset"]);
+const AXIS_SPAN_FIELDS = Object.freeze(["source", "start", "count"]);
+const INSERT_ACTION_FIELDS = Object.freeze(["kind", "at", "before", "count"]);
+const VISIBILITY_ACTION_FIELDS = Object.freeze(["kind", "at", "targets", "visible"]);
+const MOVE_ACTION_FIELDS = Object.freeze(["kind", "at", "targets", "before"]);
+const TOGGLE_ACTION_FIELDS = Object.freeze(["kind", "at", "target", "active"]);
+
 /** An offset within an immutable initial or inserted run. */
 export interface AxisId {source: string; offset: number}
 export interface AxisSpan {source: string; start: number; count: number}
@@ -15,16 +24,16 @@ const INITIAL = "initial";
 const copy = <T>(value: T): T => structuredClone(value);
 const integer = (value: unknown, min = 0): value is number => Number.isSafeInteger(value) && (value as number) >= min;
 const record = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" &&
-    !Array.isArray(value) && [Object.prototype, null].includes(Object.getPrototypeOf(value));
+    !Array.isArray(value) && AXIS_RECORD_PROTOTYPES.includes(Object.getPrototypeOf(value));
 function fail(message: string): never { throw new Error(`Interval axis: ${message}`); }
-function keys(value: unknown, names: string[]): asserts value is Record<string, unknown> {
+function keys(value: unknown, names: readonly string[]): asserts value is Record<string, unknown> {
     if (!record(value)) fail("invalid object");
     const descriptors = Object.getOwnPropertyDescriptors(value), own = Reflect.ownKeys(value);
     if (own.length !== names.length || own.some(key => typeof key !== "string" || !names.includes(key) ||
         !descriptors[key].enumerable || !("value" in descriptors[key]))) fail("invalid object fields");
 }
 function ticket(value: unknown): asserts value is Ticket {
-    keys(value, ["lamport", "actor"]);
+    keys(value, AXIS_TICKET_FIELDS);
     if (!integer(value.lamport, 1) || typeof value.actor !== "string" || !/^[\w~-]{1,128}$/.test(value.actor) || value.actor === "~root") fail("invalid ticket");
 }
 function sourceTicket(value: unknown): Ticket | null {
@@ -39,7 +48,7 @@ function sourceTicket(value: unknown): Ticket | null {
 }
 export function axisSource(at: Ticket): string { ticket(at); return keyOf(at); }
 export function assertAxisId(value: unknown): asserts value is AxisId {
-    keys(value, ["source", "offset"]);
+    keys(value, AXIS_ID_FIELDS);
     sourceTicket(value.source);
     if (!integer(value.offset)) fail("invalid ID offset");
 }
@@ -58,7 +67,7 @@ function spans(value: unknown, at: Ticket): asserts value is AxisSpan[] {
         const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
         if (!descriptor?.enumerable || !("value" in descriptor)) fail("invalid target span descriptor");
         const span = descriptor.value;
-        keys(span, ["source", "start", "count"]);
+        keys(span, AXIS_SPAN_FIELDS);
         const origin = sourceTicket(span.source);
         if (origin && origin.lamport >= at.lamport) fail("forward span reference");
         if (!integer(span.start) || !integer(span.count, 1) || span.start > Number.MAX_SAFE_INTEGER - span.count) fail("invalid target span bounds");
@@ -78,26 +87,28 @@ export function assertAxisAction(value: unknown): asserts value is AxisAction {
     const kind = Object.getOwnPropertyDescriptor(value, "kind");
     if (!kind?.enumerable || !("value" in kind)) fail("invalid action kind");
     if (kind.value === "insert") {
-        keys(value, ["kind", "at", "before", "count"]); ticket(value.at); before(value.before, value.at);
+        keys(value, INSERT_ACTION_FIELDS); ticket(value.at); before(value.before, value.at);
         if (!integer(value.count, 1)) fail("invalid insert count");
     } else if (kind.value === "visibility") {
-        keys(value, ["kind", "at", "targets", "visible"]); ticket(value.at); spans(value.targets, value.at);
+        keys(value, VISIBILITY_ACTION_FIELDS); ticket(value.at); spans(value.targets, value.at);
         if (typeof value.visible !== "boolean") fail("invalid visibility");
     } else if (kind.value === "move") {
-        keys(value, ["kind", "at", "targets", "before"]); ticket(value.at); spans(value.targets, value.at); before(value.before, value.at);
+        keys(value, MOVE_ACTION_FIELDS); ticket(value.at); spans(value.targets, value.at); before(value.before, value.at);
         const anchor = value.before as AxisId | null;
         if (anchor && value.targets.some(span => span.source === anchor.source && anchor.offset >= span.start && anchor.offset < span.start + span.count)) fail("move anchor is a target");
     } else if (kind.value === "toggle") {
-        keys(value, ["kind", "at", "target", "active"]); ticket(value.at); ticket(value.target);
+        keys(value, TOGGLE_ACTION_FIELDS); ticket(value.at); ticket(value.target);
         if (value.at.actor !== value.target.actor || value.target.lamport >= value.at.lamport || typeof value.active !== "boolean") fail("invalid history target");
     } else fail("unknown action kind");
 }
+function canonicalAxisId(value: AxisId | null): [string, number] | null {
+    return value && [value.source, value.offset];
+}
 function canonical(action: AxisAction): string {
     const at = [action.at.lamport, action.at.actor];
-    const id = (value: AxisId | null) => value && [value.source, value.offset];
-    if (action.kind === "insert") return JSON.stringify([action.kind, at, id(action.before), action.count]);
+    if (action.kind === "insert") return JSON.stringify([action.kind, at, canonicalAxisId(action.before), action.count]);
     if (action.kind === "toggle") return JSON.stringify([action.kind, at, [action.target.lamport, action.target.actor], action.active]);
-    return JSON.stringify([action.kind, at, action.targets.map(span => [span.source, span.start, span.count]), action.kind === "move" ? id(action.before) : action.visible]);
+    return JSON.stringify([action.kind, at, action.targets.map(span => [span.source, span.start, span.count]), action.kind === "move" ? canonicalAxisId(action.before) : action.visible]);
 }
 function coalesce(runs: Run[]): Run[] {
     const result: Run[] = [];

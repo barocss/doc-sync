@@ -1,3 +1,19 @@
+const pathAt = (text, offset) => {
+    offset = Math.max(0, Math.min(text.length, offset));
+    const prefix = text.slice(0, offset).split('\n');
+    return [prefix.length - 1, prefix.at(-1).length];
+};
+const offsetAt = (text, path) => {
+    const lines = text.split('\n');
+    if (!path || path.length !== 2 || path[0] < 0 || path[0] >= lines.length) return null;
+    return lines.slice(0, path[0]).reduce((sum, line) => sum + line.length + 1, 0) + Math.min(lines[path[0]].length, Math.max(0, path[1]));
+};
+const resolve = (current, range) => {
+    if (!range) return null;
+    const anchor = current.locateAnchor(range.anchor, 'visible'), focus = current.locateAnchor(range.focus, 'visible');
+    return anchor && focus ? {anchor, focus} : null;
+};
+
 /** A plain-text textarea binding. Document access goes through EditorHost only. */
 export function mountCustomEditor(textarea, host, {onError = error => { throw error; }} = {}) {
     const schema = host.schema;
@@ -22,16 +38,7 @@ export function mountCustomEditor(textarea, host, {onError = error => { throw er
             }).join('');
         }).join('\n');
     };
-    const pathAt = (text, offset) => {
-        offset = Math.max(0, Math.min(text.length, offset));
-        const prefix = text.slice(0, offset).split('\n');
-        return [prefix.length - 1, prefix.at(-1).length];
-    };
-    const offsetAt = (text, path) => {
-        const lines = text.split('\n');
-        if (!path || path.length !== 2 || path[0] < 0 || path[0] >= lines.length) return null;
-        return lines.slice(0, path[0]).reduce((sum, line) => sum + line.length + 1, 0) + Math.min(lines[path[0]].length, Math.max(0, path[1]));
-    };
+
     let disposed = false, painting = false, saved = null, beforeCaret = null;
     let session = null;
     let baseline = textOf(host.model().model);
@@ -48,11 +55,7 @@ export function mountCustomEditor(textarea, host, {onError = error => { throw er
         const anchor = current.captureAnchor(range.anchor), focus = current.captureAnchor(range.focus);
         saved = anchor && focus ? {anchor, focus} : null;
     };
-    const resolve = (current, range) => {
-        if (!range) return null;
-        const anchor = current.locateAnchor(range.anchor, 'visible'), focus = current.locateAnchor(range.focus, 'visible');
-        return anchor && focus ? {anchor, focus} : null;
-    };
+
     const select = range => {
         if (!range) return;
         const anchor = offsetAt(textarea.value, range.anchor), focus = offsetAt(textarea.value, range.focus);

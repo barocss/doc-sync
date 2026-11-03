@@ -7,6 +7,9 @@ import {z} from "zod";
 import {parseJournalRecord, type JournalRecord, type RecoveryCheckpoint} from "./journal.ts";
 import {digest, parseProposalRecord, type ProposalRecord} from "./proposal-schema.ts";
 
+const UNSETTLED_PROPOSAL_STATUSES = Object.freeze(["applying", "unconfirmed", "needs_attention"]);
+
+
 export const MAX_PROPOSAL_EVIDENCE_BYTES = 16 * 1024 * 1024;
 export type ProposalPhysicalOwner = {origin: string; document: string; actor: string};
 export type ProposalEvidence = {format: 1; physical: ProposalPhysicalOwner; proposalId: string; proposalDigest: string;
@@ -74,7 +77,7 @@ export async function readStoredProposalEvidence(directory: string, record: Prop
 }
 /** Immutable exact bridge. Call only while holding the proposal store's permanent lock. */
 export async function saveProposalEvidence(directory: string, record: ProposalRecord, journal: JournalRecord, physical: ProposalPhysicalOwner): Promise<ProposalEvidence> {
-    if (record.decision?.kind !== "accept" || !record.attempt || !["applying", "unconfirmed", "needs_attention"].includes(record.status)) throw new Error("No active approval");
+    if (record.decision?.kind !== "accept" || !record.attempt || !UNSETTLED_PROPOSAL_STATUSES.includes(record.status)) throw new Error("No active approval");
     const partial = {format: 1 as const, physical, proposalId: record.payload.id, proposalDigest: record.proposalDigest, owner: record.payload.owner,
         decision: record.decision, attemptId: record.attempt.id, journal};
     const evidence = parseProposalEvidence({...partial, evidenceDigest: digest(partial)}, record, physical), raw = JSON.stringify(evidence) + "\n";

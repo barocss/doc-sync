@@ -141,9 +141,10 @@ mutation inside a post-commit observer is rejected; schedule it after delivery.
 
 `LocalClient`, `SyncClient`, their existing constructors and host bindings remain
 supported. Direct `LocalClient` and `SyncClient` arguments are accepted by all
-four client-facing bindings. There is no new npm package: `/client` belongs to Core and is also re-exported
-by `@barocss/doc-sync/client`. The package roots also export the `Client` class
-and its option and client types. Import the host helpers from `/client`.
+four client-facing bindings. `Client` and its option and client types are
+exported from `@barocss/doc-sync/client` and the `@barocss/doc-sync` root.
+`/client` is an export path of the core package, not another package. Import
+host helpers from `/client`.
 
 Use `createEditorHost(client)` from Core `/client` for a custom adapter. Create
 one host per view and keep it private inside the adapter. Explicit
@@ -164,6 +165,34 @@ Dispose editor bindings and native views before ending the client. Local
 and release protected recovery state under its existing rules; terminal
 `dispose()` rejects remaining protected work or History. `disconnect()` retains
 pending work and History and is the normal temporary stop.
+
+## API ownership and mutation rules
+
+Keep one Client per participant. A binding owns its view and selection; the
+Client owns the document, History, pending operations and transport. The
+`data` namespace supplies Map/List handles for the fixed data schema. It does
+not create another session or select another engine.
+
+Use `client.edit()` for a complete action. Use a custom host's `apply()` and
+`commit()` only when the adapter must own a native editor batch. Finish that
+batch in its original view before another view edits or direct SyncClient APIs
+run. A session draft also belongs to its original view. Sharing one Client does
+not transfer a pending batch to another binding.
+
+Observers can read the document during delivery. They must schedule a new
+mutation after post-edit delivery. A local data validator can read the Client,
+but it cannot start a recursive write. Exceptions must release these guards so
+that the next independent action can run. A local validator is not a server
+admission policy.
+
+Treat `model()` as a borrowed read-only projection. Use `snapshot()` for a
+detached storage snapshot, or `captureState()` for local save/open with History.
+These are different contracts. A detached snapshot includes retained hidden
+nodes; it is not a rendered document or a local persistence policy.
+
+View subscriptions and framework callbacks remain detachable. Dispose each
+view before its Client. Internal helper refactoring does not change operation
+formats, selective undo, presence lifetimes, or recovery evidence.
 
 ## Run the four-editor demo
 

@@ -42,7 +42,25 @@ The MCP app persists the exact ordinary undo or redo change and the resulting hi
 
 A conditional `edit_document` intent is also persisted before its first submission. Its receipt identifies the exact generation, base, actor, sequence and payload. If the server proves acceptance, the MCP app can restore the edit and its history from a compatible protected checkpoint. If the receipt is `unknown`, the app preserves the original intent and enters `recovery_required`; it does not infer rejection or automatically resend it. A live session can still use `retry_edit` for its exact unresolved request within the supported conditional protocol.
 
-A generation or schema mismatch, a missing reservation, unsafe GC frontier, invalid checkpoint, conflicting sequence, or unavailable server prevents automatic recovery. Inspect `recovery_status` and preserve the stored files until the outcome is resolved. The demo's local log and synchronous persistence provide a single-process test boundary; they do not provide authorization, multi-server consistency, or a production retention policy.
+A crash between the accepted checkpoint write and exact intent cleanup can
+leave both files. If their source digest and actor sequence match, recovery
+verifies the exact receipt and uses the already installed History. The saved
+server cursor can precede that receipt when the checkpoint was written before
+reconnection. Before installing local state, the current server sequence must
+reach both the checkpoint cursor and the accepted receipt. Recovery obtains a
+fresh authoritative state after remote proofs and checks generation, schema
+and this minimum cursor again. Cleanup follows successful synchronization and
+checkpoint persistence; it does not reinstall the edit or duplicate its History.
+
+The Node HTTP adapter retries only schema/state reads, reservation confirmation
+and exact atomic pending recovery. It makes at most four attempts with the same
+URL/body and one shared 10-second budget, including body consumption and backoff.
+Only HTTP 429/502/503/504 or recognized connection failures qualify. Valid
+`unsafe` replies, unknown conditional receipts, invalid JSON or recovery proof,
+and permanent refusal remain terminal. Ordinary edit sends, conditional
+submissions and reservation release do not use this automatic retry helper.
+
+A generation or schema mismatch, a missing reservation, unsafe GC frontier, invalid checkpoint, conflicting sequence, or unavailable server prevents automatic recovery. Inspect `recovery_status` and preserve the stored files until the outcome is resolved. The demo's local log and serialized, fsynced persistence provide a single-process test boundary; they do not provide authorization, multi-server consistency, or a production retention policy.
 
 ## 5. Validation and remaining work
 

@@ -18,6 +18,9 @@ import type {NodeJSON} from "@barocss/doc-sync";
  *   /pm?doc=이름
  */
 
+const cell = () => pm.nodes.table_cell.create(null, pm.nodes.paragraph.create());
+const row = () => pm.nodes.table_row.create(null, [cell(), cell(), cell()]);
+
 const params = new URLSearchParams(location.search);
 const DOC = params.get("doc") ?? "pm";
 const SCHEMA = DEMO_SCHEMA;
@@ -109,8 +112,6 @@ const button = (label: string, title: string, onClick: () => void) => {
     tools.append(b);
 };
 const insertTable: Command = (state, dispatch) => {
-    const cell = () => pm.nodes.table_cell.create(null, pm.nodes.paragraph.create());
-    const row = () => pm.nodes.table_row.create(null, [cell(), cell(), cell()]);
 
     dispatch?.(state.tr.replaceSelectionWith(pm.nodes.table.create(null, [row(), row()])));
 

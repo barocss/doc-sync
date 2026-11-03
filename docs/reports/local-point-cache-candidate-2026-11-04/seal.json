@@ -1,0 +1,107 @@
+{
+  "status": "SEALED_BOUNDED_RESTORED_CHECKPOINT_NOT_RELEASE_APPROVAL",
+  "sealedAt": "2026-11-03T18:39:43.911288+00:00",
+  "files": {
+    "README.md": {
+      "bytes": 20849,
+      "sha256": "457d72d6a215e1e665d8415aaa807ee9d0f5bf03f613449d0391a0bb7daef184"
+    },
+    "evidence-manifest.json": {
+      "bytes": 35127,
+      "sha256": "78106269ffcb3abbbdafe2fe9867c1ec58e8ee0822486942b7461ef4abb22098"
+    },
+    "documentation-checks.json": {
+      "bytes": 1603,
+      "sha256": "d387ba5c3ae2285f7d0a6418595b8abb1de5284b63369f9577e7edc42c6afbe2"
+    },
+    "evidence.tar.gz": {
+      "bytes": 920451,
+      "sha256": "47fd9e3b8ba0c2da7aa42510d5cd52915cffe9a6736e17a50711f4fbaa875316"
+    },
+    "candidate-final-core.tar.gz": {
+      "bytes": 212180,
+      "sha256": "480bc202e83234c95182cd257118fc5388ce07b41cd8d70dc1fc959c2e7a772d"
+    },
+    "candidate-proof-tests.tar.gz": {
+      "bytes": 18052,
+      "sha256": "36cabb6a70effca6f7d673dd2c6ad210994218c604e925b340b118fcfda4779a"
+    },
+    "prior-report-identity.json": {
+      "bytes": 1512,
+      "sha256": "60b0f7a3f6a818d9de0c71b1a8e8c87c12d5f4b841f3183cd33b7ddc8758bd51"
+    },
+    "restored-core-identity.json": {
+      "bytes": 8318,
+      "sha256": "34a28b0f8102b37ee5821dc413ddea1ed6ced043faed95d090f244d71b28586f"
+    }
+  },
+  "sourceGate": {
+    "output/data-cache-2026-11-04/final-restored-checkpoint-source.json": {
+      "bytes": 190532,
+      "sha256": "975d72001307ac4df08a0a7aae3da1697eb0f2c4f337f343f5144e4a77dfc023"
+    },
+    "output/data-cache-2026-11-04/final-restored-checkpoint-result.json": {
+      "bytes": 588,
+      "sha256": "ac5c472eb0e8de56d9cac7bdb2cdc953b0fec42c025040f413ebaad78b219f0b"
+    },
+    "output/refactor-2026-11-03/final-restored-checkpoint-tests.json": {
+      "bytes": 200,
+      "sha256": "3762cc60f245d2674c8d1da9ba0569127c3a12a789054cb35661434fe3646790"
+    },
+    "output/refactor-2026-11-03/final-restored-checkpoint-tests.log": {
+      "bytes": 197580,
+      "sha256": "4da13010dad0df9c5859c74d0efe9c74f65ae7c61f594a761d89ce87438bf2ff"
+    },
+    "output/refactor-2026-11-03/final-restored-checkpoint-types.json": {
+      "bytes": 257,
+      "sha256": "8ac4fa6b96a0d5ccc0160ed468f8006c45fab373c899283b647eaeafe8075186"
+    },
+    "output/refactor-2026-11-03/final-restored-checkpoint-types.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "output/refactor-2026-11-03/final-restored-checkpoint-docs-build.json": {
+      "bytes": 251,
+      "sha256": "ca6ce29c7dde4f935c856a2d3bac0fca32b21af69ea575adf9226b1d76205acd"
+    },
+    "output/refactor-2026-11-03/final-restored-checkpoint-docs-build.log": {
+      "bytes": 997,
+      "sha256": "a5652a14e9bcc43b3498515da16644c79a3ec7a2eae1594ab1d6cc8496520d35"
+    },
+    "output/refactor-2026-11-03/final-restored-checkpoint-docs-check.json": {
+      "bytes": 257,
+      "sha256": "8079b3da971832eedfe8d73271cd39ca50c7a9dbbf625b323914583f41e0bdf7"
+    },
+    "output/refactor-2026-11-03/final-restored-checkpoint-docs-check.log": {
+      "bytes": 150,
+      "sha256": "4c448e92d5e373b097283b7a5e025eff099faf350fdc533f2b5e868808273c80"
+    }
+  },
+  "sourceFiles": 1403,
+  "coreFiles": 69,
+  "archiveMembers": 169,
+  "priorDraftMembersPreserved": 84,
+  "tests": {
+    "cases": 2084,
+    "passed": 2082,
+    "failed": 0,
+    "expectedPlatformSkipped": 2,
+    "cancelled": 0,
+    "seconds": 104.214
+  },
+  "types": "PASS: direct root tsc 5.157s",
+  "runtime": "Exact qualified phase-1 production runtime; rejected COW not landed.",
+  "knownLimitation": "Original MCP second/repeated-restart recovery_required failure NOT_REPRODUCED / UNRESOLVED. Later passes are not a fix or release approval.",
+  "documentation": "Recorded 55-page/2607-link PASS precedes this final roadmap prose edit; updated prose needs parent rebuild.",
+  "pending": "Read-only High duplicated disposable preflight review not implemented or approved.",
+  "notRunByFinalizer": [
+    "tests",
+    "build",
+    "benchmarks",
+    "browser",
+    "mobile",
+    "commit",
+    "push",
+    "release"
+  ]
+}

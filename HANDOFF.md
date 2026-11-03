@@ -6914,3 +6914,428 @@ their existing private0.0.0 state. No npm publication, release tag, actor migrat
 or data cleanup is part of this checkpoint. Remote commit, automatic Pages and
 Linux CI outcomes are checked after source commit and reported separately.
 Source/evidence report: docs/reports/mcp-startup-main-checkpoint-2026-11-03/.
+
+
+### 5.134 API ownership, runtime structure and measured copy costs (2026-11-04)
+
+**Scope.** User requested API review, removal of unnecessary nested helpers,
+module-level immutable lists and structural performance refactoring, then
+continued the roadmap with parallel agents. Existing public APIs, schema/wire
+identity, concurrency ordering, selective undo and recovery remain. Normal
+implementation/test lanes used GPT-6.1 Sol Medium; CRDT judgment and independent
+review used Sol High. No commit/push or release was requested for this step.
+Initial HEAD was ec9622571a04a7d7ea3f967bb3e6423b17ce5194 with a clean tree.
+
+**Changes.** Client keeps document/History/transport ownership; bindings retain
+per-view origins and detached callback behavior. Stable observer dispatch and
+private session/policy helpers reduce repeated closures. Data List.at decodes
+one selected cached value; Map.size reads distinct-key count. Capture-free core,
+editor, Graphic, Presence, Bot and demo helpers moved to module scope. MCP has
+one private process lifecycle owner. Immutable lists retain membership/order;
+mutable outputs, working buffers and per-call guards remain isolated. Doc avoids
+host cloning for immutable primitives; object/error behavior remains. SHA has
+shared constants and per-call typed working state. AST inventory: 163 -> 165
+runtime files, nested named helpers 310 -> 227, nested callbacks/accessors
+1813 -> 1790; nine primitive const-array and 96 membership literal candidates
+removed from function scope. Conservative direct-call capture-free scan: zero
+remaining candidates. Necessary callbacks remain; this is not zero-allocation.
+
+**Corrections.** Integration caught two unused sync initializer contributions in
+the local bundle; two private fresh-list pure annotations restore zero forbidden
+bytes without relaxing the guard. Independent review reproduced fallback info
+sharing between observers; per-observer arrays/info and a red/green regression
+restore compatibility. An exact History comparison now uses a deterministic
+clock instead of two real timestamps. Chrome exposed duplicate React identities;
+four demo builders now share root React/ReactDOM aliases and emitted-root tests.
+The first Graphic checker accidentally executed one inherited mobile case; it
+is excluded from accepted desktop scope. That case was removed. Subsequent
+Graphic proof is desktop-only; the original receipt remains intact.
+
+**Measured results.** Node24.22.1, 10k List +10k Map entries. Cached List.at median
+0.206014 ->0.001333ms; Map.size 1.962458 ->0.000320ms with the same archived Client
+in both access lanes. A separate Doc-only controlled comparison, same dependency
+closure, has edit+read median1007.563 ->863.005ms (14.35% reduction), seven samples
+per side. Unknown object copies/finite JSON and structural admission remain.
+Projection rebuilds, snapshot validation/reconstruction and normalization still
+cost O(stored state). These are not Chrome latency, heap or Rust/WASM results.
+The repeated reproducible access run and raw harnesses are retained separately.
+
+**Final checks.** npm test/build PASS:1680cases/1678PASS/two expected platformSKIP/
+zeroFAIL/zeroCANCEL,108.727s, watchdog inactive. Root no-emit tsc PASS. Package
+artifacts PASS:10tarballs/12isolated consumers, stale prepack output removed,
+private0.0.0 and no registry publication. Docs build/check PASS:55pages/
+2606internal links, English=true/localPathsExcluded=true. Desktop Chrome PASS:
+four editors in local and sync mode; custom shared local15groups; Graphic19;
+stable Spreadsheet21; Presence DOM/React/Vue/Svelte/Solid27. Custom checker first
+hit its external240s limit after13groups; an unchanged complete run passed in
+243.289s under480s with unchanged application deadlines. First failures remain
+archived. All1391 recorded source hashes stayed unchanged during final testing.
+
+**Next.** Before core/benchmark bytes are frozen under the source manifest for
+private Graphic proof-copy work. The High design rejects an unconditional
+trusted-Doc clone: source internals and public snapshots can escape or mutate.
+Only fresh private image certification with unchanged structural decode is a
+candidate. External snapshot/state/server/MCP/schema/recovery validation stays
+full. No new implementation/performance approval is implied by this design.
+P2 metadata-aware GC/resource gates, S3 common Spreadsheet Client, and full
+Rust/WASM client delivery remain open. Production clients and bindings use TS.
+
+Report/source/evidence seal: docs/reports/api-structure-refactor-2026-11-03/.
+Current refactor changes remain uncommitted. Earlier report snapshots are intact.
+
+
+### 5.135 Rejected validation shortcuts and stronger boundary tests (2026-11-04)
+
+**Decision.** The private Graphic snapshot-certificate candidate remains OFF.
+It did not prove wrapper ownership/observation order and its local cost screen
+was about12% slower. Decoder extraction stayed output-only. The subsequent JSON
+visitor loop was behavior-equivalent in independent review, but its12-process,
+three-cycle ABBA timing missed the predeclared5% effect gate: cycle reductions
+-0.17%,+0.25%,+2.20%. String controls exceeded0.1ms/10000-call tolerance in all
+six pairs. Host background activity was recorded and left intact. Result:
+INCONCLUSIVE/not accepted for performance. Restored annotations.ts exactly to
+post-refactor hash cc2257ad38afdb18a803eedda7968af05ab2be434b8ccfd064b0b04c64f0cac3.
+No new validation bypass or trusted source flag exists; all69 core sources equal
+the qualified refactor archive.
+
+**Tests retained.** New Graphic copy boundary and JSON validator tests plus a
+small fixed legacy fixture are self-contained in the checkout. Independent
+current/frozen source runs each pass241cases. Proxy trace/throw order, zero
+accessor reads, scalar/object depth, arrays/poisoned keys, hidden invalid values,
+late failures, public snapshot overrides and pre-persistence Data admission are
+covered. High review required H1 to reject exactly as legacy does; tests no
+longer permit either success or failure. Additional independent108 equivalence
+and6 atomicity probes pass; these are separate from committed test counts.
+
+**Restored checkpoint.** npm test/build PASS:1921cases/1919PASS/two expected
+platformSKIP/zeroFAIL/zeroCANCEL,105.397s,240s watchdog inactive. All1395 recorded
+source hashes unchanged. Production runtime equals5.134, so its package and
+Chrome results are reused for unchanged code; no new browser/mobile/Rust/WASM
+qualification is claimed. No commit/push or release.
+
+**Next.** High design rejects a stamp-only DataAccess cache update. A local-only
+COW pilot needs an opaque owner-bound completed-action receipt, exact physical
+entry target, override/escape/reentrancy checks and full-refresh fallback.
+Sync, raw edits, structures, undo/redo and uncertain paths must keep the old
+refresh. No such implementation or speed approval is implied by the design.
+Report: docs/reports/validation-candidates-2026-11-04/.
+
+### 5.136 Local point-write cache candidate rejected
+
+**Decision.** The prototype passed exact-byte High code review after fixes for
+optional trace exceptions, Doc/engine transparent Proxy receivers and public
+server-before-client prototype overrides. These fixes belong to the rejected
+prototype, not the retained library. The latest candidate qualification was
+480 focused PASS (478 main receipt plus two ticket tests); earlier overlapping
+371/409/191 counts must not be added. Final 2k/20k clone-count runs prove zero
+whole-data-root clones after known point writes versus one in the frozen
+post-refactor source. This is functional eligibility, not a heap claim.
+
+**Measured gate failure.** The first serial ABBA cycle used the same Node24,
+source-only drivers, actors, IDs and fixtures: four processes per size, three
+measured samples and one warmup per process. All 12 Data/general-Doc process
+oracles passed. First read improved 26.58–36.21%, but the 2k nested Map total
+regressed 5.40%. At 20k, total setter plus read reductions were 6.01% (root Map),
+3.55% (nested Map) and 2.91% (List). The last two missed the predeclared useful
+5% total-effect gate. The 100k-character general-Doc control did not regress
+in that cycle. Other host work was preserved; no isolated-host causal claim
+or production/editor/network SLA follows. Cycles two and three are NOT_RUN
+after the mandatory first-cycle failure, not favorable reruns or an overall
+three-cycle PASS. Plans v1–v3 all preceded the first timing run; v3 is final.
+
+**Rollback and retained tests.** Eight existing production sources were restored
+byte-for-byte, and the candidate-only helper removed. All69 Core sources equal
+the qualified post-refactor archive. The historical phase-1 identity check matched1391 files at its timestamp.
+Current comparison matches1389: only Bot brief-runner and MCP automatic-recovery
+tests differ. Unchanged production runtime package/Chrome receipts can be reused,
+but they never qualified this rejected prototype. Candidate70-source/245-test archives
+are unchanged. The bounded final report seals169 evidence members, preserving
+all84 prior members and the original draft provenance. This is restored-
+checkpoint qualification, not release approval or COW acceptance. Normal tests retain162 public behavior contracts
+(Map/List116, engine/Doc27, raw Doc12, preload7), with no feature SKIP,
+private-candidate import or external evidence dependency. Combined focused
+verification is335 PASS/zero FAIL/zero SKIP; bounded diagnostics are zero.
+The first restored full-workspace run failed after103.9s; the1403-file source
+manifest was unchanged. The Bot brief-restart child failed with EPERM while
+cleaning its detached process group, and MCP undo/after-accept restart returned
+recovery_required instead of clear. The Bot parent also fails as a consequence;
+these are two underlying failures, not three independent defects. Investigation
+continued in output/recovery-test-failures-2026-11-04/. The fixed-harness full
+run subsequently passed2083 cases/2081PASS/two platformSKIP/zeroFAIL in103.332s,
+with all1403 input hashes unchanged. Bot cleanup now uses a live owned-group IPC
+barrier. The intermediate root typecheck failed with TS18047 for nullable stderr.
+A later stderr non-null assertion preserves the pipe contract and passes11
+focused Bot cases and the corrected full-workspace typecheck; final exact-source integration includes
+that test-only assertion. The first MCP failure is still NOT_REPRODUCED and not
+a product fix: High review localized it to the SECOND restart assertion, not
+initial recovery, and proved stdio waits for automatic recovery/hello. Correct
+second-stage JSON/stderr diagnostics and a persistent controlled-barrier test
+are complete. The full recovery file passes8 cases; an output-only controlled
+probe also passed once. Both hold the first recover reply and repeated SSE hello
+to verify no early stdio, preserving human text, exact receipt, zero resend,
+once-only recovery and opposite undo/redo. No polling or proof relaxation.
+Final root integration PASS:2084 cases/2082PASS/zeroFAIL/two expected platformSKIP/
+zeroCANCEL in104.214s; direct root tsc PASS in5.157s. All1403 final inputs remain
+unchanged, manifest SHA-256
+975d72001307ac4df08a0a7aae3da1697eb0f2c4f337f343f5144e4a77dfc023.
+These final passes do not resolve the original MCP repeated-restart failure.
+The failing receipt remains preserved; a later PASS does not explain it.
+
+**Records.** docs/reports/local-point-cache-candidate-2026-11-04/ and
+output/data-cache-2026-11-04/, especially performance-decision.json,
+timing-plan-v3.json, rollback.json and restored-phase1-identity.json. The
+initial API/structure refactor and earlier validation-boundary tests remain.
+No commit, push or release; no mobile qualification.
+
+**Next investigation.** Full engine clone/preflight still dominates the
+measured writes. The completed read-only High payload-transfer review retained Doc.check,
+normalization, selective History and all public defensive-copy requirements.
+That handoff design is HOLD: original snapshot identity does not prove
+private payload ownership. Own items.map and native Array Symbol.species
+counterexamples are reproduced; public register aliases must remain detached.
+No implementation, trust flag or performance approval exists. The KeyIndex census is COMPLETED / DECLINE_OPPORTUNITY: exactly60015 rebuild
+insertions but about1.1% KeyIndex.set inclusive CPU; duplicate parse is a fraction
+of that and does not support a plausible5% total gain. No implementation.
+The read-only High review of duplicated disposable preflight stages remains
+PENDING, not implemented or approved at this handoff. See
+output/owned-snapshot-2026-11-04/design.*,
+output/index-restore-2026-11-04/census.* and
+output/preflight-reuse-2026-11-04/design.*.
+
+Documentation build/check PASS:55 pages,2607 internal links, English=true,
+localPathsExcluded=true. These root receipts precede this final roadmap prose
+correction; parent must rebuild that changed prose. An owned desktop Google
+Chrome156 binary (HeadlessChrome user agent) session rendered the
+discarded-candidate heading and exact warning/limits (1280×633 viewport). This
+is DOM proof, not new editor/performance or physical-display proof. The owned
+preview and browser session were closed. No mobile test.
+
+### 5.137 Scoped preflight proof and benchmark CLI follow-up
+
+**Current disposition: NOT_PROMOTED / HOLD_PERFORMANCE.** This section supersedes
+the pending investigation status in 5.136. Production retains the qualified
+69-file refactor. The additional 70-file prototype remains outside the library.
+No commit, push, site publication or registry release occurred.
+
+**Scope and proof.** The prototype removes one disposable validation stage for
+one guarded existing-entry value update in the exact engine-owned default Data
+schema. It retains public admission/copies, both live snapshots, live staging,
+normalization and selective History. General schemas, structural edits and
+uncertain routes retain legacy staging. Candidate source closure:
+`d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab`.
+
+Independent comparison passes 94 baseline, 94 candidate and 94 full-output
+checks, plus candidate-only noEmit TypeScript. Independent High review gives
+APPROVE_PROOF for the exact bounded source. Nineteen positive cases reduce
+private snapshot/restore pairs from 3 to 2 and compiler entries from 4 to 3,
+while retaining both live snapshots. Nine required normal scenarios pass.
+These focused results do not qualify packages, editors or the full candidate.
+
+The initial output-only proof had no optimized producer; its 64 baseline passes
+remain baseline evidence. The later 90-case HOLD also remains preserved: its
+custom-schema fixture cloned the exact default rather than altering its
+fingerprint. Independent High interpretation and the parent clarification
+establish authority through the actual factory's validated/copied/frozen output,
+not caller-input identity. The revised cases separately test cloned/raw/frozen
+default inputs, an actually altered schema and public raw Doc staging. Strict
+legacy counts still pass for the latter two. No source change or validation
+removal resolved the classification. Parent receipts and prospective gates are
+under `output/preflight-reuse-2026-11-04/`.
+
+**Performance decision.** The first prospective ABBA cycle completed 24
+source-stable, semantic-oracle-PASS processes. All four Data fixture/size groups
+and the structural/custom-schema controls passed. At 20k entries, complete
+setter plus first read improved 18.21–19.89% with authored moves and
+20.06–20.33% without moves. The direct 100k Doc remote-apply control rose from
+2.188646 to 2.2744375 ms (+3.91984%), exceeding its strict 3% limit. That FAIL
+is authoritative. Cycles 2/3 are NOT_RUN; no retry or tolerance change replaces
+it. Candidate package, editor and Chrome acceptance are NOT_RUN because the
+candidate was not promoted.
+
+Completed untimed attribution observes 28 reached callable definitions and
+1,176 entries in both lanes for the exact 16 wire operations. New registrations,
+snapshot-audit and private Data paths have zero calls inside remote apply.
+Doc.get has changed, unexecuted allocation branches. Code-generation, GC and
+host causes are unproved. Cause remains UNRESOLVED; no source fix or passing
+retry is justified. Reports and separately verified evidence archives:
+
+- [Candidate decision](docs/reports/private-preflight-candidate-2026-11-04/README.md)
+- [Control attribution](docs/reports/private-preflight-control-attribution-2026-11-04/README.md)
+
+**Ownership and read checks.** The bounded retention probe observed reclamation
+of 12 disposed Clients per lane after fixed explicit-GC schedules. Held
+snapshots/entries and a separate live Client remained unchanged. A strong-root
+control stayed reachable until release. This is not general leak freedom or
+heap savings. Both 2k/20k normal count runs retain one next-read root clone and
+identical authored/final checkpoints across lanes.
+
+**Standalone benchmark CLI.** `benchmarks/data-point-cache.mjs` now observes
+clone counts by default. `--expect-root-clones 0|1` checks an explicit expectation;
+source paths no longer imply eligibility or require an ignored archive to exist.
+Timing and oracle bodies are unchanged. Current restored source reports one
+next-read root clone; the archived discarded COW source reports zero. Five
+positive CLI runs and six rejection cases pass, including an isolated driver
+without the ignored baseline directory. Receipt:
+`output/benchmark-cli-2026-11-04/receipt.json`.
+
+Historical driver `ea3e83e675bb32e175e7d0d3d787806f78592a1aade7dedaa65b0800e34cd298`
+is preserved in sealed evidence. Current standalone driver:
+`0f5b169ad905c686c86e9fcd6056fd5efd96453376d9b2400ae3a949c3cd46d7`.
+
+**Production verification boundary.** All 69 live Core files still equal the
+qualified archive. The historical 1,403-file full-suite source manifest differs
+only at the separately checked standalone benchmark CLI; runtime and normal
+tests are unchanged. `production-stability-after-preflight.json` records this.
+The preserved full-suite result is 2,084 cases / 2,082 PASS / 2 expected platform
+SKIP, not a new full-suite execution of the output-only candidate. Prior package
+and Chrome receipts retain their original unchanged-runtime scope. The original
+intermittent MCP repeated-restart failure remains NOT_REPRODUCED / UNRESOLVED;
+no production MCP fix is claimed. Whole-snapshot/projection costs remain open.
+
+Final documentation checks pass: 55 pages, 2,609 internal links, English=true,
+localPathsExcluded=true. Receipts: preflight-final-docs-build (12.992 s) and
+preflight-final-docs-check (1.235 s) under output/refactor-2026-11-03/.
+The published website was not changed.
+
+### 5.138 MCP restart recovery: cleanup boundary and transient HTTP failures
+
+**Implemented locally; not committed or published.** The investigation did not
+recover the historical undo-after-accept failure body. Its exact cause remains
+NOT_REPRODUCED. The following distinct recovery failures were reproduced and
+fixed; they must not be presented as proof of the old incident's cause.
+
+An accepted conditional edit can have a settled checkpoint on disk while its
+intent still exists because the process stopped before cleanup. The old restore
+guard rejected that valid checkpoint when its server cursor exceeded the intent
+base. Restore now checks the exact receipt, matching source digest and actor
+sequence, restores the saved History once, synchronizes the current server
+snapshot, saves the checkpoint and only then clears that intent. The path also
+supports an installed checkpoint saved before reconnect. Mismatched digest or
+sequence, unknown receipt and missing protection still block. It does not
+reapply the accepted edit or create a second undo group.
+
+Recovery reads authoritative state again after remote proofs and before local
+installation. Generation and schema must still match. The cursor must reach the
+checkpoint cursor and any exact accepted conditional receipt. A same-generation
+hub reopen can therefore use its current epoch without accepting missing
+history. A newer human edit remains in the synchronized snapshot.
+
+NodeHttpTransport now retries only schema/state reads, reservation confirmation
+and exact atomic pending recovery. Each operation uses at most four attempts,
+with 100/200/400 ms backoff and one shared 10-second budget for connection,
+response-body reading and backoff. Temporary HTTP 429/502/503/504 and recognized
+connection failures qualify. Every retry uses the original URL and body,
+generation, actor, reservation ID and change. Ordinary sends, conditional
+submissions and release requests do not use this helper. Invalid JSON or proof,
+unsafe protection, conflicts and permanent refusal still fail closed. Exhausted
+retries retain the journal/checkpoint for a later verified restart.
+
+Validation:
+
+- Accepted-checkpoint/session regression: 11 PASS. Includes settled and
+  pre-SSE cleanup, not-yet-installed intent, human edits, one undo group/redo,
+  digest/sequence/receipt/reservation refusals and post-proof state changes.
+- Recovery HTTP unit regression: 9 PASS. Includes real socket loss before and
+  after HTTP 200 headers, exact-body replay, the cap/shared deadline, malformed
+  JSON and invalid proof refusal, and ordinary-send non-retry.
+- Real MCP stdio process regression: 12 PASS, including the original 8 restart
+  scenarios and 4 new transient/persistent HTTP cases. Pending bytes, exact
+  accepted sequence, no ordinary resend, other-user changes and undo/redo are
+  checked. SDK process checks do not imply a real Codex model invocation.
+- Final integrated workspace: 2,108 cases, 2,106 PASS, 0 FAIL, 2 expected platform
+  SKIP, 0 cancelled; 109.213 s. TypeScript PASS, 8.843 s. All 1,427 source/test
+  manifest files are identical before and after these checks.
+- Package artifact/isolated-consumer checks PASS, 39.149 s; no registry publish.
+- Independent High safety review has no open actionable finding. Its real
+  partial-body probe fails before the correction and passes after it.
+
+Baseline evidence is labeled precisely: the original Session source comparison
+has 3 FAIL / 4 PASS; the actual pre-edit transport unit run has 6 FAIL / 2 PASS.
+Additional reconstructed behavioral controls are not byte-identical baseline
+builds. A 30-case healthy stress PASS does not establish the old incident's cause.
+All prior reports, failed receipts and private-preflight HOLD remain preserved.
+
+Product sources: apps/mcp/src/session.ts
+SHA-256 02cccd332821d608a920d42ebf4af2dff086de4e784e4a91107af43811a254ff;
+packages/doc-sync/src/sync/node-http-transport.ts
+SHA-256 59a344046b3b428c5aeb594d7b07f7e9a5fc1b4f009cf59dab8f4d0d9631421b.
+No Rust/WASM, wire format, public transport options or CRDT conflict policy
+changed. No mobile or Chrome run was performed for this Node/MCP task.
+
+[Report and selected evidence](docs/reports/mcp-restart-recovery-2026-11-04/README.md).
+Root receipts are under output/mcp-restart-fix-2026-11-04/ and
+output/refactor-2026-11-03/mcp-restart-fix-*.
+
+Documentation final gate PASS: build 13.193 s; 55 pages and 2,609 internal links,
+English=true, localPathsExcluded=true (check 1.366 s). Package artifacts cover
+10 private tarballs and 12 isolated consumers; nothing was published. The final
+runtime/test hash map remains unchanged after packaging and documentation work.
+
+### 5.139 Main publication review and Rust delivery boundary
+
+Publication scope is the current qualified refactor, MCP recovery fixes, tests,
+benchmarks and documentation on main. All ten npm packages and the native Cargo
+crate remain private at 0.0.0. No registry release is authorized by this step.
+The source base is ec9622571a04a7d7ea3f967bb3e6423b17ce5194; the publication commit
+is identified by Git history rather than a self-referential SHA in this file.
+
+Fresh final workspace verification: 2,108 tests / 2,106 PASS / zero FAIL / two
+expected platform SKIPs / zero cancelled, 128.444 s. TypeScript PASS, 7.096 s.
+Native locked/offline Cargo checks PASS: SDK 48, shadow 78, storage 13. The Node
+runtime remains identical to the preceding 1,427-file qualified source map;
+package artifacts and 12 isolated consumers retain their exact runtime scope.
+No new Chrome/mobile or real Codex-model invocation is claimed in this review.
+
+The complete roadmap is not implemented:
+
+| Area | Current scope | Remaining delivery |
+| --- | --- | --- |
+| TypeScript | Current Client, server, MCP, editor bindings and Client.data Map/List | Production rollout, resource/GC and broader product gates remain separate |
+| Spreadsheet | Sparse fixed-axis primitives and stable structural axes in the TS experiment/demo | Common Client integration, formulas and broader spreadsheet delivery |
+| Native Rust SDK | Private Cargo Document/Graphic/SparseSheet and limited runtime schemas; History/checkpoints in declared subsets | Full nested schema/compiler coverage, live schema transitions, production recovery/GC and shared Map/List facade |
+| Rust/WASM client | Storage-only UTF-16 experiment | Full CRDT WASM artifact, production ClientEngineFactory and same-binding TS/WASM interchange |
+
+README marks the native SDK partial/experimental. The Rust guide and roadmap
+state the incomplete delivery boundary and distinguish historical 42/75 domain
+counts from the current 48/78 runtime-schema suites. Guide code describes the
+implemented native or storage APIs; it is not a working Rust/WASM Client option.
+The preflight performance candidate remains HOLD and outside the library. The
+old intermittent MCP incident remains NOT_REPRODUCED; the separately reproduced
+cleanup/epoch/transport defects have source-bound passing regression evidence.
+
+[Fresh verification logs](docs/reports/main-verification-2026-11-04/README.md).
+GitHub Pages publishes from the main push; remote workflow/deployment outcomes
+must be checked separately from these local passes.
+
+### 5.140 Final publication gate: complete server banner before test admission
+
+Precommit validation caught another intermittent test failure: retention
+received HTML 200 at a JSON API call. The failing URL was unavailable. A separate
+controlled owned-server probe reproduced a parser defect: the child bound 59587,
+but its split stdout exposed 5958 first and the old helper selected the decoy.
+PORT 0 already allocated atomically, so a free-port TOCTOU was not the cause in
+that helper. The controlled proof matches the error class; it does not recover
+the missing historical URL or establish the old MCP incident's exact cause.
+
+All 22 affected matchers in 20 test files now wait for the complete URL line.
+The real helper regression holds the suffix behind an explicit barrier and
+checks that startup stays pending and makes no prefix-port request. A second
+case covers an occupied prefix port. Only EADDRINUSE makes its decoy optional;
+other errors fail, and no existing listener is killed or contacted. JSON parse
+failures retain bounded URL/status/content-type/body-prefix diagnostics. These
+changes are test-only; product runtime and Rust sources are unchanged.
+
+The focused live/retention run passes 9 cases. Final independent review has no
+open finding. After all final bytes were frozen, the canonical full workspace
+run succeeds across 2,110 cases: 2,108 PASS, zero FAIL, two expected platform SKIPs, zero
+cancelled, 107.599 s. TypeScript passes in 8.802 s. The 1,429-file runtime/test
+source map is identical before and after that run. Earlier passing/interrupted
+source checks and the failed HTML-response run remain preserved. This final
+result supersedes the provisional publication gate in 5.139.
+
+Native source is unchanged and the fresh locked/offline tests remain SDK 48,
+shadow 78 and storage 13 PASS. Rust delivery remains partial; full native schema
+coverage, production recovery/GC, a Rust/WASM Client factory and same-binding
+backend interchange are still open. Documentation/build checks describe that
+boundary. All packages remain private; main publication does not publish npm
+or crates. Final evidence: docs/reports/main-verification-2026-11-04/.

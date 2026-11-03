@@ -3,6 +3,10 @@ import {diffFields, isFieldSpec, patchFields} from "./fields.ts";
 import {attrValueOk, groupOf, gridParts, checkSchema, storedTypes} from "./schema.ts";
 import type {AttrSpec, FlowSpec, OrderedSpec, GroupSpec, Schema, SpanSpec} from "./schema.ts";
 
+const FLOW_MODEL_SHAPES = Object.freeze(["flow", "container"]);
+const INLINE_MODEL_SHAPES = Object.freeze(["inline", "span"]);
+
+
 const groupBoundary = Symbol("doc-sync.group-boundary");
 export const withGroupBoundary = (node: NodeJSON, boundary: string): NodeJSON => {
     Object.defineProperty(node, groupBoundary, {value: boundary, configurable: true});
@@ -482,7 +486,7 @@ const walk = (root: NodeJSON, path: ModelPath): Step[] => {
 };
 
 /** 노드가 흐름 그릇이면 그 종류 (cell 의 몸, 문서 맨 위 포함) */
-const flowTypeOf = (schema: Schema, node: NodeJSON): string | null => (["flow", "container"].includes(shapeOf(schema, node.type)) ? node.type : null);
+const flowTypeOf = (schema: Schema, node: NodeJSON): string | null => (FLOW_MODEL_SHAPES.includes(shapeOf(schema, node.type)) ? node.type : null);
 
 /**
  * 흐름 안의 위치를 펼친 항목 줄의 번호로. (흐름 노드, 그 자식 번호) 또는 (묶음 노드, 항목 번호) 를 받는다.
@@ -531,7 +535,7 @@ const splitTail = (schema: Schema, type: string, attrs: Record<string, unknown>,
 };
 
 const isBlockContent = (schema: Schema, item: NodeJSON | Run): item is NodeJSON =>
-    !("text" in item) && !!schema.nodes[item.type] && !["inline", "span"].includes(shapeOf(schema, item.type) ?? "");
+    !("text" in item) && !!schema.nodes[item.type] && !INLINE_MODEL_SHAPES.includes(shapeOf(schema, item.type) ?? "");
 
 /** 연산 하나를 모델에 적용한다 (제자리에서). 묶음은 바로 다시 묶고, 표 칸 수는 묶음 끝(applyEdits)에서 맞춘다 */
 export const applyEdit = (schema: Schema, root: NodeJSON, op: EditOp): void => {
@@ -959,20 +963,21 @@ const diffList = (
     }
 };
 
+const unitContent = (u: Unit): string => ("ch" in u ? `c${u.ch}` : `i${u.inline}`);
+
 /** 글 비교 — 같은 머리·꼬리를 남기고 가운데를 바꾼다. 남긴 곳의 서식·그림 속성 차이는 update 로 */
 const diffText = (schema: Schema, path: ModelPath, a: NodeJSON, b: NodeJSON, emit: Emit): void => {
     const ua = runsToUnits(schema, a.runs);
     const ub = runsToUnits(schema, b.runs);
-    const content = (u: Unit) => ("ch" in u ? `c${u.ch}` : `i${u.inline}`);
     let head = 0;
 
-    while (head < ua.length && head < ub.length && content(ua[head]) === content(ub[head])) {
+    while (head < ua.length && head < ub.length && unitContent(ua[head]) === unitContent(ub[head])) {
         head += 1;
     }
 
     let tail = 0;
 
-    while (tail < ua.length - head && tail < ub.length - head && content(ua[ua.length - 1 - tail]) === content(ub[ub.length - 1 - tail])) {
+    while (tail < ua.length - head && tail < ub.length - head && unitContent(ua[ua.length - 1 - tail]) === unitContent(ub[ub.length - 1 - tail])) {
         tail += 1;
     }
 

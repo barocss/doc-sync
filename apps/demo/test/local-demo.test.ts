@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
+import {resolve} from 'node:path';
 import {LocalClient, createLocalEditorHost} from '@barocss/doc-sync/local';
 import {bundleLocalDemo} from '../local/build.mjs';
 import {startLocalPreview} from '../local/serve.mjs';
@@ -61,6 +62,14 @@ test('browser bundle uses public built local entry and emits no sync client, tra
     const bundle = await bundleLocalDemo();
     assert.deepEqual(bundle.proof.forbidden, []);
     const emitted = bundle.proof.emittedInputs.map(({input}) => input);
+    // Count contributing package roots, not facade/CJS files within one runtime.
+    for (const name of ['react', 'react-dom']) {
+        const roots = [...new Set(emitted.flatMap(input => {
+            const match = input.replaceAll('\\', '/').match(new RegExp(`^(.*(?:^|/)node_modules/${name})/`));
+            return match ? [resolve(match[1])] : [];
+        }))].sort();
+        assert.deepEqual(roots, [resolve(import.meta.dirname, '../../../node_modules', name)], `${name} must use one root runtime`);
+    }
     assert.ok(emitted.some(input => input.endsWith('/dist/local/client.js')));
     for (const framework of ['prosemirror', 'slate', 'lexical']) assert.ok(emitted.some(input => input.includes(`packages/doc-sync-${framework}/dist/host-binding.js`)));
     assert.ok(!emitted.some(input => /packages\/doc-sync\/src\//.test(input)));

@@ -5,6 +5,10 @@ import {keyOf} from "../crdt/ticket.ts";
 import type {Change} from "../sync/protocol.ts";
 import {createDataSchema} from "./schema.ts";
 
+const DATA_OPERATION_KINDS = Object.freeze(["node", "set", "del", "undel", "move"]);
+const DATA_RECORD_KINDS = Object.freeze(["map", "list", "entry"]);
+
+
 function fail(message: string): never { throw new Error(`Data: ${message}`); }
 const validId = (id: unknown): id is string => typeof id === "string" && /^data:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(id);
 type Identity = {id: string; kind: string; key: string};
@@ -13,7 +17,7 @@ type Identity = {id: string; kind: string; key: string};
 export function validateDataPayload(change: Change): void {
     if (!annotationJsonOk(change, 128)) fail("payload must contain finite plain JSON data without accessors");
     if (typeof change.actor !== "string" || !/^[\w~-]+$/.test(change.actor) || change.actor === "~root" || !Number.isSafeInteger(change.seq) || change.seq < 1) fail("invalid change actor or sequence");
-    if (!Array.isArray(change.ops) || change.ops.some(op => !op || !["node", "set", "del", "undel", "move"].includes(op.t))) fail("invalid storage operation");
+    if (!Array.isArray(change.ops) || change.ops.some(op => !op || !DATA_OPERATION_KINDS.includes(op.t))) fail("invalid storage operation");
 }
 
 function encoded(value: unknown, identities: Map<string, Identity>): void {
@@ -40,7 +44,7 @@ function retained(doc: Doc): {tokens: Map<string, Identity>; ids: Map<string, Id
     for (const line of doc.lines()) for (const item of line.items) {
         if (item.kind === "head" || item.key === line.key || item.key === MAIN) continue;
         if (item.compact) fail("compacted data identities are unavailable");
-        if (item.kind !== "node" || !["map", "list", "entry"].includes(item.born)) fail("invalid storage node kind");
+        if (item.kind !== "node" || !DATA_RECORD_KINDS.includes(item.born)) fail("invalid storage node kind");
         const id = item.attrs.get("id")?.value, key = item.attrs.has("key") ? item.attrs.get("key")!.value : "";
         if (!validId(id)) fail("invalid storage ID");
         if (typeof key !== "string") fail("invalid encoded map key");
@@ -63,7 +67,7 @@ export function validateDataChange(doc: Doc, change: Change): void {
     for (const op of change.ops) if (op.t === "node") {
         const id = op.attrs?.id, key = op.attrs && Object.hasOwn(op.attrs, "key") ? op.attrs.key : "";
         if (!validId(id)) fail("invalid storage ID");
-        if (!["map", "list", "entry"].includes(op.type)) fail("invalid storage node kind");
+        if (!DATA_RECORD_KINDS.includes(op.type)) fail("invalid storage node kind");
         if (typeof key !== "string") fail("invalid encoded map key");
         const token = keyOf(op.id), previous = tokens.get(token), identity = {id, kind: op.type, key};
         if (previous && (previous.id !== id || previous.kind !== op.type || previous.key !== key)) fail("storage identity is immutable");

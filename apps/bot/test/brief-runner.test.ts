@@ -37,7 +37,7 @@ test("authoritative finish checks reject partial text and wrong structure, and a
     const server=spawn(process.execPath,[fileURLToPath(new URL("../../demo/server.ts",import.meta.url))],{env:{...process.env,PORT:"0",DATA_DIR:join(dir,"server"),NO_SCHEMA:""},stdio:["ignore","pipe","pipe"]});
     let errors="";server.stderr.on("data",b=>errors+=String(b));
     try {
-        const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(errors||"server timeout")),10000);server.once("exit",()=>{clearTimeout(timer);reject(Error(errors));});server.stdout.on("data",b=>{out+=String(b);const match=out.match(/http:\/\/localhost:(\d+)/);if(match){clearTimeout(timer);resolve(`http://127.0.0.1:${match[1]}`);}});});
+        const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(errors||"server timeout")),10000);server.once("exit",()=>{clearTimeout(timer);reject(Error(errors));});server.stdout.on("data",b=>{out+=String(b);const match=out.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);if(match){clearTimeout(timer);resolve(`http://127.0.0.1:${match[1]}`);}});});
         const stateDir=join(dir,"state");
         for (const text of ["Confirmed","Confirmed exactly once."]) await t.test(text,async()=>{
             const document=text==="Confirmed"?"partial":"complete";let calls=0;
@@ -113,12 +113,23 @@ test("authoritative finish checks reject partial text and wrong structure, and a
             const profile=await createProfile(stateDir,{id:"brief-restart",name:"Brief",character:"owl",personality:"careful",role:"writer",color:"#123456"});
             const document="restart",actor=profileActor(profile,origin,document), contract=brief();
             const input=join(dir,"brief.json");await writeFile(input,JSON.stringify(contract));
-            const script=`import {readFile} from 'node:fs/promises';import {runMission} from ${JSON.stringify(new URL("../src/runner.ts",import.meta.url).href)};let calls=0;await runMission({...${JSON.stringify({url:origin,document,actor,mission:contract.objective,stateDir,profileId:profile.id,maxSteps:4})},brief:JSON.parse(await readFile(${JSON.stringify(input)},'utf8'))},async()=>{if(calls++===0)return {action:'insert',at:[0,0],text:'Confirmed exactly once.',count:0,message:'Inserted'};process.kill(process.pid,'SIGKILL');await new Promise(()=>{});});`;
-            const worker=spawn(process.execPath,["--input-type=module","-e",script],{detached:true,stdio:["ignore","ignore","pipe"]});let workerErrors="";worker.stderr.on("data",b=>workerErrors+=String(b));const [code,signal]=await once(worker,"exit");assert.equal(code,null,workerErrors);assert.equal(signal,"SIGKILL");
+            const script=`import {readFile} from 'node:fs/promises';import {runMission} from ${JSON.stringify(new URL("../src/runner.ts",import.meta.url).href)};let calls=0;await runMission({...${JSON.stringify({url:origin,document,actor,mission:contract.objective,stateDir,profileId:profile.id,maxSteps:4})},brief:JSON.parse(await readFile(${JSON.stringify(input)},'utf8'))},async()=>{if(calls++===0)return {action:'insert',at:[0,0],text:'Confirmed exactly once.',count:0,message:'Inserted'};process.send('ready-to-kill');await new Promise(()=>{});});`;
+            const worker=spawn(process.execPath,["--input-type=module","-e",script],{detached:true,stdio:["ignore","ignore","pipe","ipc"]});
+            let workerErrors="";assert.ok(worker.stderr);worker.stderr.on("data",b=>workerErrors+=String(b));
+            const exited=once(worker,"exit");
+            try {
+                // Keep the owned group leader alive until the parent kills the group.
+                // A PID saved after exit is not proof of current process-group ownership.
+                const [ready]=await Promise.race([once(worker,"message",{signal:AbortSignal.timeout(10000)}),exited.then(result=>{throw Error(`Worker exited before kill barrier: ${JSON.stringify(result)} ${workerErrors}`);})]);
+                assert.equal(ready,"ready-to-kill");
+                assert.equal(worker.exitCode,null);assert.equal(worker.signalCode,null);
+                process.kill(-worker.pid!,"SIGKILL");
+                const [code,signal]=await exited;assert.equal(code,null,workerErrors);assert.equal(signal,"SIGKILL");
+            } finally {
+                if(worker.exitCode===null&&worker.signalCode===null){worker.kill("SIGKILL");await exited;}
+            }
             const interrupted=(await listMissions(stateDir)).find(m=>m.document===document)!;assert.equal(interrupted.status,"running");assert.deepEqual(interrupted.brief,contract);
             await writeFile(input,JSON.stringify({...contract,requirements:[]}));
-            // Kill the isolated test process group, including its MCP writer, before recovery.
-            try {process.kill(-worker.pid!,"SIGKILL");} catch (error) {if((error as NodeJS.ErrnoException).code!=="ESRCH")throw error;}
             let resumed;
             const deadline=Date.now()+5000;
             while(!resumed){

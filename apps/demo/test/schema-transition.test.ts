@@ -28,7 +28,7 @@ async function start(data: string) {
         child.once("exit", code => { clearTimeout(timer); reject(new Error(`Server exited ${code}: ${error}`)); });
         child.stdout.on("data", chunk => {
             output += String(chunk);
-            const match = output.match(/http:\/\/localhost:(\d+)/);
+            const match = output.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
             if (match) { clearTimeout(timer); resolve(match[0]); }
         });
     });

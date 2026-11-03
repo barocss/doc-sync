@@ -1,5 +1,11 @@
 import {z} from "zod";
 import {resolve} from "node:path";
+
+const unique = (values: string[]) => { if (new Set(values).size !== values.length) throw new Error("Duplicate configuration identity"); };
+
+const SERVER_URL_PROTOCOLS = Object.freeze(["http:", "https:"]);
+const HOSTED_PERMISSION_NAMES = Object.freeze(["write", "schema", "proposal_read", "proposal_decide", "proposal_accept"]);
+
 const id = z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/);
 const route = z.object({tenant: id, document: id, slot: id, actor: id, upstreamDocument: z.string().regex(/^[a-z0-9-]{1,40}$/),
     upstream: z.string().url(), headers: z.record(z.string()).default({})}).strict();
@@ -17,12 +23,12 @@ export type HostedGrant = HostedConfig["grants"][number];
 export const routePath = (r: HostedRoute) => `/mcp/${r.tenant}/${r.document}/${r.slot}`;
 export function parseHostedConfig(value: unknown): HostedConfig {
     const c = config.parse(value); c.dataDir = resolve(c.dataDir);
-    const unique = (values: string[]) => { if (new Set(values).size !== values.length) throw new Error("Duplicate configuration identity"); };
+
     unique(c.hosts); unique(c.origins); unique(c.routes.map(routePath));
     unique(c.grants.map(g => g.id)); unique(c.grants.map(g => g.token));
     for (const r of c.routes) {
         const u = new URL(r.upstream);
-        if (!["http:", "https:"].includes(u.protocol) || u.username || u.password || u.search || u.hash || u.pathname !== "/") throw new Error("Upstream must be a configured HTTP origin");
+        if (!SERVER_URL_PROTOCOLS.includes(u.protocol) || u.username || u.password || u.search || u.hash || u.pathname !== "/") throw new Error("Upstream must be a configured HTTP origin");
         r.upstream = u.origin;
         for (const [name, value] of Object.entries(r.headers)) {
             if (!/^[a-z0-9-]+$/i.test(name) || /[\r\n]/.test(value) || /^(host|content-length|connection|transfer-encoding|x-doc-sync-)/i.test(name)) throw new Error("Invalid upstream header");
@@ -31,7 +37,7 @@ export function parseHostedConfig(value: unknown): HostedConfig {
     unique(c.routes.map(r => JSON.stringify([r.upstream, r.upstreamDocument, r.actor])));
     for (const g of c.grants) {
         if (!g.permissions.includes("read") || (g.permissions.includes("schema") && !g.permissions.includes("write"))) throw new Error("Invalid permission combination");
-        if (g.permissions.includes("proposal_create") && g.permissions.some(p => ["write", "schema", "proposal_read", "proposal_decide", "proposal_accept"].includes(p))) throw new Error("A proposal creator grant cannot hold write or owner proposal permissions");
+        if (g.permissions.includes("proposal_create") && g.permissions.some(p => HOSTED_PERMISSION_NAMES.includes(p))) throw new Error("A proposal creator grant cannot hold write or owner proposal permissions");
         unique(g.routes); unique(g.permissions);
         if (g.routes.some(p => !c.routes.some(r => routePath(r) === p))) throw new Error("Unknown grant route");
         if (Buffer.from(g.token, "base64url").length < 32) throw new Error("Bearer token must contain at least 32 bytes");

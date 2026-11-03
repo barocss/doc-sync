@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
+import {resolve} from 'node:path';
 import {readFile} from 'node:fs/promises';
 import {Client, clientOwner} from '@barocss/doc-sync/client';
 import {LocalClient} from '@barocss/doc-sync/local';
@@ -23,6 +24,14 @@ test('Client demo local seed has a real local backend, rich text, and no sync ru
 test('Client demo bundles all public client bindings without a caller host factory', async () => {
     const bundle = await bundleClientDemo({write: false});
     const emitted = bundle.proof.emittedInputs.map(({input}) => input);
+    // Count contributing package roots, not facade/CJS files within one runtime.
+    for (const name of ['react', 'react-dom']) {
+        const roots = [...new Set(emitted.flatMap(input => {
+            const match = input.replaceAll('\\', '/').match(new RegExp(`^(.*(?:^|/)node_modules/${name})/`));
+            return match ? [resolve(match[1])] : [];
+        }))].sort();
+        assert.deepEqual(roots, [resolve(import.meta.dirname, '../../../node_modules', name)], `${name} must use one root runtime`);
+    }
     for (const name of ['prosemirror', 'slate', 'lexical', 'tiptap']) assert.ok(emitted.some(input => input.includes(`packages/doc-sync-${name}/dist/`)), name);
     assert.ok(emitted.some(input => input.endsWith('/dist/client/index.js')));
     assert.ok(!emitted.some(input => /packages\/doc-sync\/src\//.test(input)));

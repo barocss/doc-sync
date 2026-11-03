@@ -50,7 +50,7 @@ async function start(data: string) {
         child.once("exit", code => { clearTimeout(timeout); reject(new Error(`서버 종료 ${code}: ${error}`)); });
         child.stdout.on("data", chunk => {
             output += String(chunk);
-            const match = output.match(/http:\/\/localhost:(\d+)/);
+            const match = output.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
 
             if (match) {
                 clearTimeout(timeout);

@@ -1,5 +1,7 @@
 import type {Ticket} from "./ticket.ts";
 
+const TEXT_STORAGE_NEIGHBOR_FIELDS = Object.freeze(["into", "after"]);
+
 /** Stable storage for logical default and trailing paragraphs. Physical origins never change. */
 export type TextAddress = {parent: string; after: string | null; detached?: boolean};
 export const textTicket = ({parent, after, detached}: TextAddress): Ticket => ({lamport: 0, actor: `~${detached ? "fragment" : "text"}:${encodeURIComponent(parent)}:${after === null ? "" : encodeURIComponent(after)}`});
@@ -14,7 +16,7 @@ export function parseJoin(value: unknown): JoinValue | null {
     const prototype = Object.getPrototypeOf(value);
     if (prototype !== Object.prototype && prototype !== null) return null;
     const descriptors = Object.getOwnPropertyDescriptors(value);
-    if (Reflect.ownKeys(value).length !== 2 || !["into", "after"].every(key => descriptors[key]?.enumerable && Object.hasOwn(descriptors[key], "value") && typeof descriptors[key].value === "string")) return null;
+    if (Reflect.ownKeys(value).length !== 2 || !TEXT_STORAGE_NEIGHBOR_FIELDS.every(key => descriptors[key]?.enumerable && Object.hasOwn(descriptors[key], "value") && typeof descriptors[key].value === "string")) return null;
     return {into: descriptors.into.value, after: descriptors.after.value};
 }
 

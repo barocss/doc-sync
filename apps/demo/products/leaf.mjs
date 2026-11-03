@@ -1,5 +1,7 @@
 import {SchemaLeafNode,$modelData,$setModelData} from '@barocss/doc-sync-lexical';
 
+const LEAF_ATOM_SHAPES = Object.freeze(['inline','atom']);
+
 /** Application-owned labels; never interpret schema attributes as HTML or URLs. */
 export class ProductLeafNode extends SchemaLeafNode {
  static getType(){return 'product-leaf';}
@@ -12,6 +14,6 @@ export class ProductLeafNode extends SchemaLeafNode {
  }
 }
 export const productLeafCodec={nodes:[ProductLeafNode],
- toLexical(model,{schema}){const shape=schema.nodes[model.type]?.shape;if(!['inline','atom'].includes(shape))return null;return $setModelData(new ProductLeafNode(),{type:model.type,shape,...(model.attrs?{attrs:structuredClone(model.attrs)}:{})});},
+ toLexical(model,{schema}){const shape=schema.nodes[model.type]?.shape;if(!LEAF_ATOM_SHAPES.includes(shape))return null;return $setModelData(new ProductLeafNode(),{type:model.type,shape,...(model.attrs?{attrs:structuredClone(model.attrs)}:{})});},
  fromLexical(node){if(!(node instanceof ProductLeafNode))return null;const data=$modelData(node);return {type:data.type,...(data.attrs?{attrs:structuredClone(data.attrs)}:{})};},
 };

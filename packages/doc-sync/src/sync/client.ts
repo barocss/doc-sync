@@ -15,6 +15,8 @@ import type {ClientEngine, ClientEngineFactory, EnginePreparedDocument, EngineEv
 import {CONTAINER_CAPABILITY, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "./protocol.ts";
 import type {Change, Envelope, Outbound, Presence, PresenceInput, ServerEvent, Transport} from "./protocol.ts";
 
+const REQUIRED_CLIENT_ENGINE_METHODS = /* @__PURE__ */ Object.freeze(["identity", "schema", "requireCapabilities", "setEditHooks", "assertEditing", "stamp", "model", "apply", "applyModelEdits", "deleteRange", "captureAnchor", "locateAnchor", "record", "receive", "emitLocal", "check", "undo", "redo", "historyStatus", "clearHistory", "historyDeletionKeys", "historyPin", "compact", "snapshot", "allocationFloor", "prepareSnapshot", "replayPrepared", "compilePrepared", "installPrepared", "checkpoint", "prepareCheckpoint", "installCheckpoint", "previewSchema", "upgradeSchema", "reset", "beginEvents", "finishEvents", "createSession", "dispose"] as const);
+
 /**
  * 참여자 하나. 문서·되돌리기·서버 연결을 묶는다.
  *
@@ -63,19 +65,25 @@ type ConditionalAttempt = {
     events: Array<{event: ServerEvent; connection: number}>; reconnect: boolean; attempting: boolean; priorGuard: (() => void) | null; wasUnconfirmed: boolean;
 };
 
+function freezeOwnedSchema(value: unknown): void {
+    if (value && typeof value === "object" && !Object.isFrozen(value)) {
+        Object.values(value).forEach(freezeOwnedSchema);
+        Object.freeze(value);
+    }
+}
+
 function ownedSchema(input: Schema): Schema {
     // Inspect the original before cloning: structuredClone would invoke getters.
     schemaVersion(input);
     const result = structuredClone(input);
     schemaVersion(result);
-    const freeze = (value: unknown): void => {
-        if (value && typeof value === "object" && !Object.isFrozen(value)) {
-            Object.values(value).forEach(freeze);
-            Object.freeze(value);
-        }
-    };
-    freeze(result);
+    freezeOwnedSchema(result);
     return result;
+}
+
+function validHelloCounters(value: unknown): boolean {
+    return Array.isArray(value) && value.every(entry =>
+        Array.isArray(entry) && entry.length === 2 && typeof entry[0] === "string" && Number.isSafeInteger(entry[1]) && entry[1] >= 0);
 }
 
 export class SyncClient {
@@ -242,9 +250,8 @@ export class SyncClient {
         this.engineFactory = options.engineFactory ?? typescriptClientEngineFactory;
         if (!this.engineFactory || this.engineFactory.contractVersion !== ENGINE_CONTRACT_VERSION || typeof this.engineFactory.create !== "function") throw new Error("Incompatible client engine factory");
         this.engine = this.engineFactory.create(actor, this.schema);
-        const methods = ["identity", "schema", "requireCapabilities", "setEditHooks", "assertEditing", "stamp", "model", "apply", "applyModelEdits", "deleteRange", "captureAnchor", "locateAnchor", "record", "receive", "emitLocal", "check", "undo", "redo", "historyStatus", "clearHistory", "historyDeletionKeys", "historyPin", "compact", "snapshot", "allocationFloor", "prepareSnapshot", "replayPrepared", "compilePrepared", "installPrepared", "checkpoint", "prepareCheckpoint", "installCheckpoint", "previewSchema", "upgradeSchema", "reset", "beginEvents", "finishEvents", "createSession", "dispose"] as const;
         try {
-        if (!this.engine || methods.some(method => typeof this.engine[method] !== "function")) throw new Error("Incompatible production client engine");
+        if (!this.engine || REQUIRED_CLIENT_ENGINE_METHODS.some(method => typeof this.engine[method] !== "function")) throw new Error("Incompatible production client engine");
         const identity = this.engine.identity();
         if (identity.engine !== this.engineFactory.engine || identity.contractVersion !== ENGINE_CONTRACT_VERSION || identity.actor !== actor || identity.schemaVersion !== schemaVersion(this.schema)) throw new Error("Client engine identity mismatch");
         this.engine.requireCapabilities(["edit", "receive", "history", "anchors", "checkpoint", "composition", "events", "gc", "schema-transition"]);
@@ -700,13 +707,11 @@ export class SyncClient {
                 this.disconnect();
                 return;
             }
-            const counters = (value: unknown): boolean => Array.isArray(value) && value.every(entry =>
-                Array.isArray(entry) && entry.length === 2 && typeof entry[0] === "string" && Number.isSafeInteger(entry[1]) && entry[1] >= 0);
             const presenceValid = Array.isArray(event.presence) && event.presence.every(peer => peer &&
                 typeof peer.actor === "string" && typeof peer.name === "string" && typeof peer.color === "string" &&
                 (peer.anchor === null || typeof peer.anchor === "string") && (peer.focus === null || typeof peer.focus === "string"));
-            if (!Number.isSafeInteger(event.serverSeq) || event.serverSeq < 0 || !counters(event.delSeqs) ||
-                (event.clientSeqs !== undefined && !counters(event.clientSeqs)) || !presenceValid) {
+            if (!Number.isSafeInteger(event.serverSeq) || event.serverSeq < 0 || !validHelloCounters(event.delSeqs) ||
+                (event.clientSeqs !== undefined && !validHelloCounters(event.clientSeqs)) || !presenceValid) {
                 this.connectionError = new Error("Invalid doc-sync hello metadata");
                 this.disconnect();
                 return;

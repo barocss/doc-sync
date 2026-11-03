@@ -7,6 +7,22 @@ import type {Block, Doc, GridBlock, Marks, Op, Pos, TextBlock} from "@barocss/do
 import type {Schema} from "@barocss/doc-sync";
 import type {SyncClient} from "@barocss/doc-sync/sync";
 
+const sliceRange = (range: [Pos, Pos] | null, line: string, b: number, length: number): [number, number] | null => {
+    if (!range || lineOf(range[0]) !== line || b < range[0].b || b > range[1].b) {
+        return null;
+    }
+
+    const from = b === range[0].b ? range[0].o : 0;
+    const to = b === range[1].b ? range[1].o : length;
+
+    return from < to ? [from, to] : null;
+};
+
+const GRID_SIZE_CHOICES = Object.freeze(["2x2", "3x3", "2x4"]);
+const LIST_BULLET_MARKERS = Object.freeze(["•", "◦", "▪"]);
+
+const IMAGE_WIDTH_STEPS = Object.freeze([160, 240, 320]);
+
 /**
  * 아주 작은 편집기. contenteditable 을 쓰지 않고 문서를 직접 그린다 — 어떤 키가 어떤 CRDT 연산이 되는지가 그대로 보이도록.
  * 무엇을 그릴 수 있는지(블록 종류·서식·넣을 수 있는 것)는 주입된 스키마에서 읽는다.
@@ -425,7 +441,7 @@ export class Editor {
             const name = spec?.ui?.label ?? type;
 
             if (spec?.shape === "grid") {
-                return ["2x2", "3x3", "2x4"].map(size => ({value: `${type}:${size}`, label: `${name} ${size.replace("x", "×")}`}));
+                return GRID_SIZE_CHOICES.map(size => ({value: `${type}:${size}`, label: `${name} ${size.replace("x", "×")}`}));
             }
 
             return spec && spec.shape !== "text" ? [{value: type, label: name}] : [];
@@ -457,12 +473,11 @@ export class Editor {
         if (block?.kind !== "flow") {
             return;
         }
-
         const image = this.doc.blocks(block.body).flatMap(x => (x.kind === "text" ? x.chars.filter(c => this.doc.isInline(c)) : []))[0];
-        const sizes = [160, 240, 320];
+
         const width = Number(image?.attrs.get("width")?.value ?? 160);
 
-        image && this.commit(cmd.setItemAttr(this.doc, image, "width", sizes[(sizes.indexOf(width) + 1) % sizes.length]), this.anchor, this.anchor);
+        image && this.commit(cmd.setItemAttr(this.doc, image, "width", IMAGE_WIDTH_STEPS[(IMAGE_WIDTH_STEPS.indexOf(width) + 1) % IMAGE_WIDTH_STEPS.length]), this.anchor, this.anchor);
         this.focusInput();
     }
 
@@ -995,17 +1010,6 @@ export class Editor {
             comparePos(here, selection[0]) >= 0 &&
             comparePos({...here, o: here.o + 1}, selection[1]) <= 0;
 
-        const sliceRange = (range: [Pos, Pos] | null, line: string, b: number, length: number): [number, number] | null => {
-            if (!range || lineOf(range[0]) !== line || b < range[0].b || b > range[1].b) {
-                return null;
-            }
-
-            const from = b === range[0].b ? range[0].o : 0;
-            const to = b === range[1].b ? range[1].o : length;
-
-            return from < to ? [from, to] : null;
-        };
-
         const renderLine = (line: string, into: HTMLElement): void => {
             // 번호 목록: 같은 수준의 이어진 번호 항목끼리 1, 2, 3 …
             const counters: number[] = [];
@@ -1071,7 +1075,7 @@ export class Editor {
 
                     counters.length = level + 1;
                     counters[level] = numbered ? (counters[level] ?? 0) + 1 : 0;
-                    bullet = numbered ? `${counters[level]}.` : ["•", "◦", "▪"][level % 3];
+                    bullet = numbered ? `${counters[level]}.` : LIST_BULLET_MARKERS[level % 3];
                 } else {
                     counters.length = 0;
                 }

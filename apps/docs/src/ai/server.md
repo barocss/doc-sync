@@ -25,6 +25,20 @@ when that input is paused. Tools become available only after session startup
 and the existing recovery checks complete. Async schema modules do not need to
 keep a separate event-loop handle alive to finish importing.
 
+Schema reads, recovery-state reads, reservation confirmation and exact pending
+recovery use at most four HTTP attempts within one 10-second budget per request.
+The budget includes connection, body reading and backoff. Temporary HTTP 429,
+502, 503 and 504 responses and recognized connection failures can be retried.
+Each retry keeps the original request identity and body. Ordinary edits and
+conditional submissions do not use this automatic retry path.
+
+An interrupted cleanup can leave both an accepted intent and the checkpoint
+that already contains it. Startup verifies the exact receipt and matching
+checkpoint digest and sequence, restores the saved history once, synchronizes
+the current server snapshot, then clears that intent. It does not add another
+undo group. Changed generations or schemas, missing protection, unknown receipts
+and exhausted request retries keep recovery blocked and preserve the files.
+
 EOF, stream closure, SIGINT and SIGTERM stop input admission and request cleanup.
 Cleanup waits for the current bootstrap step or admitted operation to settle,
 then closes the local stream and journal writer. It sends an ordinary participant

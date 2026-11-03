@@ -1,3 +1,4 @@
+import type {Snapshot} from "../crdt/doc.ts";
 import type {Client} from "../client/index.ts";
 import {schemaVersion} from "../crdt/schema-version.ts";
 import {createDataSchema} from "./schema.ts";
@@ -20,11 +21,48 @@ export interface SharedData {
 type Encoded = {scalar: DataScalar} | {reference: DataId; kind: "map" | "list"};
 type Indexed = {id: DataId; node: NodeJSON; path: number[]};
 const ROOT = "$root";
+const recordKinds: readonly string[] = Object.freeze(["map", "list", "entry"]);
+type DataIndexes = {
+    index: Map<DataId, Indexed>;
+    children: Map<DataId, Indexed[]>;
+    keys: Map<DataId, Map<string, Indexed[]>>;
+};
 const validId = (id: unknown): id is DataId => typeof id === "string" && /^data:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(id);
 const fail = (message: string): never => {throw new Error(`Data: ${message}`);};
 function freeze<T>(value: T): T {
     if (value && typeof value === "object" && !Object.isFrozen(value)) { Object.values(value).forEach(freeze); Object.freeze(value); }
     return value;
+}
+
+function deeplyFrozen(value: unknown): boolean {
+    return !value || typeof value !== "object" ||
+        Object.isFrozen(value) && Object.values(value).every(deeplyFrozen);
+}
+
+function visitRecord(node: NodeJSON, path: number[], indexes: DataIndexes, parent?: DataId): void {
+    const {index, children, keys} = indexes;
+    const id = path.length ? node.attrs?.id : ROOT;
+    if (path.length ? !validId(id) : id !== ROOT) fail("invalid storage ID");
+    if (index.has(id as string)) fail("duplicate storage ID");
+    const item = freeze({id: id as string, node, path}); index.set(item.id, item);
+    if (parent !== undefined && node.type === "entry") {
+        const list = children.get(parent) ?? []; list.push(item); children.set(parent, list);
+        const keyMap = keys.get(parent) ?? new Map<string, Indexed[]>(), key = node.attrs!.key as string;
+        const candidates = keyMap.get(key) ?? []; candidates.push(item); keyMap.set(key, candidates); keys.set(parent, keyMap);
+    }
+    node.children?.forEach((child, at) => visitRecord(child, [...path, at], indexes, item.id));
+}
+
+function retainedRecordKinds(snapshot: Snapshot): Map<string, string> {
+    const kinds = new Map<string, string>();
+    for (const line of snapshot.lines) for (const item of line.items) {
+        if (item.z || item.k !== "n" || !recordKinds.includes(item.b ?? "")) continue;
+        const storedId = item.a?.find(([key]) => key === "id")?.[1];
+        if (!validId(storedId)) fail("invalid storage ID");
+        if (kinds.has(storedId as string)) fail("duplicate storage ID");
+        kinds.set(storedId as string, item.b!);
+    }
+    return kinds;
 }
 
 /** Map/List facade. All edits, history and transport use the existing Client. */
@@ -55,33 +93,8 @@ class DataAccess implements SharedData {
         const stamp = this.#client.stamp(), version = `${stamp.generation}:${stamp.revision}`;
         if (this.version === version) return;
         const index = new Map<DataId, Indexed>(), children = new Map<DataId, Indexed[]>(), keys = new Map<DataId, Map<string, Indexed[]>>();
-        const visit = (node: NodeJSON, path: number[], parent?: DataId) => {
-            const id = path.length ? node.attrs?.id : ROOT;
-            if (path.length ? !validId(id) : id !== ROOT) fail("invalid storage ID");
-            if (index.has(id as string)) fail("duplicate storage ID");
-            const item = freeze({id: id as string, node, path}); index.set(item.id, item);
-            if (parent !== undefined && node.type === "entry") {
-                const list = children.get(parent) ?? []; list.push(item); children.set(parent, list);
-                const keyMap = keys.get(parent) ?? new Map<string, Indexed[]>(), key = node.attrs!.key as string;
-                const candidates = keyMap.get(key) ?? []; candidates.push(item); keyMap.set(key, candidates); keys.set(parent, keyMap);
-            }
-            node.children?.forEach((child, at) => visit(child, [...path, at], item.id));
-        };
-        visit(structuredClone(this.#client.model()), []);
+        visitRecord(structuredClone(this.#client.model()), [], {index, children, keys});
         let retainedKinds: Map<string, string> | undefined;
-        const retainedKind = (id: string): string | undefined => {
-            if (!retainedKinds) {
-                retainedKinds = new Map();
-                for (const line of this.#client.snapshot().lines) for (const item of line.items) {
-                    if (item.z || item.k !== "n" || !["map", "list", "entry"].includes(item.b ?? "")) continue;
-                    const storedId = item.a?.find(([key]) => key === "id")?.[1];
-                    if (!validId(storedId)) fail("invalid storage ID");
-                    if (retainedKinds.has(storedId as string)) fail("duplicate storage ID");
-                    retainedKinds.set(storedId as string, item.b!);
-                }
-            }
-            return retainedKinds.get(id);
-        };
         for (const item of index.values()) if (item.node.type === "entry") {
             if (typeof item.node.attrs!.key !== "string") fail("invalid encoded map key");
             const value = item.node.attrs!.value;
@@ -92,7 +105,11 @@ class DataAccess implements SharedData {
                 if (scalar !== null && typeof scalar !== "boolean" && typeof scalar !== "string" && !(typeof scalar === "number" && Number.isFinite(scalar))) fail("invalid encoded scalar");
             } else if (fields.length === 2 && Object.hasOwn(encoded, "reference") && Object.hasOwn(encoded, "kind")) {
                 const target = index.get(encoded.reference as string), kind = encoded.kind;
-                const targetKind = encoded.reference === ROOT ? "map" : target?.node.type ?? retainedKind(encoded.reference as string);
+                let targetKind = encoded.reference === ROOT ? "map" : target?.node.type;
+                if (targetKind === undefined) {
+                    retainedKinds ??= retainedRecordKinds(this.#client.snapshot());
+                    targetKind = retainedKinds.get(encoded.reference as string);
+                }
                 if ((kind !== "map" && kind !== "list") || targetKind !== kind) fail("invalid encoded reference");
             } else fail("invalid encoded value");
         }
@@ -109,6 +126,9 @@ class DataAccess implements SharedData {
     }
     children(id: DataId, kind: "map" | "list"): Indexed[] {
         this.collection(id, kind); return this.childIndex.get(id) ?? [];
+    }
+    mapSize(id: DataId): number {
+        this.collection(id, "map"); return this.keyIndex.get(id)?.size ?? 0;
     }
     candidates(id: DataId, key: string): Indexed[] { this.collection(id, "map"); return this.keyIndex.get(id)?.get(key) ?? []; }
     findEntry(collection: DataId, id: DataId): Indexed | undefined {
@@ -190,7 +210,7 @@ export class SharedMap {
         const keys = [...new Set(this.owner.children(this.id, "map").map(item => item.node.attrs!.key as string))].sort();
         return keys.map(key => [key, this.get(key)!]);
     }
-    get size() { return this.entries().length; }
+    get size() { return this.owner.mapSize(this.id); }
 }
 
 export class SharedList {
@@ -201,7 +221,10 @@ export class SharedList {
     entries(): Array<{id: DataId; value: DataValue}> { return this.owner.children(this.id, "list").map(item => ({id: item.id, value: this.owner.decode(item)})); }
     get length() { return this.owner.children(this.id, "list").length; }
     get(id: DataId): DataValue | undefined { const entry = this.owner.findEntry(this.id, id); return entry ? this.owner.decode(entry) : undefined; }
-    at(index: number): {id: DataId; value: DataValue} | undefined { return this.entries().at(index); }
+    at(index: number): {id: DataId; value: DataValue} | undefined {
+        const item = this.owner.children(this.id, "list").at(index);
+        return item ? {id: item.id, value: this.owner.decode(item)} : undefined;
+    }
     insert(index: number, value: DataValue): DataId { this.owner.mutable(); return this.owner.insert(this, index, value); }
     push(value: DataValue): DataId { this.owner.mutable(); return this.insert(this.length, value); }
     set(id: DataId, value: DataValue): void { this.owner.mutable(); this.owner.update(this, id, value); }
@@ -233,7 +256,5 @@ export function assertDataSchema(client: Client): void {
     if (checkedSchemas.has(schema)) return;
     if (schemaVersion(schema) !== dataSchemaVersion) fail("client.data requires createDataSchema()");
     // Engine schemas are deeply frozen. A mutable external schema must be checked again.
-    const deeplyFrozen = (value: unknown): boolean => !value || typeof value !== "object" ||
-        Object.isFrozen(value) && Object.values(value).every(deeplyFrozen);
     if (deeplyFrozen(schema)) checkedSchemas.add(schema);
 }

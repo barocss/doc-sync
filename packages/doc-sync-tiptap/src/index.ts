@@ -12,6 +12,14 @@ import type {BindingClient} from "@barocss/doc-sync/client";
 import type {DomHints} from "@barocss/doc-sync-prosemirror";
 import type {Presence} from "@barocss/doc-sync/sync";
 
+function defaults(attrs: PmSchema["nodes"][string]["spec"]["attrs"]) { return JSON.stringify(Object.entries(attrs ?? {}).map(([key, value]) => [key, value.default])); }
+
+function names(value: object) { return Object.keys(value).sort().join(","); }
+
+const TIPTAP_NODE_SPEC_FIELDS = Object.freeze(["content", "group", "marks", "tableRole", "whitespace"] as const);
+
+const EXCLUDED_TIPTAP_EXTENSIONS = Object.freeze(["undoRedo", "history", "collaboration", "collaborationCaret", "collaborationCursor"]);
+
 /** Generate the exact flattened schema supported by the shared ProseMirror converter.
  * Do not combine these nodes/marks with StarterKit or another document schema.
  */
@@ -74,15 +82,15 @@ export function createTiptapExtensions(schema: Schema, dom: DomHints = {}): Exte
 }
 
 function validateSchema(actual: PmSchema, expected: PmSchema): void {
-    const names = (value: object) => Object.keys(value).sort().join(",");
-    const defaults = (attrs: PmSchema["nodes"][string]["spec"]["attrs"]) => JSON.stringify(Object.entries(attrs ?? {}).map(([key, value]) => [key, value.default]));
+
+
     if (names(actual.nodes) !== names(expected.nodes) || names(actual.marks) !== names(expected.marks) || actual.topNodeType.name !== expected.topNodeType.name) {
         throw new Error("DocSync: incompatible Tiptap schema. Use createTiptapExtensions(client.schema).");
     }
     for (const [name, type] of Object.entries(expected.nodes)) {
         const node = actual.nodes[name];
         // Tiptap adds HTML attribute metadata. Compare document semantics and effective defaults.
-        const fields = ["content", "group", "marks", "tableRole", "whitespace"] as const;
+        const fields = TIPTAP_NODE_SPEC_FIELDS;
         if (fields.some(field => node.spec[field] !== type.spec[field]) || node.isInline !== type.isInline || node.isAtom !== type.isAtom || !!node.spec.defining !== !!type.spec.defining || !!node.spec.isolating !== !!type.spec.isolating || defaults(node.spec.attrs) !== defaults(type.spec.attrs)) throw new Error(`DocSync: incompatible node ${name}.`);
     }
     for (const [name, type] of Object.entries(expected.marks)) {
@@ -119,7 +127,7 @@ export const DocSync = Extension.create<DocSyncOptions, DocSyncStorage>({
     onBeforeCreate() {
         if (!this.options.client) throw new Error("DocSync: client is required.");
         this.editor.options.content = toPmJSON(this.options.client.schema, initialClientModel(this.options.client));
-        const incompatible = this.editor.extensionManager.extensions.find(extension => ["undoRedo", "history", "collaboration", "collaborationCaret", "collaborationCursor"].includes(extension.name));
+        const incompatible = this.editor.extensionManager.extensions.find(extension => EXCLUDED_TIPTAP_EXTENSIONS.includes(extension.name));
         if (incompatible) throw new Error(`DocSync: disable ${incompatible.name}; DocSync provides actor-owned history and presence.`);
     },
     addCommands() {

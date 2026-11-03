@@ -31,7 +31,7 @@ async function start(data: string, gate = false, receiptGate = false) {
         child.once("exit", code => { clearTimeout(timer); reject(new Error(`server exited ${code}: ${errors}`)); });
         child.stdout.on("data", chunk => {
             output += String(chunk);
-            const match = output.match(/http:\/\/localhost:(\d+)/);
+            const match = output.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
             if (match) { clearTimeout(timer); resolve(match[0]); }
         });
     });

@@ -7,13 +7,16 @@ import type {Marks} from "./model.ts";
 import type {GroupSpec, SpanSpec} from "./schema.ts";
 import type {SliceQuery} from "./read.ts";
 
+function definedJSONKeys(value: object): string[] {
+    return Object.keys(value).filter(key => (value as Record<string, unknown>)[key] !== undefined);
+}
+
 // JSON object key order is significant to the canonical compiler's mark signature.
 const sameJSON = (a: unknown, b: unknown): boolean => {
     if (a === b) return true;
     if (!a || !b || typeof a !== "object" || typeof b !== "object") return false;
     if (Array.isArray(a) || Array.isArray(b)) return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((value, i) => sameJSON(value, b[i]));
-    const keys = (value: object) => Object.keys(value).filter(key => (value as Record<string, unknown>)[key] !== undefined);
-    const left = keys(a), right = keys(b);
+    const left = definedJSONKeys(a), right = definedJSONKeys(b);
     return left.length === right.length && left.every((key, i) => key === right[i] && sameJSON((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]));
 };
 

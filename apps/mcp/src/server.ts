@@ -4,6 +4,9 @@ import type {EditOp} from "@barocss/doc-sync";
 import type {DocumentSession} from "./session.ts";
 import {sliceToolResult} from "./slice-result.ts";
 
+const HISTORY_TOOL_ACTIONS = Object.freeze(["undo", "redo"] as const);
+
+
 const path = z.array(z.number().int().nonnegative()).min(1);
 const edit = z.discriminatedUnion("op", [
     z.object({op: z.literal("insert"), at: path, content: z.union([z.string(), z.array(z.record(z.unknown()))])}).strict(),
@@ -102,7 +105,7 @@ export function createServer(session: DocumentSession, options: ServerOptions = 
     }, async () => run("discard_history", async () => {
         try { return result(await session.discardHistory()); } catch (error) { return toolError(error); }
     }));
-    for (const action of ["undo", "redo"] as const) {
+    for (const action of HISTORY_TOOL_ACTIONS) {
         server.registerTool(action, {
             description: `${action} the AI participant's own history in this running session. Other participants' changes follow the existing collaboration rules.`,
             inputSchema: z.object({}).strict(),

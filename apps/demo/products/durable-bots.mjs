@@ -4,12 +4,14 @@ import {listMissions,recoverMission} from '../../bot/src/runner.ts';
 import {listProfiles,loadProfile,profileActor,profileUrl} from '../../bot/src/profiles.ts';
 
 // The browser is a local controller; the existing profile and journal remain the source of identity.
+const key=(profile,doc,id)=>JSON.stringify([profile,doc,id]);
+const validDoc=doc=>typeof doc==='string'&&/^[a-z0-9-]{1,40}$/.test(doc);
+const endpoint=(origin,profile)=>profileUrl(`${origin}/profiles/${profile}`);
+const own=(m,profile,doc,origin)=>m.document===doc && m.url===endpoint(origin,profile) && typeof m.profileId==='string';
+
 export function durableBots({root,stateDir,model,children}) {
  const active=new Map(),recovering=new Set(),lastAttempt=new Map();
- const key=(profile,doc,id)=>JSON.stringify([profile,doc,id]);
- const validDoc=doc=>typeof doc==='string'&&/^[a-z0-9-]{1,40}$/.test(doc);
- const endpoint=(origin,profile)=>profileUrl(`${origin}/profiles/${profile}`);
- const own=(m,profile,doc,origin)=>m.document===doc && m.url===endpoint(origin,profile) && typeof m.profileId==='string';
+
  async function records(profile,doc,origin) {
   const [profiles,missions]=await Promise.all([listProfiles(stateDir),listMissions(stateDir)]);
   const jobs=[],history=[];

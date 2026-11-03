@@ -6,6 +6,13 @@ import {fieldJsonOk} from "../crdt/fields.ts";
 import {BUILTIN_GRAPHIC_SCHEMA, GRAPHIC_ID_PATTERN, GRAPHIC_LIMITS, GRAPHIC_OVERRIDE_PROPERTIES} from "./schema.ts";
 import type {GraphicAttrsByKind, GraphicId, GraphicKind, GraphicNode, GraphicObject, GraphicOverrideAssignment, GraphicOverrideProperty, GraphicOverrideValue, GraphicPatch} from "./types.ts";
 
+const GRAPHIC_REFERENCE_FIELDS = Object.freeze(["from", "to", "targetId", "componentId"]);
+const GRAPHIC_NODE_FIELDS = Object.freeze(["type", "attrs", "children", "runs"]);
+const GRAPHIC_RUN_FIELDS = Object.freeze(["text", "marks"]);
+const GRAPHIC_CONTENT_FIELDS = Object.freeze(["children", "text"]);
+const GRAPHIC_OVERRIDE_KINDS = Object.freeze(["source-ref", "instance-override"]);
+
+
 const fail = (reason: string): never => { throw new Error(`Graphic: ${reason}`); };
 const signature = JSON.stringify(BUILTIN_GRAPHIC_SCHEMA);
 const idPattern = new RegExp(GRAPHIC_ID_PATTERN);
@@ -24,7 +31,7 @@ const assertAttrs = (kind: GraphicKind, attrs: unknown): void => {
     const specs = BUILTIN_GRAPHIC_SCHEMA.nodes[kind].attrs!;
     for (const [key, value] of Object.entries(attrs as Record<string, unknown>)) {
         if (!Object.hasOwn(specs, key) || !attrValueOk(specs[key], value)) fail(`invalid ${kind}.${key}`);
-        if (["from", "to", "targetId", "componentId"].includes(key) && value !== null && value !== "" && !isGraphicId(value)) fail(`invalid ${kind}.${key} reference`);
+        if (GRAPHIC_REFERENCE_FIELDS.includes(key) && value !== null && value !== "" && !isGraphicId(value)) fail(`invalid ${kind}.${key} reference`);
         if (kind === "instance-override" && key === "assignment" && value !== null) assertAssignment(value);
     }
 };
@@ -55,7 +62,7 @@ export const assertGraphicNode = (node: NodeJSON): void => {
         const {node: current, depth} = pending.pop()!;
         if (++count > GRAPHIC_LIMITS.nodes || depth > GRAPHIC_LIMITS.depth) fail("node limits exceeded");
         if (!current || typeof current !== "object" || !kindOk(current.type)) fail("unknown node kind");
-        if (Object.keys(current).some(key => !["type", "attrs", "children", "runs"].includes(key))) fail("unknown node property");
+        if (Object.keys(current).some(key => !GRAPHIC_NODE_FIELDS.includes(key))) fail("unknown node property");
         assertAttrs(current.type as GraphicKind, current.attrs === undefined ? {} : current.attrs);
         const spec = BUILTIN_GRAPHIC_SCHEMA.nodes[current.type];
         if (spec.shape === "container") {
@@ -67,7 +74,7 @@ export const assertGraphicNode = (node: NodeJSON): void => {
         } else if (spec.shape === "text") {
             if (current.children !== undefined || current.runs !== undefined && !Array.isArray(current.runs)) fail("invalid label content");
             for (const run of current.runs ?? []) {
-                if (!run || typeof run !== "object" || !("text" in run) || typeof run.text !== "string" || !run.marks || typeof run.marks !== "object" || Array.isArray(run.marks) || Object.keys(run).some(key => !["text", "marks"].includes(key)) || Object.entries(run.marks).some(([key, value]) => !BUILTIN_GRAPHIC_SCHEMA.marks.includes(key) || typeof value !== "boolean")) fail("invalid label run");
+                if (!run || typeof run !== "object" || !("text" in run) || typeof run.text !== "string" || !run.marks || typeof run.marks !== "object" || Array.isArray(run.marks) || Object.keys(run).some(key => !GRAPHIC_RUN_FIELDS.includes(key)) || Object.entries(run.marks).some(([key, value]) => !BUILTIN_GRAPHIC_SCHEMA.marks.includes(key) || typeof value !== "boolean")) fail("invalid label run");
             }
         } else if (current.children !== undefined || current.runs !== undefined) fail("atom cannot contain content");
     }
@@ -76,7 +83,7 @@ export const assertGraphicNode = (node: NodeJSON): void => {
 /** Build a standard node without defining a schema or custom attributes. */
 export const createGraphicNode = <K extends GraphicKind>(kind: K, attrs: GraphicPatch<GraphicAttrsByKind[K]> = {}, content: {children?: NodeJSON[]; text?: string} = {}): GraphicNode<K> => {
     if (!kindOk(kind)) return fail("unknown node kind");
-    if (!fieldJsonOk(content) || !content || typeof content !== "object" || Array.isArray(content) || Object.keys(content).some(key => !["children", "text"].includes(key))) return fail("invalid content options");
+    if (!fieldJsonOk(content) || !content || typeof content !== "object" || Array.isArray(content) || Object.keys(content).some(key => !GRAPHIC_CONTENT_FIELDS.includes(key))) return fail("invalid content options");
     if (content.text !== undefined && (kind !== "label" || typeof content.text !== "string")) return fail("text is only supported on labels");
     const node: GraphicNode<K> = {type: kind, attrs: attrs as Record<string, unknown>,
         ...(content.children !== undefined ? {children: content.children} : {}),
@@ -188,7 +195,7 @@ export const createGraphicOverride = <P extends GraphicOverrideProperty>(targetI
  */
 export const resolveGraphicReference = (doc: Doc, recordId: GraphicId, field: "targetId" | "componentId" | "from" | "to"): GraphicObject | null => {
     const record = needObject(doc, recordId), value = record.node.attrs?.[field];
-    const valid = field === "componentId" ? record.node.type === "instance" : field === "from" || field === "to" ? record.node.type === "segment" : ["source-ref", "instance-override"].includes(record.node.type);
+    const valid = field === "componentId" ? record.node.type === "instance" : field === "from" || field === "to" ? record.node.type === "segment" : GRAPHIC_OVERRIDE_KINDS.includes(record.node.type);
     if (!valid) return fail("reference field does not belong to this record");
     if (value === "") return null;
     if (!isGraphicId(value)) return fail("invalid stored reference");

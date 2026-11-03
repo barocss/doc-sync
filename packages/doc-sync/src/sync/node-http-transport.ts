@@ -5,6 +5,36 @@ import type {ConditionalBase, ConditionalReply} from "./client.ts";
 import {schemaVersion, sha256} from "../crdt/schema-version.ts";
 import type {Schema} from "../crdt/schema.ts";
 
+const SERVER_URL_PROTOCOLS = /* @__PURE__ */ Object.freeze(["http:", "https:"]);
+const RECOVERY_TEMPORARY_HTTP = /* @__PURE__ */ new Set([429, 502, 503, 504]);
+const RECOVERY_DELAYS = [100, 200, 400] as const;
+const RECOVERY_NETWORK_CODES = /* @__PURE__ */ new Set(["ECONNREFUSED", "ECONNRESET", "EPIPE", "ETIMEDOUT", "EAI_AGAIN",
+    "UND_ERR_SOCKET", "UND_ERR_CONNECT_TIMEOUT", "UND_ERR_HEADERS_TIMEOUT", "UND_ERR_BODY_TIMEOUT"]);
+
+function retryableRecoveryNetwork(error: unknown): boolean {
+    const pending: unknown[] = [error];
+    const visited = new Set<unknown>();
+    while (pending.length) {
+        const entry = pending.pop();
+        if (!entry || typeof entry !== "object" || visited.has(entry)) continue;
+        visited.add(entry);
+        const value = entry as {code?: unknown; cause?: unknown; errors?: unknown};
+        if (typeof value.code === "string" && RECOVERY_NETWORK_CODES.has(value.code)) return true;
+        if (value.cause) pending.push(value.cause);
+        if (Array.isArray(value.errors)) pending.push(...value.errors);
+    }
+    return false;
+}
+
+function recoveryPause(signal: AbortSignal, ms: number): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        signal.throwIfAborted();
+        const aborted = () => { clearTimeout(timer); reject(signal.reason); };
+        const timer = setTimeout(() => { signal.removeEventListener("abort", aborted); resolve(); }, ms);
+        signal.addEventListener("abort", aborted, {once: true});
+    });
+}
+
 export type ConditionalSettlement = {status: "accepted"; generation: string; serverSeq: number}
     | {status: "not_applied"; generation: string; requestDigest: string; changeDigest: string; sealId: string}
     | {status: "unknown"};
@@ -26,7 +56,7 @@ export class NodeHttpTransport implements Transport {
         // Browser HttpTransport delegates recovery here and uses relative bases.
         // Configured credentials require an absolute URL; never attach them to a relative target.
         const url = options.headers === undefined ? new URL(origin, "http://doc-sync.invalid") : new URL(origin);
-        if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || origin.includes("?") || origin.includes("#")) throw new Error("Invalid document origin");
+        if (!SERVER_URL_PROTOCOLS.includes(url.protocol) || url.username || url.password || origin.includes("?") || origin.includes("#")) throw new Error("Invalid document origin");
         for (const [name, value] of Object.entries(options.headers ?? {})) {
             if (!/^[!#$%&\'*+.^_`|~0-9a-z-]+$/i.test(name) || /[\r\n]/.test(value) || /^(host|content-length|connection|transfer-encoding|x-doc-sync-)/i.test(name)) throw new Error("Invalid upstream credential header");
         }
@@ -38,6 +68,32 @@ export class NodeHttpTransport implements Transport {
         const headers = new Headers(this.options.headers);
         new Headers(init.headers).forEach((value, name) => headers.set(name, value));
         return fetch(url, {...init, signal: init.signal ?? AbortSignal.timeout(10_000), headers, redirect: "error"});
+    }
+
+    /** Only replay requests whose exact body is safe before or after acceptance. */
+    private async recoveryRequest(url: string, init: RequestInit = {}): Promise<Response> {
+        const signal = AbortSignal.timeout(10_000);
+        for (let attempt = 0; ; attempt++) {
+            signal.throwIfAborted();
+            let response: Response;
+            try {
+                response = await this.request(url, {...init, signal});
+                // A connection can fail after headers arrive. Consume the complete
+                // successful JSON body under the same deadline before admitting it.
+                if (response.ok) {
+                    const body = await response.arrayBuffer();
+                    return new Response(body.byteLength ? body : null, {status: response.status, statusText: response.statusText, headers: response.headers});
+                }
+            }
+            catch (error) {
+                if (signal.aborted || attempt === RECOVERY_DELAYS.length || !retryableRecoveryNetwork(error)) throw error;
+                await recoveryPause(signal, RECOVERY_DELAYS[attempt]);
+                continue;
+            }
+            if (!response.ok) await response.body?.cancel().catch(() => undefined);
+            if (attempt === RECOVERY_DELAYS.length || !RECOVERY_TEMPORARY_HTTP.has(response.status)) return response;
+            await recoveryPause(signal, RECOVERY_DELAYS[attempt]);
+        }
     }
 
     subscribe(since: number, onEvent: (event: ServerEvent) => void, epoch?: string, schemaVersion?: string): () => void {
@@ -147,7 +203,7 @@ export class NodeHttpTransport implements Transport {
 
     /** Inspect the server's current schema independently of the SSE subscription. */
     async getSchema(): Promise<{schemaVersion: string | null; schema: Schema | null}> {
-        const response = await this.request(`${this.base}/schema`, {signal: AbortSignal.timeout(10_000)});
+        const response = await this.recoveryRequest(`${this.base}/schema`, {});
         if (!response.ok) throw new Error(`Could not read server schema: HTTP ${response.status}`);
         const value = await response.json() as {schemaVersion?: unknown; schema?: unknown};
         if (value.schemaVersion === null && value.schema === null) return {schemaVersion: null, schema: null};
@@ -158,7 +214,7 @@ export class NodeHttpTransport implements Transport {
 
     /** Read the authoritative generation without joining as an editing participant. */
     async getRecoveryState(): Promise<{generation: string | null; epoch: string; serverSeq: number; schemaVersion: string | null; reservationEra?: number}> {
-        const response = await this.request(`${this.base}/recovery-state`, {signal: AbortSignal.timeout(10_000)});
+        const response = await this.recoveryRequest(`${this.base}/recovery-state`, {});
         if (!response.ok) throw new Error(`Could not read server state: HTTP ${response.status}`);
         const value = await response.json() as {generation?: unknown; epoch?: unknown; serverSeq?: unknown; schemaVersion?: unknown; reservationEra?: unknown};
         if (!(value.generation === null || typeof value.generation === "string") || typeof value.epoch !== "string" ||
@@ -170,8 +226,8 @@ export class NodeHttpTransport implements Transport {
 
     /** Reserve deletion history independently of an online peer lease. */
     async reserveRecovery(generation: string, reservationId: string, pin: number | null, requireExisting = false): Promise<{status: "protected"; generation: string; pin: number; lastGc: number; existing: boolean} | {status: "unsafe"}> {
-        const response = await this.request(`${this.base}/recovery-lease`, {
-            method: "POST", signal: AbortSignal.timeout(10_000),
+        const response = await this.recoveryRequest(`${this.base}/recovery-lease`, {
+            method: "POST",
             headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION)},
             body: JSON.stringify({generation, actor: this.actor, reservationId, pin, ...(requireExisting ? {requireExisting: true} : {})}),
         });
@@ -196,7 +252,7 @@ export class NodeHttpTransport implements Transport {
 
     /** Atomically recover the exact pending change under a durable reservation. */
     async recoverChange(generation: string, reservationId: string, version: string, change: Change): Promise<void> {
-        const response = await this.request(`${this.base}/recover-change`, {method: "POST", signal: AbortSignal.timeout(10_000),
+        const response = await this.recoveryRequest(`${this.base}/recover-change`, {method: "POST",
             headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION)},
             body: JSON.stringify({generation, reservationId, schemaVersion: version, change})});
         if (!response.ok) throw new Error(`Pending recovery is not confirmed: HTTP ${response.status}`);

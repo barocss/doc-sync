@@ -11,6 +11,22 @@ import {listMissions, loadMission, runMission, recoverMission, resumeMission} fr
 import {createProfile, listProfiles, loadProfile, profileActor, profileUrl} from "./profiles.ts";
 import type {ProfileInput} from "./profiles.ts";
 
+const PROPOSAL_CREATE_OPTIONS = Object.freeze(["--input"]);
+const PROPOSAL_DECIDE_OPTIONS = Object.freeze(["--id", "--input"]);
+const PROPOSAL_INSPECT_OPTIONS = Object.freeze(["--id"]);
+const WATCH_OPTIONS = Object.freeze(["--url", "--doc", "--mission", "--state-dir", "--model", "--interval", "--max-runs"]);
+const RUN_OPTIONS = Object.freeze(["--url", "--doc", "--actor", "--name", "--color", "--mission", "--state-dir", "--max-steps", "--ephemeral", "--model", "--character", "--personality", "--role", "--profile", "--brief"]);
+const PROFILE_CREATE_OPTIONS = Object.freeze(["--id", "--name", "--character", "--personality", "--role", "--color", "--state-dir"]);
+const RESUME_OPTIONS = Object.freeze(["--id","--state-dir","--model"]);
+const ID_STATE_OPTIONS = Object.freeze(["--id", "--state-dir"]);
+const STATE_OPTIONS = Object.freeze(["--state-dir"]);
+const PROFILE_OVERRIDE_OPTIONS = Object.freeze(["--actor","--name","--color","--character","--personality","--role"]);
+
+const PROPOSAL_DECISION_COMMANDS = Object.freeze(["proposal-reject", "proposal-accept", "proposal-reconcile"]);
+const BOOLEAN_OPTION_VALUES = Object.freeze(["true", "false"]);
+const REQUIRED_PROFILE_OPTIONS = Object.freeze(["--id", "--name", "--character", "--personality", "--role", "--color"]);
+
+
 async function main() {
     const [command, ...rest] = process.argv.slice(2);
     const options = new Map<string, string>();
@@ -19,14 +35,13 @@ async function main() {
         if (!key?.startsWith("--") || value === undefined || options.has(key)) throw new Error("Use unique --option value pairs");
         options.set(key, value);
     }
-    const permitted = command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-create" ? ["--input"] : ["proposal-reject", "proposal-accept", "proposal-reconcile"].includes(command) ? ["--id", "--input"] : command === "proposal-inspect" ? ["--id"] : [])]) : command === "watch" ? new Set(["--url", "--doc", "--mission", "--state-dir", "--model", "--interval", "--max-runs"]) : command === "run" ? new Set(["--url", "--doc", "--actor", "--name", "--color", "--mission", "--state-dir", "--max-steps", "--ephemeral", "--model", "--character", "--personality", "--role", "--profile", "--brief"]) : command === "profile-create" ? new Set(["--id", "--name", "--character", "--personality", "--role", "--color", "--state-dir"]) : command === "resume" ? new Set(["--id","--state-dir","--model"]) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(["--id", "--state-dir"]) : command === "profile-list" || command === "list" ? new Set(["--state-dir"]) : new Set<string>();
+    const permitted = command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
     for (const key of options.keys()) if (!permitted.has(key)) throw new Error(`Unknown option: ${key}`);
     if (command?.startsWith("proposal-")) { console.log(JSON.stringify(await proposalCommand(command, options), null, 2)); return; }
-    if (options.has("--ephemeral") && !["true", "false"].includes(options.get("--ephemeral")!)) throw new Error("--ephemeral must be true or false");
+    if (options.has("--ephemeral") && !BOOLEAN_OPTION_VALUES.includes(options.get("--ephemeral")!)) throw new Error("--ephemeral must be true or false");
     const stateDir = resolve(process.env.INIT_CWD ?? process.cwd(), options.get("--state-dir") ?? ".doc-sync-bots");
     if (command === "profile-create") {
-        const fields = ["--id", "--name", "--character", "--personality", "--role", "--color"];
-        if (fields.some(field => !options.get(field))) throw new Error("profile-create requires --id, --name, --character, --personality, --role and --color");
+        if (REQUIRED_PROFILE_OPTIONS.some(field => !options.get(field))) throw new Error("profile-create requires --id, --name, --character, --personality, --role and --color");
         console.log(JSON.stringify(await createProfile(stateDir, {id:options.get("--id")!,name:options.get("--name")!,character:options.get("--character") as ProfileInput["character"],personality:options.get("--personality") as ProfileInput["personality"],role:options.get("--role") as ProfileInput["role"],color:options.get("--color")!}),null,2));return;
     }
     if (command === "profile-list") {console.log(JSON.stringify(await listProfiles(stateDir),null,2));return;}
@@ -73,7 +88,7 @@ async function main() {
     let actualUrl=url;
     if(profileId){
         if(options.get("--ephemeral")==="true")throw new Error("A profile requires durable MCP recovery; ephemeral mode is not supported");
-        if(["--actor","--name","--color","--character","--personality","--role"].some(key=>options.has(key)))throw new Error("Profile identity fields cannot be overridden for a mission");
+        if(PROFILE_OVERRIDE_OPTIONS.some(key=>options.has(key)))throw new Error("Profile identity fields cannot be overridden for a mission");
         configured=await loadProfile(stateDir,profileId);actualUrl=profileUrl(url);
     }
     const actor = configured ? profileActor(configured,actualUrl,document) : options.get("--actor") ?? `bot-${randomUUID()}`;

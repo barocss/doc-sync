@@ -345,37 +345,60 @@ function historySnapshot(history: HistoryInternals): HistorySnapshot {
     return jsonCopy(snapshot) as HistorySnapshot;
 }
 
+function invalidHistorySnapshot(): never {
+    throw new Error("Invalid history snapshot");
+}
+
+function restoreHistoryStep<T>(prototype: object, props: object): T {
+    return Object.assign(Object.create(prototype), props) as T;
+}
+
+function historyObject(value: unknown): Record<string, unknown> {
+    return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : invalidHistorySnapshot();
+}
+function historyArray(value: unknown): unknown[] {
+    return Array.isArray(value) ? value : invalidHistorySnapshot();
+}
+function historyString(value: unknown): string {
+    return typeof value === "string" ? value : invalidHistorySnapshot();
+}
+function historyBoolean(value: unknown): boolean {
+    return typeof value === "boolean" ? value : invalidHistorySnapshot();
+}
+function historyTicket(value: unknown): Ticket {
+    const ticket = historyObject(value);
+    if (!Number.isSafeInteger(ticket.lamport) || (ticket.lamport as number) < 0 || typeof ticket.actor !== "string" || !ticket.actor) invalidHistorySnapshot();
+    return {lamport: ticket.lamport as number, actor: ticket.actor as string};
+}
+function historyMaybeTicket(value: unknown): Ticket | null {
+    return value === null ? null : historyTicket(value);
+}
+function historyReference<T>(table: T[], id: unknown): T {
+    return Number.isSafeInteger(id) && (id as number) >= 0 && (id as number) < table.length ? table[id as number] : invalidHistorySnapshot();
+}
+
 function restoreHistory(input: unknown): History {
-    const invalid = (): never => { throw new Error("Invalid history snapshot"); };
     const x = jsonCopy(input) as Record<string, unknown>;
-    const object = (v: unknown): Record<string, unknown> => v && typeof v === "object" && !Array.isArray(v) ? v as Record<string, unknown> : invalid();
-    const array = (v: unknown): unknown[] => Array.isArray(v) ? v : invalid();
-    const str = (v: unknown): string => typeof v === "string" ? v : invalid();
-    const bool = (v: unknown): boolean => typeof v === "boolean" ? v : invalid();
-    const ticket = (v: unknown): Ticket => { const t = object(v); if (!Number.isSafeInteger(t.lamport) || (t.lamport as number) < 0 || typeof t.actor !== "string" || !t.actor) invalid(); return {lamport: t.lamport as number, actor: t.actor as string}; };
-    const maybeTicket = (v: unknown): Ticket | null => v === null ? null : ticket(v);
-    if (!x || x.version !== 1) invalid();
-    const sets: SetState[] = array(x.sets).map(v => { const s = object(v); if (!("value" in s) || !Number.isSafeInteger(s.users) || (s.users as number) < 1) invalid(); return {value: s.value, users: s.users as number, ...(s.at === undefined ? {} : {at: ticket(s.at)})}; });
-    const moves: MoveState[] = array(x.moves).map(v => { const m = object(v); return {parent: ticket(m.parent), after: maybeTicket(m.after), at: ticket(m.at)}; });
-    const ref = <T>(table: T[], id: unknown): T => Number.isSafeInteger(id) && (id as number) >= 0 && (id as number) < table.length ? table[id as number] : invalid();
+    if (!x || x.version !== 1) invalidHistorySnapshot();
+    const sets: SetState[] = historyArray(x.sets).map(v => { const s = historyObject(v); if (!("value" in s) || !Number.isSafeInteger(s.users) || (s.users as number) < 1) invalidHistorySnapshot(); return {value: s.value, users: s.users as number, ...(s.at === undefined ? {} : {at: historyTicket(s.at)})}; });
+    const moves: MoveState[] = historyArray(x.moves).map(v => { const m = historyObject(v); return {parent: historyTicket(m.parent), after: historyMaybeTicket(m.after), at: historyTicket(m.at)}; });
     const result = new History(), h = fields<HistoryInternals>(result);
     const currentSets = fields<{current: Map<string, SetState>}>(h.setStates).current;
-    for (const entry of array(x.currentSets)) { const pair = array(entry); if (pair.length !== 2 || currentSets.has(str(pair[0]))) invalid(); currentSets.set(str(pair[0]), ref(sets, pair[1])); }
-    for (const entry of array(x.currentMoves)) { const pair = array(entry); if (pair.length !== 2 || h.moveStates.has(str(pair[0]))) invalid(); h.moveStates.set(str(pair[0]), ref(moves, pair[1])); }
-    const make = <T>(prototype: object, props: object): T => Object.assign(Object.create(prototype), props) as T;
+    for (const entry of historyArray(x.currentSets)) { const pair = historyArray(entry); if (pair.length !== 2 || currentSets.has(historyString(pair[0]))) invalidHistorySnapshot(); currentSets.set(historyString(pair[0]), historyReference(sets, pair[1])); }
+    for (const entry of historyArray(x.currentMoves)) { const pair = historyArray(entry); if (pair.length !== 2 || h.moveStates.has(historyString(pair[0]))) invalidHistorySnapshot(); h.moveStates.set(historyString(pair[0]), historyReference(moves, pair[1])); }
     const step = (v: unknown): Step => {
-        const s = object(v);
-        if (s.type === "existence") return new ExistenceStep(array(s.ids).map(ticket), maybeTicket(s.delAt));
-        if (s.type === "split") { const id = ticket(s.id), slot = str(s.slot); if (slot !== JSON.stringify([keyOf(id), "$join"])) invalid(); return make<SplitStep>(SplitStep.prototype, {id, slot, before: ref(sets, s.before), after: ref(sets, s.after), placement: ref(moves, s.placement), undone: bool(s.undone), states: h.setStates}); }
-        if (s.type === "move") return make<MoveStep>(MoveStep.prototype, {target: ticket(s.target), before: ref(moves, s.before), after: ref(moves, s.after), undone: bool(s.undone)});
+        const s = historyObject(v);
+        if (s.type === "existence") return new ExistenceStep(historyArray(s.ids).map(historyTicket), historyMaybeTicket(s.delAt));
+        if (s.type === "split") { const id = historyTicket(s.id), slot = historyString(s.slot); if (slot !== JSON.stringify([keyOf(id), "$join"])) invalidHistorySnapshot(); return restoreHistoryStep<SplitStep>(SplitStep.prototype, {id, slot, before: historyReference(sets, s.before), after: historyReference(sets, s.after), placement: historyReference(moves, s.placement), undone: historyBoolean(s.undone), states: h.setStates}); }
+        if (s.type === "move") return restoreHistoryStep<MoveStep>(MoveStep.prototype, {target: historyTicket(s.target), before: historyReference(moves, s.before), after: historyReference(moves, s.after), undone: historyBoolean(s.undone)});
         if (s.type === "set") {
-            const key = str(s.key), targets = array(s.targets).map(v => { const t = object(v), id = ticket(t.id), slot = str(t.slot); if (slot !== JSON.stringify([keyOf(id), key])) invalid(); return {id, slot, before: ref(sets, t.before), after: ref(sets, t.after), undone: bool(t.undone)}; });
-            return make<SetStep>(SetStep.prototype, {key, targets, states: h.setStates});
+            const key = historyString(s.key), targets = historyArray(s.targets).map(v => { const t = historyObject(v), id = historyTicket(t.id), slot = historyString(t.slot); if (slot !== JSON.stringify([keyOf(id), key])) invalidHistorySnapshot(); return {id, slot, before: historyReference(sets, t.before), after: historyReference(sets, t.after), undone: historyBoolean(t.undone)}; });
+            return restoreHistoryStep<SetStep>(SetStep.prototype, {key, targets, states: h.setStates});
         }
-        return invalid();
+        return invalidHistorySnapshot();
     };
-    const group = (v: unknown): Group => { const g = object(v); if (typeof g.at !== "number" || !Number.isFinite(g.at)) invalid(); const steps = array(g.steps).map(step); if (!steps.length) invalid(); return {steps, caretBefore: str(g.caretBefore), caretAfter: str(g.caretAfter), typing: bool(g.typing), at: g.at as number}; };
-    const undo = array(x.undo), redo = array(x.redo); if (undo.length + redo.length > DEPTH) invalid();
+    const group = (v: unknown): Group => { const g = historyObject(v); if (typeof g.at !== "number" || !Number.isFinite(g.at)) invalidHistorySnapshot(); const steps = historyArray(g.steps).map(step); if (!steps.length) invalidHistorySnapshot(); return {steps, caretBefore: historyString(g.caretBefore), caretAfter: historyString(g.caretAfter), typing: historyBoolean(g.typing), at: g.at as number}; };
+    const undo = historyArray(x.undo), redo = historyArray(x.redo); if (undo.length + redo.length > DEPTH) invalidHistorySnapshot();
     h.undoStack.push(...undo.map(group)); h.redoStack.push(...redo.map(group));
     return result;
 }

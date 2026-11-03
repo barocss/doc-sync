@@ -1,6 +1,9 @@
 import {open} from "node:fs/promises";
 import {constants} from "node:fs";
 import {createHostedService} from "./hosted.ts";
+
+const HTTP_SHUTDOWN_SIGNALS = Object.freeze(["SIGTERM", "SIGINT"] as const);
+
 async function main() {
     const file = process.env.DOC_SYNC_HOSTED_CONFIG;
     if (!file) throw new Error("DOC_SYNC_HOSTED_CONFIG is required");
@@ -21,6 +24,6 @@ async function main() {
     const port = Number(process.env.PORT ?? 5411);
     if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error("Invalid PORT");
     service.server.listen(port, process.env.HOST ?? "127.0.0.1", () => { const address = service.server.address(); if (address && typeof address !== "string") console.error(`Hosted MCP listening on ${address.port}`); });
-    for (const signal of ["SIGTERM", "SIGINT"] as const) process.once(signal, () => { void service.shutdown().catch(() => { process.exitCode = 1; }); });
+    for (const signal of HTTP_SHUTDOWN_SIGNALS) process.once(signal, () => { void service.shutdown().catch(() => { process.exitCode = 1; }); });
 }
 main().catch(() => { console.error("Hosted MCP startup failed"); process.exitCode = 1; });

@@ -1,5 +1,7 @@
 import {Doc, anchorAt, pathAt} from '@barocss/doc-sync';
 
+const COMPAT_TEXT_BLOCK_TYPES = Object.freeze(['paragraph','heading','quote']);
+
 /** A composition edits its own CRDT view. Remote ops keep reaching the live client.
  * Local ops retain their token origins when sent to the live document, so a stale
  * native view never turns remote text into a deletion in a model diff.
@@ -86,7 +88,7 @@ export function lexicalBlocks(root){
   const blocks=[];
   const visit=(node,path)=>{
     const type=node.getType();
-    if(['paragraph','heading','quote'].includes(type)){blocks.push({node,path});return;}
+    if(COMPAT_TEXT_BLOCK_TYPES.includes(type)){blocks.push({node,path});return;}
     const prefix=type==='tablecell'?[...path,0]:path;
     node.getChildren?.().forEach((child,i)=>visit(child,[...prefix,i]));
   };

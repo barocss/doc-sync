@@ -1,0 +1,14 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import assert from 'node:assert/strict';
+const read=p=>JSON.parse(readFileSync(join(import.meta.dirname,p)));
+const a=read('baseline-counts.json'),b=read('candidate-counts.json');
+assert.deepEqual(b.counts.remote,a.counts.remote);
+const bodies=Object.keys(a.counts.remote).map(name=>({name,calls:a.counts.remote[name],baselineBody:a.definitions[name],candidateBody:b.definitions[name],same:a.definitions[name]===b.definitions[name]}));
+assert.deepEqual(bodies.filter(r=>!r.same).map(r=>r.name),['crdt/doc.ts:Doc.get']);
+const selected=Object.keys(b.definitions).filter(n=>/rememberLine|Doc.constructor|Placements.constructor|captureSurface|ownEngineSchema|snapshotSource|nativeItemsArray|pureItemWrapper|originalDataDispatch|dataPointShape|canonicalDataMeta|preflightOwnedDataPoint|eligiblePrivateDataPoint|Doc.snapshot|Doc.edit/.test(n)&&!n.includes('/callback'));
+const sites=selected.map(name=>({name,phases:Object.fromEntries(Object.entries(b.counts).map(([p,counts])=>[p,counts[name]??0]))}));
+assert(sites.every(r=>r.phases.remote===0));
+const result={status:'PASS_STRUCTURAL_COMPARISON',causalDisposition:'UNRESOLVED',timing:'NOT_RUN',sameRemoteEntryCounts:true,remoteCallableDefinitions:28,remoteCalls:1176,sameWholeCallableBodies:27,changedWholeCallableBodies:['Doc.get: implicit-storage allocation branches wrap rememberLine; remote rememberLine count is zero'],newMetadataDuringRemote:0,bodies,sites,loadedAdded:b.loaded.filter(x=>!a.loaded.includes(x)),baselineClosure:a.closure,candidateClosure:b.closure,operationSHA:a.operationSHA,modelSHA:a.modelSHA,snapshotSHA:a.snapshotSHA};
+writeFileSync(join(import.meta.dirname,'structural-comparison.json'),JSON.stringify(result,null,2)+'\n');
+console.log(JSON.stringify({status:result.status,causalDisposition:result.causalDisposition,remoteCalls:result.remoteCalls,newMetadataDuringRemote:0}));

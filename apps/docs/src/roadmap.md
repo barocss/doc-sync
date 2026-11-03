@@ -183,7 +183,8 @@ actions and 70 actor states, with normalized model/History and exact manifest
 equality. The sheet
 comparison covers 31 actions and 62 states with exact operations, models, full
 History, pending queues and checkpoints. The native Builtins profile implements the frozen TypeScript data contract.
-The SDK has 42 passing tests; the shadow core has 75. These checks do not qualify
+The fixed-domain checkpoint had 42 SDK tests and 75 shadow-core tests. The
+current runtime-schema suites pass 48 SDK tests and 78 shadow-core tests. These checks do not qualify
 exact graphic wire encoding or mixed-runtime network exchange. It has no browser/WASM, Node,
 editor or MCP adapter. The new Tiptap extension uses the TypeScript engine.
 Rust can support them, but its current experimental schemas are compiled in.
@@ -251,3 +252,32 @@ DataClient facade was removed; Client retains connection, History and save/open.
 This preserves the P1 encoding fingerprint and P2 server admission. It does not
 complete storage/schema extraction or enable data access on another domain
 schema. See [the migration guide](./guide/shared-data#migrate-the-unreleased-facade).
+
+### API structure and collection read cost
+
+The internal refactor retains Client ownership, existing package entry points,
+per-view host origins, exact data-schema checks and selective History. Private
+validation lists and capture-free helpers are shared at module scope. Mutable
+working buffers, pending batches, listener snapshots and framework callbacks
+retain their required lifetimes. Cached List.at and Map.size avoid complete
+result construction; primitive register copies avoid unnecessary host cloning.
+See [performance evidence](./performance#collection-access-and-internal-copies)
+and the [source report](https://github.com/barocss/doc-sync/blob/main/docs/reports/api-structure-refactor-2026-11-03/README.md).
+
+Whole-snapshot restoration, finite-JSON validation, normalization and the first
+Map/List projection after a revision remain proportional to stored state. A
+future optimization must identify trusted internal copies separately from public
+admission, then prove exact operations, hidden references, History, schema
+transitions, GC and restart behavior. The local COW prototype was discarded after
+mandatory performance gates failed; it is not a current-library fast path. The
+owned-attribute handoff review is on hold: an original snapshot can still expose
+payloads through public array methods or species construction. The index-rebuild census
+is complete; its observed cost does not support a useful total gain, so that
+opportunity was declined. A separate disposable-preflight prototype passes
+bounded equivalence and source-proof checks, but fails its predeclared remote
+apply performance control. It remains outside the library; later timing cycles
+are NOT_RUN. The next step is to attribute that control difference without
+replacing the failed gate with a passing retry. See the [measured scope](./performance#private-preflight-experiment-remains-on-hold).
+Removing a validation pass without proof is not accepted. This work does not
+close P2 GC/resource budgets, S3 Spreadsheet integration, or the Rust/WASM client
+delivery gates.

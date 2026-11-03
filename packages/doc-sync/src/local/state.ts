@@ -37,21 +37,24 @@ export function copyLocalState<T>(value: T): T {
     return structuredClone(value);
 }
 
+function invalidLocalState(message: string): never {
+    throw new Error(`Invalid local state: ${message}`);
+}
+
 /** Validate only known state fields. User attribute values are not ticket records. */
 export function validateLocalState(doc: Doc, history: HistorySnapshot, snapshot: Snapshot, actor: string): void {
-    const invalid = (message: string): never => { throw new Error(`Invalid local state: ${message}`); };
     const floor = snapshot.lamport;
     const ticket = (value: Ticket): void => {
-        if (!value || !Number.isSafeInteger(value.lamport) || value.lamport < 0 || typeof value.actor !== "string" || !value.actor) invalid("invalid ticket");
+        if (!value || !Number.isSafeInteger(value.lamport) || value.lamport < 0 || typeof value.actor !== "string" || !value.actor) invalidLocalState("invalid ticket");
         // Required-child identities are deterministic schema storage, not clock allocations.
-        if (value.lamport > floor && !(value.lamport === 1 && parseRequired(keyOf(value)))) invalid("ticket exceeds saved clock");
+        if (value.lamport > floor && !(value.lamport === 1 && parseRequired(keyOf(value)))) invalidLocalState("ticket exceeds saved clock");
     };
     const key = (value: string): void => {
-        if (typeof value !== "string") invalid("invalid ticket key");
+        if (typeof value !== "string") invalidLocalState("invalid ticket key");
         const parsed = ticketOf(value); ticket(parsed);
-        if (keyOf(parsed) !== value) invalid("invalid ticket key");
+        if (keyOf(parsed) !== value) invalidLocalState("invalid ticket key");
     };
-    const exists = (value: Ticket): void => { ticket(value); if (!doc.hasStoredToken(keyOf(value))) invalid("history token is absent from document"); };
+    const exists = (value: Ticket): void => { ticket(value); if (!doc.hasStoredToken(keyOf(value))) invalidLocalState("history token is absent from document"); };
     for (const line of doc.lines()) for (const item of line.items) {
         ticket({...item.id, lamport: item.id.lamport + item.span - 1});
         for (const entry of item.attrs.values()) ticket(entry.at);
@@ -71,7 +74,7 @@ export function validateLocalState(doc: Doc, history: HistorySnapshot, snapshot:
             ticket(state.after);
             // Placement anchors can name an earlier movement, independently of token IDs.
             const placement = placements.get(keyOf(state.after));
-            if (placement) { if (keyOf(placement.parent) !== keyOf(state.parent)) invalid("history placement anchor has another parent"); }
+            if (placement) { if (keyOf(placement.parent) !== keyOf(state.parent)) invalidLocalState("history placement anchor has another parent"); }
             else exists(state.after);
         }
     }
@@ -81,7 +84,7 @@ export function validateLocalState(doc: Doc, history: HistorySnapshot, snapshot:
             if (step.type === "existence") {
                 step.ids.forEach(exists);
                 const owned = step.delAt === null ? step.ids : [step.delAt];
-                for (const value of owned) { ticket(value); if (value.actor !== actor) invalid("history belongs to another actor"); }
+                for (const value of owned) { ticket(value); if (value.actor !== actor) invalidLocalState("history belongs to another actor"); }
             } else if (step.type === "split") exists(step.id);
             else if (step.type === "move") exists(step.target);
             else if (step.type === "set") step.targets.forEach(target => exists(target.id));

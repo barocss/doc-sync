@@ -14,6 +14,17 @@ export type PreparedHubMutation<T> =
     | {status: "done"; result: T}
     | {status: "write"; record: DurableHubRecord; commit(): T};
 
+function appendRecord(envelope: Envelope, conditionalBase?: Base): DurableHubRecord {
+    return envelope.gc !== undefined
+        ? {gc: envelope.gc} : {change: envelope.change!, ...(conditionalBase ? {conditionalBase} : {})};
+}
+
+function freezeRecord(value: unknown): void {
+    if (!value || typeof value !== "object" || Object.isFrozen(value)) return;
+    for (const child of Object.values(value)) freezeRecord(child);
+    Object.freeze(value);
+}
+
 /**
  * Prepare one synchronous hub mutation without applying it. The storage owner
  * must serialize every mutation of this hub, durably write `record`, then call
@@ -26,8 +37,6 @@ export function prepareDurableMutation<T>(hub: DocHub, apply: () => T): Prepared
     const signal = Symbol("prepared-hub-record");
     let record: DurableHubRecord | undefined;
     const capture = (value: DurableHubRecord): never => { record = structuredClone(value); throw signal; };
-    const appendRecord = (envelope: Envelope, conditionalBase?: Base): DurableHubRecord => envelope.gc !== undefined
-        ? {gc: envelope.gc} : {change: envelope.change!, ...(conditionalBase ? {conditionalBase} : {})};
     const restore = () => { hub.onAppend = originals.append; hub.onRecoveryPin = originals.pin; hub.onSchemaChange = originals.schema; hub.onConditionalSeal = originals.seal; };
     hub.onAppend = (envelope, base) => capture(appendRecord(envelope, base));
     hub.onRecoveryPin = entry => capture({recoveryPin: entry});
@@ -40,12 +49,7 @@ export function prepareDurableMutation<T>(hub: DocHub, apply: () => T): Prepared
     } finally { restore(); }
 
     const prepared = record!;
-    const freeze = (value: unknown): void => {
-        if (!value || typeof value !== "object" || Object.isFrozen(value)) return;
-        for (const child of Object.values(value)) freeze(child);
-        Object.freeze(value);
-    };
-    freeze(prepared);
+    freezeRecord(prepared);
     let committed = false;
     return {status: "write", record: prepared, commit(): T {
         if (committed) throw new Error("Prepared hub mutation was already committed");

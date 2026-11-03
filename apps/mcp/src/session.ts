@@ -124,19 +124,33 @@ export class DocumentSession {
             checkpoint = this.checkpoint!;
         } else if (checkpoint.reservationConfirmed && !reservation.existing) throw new Error("The original recovery reservation cannot be proved");
         let installIntent = false;
+        let minimumServerSeq = checkpoint.client.serverSeq;
         if (this.recovered) {
             if (!this.transport.getRecoveryReceipt || this.recovered.generation !== checkpoint.generation ||
-                this.recovered.base.serverSeq < checkpoint.client.serverSeq || checkpoint.client.pending.length) throw new Error("An unresolved conditional edit needs inspection");
+                checkpoint.client.pending.length) throw new Error("An unresolved conditional edit needs inspection");
             const receipt = await this.transport.getRecoveryReceipt(this.recovered.generation, this.recovered.base, this.recovered.change);
             if (receipt.status !== "accepted") throw new Error("The conditional edit receipt is unknown");
-            if (checkpoint.sourceIntentDigest !== this.recovered.recordDigest) {
-                if (this.recovered.change.seq !== checkpoint.client.seq + 1) throw new Error("The accepted intent cannot follow this checkpoint");
+            minimumServerSeq = Math.max(minimumServerSeq, receipt.serverSeq);
+            if (checkpoint.sourceIntentDigest === this.recovered.recordDigest) {
+                // Cleanup can stop after the accepted intent and a newer server cursor were saved.
+                if (this.recovered.change.seq !== checkpoint.client.seq || this.recovered.base.serverSeq > checkpoint.client.serverSeq) {
+                    throw new Error("The accepted intent does not match this checkpoint");
+                }
+            } else {
+                if (this.recovered.base.serverSeq < checkpoint.client.serverSeq || this.recovered.change.seq !== checkpoint.client.seq + 1) {
+                    throw new Error("The accepted intent cannot follow this checkpoint");
+                }
                 installIntent = true;
             }
         }
         for (const change of checkpoint.client.pending) {
             if (!this.transport.recoverChange) throw new Error("Atomic pending recovery is unavailable");
             await this.transport.recoverChange(checkpoint.generation, checkpoint.reservationId, schemaVersion(checkpoint.schema), change);
+        }
+        // A retried durable proof can reopen the same generation with a new process epoch.
+        state = await this.transport.getRecoveryState();
+        if (state.generation !== checkpoint.generation || state.schemaVersion !== schemaVersion(checkpoint.schema) || state.serverSeq < minimumServerSeq) {
+            throw new Error("Server generation, schema or history does not match the checkpoint");
         }
         this.reservationId = checkpoint.reservationId;
         this.generation = {epoch: state.epoch, value: checkpoint.generation};

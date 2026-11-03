@@ -6,6 +6,9 @@ import type {LexicalNode} from "lexical";
 import type {EditOp} from "@barocss/doc-sync";
 import type {LexicalSchemaInfo} from "./schema.ts";
 
+const LEXICAL_NODE_SHAPES = Object.freeze(["text", "flow", "grid", "atom", "group"]);
+
+
 type Placement = {path: number[]; parent: string; index: number};
 type NativePlacements = {blocks: Map<string, Placement>; containers: Map<string, number[]>};
 /** Native keys identify a reparented node; model equality alone cannot do so. */
@@ -16,7 +19,7 @@ export function $nativePlacements(info: LexicalSchemaInfo): NativePlacements {
     containers.set(root.getKey(), []);
     const visit = (node: LexicalNode, path: number[], parent: string, index: number) => {
         const type = $lexicalModelType(info, node), shape = info.schema.nodes[type]?.shape;
-        if (["text", "flow", "grid", "atom", "group"].includes(shape ?? "")) blocks.set(node.getKey(), {path, parent, index});
+        if (LEXICAL_NODE_SHAPES.includes(shape ?? "")) blocks.set(node.getKey(), {path, parent, index});
         if (!$isElementNode(node) || shape === "text" || shape === "span") return;
         const prefix = $isTableCellNode(node) ? [...path, 0] : path;
         containers.set(node.getKey(), prefix);

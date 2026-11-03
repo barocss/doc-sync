@@ -115,6 +115,20 @@ The demo server records a recovery reservation for the checkpoint. It protects t
 
 For an interrupted conditional edit, an exact `accepted` receipt lets the app restore the edit and its history from a compatible protected checkpoint. An `unknown` receipt does not mean the edit failed. In that case the app preserves the intent, enters `recovery_required`, and blocks further edits, undo, redo, and schema changes. Call `recovery_status` to inspect the available evidence. A generation or schema mismatch, missing reservation, unsafe garbage-collection boundary, or unavailable server can also prevent recovery. Do not discard the files while an outcome is unresolved.
 
+If the process stops after saving an accepted edit's checkpoint but before
+removing its intent, startup verifies the matching digest, actor sequence and
+exact receipt. It uses the saved History without applying that intent again.
+It checks the server state again after the remote proofs, so a reopened server
+hub can supply its current epoch while preserving the document generation.
+Other users' intervening edits come from the synchronized server snapshot.
+
+Schema/state reads and exact reservation or pending-recovery requests can retry
+recognized temporary HTTP or connection failures, including a broken response
+body. They use at most four attempts within one shared 10-second request budget.
+The URL, reservation and change body stay the same. Ordinary edit submission is
+not automatically repeated. Persistent failure or invalid recovery evidence
+keeps the files and `recovery_required` status for inspection or a later restart.
+
 ### Discard this participant's history
 
 Call `discard_history` with `{}` to permanently remove this participant's undo and redo history and release its old recovery reservation. This operation does not delete document content or another participant's history. It cannot be undone. The app rejects it while an edit or its outcome is pending or unresolved. Resolve pending work before calling it.

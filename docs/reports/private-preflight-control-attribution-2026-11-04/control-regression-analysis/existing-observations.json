@@ -1,0 +1,5907 @@
+{
+  "status": "ANALYSIS_ONLY",
+  "summarySHA": "2f3bc2cc3f51dc7752fc626d7032a09dd018c7124161233498df7333c84676f4",
+  "processes": 24,
+  "processPASS": 24,
+  "groupStatuses": [
+    {
+      "name": "cycle1-normal-20000",
+      "status": "PASS"
+    },
+    {
+      "name": "cycle1-normal-2000",
+      "status": "PASS"
+    },
+    {
+      "name": "cycle1-legacy-no-moves-20000",
+      "status": "PASS"
+    },
+    {
+      "name": "cycle1-legacy-no-moves-2000",
+      "status": "PASS"
+    },
+    {
+      "name": "cycle1-fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "cycle1-doc",
+      "status": "FAIL"
+    },
+    {
+      "name": "cycle2-normal-20000",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle2-normal-2000",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle2-legacy-no-moves-20000",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle2-legacy-no-moves-2000",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle2-fallback",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle2-doc",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle3-normal-20000",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle3-normal-2000",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle3-legacy-no-moves-20000",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle3-legacy-no-moves-2000",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle3-fallback",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "cycle3-doc",
+      "status": "NOT_RUN"
+    }
+  ],
+  "docDiagnosis": {
+    "failureUnchanged": {
+      "group": "cycle1-doc",
+      "cell": "remoteApplyMs",
+      "baselineMedianMs": 2.18864600000029,
+      "candidateMedianMs": 2.27443750000009,
+      "candidateChangePercent": 3.919843592786987,
+      "maximumCandidateMedianMs": 2.254305380000299,
+      "rule": "control3",
+      "absoluteAllowanceMs": 0,
+      "status": "FAIL",
+      "mandatory": true
+    },
+    "processes": [
+      {
+        "name": "cycle1-doc-1-A",
+        "lane": "A",
+        "raw": [
+          2.030375000000049,
+          2.018542000000025,
+          2.1828330000003007,
+          2.194459000000279,
+          2.112750000000233
+        ],
+        "median": 2.112750000000233,
+        "range": [
+          2.018542000000025,
+          2.194459000000279
+        ],
+        "firstToLastPercent": 4.05713230315492,
+        "loadBefore": [
+          10.36669921875,
+          10.91357421875,
+          11.6142578125
+        ],
+        "loadAfter": [
+          10.6572265625,
+          10.96435546875,
+          11.6279296875
+        ],
+        "localEditMedianMs": 50.677708000000166,
+        "cpuMicroseconds": {
+          "user": 3616826,
+          "system": 301233
+        },
+        "contextSwitches": {
+          "voluntary": 0,
+          "involuntary": 4444
+        },
+        "minorPageFaults": 145135
+      },
+      {
+        "name": "cycle1-doc-2-B",
+        "lane": "B",
+        "raw": [
+          2.098709000000099,
+          2.2474580000000515,
+          2.4789590000000317,
+          2.0644999999999527,
+          2.75454099999979
+        ],
+        "median": 2.2474580000000515,
+        "range": [
+          2.0644999999999527,
+          2.75454099999979
+        ],
+        "firstToLastPercent": 31.249306121032518,
+        "loadBefore": [
+          10.6572265625,
+          10.96435546875,
+          11.6279296875
+        ],
+        "loadAfter": [
+          10.5244140625,
+          10.931640625,
+          11.6123046875
+        ],
+        "localEditMedianMs": 48.42037500000015,
+        "cpuMicroseconds": {
+          "user": 3747907,
+          "system": 318376
+        },
+        "contextSwitches": {
+          "voluntary": 0,
+          "involuntary": 3874
+        },
+        "minorPageFaults": 146857
+      },
+      {
+        "name": "cycle1-doc-3-B",
+        "lane": "B",
+        "raw": [
+          2.3123749999999745,
+          2.3014170000001286,
+          2.2215000000001055,
+          2.052082999999584,
+          2.814332999999806
+        ],
+        "median": 2.3014170000001286,
+        "range": [
+          2.052082999999584,
+          2.814332999999806
+        ],
+        "firstToLastPercent": 21.70746526838583,
+        "loadBefore": [
+          10.5244140625,
+          10.931640625,
+          11.6123046875
+        ],
+        "loadAfter": [
+          10.5244140625,
+          10.931640625,
+          11.6123046875
+        ],
+        "localEditMedianMs": 49.39920799999982,
+        "cpuMicroseconds": {
+          "user": 3741579,
+          "system": 307060
+        },
+        "contextSwitches": {
+          "voluntary": 0,
+          "involuntary": 3948
+        },
+        "minorPageFaults": 147154
+      },
+      {
+        "name": "cycle1-doc-4-A",
+        "lane": "A",
+        "raw": [
+          2.370416000000205,
+          2.081416999999874,
+          2.2628750000003492,
+          2.3355830000000424,
+          2.280707999999777
+        ],
+        "median": 2.280707999999777,
+        "range": [
+          2.081416999999874,
+          2.370416000000205
+        ],
+        "firstToLastPercent": -3.7844833987123017,
+        "loadBefore": [
+          10.5244140625,
+          10.931640625,
+          11.6123046875
+        ],
+        "loadAfter": [
+          10.00146484375,
+          10.81640625,
+          11.5673828125
+        ],
+        "localEditMedianMs": 59.21741699999984,
+        "cpuMicroseconds": {
+          "user": 3707671,
+          "system": 409510
+        },
+        "contextSwitches": {
+          "voluntary": 0,
+          "involuntary": 8411
+        },
+        "minorPageFaults": 152177
+      }
+    ],
+    "baselineAcrossProcessMedianChangePercent": 7.949733759295974,
+    "candidateAcrossProcessMedianChangePercent": 2.4008902502327567,
+    "baselineLocalAcrossProcessChangePercent": 16.851016624508052,
+    "overlapRawRange": [
+      2.052082999999584,
+      2.370416000000205
+    ],
+    "jitAndGCTelemetry": "NOT_RECORDED; no causal inference from process totals",
+    "acceptance": "FAIL remains; no sample excluded or alternate acceptance statistic used"
+  },
+  "rows": [
+    {
+      "group": "cycle1-normal-20000",
+      "kind": "data",
+      "name": "cycle1-normal-20000-1-A",
+      "lane": "A",
+      "receiptSHA": "3f6ff9ba1661a3e9d84599fd32b12df2348b94af5e21bb7b8f13fdbd34a66d0c",
+      "startedUTC": "2026-11-03T20:15:25.360629+00:00",
+      "endedUTC": "2026-11-03T20:17:46.442198+00:00",
+      "elapsedSeconds": 141.0810187079478,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          24.27197265625,
+          13.984375,
+          13.1884765625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.046539,
+          "system": 0.024853
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          12.4580078125,
+          13.10791015625,
+          12.9599609375
+        ],
+        "selfCPUSeconds": {
+          "user": 0.079841,
+          "system": 0.038126
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 22949,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            24.27197265625,
+            13.984375,
+            13.1884765625
+          ],
+          "cpuUsage": {
+            "user": 235772,
+            "system": 23294
+          },
+          "resourceUsage": {
+            "userCPUTime": 235779,
+            "systemCPUTime": 23296,
+            "maxRSS": 180416,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 11518,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 361
+          }
+        },
+        "end": {
+          "loadavg": [
+            12.4580078125,
+            13.10791015625,
+            12.9599609375
+          ],
+          "cpuUsage": {
+            "user": 158048207,
+            "system": 4216446
+          },
+          "resourceUsage": {
+            "userCPUTime": 158048224,
+            "systemCPUTime": 4216449,
+            "maxRSS": 1812512,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 753818,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 71,
+            "involuntaryContextSwitches": 111163
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 806.3412919999992,
+              "nextReadMs": 100.03787499999999,
+              "totalMs": 906.3791669999991
+            },
+            {
+              "setMs": 817.0112079999999,
+              "nextReadMs": 94.36212499999965,
+              "totalMs": 911.3733329999995
+            },
+            {
+              "setMs": 788.6072089999998,
+              "nextReadMs": 106.99745800000164,
+              "totalMs": 895.6046670000014
+            },
+            {
+              "setMs": 826.3004170000004,
+              "nextReadMs": 99.9072500000002,
+              "totalMs": 926.2076670000006
+            },
+            {
+              "setMs": 789.1896250000009,
+              "nextReadMs": 96.9305000000004,
+              "totalMs": 886.1201250000013
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 798.8489169999993,
+              "nextReadMs": 96.5645829999994,
+              "totalMs": 895.4134999999987
+            },
+            {
+              "setMs": 768.1362079999999,
+              "nextReadMs": 97.78729200000089,
+              "totalMs": 865.9235000000008
+            },
+            {
+              "setMs": 807.1340830000008,
+              "nextReadMs": 98.5527089999996,
+              "totalMs": 905.6867920000004
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 784.1694580000039,
+              "nextReadMs": 102.00029199999699,
+              "totalMs": 886.1697500000009
+            },
+            {
+              "setMs": 909.3362500000003,
+              "nextReadMs": 103.02595899999869,
+              "totalMs": 1012.362208999999
+            },
+            {
+              "setMs": 790.7426670000059,
+              "nextReadMs": 92.36483299999963,
+              "totalMs": 883.1075000000055
+            },
+            {
+              "setMs": 794.6700410000049,
+              "nextReadMs": 102.0992499999993,
+              "totalMs": 896.7692910000042
+            },
+            {
+              "setMs": 795.0010830000028,
+              "nextReadMs": 97.57754199999908,
+              "totalMs": 892.5786250000019
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 796.6395420000044,
+              "nextReadMs": 95.27962499999558,
+              "totalMs": 891.919167
+            },
+            {
+              "setMs": 781.0392090000096,
+              "nextReadMs": 103.06287499998871,
+              "totalMs": 884.1020839999983
+            },
+            {
+              "setMs": 780.514124999987,
+              "nextReadMs": 99.35783400000946,
+              "totalMs": 879.8719589999964
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 883.8179170000076,
+              "nextReadMs": 100.78729199999361,
+              "totalMs": 984.6052090000012
+            },
+            {
+              "setMs": 776.7309999999998,
+              "nextReadMs": 98.63354199999594,
+              "totalMs": 875.3645419999957
+            },
+            {
+              "setMs": 787.7184589999961,
+              "nextReadMs": 102.38966600000276,
+              "totalMs": 890.1081249999988
+            },
+            {
+              "setMs": 802.964083999992,
+              "nextReadMs": 98.29820800000743,
+              "totalMs": 901.2622919999994
+            },
+            {
+              "setMs": 829.0829999999987,
+              "nextReadMs": 101.38708400000178,
+              "totalMs": 930.4700840000005
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 783.1886669999949,
+              "nextReadMs": 100.14549999999872,
+              "totalMs": 883.3341669999936
+            },
+            {
+              "setMs": 779.4559159999917,
+              "nextReadMs": 102.48558400000911,
+              "totalMs": 881.9415000000008
+            },
+            {
+              "setMs": 795.7480840000062,
+              "nextReadMs": 94.08116600000358,
+              "totalMs": 889.8292500000098
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-normal-20000",
+      "kind": "data",
+      "name": "cycle1-normal-20000-2-B",
+      "lane": "B",
+      "receiptSHA": "fd70d0f856007de316818b77dec34cc043b20223c89bda708a7cf1b5a3b1959f",
+      "startedUTC": "2026-11-03T20:17:46.485392+00:00",
+      "endedUTC": "2026-11-03T20:19:52.412548+00:00",
+      "elapsedSeconds": 125.92663533310406,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          12.4580078125,
+          13.10791015625,
+          12.9599609375
+        ],
+        "selfCPUSeconds": {
+          "user": 0.084363,
+          "system": 0.045706
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          11.111328125,
+          12.4140625,
+          12.69921875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.11476499999999999,
+          "system": 0.057715999999999996
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 25312,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            12.4580078125,
+            13.10791015625,
+            12.9599609375
+          ],
+          "cpuUsage": {
+            "user": 274082,
+            "system": 28846
+          },
+          "resourceUsage": {
+            "userCPUTime": 274090,
+            "systemCPUTime": 28849,
+            "maxRSS": 191120,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 12190,
+            "majorPageFault": 87,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 1263
+          }
+        },
+        "end": {
+          "loadavg": [
+            11.111328125,
+            12.4140625,
+            12.69921875
+          ],
+          "cpuUsage": {
+            "user": 140014259,
+            "system": 4491101
+          },
+          "resourceUsage": {
+            "userCPUTime": 140014273,
+            "systemCPUTime": 4491104,
+            "maxRSS": 1807376,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 797415,
+            "majorPageFault": 87,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 85,
+            "involuntaryContextSwitches": 111166
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 700.8307499999992,
+              "nextReadMs": 94.183500000001,
+              "totalMs": 795.0142500000002
+            },
+            {
+              "setMs": 656.2822919999999,
+              "nextReadMs": 100.87024999999994,
+              "totalMs": 757.1525419999998
+            },
+            {
+              "setMs": 586.4503750000003,
+              "nextReadMs": 95.73483399999895,
+              "totalMs": 682.1852089999993
+            },
+            {
+              "setMs": 599.7322499999991,
+              "nextReadMs": 101.4325000000008,
+              "totalMs": 701.1647499999999
+            },
+            {
+              "setMs": 594.5320830000001,
+              "nextReadMs": 132.5431669999998,
+              "totalMs": 727.0752499999999
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 591.6752500000002,
+              "nextReadMs": 119.74362500000097,
+              "totalMs": 711.4188750000012
+            },
+            {
+              "setMs": 582.3514160000013,
+              "nextReadMs": 114.48983399999997,
+              "totalMs": 696.8412500000013
+            },
+            {
+              "setMs": 590.271166999999,
+              "nextReadMs": 102.25420799999847,
+              "totalMs": 692.5253749999974
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 631.5372910000006,
+              "nextReadMs": 101.10270899999887,
+              "totalMs": 732.6399999999994
+            },
+            {
+              "setMs": 608.9978750000009,
+              "nextReadMs": 98.79637499999808,
+              "totalMs": 707.794249999999
+            },
+            {
+              "setMs": 627.3501669999969,
+              "nextReadMs": 94.11216699999932,
+              "totalMs": 721.4623339999962
+            },
+            {
+              "setMs": 703.841207999998,
+              "nextReadMs": 100.60237500000221,
+              "totalMs": 804.4435830000002
+            },
+            {
+              "setMs": 595.4954579999976,
+              "nextReadMs": 94.77333299999736,
+              "totalMs": 690.268790999995
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 658.2115829999966,
+              "nextReadMs": 101.51499999999942,
+              "totalMs": 759.726582999996
+            },
+            {
+              "setMs": 623.9804589999985,
+              "nextReadMs": 96.59949999999662,
+              "totalMs": 720.5799589999951
+            },
+            {
+              "setMs": 658.9259999999995,
+              "nextReadMs": 98.7847499999989,
+              "totalMs": 757.7107499999984
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 645.5732500000013,
+              "nextReadMs": 104.68254199999501,
+              "totalMs": 750.2557919999963
+            },
+            {
+              "setMs": 664.4417919999978,
+              "nextReadMs": 101.9943329999951,
+              "totalMs": 766.4361249999929
+            },
+            {
+              "setMs": 600.111625000005,
+              "nextReadMs": 102.42004100000486,
+              "totalMs": 702.5316660000099
+            },
+            {
+              "setMs": 616.5265000000072,
+              "nextReadMs": 102.10120799999277,
+              "totalMs": 718.627708
+            },
+            {
+              "setMs": 616.5584999999992,
+              "nextReadMs": 103.79741700000886,
+              "totalMs": 720.355917000008
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 676.7419999999984,
+              "nextReadMs": 96.99458299999242,
+              "totalMs": 773.7365829999908
+            },
+            {
+              "setMs": 600.8159580000065,
+              "nextReadMs": 93.21374999999534,
+              "totalMs": 694.0297080000018
+            },
+            {
+              "setMs": 592.8772920000047,
+              "nextReadMs": 95.5214580000029,
+              "totalMs": 688.3987500000076
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-normal-20000",
+      "kind": "data",
+      "name": "cycle1-normal-20000-3-B",
+      "lane": "B",
+      "receiptSHA": "351f932846be22d9a01268582131d3aed2060d3457d0b1dff0b34dcaa8e1cf6a",
+      "startedUTC": "2026-11-03T20:19:52.428425+00:00",
+      "endedUTC": "2026-11-03T20:22:01.651133+00:00",
+      "elapsedSeconds": 129.22219866677187,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          11.111328125,
+          12.4140625,
+          12.69921875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.118964,
+          "system": 0.063146
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          9.2099609375,
+          11.166015625,
+          12.15673828125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.149992,
+          "system": 0.07538
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 27535,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            11.111328125,
+            12.4140625,
+            12.69921875
+          ],
+          "cpuUsage": {
+            "user": 237545,
+            "system": 21998
+          },
+          "resourceUsage": {
+            "userCPUTime": 237551,
+            "systemCPUTime": 22000,
+            "maxRSS": 184016,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 11712,
+            "majorPageFault": 110,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 275
+          }
+        },
+        "end": {
+          "loadavg": [
+            9.2099609375,
+            11.166015625,
+            12.15673828125
+          ],
+          "cpuUsage": {
+            "user": 144082043,
+            "system": 4311461
+          },
+          "resourceUsage": {
+            "userCPUTime": 144082057,
+            "systemCPUTime": 4311467,
+            "maxRSS": 1739984,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 774696,
+            "majorPageFault": 110,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 90,
+            "involuntaryContextSwitches": 110898
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 633.0862500000003,
+              "nextReadMs": 104.66191699999945,
+              "totalMs": 737.7481669999997
+            },
+            {
+              "setMs": 687.0130000000008,
+              "nextReadMs": 98.9182499999988,
+              "totalMs": 785.9312499999996
+            },
+            {
+              "setMs": 642.314124999999,
+              "nextReadMs": 113.43604100000084,
+              "totalMs": 755.7501659999998
+            },
+            {
+              "setMs": 608.5020829999994,
+              "nextReadMs": 109.09625000000051,
+              "totalMs": 717.5983329999999
+            },
+            {
+              "setMs": 628.8518329999988,
+              "nextReadMs": 109.21362500000032,
+              "totalMs": 738.0654579999991
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 611.8069590000014,
+              "nextReadMs": 104.36004099999991,
+              "totalMs": 716.1670000000013
+            },
+            {
+              "setMs": 647.9135830000014,
+              "nextReadMs": 97.96366699999999,
+              "totalMs": 745.8772500000014
+            },
+            {
+              "setMs": 592.1547920000012,
+              "nextReadMs": 97.22783300000083,
+              "totalMs": 689.382625000002
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 761.5405829999945,
+              "nextReadMs": 102.71654200000194,
+              "totalMs": 864.2571249999964
+            },
+            {
+              "setMs": 626.2755000000034,
+              "nextReadMs": 110.24704199999542,
+              "totalMs": 736.5225419999988
+            },
+            {
+              "setMs": 648.8210420000032,
+              "nextReadMs": 105.15054099999543,
+              "totalMs": 753.9715829999986
+            },
+            {
+              "setMs": 627.7415409999958,
+              "nextReadMs": 101.71191700000054,
+              "totalMs": 729.4534579999963
+            },
+            {
+              "setMs": 620.1403340000033,
+              "nextReadMs": 105.51366599999892,
+              "totalMs": 725.6540000000023
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 596.6968330000018,
+              "nextReadMs": 100.78095900000335,
+              "totalMs": 697.4777920000051
+            },
+            {
+              "setMs": 608.4924170000013,
+              "nextReadMs": 93.95204199999716,
+              "totalMs": 702.4444589999985
+            },
+            {
+              "setMs": 606.3488750000033,
+              "nextReadMs": 98.24583399999392,
+              "totalMs": 704.5947089999972
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 618.6999159999978,
+              "nextReadMs": 101.21841700001096,
+              "totalMs": 719.9183330000087
+            },
+            {
+              "setMs": 620.5445420000033,
+              "nextReadMs": 112.44312499999069,
+              "totalMs": 732.987666999994
+            },
+            {
+              "setMs": 659.3226250000007,
+              "nextReadMs": 153.10695800000394,
+              "totalMs": 812.4295830000046
+            },
+            {
+              "setMs": 642.5423340000125,
+              "nextReadMs": 103.60658300000068,
+              "totalMs": 746.1489170000132
+            },
+            {
+              "setMs": 598.7183340000047,
+              "nextReadMs": 102.68812500000058,
+              "totalMs": 701.4064590000053
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 615.1436669999966,
+              "nextReadMs": 102.58862500000396,
+              "totalMs": 717.7322920000006
+            },
+            {
+              "setMs": 655.0248330000031,
+              "nextReadMs": 98.42466699999932,
+              "totalMs": 753.4495000000024
+            },
+            {
+              "setMs": 615.2021249999962,
+              "nextReadMs": 102.84041699999943,
+              "totalMs": 718.0425419999956
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-normal-20000",
+      "kind": "data",
+      "name": "cycle1-normal-20000-4-A",
+      "lane": "A",
+      "receiptSHA": "1e429100e58e5293e3da77c0b296b4b2f1b6338895e4238ebc5f0c7eb01e4b0d",
+      "startedUTC": "2026-11-03T20:22:01.680478+00:00",
+      "endedUTC": "2026-11-03T20:24:23.051757+00:00",
+      "elapsedSeconds": 141.37071229098365,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          9.2099609375,
+          11.166015625,
+          12.15673828125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.154358,
+          "system": 0.082735
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          11.158203125,
+          11.69482421875,
+          12.24658203125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.18850599999999998,
+          "system": 0.095908
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 30000,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            9.2099609375,
+            11.166015625,
+            12.15673828125
+          ],
+          "cpuUsage": {
+            "user": 232317,
+            "system": 20661
+          },
+          "resourceUsage": {
+            "userCPUTime": 232325,
+            "systemCPUTime": 20666,
+            "maxRSS": 184944,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 11802,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 395
+          }
+        },
+        "end": {
+          "loadavg": [
+            11.158203125,
+            11.69482421875,
+            12.24658203125
+          ],
+          "cpuUsage": {
+            "user": 158034542,
+            "system": 4558238
+          },
+          "resourceUsage": {
+            "userCPUTime": 158034559,
+            "systemCPUTime": 4558244,
+            "maxRSS": 1753536,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 820597,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 88,
+            "involuntaryContextSwitches": 121849
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 800.4760000000006,
+              "nextReadMs": 97.61591699999917,
+              "totalMs": 898.0919169999997
+            },
+            {
+              "setMs": 849.8552909999999,
+              "nextReadMs": 98.10475000000042,
+              "totalMs": 947.9600410000003
+            },
+            {
+              "setMs": 800.4965420000008,
+              "nextReadMs": 95.36704199999986,
+              "totalMs": 895.8635840000006
+            },
+            {
+              "setMs": 778.7426660000001,
+              "nextReadMs": 98.22129200000018,
+              "totalMs": 876.9639580000003
+            },
+            {
+              "setMs": 815.950417,
+              "nextReadMs": 99.16200000000026,
+              "totalMs": 915.1124170000003
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 812.8512499999997,
+              "nextReadMs": 101.47287499999948,
+              "totalMs": 914.3241249999992
+            },
+            {
+              "setMs": 776.8757499999992,
+              "nextReadMs": 101.96166599999924,
+              "totalMs": 878.8374159999985
+            },
+            {
+              "setMs": 835.546542,
+              "nextReadMs": 99.32824999999866,
+              "totalMs": 934.8747919999987
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 849.5504999999976,
+              "nextReadMs": 96.19974999999977,
+              "totalMs": 945.7502499999973
+            },
+            {
+              "setMs": 830.9788340000014,
+              "nextReadMs": 101.21429099999659,
+              "totalMs": 932.193124999998
+            },
+            {
+              "setMs": 798.1804580000025,
+              "nextReadMs": 105.63716700000077,
+              "totalMs": 903.8176250000033
+            },
+            {
+              "setMs": 804.5623329999944,
+              "nextReadMs": 101.99550000000454,
+              "totalMs": 906.5578329999989
+            },
+            {
+              "setMs": 799.590875000009,
+              "nextReadMs": 102.62233299999207,
+              "totalMs": 902.213208000001
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 795.0843339999992,
+              "nextReadMs": 102.04941600000893,
+              "totalMs": 897.1337500000081
+            },
+            {
+              "setMs": 808.2035409999953,
+              "nextReadMs": 96.42137500000536,
+              "totalMs": 904.6249160000007
+            },
+            {
+              "setMs": 782.651417000001,
+              "nextReadMs": 100.52191699999094,
+              "totalMs": 883.1733339999919
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 913.143916999994,
+              "nextReadMs": 101.84445800000685,
+              "totalMs": 1014.9883750000008
+            },
+            {
+              "setMs": 811.661791999999,
+              "nextReadMs": 95.80329199999687,
+              "totalMs": 907.4650839999958
+            },
+            {
+              "setMs": 809.9153749999969,
+              "nextReadMs": 96.90249999999651,
+              "totalMs": 906.8178749999934
+            },
+            {
+              "setMs": 835.6167909999931,
+              "nextReadMs": 98.74658400000772,
+              "totalMs": 934.3633750000008
+            },
+            {
+              "setMs": 776.3837920000078,
+              "nextReadMs": 95.29445799998939,
+              "totalMs": 871.6782499999972
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 774.505124999996,
+              "nextReadMs": 99.03316700000141,
+              "totalMs": 873.5382919999975
+            },
+            {
+              "setMs": 786.731334000011,
+              "nextReadMs": 104.91137499999604,
+              "totalMs": 891.642709000007
+            },
+            {
+              "setMs": 793.9190830000007,
+              "nextReadMs": 101.40325000000303,
+              "totalMs": 895.3223330000037
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-normal-2000",
+      "kind": "data",
+      "name": "cycle1-normal-2000-1-A",
+      "lane": "A",
+      "receiptSHA": "1aa7268fc439aa3f1ed6516a5c66aa4e48d025b46b387fb2627342898ec05b94",
+      "startedUTC": "2026-11-03T20:24:23.065886+00:00",
+      "endedUTC": "2026-11-03T20:24:33.934781+00:00",
+      "elapsedSeconds": 10.868806417100132,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          11.158203125,
+          11.69482421875,
+          12.24658203125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.194456,
+          "system": 0.102017
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.9736328125,
+          11.63818359375,
+          12.22021484375
+        ],
+        "selfCPUSeconds": {
+          "user": 0.197357,
+          "system": 0.103868
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 33309,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            11.158203125,
+            11.69482421875,
+            12.24658203125
+          ],
+          "cpuUsage": {
+            "user": 193206,
+            "system": 16361
+          },
+          "resourceUsage": {
+            "userCPUTime": 193212,
+            "systemCPUTime": 16364,
+            "maxRSS": 127168,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 8190,
+            "majorPageFault": 88,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 213
+          }
+        },
+        "end": {
+          "loadavg": [
+            10.9736328125,
+            11.63818359375,
+            12.22021484375
+          ],
+          "cpuUsage": {
+            "user": 12341351,
+            "system": 195388
+          },
+          "resourceUsage": {
+            "userCPUTime": 12341366,
+            "systemCPUTime": 195391,
+            "maxRSS": 537280,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 40385,
+            "majorPageFault": 88,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 71,
+            "involuntaryContextSwitches": 8925
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 79.64129200000002,
+              "nextReadMs": 8.591541000000007,
+              "totalMs": 88.23283300000003
+            },
+            {
+              "setMs": 76.07929100000001,
+              "nextReadMs": 8.956709000000046,
+              "totalMs": 85.03600000000006
+            },
+            {
+              "setMs": 76.69079099999999,
+              "nextReadMs": 9.846750000000043,
+              "totalMs": 86.53754100000003
+            },
+            {
+              "setMs": 83.49866600000007,
+              "nextReadMs": 8.78445899999997,
+              "totalMs": 92.28312500000004
+            },
+            {
+              "setMs": 76.97866700000009,
+              "nextReadMs": 9.821165999999948,
+              "totalMs": 86.79983300000004
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 74.3895,
+              "nextReadMs": 8.267875000000004,
+              "totalMs": 82.657375
+            },
+            {
+              "setMs": 73.64279099999999,
+              "nextReadMs": 9.614667000000054,
+              "totalMs": 83.25745800000004
+            },
+            {
+              "setMs": 73.05179199999998,
+              "nextReadMs": 8.846542,
+              "totalMs": 81.89833399999998
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 71.32404100000076,
+              "nextReadMs": 9.138333999999304,
+              "totalMs": 80.46237500000007
+            },
+            {
+              "setMs": 70.91433299999971,
+              "nextReadMs": 7.718333000000712,
+              "totalMs": 78.63266600000043
+            },
+            {
+              "setMs": 69.26704100000006,
+              "nextReadMs": 8.58520899999985,
+              "totalMs": 77.85224999999991
+            },
+            {
+              "setMs": 66.94745899999998,
+              "nextReadMs": 7.611249999999927,
+              "totalMs": 74.55870899999991
+            },
+            {
+              "setMs": 71.20166700000027,
+              "nextReadMs": 9.328708000000006,
+              "totalMs": 80.53037500000028
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 71.57249999999931,
+              "nextReadMs": 8.360583000000588,
+              "totalMs": 79.9330829999999
+            },
+            {
+              "setMs": 71.77516599999944,
+              "nextReadMs": 8.179792000000816,
+              "totalMs": 79.95495800000026
+            },
+            {
+              "setMs": 78.21816599999966,
+              "nextReadMs": 8.144124999999804,
+              "totalMs": 86.36229099999946
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 73.3578749999997,
+              "nextReadMs": 9.675500000000284,
+              "totalMs": 83.03337499999998
+            },
+            {
+              "setMs": 72.2020420000008,
+              "nextReadMs": 8.3487499999992,
+              "totalMs": 80.550792
+            },
+            {
+              "setMs": 73.54600000000028,
+              "nextReadMs": 9.4512909999994,
+              "totalMs": 82.99729099999968
+            },
+            {
+              "setMs": 73.20395800000006,
+              "nextReadMs": 8.323542000000089,
+              "totalMs": 81.52750000000015
+            },
+            {
+              "setMs": 72.84362499999952,
+              "nextReadMs": 9.565458000000945,
+              "totalMs": 82.40908300000046
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 70.65462499999921,
+              "nextReadMs": 7.895249999999578,
+              "totalMs": 78.54987499999879
+            },
+            {
+              "setMs": 70.47691699999996,
+              "nextReadMs": 8.015708000000814,
+              "totalMs": 78.49262500000077
+            },
+            {
+              "setMs": 72.98054200000115,
+              "nextReadMs": 8.313666000000012,
+              "totalMs": 81.29420800000116
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-normal-2000",
+      "kind": "data",
+      "name": "cycle1-normal-2000-2-B",
+      "lane": "B",
+      "receiptSHA": "9858e903fe47607023f0470e3bf20b34304bfe1eb32b16905e3da84745c8a65f",
+      "startedUTC": "2026-11-03T20:24:33.968737+00:00",
+      "endedUTC": "2026-11-03T20:24:43.042650+00:00",
+      "elapsedSeconds": 9.07383254216984,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          10.9736328125,
+          11.63818359375,
+          12.22021484375
+        ],
+        "selfCPUSeconds": {
+          "user": 0.202122,
+          "system": 0.111549
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.6953125,
+          11.55224609375,
+          12.18212890625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.204478,
+          "system": 0.11323499999999999
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 33562,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            10.9736328125,
+            11.63818359375,
+            12.22021484375
+          ],
+          "cpuUsage": {
+            "user": 196469,
+            "system": 17342
+          },
+          "resourceUsage": {
+            "userCPUTime": 196476,
+            "systemCPUTime": 17345,
+            "maxRSS": 129920,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 8336,
+            "majorPageFault": 110,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 253
+          }
+        },
+        "end": {
+          "loadavg": [
+            10.6953125,
+            11.55224609375,
+            12.18212890625
+          ],
+          "cpuUsage": {
+            "user": 10677851,
+            "system": 181970
+          },
+          "resourceUsage": {
+            "userCPUTime": 10677864,
+            "systemCPUTime": 181973,
+            "maxRSS": 545088,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 40697,
+            "majorPageFault": 110,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 6620
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 57.78875000000005,
+              "nextReadMs": 8.672624999999925,
+              "totalMs": 66.46137499999998
+            },
+            {
+              "setMs": 56.26274999999998,
+              "nextReadMs": 8.829207999999994,
+              "totalMs": 65.09195799999998
+            },
+            {
+              "setMs": 54.52816699999994,
+              "nextReadMs": 8.572417000000087,
+              "totalMs": 63.100584000000026
+            },
+            {
+              "setMs": 57.03958299999999,
+              "nextReadMs": 9.92558299999996,
+              "totalMs": 66.96516599999995
+            },
+            {
+              "setMs": 55.93512499999997,
+              "nextReadMs": 9.669167000000016,
+              "totalMs": 65.60429199999999
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 55.09854200000018,
+              "nextReadMs": 8.307332999999971,
+              "totalMs": 63.40587500000015
+            },
+            {
+              "setMs": 52.90325000000007,
+              "nextReadMs": 8.229166999999961,
+              "totalMs": 61.13241700000003
+            },
+            {
+              "setMs": 58.22499999999991,
+              "nextReadMs": 8.167707999999948,
+              "totalMs": 66.39270799999986
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 53.77545800000007,
+              "nextReadMs": 8.324959000000035,
+              "totalMs": 62.10041700000011
+            },
+            {
+              "setMs": 56.1097920000002,
+              "nextReadMs": 8.131124999999884,
+              "totalMs": 64.24091700000008
+            },
+            {
+              "setMs": 57.10112500000014,
+              "nextReadMs": 8.43441699999994,
+              "totalMs": 65.53554200000008
+            },
+            {
+              "setMs": 57.33100000000013,
+              "nextReadMs": 8.112166999999772,
+              "totalMs": 65.4431669999999
+            },
+            {
+              "setMs": 57.60087499999963,
+              "nextReadMs": 8.563875000000735,
+              "totalMs": 66.16475000000037
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 58.15520799999922,
+              "nextReadMs": 8.777667000000292,
+              "totalMs": 66.93287499999951
+            },
+            {
+              "setMs": 56.31633300000067,
+              "nextReadMs": 10.041333000000122,
+              "totalMs": 66.35766600000079
+            },
+            {
+              "setMs": 55.29708399999981,
+              "nextReadMs": 9.58850000000075,
+              "totalMs": 64.88558400000056
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 54.477208000000246,
+              "nextReadMs": 9.399083000000246,
+              "totalMs": 63.87629100000049
+            },
+            {
+              "setMs": 53.41058299999986,
+              "nextReadMs": 10.002124999999978,
+              "totalMs": 63.41270799999984
+            },
+            {
+              "setMs": 51.96654099999978,
+              "nextReadMs": 7.946084000000155,
+              "totalMs": 59.912624999999935
+            },
+            {
+              "setMs": 50.670874999999796,
+              "nextReadMs": 7.642125000000306,
+              "totalMs": 58.3130000000001
+            },
+            {
+              "setMs": 50.91975000000002,
+              "nextReadMs": 7.657750000000306,
+              "totalMs": 58.57750000000033
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 55.00075000000015,
+              "nextReadMs": 8.105415999999423,
+              "totalMs": 63.106165999999575
+            },
+            {
+              "setMs": 55.70787500000006,
+              "nextReadMs": 8.139791999999943,
+              "totalMs": 63.847667
+            },
+            {
+              "setMs": 55.15174999999999,
+              "nextReadMs": 7.696125000000393,
+              "totalMs": 62.847875000000386
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-normal-2000",
+      "kind": "data",
+      "name": "cycle1-normal-2000-3-B",
+      "lane": "B",
+      "receiptSHA": "ce3a48e65ed35ace882f2263b2c86e7ce9bacf8f6191a143945e412587b7b834",
+      "startedUTC": "2026-11-03T20:24:43.056646+00:00",
+      "endedUTC": "2026-11-03T20:24:52.182678+00:00",
+      "elapsedSeconds": 9.125935749849305,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          10.6953125,
+          11.55224609375,
+          12.18212890625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.20857399999999998,
+          "system": 0.118575
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          11.0361328125,
+          11.59912109375,
+          12.19091796875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.211003,
+          "system": 0.120498
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 33687,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            10.6953125,
+            11.55224609375,
+            12.18212890625
+          ],
+          "cpuUsage": {
+            "user": 196655,
+            "system": 17461
+          },
+          "resourceUsage": {
+            "userCPUTime": 196661,
+            "systemCPUTime": 17463,
+            "maxRSS": 126608,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 8132,
+            "majorPageFault": 110,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 254
+          }
+        },
+        "end": {
+          "loadavg": [
+            11.0361328125,
+            11.59912109375,
+            12.19091796875
+          ],
+          "cpuUsage": {
+            "user": 10681053,
+            "system": 207569
+          },
+          "resourceUsage": {
+            "userCPUTime": 10681067,
+            "systemCPUTime": 207574,
+            "maxRSS": 565264,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 43696,
+            "majorPageFault": 110,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 10018
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 54.50433300000009,
+              "nextReadMs": 8.265249999999924,
+              "totalMs": 62.76958300000001
+            },
+            {
+              "setMs": 52.629166000000055,
+              "nextReadMs": 7.9542920000000095,
+              "totalMs": 60.583458000000064
+            },
+            {
+              "setMs": 51.967040999999995,
+              "nextReadMs": 7.915708999999993,
+              "totalMs": 59.88274999999999
+            },
+            {
+              "setMs": 52.5954999999999,
+              "nextReadMs": 8.40016700000001,
+              "totalMs": 60.99566699999991
+            },
+            {
+              "setMs": 53.548333999999954,
+              "nextReadMs": 9.829207999999994,
+              "totalMs": 63.37754199999995
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 57.21466699999996,
+              "nextReadMs": 7.980041000000028,
+              "totalMs": 65.19470799999999
+            },
+            {
+              "setMs": 53.399415999999974,
+              "nextReadMs": 8.234042000000045,
+              "totalMs": 61.63345800000002
+            },
+            {
+              "setMs": 59.82070899999985,
+              "nextReadMs": 8.554499999999962,
+              "totalMs": 68.37520899999981
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 62.01008300000012,
+              "nextReadMs": 9.453542000000198,
+              "totalMs": 71.46362500000032
+            },
+            {
+              "setMs": 60.78220800000008,
+              "nextReadMs": 8.443624999999884,
+              "totalMs": 69.22583299999997
+            },
+            {
+              "setMs": 59.7378749999998,
+              "nextReadMs": 8.151208000000224,
+              "totalMs": 67.88908300000003
+            },
+            {
+              "setMs": 60.77800000000025,
+              "nextReadMs": 7.8975829999999405,
+              "totalMs": 68.67558300000019
+            },
+            {
+              "setMs": 54.5956670000005,
+              "nextReadMs": 7.836291999999958,
+              "totalMs": 62.43195900000046
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 55.71470799999952,
+              "nextReadMs": 9.783417000000554,
+              "totalMs": 65.49812500000007
+            },
+            {
+              "setMs": 56.412500000000364,
+              "nextReadMs": 10.551499999999578,
+              "totalMs": 66.96399999999994
+            },
+            {
+              "setMs": 56.87724999999955,
+              "nextReadMs": 8.180083000000195,
+              "totalMs": 65.05733299999974
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 55.79966700000023,
+              "nextReadMs": 7.809374999999818,
+              "totalMs": 63.609042000000045
+            },
+            {
+              "setMs": 52.376916000000165,
+              "nextReadMs": 9.157874999999876,
+              "totalMs": 61.53479100000004
+            },
+            {
+              "setMs": 53.549417000000176,
+              "nextReadMs": 9.125915999999961,
+              "totalMs": 62.67533300000014
+            },
+            {
+              "setMs": 54.607083999999304,
+              "nextReadMs": 8.051707999999962,
+              "totalMs": 62.658791999999266
+            },
+            {
+              "setMs": 54.88724999999977,
+              "nextReadMs": 8.048500000000786,
+              "totalMs": 62.93575000000055
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 55.020166999999674,
+              "nextReadMs": 8.027542000000722,
+              "totalMs": 63.047709000000395
+            },
+            {
+              "setMs": 53.22112500000003,
+              "nextReadMs": 7.597541000000092,
+              "totalMs": 60.81866600000012
+            },
+            {
+              "setMs": 50.77654199999961,
+              "nextReadMs": 7.643291000000318,
+              "totalMs": 58.419832999999926
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-normal-2000",
+      "kind": "data",
+      "name": "cycle1-normal-2000-4-A",
+      "lane": "A",
+      "receiptSHA": "ce452dfbd3981ff0bc0caf096a7520cfb165fb96805e5a2968df351beef577c7",
+      "startedUTC": "2026-11-03T20:24:52.212349+00:00",
+      "endedUTC": "2026-11-03T20:25:02.591337+00:00",
+      "elapsedSeconds": 10.378893333021551,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          11.0361328125,
+          11.59912109375,
+          12.19091796875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.21529099999999998,
+          "system": 0.127274
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.57568359375,
+          11.48046875,
+          12.1416015625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.217968,
+          "system": 0.129074
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 33826,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            11.0361328125,
+            11.59912109375,
+            12.19091796875
+          ],
+          "cpuUsage": {
+            "user": 199107,
+            "system": 16060
+          },
+          "resourceUsage": {
+            "userCPUTime": 199113,
+            "systemCPUTime": 16063,
+            "maxRSS": 127776,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 8198,
+            "majorPageFault": 111,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 207
+          }
+        },
+        "end": {
+          "loadavg": [
+            10.57568359375,
+            11.48046875,
+            12.1416015625
+          ],
+          "cpuUsage": {
+            "user": 11980958,
+            "system": 181452
+          },
+          "resourceUsage": {
+            "userCPUTime": 11980972,
+            "systemCPUTime": 181458,
+            "maxRSS": 518112,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 39153,
+            "majorPageFault": 111,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 7155
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 74.68195800000001,
+              "nextReadMs": 9.185207999999989,
+              "totalMs": 83.867166
+            },
+            {
+              "setMs": 75.46733300000005,
+              "nextReadMs": 8.003833999999983,
+              "totalMs": 83.47116700000004
+            },
+            {
+              "setMs": 76.49958400000003,
+              "nextReadMs": 9.988458000000037,
+              "totalMs": 86.48804200000006
+            },
+            {
+              "setMs": 71.34920799999998,
+              "nextReadMs": 7.903291999999965,
+              "totalMs": 79.25249999999994
+            },
+            {
+              "setMs": 68.52137500000003,
+              "nextReadMs": 8.930082999999968,
+              "totalMs": 77.451458
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 75.88379099999997,
+              "nextReadMs": 8.526499999999942,
+              "totalMs": 84.41029099999992
+            },
+            {
+              "setMs": 76.65462500000012,
+              "nextReadMs": 8.424665999999888,
+              "totalMs": 85.07929100000001
+            },
+            {
+              "setMs": 73.2884590000001,
+              "nextReadMs": 8.133124999999836,
+              "totalMs": 81.42158399999994
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 70.69916600000033,
+              "nextReadMs": 8.200833999999304,
+              "totalMs": 78.89999999999964
+            },
+            {
+              "setMs": 80.23179100000016,
+              "nextReadMs": 8.76520900000014,
+              "totalMs": 88.9970000000003
+            },
+            {
+              "setMs": 74.16154099999949,
+              "nextReadMs": 8.228374999999687,
+              "totalMs": 82.38991599999918
+            },
+            {
+              "setMs": 70.96712500000012,
+              "nextReadMs": 9.146375000000262,
+              "totalMs": 80.11350000000039
+            },
+            {
+              "setMs": 71.25800000000072,
+              "nextReadMs": 8.086457999999766,
+              "totalMs": 79.34445800000049
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 74.483792,
+              "nextReadMs": 9.730207999999948,
+              "totalMs": 84.21399999999994
+            },
+            {
+              "setMs": 68.97687500000029,
+              "nextReadMs": 7.907083999999486,
+              "totalMs": 76.88395899999978
+            },
+            {
+              "setMs": 68.49391700000069,
+              "nextReadMs": 8.668124999999236,
+              "totalMs": 77.16204199999993
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 71.54116599999998,
+              "nextReadMs": 9.037459000000126,
+              "totalMs": 80.5786250000001
+            },
+            {
+              "setMs": 75.74799999999959,
+              "nextReadMs": 9.182708000000275,
+              "totalMs": 84.93070799999987
+            },
+            {
+              "setMs": 72.41166599999997,
+              "nextReadMs": 7.92291699999987,
+              "totalMs": 80.33458299999984
+            },
+            {
+              "setMs": 69.36825000000044,
+              "nextReadMs": 8.864042000000154,
+              "totalMs": 78.2322920000006
+            },
+            {
+              "setMs": 68.05116699999962,
+              "nextReadMs": 7.620750000000044,
+              "totalMs": 75.67191699999967
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 70.64312500000051,
+              "nextReadMs": 9.335583000000042,
+              "totalMs": 79.97870800000055
+            },
+            {
+              "setMs": 70.60974999999962,
+              "nextReadMs": 8.141959000000497,
+              "totalMs": 78.75170900000012
+            },
+            {
+              "setMs": 74.43062500000087,
+              "nextReadMs": 9.559541999999055,
+              "totalMs": 83.99016699999993
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-legacy-no-moves-20000",
+      "kind": "data",
+      "name": "cycle1-legacy-no-moves-20000-1-A",
+      "lane": "A",
+      "receiptSHA": "daf2bb0dc601e6804009e29eea9929da347d5081f14fe4c80a755987d358bd19",
+      "startedUTC": "2026-11-03T20:25:02.609296+00:00",
+      "endedUTC": "2026-11-03T20:26:37.822456+00:00",
+      "elapsedSeconds": 95.21275249985047,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          10.57568359375,
+          11.48046875,
+          12.1416015625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.224581,
+          "system": 0.13519499999999998
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.68310546875,
+          11.248046875,
+          11.9775390625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.24670399999999998,
+          "system": 0.144294
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 33942,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            10.57568359375,
+            11.48046875,
+            12.1416015625
+          ],
+          "cpuUsage": {
+            "user": 235655,
+            "system": 22077
+          },
+          "resourceUsage": {
+            "userCPUTime": 235663,
+            "systemCPUTime": 22080,
+            "maxRSS": 189056,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 12044,
+            "majorPageFault": 95,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 4,
+            "involuntaryContextSwitches": 271
+          }
+        },
+        "end": {
+          "loadavg": [
+            10.68310546875,
+            11.248046875,
+            11.9775390625
+          ],
+          "cpuUsage": {
+            "user": 109680213,
+            "system": 3609238
+          },
+          "resourceUsage": {
+            "userCPUTime": 109680228,
+            "systemCPUTime": 3609244,
+            "maxRSS": 1814224,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 670581,
+            "majorPageFault": 95,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 90,
+            "involuntaryContextSwitches": 77859
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 785.6074159999998,
+              "nextReadMs": 103.16829200000029,
+              "totalMs": 888.7757080000001
+            },
+            {
+              "setMs": 806.2341670000005,
+              "nextReadMs": 133.15300000000025,
+              "totalMs": 939.3871670000008
+            },
+            {
+              "setMs": 802.6729580000001,
+              "nextReadMs": 102.47083300000031,
+              "totalMs": 905.1437910000004
+            },
+            {
+              "setMs": 788.8175840000004,
+              "nextReadMs": 97.95166599999993,
+              "totalMs": 886.7692500000003
+            },
+            {
+              "setMs": 863.627125,
+              "nextReadMs": 91.57850000000053,
+              "totalMs": 955.2056250000005
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 825.4699170000004,
+              "nextReadMs": 94.53779200000099,
+              "totalMs": 920.0077090000013
+            },
+            {
+              "setMs": 776.4956669999992,
+              "nextReadMs": 97.55216600000131,
+              "totalMs": 874.0478330000005
+            },
+            {
+              "setMs": 776.7713750000003,
+              "nextReadMs": 97.05116599999928,
+              "totalMs": 873.8225409999995
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 784.2173750000002,
+              "nextReadMs": 98.3066669999971,
+              "totalMs": 882.5240419999973
+            },
+            {
+              "setMs": 852.9857919999995,
+              "nextReadMs": 95.59945799999696,
+              "totalMs": 948.5852499999964
+            },
+            {
+              "setMs": 782.103584000004,
+              "nextReadMs": 100.25537500000064,
+              "totalMs": 882.3589590000047
+            },
+            {
+              "setMs": 791.789291000001,
+              "nextReadMs": 100.16933399999834,
+              "totalMs": 891.9586249999993
+            },
+            {
+              "setMs": 800.4726670000018,
+              "nextReadMs": 102.75308299999597,
+              "totalMs": 903.2257499999978
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 785.7796670000025,
+              "nextReadMs": 97.09116699999868,
+              "totalMs": 882.8708340000012
+            },
+            {
+              "setMs": 772.6045419999937,
+              "nextReadMs": 102.3920830000061,
+              "totalMs": 874.9966249999998
+            },
+            {
+              "setMs": 820.698166000002,
+              "nextReadMs": 101.23825000000215,
+              "totalMs": 921.9364160000041
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 845.906999999992,
+              "nextReadMs": 98.73529100000451,
+              "totalMs": 944.6422909999965
+            },
+            {
+              "setMs": 791.3845419999998,
+              "nextReadMs": 108.29062499999418,
+              "totalMs": 899.675166999994
+            },
+            {
+              "setMs": 794.3370419999992,
+              "nextReadMs": 104.07541700000002,
+              "totalMs": 898.4124589999992
+            },
+            {
+              "setMs": 788.4862920000014,
+              "nextReadMs": 102.46949999999197,
+              "totalMs": 890.9557919999934
+            },
+            {
+              "setMs": 791.5602910000016,
+              "nextReadMs": 100.30720899999142,
+              "totalMs": 891.867499999993
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 786.6000829999975,
+              "nextReadMs": 95.15833400000702,
+              "totalMs": 881.7584170000046
+            },
+            {
+              "setMs": 798.6529160000064,
+              "nextReadMs": 95.93450000000303,
+              "totalMs": 894.5874160000094
+            },
+            {
+              "setMs": 777.2353750000038,
+              "nextReadMs": 100.04162499999802,
+              "totalMs": 877.2770000000019
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-legacy-no-moves-20000",
+      "kind": "data",
+      "name": "cycle1-legacy-no-moves-20000-2-B",
+      "lane": "B",
+      "receiptSHA": "7e8cb111ba9aab57d4f88b53fdd61144fe19891e012819a3ad7c447d5596b3cd",
+      "startedUTC": "2026-11-03T20:26:37.845064+00:00",
+      "endedUTC": "2026-11-03T20:27:58.794096+00:00",
+      "elapsedSeconds": 80.94867650000378,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          10.68310546875,
+          11.248046875,
+          11.9775390625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.25132499999999997,
+          "system": 0.151438
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          8.90625,
+          10.62548828125,
+          11.6767578125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.270438,
+          "system": 0.159684
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 35186,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            10.68310546875,
+            11.248046875,
+            11.9775390625
+          ],
+          "cpuUsage": {
+            "user": 230494,
+            "system": 21109
+          },
+          "resourceUsage": {
+            "userCPUTime": 230501,
+            "systemCPUTime": 21112,
+            "maxRSS": 183232,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 11726,
+            "majorPageFault": 85,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 280
+          }
+        },
+        "end": {
+          "loadavg": [
+            8.90625,
+            10.62548828125,
+            11.6767578125
+          ],
+          "cpuUsage": {
+            "user": 93320605,
+            "system": 3384838
+          },
+          "resourceUsage": {
+            "userCPUTime": 93320619,
+            "systemCPUTime": 3384842,
+            "maxRSS": 1700992,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 636653,
+            "majorPageFault": 85,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 86,
+            "involuntaryContextSwitches": 69557
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 611.8029159999996,
+              "nextReadMs": 100.78270900000007,
+              "totalMs": 712.5856249999997
+            },
+            {
+              "setMs": 616.7724579999999,
+              "nextReadMs": 107.14425000000028,
+              "totalMs": 723.9167080000002
+            },
+            {
+              "setMs": 621.7613339999998,
+              "nextReadMs": 106.09995799999979,
+              "totalMs": 727.8612919999996
+            },
+            {
+              "setMs": 672.5624580000003,
+              "nextReadMs": 100.12512499999957,
+              "totalMs": 772.6875829999999
+            },
+            {
+              "setMs": 613.0174160000006,
+              "nextReadMs": 100.57545899999968,
+              "totalMs": 713.5928750000003
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 682.9212500000012,
+              "nextReadMs": 113.92799999999988,
+              "totalMs": 796.8492500000011
+            },
+            {
+              "setMs": 641.1969999999983,
+              "nextReadMs": 110.43533300000126,
+              "totalMs": 751.6323329999996
+            },
+            {
+              "setMs": 645.1892500000013,
+              "nextReadMs": 107.56512499999917,
+              "totalMs": 752.7543750000004
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 617.6528749999998,
+              "nextReadMs": 99.91662499999802,
+              "totalMs": 717.5694999999978
+            },
+            {
+              "setMs": 713.5113330000022,
+              "nextReadMs": 98.46420899999794,
+              "totalMs": 811.9755420000001
+            },
+            {
+              "setMs": 615.6770000000033,
+              "nextReadMs": 101.90674999999828,
+              "totalMs": 717.5837500000016
+            },
+            {
+              "setMs": 602.8872499999998,
+              "nextReadMs": 98.58224999999948,
+              "totalMs": 701.4694999999992
+            },
+            {
+              "setMs": 611.0303749999985,
+              "nextReadMs": 98.2766249999986,
+              "totalMs": 709.3069999999971
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 683.2044160000005,
+              "nextReadMs": 105.36566699999821,
+              "totalMs": 788.5700829999987
+            },
+            {
+              "setMs": 609.3663750000051,
+              "nextReadMs": 99.09720899999957,
+              "totalMs": 708.4635840000046
+            },
+            {
+              "setMs": 610.056958000001,
+              "nextReadMs": 96.05816700000287,
+              "totalMs": 706.1151250000039
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 611.9552499999991,
+              "nextReadMs": 104.60166699999536,
+              "totalMs": 716.5569169999944
+            },
+            {
+              "setMs": 677.9665420000019,
+              "nextReadMs": 98.99283299999661,
+              "totalMs": 776.9593749999985
+            },
+            {
+              "setMs": 597.3817090000011,
+              "nextReadMs": 96.24366600000212,
+              "totalMs": 693.6253750000033
+            },
+            {
+              "setMs": 613.2147920000061,
+              "nextReadMs": 93.45683299999655,
+              "totalMs": 706.6716250000027
+            },
+            {
+              "setMs": 600.2631660000043,
+              "nextReadMs": 93.84762500000215,
+              "totalMs": 694.1107910000064
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 670.4819590000043,
+              "nextReadMs": 106.03525000000081,
+              "totalMs": 776.5172090000051
+            },
+            {
+              "setMs": 621.835874999997,
+              "nextReadMs": 103.38933300000645,
+              "totalMs": 725.2252080000035
+            },
+            {
+              "setMs": 606.7456250000032,
+              "nextReadMs": 101.92437500000233,
+              "totalMs": 708.6700000000055
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-legacy-no-moves-20000",
+      "kind": "data",
+      "name": "cycle1-legacy-no-moves-20000-3-B",
+      "lane": "B",
+      "receiptSHA": "68bc4292e79d7165d5ef8961c804515a736edb4aaa9bb269e7a3a86c09a0a51e",
+      "startedUTC": "2026-11-03T20:27:58.804970+00:00",
+      "endedUTC": "2026-11-03T20:29:19.026281+00:00",
+      "elapsedSeconds": 80.2209604170639,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          8.90625,
+          10.62548828125,
+          11.6767578125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.27461599999999997,
+          "system": 0.16449
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          11.7099609375,
+          11.41796875,
+          11.89990234375
+        ],
+        "selfCPUSeconds": {
+          "user": 0.293326,
+          "system": 0.17302399999999998
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 36375,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            8.90625,
+            10.62548828125,
+            11.6767578125
+          ],
+          "cpuUsage": {
+            "user": 231648,
+            "system": 20753
+          },
+          "resourceUsage": {
+            "userCPUTime": 231655,
+            "systemCPUTime": 20756,
+            "maxRSS": 191344,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 12226,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 11,
+            "involuntaryContextSwitches": 270
+          }
+        },
+        "end": {
+          "loadavg": [
+            11.7099609375,
+            11.41796875,
+            11.89990234375
+          ],
+          "cpuUsage": {
+            "user": 93307631,
+            "system": 3198459
+          },
+          "resourceUsage": {
+            "userCPUTime": 93307737,
+            "systemCPUTime": 3198466,
+            "maxRSS": 1702880,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 614239,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 94,
+            "involuntaryContextSwitches": 69294
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 597.6172079999997,
+              "nextReadMs": 118.05816700000014,
+              "totalMs": 715.6753749999998
+            },
+            {
+              "setMs": 606.2974590000003,
+              "nextReadMs": 100.01641599999948,
+              "totalMs": 706.3138749999998
+            },
+            {
+              "setMs": 629.168584,
+              "nextReadMs": 99.21779100000003,
+              "totalMs": 728.386375
+            },
+            {
+              "setMs": 588.3059999999996,
+              "nextReadMs": 101.4066670000002,
+              "totalMs": 689.7126669999998
+            },
+            {
+              "setMs": 602.2072500000004,
+              "nextReadMs": 98.15629100000024,
+              "totalMs": 700.3635410000006
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 587.6885840000004,
+              "nextReadMs": 96.18941599999926,
+              "totalMs": 683.8779999999997
+            },
+            {
+              "setMs": 601.7218749999993,
+              "nextReadMs": 94.17687500000102,
+              "totalMs": 695.8987500000003
+            },
+            {
+              "setMs": 645.684416,
+              "nextReadMs": 101.7117500000004,
+              "totalMs": 747.3961660000004
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 602.9148749999986,
+              "nextReadMs": 95.14404099999956,
+              "totalMs": 698.0589159999981
+            },
+            {
+              "setMs": 623.2279999999992,
+              "nextReadMs": 126.43570800000089,
+              "totalMs": 749.663708
+            },
+            {
+              "setMs": 635.9564160000009,
+              "nextReadMs": 94.18437499999709,
+              "totalMs": 730.140790999998
+            },
+            {
+              "setMs": 603.2940000000017,
+              "nextReadMs": 100.62229200000002,
+              "totalMs": 703.9162920000017
+            },
+            {
+              "setMs": 625.6134160000038,
+              "nextReadMs": 94.90970899999957,
+              "totalMs": 720.5231250000033
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 687.1257909999986,
+              "nextReadMs": 106.92854200000147,
+              "totalMs": 794.054333
+            },
+            {
+              "setMs": 607.7586250000022,
+              "nextReadMs": 100.3996249999982,
+              "totalMs": 708.1582500000004
+            },
+            {
+              "setMs": 608.9132909999971,
+              "nextReadMs": 103.38450000000012,
+              "totalMs": 712.2977909999972
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 676.8396670000002,
+              "nextReadMs": 100.43608300000051,
+              "totalMs": 777.2757500000007
+            },
+            {
+              "setMs": 608.7701250000027,
+              "nextReadMs": 97.50787499999569,
+              "totalMs": 706.2779999999984
+            },
+            {
+              "setMs": 604.8125419999997,
+              "nextReadMs": 103.42704100000265,
+              "totalMs": 708.2395830000023
+            },
+            {
+              "setMs": 604.4540839999972,
+              "nextReadMs": 161.22900000000664,
+              "totalMs": 765.6830840000039
+            },
+            {
+              "setMs": 620.978750000002,
+              "nextReadMs": 105.62449999999808,
+              "totalMs": 726.6032500000001
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 600.023208999999,
+              "nextReadMs": 97.53187500000058,
+              "totalMs": 697.5550839999996
+            },
+            {
+              "setMs": 600.8234169999996,
+              "nextReadMs": 96.82066699999996,
+              "totalMs": 697.6440839999996
+            },
+            {
+              "setMs": 615.0468330000003,
+              "nextReadMs": 102.99983400000201,
+              "totalMs": 718.0466670000023
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-legacy-no-moves-20000",
+      "kind": "data",
+      "name": "cycle1-legacy-no-moves-20000-4-A",
+      "lane": "A",
+      "receiptSHA": "edc20a9a1306929c248e97d920a2a85ceb3266f29ee815fa513686b8a2cfe8d3",
+      "startedUTC": "2026-11-03T20:29:19.052930+00:00",
+      "endedUTC": "2026-11-03T20:30:53.924265+00:00",
+      "elapsedSeconds": 94.87093204190023,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          11.7099609375,
+          11.41796875,
+          11.89990234375
+        ],
+        "selfCPUSeconds": {
+          "user": 0.298506,
+          "system": 0.181162
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.087890625,
+          10.89794921875,
+          11.6416015625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.320028,
+          "system": 0.190429
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 37484,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            11.7099609375,
+            11.41796875,
+            11.89990234375
+          ],
+          "cpuUsage": {
+            "user": 231742,
+            "system": 23520
+          },
+          "resourceUsage": {
+            "userCPUTime": 231755,
+            "systemCPUTime": 23524,
+            "maxRSS": 189968,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 12126,
+            "majorPageFault": 85,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 270
+          }
+        },
+        "end": {
+          "loadavg": [
+            10.087890625,
+            10.89794921875,
+            11.6416015625
+          ],
+          "cpuUsage": {
+            "user": 109140313,
+            "system": 3377313
+          },
+          "resourceUsage": {
+            "userCPUTime": 109140350,
+            "systemCPUTime": 3377317,
+            "maxRSS": 1699616,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 634653,
+            "majorPageFault": 85,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 71,
+            "involuntaryContextSwitches": 78693
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 828.1449590000007,
+              "nextReadMs": 97.73041599999942,
+              "totalMs": 925.8753750000001
+            },
+            {
+              "setMs": 772.6383750000005,
+              "nextReadMs": 95.34199999999964,
+              "totalMs": 867.9803750000001
+            },
+            {
+              "setMs": 774.0185000000001,
+              "nextReadMs": 90.93724999999995,
+              "totalMs": 864.9557500000001
+            },
+            {
+              "setMs": 811.4812090000005,
+              "nextReadMs": 95.4911659999998,
+              "totalMs": 906.9723750000003
+            },
+            {
+              "setMs": 760.0117499999997,
+              "nextReadMs": 95.06470900000022,
+              "totalMs": 855.0764589999999
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 750.5010000000002,
+              "nextReadMs": 96.35487499999908,
+              "totalMs": 846.8558749999993
+            },
+            {
+              "setMs": 768.1753749999989,
+              "nextReadMs": 93.58262500000092,
+              "totalMs": 861.7579999999998
+            },
+            {
+              "setMs": 790.0044579999994,
+              "nextReadMs": 98.83937499999956,
+              "totalMs": 888.843832999999
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 770.9119589999973,
+              "nextReadMs": 97.44233299999905,
+              "totalMs": 868.3542919999963
+            },
+            {
+              "setMs": 788.2710829999996,
+              "nextReadMs": 99.19354200000089,
+              "totalMs": 887.4646250000005
+            },
+            {
+              "setMs": 807.1500000000015,
+              "nextReadMs": 99.06891699999687,
+              "totalMs": 906.2189169999983
+            },
+            {
+              "setMs": 837.432375000004,
+              "nextReadMs": 104.68137500000012,
+              "totalMs": 942.1137500000041
+            },
+            {
+              "setMs": 838.7354160000032,
+              "nextReadMs": 100.54887499999313,
+              "totalMs": 939.2842909999963
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 770.7152500000011,
+              "nextReadMs": 94.44645899999887,
+              "totalMs": 865.161709
+            },
+            {
+              "setMs": 837.2983339999992,
+              "nextReadMs": 105.14908299999661,
+              "totalMs": 942.4474169999958
+            },
+            {
+              "setMs": 770.3262090000062,
+              "nextReadMs": 97.03183300000092,
+              "totalMs": 867.3580420000071
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 771.0038330000098,
+              "nextReadMs": 99.08712499999092,
+              "totalMs": 870.0909580000007
+            },
+            {
+              "setMs": 840.9902919999877,
+              "nextReadMs": 100.611791000003,
+              "totalMs": 941.6020829999907
+            },
+            {
+              "setMs": 769.9776669999992,
+              "nextReadMs": 98.12375000001339,
+              "totalMs": 868.1014170000126
+            },
+            {
+              "setMs": 775.4011669999891,
+              "nextReadMs": 97.4007500000007,
+              "totalMs": 872.8019169999898
+            },
+            {
+              "setMs": 791.5294159999903,
+              "nextReadMs": 100.02174999999988,
+              "totalMs": 891.5511659999902
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 782.656833999994,
+              "nextReadMs": 99.9811250000057,
+              "totalMs": 882.6379589999997
+            },
+            {
+              "setMs": 773.1412500000006,
+              "nextReadMs": 98.56595899999957,
+              "totalMs": 871.7072090000001
+            },
+            {
+              "setMs": 818.8054169999959,
+              "nextReadMs": 104.7815830000036,
+              "totalMs": 923.5869999999995
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-legacy-no-moves-2000",
+      "kind": "data",
+      "name": "cycle1-legacy-no-moves-2000-1-A",
+      "lane": "A",
+      "receiptSHA": "e94284602ea8ad91b3e710c2029336b9cb50e79a42b95db8de4bc58208bcd013",
+      "startedUTC": "2026-11-03T20:30:53.940503+00:00",
+      "endedUTC": "2026-11-03T20:31:02.919918+00:00",
+      "elapsedSeconds": 8.979338000062853,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          10.087890625,
+          10.89794921875,
+          11.6416015625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.327576,
+          "system": 0.19719899999999999
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.18896484375,
+          10.8994140625,
+          11.63330078125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.32993,
+          "system": 0.19889099999999998
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 38783,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            10.087890625,
+            10.89794921875,
+            11.6416015625
+          ],
+          "cpuUsage": {
+            "user": 197834,
+            "system": 16285
+          },
+          "resourceUsage": {
+            "userCPUTime": 197841,
+            "systemCPUTime": 16288,
+            "maxRSS": 133472,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 8589,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 202
+          }
+        },
+        "end": {
+          "loadavg": [
+            10.18896484375,
+            10.8994140625,
+            11.63330078125
+          ],
+          "cpuUsage": {
+            "user": 9952919,
+            "system": 173566
+          },
+          "resourceUsage": {
+            "userCPUTime": 9952933,
+            "systemCPUTime": 173568,
+            "maxRSS": 509856,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 37970,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 6589
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 80.63299999999998,
+              "nextReadMs": 8.911542000000054,
+              "totalMs": 89.54454200000004
+            },
+            {
+              "setMs": 78.03408300000001,
+              "nextReadMs": 9.429208000000017,
+              "totalMs": 87.46329100000003
+            },
+            {
+              "setMs": 78.445875,
+              "nextReadMs": 10.248040999999944,
+              "totalMs": 88.69391599999994
+            },
+            {
+              "setMs": 74.15216699999996,
+              "nextReadMs": 9.093624999999975,
+              "totalMs": 83.24579199999994
+            },
+            {
+              "setMs": 75.66441599999996,
+              "nextReadMs": 9.744416999999999,
+              "totalMs": 85.40883299999996
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 71.83916700000009,
+              "nextReadMs": 8.322750000000042,
+              "totalMs": 80.16191700000013
+            },
+            {
+              "setMs": 72.27558399999998,
+              "nextReadMs": 8.329082999999855,
+              "totalMs": 80.60466699999984
+            },
+            {
+              "setMs": 71.74258299999997,
+              "nextReadMs": 9.034209000000146,
+              "totalMs": 80.77679200000011
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 73.89749999999958,
+              "nextReadMs": 8.444458000000395,
+              "totalMs": 82.34195799999998
+            },
+            {
+              "setMs": 70.49150000000009,
+              "nextReadMs": 8.124124999999822,
+              "totalMs": 78.61562499999991
+            },
+            {
+              "setMs": 70.81824999999981,
+              "nextReadMs": 7.910417000000052,
+              "totalMs": 78.72866699999986
+            },
+            {
+              "setMs": 68.90391600000021,
+              "nextReadMs": 9.459958999999799,
+              "totalMs": 78.36387500000001
+            },
+            {
+              "setMs": 71.23749999999973,
+              "nextReadMs": 7.913833000000068,
+              "totalMs": 79.1513329999998
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 72.56108300000005,
+              "nextReadMs": 8.506124999999884,
+              "totalMs": 81.06720799999994
+            },
+            {
+              "setMs": 72.47325000000001,
+              "nextReadMs": 9.51641699999982,
+              "totalMs": 81.98966699999983
+            },
+            {
+              "setMs": 70.28737499999988,
+              "nextReadMs": 8.172207999999955,
+              "totalMs": 78.45958299999984
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 71.42533300000014,
+              "nextReadMs": 7.9132079999999405,
+              "totalMs": 79.33854100000008
+            },
+            {
+              "setMs": 68.61520800000017,
+              "nextReadMs": 9.258375000000342,
+              "totalMs": 77.87358300000051
+            },
+            {
+              "setMs": 70.50195900000017,
+              "nextReadMs": 7.943666000000121,
+              "totalMs": 78.44562500000029
+            },
+            {
+              "setMs": 74.26308400000016,
+              "nextReadMs": 8.03204099999948,
+              "totalMs": 82.29512499999964
+            },
+            {
+              "setMs": 73.34879199999978,
+              "nextReadMs": 8.186249999999745,
+              "totalMs": 81.53504199999952
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 72.96512500000063,
+              "nextReadMs": 8.560208999999304,
+              "totalMs": 81.52533399999993
+            },
+            {
+              "setMs": 71.2465000000002,
+              "nextReadMs": 9.246874999999818,
+              "totalMs": 80.49337500000001
+            },
+            {
+              "setMs": 68.75866700000006,
+              "nextReadMs": 8.055167000000438,
+              "totalMs": 76.8138340000005
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-legacy-no-moves-2000",
+      "kind": "data",
+      "name": "cycle1-legacy-no-moves-2000-2-B",
+      "lane": "B",
+      "receiptSHA": "a3be3bad12db8d069e0f434fb9fbee0952be2b593ab97d960a1be72cb65b28b8",
+      "startedUTC": "2026-11-03T20:31:02.941849+00:00",
+      "endedUTC": "2026-11-03T20:31:10.270045+00:00",
+      "elapsedSeconds": 7.328123249812052,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          10.18896484375,
+          10.8994140625,
+          11.63330078125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.334564,
+          "system": 0.20553
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          11.134765625,
+          11.08349609375,
+          11.69384765625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.33657,
+          "system": 0.20708
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 38887,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            10.18896484375,
+            10.8994140625,
+            11.63330078125
+          ],
+          "cpuUsage": {
+            "user": 196628,
+            "system": 18808
+          },
+          "resourceUsage": {
+            "userCPUTime": 196633,
+            "systemCPUTime": 18810,
+            "maxRSS": 130416,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 8402,
+            "majorPageFault": 112,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 236
+          }
+        },
+        "end": {
+          "loadavg": [
+            11.134765625,
+            11.08349609375,
+            11.69384765625
+          ],
+          "cpuUsage": {
+            "user": 8475767,
+            "system": 172805
+          },
+          "resourceUsage": {
+            "userCPUTime": 8475769,
+            "systemCPUTime": 172807,
+            "maxRSS": 528976,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 39293,
+            "majorPageFault": 112,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 6,
+            "involuntaryContextSwitches": 5750
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 68.15325000000001,
+              "nextReadMs": 9.082167000000027,
+              "totalMs": 77.23541700000004
+            },
+            {
+              "setMs": 61.25862500000005,
+              "nextReadMs": 8.592084,
+              "totalMs": 69.85070900000005
+            },
+            {
+              "setMs": 57.23579200000006,
+              "nextReadMs": 8.467624999999998,
+              "totalMs": 65.70341700000006
+            },
+            {
+              "setMs": 56.34895800000004,
+              "nextReadMs": 8.412041999999929,
+              "totalMs": 64.76099999999997
+            },
+            {
+              "setMs": 54.92537500000003,
+              "nextReadMs": 8.259416999999985,
+              "totalMs": 63.184792000000016
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 65.67825000000005,
+              "nextReadMs": 10.220958999999993,
+              "totalMs": 75.89920900000004
+            },
+            {
+              "setMs": 56.375749999999925,
+              "nextReadMs": 9.688833000000045,
+              "totalMs": 66.06458299999997
+            },
+            {
+              "setMs": 55.4369999999999,
+              "nextReadMs": 8.332625000000007,
+              "totalMs": 63.769624999999905
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 52.08612499999981,
+              "nextReadMs": 7.73595800000021,
+              "totalMs": 59.82208300000002
+            },
+            {
+              "setMs": 52.7175000000002,
+              "nextReadMs": 7.898291999999856,
+              "totalMs": 60.615792000000056
+            },
+            {
+              "setMs": 60.80516699999998,
+              "nextReadMs": 7.983666000000085,
+              "totalMs": 68.78883300000007
+            },
+            {
+              "setMs": 58.69558300000017,
+              "nextReadMs": 8.345542000000023,
+              "totalMs": 67.04112500000019
+            },
+            {
+              "setMs": 57.04441700000007,
+              "nextReadMs": 8.107124999999996,
+              "totalMs": 65.15154200000006
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 54.002042000000074,
+              "nextReadMs": 8.090291999999863,
+              "totalMs": 62.09233399999994
+            },
+            {
+              "setMs": 54.16191600000002,
+              "nextReadMs": 7.921041999999943,
+              "totalMs": 62.08295799999996
+            },
+            {
+              "setMs": 53.33849999999984,
+              "nextReadMs": 7.783750000000055,
+              "totalMs": 61.122249999999894
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 54.37933299999986,
+              "nextReadMs": 9.069042000000081,
+              "totalMs": 63.44837499999994
+            },
+            {
+              "setMs": 55.14562500000011,
+              "nextReadMs": 9.8389159999997,
+              "totalMs": 64.98454099999981
+            },
+            {
+              "setMs": 56.658416000000216,
+              "nextReadMs": 8.67724999999973,
+              "totalMs": 65.33566599999995
+            },
+            {
+              "setMs": 57.53295900000012,
+              "nextReadMs": 8.55895800000053,
+              "totalMs": 66.09191700000065
+            },
+            {
+              "setMs": 52.06299999999919,
+              "nextReadMs": 7.8440410000002885,
+              "totalMs": 59.90704099999948
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 50.54258300000038,
+              "nextReadMs": 7.726624999999331,
+              "totalMs": 58.26920799999971
+            },
+            {
+              "setMs": 51.46308399999998,
+              "nextReadMs": 10.131624999999985,
+              "totalMs": 61.594708999999966
+            },
+            {
+              "setMs": 55.380707999999686,
+              "nextReadMs": 8.559959000000163,
+              "totalMs": 63.94066699999985
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-legacy-no-moves-2000",
+      "kind": "data",
+      "name": "cycle1-legacy-no-moves-2000-3-B",
+      "lane": "B",
+      "receiptSHA": "18be4e8770c0dbe48b0445fc7957c76bfbdbe174a21c7286b5426df37f4677ba",
+      "startedUTC": "2026-11-03T20:31:10.281713+00:00",
+      "endedUTC": "2026-11-03T20:31:17.638630+00:00",
+      "elapsedSeconds": 7.356850167037919,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          11.134765625,
+          11.08349609375,
+          11.69384765625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.340974,
+          "system": 0.212135
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          11.32470703125,
+          11.11572265625,
+          11.697265625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.34299799999999997,
+          "system": 0.213858
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 39030,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            11.134765625,
+            11.08349609375,
+            11.69384765625
+          ],
+          "cpuUsage": {
+            "user": 200390,
+            "system": 17918
+          },
+          "resourceUsage": {
+            "userCPUTime": 200395,
+            "systemCPUTime": 17921,
+            "maxRSS": 137760,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 8851,
+            "majorPageFault": 94,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 4,
+            "involuntaryContextSwitches": 534
+          }
+        },
+        "end": {
+          "loadavg": [
+            11.32470703125,
+            11.11572265625,
+            11.697265625
+          ],
+          "cpuUsage": {
+            "user": 8595150,
+            "system": 168961
+          },
+          "resourceUsage": {
+            "userCPUTime": 8595164,
+            "systemCPUTime": 168964,
+            "maxRSS": 520848,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 38472,
+            "majorPageFault": 94,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 4,
+            "involuntaryContextSwitches": 6228
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 64.17712499999999,
+              "nextReadMs": 8.779584,
+              "totalMs": 72.95670899999999
+            },
+            {
+              "setMs": 58.838540999999964,
+              "nextReadMs": 8.848124999999982,
+              "totalMs": 67.68666599999995
+            },
+            {
+              "setMs": 61.005333000000064,
+              "nextReadMs": 8.781917000000021,
+              "totalMs": 69.78725000000009
+            },
+            {
+              "setMs": 59.16554199999996,
+              "nextReadMs": 8.808875000000057,
+              "totalMs": 67.97441700000002
+            },
+            {
+              "setMs": 54.54991699999994,
+              "nextReadMs": 8.120041000000015,
+              "totalMs": 62.66995799999995
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 51.524,
+              "nextReadMs": 9.14691700000003,
+              "totalMs": 60.67091700000003
+            },
+            {
+              "setMs": 54.10591599999998,
+              "nextReadMs": 9.64041700000007,
+              "totalMs": 63.74633300000005
+            },
+            {
+              "setMs": 54.46991700000012,
+              "nextReadMs": 8.24412499999994,
+              "totalMs": 62.71404200000006
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 59.33341699999983,
+              "nextReadMs": 8.392333000000235,
+              "totalMs": 67.72575000000006
+            },
+            {
+              "setMs": 57.6379579999998,
+              "nextReadMs": 8.408957999999984,
+              "totalMs": 66.04691599999978
+            },
+            {
+              "setMs": 58.42925000000014,
+              "nextReadMs": 8.200749999999971,
+              "totalMs": 66.63000000000011
+            },
+            {
+              "setMs": 56.36124999999993,
+              "nextReadMs": 8.478832999999668,
+              "totalMs": 64.8400829999996
+            },
+            {
+              "setMs": 54.10391699999991,
+              "nextReadMs": 9.345832999999857,
+              "totalMs": 63.44974999999977
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 54.35533299999997,
+              "nextReadMs": 9.62170900000001,
+              "totalMs": 63.97704199999998
+            },
+            {
+              "setMs": 56.02495799999997,
+              "nextReadMs": 8.376416999999947,
+              "totalMs": 64.40137499999992
+            },
+            {
+              "setMs": 57.89566600000035,
+              "nextReadMs": 8.271249999999782,
+              "totalMs": 66.16691600000013
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 54.857083000000785,
+              "nextReadMs": 8.077749999999469,
+              "totalMs": 62.93483300000025
+            },
+            {
+              "setMs": 54.38166600000022,
+              "nextReadMs": 8.053917000000183,
+              "totalMs": 62.435583000000406
+            },
+            {
+              "setMs": 53.423250000000735,
+              "nextReadMs": 8.027416999999332,
+              "totalMs": 61.45066700000007
+            },
+            {
+              "setMs": 54.30791700000009,
+              "nextReadMs": 8.17870799999946,
+              "totalMs": 62.48662499999955
+            },
+            {
+              "setMs": 61.722499999999854,
+              "nextReadMs": 8.306875000000218,
+              "totalMs": 70.02937500000007
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 53.837916000000405,
+              "nextReadMs": 8.984749999999622,
+              "totalMs": 62.82266600000003
+            },
+            {
+              "setMs": 55.03924999999981,
+              "nextReadMs": 9.345750000000407,
+              "totalMs": 64.38500000000022
+            },
+            {
+              "setMs": 53.995584000000235,
+              "nextReadMs": 9.422708000000057,
+              "totalMs": 63.41829200000029
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-legacy-no-moves-2000",
+      "kind": "data",
+      "name": "cycle1-legacy-no-moves-2000-4-A",
+      "lane": "A",
+      "receiptSHA": "230b535598cf50ff5a0a81b6a1731eb8424536a6595ab12d13a25b1aceae38c8",
+      "startedUTC": "2026-11-03T20:31:17.659581+00:00",
+      "endedUTC": "2026-11-03T20:31:26.362842+00:00",
+      "elapsedSeconds": 8.70316179189831,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          11.32470703125,
+          11.11572265625,
+          11.697265625
+        ],
+        "selfCPUSeconds": {
+          "user": 0.34745899999999996,
+          "system": 0.21995699999999999
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.57275390625,
+          10.962890625,
+          11.6357421875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.349774,
+          "system": 0.221663
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 39153,
+        "scope": "single lane; no isolation from other host processes",
+        "start": {
+          "loadavg": [
+            11.32470703125,
+            11.11572265625,
+            11.697265625
+          ],
+          "cpuUsage": {
+            "user": 198518,
+            "system": 18300
+          },
+          "resourceUsage": {
+            "userCPUTime": 198528,
+            "systemCPUTime": 18303,
+            "maxRSS": 135840,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 8738,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 369
+          }
+        },
+        "end": {
+          "loadavg": [
+            10.57275390625,
+            10.962890625,
+            11.6357421875
+          ],
+          "cpuUsage": {
+            "user": 9971494,
+            "system": 179261
+          },
+          "resourceUsage": {
+            "userCPUTime": 9971507,
+            "systemCPUTime": 179266,
+            "maxRSS": 490800,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 40137,
+            "majorPageFault": 86,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 1,
+            "involuntaryContextSwitches": 6516
+          }
+        }
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "existing-root-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 78.30791600000003,
+              "nextReadMs": 9.39637499999992,
+              "totalMs": 87.70429099999996
+            },
+            {
+              "setMs": 73.62241600000004,
+              "nextReadMs": 8.217874999999935,
+              "totalMs": 81.84029099999998
+            },
+            {
+              "setMs": 74.06433300000003,
+              "nextReadMs": 9.074666999999977,
+              "totalMs": 83.13900000000001
+            },
+            {
+              "setMs": 69.495,
+              "nextReadMs": 8.163416999999981,
+              "totalMs": 77.65841699999999
+            },
+            {
+              "setMs": 73.3845,
+              "nextReadMs": 8.464166999999975,
+              "totalMs": 81.84866699999998
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 72.09700000000021,
+              "nextReadMs": 8.2974999999999,
+              "totalMs": 80.39450000000011
+            },
+            {
+              "setMs": 74.484375,
+              "nextReadMs": 8.332458000000088,
+              "totalMs": 82.81683300000009
+            },
+            {
+              "setMs": 71.32341699999984,
+              "nextReadMs": 8.10266700000011,
+              "totalMs": 79.42608399999995
+            }
+          ]
+        },
+        {
+          "name": "existing-nested-map-overwrite",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 70.88599999999997,
+              "nextReadMs": 8.257540999999947,
+              "totalMs": 79.14354099999991
+            },
+            {
+              "setMs": 70.87041700000009,
+              "nextReadMs": 8.38562499999989,
+              "totalMs": 79.25604199999998
+            },
+            {
+              "setMs": 70.81120800000008,
+              "nextReadMs": 8.35104199999978,
+              "totalMs": 79.16224999999986
+            },
+            {
+              "setMs": 72.5777079999998,
+              "nextReadMs": 8.143417000000227,
+              "totalMs": 80.72112500000003
+            },
+            {
+              "setMs": 71.30116699999962,
+              "nextReadMs": 9.42870800000037,
+              "totalMs": 80.72987499999999
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 70.84237499999972,
+              "nextReadMs": 8.011625000000095,
+              "totalMs": 78.85399999999981
+            },
+            {
+              "setMs": 68.07604200000014,
+              "nextReadMs": 7.614249999999629,
+              "totalMs": 75.69029199999977
+            },
+            {
+              "setMs": 65.76658300000008,
+              "nextReadMs": 7.676167000000078,
+              "totalMs": 73.44275000000016
+            }
+          ]
+        },
+        {
+          "name": "existing-list-item-set",
+          "oracle": {
+            "fullArraysIDsOrderValues": "PASS",
+            "publicModel": "PASS",
+            "snapshotAndHistoryControl": "PASS",
+            "undoRedo": "PASS",
+            "heldFrozenEntry": "PASS",
+            "repeatedSetsNoRead": "PASS",
+            "referencesAndNegativeZero": "PASS",
+            "foreignWriteAndDeletionUndoRedo": "PASS"
+          },
+          "timing": [
+            {
+              "setMs": 70.54424999999992,
+              "nextReadMs": 8.16820800000005,
+              "totalMs": 78.71245799999997
+            },
+            {
+              "setMs": 72.78462500000023,
+              "nextReadMs": 8.09295899999961,
+              "totalMs": 80.87758399999984
+            },
+            {
+              "setMs": 71.56183299999975,
+              "nextReadMs": 8.192917000000307,
+              "totalMs": 79.75475000000006
+            },
+            {
+              "setMs": 73.86158400000022,
+              "nextReadMs": 8.00670799999989,
+              "totalMs": 81.86829200000011
+            },
+            {
+              "setMs": 70.79262500000004,
+              "nextReadMs": 8.05645800000002,
+              "totalMs": 78.84908300000006
+            }
+          ],
+          "rawEditReadControlTiming": [
+            {
+              "setMs": 65.37862499999937,
+              "nextReadMs": 7.642334000000119,
+              "totalMs": 73.0209589999995
+            },
+            {
+              "setMs": 65.8759170000003,
+              "nextReadMs": 9.204458000000159,
+              "totalMs": 75.08037500000046
+            },
+            {
+              "setMs": 69.7144589999998,
+              "nextReadMs": 8.360249999999724,
+              "totalMs": 78.07470899999953
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-fallback",
+      "kind": "fallback",
+      "name": "cycle1-fallback-1-A",
+      "lane": "A",
+      "receiptSHA": "d4fbeb5b3050fd73abcebccb9bbef3c09602fc21b08f6a609a0910258caa9d16",
+      "startedUTC": "2026-11-03T20:31:26.380681+00:00",
+      "endedUTC": "2026-11-03T20:31:28.757699+00:00",
+      "elapsedSeconds": 2.3769513750448823,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          10.57275390625,
+          10.962890625,
+          11.6357421875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.35745899999999997,
+          "system": 0.227322
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.57275390625,
+          10.962890625,
+          11.6357421875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.358257,
+          "system": 0.228604
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "default-structural-insert",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            15.676917000000003,
+            14.930041999999958,
+            14.679292000000032,
+            14.650375000000054,
+            15.746667000000002
+          ]
+        },
+        {
+          "name": "default-structural-delete",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            16.40591699999993,
+            13.253917000000001,
+            13.79204199999981,
+            12.788792000000058,
+            13.440624999999955
+          ]
+        },
+        {
+          "name": "default-structural-move",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            43.02562499999999,
+            41.426124999999956,
+            41.69441600000005,
+            42.0502919999999,
+            40.84116600000016
+          ]
+        },
+        {
+          "name": "custom-schema-value-update",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            14.505750000000035,
+            12.264500000000226,
+            14.38433299999997,
+            13.640917000000172,
+            14.341457999999875
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-fallback",
+      "kind": "fallback",
+      "name": "cycle1-fallback-2-B",
+      "lane": "B",
+      "receiptSHA": "551a31f6ca98f2fcac05ccfb08f8483f0de5a42e78aeb9bf231187d908cf2831",
+      "startedUTC": "2026-11-03T20:31:28.778250+00:00",
+      "endedUTC": "2026-11-03T20:31:31.119899+00:00",
+      "elapsedSeconds": 2.3415968329645693,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          10.57275390625,
+          10.962890625,
+          11.6357421875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.362791,
+          "system": 0.23404
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.57275390625,
+          10.962890625,
+          11.6357421875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.36356099999999997,
+          "system": 0.235124
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "default-structural-insert",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            15.52658299999996,
+            15.671875,
+            15.862250000000017,
+            16.235915999999975,
+            16.317499999999995
+          ]
+        },
+        {
+          "name": "default-structural-delete",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            14.283250000000066,
+            13.264040999999906,
+            14.130541999999878,
+            13.476875000000064,
+            14.692499999999882
+          ]
+        },
+        {
+          "name": "default-structural-move",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            40.92662499999983,
+            39.648749999999836,
+            40.79733299999998,
+            41.42333299999996,
+            41.60583399999996
+          ]
+        },
+        {
+          "name": "custom-schema-value-update",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            13.31204200000002,
+            13.534499999999753,
+            12.969583000000057,
+            14.08987500000012,
+            12.454459000000043
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-fallback",
+      "kind": "fallback",
+      "name": "cycle1-fallback-3-B",
+      "lane": "B",
+      "receiptSHA": "ef1a42f1dd8df224c3598f11e64287122960adf1ac6edd719d661a814369211b",
+      "startedUTC": "2026-11-03T20:31:31.131651+00:00",
+      "endedUTC": "2026-11-03T20:31:33.512056+00:00",
+      "elapsedSeconds": 2.380358582828194,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          10.57275390625,
+          10.962890625,
+          11.6357421875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.367372,
+          "system": 0.239304
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.36669921875,
+          10.91357421875,
+          11.6142578125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.368124,
+          "system": 0.240385
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "default-structural-insert",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            15.872000000000071,
+            15.97849999999994,
+            15.86808300000007,
+            16.604417000000012,
+            17.178583000000003
+          ]
+        },
+        {
+          "name": "default-structural-delete",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            14.234458000000018,
+            14.60225000000014,
+            12.807083999999804,
+            13.261334000000033,
+            13.079040999999961
+          ]
+        },
+        {
+          "name": "default-structural-move",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            43.27429200000006,
+            41.41983400000004,
+            41.15979100000004,
+            40.757709000000204,
+            39.75058399999989
+          ]
+        },
+        {
+          "name": "custom-schema-value-update",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            14.413999999999987,
+            13.164499999999862,
+            14.298249999999825,
+            13.111875000000055,
+            14.046124999999847
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-fallback",
+      "kind": "fallback",
+      "name": "cycle1-fallback-4-A",
+      "lane": "A",
+      "receiptSHA": "f5e9869ee2f15dac1650d01402d459e0a2ee676948a2ce23441fb5add7873b8a",
+      "startedUTC": "2026-11-03T20:31:33.524757+00:00",
+      "endedUTC": "2026-11-03T20:31:35.857156+00:00",
+      "elapsedSeconds": 2.3323320418130606,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          10.36669921875,
+          10.91357421875,
+          11.6142578125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.37259,
+          "system": 0.24586799999999998
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.36669921875,
+          10.91357421875,
+          11.6142578125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.37337699999999996,
+          "system": 0.246916
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "sourceUnchanged": true,
+      "scenarios": [
+        {
+          "name": "default-structural-insert",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            16.401875000000018,
+            16.08137499999998,
+            18.61145799999997,
+            14.603041000000076,
+            21.028458
+          ]
+        },
+        {
+          "name": "default-structural-delete",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            14.67791699999998,
+            14.379165999999941,
+            13.270708000000013,
+            14.07833299999993,
+            13.087291999999934
+          ]
+        },
+        {
+          "name": "default-structural-move",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            39.68270899999993,
+            38.59516699999995,
+            40.17383300000006,
+            44.09112499999992,
+            41.83158400000002
+          ]
+        },
+        {
+          "name": "custom-schema-value-update",
+          "oracle": "PASS: full ops/checkpoint/History/model, undo-redo and foreign set/delete preservation",
+          "timing": [
+            12.604332999999997,
+            12.994375000000218,
+            12.625292000000172,
+            13.379667000000154,
+            12.862292000000252
+          ]
+        }
+      ]
+    },
+    {
+      "group": "cycle1-doc",
+      "kind": "doc",
+      "name": "cycle1-doc-1-A",
+      "lane": "A",
+      "receiptSHA": "8d047a8c47653adc437e131d972b0f8ef682c8faf970653192ebc528e61838ee",
+      "startedUTC": "2026-11-03T20:31:35.872861+00:00",
+      "endedUTC": "2026-11-03T20:31:39.046767+00:00",
+      "elapsedSeconds": 3.1738526658155024,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          10.36669921875,
+          10.91357421875,
+          11.6142578125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.381667,
+          "system": 0.25234999999999996
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.6572265625,
+          10.96435546875,
+          11.6279296875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.382658,
+          "system": 0.253573
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 39402,
+        "startedUTC": "2026-11-03T20:31:35.908Z",
+        "start": {
+          "loadavg": [
+            10.36669921875,
+            10.91357421875,
+            11.6142578125
+          ],
+          "cpuUsage": {
+            "user": 30441,
+            "system": 7804
+          },
+          "resourceUsage": {
+            "userCPUTime": 30448,
+            "systemCPUTime": 7806,
+            "maxRSS": 58160,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 3830,
+            "majorPageFault": 96,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 3,
+            "involuntaryContextSwitches": 70
+          }
+        },
+        "isolation": "single source process; other host activity is not controlled",
+        "end": {
+          "loadavg": [
+            10.6572265625,
+            10.96435546875,
+            11.6279296875
+          ],
+          "cpuUsage": {
+            "user": 3647267,
+            "system": 309037
+          },
+          "resourceUsage": {
+            "userCPUTime": 3647270,
+            "systemCPUTime": 309039,
+            "maxRSS": 1032448,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 148965,
+            "majorPageFault": 97,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 3,
+            "involuntaryContextSwitches": 4514
+          }
+        },
+        "endedUTC": "2026-11-03T20:31:38.978Z"
+      },
+      "oracle": {
+        "schema": "PASS",
+        "utf16TextAndModel": "PASS",
+        "exactOperations": "PASS",
+        "exactSnapshotLinesTokensClock": "PASS",
+        "replicaConvergence": "PASS",
+        "undoRedo": "NOT_RUN: no History in this direct Doc control"
+      },
+      "sourceUnchanged": true,
+      "runs": [
+        {
+          "sample": 1,
+          "localEditMs": 73.92229199999997,
+          "localColdToJSONMs": 23.866833000000042,
+          "remoteApplyMs": 2.030375000000049,
+          "remoteColdToJSONMs": 31.15954099999999,
+          "localEditAndReadMs": 97.78912500000001,
+          "remoteApplyAndReadMs": 33.18991600000004,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 2,
+          "localEditMs": 42.220417,
+          "localColdToJSONMs": 20.24829100000011,
+          "remoteApplyMs": 2.018542000000025,
+          "remoteColdToJSONMs": 28.539457999999968,
+          "localEditAndReadMs": 62.468708000000106,
+          "remoteApplyAndReadMs": 30.557999999999993,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 3,
+          "localEditMs": 50.677708000000166,
+          "localColdToJSONMs": 22.837083999999777,
+          "remoteApplyMs": 2.1828330000003007,
+          "remoteColdToJSONMs": 29.278249999999844,
+          "localEditAndReadMs": 73.51479199999994,
+          "remoteApplyAndReadMs": 31.461083000000144,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 4,
+          "localEditMs": 50.006374999999935,
+          "localColdToJSONMs": 22.142875000000004,
+          "remoteApplyMs": 2.194459000000279,
+          "remoteColdToJSONMs": 30.528124999999818,
+          "localEditAndReadMs": 72.14924999999994,
+          "remoteApplyAndReadMs": 32.7225840000001,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 5,
+          "localEditMs": 56.50366699999995,
+          "localColdToJSONMs": 21.521957999999813,
+          "remoteApplyMs": 2.112750000000233,
+          "remoteColdToJSONMs": 29.406208999999762,
+          "localEditAndReadMs": 78.02562499999976,
+          "remoteApplyAndReadMs": 31.518958999999995,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        }
+      ],
+      "mediansMs": {
+        "localEditMs": 50.677708000000166,
+        "localColdToJSONMs": 22.142875000000004,
+        "remoteApplyMs": 2.112750000000233,
+        "remoteColdToJSONMs": 29.406208999999762,
+        "localEditAndReadMs": 73.51479199999994,
+        "remoteApplyAndReadMs": 31.518958999999995
+      },
+      "remoteRawMs": [
+        2.030375000000049,
+        2.018542000000025,
+        2.1828330000003007,
+        2.194459000000279,
+        2.112750000000233
+      ],
+      "remoteMedianMs": 2.112750000000233,
+      "remoteRangeMs": [
+        2.018542000000025,
+        2.194459000000279
+      ],
+      "remoteFirstToLastPercent": 4.05713230315492
+    },
+    {
+      "group": "cycle1-doc",
+      "kind": "doc",
+      "name": "cycle1-doc-2-B",
+      "lane": "B",
+      "receiptSHA": "eb8744824180c03b89a98f2657dd92322781a8467ecba988c793ec50bfb28246",
+      "startedUTC": "2026-11-03T20:31:39.076872+00:00",
+      "endedUTC": "2026-11-03T20:31:42.282456+00:00",
+      "elapsedSeconds": 3.2055185418576,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          10.6572265625,
+          10.96435546875,
+          11.6279296875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.387057,
+          "system": 0.260069
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.5244140625,
+          10.931640625,
+          11.6123046875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.38811599999999996,
+          "system": 0.261614
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 39443,
+        "startedUTC": "2026-11-03T20:31:39.115Z",
+        "start": {
+          "loadavg": [
+            10.6572265625,
+            10.96435546875,
+            11.6279296875
+          ],
+          "cpuUsage": {
+            "user": 31803,
+            "system": 8788
+          },
+          "resourceUsage": {
+            "userCPUTime": 31810,
+            "systemCPUTime": 8791,
+            "maxRSS": 57248,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 3780,
+            "majorPageFault": 87,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 0,
+            "involuntaryContextSwitches": 53
+          }
+        },
+        "isolation": "single source process; other host activity is not controlled",
+        "end": {
+          "loadavg": [
+            10.5244140625,
+            10.931640625,
+            11.6123046875
+          ],
+          "cpuUsage": {
+            "user": 3779710,
+            "system": 327164
+          },
+          "resourceUsage": {
+            "userCPUTime": 3779712,
+            "systemCPUTime": 327166,
+            "maxRSS": 1067648,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 150637,
+            "majorPageFault": 87,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 0,
+            "involuntaryContextSwitches": 3927
+          }
+        },
+        "endedUTC": "2026-11-03T20:31:42.221Z"
+      },
+      "oracle": {
+        "schema": "PASS",
+        "utf16TextAndModel": "PASS",
+        "exactOperations": "PASS",
+        "exactSnapshotLinesTokensClock": "PASS",
+        "replicaConvergence": "PASS",
+        "undoRedo": "NOT_RUN: no History in this direct Doc control"
+      },
+      "sourceUnchanged": true,
+      "runs": [
+        {
+          "sample": 1,
+          "localEditMs": 56.466249999999945,
+          "localColdToJSONMs": 22.88666699999999,
+          "remoteApplyMs": 2.098709000000099,
+          "remoteColdToJSONMs": 33.08649999999989,
+          "localEditAndReadMs": 79.35291699999993,
+          "remoteApplyAndReadMs": 35.185208999999986,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 2,
+          "localEditMs": 48.42037500000015,
+          "localColdToJSONMs": 21.129207999999835,
+          "remoteApplyMs": 2.2474580000000515,
+          "remoteColdToJSONMs": 29.598416999999927,
+          "localEditAndReadMs": 69.54958299999998,
+          "remoteApplyAndReadMs": 31.845874999999978,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 3,
+          "localEditMs": 46.65120900000011,
+          "localColdToJSONMs": 22.323624999999993,
+          "remoteApplyMs": 2.4789590000000317,
+          "remoteColdToJSONMs": 31.263540999999805,
+          "localEditAndReadMs": 68.9748340000001,
+          "remoteApplyAndReadMs": 33.742499999999836,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 4,
+          "localEditMs": 44.80845799999997,
+          "localColdToJSONMs": 20.091542000000118,
+          "remoteApplyMs": 2.0644999999999527,
+          "remoteColdToJSONMs": 27.992707999999766,
+          "localEditAndReadMs": 64.90000000000009,
+          "remoteApplyAndReadMs": 30.05720799999972,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 5,
+          "localEditMs": 69.26041600000008,
+          "localColdToJSONMs": 24.011917000000267,
+          "remoteApplyMs": 2.75454099999979,
+          "remoteColdToJSONMs": 29.55512499999986,
+          "localEditAndReadMs": 93.27233300000034,
+          "remoteApplyAndReadMs": 32.30966599999965,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        }
+      ],
+      "mediansMs": {
+        "localEditMs": 48.42037500000015,
+        "localColdToJSONMs": 22.323624999999993,
+        "remoteApplyMs": 2.2474580000000515,
+        "remoteColdToJSONMs": 29.598416999999927,
+        "localEditAndReadMs": 69.54958299999998,
+        "remoteApplyAndReadMs": 32.30966599999965
+      },
+      "remoteRawMs": [
+        2.098709000000099,
+        2.2474580000000515,
+        2.4789590000000317,
+        2.0644999999999527,
+        2.75454099999979
+      ],
+      "remoteMedianMs": 2.2474580000000515,
+      "remoteRangeMs": [
+        2.0644999999999527,
+        2.75454099999979
+      ],
+      "remoteFirstToLastPercent": 31.249306121032518
+    },
+    {
+      "group": "cycle1-doc",
+      "kind": "doc",
+      "name": "cycle1-doc-3-B",
+      "lane": "B",
+      "receiptSHA": "adae23e872e5cc0f581225202c073f0da792e0f139a9efebbc7769cbfcaa4869",
+      "startedUTC": "2026-11-03T20:31:42.295281+00:00",
+      "endedUTC": "2026-11-03T20:31:45.462101+00:00",
+      "elapsedSeconds": 3.166775125078857,
+      "status": "PASS",
+      "sourceSHA": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+      "hostBefore": {
+        "loadavg": [
+          10.5244140625,
+          10.931640625,
+          11.6123046875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.39198099999999997,
+          "system": 0.265996
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.5244140625,
+          10.931640625,
+          11.6123046875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.392918,
+          "system": 0.267076
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 39480,
+        "startedUTC": "2026-11-03T20:31:42.327Z",
+        "start": {
+          "loadavg": [
+            10.5244140625,
+            10.931640625,
+            11.6123046875
+          ],
+          "cpuUsage": {
+            "user": 27508,
+            "system": 7027
+          },
+          "resourceUsage": {
+            "userCPUTime": 27514,
+            "systemCPUTime": 7029,
+            "maxRSS": 57136,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 3761,
+            "majorPageFault": 105,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 2,
+            "involuntaryContextSwitches": 49
+          }
+        },
+        "isolation": "single source process; other host activity is not controlled",
+        "end": {
+          "loadavg": [
+            10.5244140625,
+            10.931640625,
+            11.6123046875
+          ],
+          "cpuUsage": {
+            "user": 3769087,
+            "system": 314087
+          },
+          "resourceUsage": {
+            "userCPUTime": 3769090,
+            "systemCPUTime": 314093,
+            "maxRSS": 1072128,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 150915,
+            "majorPageFault": 105,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 2,
+            "involuntaryContextSwitches": 3997
+          }
+        },
+        "endedUTC": "2026-11-03T20:31:45.409Z"
+      },
+      "oracle": {
+        "schema": "PASS",
+        "utf16TextAndModel": "PASS",
+        "exactOperations": "PASS",
+        "exactSnapshotLinesTokensClock": "PASS",
+        "replicaConvergence": "PASS",
+        "undoRedo": "NOT_RUN: no History in this direct Doc control"
+      },
+      "sourceUnchanged": true,
+      "runs": [
+        {
+          "sample": 1,
+          "localEditMs": 52.788499999999885,
+          "localColdToJSONMs": 24.402000000000044,
+          "remoteApplyMs": 2.3123749999999745,
+          "remoteColdToJSONMs": 28.8888750000001,
+          "localEditAndReadMs": 77.19049999999993,
+          "remoteApplyAndReadMs": 31.201250000000073,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 2,
+          "localEditMs": 45.49958400000014,
+          "localColdToJSONMs": 21.389666000000034,
+          "remoteApplyMs": 2.3014170000001286,
+          "remoteColdToJSONMs": 29.43662500000005,
+          "localEditAndReadMs": 66.88925000000017,
+          "remoteApplyAndReadMs": 31.738042000000178,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 3,
+          "localEditMs": 43.17595900000015,
+          "localColdToJSONMs": 20.377915999999914,
+          "remoteApplyMs": 2.2215000000001055,
+          "remoteColdToJSONMs": 28.091416999999637,
+          "localEditAndReadMs": 63.55387500000006,
+          "remoteApplyAndReadMs": 30.312916999999743,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 4,
+          "localEditMs": 49.39920799999982,
+          "localColdToJSONMs": 21.997875000000022,
+          "remoteApplyMs": 2.052082999999584,
+          "remoteColdToJSONMs": 30.787042000000383,
+          "localEditAndReadMs": 71.39708299999984,
+          "remoteApplyAndReadMs": 32.83912499999997,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 5,
+          "localEditMs": 71.14083299999993,
+          "localColdToJSONMs": 24.679999999999836,
+          "remoteApplyMs": 2.814332999999806,
+          "remoteColdToJSONMs": 30.4792080000002,
+          "localEditAndReadMs": 95.82083299999977,
+          "remoteApplyAndReadMs": 33.293541000000005,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        }
+      ],
+      "mediansMs": {
+        "localEditMs": 49.39920799999982,
+        "localColdToJSONMs": 21.997875000000022,
+        "remoteApplyMs": 2.3014170000001286,
+        "remoteColdToJSONMs": 29.43662500000005,
+        "localEditAndReadMs": 71.39708299999984,
+        "remoteApplyAndReadMs": 31.738042000000178
+      },
+      "remoteRawMs": [
+        2.3123749999999745,
+        2.3014170000001286,
+        2.2215000000001055,
+        2.052082999999584,
+        2.814332999999806
+      ],
+      "remoteMedianMs": 2.3014170000001286,
+      "remoteRangeMs": [
+        2.052082999999584,
+        2.814332999999806
+      ],
+      "remoteFirstToLastPercent": 21.70746526838583
+    },
+    {
+      "group": "cycle1-doc",
+      "kind": "doc",
+      "name": "cycle1-doc-4-A",
+      "lane": "A",
+      "receiptSHA": "822ef98d520418820e38e696eb1dccc0e3fc40dcfae873f890e72a7b88a89dbe",
+      "startedUTC": "2026-11-03T20:31:45.475075+00:00",
+      "endedUTC": "2026-11-03T20:31:48.933714+00:00",
+      "elapsedSeconds": 3.4585832091979682,
+      "status": "PASS",
+      "sourceSHA": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+      "hostBefore": {
+        "loadavg": [
+          10.5244140625,
+          10.931640625,
+          11.6123046875
+        ],
+        "selfCPUSeconds": {
+          "user": 0.397323,
+          "system": 0.272882
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "hostAfter": {
+        "loadavg": [
+          10.00146484375,
+          10.81640625,
+          11.5673828125
+        ],
+        "selfCPUSeconds": {
+          "user": 0.398483,
+          "system": 0.27419099999999996
+        },
+        "isolation": "NOT_ASSERTED: other host activity is not controlled"
+      },
+      "rawProcess": {
+        "pid": 39535,
+        "startedUTC": "2026-11-03T20:31:45.515Z",
+        "start": {
+          "loadavg": [
+            10.5244140625,
+            10.931640625,
+            11.6123046875
+          ],
+          "cpuUsage": {
+            "user": 30667,
+            "system": 8234
+          },
+          "resourceUsage": {
+            "userCPUTime": 30675,
+            "systemCPUTime": 8236,
+            "maxRSS": 58464,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 3837,
+            "majorPageFault": 95,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 3,
+            "involuntaryContextSwitches": 59
+          }
+        },
+        "isolation": "single source process; other host activity is not controlled",
+        "end": {
+          "loadavg": [
+            10.00146484375,
+            10.81640625,
+            11.5673828125
+          ],
+          "cpuUsage": {
+            "user": 3738338,
+            "system": 417744
+          },
+          "resourceUsage": {
+            "userCPUTime": 3738341,
+            "systemCPUTime": 417747,
+            "maxRSS": 965792,
+            "sharedMemorySize": 0,
+            "unsharedDataSize": 0,
+            "unsharedStackSize": 0,
+            "minorPageFault": 156014,
+            "majorPageFault": 96,
+            "swappedOut": 0,
+            "fsRead": 0,
+            "fsWrite": 0,
+            "ipcSent": 0,
+            "ipcReceived": 0,
+            "signalsCount": 0,
+            "voluntaryContextSwitches": 3,
+            "involuntaryContextSwitches": 8470
+          }
+        },
+        "endedUTC": "2026-11-03T20:31:48.842Z"
+      },
+      "oracle": {
+        "schema": "PASS",
+        "utf16TextAndModel": "PASS",
+        "exactOperations": "PASS",
+        "exactSnapshotLinesTokensClock": "PASS",
+        "replicaConvergence": "PASS",
+        "undoRedo": "NOT_RUN: no History in this direct Doc control"
+      },
+      "sourceUnchanged": true,
+      "runs": [
+        {
+          "sample": 1,
+          "localEditMs": 79.75979199999983,
+          "localColdToJSONMs": 22.901749999999993,
+          "remoteApplyMs": 2.370416000000205,
+          "remoteColdToJSONMs": 30.901708999999983,
+          "localEditAndReadMs": 102.66154199999983,
+          "remoteApplyAndReadMs": 33.27212500000019,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 2,
+          "localEditMs": 48.70583300000021,
+          "localColdToJSONMs": 22.37537499999985,
+          "remoteApplyMs": 2.081416999999874,
+          "remoteColdToJSONMs": 30.861167000000023,
+          "localEditAndReadMs": 71.08120800000006,
+          "remoteApplyAndReadMs": 32.9425839999999,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 3,
+          "localEditMs": 59.03941699999996,
+          "localColdToJSONMs": 21.62166699999989,
+          "remoteApplyMs": 2.2628750000003492,
+          "remoteColdToJSONMs": 32.12604099999999,
+          "localEditAndReadMs": 80.66108399999985,
+          "remoteApplyAndReadMs": 34.388916000000336,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 4,
+          "localEditMs": 59.21741699999984,
+          "localColdToJSONMs": 22.556750000000193,
+          "remoteApplyMs": 2.3355830000000424,
+          "remoteColdToJSONMs": 30.144874999999956,
+          "localEditAndReadMs": 81.77416700000003,
+          "remoteApplyAndReadMs": 32.480458,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        },
+        {
+          "sample": 5,
+          "localEditMs": 60.41387500000019,
+          "localColdToJSONMs": 21.972207999999682,
+          "remoteApplyMs": 2.280707999999777,
+          "remoteColdToJSONMs": 30.509625000000142,
+          "localEditAndReadMs": 82.38608299999987,
+          "remoteApplyAndReadMs": 32.79033299999992,
+          "hashes": {
+            "operations": "2a70fca01e2b2c0303df062330e29bc1f50d7186d3a39b119115e633d8fb0f06",
+            "model": "9ce16cf91b49b90623ce741d86ece1a6760c56ab742f0924de3997c5ae2306ff",
+            "snapshot": "281084acbf6dc39dbe744b0a623bd82401b9d392f61011d263db32e8142c9a6c"
+          },
+          "sizes": {
+            "clock": 100048,
+            "textLengthUTF16": 100032,
+            "lineCount": 1,
+            "storedItems": 100041,
+            "liveChars": 100032,
+            "deletedChars": 8
+          }
+        }
+      ],
+      "mediansMs": {
+        "localEditMs": 59.21741699999984,
+        "localColdToJSONMs": 22.37537499999985,
+        "remoteApplyMs": 2.280707999999777,
+        "remoteColdToJSONMs": 30.861167000000023,
+        "localEditAndReadMs": 81.77416700000003,
+        "remoteApplyAndReadMs": 32.9425839999999
+      },
+      "remoteRawMs": [
+        2.370416000000205,
+        2.081416999999874,
+        2.2628750000003492,
+        2.3355830000000424,
+        2.280707999999777
+      ],
+      "remoteMedianMs": 2.280707999999777,
+      "remoteRangeMs": [
+        2.081416999999874,
+        2.370416000000205
+      ],
+      "remoteFirstToLastPercent": -3.7844833987123017
+    }
+  ]
+}

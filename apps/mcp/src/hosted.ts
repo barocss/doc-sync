@@ -18,6 +18,9 @@ import {acceptProposal, proposalOwner} from "./proposal-accept.ts";
 import {ProposalStore} from "./proposal-store.ts";
 import {SessionRegistry} from "./session-registry.ts";
 
+const HOSTED_HTTP_METHODS = Object.freeze(["POST", "GET", "DELETE"]);
+
+
 type Entry = {identity: string; binding: string; principal: string; state: "starting" | "active" | "closing" | "closed";
     lastUsed: number; calls: Set<Promise<unknown>>; ready?: Promise<void>; closePromise?: Promise<void>;
     journal?: IntentJournal; document?: DocumentSession; upstream?: NodeHttpTransport;
@@ -150,7 +153,7 @@ export function createHostedService(rawConfig: unknown) {
             const grant = authenticate(req, config.grants);
             if (!grant) throw new HttpError(401);
             if (!route || !grant.routes.includes(routePath(route))) throw new HttpError(403);
-            if (!["POST", "GET", "DELETE"].includes(req.method ?? "")) throw new HttpError(405);
+            if (!HOSTED_HTTP_METHODS.includes(req.method ?? "")) throw new HttpError(405);
             if (proposalRoute) {
                 if (req.headers["mcp-session-id"] !== undefined) throw new HttpError(400);
                 const suffix = url.pathname.slice(`${routePath(route)}/proposals`.length);

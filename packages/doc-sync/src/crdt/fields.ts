@@ -70,18 +70,19 @@ const leafOk = (spec: AttrSpec, value: unknown): boolean => {
     return spec.default === null || spec.default === undefined || typeof value === typeof spec.default;
 };
 
+const fieldBranchValueOk = (rule: AttrSpec, item: unknown, depth: number): boolean => {
+    if (depth > MAX_FIELD_PATH) return false;
+    if (!isFieldSpec(rule)) return leafOk(rule, item);
+    const fields = fieldsOf(rule);
+    if (!record(fields)) return false;
+    if (item === null) return true;
+    return record(item) && entries(item).every(([key, child]) => safeFieldName(key) && Object.hasOwn(fields, key) && fieldBranchValueOk(fields[key], child, depth + 1));
+};
+
 /** A branch accepts a declared partial patch. Null means reset, including for leaf registers. */
 export const fieldValueOk = (spec: AttrSpec, value: unknown): boolean => {
     if (!fieldJsonOk(value)) return false;
-    const visit = (rule: AttrSpec, item: unknown, depth: number): boolean => {
-        if (depth > MAX_FIELD_PATH) return false;
-        if (!isFieldSpec(rule)) return leafOk(rule, item);
-        const fields = fieldsOf(rule);
-        if (!record(fields)) return false;
-        if (item === null) return true;
-        return record(item) && entries(item).every(([key, child]) => safeFieldName(key) && Object.hasOwn(fields, key) && visit(fields[key], child, depth + 1));
-    };
-    return visit(spec, value, 0);
+    return fieldBranchValueOk(spec, value, 0);
 };
 
 /** Validate only opt-in field attributes. Existing atomic attribute contracts stay unchanged. */
@@ -198,19 +199,20 @@ export const patchFields = (spec: AttrSpec, before: unknown, patch: unknown): Js
     });
 };
 
+const diffFieldBranch = (rule: AttrSpec, left: unknown, right: unknown): unknown => {
+    if (!isFieldSpec(rule)) return equal(left, right) ? undefined : equal(right, rule.default) ? null : clone(right);
+    const pairs: Array<[string, unknown]> = [];
+    for (const [name, child] of Object.entries(fieldsOf(rule)!)) {
+        const change = diffFieldBranch(child, own(left, name), own(right, name));
+        if (change !== undefined) pairs.push([name, change]);
+    }
+    return pairs.length ? Object.fromEntries(pairs) : undefined;
+};
+
 /** Model diffs mention changed leaves only; explicit editing writes are not filtered here. */
 export const diffFields = (spec: AttrSpec, before: unknown, after: unknown): JsonRecord | null => {
     if (before !== undefined && !fieldValueOk(spec, before) || after !== undefined && !fieldValueOk(spec, after)) return failure("invalid field diff value");
     const a = materializeFields(spec, path => { const value = valueAt(before, path); return value === undefined ? undefined : {value}; });
     const b = materializeFields(spec, path => { const value = valueAt(after, path); return value === undefined ? undefined : {value}; });
-    const visit = (rule: AttrSpec, left: unknown, right: unknown): unknown => {
-        if (!isFieldSpec(rule)) return equal(left, right) ? undefined : equal(right, rule.default) ? null : clone(right);
-        const pairs: Array<[string, unknown]> = [];
-        for (const [name, child] of Object.entries(fieldsOf(rule)!)) {
-            const change = visit(child, own(left, name), own(right, name));
-            if (change !== undefined) pairs.push([name, change]);
-        }
-        return pairs.length ? Object.fromEntries(pairs) : undefined;
-    };
-    return visit(spec, a, b) as JsonRecord | undefined ?? null;
+    return diffFieldBranch(spec, a, b) as JsonRecord | undefined ?? null;
 };

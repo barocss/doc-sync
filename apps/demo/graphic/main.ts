@@ -2,6 +2,11 @@ import {SceneSession} from './session.ts';
 import {GraphicCanvas} from './canvas.ts';
 import type {CanvasObject} from './canvas.ts';
 
+const input=(name:string,label:string,value:unknown,type='text')=>`<label class="field">${label}<input name="${name}" type="${type}" value="${escape(value)}" ${type==='number'?'step="any"':''}></label>`;
+
+const GRAPHIC_TRANSFORM_FIELDS = Object.freeze(['x','y','rotation','scale']);
+const GRAPHIC_DIMENSION_FIELDS = Object.freeze(['width','height']);
+
 const $=<T extends HTMLElement=HTMLElement>(selector:string)=>document.querySelector<T>(selector)!;
 const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const params=new URLSearchParams(location.search),doc=params.get('doc')??'canvas',requested=params.get('size')??'sample';
@@ -41,14 +46,14 @@ function renderInspector(){
   if(key===inspectorKey&&$('#inspector-content').dataset.signature===signature)return;
   inspectorKey=key;$('#inspector-content').dataset.signature=signature;
   if(!object){$('#inspector-content').innerHTML='<div class="empty"><span>↖</span>Select an object<br><small>Inspect its properties here.</small></div>';return;}
-  const input=(name:string,label:string,value:unknown,type='text')=>`<label class="field">${label}<input name="${name}" type="${type}" value="${escape(value)}" ${type==='number'?'step="any"':''}></label>`;
+
   const t=object.transform,s=object.size??{width:160,height:70};
   $('#inspector-content').innerHTML=`<form id="properties"><div class="section-label">${escape(object.type)}</div>${input('name','Name',object.name??'')}<div class="object-id" title="Stable object ID">${escape(object.id)}</div><div class="section-label">Geometry</div><div class="field-row">${input('x','X',t.x,'number')}${input('y','Y',t.y,'number')}${input('width','Width',s.width,'number')}${input('height','Height',s.height,'number')}${input('rotation','Rotation °',t.rotation,'number')}${input('scale','Scale',t.scale,'number')}</div><div class="section-label">Appearance</div><div class="field-row">${input('fill','Fill',object.fill??'#dbe7ff','color')}${input('opacity','Opacity',object.opacity??1,'number')}</div>${object.type==='label'?`<label class="field">Text<textarea name="text">${escape(object.text??'')}</textarea></label>`:''}<button class="primary" type="submit">Apply changes</button><p class="help">Only changed fields are applied.</p></form><div class="section-label">Structure</div><label class="field">Parent<select id="parent"><option value="">Canvas root</option>${objects().filter(item=>item.id!==object.id&&(item.type==='frame'||item.type==='object-group')).map(item=>`<option value="${escape(item.id)}" ${object.parentId===item.id?'selected':''}>${escape(item.name||item.type)} · ${escape(item.id.slice(-8))}</option>`).join('')}</select></label><div class="stack-order"><button id="backward">Move back</button><button id="forward">Move forward</button></div><button class="danger" id="inspector-delete">Delete object</button>`;
   const form=$<HTMLFormElement>('#properties'),base=new FormData(form),baseText=object.text;
   form.addEventListener('submit',event=>{event.preventDefault();safe(()=>{
     const fresh=objects().find(item=>item.id===object.id);if(!fresh)throw new Error('This object was deleted. Select another object.');
     const values=new FormData(form),attrs:Record<string,unknown>={},transform:Record<string,number>={},size:Record<string,number>={};
-    for(const[name,value]of values){if(value===base.get(name))continue;if(['x','y','rotation','scale'].includes(name))transform[name]=Number(value);else if(['width','height'].includes(name))size[name]=Number(value);else if(name==='opacity')attrs[name]=Number(value);else attrs[name]=String(value);}
+    for(const[name,value]of values){if(value===base.get(name))continue;if(GRAPHIC_TRANSFORM_FIELDS.includes(name))transform[name]=Number(value);else if(GRAPHIC_DIMENSION_FIELDS.includes(name))size[name]=Number(value);else if(name==='opacity')attrs[name]=Number(value);else attrs[name]=String(value);}
     if('text'in attrs&&fresh.text!==baseText)throw new Error('The text changed in the other peer. Select the object again to load its latest text.');
     if(Object.keys(transform).length)attrs.transform=transform;if(Object.keys(size).length)attrs.size=size;
     if(Object.keys(attrs).length)sessions[active].update(object.id,attrs,'text'in attrs?baseText:undefined);
@@ -65,7 +70,7 @@ $('#create-tools').addEventListener('click',event=>{const button=(event.target a
 $('#undo').addEventListener('click',()=>safe(()=>sessions[active].undo()));$('#redo').addEventListener('click',()=>safe(()=>sessions[active].redo()));$('#delete').addEventListener('click',()=>safe(()=>selection().forEach(id=>sessions[active].delete(id))));
 document.querySelectorAll<HTMLElement>('[data-active]').forEach(button=>button.addEventListener('click',()=>activate(Number(button.dataset.active))));
 document.querySelectorAll<HTMLElement>('[data-connect]').forEach(button=>button.addEventListener('click',()=>safe(()=>{const session=sessions[Number(button.dataset.connect)];session.snapshot().online?session.disconnect():session.connect();})));
-document.querySelectorAll<HTMLElement>('[data-hold]').forEach(button=>button.addEventListener('click',()=>safe(()=>{const session=sessions[Number(button.dataset.hold)];session.hold(!session.snapshot().held);}))); 
+document.querySelectorAll<HTMLElement>('[data-hold]').forEach(button=>button.addEventListener('click',()=>safe(()=>{const session=sessions[Number(button.dataset.hold)];session.hold(!session.snapshot().held);})));
 window.addEventListener('keydown',event=>{if((event.target as HTMLElement).closest('input,textarea,select,[contenteditable]'))return;if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();safe(()=>event.shiftKey?sessions[active].redo():sessions[active].undo());}else if(event.key==='Delete'||event.key==='Backspace'){event.preventDefault();safe(()=>selection().forEach(id=>sessions[active].delete(id)));}});
 const subscriptions=sessions.map(session=>session.subscribe(refresh));
 const api={ready:false,sessions,canvases,snapshot:()=>({ready:api.ready,active,views:sessions.map((session,index)=>({...session.snapshot(),render:canvases[index].snapshot()})),errors:[...errors]}),screenPoint:(view:number,id:string)=>canvases[view].screenPoint(id),actions:{select:(view:number,id:string)=>{activate(view);sessions[view].select([id]);},update:(view:number,id:string,attrs:Record<string,unknown>)=>sessions[view].update(id,attrs),create:(view:number,type:any,attrs:Record<string,unknown>={},parentId:string|null=null)=>sessions[view].create(type,attrs,parentId),hold:(view:number,value:boolean)=>sessions[view].hold(value),disconnect:(view:number)=>sessions[view].disconnect(),connect:(view:number)=>sessions[view].connect(),reparent:(view:number,id:string,parentId:string|null)=>sessions[view].reparent(id,parentId),undo:(view:number)=>sessions[view].undo(),redo:(view:number)=>sessions[view].redo(),lookup:(view:number,id:string)=>sessions[view].lookup(id)}};

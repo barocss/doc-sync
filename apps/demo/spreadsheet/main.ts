@@ -9,6 +9,12 @@ import {changedInspectorFields,changedProfileFields} from './inspector.ts';
 import type {InspectorDraft,FieldDraft} from './inspector.ts';
 import {sheetProfile,parseFieldInput} from './profiles.ts';
 import type {SparseCellPatch} from '../../../experiments/sparse-sheet/src/sheet.ts';
+
+const safeColor=(color:unknown)=>typeof color==='string'&&/^#[0-9a-f]{6}$/i.test(color)?color:'#3975c5';
+
+const PREVIEW_SELECTION_EVENTS = Object.freeze(['select','keyup','pointerup'] as const);
+const INSPECTOR_PRESENCE_EVENTS = Object.freeze(['focusin','select','keyup','pointerup'] as const);
+
 const columnName=(n:number)=>{let s='';for(n++;n;n=Math.floor((n-1)/26))s=String.fromCharCode(65+(n-1)%26)+s;return s;};
 const address=(row:number,column:number)=>columnName(column)+(row+1);
 function parseAddress(text:string,rows=META.rows,columns=META.columns){const m=/^([A-Z]+)([1-9]\d*)$/.exec(text.trim().toUpperCase());if(!m)throw Error('Use a cell address such as A1 or XFD1048576');let col=0;for(const c of m[1]!)col=col*26+c.charCodeAt(0)-64;const row=Number(m[2])-1;if(row>=rows||col>columns)throw Error('Address outside sheet');return {row,column:col-1};}
@@ -43,7 +49,7 @@ const views=sessions.map((session,i)=>{
  type ProjectedPeer={actor:string;name:string;color:string;range:any;editing:any;position:any};
  let projectedPeers:ProjectedPeer[]=[];
  const previews=new Map<string,ProjectedPeer>();
- const safeColor=(color:unknown)=>typeof color==='string'&&/^#[0-9a-f]{6}$/i.test(color)?color:'#3975c5';
+
  const cachePresence=()=>{previews.clear();projectedPeers=session.peers.filter(p=>p.actor!==session.actor).sort((a,b)=>a.actor<b.actor?-1:a.actor>b.actor?1:0).map(p=>({...p,color:safeColor(p.color),range:p.range?session.projectRange(p.range):null,position:p.editing?session.resolve(p.editing.target):null}));for(const p of projectedPeers)if(p.editing&&p.position?.row>=0&&p.position?.column>=0)previews.set(`${p.position.row}:${p.position.column}`,p);};
  const records=()=>Array.from({length:Math.min(100,session.rows-origin.row)},(_,r)=>Object.fromEntries(Array.from({length:Math.min(26,session.columns-origin.column)},(_,c)=>{const row=origin.row+r,column=origin.column+c,preview=previews.get(`${row}:${column}`);return [String(c),preview?(preview.editing.field===profile.primary||preview.editing.field==='formula'?preview.editing.text:`${preview.editing.field}: ${preview.editing.text}`):session.sheet.getCellValue(row,column,profile.primary)??''];})));
  const projectedStyles=new Map<string,string>();
@@ -73,10 +79,10 @@ const views=sessions.map((session,i)=>{
   const compositionStart=()=>{composing=true;publish();};const compositionEnd=()=>{composing=false;publish();};
   const keydown=(event:KeyboardEvent)=>{if(event.isComposing||composing||event.keyCode===229){if(event.key==='Enter')event.stopPropagation();return;}if(event.key==='Escape'){event.preventDefault();event.stopPropagation();manager().cancelEdit();refresh();}};
   element.addEventListener('input',publish);element.addEventListener('compositionstart',compositionStart);element.addEventListener('compositionend',compositionEnd);element.addEventListener('keydown',keydown,true);
-  for(const event of ['select','keyup','pointerup'])element.addEventListener(event,publish);
+  for(const event of PREVIEW_SELECTION_EVENTS)element.addEventListener(event,publish);
   document.addEventListener('selectionchange',publish);
   publish();queueMicrotask(publish);
-  nativeCleanup=()=>{active=false;for(const event of ['select','keyup','pointerup'])element.removeEventListener(event,publish);document.removeEventListener('selectionchange',publish);element.removeEventListener('input',publish);element.removeEventListener('compositionstart',compositionStart);element.removeEventListener('compositionend',compositionEnd);element.removeEventListener('keydown',keydown,true);};
+  nativeCleanup=()=>{active=false;for(const event of PREVIEW_SELECTION_EVENTS)element.removeEventListener(event,publish);document.removeEventListener('selectionchange',publish);element.removeEventListener('input',publish);element.removeEventListener('compositionstart',compositionStart);element.removeEventListener('compositionend',compositionEnd);element.removeEventListener('keydown',keydown,true);};
  };
  editor.validateValue=value=>{if(composing)return ValidateEnum.invalidateNotExit;const position=nativeTarget&&session.resolve(nativeTarget);if(position&&(position.row<0||position.column<0)){section.querySelector('.status')!.textContent='Cell was deleted; draft kept';return ValidateEnum.invalidateNotExit;}try{const parsed=parseFieldInput(profile.fields[profile.primary]!,String(value??''));if(profile.schema&&!validateSpreadsheetFieldValue(profile.schema,profile.primary,parsed))throw Error('Value does not match the field constraints');return ValidateEnum.validateExit;}catch(error){section.querySelector('.status')!.textContent=String(error);return ValidateEnum.invalidateNotExit;}};
  register.editor(editorName,editor);
@@ -142,7 +148,7 @@ const views=sessions.map((session,i)=>{
  inspector.addEventListener('input',e=>publishInspector(e.target as HTMLInputElement));
  inspector.addEventListener('compositionstart',e=>{inspectorComposing=true;publishInspector(e.target as HTMLInputElement);});
  inspector.addEventListener('compositionend',e=>{inspectorComposing=false;publishInspector(e.target as HTMLInputElement);});
- for(const name of ['focusin','select','keyup','pointerup'])inspector.addEventListener(name,e=>publishInspector(e.target as HTMLInputElement));
+ for(const name of INSPECTOR_PRESENCE_EVENTS)inspector.addEventListener(name,e=>publishInspector(e.target as HTMLInputElement));
  document.addEventListener('selectionchange',()=>{const control=document.activeElement;if(control instanceof HTMLInputElement&&inspector.contains(control))publishInspector(control);});
  inspector.addEventListener('focusout',()=>{queueMicrotask(()=>{if(!inspector.contains(document.activeElement))session.clearPreview();});});
  inspector.addEventListener('keydown',e=>{if((e as KeyboardEvent).key==='Escape'){session.clearPreview();inspect(true);(e.target as HTMLElement).blur();}});

@@ -13,6 +13,15 @@ import type {LexicalSchemaInfo} from "./schema.ts";
 import type {Op} from "@barocss/doc-sync";
 import type {NodeJSON, EditOp, Unit, Schema} from "@barocss/doc-sync";
 
+function unitIndex(units: Unit[], offset: number): number | null {
+    let at = 0;
+    for (let index = 0; index < units.length; index++) {
+        if (at === offset) return index;
+        const unit = units[index]; at += "ch" in unit ? unit.ch.length : 1;
+    }
+    return at === offset ? units.length : null;
+}
+
 export const LEXICAL_REMOTE_TAG = "doc-sync-remote";
 export type LexicalBindingOptions = {info?: LexicalSchemaInfo; onError?: (error: Error) => void; groupTyping?: boolean};
 const owners = new WeakMap<LexicalEditor, LexicalHostBinding>();
@@ -31,14 +40,7 @@ function nativeTextEdits(schema: Schema, before: NodeJSON, next: NodeJSON, previ
     }
     if (!left.runs || !right.runs || !sameModel({...left, runs: undefined}, {...right, runs: undefined})) return null;
     const a = runsToUnits(schema, left.runs), b = runsToUnits(schema, right.runs);
-    const unitIndex = (units: Unit[], offset: number): number | null => {
-        let at = 0;
-        for (let index = 0; index < units.length; index++) {
-            if (at === offset) return index;
-            const unit = units[index]; at += "ch" in unit ? unit.ch.length : 1;
-        }
-        return at === offset ? units.length : null;
-    };
+
     const end = unitIndex(b, current.focus.at(-1)!);
     if (end === null) return null;
     const splice = (start: number, removed: number): EditOp[] | null => {

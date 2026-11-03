@@ -5,6 +5,10 @@ import {join} from "node:path";
 import {randomUUID} from "node:crypto";
 import {openWriterLock} from "./kernel-lock.ts";
 import {ACCEPTANCE_POLICY_FINGERPRINT, digest, MAX_PROPOSAL_BYTES, parseProposalRecord, proposalId, type ProposalImmutable, type ProposalOwner, type ProposalRecord, type ProposalReceipt} from "./proposal-schema.ts";
+
+const PROPOSAL_RECONCILIATION_STATUSES = Object.freeze(["applied", "stale", "not_applied"]);
+const FINAL_PROPOSAL_STATUSES = Object.freeze(["rejected", "applied", "stale", "not_applied"]);
+
 export class ProposalConflict extends Error {}
 export class ProposalQuota extends Error {}
 async function privateDirectory(path: string) {
@@ -62,7 +66,7 @@ export class ProposalStore {
     recordNotAppliedPlan(id: string, requestId: string, planDigest: string) {
         return this.serial(async () => {
             const record = await this.load(id);
-            if (!record || record.attempt?.id !== requestId || !record.attempt.evidenceDigest || record.attempt.receipt || ["applied", "stale", "not_applied"].includes(record.status)) throw new ProposalConflict("No active prepared attempt");
+            if (!record || record.attempt?.id !== requestId || !record.attempt.evidenceDigest || record.attempt.receipt || PROPOSAL_RECONCILIATION_STATUSES.includes(record.status)) throw new ProposalConflict("No active prepared attempt");
             const plan = await readNotAppliedPlan(this.directory, record);
             if (!plan || plan.planDigest !== planDigest || record.attempt.notAppliedPlanDigest && record.attempt.notAppliedPlanDigest !== planDigest) throw new ProposalConflict("Negative settlement plan differs");
             if (record.attempt.notAppliedPlanDigest) return this.confirmDurable(record);
@@ -105,7 +109,7 @@ export class ProposalStore {
         }
         const lock = await openWriterLock(join(directory, "writer.lock"));
         const store = new ProposalStore(directory, owner, lock);
-        try { return (await store.list()).filter(r => r.decision?.kind === "accept" && !["applied", "stale", "not_applied"].includes(r.status)); }
+        try { return (await store.list()).filter(r => r.decision?.kind === "accept" && !PROPOSAL_RECONCILIATION_STATUSES.includes(r.status)); }
         finally { await store.close(); }
     }
     private async load(id: string): Promise<ProposalRecord | null> {
@@ -166,7 +170,7 @@ export class ProposalStore {
         const existing = await this.load(payload.id);
         if (existing) { if (existing.proposalDigest !== digest(payload)) throw new ProposalConflict("Create UUID has different content"); return this.confirmDurable(existing); }
         const records = await this.loadAll();
-        if (records.length >= 256 || records.filter(r => !["rejected", "applied", "stale", "not_applied"].includes(r.status)).length >= 128) throw new ProposalQuota("Proposal quota reached");
+        if (records.length >= 256 || records.filter(r => !FINAL_PROPOSAL_STATUSES.includes(r.status)).length >= 128) throw new ProposalQuota("Proposal quota reached");
         if (payload.request.supersedes && !await this.load(payload.request.supersedes)) throw new ProposalConflict("Missing previous proposal");
         const partial = {payload, proposalDigest: digest(payload), status: "pending" as const, stateVersion: 1};
         return this.save({...partial, recordDigest: digest(partial)});

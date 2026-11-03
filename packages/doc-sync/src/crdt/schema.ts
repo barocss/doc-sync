@@ -1,6 +1,12 @@
 import {childRuleProblems} from "./cardinality.ts";
 import type {ChildRule} from "./cardinality.ts";
 import {fieldValueOk, fieldsSchemaProblems, isFieldSpec} from "./fields.ts";
+
+const DERIVED_SCHEMA_SHAPES = Object.freeze(["row", "group", "span"]);
+const NODE_SCHEMA_FIELDS = Object.freeze(["shape", "children", "attrs", "ui"]);
+const STORED_NODE_SHAPES = Object.freeze(["container", "flow", "text", "grid", "atom"]);
+const PLACEMENT_SCHEMA_SHAPES = Object.freeze(["inline", "row", "cell"]);
+
 /**
  * 문서 스키마 — 바깥에서 주입한다. CRDT 는 노드 종류(문단·제목·표 …)를 모른다. 아는 것은 "모양"뿐이다.
  * 노드 종류마다 모양 하나와 children(올 수 있는 자식 종류)·속성·서식을 적는다 — 스키마 기반 문서 에디터의 스키마처럼 트리로 읽힌다.
@@ -163,7 +169,7 @@ export const checkSchema = (schema: Schema): string[] => {
     for (const [key, spec] of Object.entries(schema.markValues ?? {})) if (isFieldSpec(spec)) problems.push(`markValues.${key}.fields is not supported`);
     const cellBodies = new Set(Object.keys(schema.nodes).map(type => gridParts(schema, type)?.body).filter((type): type is string => !!type));
     for (const [type, spec] of Object.entries(schema.nodes)) {
-        if ((type === schema.root || ["row", "group", "span"].includes(spec.shape) || cellBodies.has(type)) && Object.values(spec.attrs ?? {}).some(isFieldSpec)) problems.push(`${type}.attrs.fields is not supported at this model-only position`);
+        if ((type === schema.root || DERIVED_SCHEMA_SHAPES.includes(spec.shape) || cellBodies.has(type)) && Object.values(spec.attrs ?? {}).some(isFieldSpec)) problems.push(`${type}.attrs.fields is not supported at this model-only position`);
         problems.push(...fieldsSchemaProblems(spec.attrs ?? {}, `${type}.attrs`));
         for (const key of Object.keys(spec.attrs ?? {})) if (key.startsWith("$field:")) problems.push(`Reserved attribute name: ${key}`);
         if (/^\$/.test(type) || type === "col") {
@@ -174,9 +180,9 @@ export const checkSchema = (schema: Schema): string[] => {
             case "container":
                 if (schema.domain !== "graphic") problems.push(`${type}: container requires the graphic domain`);
                 if (type === schema.root && Object.keys(spec.attrs ?? {}).length) problems.push(`${type}.attrs are not supported on the graphic root`);
-                for (const key of Object.keys(spec)) if (!["shape", "children", "attrs", "ui"].includes(key)) problems.push(`${type}.${key} is not supported on a container`);
+                for (const key of Object.keys(spec)) if (!NODE_SCHEMA_FIELDS.includes(key)) problems.push(`${type}.${key} is not supported on a container`);
                 missing(type, spec.children);
-                spec.children.filter(c => !["container", "flow", "text", "grid", "atom"].includes(shapeOf(c) ?? ""))
+                spec.children.filter(c => !STORED_NODE_SHAPES.includes(shapeOf(c) ?? ""))
                     .forEach(c => problems.push(`${type}.children must name stored object types: "${c}"`));
                 break;
             case "flow":
@@ -185,7 +191,7 @@ export const checkSchema = (schema: Schema): string[] => {
                 shapeOf(spec.default) !== "text" && problems.push(`${type}.default "${spec.default}" 는 text 모양이어야 한다`);
                 storedTypes(schema, spec).includes(spec.default) || problems.push(`${type}.default 는 children 에 있어야 한다`);
                 spec.children
-                    .filter(c => ["inline", "row", "cell"].includes(shapeOf(c) ?? ""))
+                    .filter(c => PLACEMENT_SCHEMA_SHAPES.includes(shapeOf(c) ?? ""))
                     .forEach(c => problems.push(`${type}.children 에 ${shapeOf(c)} 모양 "${c}" 는 올 수 없다`));
                 break;
             case "group":

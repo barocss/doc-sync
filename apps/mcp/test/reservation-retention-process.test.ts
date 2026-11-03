@@ -39,7 +39,7 @@ async function startDemo(data: string, threshold = 8) {
         child.once("exit", code => reject(new Error(`Demo exited ${code}: ${stderr}`)));
         child.stdout.on("data", chunk => {
             stdout += String(chunk);
-            const match = stdout.match(/http:\/\/localhost:(\d+)/);
+            const match = stdout.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
             if (match) resolve(`http://127.0.0.1:${match[1]}`);
         });
     }), "server start");
@@ -52,17 +52,26 @@ async function stop(child: ChildProcess, signal: NodeJS.Signals = "SIGTERM") {
     await deadline(exited, `server exit after ${signal}`);
 }
 
+async function parseJson<T>(response: Response): Promise<T> {
+    const body = await response.text();
+    try { return JSON.parse(body) as T; }
+    catch (cause) {
+        throw new Error(`Invalid JSON response: ${JSON.stringify({url: response.url, status: response.status,
+            contentType: response.headers.get("content-type"), bodyPrefix: body.slice(0, 256)})}`, {cause});
+    }
+}
+
 async function state(origin: string): Promise<State> {
     const response = await fetch(`${origin}/api/docs/${document}/state`);
     assert.equal(response.status, 200);
-    return response.json() as Promise<State>;
+    return parseJson<State>(response);
 }
 
 async function post(origin: string, action: string, body: unknown): Promise<Record<string, unknown>> {
     const response = await fetch(`${origin}/api/docs/${document}/${action}`, {
         method: "POST", headers: {"content-type": "application/json", "x-doc-sync-protocol": String(PROTOCOL_VERSION)}, body: JSON.stringify(body),
     });
-    const value = await response.json() as Record<string, unknown>;
+    const value = await parseJson<Record<string, unknown>>(response);
     assert.equal(response.status, 200, JSON.stringify(value));
     return value;
 }

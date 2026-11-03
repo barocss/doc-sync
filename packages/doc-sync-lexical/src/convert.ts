@@ -13,6 +13,10 @@ import type {HeadingTagType} from "@lexical/rich-text";
 import type {Marks, NodeJSON, Run} from "@barocss/doc-sync";
 import type {LexicalSchemaInfo, LexicalCodecContext} from "./schema.ts";
 
+function equal(a: NodeJSON, b: NodeJSON) { return JSON.stringify(a) === JSON.stringify(b); }
+
+const INLINE_MODEL_SHAPES = Object.freeze(["inline", "span"]);
+
 const formats: Record<string, TextFormatType> = {bold: "bold", italic: "italic", underline: "underline", strike: "strikethrough", code: "code", subscript: "subscript", superscript: "superscript", highlight: "highlight"};
 const attrsOf = (node: LexicalNode): Record<string, unknown> => structuredClone($modelData(node)?.attrs ?? {});
 const withAttrs = (type: string, attrs: Record<string, unknown>): NodeJSON => ({type, ...(Object.keys(attrs).length ? {attrs} : {})});
@@ -136,7 +140,7 @@ export function $readModelNode(info: LexicalSchemaInfo, node: LexicalNode): Node
     if (!$isElementNode(node)) throw new Error(`Unsupported non-element: ${node.getType()}`);
     if (spec.shape === "text" || spec.shape === "span") return {...withAttrs(type, attrs), runs: node.getChildren().map(child => {
         const run = $readModelNode(info, child);
-        if (!("text" in run) && !["inline", "span"].includes(info.schema.nodes[run.type]?.shape)) throw new Error(`Unsupported node inside text: ${run.type}`);
+        if (!("text" in run) && !INLINE_MODEL_SHAPES.includes(info.schema.nodes[run.type]?.shape)) throw new Error(`Unsupported node inside text: ${run.type}`);
         return run as Run;
     })};
     if ($isTableCellNode(node)) {
@@ -181,7 +185,7 @@ export function $projectLexical(info: LexicalSchemaInfo, before: NodeJSON, after
     const old = before.children ?? [], next = after.children ?? [];
     const root = $getRoot(), nodes = root.getChildren();
     if (nodes.length !== old.length) { $toLexical(info, after); return; }
-    const equal = (a: NodeJSON, b: NodeJSON) => JSON.stringify(a) === JSON.stringify(b);
+
     let start = 0, end = old.length, nextEnd = next.length;
     while (start < end && start < nextEnd && equal(old[start], next[start])) start++;
     while (end > start && nextEnd > start && equal(old[end - 1], next[nextEnd - 1])) { end--; nextEnd--; }

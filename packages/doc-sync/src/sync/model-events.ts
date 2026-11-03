@@ -137,18 +137,21 @@ export const textEventScopes = (doc: Doc, ops: Op[]) => {
 // Guard nodes count toward the limit. Large changes keep whole-model verification.
 const MAX_EVENT_WINDOW = 8;
 
+function equalModelNode(x: NodeJSON, y: NodeJSON): boolean {
+    return JSON.stringify(x) === JSON.stringify(y);
+}
+
 /** Actual canonical models determine the changed range; no wire-op prediction. */
 export const modelEventWindow = (schema: Schema, before: NodeJSON, after: NodeJSON) => {
     const flow = schema.nodes[schema.root];
     if (flow?.shape !== "flow" || flow.childRules || before.type !== schema.root || after.type !== schema.root) return null;
     const a = before.children ?? [], b = after.children ?? [];
     if (Math.max(a.length, b.length) <= MAX_EVENT_WINDOW) return null;
-    const equal = (x: NodeJSON, y: NodeJSON) => JSON.stringify(x) === JSON.stringify(y);
     let start = 0;
-    while (start < a.length && start < b.length && equal(a[start], b[start])) start += 1;
+    while (start < a.length && start < b.length && equalModelNode(a[start], b[start])) start += 1;
     if (start === a.length && start === b.length) return null;
     let endA = a.length, endB = b.length;
-    while (endA > start && endB > start && equal(a[endA - 1], b[endB - 1])) {endA -= 1; endB -= 1;}
+    while (endA > start && endB > start && equalModelNode(a[endA - 1], b[endB - 1])) {endA -= 1; endB -= 1;}
 
     // A retained plain-text guard prevents leading normalization or regrouping
     // with the unchanged prefix. A group boundary keeps the existing full path.

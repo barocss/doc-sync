@@ -100,7 +100,10 @@ test("rejects non-JSON payloads and detached snapshots do not alias live state",
     assert.equal(JSON.stringify(saved), before);
 });
 
-test("new formatting links to restored state rather than losing ownership", () => {
+test("new formatting links to restored state rather than losing ownership", t => {
+    // Both branches record the same logical action. Their History timestamps
+    // must not depend on crossing a real millisecond between the two calls.
+    t.mock.method(Date, "now", () => 1_000_000);
     const doc = new Doc("A", schema), history = new History();
     doc.edit([{op: "insert", at: [0, 0], content: "a"}]);
     edit(doc, history, {op: "update", at: [0, 0], length: 1, attrs: {bold: true}});

@@ -47,7 +47,7 @@ async function startDemo(data: string, clockModule: string) {
         child.once("exit", code => reject(new Error(`Demo exited ${code}: ${stderr}`)));
         child.stdout.on("data", chunk => {
             stdout += String(chunk);
-            const match = stdout.match(/http:\/\/localhost:(\d+)/);
+            const match = stdout.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
             if (match) resolve(`http://127.0.0.1:${match[1]}`);
         });
     }), "server start");
@@ -117,7 +117,7 @@ async function connectMcp(origin: string, journalDir: string) {
     transport.stderr?.on("data", chunk => { stderr += String(chunk); });
     try { await deadline(client.connect(transport), "MCP start"); }
     catch (error) { throw new Error(`MCP startup failed: ${stderr}`, {cause: error}); }
-    return {client, transport};
+    return {client, transport, diagnostics: () => stderr};
 }
 async function killMcp(mcp: Awaited<ReturnType<typeof connectMcp>>) {
     assert.ok(mcp.transport.pid);
@@ -126,11 +126,16 @@ async function killMcp(mcp: Awaited<ReturnType<typeof connectMcp>>) {
 }
 
 /** Gate one ordinary change and suppress its SSE echo after the reconnect hello. */
-async function historyProxy(origin: string, mode: "before-send" | "after-accept" | "pass" | "fail-recovery") {
-    let armed = false, changes = 0, recoveries = 0;
+async function historyProxy(origin: string, mode: "before-send" | "after-accept" | "pass" | "fail-recovery",
+    startupGate?: "recover-change" | "stream") {
+    let armed = false, changes = 0, recoveries = 0, streams = 0;
+    let releaseGate!: () => void, seeGate!: () => void;
+    const held = new Promise<void>(resolve => { releaseGate = resolve; });
+    const seen = new Promise<void>(resolve => { seeGate = resolve; });
     let resolveBarrier!: () => void, rejectBarrier!: (error: Error) => void;
     const barrier = new Promise<void>((resolve, reject) => { resolveBarrier = resolve; rejectBarrier = reject; });
     const server = createServer((req, res) => {
+        if (req.url?.includes("/stream")) streams++;
         const change = req.method === "POST" && req.url?.endsWith("/changes");
         if (change) changes++;
         if (req.method === "POST" && req.url?.endsWith("/recover-change")) {
@@ -147,6 +152,16 @@ async function historyProxy(origin: string, mode: "before-send" | "after-accept"
                 response.on("end", () => {
                     try { assert.equal(response.statusCode, 200, body); assert.ok(JSON.parse(body).serverSeq); resolveBarrier(); }
                     catch (error) { rejectBarrier(error as Error); }
+                });
+                return;
+            }
+            if (mode === "pass" && response.statusCode === 200 &&
+                (startupGate === "stream" ? req.url?.includes("/stream") : startupGate === "recover-change" && req.url?.endsWith("/recover-change"))) {
+                response.pause();
+                seeGate();
+                void held.then(() => {
+                    res.writeHead(response.statusCode ?? 502, response.headers);
+                    response.pipe(res);
                 });
                 return;
             }
@@ -179,9 +194,10 @@ async function historyProxy(origin: string, mode: "before-send" | "after-accept"
     await deadline(once(server, "listening"), "proxy start");
     const address = server.address();
     if (!address || typeof address === "string") throw new Error("Expected TCP proxy");
-    return {origin: `http://127.0.0.1:${address.port}`, arm() { armed = true; },
+    return {gateSeen: () => deadline(seen, `${startupGate} startup barrier`), releaseGate, streams: () => streams,
+        origin: `http://127.0.0.1:${address.port}`, arm() { armed = true; },
         barrier: () => deadline(barrier, `${mode} ordinary change barrier`), changes: () => changes, recoveries: () => recoveries,
-        async close() { server.closeAllConnections(); await deadline(new Promise<void>(resolve => server.close(() => resolve())), "proxy close"); }};
+        async close() { releaseGate(); server.closeAllConnections(); await deadline(new Promise<void>(resolve => server.close(() => resolve())), "proxy close"); }};
 }
 
 test("recovery reservation survives peer lease expiry and a killed server, without losing another user's edit", {timeout: 30000}, async () => {
@@ -299,73 +315,127 @@ test("MCP restart restores edit history across server restart, undo, another res
     }
 });
 
+const journalPlatformSkip = (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false;
+
 for (const action of ["undo", "redo"] as const) for (const mode of ["before-send", "after-accept"] as const) {
     test(`MCP killed during ${action} ${mode}: exact receipt controls automatic recovery`, {
-        timeout: 45000, skip: (process.platform !== "darwin" && process.platform !== "linux") ? "The journal requires a macOS or Linux kernel lock" : false,
-    }, async () => {
-        const root = await mkdtemp(join(tmpdir(), `doc-sync-undo-${mode}-`));
-        const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");
-        const checkpointPath = join(journal, `${document}.json.checkpoint`);
-        await writeFile(module, "export {};\n");
-        let demo: Awaited<ReturnType<typeof startDemo>> | undefined;
-        let mcp: Awaited<ReturnType<typeof connectMcp>> | undefined;
-        let proxy: Awaited<ReturnType<typeof historyProxy>> | undefined;
-        let resumedProxy: Awaited<ReturnType<typeof historyProxy>> | undefined;
-        try {
-            demo = await startDemo(data, module);
-            proxy = await historyProxy(demo.origin, mode);
-            mcp = await connectMcp(proxy.origin, journal);
-            const initial = value<{revision: Revision}>(await call(mcp.client, "read_document"));
-            assert.equal(value<{status: string}>(await call(mcp.client, "edit_document", {base: initial.revision,
-                edits: [{op: "insert", at: [0, 0], content: "abc"}]})).status, "confirmed");
-            if (action === "redo") assert.equal(value<{status: string}>(await call(mcp.client, "undo")).status, "confirmed");
-            proxy.arm();
-            const pendingAction = call(mcp.client, action).catch(() => undefined);
-            await proxy.barrier();
-            const checkpoint = await readFile(checkpointPath);
-            const pending = (JSON.parse(checkpoint.toString("utf8")) as {generation: string; client: {pending: unknown[]}});
-            assert.equal(pending.client.pending.length, 1);
-            await killMcp(mcp); mcp = undefined;
-            await deadline(pendingAction, `${action} completion after SIGKILL`);
-            await proxy.close(); proxy = undefined;
-            const beforeText = action === "undo" ? "abc" : "";
-            const afterText = action === "undo" ? "" : "abc";
-            assert.equal(text(await state(demo.origin)), mode === "after-accept" ? afterText : beforeText);
-            await stop(demo.child, "SIGKILL"); demo = undefined;
-            demo = await startDemo(data, module);
-            await userInsert(demo.origin);
-            const afterHuman = await state(demo.origin);
-            assert.equal(text(afterHuman), `Human ${mode === "after-accept" ? afterText : beforeText}`);
-            const originalReceipt = await post(demo.origin, "change-receipt", {generation: pending.generation, change: pending.client.pending[0]});
-            assert.equal(originalReceipt.status, mode === "after-accept" ? "accepted" : "unknown");
-            resumedProxy = await historyProxy(demo.origin, "pass");
-            mcp = await connectMcp(resumedProxy.origin, journal);
-            const recovery = value<{status: string; message?: string}>(await call(mcp.client, "recovery_status"));
-            assert.equal(recovery.status, "clear");
-            assert.equal(resumedProxy.changes(), 0, "pending change must not use the ordinary send path");
-            assert.equal(resumedProxy.recoveries(), 1, "the server atomically checks and recovers the exact change");
-            const view = value<{recoveryRequired: boolean; document: State["model"]}>(await call(mcp.client, "read_document"));
-            assert.equal(view.recoveryRequired, false);
-            assert.equal(text({model: view.document} as State), `Human ${afterText}`);
-            const accepted = await post(demo.origin, "change-receipt", {generation: pending.generation, change: pending.client.pending[0]});
-            assert.equal(accepted.status, "accepted");
-            if (mode === "after-accept") assert.equal(accepted.serverSeq, originalReceipt.serverSeq, "accepted history change is not appended twice");
-            await killMcp(mcp); mcp = undefined;
-            await resumedProxy.close(); resumedProxy = undefined;
-            await stop(demo.child, "SIGKILL"); demo = undefined;
-            demo = await startDemo(data, module);
-            mcp = await connectMcp(demo.origin, journal);
-            assert.equal(value<{status: string}>(await call(mcp.client, "recovery_status")).status, "clear");
-            assert.equal(text(await state(demo.origin)), `Human ${afterText}`, "repeated restart must not duplicate the history change");
-            assert.equal(value<{status: string}>(await call(mcp.client, action === "undo" ? "redo" : "undo")).status, "confirmed");
-            assert.equal(text(await state(demo.origin)), `Human ${beforeText}`);
-        } finally {
-            if (mcp) await killMcp(mcp);
-            await proxy?.close(); await resumedProxy?.close();
-            if (demo) await stop(demo.child);
-            await rm(root, {recursive: true, force: true});
+        timeout: 45000, skip: journalPlatformSkip,
+    }, () => historyRecoveryScenario(action, mode));
+}
+
+test("MCP startup waits for atomic recovery and repeated restart hello before stdio admission", {
+    timeout: 45000, skip: journalPlatformSkip,
+}, () => historyRecoveryScenario("undo", "after-accept", true));
+
+async function historyRecoveryScenario(action: "undo" | "redo", mode: "before-send" | "after-accept", controlledStartup = false) {
+    const root = await mkdtemp(join(tmpdir(), `doc-sync-undo-${mode}-`));
+    const data = join(root, "data"), journal = join(root, "journal"), module = join(root, "clock.mjs");
+    const checkpointPath = join(journal, `${document}.json.checkpoint`);
+    await writeFile(module, "export {};\n");
+    let demo: Awaited<ReturnType<typeof startDemo>> | undefined;
+    let mcp: Awaited<ReturnType<typeof connectMcp>> | undefined;
+    let proxy: Awaited<ReturnType<typeof historyProxy>> | undefined;
+    let resumedProxy: Awaited<ReturnType<typeof historyProxy>> | undefined;
+    let connecting: Promise<Awaited<ReturnType<typeof connectMcp>>> | undefined;
+    async function connectThroughGate(proxy: Awaited<ReturnType<typeof historyProxy>>, phase: "recover-change" | "stream") {
+        let connected = false;
+        connecting = connectMcp(proxy.origin, journal).then(result => { connected = true; return result; });
+        // Observe rejection even if waiting for the proxy barrier fails first.
+        void connecting.catch(() => undefined);
+        await proxy.gateSeen();
+        assert.equal(connected, false, `${phase}: stdio must wait for automatic recovery`);
+        if (phase === "recover-change") {
+            assert.equal(proxy.recoveries(), 1, "hold the first successful atomic recovery response");
+            assert.equal(proxy.streams(), 0, "atomic recovery must precede SSE admission");
+        } else {
+            assert.equal(proxy.streams(), 1, "hold the repeated restart hello");
+            assert.equal(proxy.recoveries(), 0, "settled checkpoint needs no atomic resubmission");
+            assert.equal(proxy.changes(), 0, "settled checkpoint needs no ordinary resend");
         }
-    });
+        proxy.releaseGate();
+        const result = await connecting;
+        connecting = undefined;
+        return result;
+    }
+    try {
+        demo = await startDemo(data, module);
+        proxy = await historyProxy(demo.origin, mode);
+        mcp = await connectMcp(proxy.origin, journal);
+        const initial = value<{revision: Revision}>(await call(mcp.client, "read_document"));
+        assert.equal(value<{status: string}>(await call(mcp.client, "edit_document", {base: initial.revision,
+            edits: [{op: "insert", at: [0, 0], content: "abc"}]})).status, "confirmed");
+        if (action === "redo") assert.equal(value<{status: string}>(await call(mcp.client, "undo")).status, "confirmed");
+        proxy.arm();
+        const pendingAction = call(mcp.client, action).catch(() => undefined);
+        await proxy.barrier();
+        const checkpoint = await readFile(checkpointPath);
+        const pending = (JSON.parse(checkpoint.toString("utf8")) as {generation: string; client: {pending: unknown[]}});
+        assert.equal(pending.client.pending.length, 1);
+        await killMcp(mcp); mcp = undefined;
+        await deadline(pendingAction, `${action} completion after SIGKILL`);
+        await proxy.close(); proxy = undefined;
+        const beforeText = action === "undo" ? "abc" : "";
+        const afterText = action === "undo" ? "" : "abc";
+        assert.equal(text(await state(demo.origin)), mode === "after-accept" ? afterText : beforeText);
+        await stop(demo.child, "SIGKILL"); demo = undefined;
+        demo = await startDemo(data, module);
+        await userInsert(demo.origin);
+        const afterHuman = await state(demo.origin);
+        assert.equal(text(afterHuman), `Human ${mode === "after-accept" ? afterText : beforeText}`);
+        const originalReceipt = await post(demo.origin, "change-receipt", {generation: pending.generation, change: pending.client.pending[0]});
+        assert.equal(originalReceipt.status, mode === "after-accept" ? "accepted" : "unknown");
+        resumedProxy = await historyProxy(demo.origin, "pass", controlledStartup ? "recover-change" : undefined);
+        mcp = controlledStartup ? await connectThroughGate(resumedProxy, "recover-change") : await connectMcp(resumedProxy.origin, journal);
+        const recovery = value<{status: string; message?: string}>(await call(mcp.client, "recovery_status"));
+        // Stdio startup awaits session.start(), including automatic recovery.
+        // A recovery error here is not an unfinished background operation.
+        assert.equal(recovery.status, "clear", JSON.stringify({action, mode, recovery, checkpoint: pending,
+            originalReceipt, afterHuman, changes: resumedProxy.changes(), recoveries: resumedProxy.recoveries(), stderr: mcp.diagnostics()}));
+        assert.equal(resumedProxy.changes(), 0, "pending change must not use the ordinary send path");
+        assert.equal(resumedProxy.recoveries(), 1, "the server atomically checks and recovers the exact change");
+        const view = value<{recoveryRequired: boolean; document: State["model"]}>(await call(mcp.client, "read_document"));
+        assert.equal(view.recoveryRequired, false);
+        assert.equal(text({model: view.document} as State), `Human ${afterText}`);
+        const accepted = await post(demo.origin, "change-receipt", {generation: pending.generation, change: pending.client.pending[0]});
+        assert.equal(accepted.status, "accepted");
+        if (mode === "after-accept") assert.equal(accepted.serverSeq, originalReceipt.serverSeq, "accepted history change is not appended twice");
+        if (controlledStartup) {
+            const settled = JSON.parse(await readFile(checkpointPath, "utf8")) as {client: {pending: unknown[]}};
+            assert.equal(settled.client.pending.length, 0, "healthy recovery persists a settled checkpoint");
+        }
+        await killMcp(mcp); mcp = undefined;
+        await resumedProxy.close(); resumedProxy = undefined;
+        await stop(demo.child, "SIGKILL"); demo = undefined;
+        demo = await startDemo(data, module);
+        if (controlledStartup) {
+            resumedProxy = await historyProxy(demo.origin, "pass", "stream");
+            mcp = await connectThroughGate(resumedProxy, "stream");
+        } else {
+            mcp = await connectMcp(demo.origin, journal);
+        }
+        const repeatedResponse = await call(mcp.client, "recovery_status");
+        const repeatedRecovery = repeatedResponse.structuredContent as {status: string; message?: string} | undefined;
+        const repeatedDiagnostic = JSON.stringify({stage: "repeated-restart", action, mode,
+            response: repeatedResponse, stderr: mcp.diagnostics()});
+        assert.equal(repeatedResponse.isError, undefined, repeatedDiagnostic);
+        assert.equal(repeatedRecovery?.status, "clear", repeatedDiagnostic);
+        if (controlledStartup) {
+            assert.equal(resumedProxy!.recoveries(), 0, "repeated startup must not recover settled history again");
+            assert.equal(resumedProxy!.changes(), 0, "repeated startup must not resend settled history");
+        }
+        assert.equal(text(await state(demo.origin)), `Human ${afterText}`, "repeated restart must not duplicate the history change");
+        assert.equal(value<{status: string}>(await call(mcp.client, action === "undo" ? "redo" : "undo")).status, "confirmed");
+        assert.equal(text(await state(demo.origin)), `Human ${beforeText}`);
+    } finally {
+        if (connecting) {
+            resumedProxy?.releaseGate();
+            mcp = await connecting.catch(() => undefined);
+        }
+        if (mcp) await killMcp(mcp);
+        await proxy?.close(); await resumedProxy?.close();
+        if (demo) await stop(demo.child);
+        await rm(root, {recursive: true, force: true});
+    }
 }
 
 test("unavailable atomic recovery keeps the pending checkpoint and blocks edits until a later restart", {
@@ -412,7 +482,7 @@ test("unavailable atomic recovery keeps the pending checkpoint and blocks edits 
         });
         assert.equal(transition.isError, true);
         assert.match(JSON.stringify(transition), /Resolve recovery before changing schema/);
-        assert.equal(failedProxy.recoveries(), 1);
+        assert.equal(failedProxy.recoveries(), 4, "temporary HTTP failure exhausts the bounded atomic-recovery attempts");
         assert.equal(failedProxy.changes(), 0);
         assert.deepEqual(await readFile(checkpointPath), original, "unproven recovery preserves the checkpoint bytes");
         assert.deepEqual((await state(demo.origin)).model, afterHuman.model);

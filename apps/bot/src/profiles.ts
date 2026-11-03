@@ -5,20 +5,26 @@ import {join, resolve} from 'node:path';
 import type {BotCharacter} from '@barocss/doc-sync/sync';
 import type {Personality, Role} from './runner.ts';
 
+const BOT_CHARACTERS = Object.freeze(['cat','fox','owl','robot']);
+const BOT_PERSONALITIES = Object.freeze(['curious','careful','creative','concise']);
+const BOT_ROLES = Object.freeze(['writer','reviewer','organizer']);
+const SERVER_URL_PROTOCOLS = Object.freeze(['http:','https:']);
+
+
 export type ProfileInput = {id:string; name:string; character:BotCharacter; personality:Personality; role:Role; color:string};
 export type BotProfile = ProfileInput & {version:1; identity:string};
 const validId=(id:string)=>typeof id==='string'&&/^[a-zA-Z0-9_-]{1,80}$/.test(id);
 function validate(profile: BotProfile): void {
  if (!validId(profile.id)) throw Error('Invalid profile ID');
  if (profile.version!==1 || typeof profile.identity!=='string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(profile.identity) ||
-     typeof profile.name!=='string' || !profile.name.trim() || profile.name.length>80 || !['cat','fox','owl','robot'].includes(profile.character) ||
-     !['curious','careful','creative','concise'].includes(profile.personality) || !['writer','reviewer','organizer'].includes(profile.role) ||
+     typeof profile.name!=='string' || !profile.name.trim() || profile.name.length>80 || !BOT_CHARACTERS.includes(profile.character) ||
+     !BOT_PERSONALITIES.includes(profile.personality) || !BOT_ROLES.includes(profile.role) ||
      typeof profile.color!=='string' || !/^#[0-9a-f]{6}$/i.test(profile.color)) throw Error('Invalid bot profile');
 }
 /** Normalize the endpoint once for both the stable actor and journal key. */
 export function profileUrl(url: string): string {
  const parsed=new URL(url);
- if(!['http:','https:'].includes(parsed.protocol)||parsed.username||parsed.password||parsed.search||parsed.hash)throw Error('Invalid profile server URL');
+ if(!SERVER_URL_PROTOCOLS.includes(parsed.protocol)||parsed.username||parsed.password||parsed.search||parsed.hash)throw Error('Invalid profile server URL');
  return parsed.origin+parsed.pathname.replace(/\/+$/,'');
 }
 export function profileActor(profile: BotProfile,url:string,document:string):string {

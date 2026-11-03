@@ -61,8 +61,8 @@ async function environment() {
     let releaseResponse: (() => void) | undefined;
     let proxy: ReturnType<typeof createServer> | undefined;
     try {
-        await until(() => /http:\/\/localhost:\d+/.test(stdout), 'demo readiness');
-        const origin = stdout.match(/http:\/\/localhost:\d+/)![0].replace('localhost', '127.0.0.1');
+        await until(() => /http:\/\/localhost:\d+(?=\r?\n)/.test(stdout), 'demo readiness');
+        const origin = stdout.match(/http:\/\/localhost:\d+(?=\r?\n)/)![0].replace('localhost', '127.0.0.1');
         proxy = createServer((req, res) => {
             const isStream = !!req.url?.includes('/stream');
             const isConditional = req.method === 'POST' && !!req.url?.endsWith('/conditional');
@@ -344,5 +344,40 @@ test('ready EOF drains already admitted accepted work before closing durable own
         assert.equal(env.counts().conditional, 1, 'no duplicate on admitted-work restart');
         assert.equal(text(await state(env.origin)), 'AI');
         resumed.eof(); assert.deepEqual(await deadline(resumed.exited(), 'admitted restart EOF'), {code: 0, signal: null});
+    } finally { await env.close(); }
+});
+
+for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+    test(`${signal} during schema bootstrap closes normally without an input error`, {timeout: 12000}, async () => {
+        const env = await environment();
+        try {
+            const child = env.launch({DOC_SYNC_SCHEMA: await env.schema()});
+            await until(() => child.errors().includes('lifecycle:schema-wait'), 'signal schema barrier');
+            assert.equal(child.child().kill(signal), true);
+            assert.deepEqual(await deadline(child.exited(), 'signal bootstrap exit'), {code: 0, signal: null});
+            assert.doesNotMatch(child.errors(), /MCP (?:input|startup|cleanup) failure/);
+            assert.equal(env.counts().activeStreams, 0);
+            assert.equal(env.counts().conditional, 0);
+            assert.equal((await state(env.origin)).serverSeq, 0);
+        } finally { await env.close(); }
+    });
+}
+
+test('ready signal and EOF share idempotent cleanup and release durable ownership', {timeout: 12000}, async () => {
+    const env = await environment();
+    try {
+        const child = env.launch();
+        await deadline(child.connected, 'ready signal handshake');
+        assert.equal(child.child().kill('SIGTERM'), true);
+        child.eof();
+        assert.deepEqual(await deadline(child.exited(), 'ready signal exit'), {code: 0, signal: null});
+        assert.doesNotMatch(child.errors(), /MCP (?:input|startup|cleanup) failure/);
+        await until(() => env.counts().activeStreams === 0, 'ready signal SSE close');
+        await unlocked(env.journalPath);
+        const resumed = env.launch();
+        await deadline(resumed.connected, 'ready signal restart');
+        assert.equal((await value(resumed.client, 'recovery_status')).status, 'clear');
+        resumed.eof();
+        assert.deepEqual(await deadline(resumed.exited(), 'ready signal restart exit'), {code: 0, signal: null});
     } finally { await env.close(); }
 });

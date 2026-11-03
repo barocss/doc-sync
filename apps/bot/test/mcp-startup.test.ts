@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import {spawn} from "node:child_process";
 import {randomUUID} from "node:crypto";
 import {mkdir, mkdtemp, readFile, rm, writeFile} from "node:fs/promises";
-import {createRequire} from "node:module";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {test} from "node:test";
@@ -12,7 +11,7 @@ import type {Mission} from "../src/runner.ts";
 const runner = new URL("../src/runner.ts", import.meta.url).href;
 const mcpMain = fileURLToPath(new URL("../../mcp/src/main.ts", import.meta.url));
 // Resolve from the project, not from the temporary preload directory.
-const nodeTransport = pathToFileURL(createRequire(import.meta.url).resolve("@barocss/doc-sync/node")).href;
+const nodeTransport = import.meta.resolve("@barocss/doc-sync/node");
 const cases = ["schema discovery failure", "split known marker", "unknown and oversized stderr"] as const;
 
 for (const scenario of cases) test(`mission startup provenance: ${scenario}`, {timeout: 35_000}, async () => {
@@ -63,7 +62,7 @@ for (const scenario of cases) test(`mission startup provenance: ${scenario}`, {t
     // Each driver has its own process group. The watchdog cannot kill a foreign child.
     const child = spawn(process.execPath, [driver], {
         detached: true,
-        env: {...process.env, DOC_SYNC_SCHEMA: schema, NODE_OPTIONS: `--import=${pathToFileURL(preload).href}`},
+        env: {...process.env, DOC_SYNC_SCHEMA: schema, NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} --import=${pathToFileURL(preload).href}`},
         stdio: ["ignore", "ignore", "pipe"],
     });
     let diagnostics = "", expired = false;

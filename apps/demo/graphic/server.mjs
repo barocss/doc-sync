@@ -6,6 +6,15 @@ import {DocHub} from '@barocss/doc-sync/server';
 import {Client} from '@barocss/doc-sync/client';
 import {PROTOCOL_VERSION} from '@barocss/doc-sync/sync';
 import {CANVAS_SCHEMA, CANVAS_SAMPLE, makeCanvasScene} from '../../../fixtures/graphic-canvas-schema.ts';
+
+const GRAPHIC_HTML_ASSET = Object.freeze(['index.html', 'text/html']);
+const GRAPHIC_SCRIPT_ASSET = Object.freeze(['../../../output/graphic-demo/main.js', 'text/javascript']);
+const GRAPHIC_STYLE_ASSET = Object.freeze(['style.css', 'text/css']);
+
+const LOOPBACK_HOST_NAMES = Object.freeze(['127.0.0.1', 'localhost', '[::1]']);
+const GRAPHIC_SCENARIO_SIZES = Object.freeze(['sample', 100, 1000, 5000]);
+const LARGE_GRAPHIC_SCENARIO_SIZES = Object.freeze([1000, 5000]);
+
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 const MAX_BODY = 8 * 1024 * 1024;
 /** This server has no persistence. Each process owns its own bounded document rooms. */
@@ -27,13 +36,13 @@ export function createGraphicServer({maxRooms = 16} = {}) {
         const send = (code, value) => { res.writeHead(code, {'content-type': 'application/json', 'cache-control': 'no-store'}); res.end(JSON.stringify(value)); };
         try {
             const url = new URL(req.url, 'http://localhost');
-            if (!['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)) return send(403, {error: 'Local access only'});
+            if (!LOOPBACK_HOST_NAMES.includes(url.hostname)) return send(403, {error: 'Local access only'});
             if (req.headers.origin && !/^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/.test(req.headers.origin)) return send(403, {error: 'Local origin required'});
             if (url.pathname === '/api/graphic/rooms' && req.method === 'POST') {
                 let bytes = 0, chunks = [];
                 for await (const chunk of req) { bytes += chunk.length; if (bytes > 1024) return send(413, {error: 'Payload limit'}); chunks.push(chunk); }
                 let body; try { body = JSON.parse(Buffer.concat(chunks).toString()); } catch { return send(400, {error: 'Malformed JSON'}); }
-                if (!body || typeof body.doc !== 'string' || !/^[\w~-]{1,80}$/.test(body.doc) || !['sample', 100, 1000, 5000].includes(body.count)) return send(400, {error: 'Invalid room request'});
+                if (!body || typeof body.doc !== 'string' || !/^[\w~-]{1,80}$/.test(body.doc) || !GRAPHIC_SCENARIO_SIZES.includes(body.count)) return send(400, {error: 'Invalid room request'});
                 const count = body.count === 'sample' ? null : body.count;
                 if (rooms.has(body.doc) && sizes.get(body.doc) !== count) return send(409, {error: 'Room already exists with a different initial scene'});
                 const existed = rooms.has(body.doc); room(body.doc, count); return send(existed ? 200 : 201, {doc: body.doc, count: body.count, created: !existed, storage: 'memory'});
@@ -41,7 +50,7 @@ export function createGraphicServer({maxRooms = 16} = {}) {
             const match = /^\/api\/docs\/([\w~-]{1,80})\/(stream|changes|ack|presence|leave|state)$/.exec(url.pathname);
             if (!match) {
                 if (req.method !== 'GET') return send(405, {error: 'Method not allowed'});
-                const files = {'/': ['index.html', 'text/html'], '/index.html': ['index.html', 'text/html'], '/main.js': ['../../../output/graphic-demo/main.js', 'text/javascript'], '/style.css': ['style.css', 'text/css']};
+                const files = {'/': GRAPHIC_HTML_ASSET, '/index.html': GRAPHIC_HTML_ASSET, '/main.js': GRAPHIC_SCRIPT_ASSET, '/style.css': GRAPHIC_STYLE_ASSET};
                 const file = files[url.pathname]; if (!file) return send(404, {error: 'Not found'});
                 const content = await readFile(resolve(HERE, file[0])); res.writeHead(200, {'content-type': file[1], 'cache-control': 'no-store'}); return res.end(content);
             }
@@ -50,7 +59,7 @@ export function createGraphicServer({maxRooms = 16} = {}) {
             const protocol = action === 'stream' ? url.searchParams.get('protocol') : req.headers['x-doc-sync-protocol'];
             if (protocol !== String(PROTOCOL_VERSION)) return send(426, {error: 'Unsupported protocol', protocol: PROTOCOL_VERSION});
             let count = null;
-            if (url.searchParams.has('count')) { count = Number(url.searchParams.get('count')); if (![1000, 5000].includes(count)) return send(400, {error: 'Invalid scene count'}); }
+            if (url.searchParams.has('count')) { count = Number(url.searchParams.get('count')); if (!LARGE_GRAPHIC_SCENARIO_SIZES.includes(count)) return send(400, {error: 'Invalid scene count'}); }
             const hub = room(name, count);
             if (action === 'stream') {
                 if (req.method !== 'GET') return send(405, {error: 'Method not allowed'});

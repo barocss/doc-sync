@@ -1,3 +1,6 @@
+
+
+const PERSISTED_EDITOR_NAMES = Object.freeze(['ProseMirror', 'Slate', 'Lexical', 'Tiptap']);
 // Storage belongs to the application. Each save replaces one browser key atomically.
 export const DEFAULT_STORAGE_KEY = 'doc-sync:client-demo:local:v1';
 const FORMAT = 'doc-sync-client-demo-v1';
@@ -15,7 +18,7 @@ export function openLocal(storage, key, restore) {
     try {
         const selections = {};
         for (const [name, selection] of Object.entries(envelope.selections)) {
-            if (!['ProseMirror', 'Slate', 'Lexical', 'Tiptap'].includes(name)) throw Error('Invalid saved view');
+            if (!PERSISTED_EDITOR_NAMES.includes(name)) throw Error('Invalid saved view');
             const resolved = client.resolveSelection(selection);
             if (selection !== null && !resolved) throw Error('Invalid saved selection');
             selections[name] = resolved;

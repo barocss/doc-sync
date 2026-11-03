@@ -9,6 +9,12 @@ import type {Change} from "@barocss/doc-sync/sync";
 import {SyncClient} from "@barocss/doc-sync/sync";
 import type {ClientCheckpoint, Transport} from "@barocss/doc-sync/sync";
 
+const JOURNAL_REQUEST_FIELDS = Object.freeze(["base", "change", "edits", "generation", "schema", "snapshot"]);
+const REVISION_FIELDS = Object.freeze(["epoch", "schemaVersion", "serverSeq"]);
+const CHANGE_FIELDS = Object.freeze(["actor", "ops", "seq"]);
+const JOURNAL_RECORD_FIELDS = Object.freeze(["format", "state", "document", "actor", "generation", "base", "change", "edits", "snapshot", "schema", "requestDigest", "recordDigest"].sort());
+const RELEASE_PENDING_FIELDS = Object.freeze(["releasePending"]);
+
 export type RecoveryCheckpoint = {
     format: 1; document: string; actor: string; generation: string; epoch: string;
     reservationId: string; reservationConfirmed: boolean; sourceIntentDigest: string | null;
@@ -66,14 +72,14 @@ function assertPlainJson(value: unknown, active = new Set<object>(), depth = 0):
 function validateIntent(input: PreparedIntent, actor: string): void {
     assertPlainJson(input);
     if (!input || typeof input !== "object" || Array.isArray(input) ||
-        JSON.stringify(Object.keys(input).sort()) !== JSON.stringify(["base", "change", "edits", "generation", "schema", "snapshot"])) throw new Error("Invalid journal intent fields");
+        JSON.stringify(Object.keys(input).sort()) !== JSON.stringify(JOURNAL_REQUEST_FIELDS)) throw new Error("Invalid journal intent fields");
     if (typeof input.generation !== "string" || !input.generation || input.generation.length > 256) throw new Error("Invalid document generation");
     const base = input.base, change = input.change;
     if (!base || typeof base.epoch !== "string" || !base.epoch || !Number.isSafeInteger(base.serverSeq) || base.serverSeq < 0 ||
         !(typeof base.schemaVersion === "string" || base.schemaVersion === null) ||
-        JSON.stringify(Object.keys(base).sort()) !== JSON.stringify(["epoch", "schemaVersion", "serverSeq"])) throw new Error("Invalid journal base");
+        JSON.stringify(Object.keys(base).sort()) !== JSON.stringify(REVISION_FIELDS)) throw new Error("Invalid journal base");
     if (!change || change.actor !== actor || !Number.isSafeInteger(change.seq) || change.seq < 1 || !Array.isArray(change.ops) || !Array.isArray(input.edits) ||
-        JSON.stringify(Object.keys(change).sort()) !== JSON.stringify(["actor", "ops", "seq"])) throw new Error("Invalid journal change");
+        JSON.stringify(Object.keys(change).sort()) !== JSON.stringify(CHANGE_FIELDS)) throw new Error("Invalid journal change");
     const version = schemaVersion(input.schema);
     if (base.schemaVersion !== null && version !== base.schemaVersion) throw new Error("Journal schema does not match its base");
     const draft = Doc.fromSnapshot(actor, input.snapshot, input.schema);
@@ -95,7 +101,7 @@ export function parseJournalRecord(parsed: unknown, document: string, actor?: st
     assertPlainJson(parsed);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("Invalid journal record; original file was preserved");
     const record = parsed as JournalRecord;
-    const keys = ["format", "state", "document", "actor", "generation", "base", "change", "edits", "snapshot", "schema", "requestDigest", "recordDigest"].sort();
+    const keys = JOURNAL_RECORD_FIELDS;
     if (JSON.stringify(Object.keys(record).sort()) !== JSON.stringify(keys) || record.format !== 1 || record.state !== "may_have_been_sent" ||
         record.document !== document || typeof record.actor !== "string" || !/^[\w~-]{1,256}$/.test(record.actor) ||
         typeof record.requestDigest !== "string" || typeof record.recordDigest !== "string" ||
@@ -190,7 +196,7 @@ export class IntentJournal {
         if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Invalid checkpoint; original file was preserved");
         const record = input as RecoveryCheckpoint;
         const {recordDigest, ...rest} = record;
-        const expectedKeys = ["actor", "client", "document", "epoch", "format", "generation", "recordDigest", "reservationConfirmed", "reservationId", "schema", "sourceIntentDigest", ...(Object.hasOwn(record, "releasePending") ? ["releasePending"] : [])].sort();
+        const expectedKeys = ["actor", "client", "document", "epoch", "format", "generation", "recordDigest", "reservationConfirmed", "reservationId", "schema", "sourceIntentDigest", ...(Object.hasOwn(record, "releasePending") ? RELEASE_PENDING_FIELDS : [])].sort();
         if (JSON.stringify(Object.keys(record).sort()) !== JSON.stringify(expectedKeys) ||
             record.format !== 1 || record.document !== this.document || typeof record.actor !== "string" || !/^[\w~-]{1,256}$/.test(record.actor) ||
             typeof record.generation !== "string" || !record.generation || record.generation.length > 256 || typeof record.epoch !== "string" || !record.epoch ||
@@ -219,7 +225,7 @@ export class IntentJournal {
         return this.serial(async () => {
             this.ensureOpen();
             assertPlainJson(input);
-            const expectedKeys = ["client", "epoch", "generation", "reservationConfirmed", "reservationId", "schema", "sourceIntentDigest", ...(input && Object.hasOwn(input, "releasePending") ? ["releasePending"] : [])].sort();
+            const expectedKeys = ["client", "epoch", "generation", "reservationConfirmed", "reservationId", "schema", "sourceIntentDigest", ...(input && Object.hasOwn(input, "releasePending") ? RELEASE_PENDING_FIELDS : [])].sort();
             if (!input || JSON.stringify(Object.keys(input).sort()) !== JSON.stringify(expectedKeys) ||
                 typeof input.generation !== "string" || !input.generation || input.generation.length > 256 || typeof input.epoch !== "string" || !input.epoch ||
                 typeof input.reservationId !== "string" || !/^[\w~-]{1,256}$/.test(input.reservationId) || typeof input.reservationConfirmed !== "boolean" || !(input.sourceIntentDigest === null || /^[a-f0-9]{64}$/.test(input.sourceIntentDigest)) ||

@@ -1,6 +1,9 @@
 import type {FlowSpec, Schema} from "./schema.ts";
 import type {Ticket} from "./ticket.ts";
 
+const CARDINALITY_NODE_SHAPES = Object.freeze(["text", "flow", "container", "grid", "atom", "group"]);
+
+
 export type ChildRule = {min?: number; max?: number};
 export type RequiredAddress = {parent: string; type: string; ordinal: number};
 const PREFIX = "~required:";
@@ -23,7 +26,7 @@ export function requiredType(schema: Schema, type: string): string {
 export function childRuleProblems(schema: Schema, type: string, spec: FlowSpec): string[] {
     const problems: string[] = [];
     for (const [child, rule] of Object.entries(spec.childRules ?? {})) {
-        if (!["text", "flow", "container", "grid", "atom", "group"].includes(schema.nodes[child]?.shape ?? "")) problems.push(`${type}.childRules.${child} must name a block or group`);
+        if (!CARDINALITY_NODE_SHAPES.includes(schema.nodes[child]?.shape ?? "")) problems.push(`${type}.childRules.${child} must name a block or group`);
         if (!spec.children.includes(child)) problems.push(`${type}.childRules.${child} is not a declared child`);
         if (!rule || typeof rule !== "object" || Array.isArray(rule)) { problems.push(`${type}.childRules.${child} must be an object`); continue; }
         for (const value of [rule.min, rule.max]) if (value !== undefined && (!Number.isSafeInteger(value) || value < 0 || value > 1000)) problems.push(`${type}.childRules.${child} bounds must be integers from 0 to 1000`);

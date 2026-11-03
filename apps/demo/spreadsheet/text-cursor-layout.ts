@@ -1,7 +1,10 @@
+
+
+const TEXT_SELECTION_INPUT_TYPES = Object.freeze(['text','search','url','tel','password']);
 /** DOM shaping is the source of truth for UTF-16 caret and selection geometry. */
 export type TextCursorSelection={start:number;end:number;direction:'forward'|'backward'|'none'};
 export function textInputSelection(control:HTMLInputElement):TextCursorSelection|undefined{
- if(!['text','search','url','tel','password'].includes(control.type))return;
+ if(!TEXT_SELECTION_INPUT_TYPES.includes(control.type))return;
  if(control.selectionStart===null||control.selectionEnd===null)return;
  return {start:control.selectionStart,end:control.selectionEnd,direction:control.selectionDirection??'none'};
 }

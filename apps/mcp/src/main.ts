@@ -23,129 +23,147 @@ function diagnostic(kind: string, phase: string, error: unknown) {
     process.exitCode = 1;
 }
 
-async function main() {
-    let phase = "input";
-    let closing = false;
-    let ready = false;
-    let failed = false;
-    let journal: IntentJournal | null = null;
-    let session: DocumentSession | undefined;
-    let transport: NodeHttpTransport | undefined;
-    let server: ReturnType<typeof createServer> | undefined;
-    let stdio: StdioServerTransport | undefined;
-    let cleanup: Promise<void> | undefined;
-    let bootstrap: Promise<void>;
-    const cancelled = new Error("Startup cancelled");
-    const checkOpen = () => { if (closing) throw cancelled; };
-    const input = ownStdioInput(requestClose);
-    const signal = () => requestClose();
-    process.on("SIGINT", signal);
-    process.on("SIGTERM", signal);
+/** One process owns input, bootstrap and pending-safe cleanup. */
+class StdioLifecycle {
+    private phase = "input";
+    private closing = false;
+    private ready = false;
+    private failed = false;
+    private journal: IntentJournal | null = null;
+    private session: DocumentSession | undefined;
+    private transport: NodeHttpTransport | undefined;
+    private server: ReturnType<typeof createServer> | undefined;
+    private stdio: StdioServerTransport | undefined;
+    private cleanup: Promise<void> | undefined;
+    private bootstrap!: Promise<void>;
+    private readonly cancelled = new Error("Startup cancelled");
+    private readonly input: ReturnType<typeof ownStdioInput>;
+    // A signal callback receives a string, not an input error.
+    private readonly signal = () => this.requestClose();
+    private readonly onInputClose = (error?: unknown) => this.requestClose(error);
+    private readonly scheduleCleanup = () => { void this.clean(); };
 
-    function requestClose(error?: unknown) {
-        if (error !== undefined) diagnostic("input failure", phase, error);
-        if (!closing) {
-            closing = true;
-            input.close();
+    constructor() {
+        this.input = ownStdioInput(this.onInputClose);
+        process.on("SIGINT", this.signal);
+        process.on("SIGTERM", this.signal);
+    }
+
+    private checkOpen(): void { if (this.closing) throw this.cancelled; }
+
+    private requestClose(error?: unknown): void {
+        if (error !== undefined) diagnostic("input failure", this.phase, error);
+        if (!this.closing) {
+            this.closing = true;
+            this.input.close();
         }
-        // Defer until bootstrap has been assigned, including already-ended stdin.
-        queueMicrotask(() => { void clean(); });
+        // Also defer already-ended stdin until bootstrap has been assigned.
+        queueMicrotask(this.scheduleCleanup);
     }
 
-    function clean(): Promise<void> {
-        return cleanup ??= (async () => {
-            // Never close a journal while its owner is still initializing it.
-            await bootstrap.catch(() => undefined);
-            const attempt = async (action: () => Promise<void>) => {
-                try { await action(); }
-                catch (error) { diagnostic("cleanup failure", phase, error); }
-            };
-            try {
-                if (server) await attempt(() => server!.close());
-                else if (stdio) await attempt(() => stdio!.close());
-                if (session) {
-                    try {
-                        if (ready && !failed) await shutdownSession(session, transport!);
-                        else await session.close();
-                    } catch (error) {
-                        diagnostic("cleanup failure", phase, error);
-                        // A failed drain must not retain the local SSE or writer lock.
-                        await attempt(async () => session!.disconnect());
-                    }
+    private clean(): Promise<void> { return this.cleanup ??= this.closeResources(); }
+
+    private async closeResource(resource: {close(): Promise<void>}): Promise<void> {
+        try { await resource.close(); }
+        catch (error) { diagnostic("cleanup failure", this.phase, error); }
+    }
+
+    private async closeResources(): Promise<void> {
+        // Bootstrap never awaits cleanup. Do not close a journal during its open/read.
+        try { await this.bootstrap; } catch { /* Startup reports its own failure. */ }
+        try {
+            if (this.server) await this.closeResource(this.server);
+            else if (this.stdio) await this.closeResource(this.stdio);
+            if (this.session) {
+                try {
+                    if (this.ready && !this.failed) await shutdownSession(this.session, this.transport!);
+                    else await this.session.close();
+                } catch (error) {
+                    diagnostic("cleanup failure", this.phase, error);
+                    try { this.session.disconnect(); }
+                    catch (error) { diagnostic("cleanup failure", this.phase, error); }
                 }
-                if (journal) await attempt(() => journal!.close());
-            } finally {
-                input.close();
-                process.off("SIGINT", signal);
-                process.off("SIGTERM", signal);
             }
-        })();
+            if (this.journal) await this.closeResource(this.journal);
+        } finally {
+            this.input.close();
+            process.off("SIGINT", this.signal);
+            process.off("SIGTERM", this.signal);
+        }
     }
 
-    bootstrap = (async () => {
-        checkOpen();
+    private async start(): Promise<void> {
+        this.checkOpen();
         const origin = process.env.DOC_SYNC_URL ?? "http://127.0.0.1:5410";
         const document = process.env.DOC_SYNC_DOCUMENT ?? "default";
         const actorHint = process.env.DOC_SYNC_ACTOR;
         const modulePath = process.env.DOC_SYNC_SCHEMA;
         let schema: Schema = DEMO_SCHEMA;
         if (modulePath) {
-            phase = "schema-import";
+            this.phase = "schema-import";
             const loaded = await import(pathToFileURL(resolve(modulePath)).href) as {schema?: Schema; default?: Schema};
-            checkOpen();
+            this.checkOpen();
             if (!loaded.schema && !loaded.default) throw new Error("Schema module must export schema or default");
             schema = (loaded.schema ?? loaded.default)!;
         }
         else if (process.env.DOC_SYNC_DISCOVER_SCHEMA === "on") {
             // Schema is data, not executable code. The transport validates its fingerprint.
-            phase = "schema-discovery";
+            this.phase = "schema-discovery";
             const probe = new NodeHttpTransport(document, actorHint ?? "schema-probe", origin);
             const discovered = await probe.getSchema();
-            checkOpen();
+            this.checkOpen();
             if (!discovered.schema || !discovered.schemaVersion) throw new Error("The server must provide a verifiable schema");
             schema = discovered.schema;
         }
         // Use a stable per-document location so an interrupted request is found on restart.
         // Applications that explicitly choose the previous ephemeral behavior can disable it.
-        phase = "journal-open";
-        checkOpen();
-        journal = process.env.DOC_SYNC_JOURNAL === "off" ? null : await IntentJournal.open(
+        this.phase = "journal-open";
+        this.checkOpen();
+        this.journal = process.env.DOC_SYNC_JOURNAL === "off" ? null : await IntentJournal.open(
             join(resolve(process.env.DOC_SYNC_JOURNAL_DIR ?? join(homedir(), ".local", "state", "doc-sync", "recovery")), `${document}.json`),
             {document, actor: actorHint},
         );
-        checkOpen();
-        phase = "journal-read";
-        const recovered = journal ? await journal.read() : null;
-        checkOpen();
-        const checkpoint = journal ? await journal.readCheckpoint() : null;
-        checkOpen();
-        const actor = journal?.actor ?? actorHint ?? `ai-${randomUUID()}`;
-        transport = new NodeHttpTransport(document, actor, origin);
+        this.checkOpen();
+        this.phase = "journal-read";
+        const recovered = this.journal ? await this.journal.read() : null;
+        this.checkOpen();
+        const checkpoint = this.journal ? await this.journal.readCheckpoint() : null;
+        this.checkOpen();
+        const actor = this.journal?.actor ?? actorHint ?? `ai-${randomUUID()}`;
+        this.transport = new NodeHttpTransport(document, actor, origin);
         const bridge=process.env.DOC_SYNC_MISSION_BRIDGE;
-        if (bridge && !journal) throw Error("Mission evidence requires a durable journal");
-        phase = "session-create";
-        checkOpen();
-        session = new DocumentSession(actor, transport, recovered?.schema ?? checkpoint?.schema ?? schema, 10_000, journal, bridge ? (step,record)=>saveStepEvidence(bridge,step,record) : undefined);
-        phase = "session-start";
-        await session.start();
-        checkOpen();
-        phase = "stdio-connect";
-        server = createServer(session);
-        server.server.onclose = () => requestClose();
-        stdio = new StdioServerTransport(input.input);
-        await server.connect(stdio);
-        checkOpen();
-        ready = true;
-        phase = "ready";
-        input.releaseBootstrap();
-    })();
-    try { await bootstrap; }
-    catch (error) {
-        failed = true;
-        if (error !== cancelled) diagnostic("startup failure", phase, error);
-        requestClose();
+        if (bridge && !this.journal) throw Error("Mission evidence requires a durable journal");
+        this.phase = "session-create";
+        this.checkOpen();
+        this.session = new DocumentSession(actor, this.transport, recovered?.schema ?? checkpoint?.schema ?? schema, 10_000, this.journal, bridge ? (step,record)=>saveStepEvidence(bridge,step,record) : undefined);
+        this.phase = "session-start";
+        await this.session.start();
+        this.checkOpen();
+        this.phase = "stdio-connect";
+        this.server = createServer(this.session);
+        this.server.server.onclose = this.signal;
+        this.stdio = new StdioServerTransport(this.input.input);
+        await this.server.connect(this.stdio);
+        this.checkOpen();
+        this.ready = true;
+        this.phase = "ready";
+        this.input.releaseBootstrap();
     }
-    if (closing) await clean();
+
+    async run(): Promise<void> {
+        this.bootstrap = this.start();
+        try { await this.bootstrap; }
+        catch (error) {
+            this.failed = true;
+            if (error !== this.cancelled) diagnostic("startup failure", this.phase, error);
+            this.requestClose();
+        }
+        if (this.closing) await this.clean();
+    }
+}
+
+async function main(): Promise<void> {
+    await new StdioLifecycle().run();
 }
 
 void main().catch(error => diagnostic("lifetime failure", "main", error));

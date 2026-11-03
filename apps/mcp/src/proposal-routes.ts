@@ -4,6 +4,9 @@ import {routePath} from "./hosted-config.ts";
 import {createProposalSchema, digest, POLICY_FINGERPRINT, proposalId, rejectProposalSchema, type CreateProposal, type ProposalOwner} from "./proposal-schema.ts";
 import {ProposalConflict, ProposalQuota, ProposalStore} from "./proposal-store.ts";
 import {previewReplacement} from "./proposal-preview.ts";
+
+const UNSETTLED_PROPOSAL_STATUSES = Object.freeze(["applying", "unconfirmed", "needs_attention"]);
+
 export class ProposalHttpError extends Error { readonly status: number; constructor(status: number) { super("Proposal request rejected"); this.status = status; } }
 export type ProposalCapture = (route: HostedRoute, grant: HostedGrant, request?: CreateProposal) => Promise<{base: CreateProposal["base"]; source?: string}>;
 export function proposalCapability(method: string | undefined, suffix: string): "proposal_create" | "proposal_read" | "proposal_decide" | "proposal_accept" {
@@ -35,7 +38,7 @@ export async function handleProposal(options: {req: IncomingMessage; res: Server
         if (request) {
             const existing = await store.get(proposalId(owner, request.requestId));
             if (existing) { if (digest(existing.payload.request) !== digest(request)) throw new ProposalConflict(); const record = await store.create(existing.payload); respond({id: record.payload.id, status: record.status, proposalDigest: record.proposalDigest}); return; }
-            if ((await store.list()).some(r => ["applying", "unconfirmed", "needs_attention"].includes(r.status))) throw new ProposalHttpError(409);
+            if ((await store.list()).some(r => UNSETTLED_PROPOSAL_STATUSES.includes(r.status))) throw new ProposalHttpError(409);
             const captured = await capture(route, grant, request);
             if (captured.source === undefined) throw new Error("Missing source");
             const payload = {format: 1 as const, id: proposalId(owner, request.requestId), owner, request, ...previewReplacement(captured.source, request.change), policyFingerprint: POLICY_FINGERPRINT};

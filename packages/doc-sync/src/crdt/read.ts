@@ -5,6 +5,9 @@ import type {Block, Doc} from "./doc.ts";
 import type {NodeJSON, Run} from "./model.ts";
 import type {GroupSpec} from "./schema.ts";
 
+const READ_LIMIT_FIELDS = Object.freeze(["limit", "maxNodes", "maxTextUnits", "maxBytes"] as const);
+
+
 export type SliceQuery = {path?: number[]; start?: number; limit?: number; maxNodes?: number; maxTextUnits?: number; maxBytes?: number};
 export const SLICE_LIMITS = Object.freeze({limit: 100, maxNodes: 4096, maxTextUnits: 65_536, maxBytes: 262_144, depth: 32});
 type LineIndex = {blocks: Block[]; visible: number[]; entries: ReturnType<typeof entriesOf>};
@@ -38,7 +41,7 @@ export function validateSliceQuery(query: SliceQuery): Required<SliceQuery> {
     const out = {path: [...path], start: query.start ?? 0, limit: query.limit ?? 20,
         maxNodes: query.maxNodes ?? SLICE_LIMITS.maxNodes, maxTextUnits: query.maxTextUnits ?? SLICE_LIMITS.maxTextUnits, maxBytes: query.maxBytes ?? SLICE_LIMITS.maxBytes};
     if (!Number.isSafeInteger(out.start) || out.start < 0) throw new Error("Invalid slice start");
-    for (const key of ["limit", "maxNodes", "maxTextUnits", "maxBytes"] as const) {
+    for (const key of READ_LIMIT_FIELDS) {
         if (!Number.isSafeInteger(out[key]) || out[key] < 1 || out[key] > SLICE_LIMITS[key]) throw new Error(`Invalid slice ${key}`);
     }
     return out;

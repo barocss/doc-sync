@@ -3,6 +3,19 @@ import {gridParts, storedTypes} from "@barocss/doc-sync";
 import type {DOMOutputSpec, MarkSpec, Node as PmNode, NodeSpec as PmNodeSpec} from "prosemirror-model";
 import type {FlowSpec, NodeSpec, Schema as DocSchema} from "@barocss/doc-sync";
 
+function attrsOf(spec: NodeSpec, extra: Record<string, {default: unknown}> = {}) {
+    return {
+        ...Object.fromEntries(
+            Object.entries(spec.attrs ?? {})
+                .filter(([, a]) => !a.computed)
+                .map(([k, a]) => [k, {default: a.default}]),
+        ),
+        ...extra,
+    };
+}
+
+const TEXT_CONTENT_NAMES = Object.freeze(["text"]);
+
 /**
  * 우리 스키마 → ProseMirror 스키마. 모양마다 ProseMirror 노드 꼴이 정해진다.
  *
@@ -47,14 +60,7 @@ export const buildPmSchema = (schema: DocSchema, dom: DomHints = {}): PmSchemaIn
     const ours = new Map<string, string>();
     const nodes: Record<string, PmNodeSpec> = {};
     const flowContent = (flow: FlowSpec) => `(${storedTypes(schema, flow).map(pmName).join(" | ")})+`;
-    const attrsOf = (spec: NodeSpec, extra: Record<string, {default: unknown}> = {}) => ({
-        ...Object.fromEntries(
-            Object.entries(spec.attrs ?? {})
-                .filter(([, a]) => !a.computed)
-                .map(([k, a]) => [k, {default: a.default}]),
-        ),
-        ...extra,
-    });
+
     const toDOM = (type: string, fallback: (node: PmNode) => DOMOutputSpec) => dom[type] ?? fallback;
 
     // 문서 맨 위가 먼저
@@ -77,7 +83,7 @@ export const buildPmSchema = (schema: DocSchema, dom: DomHints = {}): PmSchemaIn
                 break;
             case "text": {
                 const inline = (spec.children ?? []).filter(c => schema.nodes[c]?.shape === "inline").map(pmName);
-                const parts = [...(spec.text === false ? [] : ["text"]), ...inline];
+                const parts = [...(spec.text === false ? [] : TEXT_CONTENT_NAMES), ...inline];
 
                 nodes[name] = {
                     content: parts.length ? `(${parts.join(" | ")})*` : "",

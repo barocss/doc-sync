@@ -8,6 +8,9 @@ import type {ProfileJSON} from "../client/profile.ts";
 import {validatePresenceState} from "./store.ts";
 import type {PresenceState, PresenceStore} from "./store.ts";
 
+const REPLACEABLE_PRESENCE_FIELDS = Object.freeze(["cursor", "selection", "draft", "activity"] as const);
+
+
 export const PRESENCE_METADATA_KEY = "doc-sync.presence.v1";
 export interface ClientPresenceOptions {
     intervalMs?: number;
@@ -131,7 +134,7 @@ export function connectClientPresence(store: PresenceStore, source: Client | Syn
             if (disposed) return;
             const next = store.getSnapshot().find(state => state.actor === store.actor);
             if (next === local) return;
-            const cleared = !next || (!!local && (["cursor", "selection", "draft", "activity"] as const).some(key => local?.[key] !== undefined && next[key] === undefined));
+            const cleared = !next || (!!local && (REPLACEABLE_PRESENCE_FIELDS).some(key => local?.[key] !== undefined && next[key] === undefined));
             local = next;
             if (cleared || interval === 0 || Date.now() - lastSent >= interval) publish();
             else if (timer === undefined) { timer = setTimeout(publish, Math.max(0, interval - (Date.now() - lastSent))); timer.unref?.(); }

@@ -15,6 +15,27 @@ import type {EditOp, Marks, NodeJSON, Run, Unit} from "./model.ts";
 import type {AttrSpec, FlowSpec, NodeSpec, Schema, Shape, TextSpec} from "./schema.ts";
 import type {Ticket} from "./ticket.ts";
 
+const PLACEMENT_CAPABILITY = Object.freeze(["placement-v1"]);
+const CARDINALITY_CAPABILITY = Object.freeze(["cardinality-v1"]);
+const FIELDS_CAPABILITY = Object.freeze(["fields-v1"]);
+const ANNOTATIONS_CAPABILITY = Object.freeze(["annotations-v1"]);
+
+const BLOCK_NODE_SHAPES = Object.freeze(["flow", "container", "grid", "atom"]);
+const STORED_NODE_SHAPES = Object.freeze(["text", "flow", "container", "grid", "atom"]);
+const CHILD_NODE_SHAPES = Object.freeze(["text", "flow", "container", "atom", "grid"]);
+const SUPPORTED_SNAPSHOT_CAPABILITIES = Object.freeze(["placement-v1", "cardinality-v1", "fields-v1", "annotations-v1"]);
+/** Primitive values are immutable. Keep host cloning (and rejection) for all other values. */
+const copyStoredValue = <T>(value: T): T => {
+    const kind = typeof value;
+    return value === null || kind === "undefined" || kind === "string" || kind === "boolean" || kind === "number" || kind === "bigint"
+        ? value : structuredClone(value);
+};
+
+const isAxis = (slot: string): boolean => slot === "rows" || slot === "cols";
+const cachedBlockShape = (list: Block[]): string[] =>
+    list.map(b => [b.kind, b.marker.key, b.type, JSON.stringify(b.attrs), ...(b.kind === "text" ? [b.virtual, b.text, b.chars.map(c => c.key).join(","), b.aliases.map(a => a.key).join(",")] : [])].join("|"));
+
+
 export type {EditOp, Marks, ModelPath, NodeJSON, Run} from "./model.ts";
 
 /**
@@ -489,7 +510,7 @@ export class Doc {
                 } else if (textAddress.after) {
                     const placement = this.placements.get(textAddress.after) ?? stagedMoves.get(textAddress.after);
                     const anchor = placement ? factOf(keyOf(placement.target)) : factOf(textAddress.after);
-                    if (!anchor || !["flow", "container", "grid", "atom"].includes(schema?.nodes[anchor.born]?.shape ?? "") || (placement ? keyOf(placement.parent) !== textAddress.parent : anchor.line.key !== textAddress.parent)) return undefined;
+                    if (!anchor || !BLOCK_NODE_SHAPES.includes(schema?.nodes[anchor.born]?.shape ?? "") || (placement ? keyOf(placement.parent) !== textAddress.parent : anchor.line.key !== textAddress.parent)) return undefined;
                 }
                 return {kind: "node", born: flow.default, head: true, line: {...parent!.line, key}};
             }
@@ -503,7 +524,7 @@ export class Doc {
                 const shape = schema.nodes[type]?.shape;
                 const lamport = ticketOf(key).lamport, privateKey = keyOf(requiredTicket(required));
                 if (lamport === 0) return {kind: "node", born: shape === "text" ? type : flow!.default, head: true, line: {...parent!.line, key: privateKey}};
-                if (lamport === 1 && ["flow", "container", "grid", "atom"].includes(shape ?? "")) return {kind: "node", born: type, head: false, line: {...parent!.line, key: privateKey}};
+                if (lamport === 1 && BLOCK_NODE_SHAPES.includes(shape ?? "")) return {kind: "node", born: type, head: false, line: {...parent!.line, key: privateKey}};
                 if ((lamport === 2 || lamport === 3) && shape === "grid") {
                     const owner = keyOf(requiredTicket(required, true)), parts = gridParts(schema, type)!;
                     const slot = lamport === 2 ? "rows" : "cols";
@@ -539,7 +560,6 @@ export class Doc {
                   }
                 : undefined;
         };
-        const isAxis = (slot: string) => slot === "rows" || slot === "cols";
         const referenceExists = (key: string): boolean => {
             const fact = factOf(key);
             return !!fact && fact.line.slot !== ANNOTATION_SLOT && !isAxis(fact.line.slot) && fact.born !== ANNOTATION_TYPE;
@@ -571,7 +591,7 @@ export class Doc {
                 const parent = parentFact?.head && !parseTextStorage(parentFact.line.key) && !parseRequired(parentFact.line.key) && parentFact.line.slot !== ANNOTATION_SLOT && !isAxis(parentFact.line.slot) ? this.flowSpecOf(parentFact.line) : undefined;
                 const shape = target && (target.head ? this.flowSpecOf(target.line)?.shape === "container" ? undefined : "text" : schema?.nodes[target.born]?.shape);
                 if (target && parseRequired(target.line.key)) return "Required slots have fixed ownership";
-                if (!target || target.line.slot === ANNOTATION_SLOT || isAxis(target.line.slot) || !["text", "flow", "container", "grid", "atom"].includes(shape ?? "")) return "Move target must be a text, flow, grid, or atom block";
+                if (!target || target.line.slot === ANNOTATION_SLOT || isAxis(target.line.slot) || !STORED_NODE_SHAPES.includes(shape ?? "")) return "Move target must be a text, flow, grid, or atom block";
                 if (!parentFact || !parent) return "Move destination must be an existing flow head";
                 if (schema && !storedTypes(schema, parent).includes(target.head ? this.flowSpecOf(target.line)?.default ?? "" : target.born)) return "Move destination does not accept the target birth type";
                 if (op.after) {
@@ -809,7 +829,7 @@ export class Doc {
                     const item = newItem(id, origin, "char", null as unknown as Line);
 
                     item.ch = op.text[i];
-                    Object.entries(op.marks ?? {}).forEach(([k, v]) => attrsFor(item).set(k, {value: structuredClone(v), at: id}));
+                    Object.entries(op.marks ?? {}).forEach(([k, v]) => attrsFor(item).set(k, {value: copyStoredValue(v), at: id}));
                     at = this.integrate(item, i === 0 ? -1 : at);
                     // 중복 토큰의 임시 Item은 줄에 들어가지 않는다. 기존 토큰은 캐시에 이미 있다.
                     if (item.line) this.charAdded(item);
@@ -825,7 +845,7 @@ export class Doc {
                 item.born = op.type;
                 item.boundary = op.boundary ?? "";
                 attrsFor(item).set("$type", {value: op.type, at: op.id});
-                Object.entries(op.attrs ?? {}).forEach(([k, v]) => attrsFor(item).set(k, {value: structuredClone(v), at: op.id}));
+                Object.entries(op.attrs ?? {}).forEach(([k, v]) => attrsFor(item).set(k, {value: copyStoredValue(v), at: op.id}));
                 this.integrate(item, -1);
                 item.line && this.structureChanged(item);
                 this.clock.observe(op.id);
@@ -881,7 +901,7 @@ export class Doc {
                         const block = (this.blockCache.get(item.line.key) ?? this.previousBlocks.get(item.line.key))?.of.get(item)?.block;
 
                         block && this.textModels.delete(block);
-                        attrsFor(item).set(op.key, {value: structuredClone(op.value), at: op.at});
+                        attrsFor(item).set(op.key, {value: copyStoredValue(op.value), at: op.at});
                         item.kind !== "char" && this.structureChanged(item);
                     }
                 });
@@ -989,10 +1009,8 @@ export class Doc {
         this.blockCache.delete(lineKey);
 
         const fresh = this.sourceBlocks(lineKey);
-        const shape = (list: Block[]) =>
-            list.map(b => [b.kind, b.marker.key, b.type, JSON.stringify(b.attrs), ...(b.kind === "text" ? [b.virtual, b.text, b.chars.map(c => c.key).join(","), b.aliases.map(a => a.key).join(",")] : [])].join("|"));
-        const got = shape(blocks);
-        const want = shape(fresh);
+        const got = cachedBlockShape(blocks);
+        const want = cachedBlockShape(fresh);
 
         this.blockCache.set(lineKey, cache);
 
@@ -1331,14 +1349,14 @@ export class Doc {
                 return normalized;
             }});
             else attrs[k] = isFieldSpec(spec) ? materializeFields(spec, path => item.attrs.get(encodeFieldKey(k, path)))
-                : structuredClone(value === undefined || value === null ? spec.default : value);
+                : copyStoredValue(value === undefined || value === null ? spec.default : value);
         });
 
         return attrs;
     }
 
     private defaultsOf(type: string): Record<string, unknown> {
-        return Object.fromEntries(Object.entries(this.specOf(type)?.attrs ?? {}).map(([k, spec]) => [k, this.borrowReadValues ? spec.default : structuredClone(spec.default)]));
+        return Object.fromEntries(Object.entries(this.specOf(type)?.attrs ?? {}).map(([k, spec]) => [k, this.borrowReadValues ? spec.default : copyStoredValue(spec.default)]));
     }
 
     /** 이 줄에 올 수 있는 블록 종류 (스키마의 children) */
@@ -1562,7 +1580,7 @@ export class Doc {
         const rule = flow?.childRules?.[address.type];
         if (!this.schema || !parent || parent.key !== address.parent || !isHead(parent.items[0]) || !flow || !rule || address.ordinal >= (rule.min ?? 0)) return undefined;
         const type = requiredType(this.schema, address.type), spec = this.specOf(type);
-        if (!spec || !["text", "flow", "container", "atom", "grid"].includes(spec.shape)) return undefined;
+        if (!spec || !CHILD_NODE_SHAPES.includes(spec.shape)) return undefined;
         const headId = requiredTicket(address), key = keyOf(headId);
         let line = this.lineMap.get(key);
         if (!line) {
@@ -1684,7 +1702,7 @@ export class Doc {
             const original = movement && parseTextStorage(keyOf(movement.target));
             if (!original) {
                 const anchor = movement && this.byKey.get(keyOf(movement.target));
-                return movement && keyOf(movement.parent) === address.parent && anchor && ["flow", "container", "grid", "atom"].includes(this.specOf(anchor.born)?.shape ?? "")
+                return movement && keyOf(movement.parent) === address.parent && anchor && BLOCK_NODE_SHAPES.includes(this.specOf(anchor.born)?.shape ?? "")
                     ? {parent: address.parent, after: movement.after ? keyOf(movement.after) : null} : null;
             }
             if (original.parent !== address.parent) return null;
@@ -2541,9 +2559,9 @@ export class Doc {
     snapshot(): Snapshot {
         const fields = !!this.schema && Object.values(this.schema.nodes).some(spec => Object.values(spec.attrs ?? {}).some(isFieldSpec));
         const annotations = this.lineMap.has(ANNOTATION_HEAD_KEY);
-        const capabilities = [...(this.usesProjection ? ["placement-v1"] : []), ...(this.hasCardinality ? ["cardinality-v1"] : []), ...(fields ? ["fields-v1"] : []), ...(annotations ? ["annotations-v1"] : [])];
+        const capabilities = [...(this.usesProjection ? PLACEMENT_CAPABILITY : []), ...(this.hasCardinality ? CARDINALITY_CAPABILITY : []), ...(fields ? FIELDS_CAPABILITY : []), ...(annotations ? ANNOTATIONS_CAPABILITY : [])];
         return {
-            ...(capabilities.length ? {format: 2 as const, capabilities, moves: structuredClone(this.placements.values())} : {}),
+            ...(capabilities.length ? {format: 2 as const, capabilities, moves: copyStoredValue(this.placements.values())} : {}),
             lamport: this.clock.lamport,
             lines: [...this.lineMap.values()].map(line => ({
                 key: line.key,
@@ -2558,14 +2576,14 @@ export class Doc {
         if (!annotationJsonOk(snapshot, 128)) throw new Error("Snapshot must contain finite plain JSON data without accessors");
         if (!Number.isSafeInteger(snapshot.lamport) || snapshot.lamport < 0) throw new Error("Invalid snapshot Lamport clock");
         if (snapshot.format !== undefined && snapshot.format !== 2) throw new Error("Unsupported snapshot format");
-        if (snapshot.capabilities?.some(capability => !["placement-v1", "cardinality-v1", "fields-v1", "annotations-v1"].includes(capability))) throw new Error("Unsupported snapshot capability");
+        if (snapshot.capabilities?.some(capability => !SUPPORTED_SNAPSHOT_CAPABILITIES.includes(capability))) throw new Error("Unsupported snapshot capability");
         const features = new Set(snapshot.capabilities ?? []);
         const fields = !!schema && Object.values(schema.nodes).some(spec => Object.values(spec.attrs ?? {}).some(isFieldSpec));
         const cardinality = !!schema && Object.values(schema.nodes).some(spec => spec.shape === "flow" && Object.keys(spec.childRules ?? {}).length);
         const annotationState = snapshot.lines.some(line => line.key === ANNOTATION_HEAD_KEY || line.slot === ANNOTATION_SLOT || line.items.some(item => item.b === ANNOTATION_TYPE));
         const placementState = !!snapshot.moves?.length || snapshot.lines.some(line => !!parseTextStorage(line.key) || line.items.some(item => item.a?.some(([key]) => key === "$join")));
         const fieldState = fields || snapshot.lines.some(line => line.items.some(item => item.a?.some(([key]) => key.startsWith("$field:") || key.startsWith("$cell:") && key.includes("|$field:"))));
-        const requiredCapabilities = [...(annotationState ? ["annotations-v1"] : []), ...(placementState ? ["placement-v1"] : []), ...(fieldState ? ["fields-v1"] : []), ...(cardinality || snapshot.lines.some(line => !!parseRequired(line.key)) ? ["cardinality-v1"] : [])];
+        const requiredCapabilities = [...(annotationState ? ANNOTATIONS_CAPABILITY : []), ...(placementState ? PLACEMENT_CAPABILITY : []), ...(fieldState ? FIELDS_CAPABILITY : []), ...(cardinality || snapshot.lines.some(line => !!parseRequired(line.key)) ? CARDINALITY_CAPABILITY : [])];
         if ((requiredCapabilities.length || features.size) && snapshot.format !== 2) throw new Error("Feature snapshots require format 2");
         if (requiredCapabilities.some(capability => !features.has(capability))) throw new Error("Feature snapshot is missing its required capability");
         const doc = new Doc(actor, schema);
@@ -2634,7 +2652,7 @@ export class Doc {
                     const movement = snapshot.moves?.find(move => keyOf(move.at) === text.after);
                     const anchor = doc.byKey.get(movement ? keyOf(movement.target) : text.after);
                     const origin = anchor && (parseRequired(anchor.line.key)?.parent ?? parseTextStorage(anchor.line.key)?.parent ?? anchor.line.key);
-                    if (!anchor || !["flow", "container", "grid", "atom"].includes(schema?.nodes[anchor.born]?.shape ?? "") || (movement ? keyOf(movement.parent) !== text.parent : origin !== text.parent)) throw new Error("Invalid trailing storage anchor");
+                    if (!anchor || !BLOCK_NODE_SHAPES.includes(schema?.nodes[anchor.born]?.shape ?? "") || (movement ? keyOf(movement.parent) !== text.parent : origin !== text.parent)) throw new Error("Invalid trailing storage anchor");
                 }
             }
             for (const item of line.items) for (const [key, entry] of item.attrs) {
@@ -2657,12 +2675,12 @@ export class Doc {
 }
 
 const copyRun = (run: Run): Run => "text" in run
-    ? {...run, marks: structuredClone(run.marks)}
-    : {...run, ...(run.attrs && {attrs: structuredClone(run.attrs)}), ...(run.runs && {runs: run.runs.map(copyRun)})};
+    ? {...run, marks: copyStoredValue(run.marks)}
+    : {...run, ...(run.attrs && {attrs: copyStoredValue(run.attrs)}), ...(run.runs && {runs: run.runs.map(copyRun)})};
 
 const copyModel = (node: NodeJSON): NodeJSON => ({
     ...node,
-    ...(node.attrs && {attrs: structuredClone(node.attrs)}),
+    ...(node.attrs && {attrs: copyStoredValue(node.attrs)}),
     ...(node.runs && {runs: node.runs.map(copyRun)}),
     ...(node.children && {children: node.children.map(copyModel)}),
 });
@@ -2684,7 +2702,7 @@ const itemToJSON = (item: Item, prev: Item | undefined): ItemJSON => {
     item.ch && (j.c = item.ch);
     item.born && (j.b = item.born);
     item.boundary && (j.y = item.boundary);
-    item.attrs.size && (j.a = [...item.attrs].map(([k, v]) => [k, structuredClone(v.value), keyOf(v.at)]));
+    item.attrs.size && (j.a = [...item.attrs].map(([k, v]) => [k, copyStoredValue(v.value), keyOf(v.at)]));
     item.dels.size && (j.d = [...item.dels]);
     item.cancels.size && (j.x = [...item.cancels]);
     item.compact && (j.z = 1);
@@ -2710,7 +2728,7 @@ const itemFromJSON = (j: ItemJSON, line: Line, prev: Item | undefined): Item => 
         ch: j.c ?? "",
         born: j.b ?? "",
         boundary: j.y ?? "",
-        attrs: j.a ? new Map(j.a.map(([k, value, at]) => [k, {value: structuredClone(value), at: ticketOf(at)}])) : NO_ATTRS,
+        attrs: j.a ? new Map(j.a.map(([k, value, at]) => [k, {value: copyStoredValue(value), at: ticketOf(at)}])) : NO_ATTRS,
         dels: j.d ? new Set(j.d) : NO_DELS,
         cancels: j.x ? new Set(j.x) : NO_DELS,
         compact: j.z === 1,

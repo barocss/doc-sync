@@ -51,8 +51,10 @@ backend.
 The graphic Canvas receipt records seven focused tests and a 20-action,
 40-state normalized model/History comparison. Builtins adds seven focused tests
 and 35 independently authored actions with 70 normalized actor model/History
-states. The full native SDK has 42 passing tests; the shadow core has 75. These
-checks do not qualify exact graphic wire encoding or mixed-runtime exchange.
+states. That domain checkpoint had 42 SDK tests and 75 shadow-core tests.
+The runtime-schema additions bring the current totals to 48 SDK tests and 78
+shadow-core tests; both suites pass in the main publication check. These checks
+do not qualify exact graphic wire encoding or mixed-runtime exchange.
 The sheet receipt records 14 focused tests and a 31-action, 62-state exact comparison of operations, models,
 full History, pending queues and checkpoints. These checks add no browser,
 WASM, renderer, server durability or performance qualification.

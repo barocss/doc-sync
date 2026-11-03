@@ -1,5 +1,7 @@
 import type {PresenceState, PresenceStore, PresenceTarget} from '@barocss/doc-sync/presence';
 
+const PROJECTED_PRESENCE_ROLES: readonly PresenceRole[] = Object.freeze(['selection', 'cursor', 'draft']);
+
 /** All geometry uses viewport CSS pixels. The host owns document and world mapping. */
 export interface PresenceRect {readonly x: number; readonly y: number; readonly width: number; readonly height: number}
 export interface PresenceProjection {readonly rects: readonly PresenceRect[]}
@@ -100,8 +102,7 @@ export function mountPresence(container: HTMLElement, store: Pick<PresenceStore,
         fragment.append(avatar, label);
       }
       const actorCursors: HTMLElement[] = [];
-      const roles: PresenceRole[] = ['selection', 'cursor', 'draft'];
-      for (const role of roles) {
+      for (const role of PROJECTED_PRESENCE_ROLES) {
         if ((role === 'cursor' && options.showCursors === false) || (role === 'selection' && options.showSelections === false) || (role === 'draft' && options.showDrafts === false)) continue;
         const target = role === 'draft' ? state.draft?.target : state[role];
         if (!target) continue;

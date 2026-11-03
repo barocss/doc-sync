@@ -4,6 +4,12 @@ import type {Doc, Item, Op, Pos, TextBlock} from "./doc.ts";
 import type {ModelPath} from "./model.ts";
 import type {Ticket} from "./ticket.ts";
 
+const ANNOTATION_ENDPOINT_FIELDS = Object.freeze(["anchor", "focus"]);
+
+const ANNOTATION_EXPANSION_MODES = Object.freeze(["none", "start", "end", "both"]);
+const ANNOTATION_PATCH_FIELDS = Object.freeze(["range", "expand", "data", "removeData"]);
+
+
 export const ANNOTATION_SLOT = "$annotations";
 export const ANNOTATION_TYPE = "$annotation";
 // Same deterministic derivation as slotTicket(ROOT, ANNOTATION_SLOT), without a Doc runtime import.
@@ -119,7 +125,7 @@ function captureEndpoint(doc: Doc, path: ModelPath, affinity: AnnotationEndpoint
     return endpoint;
 }
 function captureRange(doc: Doc, range: AnnotationRange, expand: AnnotationExpansion = "none"): {anchor: AnnotationEndpoint; focus: AnnotationEndpoint} {
-    if (!["none", "start", "end", "both"].includes(expand)) throw new Error("Invalid annotation expansion policy");
+    if (!ANNOTATION_EXPANSION_MODES.includes(expand)) throw new Error("Invalid annotation expansion policy");
     if (!range || !Array.isArray(range.anchor) || !Array.isArray(range.focus)) throw new Error("Annotation range requires anchor and focus paths");
     const backward = comparePaths(range.anchor, range.focus) > 0;
     const collapsed = comparePaths(range.anchor, range.focus) === 0;
@@ -162,7 +168,7 @@ export function createAnnotation(doc: Doc, range: AnnotationRange, data: Record<
 export function updateAnnotation(doc: Doc, id: string, patch: AnnotationPatch): Op[] {
     const item = annotationItem(doc, id);
     if (!live(item)) throw new Error("Cannot update a deleted annotation");
-    if (!plain(patch) || Object.keys(patch).some(key => !["range", "expand", "data", "removeData"].includes(key))) throw new Error("Unknown annotation patch field");
+    if (!plain(patch) || Object.keys(patch).some(key => !ANNOTATION_PATCH_FIELDS.includes(key))) throw new Error("Unknown annotation patch field");
     const attrs = patch.data === undefined ? {} : encodedData(patch.data);
     if (patch.removeData !== undefined) {
         if (!Array.isArray(patch.removeData)) throw new Error("removeData must be an array of keys");
@@ -187,15 +193,17 @@ export function deleteAnnotation(doc: Doc, id: string): Op[] {
 }
 
 type ResolvedEndpoint = {status: AnnotationStatus; path: ModelPath | null; line: string | null};
+function unresolvedEndpoint(status: AnnotationStatus): ResolvedEndpoint {
+    return {status, path: null, line: null};
+}
 function resolveEndpoint(doc: Doc, endpoint: AnnotationEndpoint): ResolvedEndpoint {
-    const fail = (status: AnnotationStatus): ResolvedEndpoint => ({status, path: null, line: null});
     const left = doc.get(endpoint.left), right = endpoint.right === null ? null : doc.get(endpoint.right);
-    if (!left || (endpoint.right !== null && !right)) return fail("missing");
-    if (left.compact || right?.compact) return fail("compacted");
+    if (!left || (endpoint.right !== null && !right)) return unresolvedEndpoint("missing");
+    if (left.compact || right?.compact) return unresolvedEndpoint("compacted");
     const leftLocation = doc.tokenLocation(endpoint.left), rightLocation = endpoint.right === null ? null : doc.tokenLocation(endpoint.right);
-    if (!leftLocation || (endpoint.right !== null && !rightLocation)) return fail("missing");
+    if (!leftLocation || (endpoint.right !== null && !rightLocation)) return unresolvedEndpoint("missing");
     const location = endpoint.affinity === "right" && rightLocation ? rightLocation : leftLocation;
-    if (!location.visible) return fail("hidden");
+    if (!location.visible) return unresolvedEndpoint("hidden");
     const line = location.line;
     let pos: Pos;
     if (endpoint.affinity === "left") pos = doc.posAfter(endpoint.left);
@@ -217,21 +225,21 @@ function resolveEndpoint(doc: Doc, endpoint: AnnotationEndpoint): ResolvedEndpoi
                 found = true;
                 break;
             }
-            if (!found) return fail("missing");
+            if (!found) return unresolvedEndpoint("missing");
         }
     } else {
         // A null right reference follows the end of its owning text block.
         pos = doc.posAfter(endpoint.left);
-        if ((pos.line ?? keyOf(ROOT)) !== line) return fail("cross-slot");
+        if ((pos.line ?? keyOf(ROOT)) !== line) return unresolvedEndpoint("cross-slot");
         const block = doc.blocks(line)[pos.b];
-        if (block?.kind !== "text") return fail("missing");
+        if (block?.kind !== "text") return unresolvedEndpoint("missing");
         pos = {...pos, o: block.chars.length};
     }
-    if ((pos.line ?? keyOf(ROOT)) !== line) return fail("cross-slot");
+    if ((pos.line ?? keyOf(ROOT)) !== line) return unresolvedEndpoint("cross-slot");
     const block = doc.blocks(line)[pos.b];
-    if (block?.kind !== "text" || pos.o < 0 || pos.o > block.chars.length) return fail("missing");
+    if (block?.kind !== "text" || pos.o < 0 || pos.o > block.chars.length) return unresolvedEndpoint("missing");
     const path = pathOfPos(doc, pos);
-    return path ? {status: "resolved", path, line} : fail("missing");
+    return path ? {status: "resolved", path, line} : unresolvedEndpoint("missing");
 }
 export function getAnnotations(doc: Doc): AnnotationRecord[] {
     return annotations(doc).map(item => {
@@ -253,7 +261,7 @@ export function annotationEndpointKeys(doc: Doc): Set<string> {
     const keys = new Set<string>();
     for (const item of annotations(doc)) {
         const attrs = values(item);
-        for (const name of ["anchor", "focus"]) {
+        for (const name of ANNOTATION_ENDPOINT_FIELDS) {
             const endpoint = attrs[name] as AnnotationEndpoint;
             if (endpoint && tokenKey(endpoint.left)) keys.add(endpoint.left);
             if (endpoint && tokenKey(endpoint.right)) keys.add(endpoint.right);

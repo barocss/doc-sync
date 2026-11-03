@@ -2,6 +2,91 @@
 
 Measure the layer you need. Core application time, client notification time, and visible editor latency cover different work.
 
+## Collection access and internal copies
+
+A structural refactor removes full result construction from cached Map/List
+queries. The paired Node 24.22.1 workload stores 10,000 List entries and 10,000
+Map entries in the same archived Client implementation. Only the access layer
+changes between lanes. Preparation and full result checks run outside timing.
+
+| Cached query | Before median (ms) | After median (ms) |
+| --- | ---: | ---: |
+| Last List entry | 0.206014 | 0.001333 |
+| Distinct Map key count | 1.962458 | 0.000320 |
+
+Each query uses ten samples from five ABBA rounds. Cached queries use batches
+of three, with the same assertion overhead in both lanes. These short timings
+are observations, not production tail-latency guarantees. Decoder instrumentation
+also checks that List.at decodes one selected entry and Map.size decodes none.
+The first read after an edit still rebuilds the full validated projection.
+
+A separate controlled comparison changes only Doc's immutable-primitive copy
+path, with the same Client and dependency sources in both lanes. For the same
+20,000 entries, seven unprofiled samples give an edit/read median of
+1,007.563 ms before and 863.005 ms after, about 14.3% lower in this run.
+Objects still use structuredClone, and snapshot/admission checks remain active.
+Final ID/value oracles and local undo/redo/restore checks run outside timing.
+
+This generic workload remains slow. Whole snapshots, finite-JSON validation,
+normalization and projection rebuilds still scale with stored state. The numbers
+exclude browser input, network delivery, physical paint, server restart and heap
+allocation measurement. They do not qualify all editor latency or Rust/WASM.
+See the [API and structure report](https://github.com/barocss/doc-sync/blob/main/docs/reports/api-structure-refactor-2026-11-03/README.md)
+for source hashes, raw records, regression results and remaining costs.
+
+## Discarded local point-cache experiment
+
+A local copy-on-write prototype was **DISCARDED**, not landed. Its first-read
+medians improved by 26.58–36.21% in the measured Node workloads, but mandatory
+combined setter-plus-read gates failed: a 2k nested Map regressed by 5.40%, and
+20k nested Map/List reductions of 3.55%/2.91% missed the prospective 5% useful-effect
+gate. Cycle 1 completed all 12 processes and correctness oracles; cycles 2/3
+were NOT_RUN after early decline. Functional passes are not performance passes.
+
+The library retains only the initial refactor described above. It has no accepted
+COW latency claim. See the [candidate decision](https://github.com/barocss/doc-sync/blob/main/docs/reports/local-point-cache-candidate-2026-11-04/README.md)
+for raw evidence, plan versions and qualification limits. These measurements
+are not isolated-host, network or editor-latency results.
+
+## Private preflight experiment remains on hold
+
+A separate output-only prototype removes one disposable validation stage for
+one guarded value update in the default Data schema. It preserves both live
+snapshots, public admission, normalization and selective History. Independent
+comparison passes 94 paired cases and a candidate-only TypeScript check. This
+prototype is **not part of the current library**.
+
+The prospective first ABBA cycle used Node 24.22.1, two warmups and five samples
+per process. Each lane contributes ten samples per case. All 24 processes pass
+their semantic and source checks. For 20,000 entries with authored moves, the
+complete setter plus first read has these pooled medians:
+
+| Data operation | Baseline (ms) | Prototype (ms) |
+| --- | ---: | ---: |
+| Root Map overwrite | 902.236 | 737.907 |
+| Nested Map overwrite | 903.015 | 731.047 |
+| List item update | 907.141 | 726.672 |
+
+All four Data size/fixture groups and structural/custom-schema controls pass
+their first-cycle gates. The direct 100k-character Doc remote-apply control,
+however, rises from 2.188646 to 2.274438 ms, a 3.92% increase against a 3% limit.
+The prospective decision is therefore **FAIL**. Cycles two and three are
+**NOT_RUN**; no retry or tolerance change replaces that result. The candidate
+remains outside the library while the control difference is investigated.
+
+An untimed trace of the exact remote operations observes no new registration,
+snapshot-audit or private Data calls inside that interval. It does not establish
+whether code generation, GC or host variation caused the difference. The
+[control analysis](https://github.com/barocss/doc-sync/blob/main/docs/reports/private-preflight-control-attribution-2026-11-04/README.md)
+preserves that unresolved result and supports no source fix.
+
+These are source-only Node observations on a host with uncontrolled external
+load. They establish no editor, network, heap-saving or Rust/WASM result. The
+bounded explicit-GC probe observes reclamation in both lanes; it is not a
+general memory-leak guarantee. The [candidate report](https://github.com/barocss/doc-sync/blob/main/docs/reports/private-preflight-candidate-2026-11-04/README.md)
+retains the first failure, raw samples, source hashes, scope clarification and
+all qualification limits.
+
 ## Graphic canvas demo
 
 The [PixiJS editor](./guide/graphic-editor) uses two independent TypeScript

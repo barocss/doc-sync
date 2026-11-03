@@ -14,6 +14,16 @@ import type {EditOp, NodeJSON, Run} from "@barocss/doc-sync";
 import type {EditorHost} from "@barocss/doc-sync/editor";
 import type {PmSchemaInfo} from "./schema.ts";
 
+function offset(node: PmNode, count: number) {
+    let pos = 0;
+
+    for (let i = 0; i < count; i += 1) {
+        pos += node.child(i).nodeSize;
+    }
+
+    return pos;
+}
+
 /**
  * ProseMirror 편집기 ↔ SyncClient.
  *
@@ -377,15 +387,6 @@ export class PmHostBinding {
             tail += 1;
         }
 
-        const offset = (node: PmNode, count: number) => {
-            let pos = 0;
-
-            for (let i = 0; i < count; i += 1) {
-                pos += node.child(i).nodeSize;
-            }
-
-            return pos;
-        };
         const from = offset(doc, head);
         const to = offset(doc, doc.childCount - tail);
         const nodes: PmNode[] = [];

@@ -17,6 +17,10 @@ import {commitModelEdits} from "./editing.ts";
 import {ENGINE_CONTRACT_VERSION} from "./contract.ts";
 import type {EngineCapability, EngineCheckpoint, EngineSelection, EngineAnchoredSelection} from "./contract.ts";
 import type {ClientEngine, ClientEngineFactory, EngineReceiveResult, EngineEditingView, EngineInputSession, EnginePreparedDocument, EnginePreparedState, EngineEventCapture, TypeScriptClientCompatibility} from "./client-contract.ts";
+
+const MODEL_EDIT_KINDS = Object.freeze(["insert", "delete", "update", "split", "merge", "move"]);
+const CRDT_OPERATION_KINDS = Object.freeze(["text", "node", "set", "del", "undel", "move"]);
+
 let nextGeneration = 0;
 const ENGINE = "doc-sync-typescript";
 const CAPABILITIES: readonly EngineCapability[] = ["edit", "receive", "history", "anchors", "checkpoint", "composition", "events", "gc", "schema-transition"];
@@ -214,7 +218,7 @@ class TypeScriptClientEngine implements ClientEngine, TypeScriptClientCompatibil
         const input = copy(edits);
         if (!Array.isArray(input)) throw new Error("Invalid edit batch");
         for (const edit of input) {
-            if (!edit || !["insert", "delete", "update", "split", "merge", "move"].includes(edit.op) || !Array.isArray(edit.at) || edit.at.some(n => !Number.isSafeInteger(n) || n < 0)) throw new Error("Invalid edit operation or path");
+            if (!edit || !MODEL_EDIT_KINDS.includes(edit.op) || !Array.isArray(edit.at) || edit.at.some(n => !Number.isSafeInteger(n) || n < 0)) throw new Error("Invalid edit operation or path");
             if (edit.op === "delete" && (!Number.isSafeInteger(edit.count) || edit.count < 0)) throw new Error("Invalid delete count");
         }
         return withPathMemo(doc, () => doc.edit(input, {...options, preflight: () => {
@@ -259,7 +263,7 @@ class TypeScriptClientEngine implements ClientEngine, TypeScriptClientCompatibil
         const input = copy(ops);
         if (!Array.isArray(input)) throw new Error("Invalid wire operation batch");
         for (const op of input) {
-            if (!op || !["text", "node", "set", "del", "undel", "move"].includes(op.t)) throw new Error("Invalid wire operation kind");
+            if (!op || !CRDT_OPERATION_KINDS.includes(op.t)) throw new Error("Invalid wire operation kind");
             const ticket = op.t === "text" || op.t === "node" ? op.id : op.at;
             if (!isTicket(ticket)) throw new Error("Invalid wire operation ticket");
         }

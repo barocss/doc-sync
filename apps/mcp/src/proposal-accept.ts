@@ -9,6 +9,10 @@ import {acceptProposalSchema, digest, POLICY_FINGERPRINT, ACCEPTANCE_POLICY_FING
 import {saveProposalEvidence, readProposalEvidence, readNotAppliedPlan, saveNotAppliedPlan, makeNotAppliedPlan, type ProposalEvidence} from "./proposal-evidence.ts";
 import type {HostedConfig, HostedGrant, HostedRoute} from "./hosted-config.ts";
 
+const PROPOSAL_RECONCILIATION_STATUSES = Object.freeze(["applied", "stale", "not_applied"]);
+const UNSETTLED_PROPOSAL_STATUSES = Object.freeze(["applying", "unconfirmed", "needs_attention"]);
+
+
 export const proposalOwner = (route: HostedRoute, grant: HostedGrant): ProposalOwner => ({principal: grant.principal, routeKey: digest([route.upstream, route.upstreamDocument, route.actor]), actor: route.actor});
 export function proposalEdits(record: ProposalRecord): EditOp[] {
     const c = record.payload.request.change, at = [...c.path, c.start];
@@ -91,9 +95,9 @@ export async function acceptProposal(config: HostedConfig, route: HostedRoute, g
         if (!record || record.proposalDigest !== decision.proposalDigest || record.payload.policyFingerprint !== POLICY_FINGERPRINT) throw new ProposalConflict("Proposal does not match");
         if (record.status === "pending" && (reconcileOnly || record.payload.request.questions.length || record.payload.before === record.payload.after)) throw new ProposalConflict("Proposal cannot be accepted");
         if (record.status !== "pending" && (record.decision?.kind !== "accept" || record.decision.requestId !== decision.requestId || record.decision.grantId !== grant.id)) throw new ProposalConflict("Different decision already exists");
-        if (["applied", "stale", "not_applied"].includes(record.status)) return (await store.beginAccept(id, decision.requestId, decision.proposalDigest, grant.id))!;
+        if (PROPOSAL_RECONCILIATION_STATUSES.includes(record.status)) return (await store.beginAccept(id, decision.requestId, decision.proposalDigest, grant.id))!;
         const fresh = record.status === "pending";
-        if (fresh && (await store.list()).some(other => other.payload.id !== id && ["applying", "unconfirmed", "needs_attention"].includes(other.status))) throw new ProposalConflict("Another approved attempt requires reconciliation");
+        if (fresh && (await store.list()).some(other => other.payload.id !== id && UNSETTLED_PROPOSAL_STATUSES.includes(other.status))) throw new ProposalConflict("Another approved attempt requires reconciliation");
         // Opening the actor journal does not start or acknowledge a participant.
         const identity = JSON.stringify([route.upstream, route.upstreamDocument, route.actor]);
         journal = await IntentJournal.open(join(config.dataDir, createHash("sha256").update(identity).digest("hex") + ".json"), {document: route.upstreamDocument, actor: route.actor});

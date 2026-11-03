@@ -63,7 +63,7 @@ test("SDK HTTP initialize, grant binding, edit, DELETE and stable reconnect hist
     const dir = await mkdtemp(join(tmpdir(), "hosted-mcp-"));
     const demo = spawn(process.execPath, [new URL("../../demo/server.ts", import.meta.url).pathname], {env: {...process.env, PORT: "0", DATA_DIR: join(dir, "upstream")}, stdio: ["ignore", "pipe", "pipe"]});
     let err = ""; demo.stderr.on("data", b => { err += b; });
-    const upstream = await new Promise<string>((resolve, reject) => { let out = ""; const timer = setTimeout(() => reject(new Error(err)), 10000); demo.stdout.on("data", b => { out += b; const m = out.match(/http:\/\/localhost:\d+/); if (m) {clearTimeout(timer); resolve(m[0]);} }); });
+    const upstream = await new Promise<string>((resolve, reject) => { let out = ""; const timer = setTimeout(() => reject(new Error(err)), 10000); demo.stdout.on("data", b => { out += b; const m = out.match(/http:\/\/localhost:\d+(?=\r?\n)/); if (m) {clearTimeout(timer); resolve(m[0]);} }); });
     const service = createHostedService(configuration(join(dir, "journals"), upstream)); const base = await listen(service.server); service.config.hosts.push(new URL(base).host); const endpoint = new URL(`${base}/mcp/t/d/s`);
     const connect = async () => { const client = new Client({name: "hosted-test", version: "1"}); const transport = new StreamableHTTPClientTransport(endpoint, {requestInit: {headers: {authorization: `Bearer ${token}`}}}); await client.connect(transport); return {client, transport}; };
     let current: Awaited<ReturnType<typeof connect>> | undefined;

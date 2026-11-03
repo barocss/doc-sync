@@ -17,7 +17,7 @@ export async function stop(child: ChildProcess, signal: NodeJS.Signals = "SIGTER
 export async function demo(data: string) {
     const child = spawn(process.execPath, [new URL("../../demo/server.ts", import.meta.url).pathname], {env: {...process.env, PORT: "0", DATA_DIR: data}, stdio: ["ignore", "pipe", "pipe"]});
     let errors = ""; child.stderr!.on("data", b => { errors += b; });
-    const url = await new Promise<string>((resolve, reject) => { let text = ""; const timer = setTimeout(() => reject(new Error(`Demo failed: ${errors}`)), 10000); child.stdout!.on("data", b => {text += b; const m = text.match(/http:\/\/localhost:\d+/); if (m) {clearTimeout(timer); resolve(m[0]);} }); });
+    const url = await new Promise<string>((resolve, reject) => { let text = ""; const timer = setTimeout(() => reject(new Error(`Demo failed: ${errors}`)), 10000); child.stdout!.on("data", b => {text += b; const m = text.match(/http:\/\/localhost:\d+(?=\r?\n)/); if (m) {clearTimeout(timer); resolve(m[0]);} }); });
     return {child, url};
 }
 export async function fixture(options: {limits?: Record<string, number>; intercept?: (req: IncomingMessage, res: ServerResponse) => Promise<boolean>} = {}) {

@@ -6,6 +6,26 @@ import type {AxisId, AxisAction} from "./axis.ts";
 import {SparseSheet} from "./sheet.ts";
 import type {SparseSheetOptions, SparseCell, SparseCellPatch, SparseField, SparseRange, SparseRangeEntry} from "./sheet.ts";
 
+const PLAIN_RECORD_PROTOTYPES = Object.freeze([Object.prototype, null]);
+
+const AXIS_ID_FIELDS = Object.freeze(["source", "offset"]);
+const STRUCTURAL_TICKET_FIELDS = Object.freeze(["lamport", "actor"]);
+const SCHEMA_VERSION_FIELDS = Object.freeze(["schemaVersion"]);
+const INSERT_AXIS_FIELDS = Object.freeze(["before", "count"]);
+const VISIBILITY_AXIS_FIELDS = Object.freeze(["targets", "visible"]);
+const MOVE_AXIS_FIELDS = Object.freeze(["targets", "before"]);
+const TOGGLE_AXIS_FIELDS = Object.freeze(["target", "active"]);
+const SCHEMA_SHEET_STATE_FIELDS = Object.freeze(["format", "schemaVersion", "options", "journal", "checkpoint"]);
+const SHEET_STATE_FIELDS = Object.freeze(["format", "options", "journal", "checkpoint"]);
+const CELL_JOURNAL_FIELDS = Object.freeze(["type", "row", "column", "patch", "ops"]);
+const AXIS_JOURNAL_FIELDS = Object.freeze(["type", "method", "args", "ops"]);
+const HISTORY_JOURNAL_FIELDS = Object.freeze(["type", "ops"]);
+
+const UNSAFE_PROPERTY_NAMES = Object.freeze(["__proto__", "prototype", "constructor"]);
+const SHEET_QUERY_FIELDS = Object.freeze(["row", "column", "rowCount", "columnCount", "limit"]);
+const STRUCTURAL_AXIS_OPERATIONS = Object.freeze(["insertRows", "insertColumns", "deleteRows", "deleteColumns", "moveRows", "moveColumns"]);
+
+
 export type StructuralSheetOptions = SparseSheetOptions;
 export interface StructuralCellOp {kind: "cell"; at: Ticket; sheetId: string; schemaVersion?: string; row: AxisId; column: AxisId; field: string; value: string | number | boolean | null}
 export type StructuralAxisOp = AxisAction & {axis: "row" | "column"; sheetId: string; schemaVersion?: string};
@@ -29,7 +49,7 @@ const copy = <T>(value: T): T => structuredClone(value);
 function fail(message: string): never { throw new Error(`Structural sheet: ${message}`); }
 const integer = (value: unknown, min = 0): value is number => Number.isSafeInteger(value) && (value as number) >= min;
 const record = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value) &&
-    [Object.prototype, null].includes(Object.getPrototypeOf(value));
+    PLAIN_RECORD_PROTOTYPES.includes(Object.getPrototypeOf(value));
 const exactKeys = (value: Record<string, unknown>, names: readonly string[]): boolean => {
     const keys = Object.keys(value);
     return keys.length === names.length && keys.every(key => names.includes(key));
@@ -45,7 +65,7 @@ const safeJson = (value: unknown, active = new Set<object>(), depth = 0): boolea
     const keys = Reflect.ownKeys(value);
     const ok = keys.every(key => {
         if (Array.isArray(value) && key === "length") return true;
-        if (typeof key !== "string" || ["__proto__", "prototype", "constructor"].includes(key)) return false;
+        if (typeof key !== "string" || UNSAFE_PROPERTY_NAMES.includes(key)) return false;
         const descriptor = descriptors[key];
         return !!descriptor && descriptor.enumerable && "value" in descriptor && safeJson(descriptor.value, active, depth + 1);
     }) && (!Array.isArray(value) || keys.length === value.length + 1 && Array.from({length: value.length}, (_, at) => String(at)).every(key => Object.hasOwn(descriptors, key)));
@@ -64,7 +84,7 @@ const validValue = (field: SparseField, value: unknown): boolean => value === nu
     (field === "value" ? typeof value === "string" || typeof value === "boolean" || typeof value === "number" && Number.isFinite(value)
         : field === "bold" ? typeof value === "boolean" : typeof value === "string");
 
-const validId = (id: unknown): id is AxisId => record(id) && exactKeys(id, ["source", "offset"]) && typeof id.source === "string" &&
+const validId = (id: unknown): id is AxisId => record(id) && exactKeys(id, AXIS_ID_FIELDS) && typeof id.source === "string" &&
     (id.source === "initial" || /^[1-9]\d*@[\w~-]{1,128}$/.test(id.source) && Number.isSafeInteger(Number(id.source.split("@")[0]))) && integer(id.offset);
 
 /** Stable-axis standalone sheet. Hidden cell registers remain available through getCellById. */
@@ -112,16 +132,16 @@ export class StructuralSheet {
     private action(op: StructuralAxisOp): AxisAction { const {axis: _axis, sheetId: _sheet, schemaVersion: _version, ...action} = op; return action as AxisAction; }
     private validateOp(op: unknown): asserts op is StructuralSheetOp {
         if (!record(op) || op.schemaVersion !== this.schemaIdentity || op.sheetId !== this.options.sheetId || !record(op.at) ||
-            !exactKeys(op.at, ["lamport", "actor"]) || !integer(op.at.lamport, 1) || typeof op.at.actor !== "string" ||
+            !exactKeys(op.at, STRUCTURAL_TICKET_FIELDS) || !integer(op.at.lamport, 1) || typeof op.at.actor !== "string" ||
             !/^[\w~-]{1,128}$/.test(op.at.actor) || op.at.actor === "~root") fail("invalid operation");
-        const common = ["kind", "at", "sheetId", ...(this.schemaIdentity ? ["schemaVersion"] : [])];
+        const common = ["kind", "at", "sheetId", ...(this.schemaIdentity ? SCHEMA_VERSION_FIELDS : [])];
         if (op.kind === "cell") {
             if (!exactKeys(op, [...common, "row", "column", "field", "value"]) || !validId(op.row) || !validId(op.column) || typeof op.field !== "string" || !this.valid(op.field, op.value)) fail("invalid cell operation");
             for (const id of [op.row, op.column]) if (id.source !== "initial" && (ticketOf(id.source).actor === "~root" || ticketOf(id.source).lamport >= (op.at.lamport as number))) fail("cell references must precede the operation");
             return;
         }
         if (op.axis !== "row" && op.axis !== "column") fail("invalid axis");
-        const names = op.kind === "insert" ? ["before", "count"] : op.kind === "visibility" ? ["targets", "visible"] : op.kind === "move" ? ["targets", "before"] : op.kind === "toggle" ? ["target", "active"] : null;
+        const names = op.kind === "insert" ? INSERT_AXIS_FIELDS : op.kind === "visibility" ? VISIBILITY_AXIS_FIELDS : op.kind === "move" ? MOVE_AXIS_FIELDS : op.kind === "toggle" ? TOGGLE_AXIS_FIELDS : null;
         if (!names || !exactKeys(op, [...common, "axis", ...names])) fail("invalid axis operation");
     }
     private prepare(ops: readonly StructuralSheetOp[], requireKnownReferences = false): {row: IntervalAxis; column: IntervalAxis} {
@@ -210,7 +230,7 @@ export class StructuralSheet {
         return this.registers.get(this.key(rowId, columnId, field))?.value ?? this.options.schema?.fields[field].default ?? null;
     }
     getRange(range: SparseRange): SparseRangeEntry[] {
-        if (!safeJson(range) || !record(range) || Object.keys(range).some(key => !["row", "column", "rowCount", "columnCount", "limit"].includes(key)) ||
+        if (!safeJson(range) || !record(range) || Object.keys(range).some(key => !SHEET_QUERY_FIELDS.includes(key)) ||
             !integer(range.rowCount) || !integer(range.columnCount) || !integer(range.row) || !integer(range.column) || range.row > this.rows || range.column > this.columns ||
             range.rowCount > this.rows - range.row || range.columnCount > this.columns - range.column || !integer(range.limit ?? 10_000)) fail("invalid range");
         const found = new Map<string, SparseRangeEntry>();
@@ -302,24 +322,24 @@ export class StructuralSheet {
         }});
     }
     static fromState(state: unknown): StructuralSheet {
-        if (!safeJson(state) || !record(state) || !exactKeys(state, Object.hasOwn(state, "schemaVersion") ? ["format", "schemaVersion", "options", "journal", "checkpoint"] : ["format", "options", "journal", "checkpoint"]) || state.format !== FORMAT || !Array.isArray(state.journal)) fail("invalid snapshot");
+        if (!safeJson(state) || !record(state) || !exactKeys(state, Object.hasOwn(state, "schemaVersion") ? SCHEMA_SHEET_STATE_FIELDS : SHEET_STATE_FIELDS) || state.format !== FORMAT || !Array.isArray(state.journal)) fail("invalid snapshot");
         const sheet = new StructuralSheet(state.options as unknown as StructuralSheetOptions);
         if (state.schemaVersion !== sheet.schemaIdentity) fail("snapshot schema differs");
         for (const entry of state.journal) {
             if (!record(entry) || typeof entry.type !== "string") fail("invalid journal entry");
             const count = sheet.journal.length;
             if (entry.type === "set") {
-                if (!exactKeys(entry, ["type", "row", "column", "patch", "ops"])) fail("invalid set journal entry");
+                if (!exactKeys(entry, CELL_JOURNAL_FIELDS)) fail("invalid set journal entry");
                 sheet.setCellById(entry.row as AxisId, entry.column as AxisId, entry.patch as SparseCellPatch);
             } else if (entry.type === "axis") {
-                if (!exactKeys(entry, ["type", "method", "args", "ops"]) || !["insertRows", "insertColumns", "deleteRows", "deleteColumns", "moveRows", "moveColumns"].includes(entry.method as string) || !Array.isArray(entry.args) || entry.args.length !== ((entry.method as string).startsWith("move") ? 3 : 2)) fail("invalid axis journal entry");
+                if (!exactKeys(entry, AXIS_JOURNAL_FIELDS) || !STRUCTURAL_AXIS_OPERATIONS.includes(entry.method as string) || !Array.isArray(entry.args) || entry.args.length !== ((entry.method as string).startsWith("move") ? 3 : 2)) fail("invalid axis journal entry");
                 sheet.axisEdit(entry.method as AxisMethod, entry.args[0] as number, entry.args[1] as number, entry.args[2] as number | undefined);
             } else if (entry.type === "receive") {
-                if (!exactKeys(entry, ["type", "ops"])) fail("invalid receive journal entry"); sheet.receive(entry.ops as StructuralSheetOp[]);
+                if (!exactKeys(entry, HISTORY_JOURNAL_FIELDS)) fail("invalid receive journal entry"); sheet.receive(entry.ops as StructuralSheetOp[]);
             } else if (entry.type === "undo" || entry.type === "redo") {
-                if (!exactKeys(entry, ["type", "ops"])) fail("invalid history journal entry"); sheet[entry.type]();
+                if (!exactKeys(entry, HISTORY_JOURNAL_FIELDS)) fail("invalid history journal entry"); sheet[entry.type]();
             } else if (entry.type === "acknowledge") {
-                if (!exactKeys(entry, ["type", "ops"])) fail("invalid acknowledgement journal entry"); sheet.acknowledge(entry.ops as StructuralSheetOp[]);
+                if (!exactKeys(entry, HISTORY_JOURNAL_FIELDS)) fail("invalid acknowledgement journal entry"); sheet.acknowledge(entry.ops as StructuralSheetOp[]);
             } else fail("unknown snapshot journal entry");
             if (sheet.journal.length === count || !equal(sheet.journal.at(-1), entry)) fail("invalid journal replay");
         }

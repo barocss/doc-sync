@@ -5,6 +5,9 @@ import type {Schema} from "../crdt/schema.ts";
 import {CONTAINER_CAPABILITY, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../sync/protocol.ts";
 import type {Ack, Change, Envelope, Presence, ServerEvent} from "../sync/protocol.ts";
 
+const GC_STATE_FIELDS = Object.freeze(["active", "era"]);
+const RECOVERY_RESERVATION_FIELDS = Object.freeze(["actor", "pin", "reservationId"]);
+
 /**
  * 문서 하나의 서버 쪽 심장. 전송(HTTP·메모리)과 무관하다.
  *
@@ -411,12 +414,12 @@ export class DocHub {
     }
 
     private validateRecoveryState(state: RecoveryState): void {
-        if (!state || typeof state !== "object" || JSON.stringify(Object.keys(state).sort()) !== JSON.stringify(["active", "era"]) ||
+        if (!state || typeof state !== "object" || JSON.stringify(Object.keys(state).sort()) !== JSON.stringify(GC_STATE_FIELDS) ||
             !Number.isSafeInteger(state.era) || state.era < 1 || !Array.isArray(state.active) ||
             Object.keys(state.active).length !== state.active.length) throw new Error("Invalid compacted recovery state");
         const keys = new Set<string>();
         for (const entry of state.active) {
-            if (!entry || JSON.stringify(Object.keys(entry).sort()) !== JSON.stringify(["actor", "pin", "reservationId"]) ||
+            if (!entry || JSON.stringify(Object.keys(entry).sort()) !== JSON.stringify(RECOVERY_RESERVATION_FIELDS) ||
                 typeof entry.actor !== "string" || !entry.actor || typeof entry.reservationId !== "string" || !entry.reservationId ||
                 !Number.isSafeInteger(entry.pin) || entry.pin <= this.lastGc || entry.pin > this.serverSeq + 1) throw new Error("Invalid compacted recovery reservation");
             const era = reservationEra(entry.reservationId);

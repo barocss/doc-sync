@@ -15,6 +15,10 @@ import type {IncomingMessage, ServerResponse} from "node:http";
 import type {Ack, Change, Presence, ServerEvent} from "@barocss/doc-sync/sync";
 import type {Schema} from "@barocss/doc-sync";
 
+const WORKSPACE_PACKAGE_NAMES = Object.freeze(["doc-sync", "doc-sync-prosemirror", "doc-sync-tiptap", "doc-sync-slate", "doc-sync-lexical"]);
+
+const CLIENT_EVENT_KINDS = Object.freeze(["changes", "ack", "presence", "leave"]);
+
 /**
  * 동기화 서버 + 데모 페이지. Node 기본 모듈만 쓴다.
  *
@@ -671,7 +675,7 @@ const serveStatic = (res: ServerResponse, urlPath: string) => {
     const file = normalize(join(ROOT, relative));
     // 라이브러리·데모 UI·공유 스키마, 그리고 node_modules 의 js·css 만 (ProseMirror 를 import map 으로 바로 읽는다 — 번들러 없음)
     const within = (directory: string) => file.startsWith(join(ROOT, directory) + sep);
-    const allowed = ["doc-sync", "doc-sync-prosemirror", "doc-sync-tiptap", "doc-sync-slate", "doc-sync-lexical"].some(name => within(`packages/${name}/src`)) || within("apps/demo/ui") || file === join(ROOT, "fixtures/demo-schema.ts") || (within("node_modules") && /\.(m?js|css)$/.test(file));
+    const allowed = WORKSPACE_PACKAGE_NAMES.some(name => within(`packages/${name}/src`)) || within("apps/demo/ui") || file === join(ROOT, "fixtures/demo-schema.ts") || (within("node_modules") && /\.(m?js|css)$/.test(file));
 
     if (!allowed || !existsSync(file)) {
         return send(res, 404, "없음", "text/plain; charset=utf-8");
@@ -908,7 +912,7 @@ const server = createServer(async (req, res) => {
         // uncertain storage write. Never mutate the captured stale hub.
         if (hubs.get(doc) !== hub) return send(res, 503, JSON.stringify({code: "storage_unknown", error: "Document state changed while the request was in flight"}));
 
-        if (["changes", "ack", "presence", "leave"].includes(action)) {
+        if (CLIENT_EVENT_KINDS.includes(action)) {
             const epoch = action === "leave" ? url.searchParams.get("epoch") ?? req.headers["x-doc-sync-epoch"] : req.headers["x-doc-sync-epoch"];
             if (epoch !== hub.epoch) return send(res, 409, JSON.stringify({error: "Document epoch changed", epoch: hub.epoch}));
         }

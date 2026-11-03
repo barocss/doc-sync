@@ -14,6 +14,26 @@ import {DocumentSession} from "../../mcp/src/session.ts";
 import {parseBrief, verifyBrief} from "./brief.ts";
 import type {Brief, VerificationReport} from "./brief.ts";
 
+const path = (v: unknown) => Array.isArray(v) && v.length >= 1 && v.length <= 64 && v.every(i => Number.isSafeInteger(i) && i >= 0);
+const object = (v: unknown) => v !== null && typeof v === "object" && !Array.isArray(v);
+
+const MCP_STARTUP_PHASES = Object.freeze(["input", "schema-import", "schema-discovery", "journal-open", "journal-read", "session-create", "session-start", "stdio-connect", "ready"]);
+const POSITION_OPTIONAL_PLANNER_ACTIONS = Object.freeze(["finish", "needs_attention", "edit"]);
+const INSERT_EDIT_FIELDS = Object.freeze(["op", "at", "content"]);
+const DELETE_EDIT_FIELDS = Object.freeze(["op", "at", "count"]);
+const UPDATE_EDIT_FIELDS = Object.freeze(["op", "at", "attrs", "length"]);
+const SPLIT_MERGE_EDIT_FIELDS = Object.freeze(["op", "at"]);
+const MOVE_EDIT_FIELDS = Object.freeze(["op", "at", "from"]);
+const STRUCTURED_EDIT_FIELDS: Readonly<Record<string, readonly string[]>> = Object.freeze({insert: INSERT_EDIT_FIELDS, delete: DELETE_EDIT_FIELDS, update: UPDATE_EDIT_FIELDS, split: SPLIT_MERGE_EDIT_FIELDS, merge: SPLIT_MERGE_EDIT_FIELDS, move: MOVE_EDIT_FIELDS});
+
+const PLANNER_ACTION_KINDS = Object.freeze(["insert", "delete", "edit", "inspect", "finish", "needs_attention"]);
+const SERVER_URL_PROTOCOLS = Object.freeze(["http:", "https:"]);
+const MISSION_CHARACTERS: readonly BotCharacter[] = Object.freeze(["cat", "fox", "owl", "robot"]);
+const MISSION_PERSONALITIES: readonly Personality[] = Object.freeze(["curious", "careful", "creative", "concise"]);
+const BOT_ROLES = Object.freeze(["writer", "reviewer", "organizer"]);
+const MISSION_COLORS = Object.freeze(["#7c3aed", "#a14418", "#036b58", "#175bb5", "#b12b62", "#79541b"]);
+const MUTATING_PLANNER_ACTIONS = Object.freeze(["insert", "delete", "edit"]);
+
 type Revision = {epoch: string; serverSeq: number; schemaVersion: string | null};
 type View = {document: unknown; revision: Revision | null; pending: number; conditionalPending: boolean; recoveryRequired: boolean; sessionOnline: boolean};
 export type Plan = {action: "insert" | "delete" | "edit" | "inspect" | "finish" | "needs_attention"; editsJson?: string; at: number[]; focus?: number[]; text: string; count: number; message: string};
@@ -28,30 +48,38 @@ const env = Object.fromEntries(Object.entries(process.env).filter((entry): entry
 const validateId = (value: string, label: string) => {if (!/^[a-zA-Z0-9_-]{1,80}$/.test(value)) throw new Error(`Invalid ${label}`);};
 
 /** Keep only a bounded line prefix, then retain only a known startup phase. */
-function startupProvenance() {
-    const phases = new Set(["input", "schema-import", "schema-discovery", "journal-open", "journal-read", "session-create", "session-start", "stdio-connect", "ready"]);
-    let prefix = "", phase: string | undefined, active = true;
-    const inspect = () => {
-        const match = /^MCP startup failure \[([a-z-]+)\]: /.exec(prefix);
-        if (!phase && match && phases.has(match[1])) phase = match[1];
-        prefix = "";
+class StartupProvenance {
+    private prefix = "";
+    private phase: string | undefined;
+    private active = true;
+
+    private inspect(): void {
+        const match = /^MCP startup failure \[([a-z-]+)\]: /.exec(this.prefix);
+        if (!this.phase && match && MCP_STARTUP_PHASES.includes(match[1])) this.phase = match[1];
+        this.prefix = "";
+    }
+
+    readonly consume = (chunk: Buffer): void => {
+        if (!this.active || this.phase) return;
+        let start = 0;
+        while (start < chunk.length) {
+            const newline = chunk.indexOf(10, start), end = newline < 0 ? chunk.length : newline;
+            const remaining = 96 - this.prefix.length;
+            if (remaining > 0) this.prefix += chunk.subarray(start, Math.min(end, start + remaining)).toString("latin1");
+            if (newline < 0) break;
+            this.inspect();
+            if (this.phase) break;
+            start = newline + 1;
+        }
     };
-    return {
-        consume(chunk: Buffer) {
-            if (!active || phase) return;
-            let start = 0;
-            while (start < chunk.length) {
-                const newline = chunk.indexOf(10, start), end = newline < 0 ? chunk.length : newline;
-                const remaining = 96 - prefix.length;
-                if (remaining > 0) prefix += chunk.subarray(start, Math.min(end, start + remaining)).toString("latin1");
-                if (newline < 0) break;
-                inspect();
-                if (phase) break;
-                start = newline + 1;
-            }
-        },
-        finish() { inspect(); active = false; return phase; },
-    };
+
+    finish(): string | undefined { this.inspect(); this.active = false; return this.phase; }
+}
+
+async function callTool(client: Client, tool: string, args: Record<string, unknown> = {}) {
+    const reply = await client.callTool({name: tool, arguments: args}) as {isError?: boolean; content?: Array<{type: string; text?: string}>; structuredContent?: Record<string, unknown>};
+    if (reply.isError) throw new Error(reply.content?.map(block => block.type === "text" ? block.text : "").join(" ") || `${tool} failed`);
+    return reply.structuredContent as Record<string, unknown>;
 }
 
 /** Atomic durable replacement. A failed or interrupted write is not treated as an acknowledgement. */
@@ -78,10 +106,10 @@ export async function listMissions(stateDir: string): Promise<Mission[]> {
     return (await Promise.all(ids.map(id => loadMission(stateDir, id)))).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 function checkPlan(value: Plan): void {
-    if (!value || !["insert", "delete", "edit", "inspect", "finish", "needs_attention"].includes(value.action) || !Array.isArray(value.at) || value.at.length > 64 ||
+    if (!value || !PLANNER_ACTION_KINDS.includes(value.action) || !Array.isArray(value.at) || value.at.length > 64 ||
         value.at.some(i => !Number.isSafeInteger(i) || i < 0) || typeof value.text !== "string" || value.text.length > 512 ||
         !Number.isSafeInteger(value.count) || value.count < 0 || value.count > 512 || typeof value.message !== "string" || value.message.length > 4000) throw new Error("Invalid or oversized model plan");
-    if (!(["finish", "needs_attention", "edit"] as string[]).includes(value.action) && value.at.length < 2) throw new Error("A text edit needs a valid model position");
+    if (!POSITION_OPTIONAL_PLANNER_ACTIONS.includes(value.action) && value.at.length < 2) throw new Error("A text edit needs a valid model position");
     if (value.action === "inspect" && (!Array.isArray(value.focus) || value.focus.length < 2 || value.focus.length > 64 || value.focus.some(i => !Number.isSafeInteger(i) || i < 0) || JSON.stringify(value.at) === JSON.stringify(value.focus))) throw new Error("An inspection needs a valid selection");
     if (value.action === "insert" && !value.text) throw new Error("An insertion needs text");
     if (value.action === "delete" && !value.count) throw new Error("A deletion needs a positive count");
@@ -93,12 +121,10 @@ function structuredEdits(plan: Plan): EditOp[] {
     let value: unknown;
     try { value = JSON.parse(plan.editsJson); } catch { throw new Error("Structured edit plan is not valid JSON"); }
     if (!Array.isArray(value) || value.length < 1 || value.length > 20) throw new Error("Structured edit plan must contain 1–20 edits");
-    const path = (v: unknown) => Array.isArray(v) && v.length >= 1 && v.length <= 64 && v.every(i => Number.isSafeInteger(i) && i >= 0);
-    const object = (v: unknown) => v !== null && typeof v === "object" && !Array.isArray(v);
+
     for (const item of value) {
         if (!object(item) || !path(item.at)) throw new Error("Invalid structured edit path");
-        const keys: Record<string, string[]> = {insert: ["op", "at", "content"], delete: ["op", "at", "count"], update: ["op", "at", "attrs", "length"], split: ["op", "at"], merge: ["op", "at"], move: ["op", "at", "from"]};
-        if (typeof item.op !== "string" || !Object.hasOwn(keys, item.op) || Object.keys(item).some(k => !keys[item.op].includes(k))) throw new Error("Invalid structured edit operation");
+        if (typeof item.op !== "string" || !Object.hasOwn(STRUCTURED_EDIT_FIELDS, item.op) || Object.keys(item).some(k => !STRUCTURED_EDIT_FIELDS[item.op].includes(k))) throw new Error("Invalid structured edit operation");
         if (item.op === "insert" && !(typeof item.content === "string" || (Array.isArray(item.content) && item.content.length > 0 && item.content.every(object)))) throw new Error("Invalid insert content");
         if (item.op === "delete" && (!Number.isSafeInteger(item.count) || item.count < 1)) throw new Error("Invalid delete count");
         if (item.op === "update" && (!object(item.attrs) || (item.length !== undefined && (!Number.isSafeInteger(item.length) || item.length < 0)))) throw new Error("Invalid update attributes");
@@ -214,20 +240,17 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
     const {url, document, actor, mission} = options;
     const brief = resumed?.brief !== undefined ? parseBrief(resumed.brief) : options.brief !== undefined ? parseBrief(options.brief) : undefined;
     validateId(document, "document ID"); validateId(actor, "actor ID");
-    const parsed = new URL(url); if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password) throw new Error("Invalid server URL");
+    const parsed = new URL(url); if (!SERVER_URL_PROTOCOLS.includes(parsed.protocol) || parsed.username || parsed.password) throw new Error("Invalid server URL");
     if (!mission.trim() || mission.length > 4000) throw new Error("Mission must contain 1–4000 characters");
     const maxSteps = options.maxSteps ?? 4;
     if (!Number.isInteger(maxSteps) || maxSteps < 1 || maxSteps > 20) throw new Error("maxSteps must be 1–20");
-    const variants: BotCharacter[] = ["cat", "fox", "owl", "robot"];
-    const personalities: Personality[] = ["curious", "careful", "creative", "concise"];
     const identity = createHash("sha256").update(actor).digest();
-    const character = options.character ?? variants[identity[0] % variants.length];
-    const personality = options.personality ?? personalities[identity[1] % personalities.length];
+    const character = options.character ?? MISSION_CHARACTERS[identity[0] % MISSION_CHARACTERS.length];
+    const personality = options.personality ?? MISSION_PERSONALITIES[identity[1] % MISSION_PERSONALITIES.length];
     const role = options.role ?? "writer";
-    if (!["writer", "reviewer", "organizer"].includes(role)) throw new Error("Invalid bot role");
-    if (!variants.includes(character) || !personalities.includes(personality)) throw new Error("Invalid bot character or personality");
-    const colors = ["#7c3aed", "#a14418", "#036b58", "#175bb5", "#b12b62", "#79541b"];
-    const color = options.color ?? colors[identity[2] % colors.length], name = options.name ?? actor;
+    if (!BOT_ROLES.includes(role)) throw new Error("Invalid bot role");
+    if (!MISSION_CHARACTERS.includes(character) || !MISSION_PERSONALITIES.includes(personality)) throw new Error("Invalid bot character or personality");
+    const color = options.color ?? MISSION_COLORS[identity[2] % MISSION_COLORS.length], name = options.name ?? actor;
     if (!/^#[0-9a-f]{6}$/i.test(color) || !name.trim() || name.length > 80) throw new Error("Invalid bot name or color");
     const directory = join(resolve(options.stateDir), "missions"); await mkdir(directory, {recursive: true, mode: 0o700});
     const id = resumed?.id ?? randomUUID(), path = join(directory, `${id}.json`), now = new Date().toISOString();
@@ -245,8 +268,8 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
             DOC_SYNC_SCHEMA: "", DOC_SYNC_JOURNAL: options.ephemeral ? "off" : "on", DOC_SYNC_JOURNAL_DIR: journal,
             DOC_SYNC_MISSION_BRIDGE: options.profileId ? join(resolve(options.stateDir),"mission-evidence",id) : ""}});
         // Drain child stderr to prevent a blocked protocol process; do not expose document data in logs.
-        const provenance = startupProvenance();
-        transport.stderr?.on("data", (chunk: Buffer) => provenance.consume(chunk));
+        const provenance = new StartupProvenance();
+        transport.stderr?.on("data", provenance.consume);
         client = new Client({name: `bot-${id}`, version: "0.0.0"});
         try { await client.connect(transport); }
         catch (error) {
@@ -254,19 +277,14 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
             if (phase) throw new Error(`${error instanceof Error ? error.message : String(error)} (MCP startup phase: ${phase})`, {cause: error});
             throw error;
         } finally { provenance.finish(); }
-        const call = async (tool: string, args: Record<string, unknown> = {}) => {
-            const reply = await client!.callTool({name: tool, arguments: args}) as {isError?: boolean; content?: Array<{type: string; text?: string}>; structuredContent?: Record<string, unknown>};
-            if (reply.isError) throw new Error(reply.content?.map(block => block.type === "text" ? block.text : "").join(" ") || `${tool} failed`);
-            return reply.structuredContent as Record<string, unknown>;
-        };
         const publish = async (base: Revision, anchor: number[] | null, expression: BotExpression, activity: BotActivity, focus: number[] | null = null) => {
-            try { await call("set_presence", {base, name, color, anchor, focus, character, expression, activity}); } catch { /* Transient presence has no delivery guarantee. */ }
+            try { await callTool(client!, "set_presence", {base, name, color, anchor, focus, character, expression, activity}); } catch { /* Transient presence has no delivery guarantee. */ }
         };
         reportConcern = async () => {
-            const current = await call("read_document") as View;
+            const current = await callTool(client!, "read_document") as View;
             if (current.revision && current.sessionOnline && !current.pending && !current.conditionalPending && !current.recoveryRequired) await publish(current.revision, null, "concerned", "needs_attention");
         };
-        const verified = await call("get_schema"), server = await call("get_server_schema");
+        const verified = await callTool(client!, "get_schema"), server = await callTool(client!, "get_server_schema");
         if (verified.verifiedAgainstServer !== true || !server.schema || typeof server.schemaVersion !== "string" ||
             !verified.schema || schemaVersion(verified.schema as Schema) !== server.schemaVersion) throw new Error("Server schema is not verified or has changed");
         const prior=[...state.history].reverse().find(entry=>entry.kind==="confirmed"&&entry.revision);
@@ -274,7 +292,7 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
         let resumedGuard=!!resumed&&!!lastConfirmed;
         let inspection: {anchor: number[]; focus: number[]; revision: Revision} | null = null;
         for (let i = state.resume?.used ?? 0; i < maxSteps; i++) {
-            const view = await call("read_document") as View;
+            const view = await callTool(client!, "read_document") as View;
             if (!view.revision || !view.sessionOnline || view.pending || view.conditionalPending || view.recoveryRequired || view.revision.schemaVersion !== server.schemaVersion) throw new Error("Session is not settled or schema changed; inspect recovery before proceeding");
             if (inspection && JSON.stringify(inspection.revision) !== JSON.stringify(view.revision)) inspection = null;
             state.expression = inspection ? "focused" : "thinking";if(state.resume)state.resume.used=i+1;await persist();
@@ -282,18 +300,18 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
             await publish(view.revision, inspection?.anchor ?? null, inspection ? "focused" : "thinking", "reading", inspection?.focus ?? null);
             const plan = await planner({mission, ...(brief ? {brief: structuredClone(brief)} : {}), personality, role, schema: server.schema, document: view.document, revision: view.revision, previous: [...state.steps], lastConfirmed, inspection: inspection ? {anchor: inspection.anchor, focus: inspection.focus} : null});
             checkPlan(plan);
-            if (role === "reviewer" && ["insert", "delete", "edit"].includes(plan.action)) throw new Error("Reviewer role cannot edit the document");
+            if (role === "reviewer" && MUTATING_PLANNER_ACTIONS.includes(plan.action)) throw new Error("Reviewer role cannot edit the document");
             if (plan.action === "inspect") {
                 const focus = plan.focus!;
                 // Validate both endpoints against the same revision before displaying the selection.
-                await call("set_presence", {base: view.revision, name, color, anchor: plan.at, focus, character, expression: "focused", activity: "reading"});
+                await callTool(client!, "set_presence", {base: view.revision, name, color, anchor: plan.at, focus, character, expression: "focused", activity: "reading"});
                 inspection = {anchor: plan.at, focus, revision: view.revision};
                 state.expression = "focused";
                 state.steps.push(plan.message || "Selected a range for review"); await persist(); continue;
             }
             inspection = null;
             if (plan.action === "finish") {
-                const latest = await call("read_document") as View;
+                const latest = await callTool(client!, "read_document") as View;
                 if (!latest.revision || !latest.sessionOnline || latest.pending || latest.conditionalPending || latest.recoveryRequired) throw new Error("Session is not settled; inspect recovery before finishing");
                 // A settled MCP read is a local replica. Fence structured verification against
                 // the server sequence so delayed stream delivery cannot prove stale content.
@@ -328,7 +346,7 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
             const stepId=options.profileId?randomUUID():undefined;
             state.pending = {revision: view.revision, plan,...(stepId?{stepId}:{})}; await persist();
             let reply: Record<string, unknown>;
-            try { reply = await call("edit_document", {base: view.revision, edits,...(stepId?{stepId}:{})}); }
+            try { reply = await callTool(client!, "edit_document", {base: view.revision, edits,...(stepId?{stepId}:{})}); }
             catch (error) {
                 const message = error instanceof Error ? error.message : String(error);
                 if (/conditional_stale|local document or schema changed since it was read/i.test(message)) {
@@ -340,7 +358,7 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
             lastConfirmed = {edits: structuredClone(edits), revision: reply.revision as Revision};
             state.history.push({kind: "confirmed", base: view.revision, plan, revision: reply.revision as Revision});
             state.steps.push(plan.message || `${plan.action} confirmed`); state.pending = null; state.expression = "thinking"; await persist();
-            const after = await call("read_document") as View;
+            const after = await callTool(client!, "read_document") as View;
             if (plan.action !== "edit" && after.revision && !after.pending && !after.conditionalPending && !after.recoveryRequired) {
                 const next = [...plan.at]; if (plan.action === "insert") next[next.length - 1] += plan.text.length;
                 await publish(after.revision, next, "thinking", "thinking");

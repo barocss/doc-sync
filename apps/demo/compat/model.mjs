@@ -1,5 +1,17 @@
 import {applyEdit, applyEdits, canonical, diffModels} from '@barocss/doc-sync';
 import {DEMO_SCHEMA} from '../../../fixtures/demo-schema.ts';
+
+const slatePoint=(children,p)=>{
+  let node={children};
+  for(const index of p.path)node=node?.children?.[index];
+  return typeof node?.text==='string'?{path:p.path,offset:Math.min(p.offset,node.text.length)}:null;
+};
+
+const same=(x,y)=>JSON.stringify(x)===JSON.stringify(y);
+const text=n=>n?.type==='paragraph' && (n.runs??[]).every(r=>'text'in r) ? n.runs.map(r=>r.text).join(''):null;
+
+const COMPAT_TEXT_BLOCK_TYPES = Object.freeze(['paragraph','heading','quote']);
+
 export const schema = DEMO_SCHEMA;
 export const canon = model => canonical(schema, model);
 const textTypes = new Set(['paragraph', 'heading1', 'heading2', 'quote']);
@@ -23,18 +35,13 @@ export function fromSlate(children) {
 }
 export function safeSlateRange(children,range) {
   if(!range)return null;
-  const point=p=>{
-    let node={children};
-    for(const index of p.path)node=node?.children?.[index];
-    return typeof node?.text==='string'?{path:p.path,offset:Math.min(p.offset,node.text.length)}:null;
-  };
-  const anchor=point(range.anchor),focus=point(range.focus);
+  const anchor=slatePoint(children,range.anchor),focus=slatePoint(children,range.focus);
   return anchor&&focus?{anchor,focus}:null;
 }
 const flags={bold:1,italic:2,strike:4,underline:8};
 export function fromLexical(json) {
   const node = item => {
-    if (['paragraph','heading','quote'].includes(item.type)) return {
+    if (COMPAT_TEXT_BLOCK_TYPES.includes(item.type)) return {
       type:item.type==='heading' ? item.tag==='h1'?'heading1':'heading2':item.type,
       runs:item.children.map(text=>{
         if(text.type!=='text') throw new Error(`시험 범위 밖 Lexical inline: ${text.type}`);
@@ -51,8 +58,7 @@ export function fromLexical(json) {
 /** Preserve Enter/join intent. A tree diff alone removes and reinserts the split tail. */
 export function editsFor(before, after) {
   const a=before.children,b=after.children;
-  const same=(x,y)=>JSON.stringify(x)===JSON.stringify(y);
-  const text=n=>n?.type==='paragraph' && (n.runs??[]).every(r=>'text'in r) ? n.runs.map(r=>r.text).join(''):null;
+
   if(b.length===a.length+1) for(let i=0;i<a.length;i++) {
     if(text(a[i])!==null && text(b[i])!==null && text(b[i+1])!==null && text(a[i])===text(b[i])+text(b[i+1]) && same(a.slice(0,i),b.slice(0,i)) && same(a.slice(i+1),b.slice(i+2)))
       {

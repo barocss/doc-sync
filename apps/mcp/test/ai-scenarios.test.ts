@@ -51,7 +51,7 @@ test("AI and user collaboration scenarios", {timeout: 120000}, async t => {
             server.once("exit", code => reject(new Error(`Server exited ${code}: ${stderr}`)));
             server.stdout.on("data", chunk => {
                 output += String(chunk);
-                const match = output.match(/http:\/\/localhost:(\d+)/);
+                const match = output.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
                 if (match) { clearTimeout(timer); resolve(`http://127.0.0.1:${match[1]}`); }
             });
         });

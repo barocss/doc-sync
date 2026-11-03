@@ -298,3 +298,23 @@ references or spreadsheet formula semantics. The repository's
 [Common Data Roadmap](../reference/common-data-roadmap)
 tracks the boundaries and completion conditions. The source is maintained at
 docs/common-data-roadmap.md and copied into this reference during the docs build.
+
+## Read cost and cached projections
+
+After the access layer has indexed the current document revision,
+`list.at(index)` reads the selected cached entry and decodes that value only.
+It supports the existing negative-index behavior and returns a fresh entry
+wrapper. `map.size` reads the number of distinct keys from its cached key index.
+Competing stored entries for one key still count as one key.
+
+These improvements do not make every read constant time. The first read after
+a revision change rebuilds and validates the visible projection. That work
+scales with the number of stored visible records. References to hidden targets
+can also require a retained-snapshot scan. `entries()` constructs complete read
+results, and Map iteration sorts keys. Avoid repeated full enumeration when you
+need one List entry or a Map count.
+
+The access layer still checks schema identity and collection visibility before
+using its cache. A retained handle can refer to a hidden collection without
+making that collection visible or permitting new edits to it. The cache does
+not replace server admission, History, or garbage-collection rules.

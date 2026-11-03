@@ -7,6 +7,32 @@ import type {EditOp, NodeJSON, Schema} from "@barocss/doc-sync";
 import type {EditorHost, EditorSession, AnchoredRange} from "@barocss/doc-sync/editor";
 import type {SlateElement} from "./codec.ts";
 
+function textEdit(schema: Schema, previous: NodeJSON, next: NodeJSON, offset: number, content: string, insertion: boolean): EditOp | null {
+    if (!previous.runs || !next.runs) return null;
+    const units = runsToUnits(schema, previous.runs);
+    let position = 0, index = 0;
+    while (index < units.length && position < offset) {
+        const unit = units[index++]; position += "ch" in unit ? unit.ch.length : 1;
+    }
+    if (position !== offset) return null;
+    const count = [...content].length;
+    const edit: EditOp = insertion
+        ? {op: "insert", at: [index], content: unitsToRuns(schema, runsToUnits(schema, next.runs).slice(index, index + count))}
+        : {op: "delete", at: [index], count};
+    const changed = structuredClone(previous); applyEdit(schema, changed, edit);
+    return sameModel(changed, next) ? edit : null;
+}
+
+function nodeAt(model: NodeJSON, path: number[]) {
+    let node = model;
+    for (const index of path) { if (!node.children?.[index]) return null; node = node.children[index]; }
+    return node;
+}
+
+const SLATE_STRUCTURAL_OPERATIONS = Object.freeze(["split_node", "merge_node", "set_node"]);
+const SLATE_SELECTION_MOVEMENT_OPERATIONS = Object.freeze(["move_node", "set_selection"]);
+const SLATE_NON_STRUCTURAL_OPERATIONS = Object.freeze(["insert_text", "remove_text", "set_selection"]);
+
 export type SlateBindingOptions = {
     /** Bind native composition events without requiring slate-react. */
     element?: HTMLElement;
@@ -22,33 +48,14 @@ const owners = new WeakMap<BaseEditor, SlateHostBinding>();
 /** Preserve native text ownership when equal text also occurs beside the edit. */
 function nativeTextEdits(schema: Schema, before: NodeJSON, after: NodeJSON, children: Descendant[], operations: Operation[]): EditOp[] | null {
     const batch = operations.filter(op => op.type !== "set_selection");
-    const nodeAt = (model: NodeJSON, path: number[]) => {
-        let node = model;
-        for (const index of path) { if (!node.children?.[index]) return null; node = node.children[index]; }
-        return node;
-    };
-    const textEdit = (previous: NodeJSON, next: NodeJSON, offset: number, content: string, insertion: boolean): EditOp | null => {
-        if (!previous.runs || !next.runs) return null;
-        const units = runsToUnits(schema, previous.runs);
-        let position = 0, index = 0;
-        while (index < units.length && position < offset) {
-            const unit = units[index++]; position += "ch" in unit ? unit.ch.length : 1;
-        }
-        if (position !== offset) return null;
-        const count = [...content].length;
-        const edit: EditOp = insertion
-            ? {op: "insert", at: [index], content: unitsToRuns(schema, runsToUnits(schema, next.runs).slice(index, index + count))}
-            : {op: "delete", at: [index], count};
-        const changed = structuredClone(previous); applyEdit(schema, changed, edit);
-        return sameModel(changed, next) ? edit : null;
-    };
+
     // Ordinary typing reads the existing before/after block models. It does not
     // clone the document, create an editor, or convert the native tree again.
     if (batch.length === 1 && (batch[0].type === "insert_text" || batch[0].type === "remove_text")) {
         const operation = batch[0], point = slatePointToModel(schema, children, {path: operation.path, offset: operation.offset});
         if (!point) return null;
         const blockPath = point.slice(0, -1), previous = nodeAt(before, blockPath), next = nodeAt(after, blockPath);
-        const edit = previous && next && textEdit(previous, next, point.at(-1)!, operation.text, operation.type === "insert_text");
+        const edit = previous && next && textEdit(schema, previous, next, point.at(-1)!, operation.text, operation.type === "insert_text");
         return edit ? [{...edit, at: [...blockPath, ...edit.at]}] : null;
     }
     if (!batch.length) return null;
@@ -77,13 +84,13 @@ function nativeTextEdits(schema: Schema, before: NodeJSON, after: NodeJSON, chil
             insertion = operation.type === "insert_text"; content = operation.text; point = {path: operation.path, offset: operation.offset};
         } else if ((operation.type === "insert_node" || operation.type === "remove_node") && Text.isText(operation.node)) {
             insertion = operation.type === "insert_node"; content = operation.node.text; point = {path: operation.path, offset: 0};
-        } else if (!["split_node", "merge_node", "set_node"].includes(operation.type)) return null;
+        } else if (!SLATE_STRUCTURAL_OPERATIONS.includes(operation.type)) return null;
         const previousPoint = point && (!insertion || operation.type === "insert_text") ? slatePointToModel(blockSchema, replay.children, point) : null;
         replay.apply(operation);
         const next = fromSlate(blockSchema, replay.children).children![0];
         if (content !== null && content.length) {
             const path = previousPoint ?? (point && slatePointToModel(blockSchema, replay.children, point));
-            const edit = path && textEdit(work, next, path.at(-1)!, content, insertion);
+            const edit = path && textEdit(schema, work, next, path.at(-1)!, content, insertion);
             if (!edit) return null;
             edits.push({...edit, at: [...blockPath, ...edit.at]});
         } else if (!sameModel(work, next)) {
@@ -206,7 +213,7 @@ export class SlateHostBinding {
             const moves = operations.filter(operation => operation.type === "move_node").map(operation => ({op: "move" as const, from: operation.path, at: operation.newPath}));
             let edits: EditOp[];
             if (moves.length) {
-                if (operations.some(operation => !["move_node", "set_selection"].includes(operation.type)) ||
+                if (operations.some(operation => !SLATE_SELECTION_MOVEMENT_OPERATIONS.includes(operation.type)) ||
                     !sameModel(applyEdits(this.host.schema, before, moves), after)) {
                     throw new Error("SlateBinding: perform block moves in a separate native update");
                 }
@@ -225,7 +232,7 @@ export class SlateHostBinding {
                 caretBefore,
                 caretAfter: this.selection?.focus ?? "",
                 typing: this.options.groupTyping !== false && operations.some(operation => operation.type === "insert_text" || operation.type === "remove_text") &&
-                    operations.every(operation => ["insert_text", "remove_text", "set_selection"].includes(operation.type)),
+                    operations.every(operation => SLATE_NON_STRUCTURAL_OPERATIONS.includes(operation.type)),
             });
             this.rendered = this.session.model().model;
             this.options.onChange?.(this.rendered);

@@ -25,7 +25,7 @@ test("bot discovers server schema, replans a stale edit and preserves a user's e
     const file=fileURLToPath(new URL("../../demo/server.ts",import.meta.url));
     const child=spawn(process.execPath,[file],{env:{...process.env,PORT:"0",DATA_DIR:join(dir,"server"),NO_SCHEMA:""},stdio:["ignore","pipe","pipe"]});
     let errors="";child.stderr.on("data",b=>errors+=String(b));
-    const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(`server timeout ${errors}`)),10000);child.once("exit",c=>reject(Error(`server exited ${c} ${errors}`)));child.stdout.on("data",b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
+    const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(`server timeout ${errors}`)),10000);child.once("exit",c=>reject(Error(`server exited ${c} ${errors}`)));child.stdout.on("data",b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
     const transport=new NodeHttpTransport("bot-test","human",origin),human=new SyncClient("human",transport,{schema:DEMO_SCHEMA});
     const phases: string[]=[];human.onUpdate=()=>{const expression=human.others.get("test-bot")?.expression;if(expression&&phases.at(-1)!==expression)phases.push(expression);};human.connect();
     try {
@@ -123,7 +123,7 @@ test("bot discovers a different product schema from the server", {timeout:30000}
     const child=spawn(process.execPath,[file],{env:{...process.env,PORT:"0",DATA_DIR:join(dir,"server"),DOC_PROFILE:"word",NO_SCHEMA:""},stdio:["ignore","pipe","pipe"]});
     let error="";child.stderr.on("data",b=>error+=String(b));
     try {
-        const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(`server timeout ${error}`)),10000);child.once("exit",c=>reject(Error(`server exited ${c} ${error}`)));child.stdout.on("data",b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
+        const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(`server timeout ${error}`)),10000);child.once("exit",c=>reject(Error(`server exited ${c} ${error}`)));child.stdout.on("data",b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
         const result=await runMission({url:origin,document:"word-bot",actor:"word-bot",mission:"Inspect",stateDir:join(dir,"state"),ephemeral:true},async input=>{
             assert.equal((input.schema as {root:string}).root,"word-document");
             assert.equal((input.document as {type:string}).type,"word-document");
@@ -141,7 +141,7 @@ for(const scenario of ['retained','cleared','unknown','repeat'] as const)test(`a
     const stop=async(process: ReturnType<typeof spawn>|undefined, signal: NodeJS.Signals="SIGTERM")=>{if(process&&process.exitCode===null&&process.signalCode===null){const exited=once(process,"exit");process.kill(signal);await exited;}};
     const start=async()=>{
         const p=spawn(process.execPath,[demo],{env:{...process.env,PORT:"0",DATA_DIR:join(dir,"server"),NO_SCHEMA:""},stdio:["ignore","pipe","pipe"]});let errors="";p.stderr.on("data",b=>errors+=String(b));
-        const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(`server timeout ${errors}`)),10000);p.once("exit",c=>reject(Error(`server exited ${c} ${errors}`)));p.stdout.on("data",b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
+        const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(`server timeout ${errors}`)),10000);p.once("exit",c=>reject(Error(`server exited ${c} ${errors}`)));p.stdout.on("data",b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
         return {p,origin,errors:()=>errors};
     };
     try {

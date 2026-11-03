@@ -7,7 +7,7 @@ import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, ModelPath} from "../crdt/model.ts";
 import type {Schema} from "../crdt/schema.ts";
 import type {EngineSelection, EngineAnchoredSelection} from "../engine/contract.ts";
-import type {EditorHost, EditorObserver, EditorSession, EditorStamp} from "../editor/host-contract.ts";
+import type {EditorHost, EditorObserver, EditorStamp} from "../editor/host-contract.ts";
 import {createSyncClientEditorHost} from "../editor/sync-client-host.ts";
 import type {SyncClientEditorInput} from "../editor/sync-client-host.ts";
 import {subscribeClient} from "../editor/index.ts";
@@ -17,7 +17,9 @@ export type {LocalClientState} from "../local/state.ts";
 import {createLocalEditorHost} from "../local/editor-host.ts";
 import {SyncClient} from "../sync/client.ts";
 import type {ClientOptions as SyncOptions} from "../sync/client.ts";
-import type {Presence, PresenceInput, Transport} from "../sync/protocol.ts";
+import {ClientDataPolicy} from "./data-policy.ts";
+import {overrideEditorView, wrapEditorSession} from "./editor-session.ts";
+import type {Presence, PresenceInput, ServerEvent, Transport} from "../sync/protocol.ts";
 
 export interface ClientOptions {
     schema: Schema;
@@ -30,6 +32,8 @@ export interface ClientOptions {
 }
 export type BindingClient = Client | LocalClient | SyncClient;
 export interface ClientNotificationError {readonly phase: keyof EditorObserver; readonly message: string}
+const syncOptionKeys: readonly string[] = Object.freeze(["engineFactory", "ackDelay", "beforeSend"]);
+type ModelEventInfo = Parameters<NonNullable<EditorObserver["modelEvents"]>>[1];
 type Entry = {observer: EditorObserver; origin?: object};
 const bridges = new WeakMap<SyncClient, SyncBridge>();
 const clientBackends = new WeakMap<Client, LocalClient | SyncClient>();
@@ -50,44 +54,56 @@ class SyncBridge {
     mutable() { if (this.notifying) throw new Error("Client observer mutation is not allowed"); }
     settled() { this.mutable(); if (this.pending) throw new Error("Commit pending operations first"); }
     dispose() { this.stop?.(); this.stop = null; this.entries.clear(); }
-    emit(phase: keyof EditorObserver, invoke: (observer: EditorObserver) => void) {
+    emit(phase: "beforeEvent", event: ServerEvent): void;
+    emit(phase: "modelEvents", edits: readonly EditOp[], info: ModelEventInfo): void;
+    emit(phase: "fallbackModelEvents"): void;
+    emit(phase: "update"): void;
+    emit(phase: keyof EditorObserver | "fallbackModelEvents", payload?: ServerEvent | readonly EditOp[], info?: ModelEventInfo) {
         const previous = this.notifying; this.notifying = phase !== "beforeEvent" || previous;
         try {
             for (const entry of [...this.entries]) {
                 if (!this.entries.has(entry) || phase !== "beforeEvent" && this.origin && entry.origin === this.origin) continue;
-                try { invoke(entry.observer); } catch (error) {
-                    this.errors.push(Object.freeze({phase, message: error instanceof Error ? error.message : String(error)}));
+                try {
+                    const observer = entry.observer;
+                    if (phase === "beforeEvent") observer.beforeEvent?.(payload as ServerEvent);
+                    else if (phase === "fallbackModelEvents") observer.modelEvents?.([], {cause: "local", fallback: true});
+                    else if (phase === "modelEvents") observer.modelEvents?.(payload as readonly EditOp[], info!);
+                    else observer.update?.();
+                } catch (error) {
+                    this.errors.push(Object.freeze({phase: phase === "fallbackModelEvents" ? "modelEvents" : phase, message: error instanceof Error ? error.message : String(error)}));
                     if (this.errors.length > 100) this.errors.shift();
                 }
             }
         } finally { this.notifying = previous; }
     }
+    // Stable callbacks for the whole backend, including unsubscribe/resubscribe.
+    private readonly observer: EditorObserver = {
+        beforeEvent: event => {
+            // Local echoes already changed the model. Native selection still uses
+            // the old projection until update, so do not recapture it here.
+            if (event.type === "change" && event.envelope.change?.actor === this.client.actor) return;
+            this.emit("beforeEvent", event);
+        },
+        modelEvents: (edits, info) => {
+            this.stamp = this.client.engine.stamp();
+            const origin = this.origin; this.origin = undefined;
+            try { this.emit("modelEvents", edits, info); } finally { this.origin = origin; }
+        },
+        update: () => {
+            const next = this.client.engine.stamp();
+            if (next.generation !== this.stamp.generation || next.revision !== this.stamp.revision) {
+                this.stamp = next;
+                // Each observer owns its fallback array and metadata.
+                this.emit("fallbackModelEvents");
+            }
+            this.emit("update");
+        },
+    };
     subscribe(observer: EditorObserver, origin?: object) {
         this.mutable();
         if (!this.stop) {
             this.stamp = this.client.engine.stamp();
-            this.stop = subscribeClient(this.client, {
-                beforeEvent: event => {
-                    // This is an acknowledgement of an already-applied local edit.
-                    // Native paths still belong to the old projection until update.
-                    if (event.type === "change" && event.envelope.change?.actor === this.client.actor) return;
-                    this.emit("beforeEvent", item => item.beforeEvent?.(event));
-                },
-                modelEvents: (edits, info) => {
-                    this.stamp = this.client.engine.stamp();
-                    const origin = this.origin; this.origin = undefined;
-                    try { this.emit("modelEvents", item => item.modelEvents?.(edits, info)); } finally { this.origin = origin; }
-                },
-                update: () => {
-                    const next = this.client.engine.stamp();
-                    if (next.generation !== this.stamp.generation || next.revision !== this.stamp.revision) {
-                        this.stamp = next;
-                        // SyncClient.commit has no local model-event payload. Invalidate honestly.
-                        this.emit("modelEvents", item => item.modelEvents?.([], {cause: "local", fallback: true}));
-                    }
-                    this.emit("update", item => item.update?.());
-                },
-            });
+            this.stop = subscribeClient(this.client, this.observer);
         }
         const entry = {observer, origin}; this.entries.add(entry);
         return () => {
@@ -142,19 +158,7 @@ export function createEditorHost(client: BindingClient, options: {input?: SyncCl
         return createLocalEditorHost(owner);
     }
     const base = createSyncClientEditorHost(owner, options), state = bridge(owner), origin = {};
-    const session = (input: EditorSession): EditorSession => ({
-        ...input,
-        get active() { return input.active; },
-        begin: () => { state.settled(); state.scoped(origin, () => input.begin()); },
-        apply: edits => input.active ? state.scoped(origin, () => input.apply(edits)) : state.apply(origin, () => input.apply(edits))!,
-        applyModelEdits: (before, edits) => input.active ? state.scoped(origin, () => input.applyModelEdits(before, edits)) : state.apply(origin, () => input.applyModelEdits(before, edits))!,
-        deleteRange: (from, to) => input.active ? state.scoped(origin, () => input.deleteRange(from, to)) : state.apply(origin, () => input.deleteRange(from, to)),
-        commit: (ops, record) => input.active ? state.scoped(origin, () => input.commit(ops, record)) : state.commit(origin, ops, () => input.commit(ops, record)),
-        end: () => { if (input.active) state.settled(); return state.scoped(origin, () => input.end()); },
-        cancel: () => state.scoped(origin, () => input.cancel()),
-    });
-    return {
-        ...base,
+    return overrideEditorView(base, {
         get actor() { return base.actor; }, get schema() { return base.schema; },
         apply: edits => state.apply(origin, () => base.apply(edits))!,
         applyModelEdits: (before, edits) => state.apply(origin, () => base.applyModelEdits(before, edits))!,
@@ -162,9 +166,9 @@ export function createEditorHost(client: BindingClient, options: {input?: SyncCl
         commit: (ops, record) => state.commit(origin, ops, () => base.commit(ops, record)),
         undo: () => { state.settled(); return base.undo(); },
         redo: () => { state.settled(); return base.redo(); },
-        createSession: () => session(base.createSession()),
+        createSession: () => wrapEditorSession(base.createSession(), state, origin),
         subscribe: observer => state.subscribe(observer, origin),
-    };
+    });
 }
 
 /** A fixed local or sync document. Omitting transport creates only a LocalClient. */
@@ -172,14 +176,15 @@ export class Client {
     readonly #backend: LocalClient | SyncClient;
     readonly #dataValidator?: DataValidator;
     #dataAccess?: SharedData;
-    #validatingData = false;
-    #assertDataMutationAllowed() { if (this.#validatingData) throw new Error("Data: validator mutation is not allowed"); }
+    #dataPolicy?: ClientDataPolicy;
+    #assertDataMutationAllowed() { this.#dataPolicy?.assertMutable(); }
     get data(): SharedData {
         assertDataSchema(this);
-        return this.#dataAccess ??= createDataAccess(this, write => {
-            this.#assertDataMutationAllowed(); this.#validatingData = true;
-            try { this.#dataValidator?.(write); } finally { this.#validatingData = false; }
-        }, () => this.#assertDataMutationAllowed());
+        if (!this.#dataAccess) {
+            const policy = this.#dataPolicy ??= new ClientDataPolicy(this.#dataValidator, this);
+            this.#dataAccess = createDataAccess(this, policy.validate, policy.assertMutable);
+        }
+        return this.#dataAccess;
     }
     get mode(): "local" | "sync" { return this.#backend instanceof LocalClient ? "local" : "sync"; }
     private readonly host: EditorHost;
@@ -188,7 +193,7 @@ export class Client {
         if (options.data?.validate !== undefined && typeof options.data.validate !== "function") throw new Error("Data: validate must be a function");
         this.#dataValidator = options.data?.validate;
         if (Object.hasOwn(options, "engineFactory")) throw new Error("Put engineFactory in syncOptions with a transport");
-        if (options.syncOptions && Object.keys(options.syncOptions).some(key => !["engineFactory", "ackDelay", "beforeSend"].includes(key))) throw new Error("Unsupported syncOptions");
+        if (options.syncOptions && Object.keys(options.syncOptions).some(key => !syncOptionKeys.includes(key))) throw new Error("Unsupported syncOptions");
         if (restored) this.#backend = restored;
         else if (options.transport !== undefined) {
             if (!options.transport || typeof options.transport.subscribe !== "function" || typeof options.transport.send !== "function" || typeof options.transport.sendPresence !== "function") throw new Error("Invalid transport");
@@ -236,7 +241,7 @@ export class Client {
         this.#assertDataMutationAllowed();
         if (this.#backend instanceof SyncClient) bridge(this.#backend).settled();
         this.#backend.clearHistory();
-        if (this.#backend instanceof SyncClient) bridge(this.#backend).emit("update", observer => observer.update?.());
+        if (this.#backend instanceof SyncClient) bridge(this.#backend).emit("update");
     }
     captureAnchor(path: ModelPath) { return this.host.captureAnchor(path); }
     locateAnchor(key: string, visibility: "visible" | "retained" = "visible") { return this.host.locateAnchor(key, visibility); }

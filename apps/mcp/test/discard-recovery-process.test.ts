@@ -47,7 +47,7 @@ async function startDemo(data: string, clockModule: string) {
         child.once("exit", code => reject(new Error(`Demo exited ${code}: ${stderr}`)));
         child.stdout.on("data", chunk => {
             stdout += String(chunk);
-            const match = stdout.match(/http:\/\/localhost:(\d+)/);
+            const match = stdout.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
             if (match) resolve(`http://127.0.0.1:${match[1]}`);
         });
     }), "server start");

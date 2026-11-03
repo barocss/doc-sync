@@ -6,6 +6,8 @@ import {normalizePreview,presenceIdentity} from './presence.ts';
 import type {PresenceEditing,PresenceTarget,PresenceTextSelection} from './presence.ts';
 import {DEFAULT_META,sheetProfile} from './profiles.ts';
 import type {SheetProfile} from './profiles.ts';
+const copyAxis=(id:PresenceTarget['row'])=>typeof id==='number'?id:{...id};
+
 export const META=DEFAULT_META;
 type Entry={serverSeq:number;actor:string;ops:(SparseSheetOp|StructuralSheetOp)[]};
 export class SheetSession {
@@ -48,7 +50,7 @@ export class SheetSession {
  }
  preview(target:PresenceTarget,field:string,text:string,{composing=false,selection}:{composing?:boolean;selection?:PresenceTextSelection}={}){
   if(!Object.hasOwn(this.profile.fields,field))return;
-  const copyAxis=(id:PresenceTarget['row'])=>typeof id==='number'?id:{...id};
+
   this.editing={target:{row:copyAxis(target.row),column:copyAxis(target.column)},field,...normalizePreview(text,selection),composing};
   if(!this.presenceRange||!this.projectRange(this.presenceRange))this.presenceRange={row:copyAxis(target.row),column:copyAxis(target.column),endRow:copyAxis(target.row),endColumn:copyAxis(target.column)};
   this.queuePresence();

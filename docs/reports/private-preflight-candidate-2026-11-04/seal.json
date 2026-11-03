@@ -1,0 +1,64 @@
+{
+  "status": "SEALED_SELECTED_EVIDENCE_CANDIDATE_NOT_PROMOTED_PERFORMANCE_HOLD",
+  "files": {
+    "README.md": {
+      "bytes": 9980,
+      "sha256": "4751ee64b8584f3a25ccd6c6f6772d4c34614a07e206e1d6da42363300541630"
+    },
+    "evidence-manifest.json": {
+      "bytes": 816126,
+      "sha256": "f75cfb594aefd2b49b7278ac5b6da6fb699067ad2118ece41666bfda0aeda248"
+    },
+    "prior-seal-identity.json": {
+      "bytes": 2080,
+      "sha256": "08e0bfe0ab73783259eb259d8d88a9cd51aae67ac40cef52540419f22b430f8a"
+    },
+    "selected-evidence.tar.gz": {
+      "bytes": 3173055,
+      "sha256": "2228f581044d7ebf9a2075caf427328f57cac1af4f693d4502040a31baf2b06d"
+    },
+    "source-identity.json": {
+      "bytes": 20017,
+      "sha256": "88024b5af6c246eae6d37020474d1313f36d12a265272e009e9d51eef5698f32"
+    }
+  },
+  "archiveMembers": 2177,
+  "selectedOriginalFiles": 2173,
+  "timingProcesses": 24,
+  "sourceIdentity": {
+    "baseline69": "8b532beb32d4ef0e7d69e54ac9a989d269d0c590e11d6ef8f3f0545b362c4a51",
+    "candidate70": "d6106051dccaac969849fac5ef24199690ccddf7a452cdeccdcc94606149d3ab",
+    "productionEqualsBaseline": true
+  },
+  "historicalProductionQualification": {
+    "cases": 2084,
+    "pass": 2082,
+    "fail": 0,
+    "expectedPlatformSkip": 2,
+    "newExecution": false
+  },
+  "candidateFullSuitePackagesChrome": "NOT_RUN",
+  "firstFailure": {
+    "group": "cycle1-doc",
+    "cell": "remoteApplyMs",
+    "baselineMedianMs": 2.18864600000029,
+    "candidateMedianMs": 2.27443750000009,
+    "candidateChangePercent": 3.919843592786987,
+    "maximumCandidateMedianMs": 2.254305380000299,
+    "rule": "control3",
+    "absoluteAllowanceMs": 0,
+    "status": "FAIL",
+    "mandatory": true
+  },
+  "laterCycles": "NOT_RUN",
+  "knownMCP": "NOT_REPRODUCED / UNRESOLVED",
+  "notRunByFinalizer": [
+    "timing",
+    "tests",
+    "build",
+    "browser",
+    "mobile",
+    "Git",
+    "release"
+  ]
+}

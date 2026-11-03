@@ -66,7 +66,7 @@ async function start(data: string, gate = false, fsyncGate = false, fsyncStage: 
         child.once("error", error => { clearTimeout(timer); reject(error); });
         child.once("exit", code => { clearTimeout(timer); reject(new Error(`server exited ${code}: ${stderr}`)); });
         child.stdout.on("data", chunk => {
-            stdout += String(chunk); const match = stdout.match(/http:\/\/localhost:(\d+)/);
+            stdout += String(chunk); const match = stdout.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
             if (match) { clearTimeout(timer); resolve(`http://127.0.0.1:${match[1]}`); }
         });
     });

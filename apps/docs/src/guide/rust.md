@@ -4,6 +4,14 @@ The private native SDK has separate APIs for Document, Graphic and Spreadsheet.
 These are native Cargo APIs. They are not browser engines or public `Client`
 implementations. The WASM adapter still provides UTF-16 storage only.
 
+The Rust delivery is **incomplete**. D1 provides the selected TypeScript client
+boundary; D2 covers only a native runtime-schema subset. Full nested schema
+coverage, the shared Client.data Map/List facade, live schema changes,
+production recovery/GC parity, a full document CRDT WASM package and selectable
+Rust/WASM editor bindings remain open. The examples below use the implemented
+native Cargo APIs or the separate storage-only WASM experiment. They do not
+provide a Rust replacement for the production Client, server or MCP path.
+
 ## Choose an engine for a graphic editor
 
 | Path | Available now | Integration limit |
@@ -46,7 +54,7 @@ directly. It is a private Cargo crate in this checkout, not a crates.io release.
 The production server, browser clients, MCP path, and editor bindings still use
 TypeScript. The native SDK does not yet replace those integrations.
 
-The five-package npm layout and the production client/engine selection seam are
+The npm package layout and the production client/engine selection seam are
 implemented. `SyncClient` accepts `ClientEngineFactory` and uses
 `typescriptClientEngineFactory` by default. The selected engine drives the common
 editor host and input sessions. The older immutable `typescriptEngine` API is a
@@ -439,7 +447,9 @@ the actual two-author example. The later domain additions have separate
 graphic and sparse-sheet evidence described above.
 Eight independent review cases also checked preset/UTF-16 restore, deletion,
 clock exhaustion, and forged pending rejection. These are native SDK checks,
-separate from the engine's 75 tests and TypeScript differential evidence.
+separate from that shadow checkpoint's 75 tests and TypeScript differential
+evidence. The current runtime-schema suites pass 48 SDK tests and 78 shadow-core
+tests; those totals do not close the remaining delivery gates.
 
 ## Use the storage-only WASM adapter
 

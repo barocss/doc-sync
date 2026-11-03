@@ -11,6 +11,8 @@ import type {Ticket} from "../crdt/ticket.ts";
 import {ENGINE_CONTRACT_VERSION} from "./contract.ts";
 import type {EngineAnchoredSelection, EngineCapability, EngineCheckpoint, EngineIdentity, EngineSelection, TypeScriptEngine, TypeScriptEngineCheckpoint, TypeScriptEngineFactory} from "./contract.ts";
 
+const CRDT_OPERATION_KINDS = Object.freeze(["text", "node", "set", "del", "undel", "move"]);
+
 const ENGINE = "doc-sync-typescript";
 const CAPABILITIES: readonly EngineCapability[] = ["edit", "receive", "history", "anchors", "checkpoint"];
 
@@ -108,7 +110,7 @@ class TypeScriptDocumentEngine implements TypeScriptEngine {
         const input = copy(ops);
         if (!Array.isArray(input)) throw new Error("Invalid wire operation batch");
         for (const op of input) {
-            if (!op || !["text", "node", "set", "del", "undel", "move"].includes(op.t)) throw new Error("Invalid wire operation kind");
+            if (!op || !CRDT_OPERATION_KINDS.includes(op.t)) throw new Error("Invalid wire operation kind");
             const ticket = op.t === "text" || op.t === "node" ? op.id : op.at;
             if (!isTicket(ticket) || ticket.actor !== writer) throw new Error("Invalid wire operation writer");
         }

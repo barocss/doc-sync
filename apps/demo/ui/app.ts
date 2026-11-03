@@ -8,6 +8,10 @@ import {createActionGuard, resetAndWait} from "./reset.ts";
 import type {GridBlock, NodeJSON, Pos, Run, TextBlock, Doc} from "@barocss/doc-sync";
 import type {Envelope, ServerEvent} from "@barocss/doc-sync/sync";
 
+const tombstones = () => observer.doc.items.filter(i => !i.compact && !isAlive(i)).length;
+
+const HEADING_LEVEL_CHOICES = Object.freeze(["1", "2", "3", "4"]);
+
 /**
  * 데모 페이지. 한 페이지에 참여자 여럿을 띄운다. 참여자마다 자기 SyncClient 와 자기 서버 연결(SSE)을 따로 가지므로,
  * 다른 창·다른 컴퓨터에서 붙은 것과 똑같이 서버를 거쳐 주고받는다.
@@ -479,7 +483,6 @@ async function gcScenario(): Promise<void> {
     }
 
     const [a, b] = peers;
-    const tombstones = () => observer.doc.items.filter(i => !i.compact && !isAlive(i)).length;
 
     say("① 'hello world' 로 시작");
     await resetDoc("hello world");
@@ -545,7 +548,7 @@ async function seedTable(): Promise<void> {
 
     first.moveTo({b: 0, o: 0});
     first.insertChoiceForScenario("table:2x2");
-    ["1", "2", "3", "4"].forEach((ch, i) => {
+    HEADING_LEVEL_CHOICES.forEach((ch, i) => {
         first.moveTo(cellEnd(first.client.doc, Math.floor(i / 2), i % 2));
         first.insert(ch);
     });

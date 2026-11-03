@@ -42,7 +42,7 @@ test("two MCP agents use separate histories and reconcile a stale concurrent bas
             server.once("exit", code => reject(new Error(`Server exited ${code}: ${serverError}`)));
             server.stdout.on("data", chunk => {
                 output += String(chunk);
-                const match = output.match(/http:\/\/localhost:(\d+)/);
+                const match = output.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);
                 if (match) { clearTimeout(timer); resolve(`http://127.0.0.1:${match[1]}`); }
             });
         });

@@ -2,6 +2,9 @@ import {spawnSync} from "node:child_process";
 import {constants} from "node:fs";
 import {open} from "node:fs/promises";
 
+const LOCK_CONTENTION_CODES = Object.freeze(["EAGAIN", "EWOULDBLOCK"]);
+
+
 // Darwin acquires flock(2) atomically with open(2).
 const DARWIN_O_EXLOCK = 0x20;
 
@@ -24,7 +27,7 @@ export async function openWriterLock(path: string): Promise<Awaited<ReturnType<t
         file = await open(path, constants.O_CREAT | constants.O_RDWR | constants.O_NONBLOCK | constants.O_NOFOLLOW |
             (process.platform === "darwin" ? DARWIN_O_EXLOCK : 0), 0o600);
     } catch (error) {
-        if (["EAGAIN", "EWOULDBLOCK"].includes((error as NodeJS.ErrnoException).code ?? "")) {
+        if (LOCK_CONTENTION_CODES.includes((error as NodeJS.ErrnoException).code ?? "")) {
             throw new Error("Journal already has an active writer");
         }
         throw error;

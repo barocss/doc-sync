@@ -4,6 +4,23 @@ import {assertSpreadsheetSchema, spreadsheetSchemaVersion} from "../spreadsheet/
 import type {Schema, SchemaDomain, Shape} from "../crdt/schema.ts";
 import {schemaVersion} from "../crdt/schema-version.ts";
 
+const TEXT_SHAPE_FIELDS = Object.freeze(["children", "text", "next"]);
+const FLOW_SHAPE_FIELDS = Object.freeze(["children", "default", "childRules"]);
+const CHILDREN_SHAPE_FIELDS = Object.freeze(["children"]);
+const GROUP_SHAPE_FIELDS = Object.freeze(["children", "by"]);
+const SPAN_SHAPE_FIELDS = Object.freeze(["mark", "attr"]);
+const SHAPE_PROPERTY_FIELDS: Readonly<Record<Shape, readonly string[]>> = Object.freeze({
+    text: TEXT_SHAPE_FIELDS, inline: Object.freeze([]),
+    flow: FLOW_SHAPE_FIELDS, container: CHILDREN_SHAPE_FIELDS,
+    group: GROUP_SHAPE_FIELDS, grid: CHILDREN_SHAPE_FIELDS, row: CHILDREN_SHAPE_FIELDS, cell: CHILDREN_SHAPE_FIELDS,
+    atom: Object.freeze([]), span: SPAN_SHAPE_FIELDS,
+});
+
+
+const ATTRIBUTE_SUPPORT_KINDS = Object.freeze(["semantic", "opaque"]);
+const SCALAR_ATTRIBUTE_TYPES = Object.freeze(["string", "number", "boolean", "scalar"]);
+
+
 export type EditorAttributeHandling = "semantic" | "preserve";
 export type EditorNodeCapability = {
     /** Semantic rendering is application-defined. Opaque nodes retain data only. */
@@ -47,15 +64,9 @@ export function inspectEditorSchema(schema: Schema, capabilities: EditorSchemaCa
         if (problems.length) throw new Error(`Invalid schema: ${problems.join("; ")}`);
         // This preflight has a stricter descriptor boundary than the legacy core.
         // Keep every public NodeSpec property, including UI hints and span mappings.
-        const shapeProperties: Record<Shape, readonly string[]> = {
-            text: ["children", "text", "next"], inline: [],
-            flow: ["children", "default", "childRules"], container: ["children"],
-            group: ["children", "by"], grid: ["children"], row: ["children"], cell: ["children"],
-            atom: [], span: ["mark", "attr"],
-        };
         for (const [type, spec] of Object.entries(schema.nodes)) {
-            if (!Object.hasOwn(shapeProperties, spec.shape)) throw new Error(`Invalid schema: nodes.${type}.shape is unsupported`);
-            const allowed = ["shape", "attrs", "ui", ...shapeProperties[spec.shape]];
+            if (!Object.hasOwn(SHAPE_PROPERTY_FIELDS, spec.shape)) throw new Error(`Invalid schema: nodes.${type}.shape is unsupported`);
+            const allowed = ["shape", "attrs", "ui", ...SHAPE_PROPERTY_FIELDS[spec.shape]];
             for (const key of Object.keys(spec)) {
                 if (!allowed.includes(key)) throw new Error(`Invalid schema: nodes.${type}.${key} is not supported on ${spec.shape}`);
             }
@@ -71,7 +82,7 @@ export function inspectEditorSchema(schema: Schema, capabilities: EditorSchemaCa
     for (const [type, spec] of Object.entries(schema.nodes)) {
         const path = `nodes.${type}`, mapping = Object.hasOwn(capabilities.nodes, type) ? capabilities.nodes[type] : undefined;
         if (!capabilities.shapes.includes(spec.shape)) add("error", `${path}.shape`, "shape", `Unsupported shape: ${spec.shape}`);
-        if (!mapping || !["semantic", "opaque"].includes(mapping.mode)) add("error", path, "node", "Explicit node handling is required");
+        if (!mapping || !ATTRIBUTE_SUPPORT_KINDS.includes(mapping.mode)) add("error", path, "node", "Explicit node handling is required");
         else if (mapping.mode === "opaque") add("warning", path, "node", "Node data is preserved without semantic rendering");
         if (mapping?.nativeName !== undefined) {
             if (!mapping.nativeName) add("error", path, "nativeName", "Native name must not be empty");
@@ -125,13 +136,13 @@ export function inspectSpreadsheetSchema(schema: SpreadsheetSchema, capabilities
     for (const [field, spec] of Object.entries(schema.fields)) {
         const path = `fields.${field}`;
         const mapping = Object.hasOwn(capabilities.fields, field) ? capabilities.fields[field] : undefined;
-        if (!mapping || !["semantic", "opaque"].includes(mapping.mode)) {
+        if (!mapping || !ATTRIBUTE_SUPPORT_KINDS.includes(mapping.mode)) {
             add("error", path, "field", "Explicit field handling is required");
             continue;
         }
         if (mapping.mode === "opaque") add("warning", path, "field", "Field data is preserved without semantic editing");
         if (mapping.mode === "semantic" && mapping.editorType === undefined) add("error", `${path}.editorType`, "fieldType", "Semantic editing requires an editor type");
-        if (mapping.editorType !== undefined && (mapping.editorType !== "scalar" && mapping.editorType !== spec.type || !["string", "number", "boolean", "scalar"].includes(mapping.editorType))) {
+        if (mapping.editorType !== undefined && (mapping.editorType !== "scalar" && mapping.editorType !== spec.type || !SCALAR_ATTRIBUTE_TYPES.includes(mapping.editorType))) {
             add("error", `${path}.editorType`, "fieldType", `Editor type does not support ${spec.type}`);
         }
     }

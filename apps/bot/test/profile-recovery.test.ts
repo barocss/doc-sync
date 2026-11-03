@@ -23,7 +23,7 @@ test('profile identity and history survive bot and server restarts without undoi
  const start=async(port:string)=>{
   const child=spawn(processExec,[serverPath],{env:{...process.env,PORT:port,DATA_DIR:join(dir,'server'),NO_SCHEMA:''},stdio:['ignore','pipe','pipe']});
   let errors='';child.stderr!.on('data',b=>errors+=String(b));
-  const origin=await new Promise<string>((resolve,reject)=>{let out='';const timer=setTimeout(()=>reject(Error(`server timeout ${errors}`)),10000);child.once('exit',code=>reject(Error(`server exited ${code} ${errors}`)));child.stdout!.on('data',b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
+  const origin=await new Promise<string>((resolve,reject)=>{let out='';const timer=setTimeout(()=>reject(Error(`server timeout ${errors}`)),10000);child.once('exit',code=>reject(Error(`server exited ${code} ${errors}`)));child.stdout!.on('data',b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
   return {process:child,origin};
  };
  const processExec=process.execPath;
