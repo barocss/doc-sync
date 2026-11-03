@@ -25,7 +25,12 @@ test('product server automatically reconciles a pre-submission interruption afte
   child=await start();let mission=await loadMission(dir,id);const deadline=Date.now()+15000;
   while(mission.status==='running'&&Date.now()<deadline){await new Promise(r=>setTimeout(r,50));mission=await loadMission(dir,id);}
   assert.equal(mission.status,'needs_attention');assert.equal(mission.pending,null);
-  const response=await fetch(`${origin}/test/bot?profile=word&doc=${doc}`);const view=await response.json() as {jobs:Array<{blocked:boolean}>};assert.equal(view.jobs[0].blocked,false);
+  // The mission is saved before recovery closes its session and releases its claim.
+  // Wait for the controller to report that cleanup has also completed.
+  const readView=async()=>{const response=await fetch(`${origin}/test/bot?profile=word&doc=${doc}`);assert.equal(response.status,200);return await response.json() as {jobs:Array<{status:string;blocked:boolean}>};};
+  let view=await readView();
+  while((view.jobs[0]?.status!=='needs_attention'||view.jobs[0]?.blocked!==false)&&Date.now()<deadline){await new Promise(r=>setTimeout(r,50));view=await readView();}
+  assert.equal(view.jobs[0]?.status,'needs_attention');assert.equal(view.jobs[0]?.blocked,false);
   await stop();child=await start();const again=await loadMission(dir,id);assert.deepEqual(again,mission);
  }finally{await stop();await rm(dir,{recursive:true,force:true});}
 });

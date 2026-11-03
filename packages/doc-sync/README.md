@@ -2,9 +2,11 @@
 
 Draft package. This workspace is private and has not been published. `publishConfig.access` records the intended public registry access. Remove `private` only in a separately approved registry release.
 
-Run `npm install` and `npm run build` from the repository root with Node 24. The package exports ESM JavaScript and TypeScript declarations from `dist`. `npm run check:packages` packs all five packages and installs the tarballs into isolated consumers.
+Run `npm install` and `npm run build` from the repository root with Node 24. The package exports ESM JavaScript and TypeScript declarations from `dist`. `npm run check:packages` packs all library packages and installs the tarballs into isolated consumers.
 
-The core has no external runtime dependencies. Public entries are the root, `/sync`, `/server`, `/node`, `/editor`, `/engine`, `/local`, and `/client`. Root and sync imports do not require an editor.
+The core has no external runtime dependencies. Public entries are the root, `/sync`, `/server`, `/node`, `/editor`, `/engine`, `/local`, `/client`, `/presence`, and `/data`. Root and sync imports do not require an editor.
+
+`Client.data` provides Map/List handles when the Client uses `createDataSchema()` from `/data`. Client owns transport, History and save/open. Other document schemas are not converted by accessing this namespace. Use `createDataHub` from `/server` for intrinsic data admission; guarded data GC is currently disabled. `/presence` supplies optional ephemeral collaboration state separately from document History.
 
 `SyncClient` accepts `engineFactory: typescriptClientEngineFactory` from `/engine` or `/sync`. The selected engine owns live document and History state and drives the client, editor hosts and input sessions. TypeScript is the default and the only production implementation. The separate immutable `typescriptEngine` API remains an experiment. See [ENGINE-CONTRACT.md](./ENGINE-CONTRACT.md) for ownership, checkpoint and compatibility rules. No Rust/WASM backend is supplied.
 

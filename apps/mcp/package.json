@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node src/main.ts",
-    "test": "node --test test/*.test.ts",
+    "test": "node --test --test-concurrency=4 test/*.test.ts",
     "start:http": "node src/http-main.ts"
   },
   "dependencies": {

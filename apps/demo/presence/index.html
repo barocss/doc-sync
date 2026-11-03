@@ -1,0 +1,5 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DocSync Presence</title><link rel="stylesheet" href="/style.css"></head><body>
+<header><strong>DocSync Presence</strong><span>Memory transport</span><div id="connection">Connected</div></header>
+<nav><button data-action="target-document">Document</button><button data-action="target-graphic">Graphic fixture</button><button data-action="target-spreadsheet">Sheet fixture</button><button data-action="disconnect">Disconnect</button><button data-action="reconnect">Reconnect</button><button data-action="unmount">Unmount</button><button data-action="mount">Mount</button></nav>
+<section class="draft-bar"><textarea id="draft-input" aria-label="Draft" placeholder="Draft a change…" rows="2"></textarea><button data-action="confirm">Confirm</button><button data-action="cancel">Cancel</button><button data-action="undo">Undo</button><button data-action="redo">Redo</button></section>
+<main id="surfaces"></main><pre id="errors" hidden></pre><script type="module" src="/bundle.js"></script></body></html>

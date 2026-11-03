@@ -130,3 +130,135 @@ Raw `anchor_resolve` returns a fallback in the first visible cell. Strict `selec
 This uses the fixed nested-table fixture, not an arbitrary editor schema. It checks native anchor semantics. Presence transport, roster lifecycle, DOM selection and Slate/Lexical/ProseMirror rendering still use TypeScript and need separate integration evidence. See [the two resolution contracts](./rust#cursors-and-selections).
 
 </details>
+
+
+## Spreadsheet live previews
+
+The private VTable demo sends active cell input through ephemeral presence.
+Alice uses blue and Bob uses red. Range tints and independent selection
+outlines use the actor's validated color; filled cells retain their stored fill.
+Preview text uses the same normal font, color and stored weight as local cell
+editing. It is not italicized or recolored because it is a preview. Native input
+padding aligns with the cell's own content padding. Display colors and names
+do not grant document permissions.
+
+Remote selection outlines are drawn independently from the neutral grid lines.
+One rectangle marks a whole range. Clipping follows the real VTable body, scroll
+and window. Coincident remote ranges use bounded inner lanes and dash phases
+so a later actor does not erase an earlier outline. These overlays do not
+intercept input or replace the native local selection.
+
+Typing updates the peer's projected cell before Enter. The projected text can
+be empty or an incomplete numeric input. It does not change committed cell
+registers, Lamport clocks, pending operations, acceptance sequence, journal or
+undo History. Enter/Apply still commits through the existing validated edit
+path. Escape/cancel clears the preview and restores the committed projection.
+An invalid final value keeps the actual input open rather than writing it.
+
+The demo's SheetSession supplies name/color, preview(target, field, text,
+{composing}), and clearPreview(). Target IDs are captured when editing begins.
+S2 previews follow row/column moves; a deleted target stays hidden and cannot
+redirect input into a neighbor. A native editor starts from its committed
+model value even if the cell displays another actor's preview.
+
+Presence requests are coalesced with a 50 ms interval and one in-flight request.
+Increasing actor-local sequence numbers prevent late updates from reviving a
+canceled preview. A new SSE connection clears its prior draft; an older stream
+closing does not remove a newer stream's presence. Disconnect clears ephemeral
+state. Local draft text is not a durable shared value and is not restored by
+server restart or page reload.
+
+Updated SheetSession requests also carry a server-issued presence generation.
+Join, stream replacement, stream close and explicit leave fence requests from
+older sessions, so a delayed request cannot restore an offline selection.
+HTTP-only sessions receive the generation at join. Legacy direct requests that
+omit it retain sequence-only behavior. Presence remains independent of the
+document edit queue; a new preview can wait for an earlier Presence request.
+
+During composition, intermediate text may be previewed, but Enter does not
+commit while composition is active. Browser automation uses labeled synthetic
+composition events; this does not prove an OS keyboard IME path.
+
+Preview text is limited to 8,192 UTF-16 units. The server validates identity,
+mode/schema, target, field, color, size and sequence before changing presence.
+The same protocol works with the fixed-axis and stable-axis demo profiles.
+This is a demo session/view feature, not a new public Schema shape, CRDT op or
+universal production-editor draft API.
+
+Run npm run dev:spreadsheet and use a fresh room. The opt-in structural URL is
+?axes=stable&room=live-input. Desktop browser checks compare actual native cells
+with the committed-model/server oracle before and after commit/cancel. Mobile
+testing is excluded.
+
+
+### Remote text carets and character selections
+
+The spreadsheet demo's optional editing.selection is a DOM-style record:
+
+```ts
+{start: 1, end: 3, direction: "backward"}
+```
+
+Offsets are UTF-16 units relative to the exact transmitted editing.text, not
+byte offsets or cell coordinates. start equals end for a caret. Otherwise the
+range is highlighted; the active caret is start for backward selection and
+end for forward/none. Existing previews without selection remain valid.
+
+The sender publishes focus/input, selection changes, arrows and pointer
+selection without creating document operations. It sends composition state
+through the same ephemeral path. The 8,192-unit preview limit truncates without
+splitting a surrogate pair; offsets clamp to the transmitted text and valid
+code-point boundaries. Legal combining/ZWJ positions remain represented as DOM
+offsets. The server atomically rejects malformed or out-of-range selections.
+
+The recipient uses real DOM text shaping and Range rectangles with the cell's
+font and padding. It renders only the caret belonging to the displayed preview
+winner. It suppresses peer carets under an active local input and clips to the
+cell/table body. Long text automatically reveals the active caret in the
+recipient's viewport; it does not copy the sender's pixel scroll position.
+Inspector prefixes adjust display offsets without changing raw offsets.
+
+Selection capability follows the actual control. Native InputEditor is text,
+so even an incomplete numeric value can carry a caret. Inspector number/color
+inputs, checkboxes and select controls omit character selection metadata.
+
+### Other domains and current coverage
+
+Presence is separate from the data schema, but each view needs its own adapter.
+The current test boundaries are:
+
+| Domain/view | Tested temporary state | Remaining view integration |
+| --- | --- | --- |
+| Document: ProseMirror, Slate, Lexical product views | Remote token caret/range, collapsed selection, cleanup, unchanged model/History/pending/server sequence | Shared uncommitted text-draft rendering; Tiptap was not browser-tested in this domain pass |
+| Graphic: PixiJS view | Remote pointer/object selection; local drag preview/cancel; exactly one committed edit on pointer release | Shared remote drag-preview geometry |
+| Spreadsheet: VTable | Input preview, intra-cell caret/character selection, composition gate and stable axis tracking | Durable drafts and universal public binding API |
+
+Custom metadata transport is tested through the public Presence path. This
+does not establish a renderer for arbitrary metadata. Document text accepted
+by ordinary editing still synchronizes through CRDT operations; raw IME/draft
+preview is a separate integration. Graphic drag is locally temporary until
+pointer release. These distinctions do not require a new data schema shape.
+
+
+### Related collaboration patterns
+
+Separating temporary interaction from stored document changes is an established
+pattern. [Yjs Awareness](https://docs.yjs.dev/getting-started/adding-awareness)
+uses a separate awareness CRDT for per-client JSON state rather than storing it
+in the document. [Automerge Repo ephemeral messages](https://automerge.org/docs/reference/repositories/ephemeral/)
+use DocHandle.broadcast and a separate receive event for non-persistent data.
+[Liveblocks Presence](https://liveblocks.io/docs/products/sync/presence) provides
+per-connected-user state for cursors, selections and other temporary UI.
+
+These APIs do not establish a universal raw typing/IME-preview policy. The
+application chooses payloads and rendering. Our demo follows the same layering
+pattern, with its own validated message format, lifecycle and view adapters;
+it does not claim wire compatibility with those protocols.
+
+
+## Shared components
+
+Use [Presence components](./presence-components) for the common state API and
+optional DOM, React, Vue and Svelte views. The existing editor-binding presence
+and private Spreadsheet preview remain valid. The component API does not
+automatically install domain-specific draft capture or projection.

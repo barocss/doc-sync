@@ -127,9 +127,9 @@ The [recovery plan](./reference/recovery-plan) describes the implemented recover
 
 ### 9. Prepare the public release
 
-**Status: local package artifacts verified; not released.** Core and the ProseMirror, Tiptap, Slate, and Lexical bindings are separate packages. `@barocss/doc-sync` contains the dependency-free core. All five packages remain private. Compiled JavaScript, declarations, and isolated tarball consumers are available. Define release versions, API/protocol compatibility, migrations, security, and release policy before registry publication. Plan the Protocol 2 to 3 upgrade for existing deployments.
+**Status: local package artifacts verified; not released.** Core and the ProseMirror, Tiptap, Slate, and Lexical bindings are separate packages. `@barocss/doc-sync` contains the dependency-free core. All ten packages remain private. Compiled JavaScript, declarations, and isolated tarball consumers are available. Define release versions, API/protocol compatibility, migrations, security, and release policy before registry publication. Plan the Protocol 2 to 3 upgrade for existing deployments.
 
-**Done when:** a clean consumer can install and use the package, the selected release checks pass, compatibility and migration instructions are available, and the release gates are approved. The five packages remain private and export compiled ESM JavaScript and declarations. See [packages and engines](./guide/packages).
+**Done when:** a clean consumer can install and use the package, the selected release checks pass, compatibility and migration instructions are available, and the release gates are approved. The ten packages remain private and export compiled ESM JavaScript and declarations. See [packages and engines](./guide/packages).
 
 ## Bot delivery sequence
 
@@ -151,11 +151,14 @@ attributes. The PixiJS demo renders a smaller basic profile. The
 orders data primitives, reference/override semantics, geometry/layout/rendering,
 native profile coverage, then WASM and performance qualification.
 
-The [sparse spreadsheet guide](./schemas/spreadsheets) describes the private S1
-primitive and its early collaborative grid demo. The
+The [sparse spreadsheet guide](./schemas/spreadsheets) describes experimental
+SparseSheet fields and the early real-transport VTable demo. The separate
+[stable rows and columns API](./schemas/spreadsheet-structure) adds opt-in S2
+TypeScript structure, IDs and History. S3 shared Client/protocol/recovery is the
+next integration priority. Native structural axes, formulas, GC and production
+resource qualification remain open. The
 [spreadsheet roadmap](https://github.com/barocss/doc-sync/blob/main/docs/spreadsheet-roadmap.md)
-keeps stable axes and public Client integration open. An early S5a browser demo
-can proceed beside those stages; it does not complete them.
+records the ordered gates.
 
 ## Separate Rust experiment
 
@@ -207,3 +210,44 @@ Live text-span coalescing remains excluded until the user explicitly asks to rec
 AI and bot documentation is separate from editor development. The [stdio connection](./ai/server) and [private hosted MCP service](./ai/hosted) both connect to the application document server through HTTP/SSE. The hosted entry point adds authenticated Streamable HTTP, configured slots, read/write/schema grants, upstream credentials, and stable actor journals on a single host. Linux requires `/usr/bin/flock` from util-linux; macOS uses the native kernel lock.
 
 Bounded source and real-client checks do not establish production deployment acceptance. OAuth, TLS termination, multiple-host coordination, storage-failure qualification, and operational rollout remain separate gates. Preserve conditional edits, exact retries, and protected recovery across both transports.
+
+
+## Shared Presence components
+
+Core `/presence` and optional DOM, React, Vue, Svelte and SolidJS packages provide
+validated ephemeral state, a Client bridge and host-projected overlays. Existing
+editor-binding APIs remain supported. See [Presence components](./guide/presence-components).
+The public components do not automatically replace the private spreadsheet
+session, implement native draft capture in every editor, or add a WASM backend.
+Future work includes authoritative server-side Presence ordering for newly
+joined observers and domain-specific adapters beyond the demonstrated fixtures.
+
+
+## Common data and schema separation
+
+P1 adds `/data` Map/List APIs and a separate optional local value policy while
+retaining fixed internal storage Schema and existing Client/History rules. P2
+covers authoritative semantic admission, restart/GC and large-data qualification.
+P3 reuses existing text nodes if a standalone Text facade is needed; it adds no
+second text engine. P4 extracts storage, structural validation and application
+schema projection. P5 migrates selected domain integrations. Read
+[Shared maps and lists](./guide/shared-data) and the
+[Common Data Roadmap](./reference/common-data-roadmap) for exact completion gates.
+
+
+### P2 intrinsic server data admission
+
+createDataHub now rejects duplicate retained IDs, malformed tagged values and
+unknown/mismatched references before application and persistence. Existing
+Schema clients retain their behavior through generic DocHub. Data GC remains
+disabled until identity-aware compaction; restart/resource/business-policy
+gates remain distinct. See [server data admission](./guide/shared-data#server-data-admission).
+
+
+### Client-owned Map/List access
+
+Shared records/lists now use the existing Client.data namespace. The unreleased
+DataClient facade was removed; Client retains connection, History and save/open.
+This preserves the P1 encoding fingerprint and P2 server admission. It does not
+complete storage/schema extraction or enable data access on another domain
+schema. See [the migration guide](./guide/shared-data#migrate-the-unreleased-facade).

@@ -130,6 +130,18 @@ normal edit/remote refresh uses zero whole-range reads. See the
 [custom schema report](https://github.com/barocss/doc-sync/blob/main/docs/reports/custom-schemas-2026-11-03/README.md).
 
 
+### Stable-axis S2 boundary
+
+The opt-in [StructuralSheet route](./schemas/spreadsheet-structure) has separate
+functional Chrome proof. Its Node diagnostics cover nine logical-extent/history
+conditions. Empty 1,000/million/billion axes each retain one run per dimension;
+point-edit p95 is 0.0404–0.0529 ms. Checkpoint replay p50 reaches 53.391 ms in
+the measured retained-history case. These are Node measurements; they do not
+establish S2 browser latency. Structural replay and view projection remain
+performance work. The earlier fixed-axis convergence measurements above do not
+qualify the S2 renderer.
+
+
 ## Sparse sheet primitive
 
 The [private sparse-sheet experiment](./schemas/spreadsheets) is a separate,

@@ -1,0 +1,38 @@
+{
+  "name": "@barocss/doc-sync-presence-vue",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "DocSync Presence vue bindings",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "test": "node --test test/*.test.mjs"
+  },
+  "peerDependencies": {
+    "@barocss/doc-sync": ">=0.0.0 <0.1.0",
+    "@barocss/doc-sync-presence-ui": ">=0.0.0 <0.1.0",
+    "vue": "^3.5.22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  }
+}

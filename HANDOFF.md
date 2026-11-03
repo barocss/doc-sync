@@ -1,5 +1,85 @@
 # Handoff — @barocss/doc-sync
 
+Latest **§5.131** consolidates the pending Spreadsheet S2, ephemeral Presence,
+shared DOM/framework views, Map/List server admission and Client.data work for
+the main checkpoint. Final full workspace run: 1638 cases/1636PASS/two expected
+platform SKIP/zeroFAIL. Review fixed identical-state Presence TTL and late
+Spreadsheet disconnect requests; the Graphic HTTP test now waits for the
+requested cursor state. MCP test files run in a bounded pool of four without
+changing scenario concurrency, assertions or timeouts. Original intermittent
+bot MCP startup closure remains NOT_PROVEN; diagnostics and failed runs are
+preserved. Client.data is the fixed Map/List namespace, requiring
+createDataSchema; it does not reinterpret other domain schemas. Client owns
+transport, History and save/open. Guarded data GC, storage extraction and resource
+qualification remain open. npm publication is outside this checkpoint.
+
+The entries below are historical snapshots. Their API names, counts and
+uncommitted/publication status describe the checkpoint recorded in each entry.
+
+Latest **§5.129** adds pre-application intrinsic Map/List server admission
+through createDataHub and detached Client/LocalClient snapshots for retained
+reference reads. Generic DocHub/Schema behavior remains; DataClient stays a
+facade over one existing Client. Rejected batches do not persist/apply or consume
+seq/receipt/broadcast state. Full workspace1616cases=1614PASS/two expected platform
+SKIP/zeroFAIL; data60PASS/actualHTTP3PASS; root build/tscPASS. Ten tarballs/
+12consumers and release rehearsalPASS; docs43PASS/55pages/2594links. Guarded data
+GC is disabled to retain IDs; metadata-aware compaction remains open. No fresh
+browser/mobile/process-restart proof. No commit/push/publication.
+
+Latest **§5.128** adds Core `/data` (`DataClient`, `SharedMap`, `SharedList`),
+a numbered storage/schema separation roadmap, and optional SolidJS Presence.
+P1 uses the existing Client with a fixed internal encoding Schema and separate
+local value policy; full storage extraction and authoritative data admission
+remain later gates. No new Text engine/facade. Full workspace1588cases:
+1586PASS/two expected platform SKIP/zeroFAIL; root tsc/buildPASS. Focused data29,
+actual HTTP3, Solid tests3 and five-surface Chrome27PASS. Ten tarballs/12consumer
+cases and release rehearsalPASS; docs43PASS/55pages/2590links. Preview:
+http://127.0.0.1:55787. Native OS IME/mobile NOT_RUN. No commit/push/publication.
+
+Latest **§5.127** adds Core `/presence`, shared DOM overlays and optional
+React/Vue/Svelte packages. Nine library packages remain private0.0.0. Full
+workspace1552cases=1550PASS/two expected platform SKIP/zeroFAIL; final affected
+UI/framework10PASS/root tscPASS; desktop Chrome27/27PASS/errors0. Nine tarballs/11isolated
+consumer cases and release rehearsalPASS. Docs43PASS;53pages/2471linksPASS.
+Preview: http://127.0.0.1:49849. No commit/push/publication. Native OS IME and
+mobile NOT_RUN. Existing-receiver sequence protection is not server-wide
+Presence ordering; Graphic/Spreadsheet playground surfaces are projection
+fixtures. Existing private sheet session is not automatically migrated.
+
+Latest **§5.126** adds remote intra-cell text carets and character selections
+through ephemeral Spreadsheet Presence. Affected Demo141/141, focused
+Document/Graphic54/54 and root tscPASS; desktop Chrome spreadsheet68/68 and
+domain7/7PASS. Docs43/43 and build52pages/2407linksPASS. OS IME and mobile
+NOT_RUN (composition is simulated). Shared remote Document raw drafts and
+Graphic drag geometry remain NOT_IMPLEMENTED. Fresh preview:
+http://127.0.0.1:62007/?axes=stable&room=text-cursor-review.
+No commit/push/publication; inherited WIP and user tabs remain preserved.
+
+Latest **§5.125** fixes remote preview typography and range outlines. Preview
+text is normal and matches native input padding; independent SVG outer borders
+replace actor-colored shared grid edges. Demo136/136 and root tscPASS; desktop
+Chrome57/57PASS with errors0. Mobile NOT_RUN. Fresh preview:
+http://127.0.0.1:50796/?axes=stable&room=selection-review. Existing58880 user
+input/History remains untouched. Intra-cell remote text carets are a proposed
+next extension, not implemented by this repair. No commit/push/publication.
+
+Latest **§5.124** adds per-user colored ranges and live input previews through
+ephemeral demo Presence, without changing data schemas or CRDT operations.
+Full workspace1516cases:1514PASS/two expected SKIPs/zeroFAIL; final affected
+Demo129PASS and root tscPASS. Desktop Chrome92checksPASS; mobile NOT_RUN.
+The fresh preview is http://127.0.0.1:58880/?axes=stable&room=live-presence-review.
+Baseline9334e59 is committed; S2/presence work remains uncommitted with no push.
+
+The tested inherited checkpoint is committed as **9334e59**. TypeScript
+Spreadsheet S2 delivery is in **§5.123**: stable row/column IDs, implicit
+intervals, insert/delete/move, selective structural History, stable editor
+drafts/selection and strict server reference validation. Final workspace run:
+**1,511 cases / 1,509 PASS / two expected SKIPs / zero FAIL**. Desktop Chrome
+acceptance has **76 passing checks** on one bundle. Mobile testing is excluded
+by the latest user instruction. New S2 changes remain uncommitted; no push or
+publication occurred. Shared Client integration, native S2, formulas, GC and
+browser performance qualification remain open.
+
 The custom-schema and editor-mapping checkpoint is in **§5.121**. Experimental
 public SpreadsheetSchema/SparseSheet, custom Graphic ID helpers, editor
 capability preflight and native runtime schema subsets are implemented.
@@ -7,7 +87,8 @@ Final suite aggregate: **1,464 cases / 1,462 PASS / two expected SKIPs / zero FA
 after correcting and rerunning the docs suite. Chrome default/custom profiles
 pass 21/21 and 29/29; native SDK/shadow pass 48/48 and 78/78. Full native nested
 Document schemas, live Rust transitions, shared sheet Client integration and
-WASM remain open. All inherited work is preserved and remains uncommitted.
+WASM remain open. That checkpoint preceded the tested 9334e59 commit; read
+§5.123 for current delivery and working-tree state.
 
 The collaborative VTable spreadsheet demo, built-in graphic data APIs and native
 Rust Document/Graphic/Spreadsheet delivery are in **§5.120**. Final workspace:
@@ -5866,3 +5947,814 @@ S2 will be opt-in, with stable row/column IDs, compressed initial axis intervals
 insert/delete/move, selective structural History, and unchanged legacy S1 paths.
 Before this checkpoint, S2 agents only performed read-only design work.
 Evidence: docs/reports/spreadsheet-s2-2026-11-03/baseline.md.
+
+
+### 5.123 Spreadsheet S2 stable axes, structural History and desktop proof (2026-11-03)
+
+**Checkpoint first.** Before S2 implementation, all inherited work was committed
+as 9334e591e25e9ff641eed8c6cd7c65ce9de4724a after a fresh full workspace
+invocation passed 1,464 cases: 1,462 PASS, two expected SKIPs, zero FAIL, plus root
+tsc. Current Graphic/Rust roadmap wording was corrected; historical reports
+were preserved. That is the only commit made for this request. No push.
+
+**Parallel ownership.** Sol High designed/implemented axis.ts and reviewed the
+wrapper's CRDT/reference boundaries. Sol Medium implemented StructuralSheet,
+cell History/state, demo/HTTP/browser work and independent property/performance
+checks. A separate Medium lane diagnosed the existing recovery-start test race.
+No existing user tabs, original pending/History or preview bundles were migrated.
+
+**S2 API.** Root exports StructuralSheet and StructuralSheetOptions/Op/State,
+StructuralCellOp/AxisOp and AxisId/Span/Action types. Fixed-axis SparseSheet and
+its v1/v2 serialization are unchanged. S2 uses doc-sync-structural-sheet-v1.
+Each initial axis is one implicit interval. Stable IDs are source+offset within
+the initial or inserted run; row/column namespaces are distinct. Cell registers
+key the stable pair and field, so structural edits do not rewrite cells.
+rows/columns report current visible extents; ID/index mapping returns -1 for
+hidden/absent IDs. getCellById can inspect retained hidden cells; local
+setCellById rejects a hidden or missing target. Remote valid offline writes
+remain retained under deleted axes. Custom SpreadsheetSchema is supported.
+
+insertRows/Columns, deleteRows/Columns and moveRows/Columns capture observed
+identity spans. Numeric move destination refers to the axis AFTER target
+removal. Concurrent unseen inserts are not added to the observed target set.
+Axis actions replay in Lamport/actor Ticket order over split/coalesced intervals.
+Moves extract exact IDs and place before a stable anchor, avoiding graph cycles
+for opposing moves. Hidden anchors remain retained. Undo/redo toggles only the
+owner's original structural action; peer moves/deletes/inserts remain active.
+Cell undo retains S1 exact-writer fences and linked compensation, including
+foreign same-value writes and consecutive own History. One local History and
+one Lamport clock cover cells and both axes.
+
+**Validation and recovery.** Entire batches validate before mutation. Identical
+retries are no-ops; conflicting ticket payloads, actor forks, wrong schema,
+unsafe values, cross-axis/nonbirth/overrun references and invalid toggles reject.
+Stable cell keys ignore JSON property order. Client receive may retain unseen
+earlier causal references for delivery-order independence. Strict server receive
+requires known references for fresh ops from room creation. Global indexed
+references validate same-batch dependencies and completion of prior unresolved
+sources; rejected batches do not leak into the reverse index. Strict mode does
+not retroactively revalidate unresolved duplicates previously accepted in
+default mode. Invalid arbitrary operation unions have no convergence guarantee.
+State restore replays journal and verifies clock, axis/model registers, History
+and exact pending operations. Acknowledgement requires an exact pending prefix.
+Validation is consistency proof, not checkpoint authenticity or durable storage.
+
+**Demo.** ?axes=stable selects S2 at construction in a fresh room, optionally
+with profile=tasks/sensors. Protocol and schema mismatch reject before mutation.
+Input and inspector targets capture stable IDs; remote insert/move does not
+redirect a draft. A deleted target retains the actual native input and blocks
+commit to a neighbor. Dirty blurred inspector drafts survive refresh. Selection
+range endpoint IDs drive native VTable border and remote presence projection.
+Native selection restoration waits for active input commit/cancel. Programmatic
+restoration suppresses selected events and preserves dirty drafts/presence.
+VTable internal range flags are normalized before comparison. Bounded viewport
+and summary remain; normal edit/structural refresh getRange calls are zero.
+
+**Final tests.** Fresh qualified workspace command
+npm run test --workspaces --if-present (using the already built/frozen packages)
+passes 1,511 cases: 1,509 PASS, two expected platform SKIPs, zero FAIL. Counts:
+Core1099, Lexical7, Slate4, Bot53, Demo124, Docs43, MCP181/179PASS. Root tsc,
+git diff --check and package consumer/artifact checks pass. Axis6 tests include
+an independent dense-ID oracle,70 mixed actions and20 shuffled deliveries,
+100 concurrent action permutations and a billion-row one-run check. Structural
+wrapper14 tests cover cell writer fences, own structural History, hidden cells,
+atomic invalid batches, references, JSON ordering, exact replay/pending and
+accessor rejection. Property20 seeds each author40 mixed operations and compare
+five shuffled delivery replicas plus restore/pending. Native core is unchanged
+from the already qualified pre-S2 checkpoint; no Rust structural-axis parity.
+
+An initial full run failed the preexisting bot-recovery-start test: persisted
+needs_attention precedes session close/claim release and controller unblocking.
+The test now waits within its existing deadline for actual API settled status,
+retaining pending=null and unchanged-restart assertions. Production recovery
+code is unchanged. An intermediate demo rerun overlapped package prepack and
+failed four imports while dist was being recreated; final tests ran with frozen
+artifacts and pass. The docs build had the same initial dist race; sequential
+build succeeds. Failed logs are retained, not relabeled as passing.
+
+**Desktop Chrome.** Same final emitted bundle
+ada76174d37af1d18edb2ecf57caa3f6b27004b8aa2135fef904564e78409aa9
+passes desktop acceptance76: structural21, S1 default20, custom29, Escape6.
+Raw pre-steering receipts have78 checks including two completed mobile checks.
+The user's subsequent instruction excludes mobile; those two are excluded from
+current acceptance. No mobile browser action ran after the instruction. Browser
+CLI scripts now default to desktop; the gated mobile branch was syntax-checked
+only. Exact executed script copies and hashes remain with their raw receipts.
+
+Chrome checks trusted native input, row/column controls, own undo/redo, drafts,
+actual rectangular borders/presence/shading, zero full-range reads and exact
+Node server oracle equality. Page and console errors are empty. Desktop
+screenshots inspected. An initial native border remap defect was fixed. Earlier
+headless tests stalled waiting for frames; final proof explicitly requests
+screenshots before view assertions and bounds nonessential frame probes. It
+does not measure latency, GPU completion or physical paint. Active-input border
+remap is deliberately deferred to preserve the real draft.
+
+**Node diagnostic.** Nine fresh --expose-gc Node24.22.1 processes on M3Max test
+extents1k/1m/1e9 × histories0/25/100. Initial axes each have one run, no registers
+or operations, observed post-GC delta5,584–6,120 bytes (noise included). Point
+editp95 .0404–.0529ms; capturep50 .865–1.746ms; replayp50 11.506–53.391ms.
+Capture/replay fixtures include120 retained warmup/sample point writes; replay
+excludes JSON parse. Structural replay grows with retained history. These are
+Node observations, not a production budget or browser performance acceptance.
+Some untimed S2 view CPU diagnostics exceed a frame; view projection still needs
+dedicated profiling. No matched speedup, WAN, long-history, GC or Rust/WASM
+performance claim is made.
+
+**Docs, run and evidence.** Schemas→Spreadsheet→Stable rows and columns gives
+a runnable public API recipe, move convention, ID/deletion/History semantics,
+strict admission and explicit boundaries. Roadmaps mark TypeScript S2 and keep
+S3 Client/protocol/recovery, native S2, formulas, GC and browser performance open.
+Final docs43/43PASS and build52pages/2400internal links pass English/local-path
+checks. No docs browser rerun or mobile testing followed the user scope change.
+Run npm run dev:spreadsheet and open ?axes=stable&room=stable-example. The final
+isolated qualified preview remains at http://127.0.0.1:5438 (exec66923), with
+output/spreadsheet-s2-qualified. SPREADSHEET_OUTPUT_DIR isolates build/server
+artifacts; older user bundles/services remain untouched. The memory-only demo
+has no page-reload/server-restart durability or live schema/axis-mode switch.
+Evidence: docs/reports/spreadsheet-s2-2026-11-03/. Raw browser overview:
+output/spreadsheet-s2-qualified/verification.json. Node diagnostic:
+output/spreadsheet-s2-node-performance-20261103/receipt.json. S2 changes remain
+uncommitted. No push, npm/Cargo publication, release or hosted deployment.
+
+
+### 5.124 Per-user spreadsheet ranges and ephemeral live input (2026-11-03)
+
+**User steering.** Show actor-specific selection colors and typing before Enter.
+Explain whether intermediate state belongs to a schema. The latest standing
+instruction prohibits mobile testing; none was performed in this checkpoint.
+
+**Architecture.** Accepted values keep the existing schema/CRDT/History path.
+Typing, cursor/range and composition state use a separate ephemeral Presence
+message contract. The view combines committed model plus temporary previews.
+No DocumentSchema/GraphicSchema/SpreadsheetSchema flag, new data shape, schema
+fingerprint change or CRDT operation was added. Partial raw numeric text may be
+previewed while the accepted number remains unchanged. This is private demo
+session/transport/view work; a universal public draft API across all bindings
+and domains is not delivered. Durable user drafts need separate persistence.
+
+**Protocol.** New presence.ts supplies bounded identity/preview types. Session
+adds name/color, preview(target,field,text,{composing}) and clearPreview. Existing
+presence(range) remains compatible. Target IDs captured at edit start follow
+S2 structure. Preview text max8192UTF16, name/color/field/mode/schema/target and
+actor/token/epoch validate before mutation. Per-actor presence sequence rejects
+stale messages. One in-flight request and50ms coalescing/trailing updates bound
+client queuing;100 generated drafts use at most two requests in the unit test.
+Presence cannot change document clock, pending, server acceptance sequence,
+cell registers, journal or own History. Cancel/disconnect clears; a new stream
+clears prior draft, and stale stream close cannot erase a newer stream.
+No durable preview persistence, production TTL/resource guarantee or new auth
+permission model is claimed.
+
+**View.** Alice blue3975c5 and Bob red d64b55 drive range tint/border and preview
+text. Generic actors use a deterministic palette, which can repeat. Primary
+and formula drafts show raw text; other field drafts show field:text. Peer
+projection is cached once per refresh. Actual input/draft is protected. Native
+editing opened on a peer preview starts from own committed value, not peer
+text. Invalid final values and active composition keep native input open.
+Inspector blur clears shared preview but retains local dirty fields; focus can
+republish, Escape restores latest committed values. Stable delete hides preview
+and blocks writes into neighbors. Only confirmed edits enter ordinary History.
+
+Two actual UI lifecycle defects were fixed: delayed cleanup of an older editor
+could clear a newer target; and blurred dirty S1 inspector input could reset
+when its own preview-clear refreshed the view. Guards now protect both modes.
+The original user5438 tab/bundle and unsaved draft/History were preserved.
+
+**Tests.** Full workspace1516cases=1514PASS/two expected platform SKIP/zeroFAIL:
+Core1099, Lexical7, Slate4, Bot53, Demo129, Docs43, MCP181/179PASS. Final
+affected Demo129/129 and root tscPASS after last UI changes. The five new real
+HTTP/SSE cases validate unchanged before-commit model/clock/history/pending/log,
+identity/color, atomic malformed/stale messages, stable move/delete, coalescing
+and cancel/reconnect/older-stream cleanup. Core engine source is unchanged from
+S2. Docs43PASS, build52pages/2404links passes English/local-path checks.
+
+**Desktop proof.** Same JS bundle
+9a2218517d3e2a1bc6060da8a2b40747463d0c11dbce14c1a2ce4eb1045f688d
+passes92desktop checks: live16, default20, custom29, stable21, cancel6. Raw
+regressions use5448; final live run uses a fresh58880 server. Trusted native and
+inspector typing shows on the peer before commit while exact model/accepted log
+remain unchanged. Empty draft, peer-preview editing baseline, Escape, one-action
+commit+undo/redo, raw formula, dirty blur, blue/red scene fills, disconnect,
+S2 move/delete and incomplete numeric Enter all pass. Page/console errors0.
+Composition events are simulated; real OS IME NOT_RUN. Mobile NOT_RUN.
+Desktop screenshots visually inspected. No latency/GPU/physical paint claim.
+
+Earlier harness select-all shortcuts, Node fetch keepalive and headless frame
+waits failed. Final proof uses trusted Home+Shift+End, node:http agent:false,
+exact latest actor/range acknowledgement and bounded frame requests before
+view assertions. One repeated test server hit its intentional room cap; a fresh
+isolated process completed the proof. Prior failures and an explicitly
+INTERRUPTED attempt remain distinct. CSS trailing whitespace cleanup changed
+no semantic style or emitted JS. No runtime change was made to fake a frame.
+
+**Docs/run.** Custom schemas guide separates stored data and live interactions;
+Presence guide documents the private protocol and limits. Evidence and source
+seal: docs/reports/spreadsheet-live-presence-2026-11-03/. Browser overview:
+output/spreadsheet-live-presence-demo/verification-final.json. Fresh preview:
+http://127.0.0.1:58880/?axes=stable&room=live-presence-review (exec11090).
+Shared Client integration, durable recovery, formula evaluation, GC, native/WASM
+S2 and browser latency/resource qualification remain open. Baseline9334e59 is
+the only new commit; S2 and presence changes remain uncommitted. No push,
+publication, release, old-tab migration or hosted docs deployment occurred.
+
+
+### 5.125 Ordinary peer text and independent selection outlines (2026-11-03)
+
+**Request.** Peer input should look like local editing, without italic styling.
+The user supplied an adjacent red/blue border artifact. Mobile tests prohibited.
+
+**Cause.** cellStyle colored each cell's four shared grid borders. VTable edge
+sharing caused neighboring colors to compete and internal range lines to look
+like selection edges. Preview text also forced italic/actor color, and native
+InputEditor padding differed from the canvas cell.
+
+**Repair.** Normal neutral text/font preserves stored bold and matches local
+input. The native editor derives horizontal padding from the actual cell style
+and cell/input rectangles, compensating borders while leaving vertical position
+unchanged. Grid lines remain neutral. An input-transparent SVG layer draws each
+remote range's original outer edges from authoritative VTable rectangles. Body
+clipping excludes headers; scrolling/resizing/window jumps redraw cached peer
+projections without enumerating logical ranges. Window clipping never invents
+an edge at a cut boundary. Stable insert/move/delete projection is retained.
+
+Exactly coincident remote geometry uses deterministic1/3/5px actor lanes; more
+coincidences share inner dashed phases. Unrelated peers do not alter a range's
+inset. Native local selection remains owned by VTable. Preview cells and remote
+selection cannot change document data or steal focus. Schema/CRDT/server/session
+contracts are unchanged by this repair. Source ownership: SolMedium main/style/
+geometry and SolMedium independent desktop proof; root docs/integration.
+
+**Verification.** Demo136/136PASS includes geometry7/7. Root tsc and diff-check
+PASS. Same final bundle
+4a4e90617ff4cf6bfe883bdf1aec3d4c5f2a475f4ead9456ad42e0e04250812c
+passes desktop57/57: focused14, clip3, coincidence3, live16, stable21. Error and
+console lists are empty. The oracle checks actual SVG/native bounds, adjacent
+boxes,2x3 outer-only borders, overlaps, XY scrolling, header/body clip, window
+cuts, unrelated-peer invariance and stable row/column edits. Native input and
+peer text start72px/72px (tolerance0.5px). Enter's actual selected address and
+inspector agree; no new advance policy. Desktop screenshots inspected. Mobile
+NOT_RUN. IME in reused live checks is simulated, not a real OS IME claim.
+
+An isolated baseline reproduces forced italic/color and missing independent
+outlines. A first browser harness tried JSON serialization of getter-backed
+VTableRect and failed; explicit fields fixed it. Earlier initial repair and
+final padding/lane receipts are preserved separately. Existing full-workspace
+qualification is §5.124; this UI repair uses affected tests rather than claiming
+a new full run. No latency or physical-paint qualification is inferred.
+
+**Docs/run.** Presence guide and demo README describe ordinary peer text and
+independent outlines. Docs43/43PASS, local build52pages/2404links passes
+English/local-path checks. New report/source seal:
+docs/reports/spreadsheet-selection-2026-11-03/. Qualified preview:
+http://127.0.0.1:50796/?axes=stable&room=selection-review (exec84940). Existing
+user58880 and earlier5438 tabs/bundles were preserved with their draft/History;
+no live migration or reload occurred. Baseline9334e59 is unchanged. No commit,
+push, registry release or hosted deployment.
+
+**Follow-up question.** Remote intra-cell caret/character selection is not yet
+shown. Current PresenceEditing carries target/field/text/composing only. The
+proposed extension is UTF-16 selectionStart/selectionEnd/direction in ephemeral
+Presence plus font/padding-aware rendering, retaining stable targets and IME
+behavior. It does not need a data schema or CRDT change. No caret feature code
+was added for this question-shaped request.
+
+
+### 5.126 Remote text carets, character selections and domain checks (2026-11-03)
+
+**Delivery.** Optional editing.selection carries UTF-16 start/end/direction
+relative to transmitted editing.text. Equal endpoints mean a caret; backward
+selection uses start as its active end. Legacy preview messages remain valid.
+Preview truncation avoids split surrogates; offsets clamp to transmitted text
+and code-point boundaries. Server validation is atomic before presence/sequence
+mutation. Session copies nested selection state. Stable target IDs follow both
+row and column insert/move; deleted targets hide rather than redirect.
+
+Native text input publishes input/focus/keyboard/pointer/selection/composition.
+Actual control capability determines metadata: raw numeric text in native
+InputEditor has a caret; inspector number/color/checkbox/select controls omit
+character selection. DOM Range text shaping uses the cell font/padding. Only
+the displayed preview winner gets a caret; own native editing suppresses it.
+Field prefixes adjust display offsets. Cell/body/window clipping remains; long
+text reveals the active caret without copying sender pixel scroll. Presence
+cannot change committed registers, clock, pending, acceptance sequence, journal
+or History. Only confirmed edits enter the existing undo/redo path.
+
+**Verification.** Affected Demo141/141PASS and root tscPASS. Independent desktop
+Chrome68/68PASS: new32 plus live16 and selection/clip/coincidence20, errors0,
+sourceDrift empty. Same final bundle:
+af5a94cfbe214b7930e3070dea56a50a5e7de501d3def30810089b968e38a5ec.
+Seven pinned source hashes match the checkout. Independent DOM Range/cell/body
+geometry uses0.75CSSpx tolerance. Hangul/emoji/ZWJ/combining text, trusted native
+arrows/mouse drag, backward/empty/long selection, numeric raw input, inspector
+prefix/nontext omission, winner/own-editor rules, both-axis changes, scrolling,
+window/delete and peer-preserving commit/undo/redo pass. Screenshots reviewed.
+Synthetic composition PASS; actual OS IME NOT_RUN. Mobile NOT_RUN. No latency,
+physical paint or production resource claim. Prior full-workspace evidence is
+§5.124; this delivery does not claim another full run.
+
+**Other domains.** Focused tests54/54PASS (overlap Demo tests; do not sum unique
+cases). Domain Chrome7/7PASS: ProseMirror/Slate/Lexical remote token caret/range,
+collapse/disconnect cleanup without model/pending/server changes; Graphic native
+pointer/object selection, local drag preview/cancel, exactly one accepted edit
+on release and peer convergence. Shared remote Document uncommitted text-draft
+rendering and remote Graphic drag-preview geometry are NOT_IMPLEMENTED. Tiptap
+was not browser-tested in this domain pass. Metadata transport alone is not
+proof of a renderer. No core engine or domain production change was required.
+
+**Attempts.** Initial26-case cursor proof predates native numeric capability
+correction. A test selected enum without focus; trusted click fixed the harness.
+Another repeated navigation stalled pending1; EventSource pool exhaustion is a
+hypothesis, not trace-proven. Explicit teardown of own prior sessions and a fresh
+owned server completed final32. Preserve these failures separately from final
+qualification. Browser-owned64252 and domain58943/58944 servers stopped; user
+and root preview servers/tabs remain intact.
+
+**Docs/evidence.** Presence/custom schema guides and spreadsheet README updated.
+Official Yjs Awareness, Automerge Repo ephemeral messages and Liveblocks Presence
+links explain the established layering pattern without wire compatibility or
+universal IME policy claims. Docs43/43PASS; build52pages/2407internal linksPASS,
+English/local-path checksPASS. Report/source seal:
+docs/reports/spreadsheet-text-cursor-2026-11-03/.
+Overview: output/spreadsheet-text-cursor-proof-qualified/browser-summary.json;
+domain: output/domain-ephemeral/chrome/receipt.json. Fresh retained preview:
+http://127.0.0.1:62007/?axes=stable&room=text-cursor-review (exec67491).
+Older user tabs/drafts/History remain untouched. Baseline9334e59 is unchanged;
+S2/Presence work remains uncommitted. No push, release or hosted deployment.
+
+
+### 5.127 Shared Presence state, DOM views and framework adapters (2026-11-03)
+
+**Delivery.** Multi-agent SolMedium ownership: Core state/bridge/tests; shared
+DOM renderer and independent Chrome proof/review; React/Vue/Svelte adapters,
+SSR/lifecycle tests and playground. Root integrated package/release tooling,
+lockfile, public guides, full checks and sealed evidence. All inherited WIP is
+preserved. Nine private0.0.0 library packages now build independently: existing
+Core/four editor bindings plus Presence UI/React/Vue/Svelte. No actual registry
+release, commit, push or hosted docs deployment occurred.
+
+Core `/presence` exports createPresenceStore, connectClientPresence, validated
+target/state/draft types and a stable immutable snapshot API. Targets cover
+Document token anchors, Graphic IDs/pointer, Spreadsheet stable IDs/ranges.
+Draft field/text/composition/UTF16selection is ephemeral. Split-surrogate
+endpoints and malformed/oversized state reject atomically. Expiry is explicit
+and uses local receipt time; no implicit timer or durable document storage.
+The bridge reversibly wraps the owning sender, keeps editor anchors/unrelated
+metadata, and uses the existing metadata transport. Mount before editor bindings
+or supply current initialPresence. Custom unowned EditorHost calls are only
+intercepted through that host. Dispose bridge before store/source. Feature
+updates coalesce at50ms, clears are immediate; normal editor sends keep their
+cadence. Validated final envelopes expose lastError/onError. Nested feature
+profile metadata is omitted; existing source-profile metadata stays in place.
+
+Session UUID+monotonic sequence and state:null tombstones block late drafts at
+existing receivers, retaining bounded high-water history across clear/leave:
+1000actors/eight retired sessions per actor. New observers, unseen earlier
+sessions and evicted history are outside that guarantee. Raw legacy/server
+Presence remains last-arrival; authoritative server-wide ordering is follow-up.
+Reconnect clears stale draft. Ordinary pending edit/ACK does not clear draft.
+No schema/CRDT/History algorithm, pending queue or existing binding was changed.
+
+**Views.** Shared DOM mount/update/invalidate/dispose renders avatars/bot faces,
+cursors, selections and content-sized drafts with host typography and actor
+colors. Names appear on hover with accessible labels. Host projectors return
+viewport CSS rectangles or null separately for each domain/role; the component
+never materializes the document. Scroll/resize/manual invalidation coalesces a
+single pending animation frame. Overlays leave native focus/selection untouched.
+React supports context/hooks/components and StrictMode cleanup; Vue supports
+reactive providers/composables/components; Svelte has a real compiled component
+and readable store with browser/server/source exports. No framework runtime is
+added to Core. Unmounting a view never disconnects its client. Draft capture and
+domain mapping remain application responsibilities; private spreadsheet demo
+protocol and native-editor IME drafts are not automatically migrated.
+
+**Checks.** Full workspace1552cases=1550PASS/two expected platform SKIP/zeroFAIL:
+Core1114, Lexical7, React2, Svelte2, UI3, Vue2, Slate4, Bot53, Demo141, Docs43,
+MCP181/179PASS. Final core includes15new store/bridge/HTTP cases. Real HTTP/SSE4
+holds an earlier composing draft until after draft-clear/local-clear/dispose/
+reconnect; stale SSE reaches raw SyncClient while public state remains clear.
+Before-patch2FAIL was observed in agent tool output; raw prepatch artifact
+NOT_SAVED. Final4PASS is in the preserved workspace log. Root tscPASS. Final
+DOM sizing/character-caret changes followed the full run; affected UI4 plus
+React2/Vue2/Svelte2 (10/10), root tsc, consumer checks and Chrome27 ran afterward. No second full run is claimed.
+
+Nine tarballs/11isolated consumer casesPASS: runtime/types, SSR-safe imports,
+no unrelated editors/frameworks, prepack stale/orphan cleanup, original native
+binding tests and independent Slate0.0.1 against unchanged Core. Release
+rehearsalPASS: all nine0.1.0 in temp copy, internal peers compatible, independent
+Slate0.1.1, private app versions and source manifests/lock unchanged. Actual
+versions remain0.0.0/private. Docs43/43PASS;53pages/2471internal linksPASS,
+English/local-path checksPASS. Root diff-checkPASS.
+
+**Desktop.** Chrome27/27PASS/errors0 on actual DOM/React/Vue/Svelte mounts.
+Independent native DOM/Range/fixture geometry tolerance1CSSpx. Same final bundle:
+73cb413c327e0f42de1284c1a6010c277367e02299b4da4fa217e77223269308.
+Ten pinned source hashes match current checkout. Trusted Hangul/emoji, native
+UTF16selection, fully visible glyphs/normal font, active document caret,
+Graphic pointer and sheet fixture projection, null hiding, hover names, confirm1
+accepted edit/cancel0, undo/redo retaining peer input and reconnect pass. Three
+mount cycles prove UI subscriptions4→0→4 and one root per framework. Screenshots
+visually inspected. React19.3.1/Vue3.5.44/Svelte5.57.3 were tested; peer ranges
+are not an exhaustive version matrix. Browser uses in-page memory DocHub and
+four real ProseMirror views, not cross-browser HTTP. Graphic/Spreadsheet are
+projection fixtures, not full editors. Actual HTTP ordering proof is separate.
+Native OS IME composition and mobile NOT_RUN. No latency/long-run resource SLO.
+
+**Corrections.** Review fixed metadata envelope depth, pre-existing selection
+clearing on bridge mount, Vue provider replacement, draft clearing on ordinary
+ACK and delayed HTTP resurrection. Initial npm cacheEACCES used a fresh task
+cache without modifying user cache permissions. Browser attempt1 preserved a
+harness quote failure and visible clipping. Attempt2 functionally22PASS but
+visually failed for an oversized opaque preview. Role-aware projection and
+bounded content-sized rendering fixed both; attempt3 passed24 plus visual
+review. A final completeness pass adds native Range draft character caret and
+explicit selection markers; matching ordinary caret is suppressed, clear
+restores it, and flags cover both types. Attempt4 preserved a stale harness
+selector failure after that intentional suppression. Final attempt5 passes27
+plus visual review, including backward/forward emoji active endpoint geometry. Keep historical attempts distinct from final qualification.
+
+**Docs/run/evidence.** New guide presence-components.md covers store/bridge,
+projection, all three UI frameworks, lifecycle, ordering bounds and package
+installation status. Packages/releasing/API/overview/getting-started/presence/
+roadmap/README updated to the nine-package structure. Run npm run dev:presence;
+set PRESENCE_URL to printed address for npm run check:presence. Final retained
+preview http://127.0.0.1:49849 (exec87558). Browser proof:
+output/playwright/presence-components-proof-attempt5/receipt.json. Report/source
+seal: docs/reports/presence-components-2026-11-03/. Earlier reports and user
+servers/tabs/drafts/History were preserved. Only owned proof browser sessions
+were closed. S2 and all inherited/current Presence changes remain uncommitted.
+
+
+**3D follow-up question.** Source inspection shows container/atom/attribute
+storage can express a scene graph, while built-in GraphicTransform is2D.
+A custom3D model and renderer would need separate tests. No3D SDK/schema or
+public independent Map/List/Text CRDT API was added in this delivery. The
+recommended direction is common storage primitives plus schema validation and
+domain presets, with new storage shapes only for demonstrated semantic needs.
+This is an architectural recommendation, not a completed primitive-API roadmap.
+
+
+### 5.128 Shared data first slice, separation roadmap and SolidJS (2026-11-03)
+
+**Scope/ownership.** SolMedium lanes implemented Map/List, independently reviewed
+architecture/tests/roadmap, and implemented Solid plus real HTTP proof. Root
+integrated exports/build/packaging/Changesets/docs and final regression checks.
+All inherited WIP remains. No existing CRDT/Client/Schema/History/sync/local
+engine source was changed. Public source under packages/doc-sync/src/data is
+explicitly unignored; root data/ runtime rule otherwise hides it from Git.
+No staging/commit/push, registry version/publish or hosted docs deployment.
+
+**Roadmap.** docs/common-data-roadmap.md is the maintained English plan and is
+copied into docs Reference. P1 caller API is delivered. P2 authoritative semantic
+admission/resource limits, restart/recovery/GC/performance has partial evidence
+only. P3 optionally exposes existing text nodes through a thin API if needed;
+no new text CRDT. P4 extracts storage/structural checks/Schema/domain projection.
+P5 migrates selected domains. Document/Graphic and standalone Spreadsheet do not
+already share one wire. Caller-facing schema-free API is not completed storage
+schema independence. Existing Schema compatibility is retained.
+
+**Data API.** Core `/data` exports DataClient, SharedMap, SharedList,
+createDataSchema and typed values/IDs/local validator. A fixed internal graphic
+container encoding stores the graph. Root SharedMap supports dynamic string
+keys, null vs missing, set/delete and sorted traversal. SharedList supports
+stable ID insert/push/get/set/delete/move and array-style at(index). Collection
+IDs are opaque data:UUID, separate from current indexes and CRDT token IDs.
+Values are finite scalars or explicit same-client Map/List handles. Plain
+objects/arrays/undefined/nonfinite numbers and foreign handles reject. Shared
+reference cycles work; raw cyclic JavaScript objects are unsupported.
+
+Atomic tagged assignments keep reference kind/payload together. Existing entry
+writes use LWW and actor-owned History. Concurrent first writes to a key use
+lexicographic DataId winner projection; losing candidates stay stored. Delete
+targets all observed candidates; unseen concurrent inserts can survive. Lists
+reuse existing ordering/move rules. createMap/createList allocations are
+non-undoable structural records. Links are undoable; removing the final root
+link retains peer content through stable handles/getMap/getList. Automatic
+collection-graph reclamation is not implemented.
+
+validate(write) is optional local application policy; throws reject before
+editing and facade reentrant writes reject. It is not authorization/distributed
+schema identity. Full server semantic admission is P2. Malformed encoded values,
+IDs/references fail closed when the facade indexes applied content, not at the
+authoritative endpoint. A per-revision cloned/frozen projection protects cache
+records and builds ID/key indexes. Repeated lookups reuse it; first read after
+a revision still scans/clones the visible model. No large-data incremental
+performance gate is claimed. captureState/fromState keeps the existing local
+Client state/History format. Sync exposes underlying Client/SyncClient lifecycle
+and pending/recovery contracts; captureState is still local-only. Map strings
+are atomic; character-level editing keeps using schema text nodes.
+
+**Solid.** New @barocss/doc-sync-presence-solid is private0.0.0 with SSR-safe
+PresenceProvider/PresenceOverlay/named layers and createPresence/usePresence/
+usePresenceStore accessors. Reactive replacement releases old subscriptions;
+owner cleanup releases UI, never the client. Shared store/renderer/geometry and
+transport semantics are reused. Ten library candidates build and pack separately.
+The playground now has DOM/React/Vue/Svelte/Solid and five actual PM views.
+Browser transport remains in-page memory DocHub; Graphic/Spreadsheet are
+projection fixtures. Solid1.9.18 tested; declared peer range is not exhaustive.
+
+**Verification.** Full workspace1588cases=1586PASS/two expected platform SKIP/
+zeroFAIL: Core1146, Lexical7, React2, Solid3(SSR1+lifecycle2), Svelte2, UI4, Vue2,
+Slate4, Bot53, Demo141, Docs43, MCP181/179PASS. Root tsc/build and diff-checkPASS.
+Focused Map/List29(implementation17+review12) are included, not extra unique
+cases: six three-peer delivery permutations, keywise/duplicate keys, null/special
+keys, stable list IDs/concurrent insert+move/peer set, selective History,
+reference graph/last-link retention, local restore, malformed remote decoding,
+cache mutation guards and seeded150-op list oracle. Review corrected mutable
+candidate exposure, malformed tagged payloads and restore constructor injection.
+Existing actor validation stays unchanged; DataIDs are actor-independent UUIDs.
+
+Real NodeHttpTransport loopback HTTP/SSE3PASS included in Core: validates actual
+protocol/epoch/schema headers, keywise/same-key convergence, list peer edits with
+undo/redo, pending reconnect and rejected local policy generating no request/
+accepted sequence. Initial test assumptions about no-op undo sequence and sync
+captureState were corrected; failed attempts remain separate. Final log/receipt:
+output/data-solid-proof/data-http-test-final.log and data-http-receipt.json.
+This is not process/server restart, GC or complete P2 admission qualification.
+
+Ten tarballs/12isolated consumersPASS, including data runtime/types/local restore,
+Solid SSR import, unrelated peer absence, stale/orphan prepack cleanup, original
+native binding tests and independent Slate0.0.1. Changesets temp rehearsalPASS:
+all ten0.1.0, compatible peers, independent Slate0.1.1, source versions/lock and
+private app versions unchanged. Actual packages remain private0.0.0. Docs43PASS;
+55pages/2590internal linksPASS; English/local-path checksPASS.
+
+**Desktop.** Solid five-surface Chrome27/27PASS/errors0; eleven source hashes
+match checkout. Bundle:
+e693385e791ac6472938565e8c4df4a7f9256b14dbff5b9236b91904f893a6ce.
+Native DOM/Range/fixture rectangles use1CSSpx tolerance. Trusted Hangul/emoji,
+character selection+active caret, native focus, typography/colors, null hiding,
+hover names, confirm1/cancel0, own undo/redo preserving peer changes, reconnect,
+repeated mount/subscription cleanup pass. Screenshots inspected by worker/root.
+Native OS IME composition and mobile NOT_RUN; no browser HTTP/WAN/large-data/
+latency SLO. Browser and actual Node HTTP proofs remain separate.
+
+**Docs/run/evidence.** New guide/shared-data.md and generated common-data-roadmap
+Reference explain APIs, local policy, Text choice and remaining layers. Presence
+components/packages/API/releasing/overview/roadmap/README updated for Solid/ten
+packages. Run npm ci then npm run build; import @barocss/doc-sync/data. Run
+npm run dev:presence and set PRESENCE_URL for npm run check:presence. Retained
+preview http://127.0.0.1:55787 (exec33962). Proof:
+output/playwright/presence-components-proof-attempt6/receipt.json. New bundle/
+map/metafile saved there. Launcher initially wrote default artifacts; previous
+bundle/map/metafile were restored byte-identically using unchanged49849 and its
+sourcemap. Older services/receipts and user tabs/drafts/History were preserved;
+owned proof Chrome closed. Report/source seal:
+docs/reports/common-data-solid-2026-11-03/. No publication/push; WIP remains.
+
+
+### 5.129 Guarded data admission before persistence/application (2026-11-03)
+
+**Request and API rationale.** P2 now rejects duplicate Map/List IDs and malformed
+values/references before authoritative application, preserving existing Schema,
+concurrency and History. The user also asked why DataClient exists: it hides
+fixed encoding/schema/index setup over one Client and delegates transport/pending/
+History. It is a convenience facade, not a second engine. The new validator is
+independent of that name, so a future Client-plus-data-view interface can reuse
+it. No facade removal/rename or model migration was performed.
+
+**Ownership.** SolMedium lanes implemented pure admission+server hooks/factory,
+independently reviewed adversarial cases and detached snapshot reads, and tested
+actual HTTP/SSE. Root integrated packaging/release checks, full regression,
+English guides/roadmap/HANDOFF and source/evidence seals. Inherited WIP and user
+services/tabs/drafts/History are preserved. No commit/push/publication occurred.
+
+**Server.** @barocss/doc-sync/server exports createDataHub and DataHubOptions.
+Pure data/schema.ts retains the original encoding literal/fingerprint; pure
+admission.ts validates raw descriptors and every authored encoded value/identity
+before a private candidate is applied. Generic HubOptions now optionally accept
+trusted read-only validatePayload/validateChange policies. The factory installs
+both; plain DocHub({schema:createDataSchema()}) remains generic. Server imports
+no DataClient/browser facade. Existing Schema/CRDT/History/protocol algorithms
+are unchanged; generic users do not stage candidates without the optional hook.
+
+Raw payloads must be finite plain JSON without getters/symbol/nonenumerable/
+foreign-prototype fields; actor/seq/ops and op tags validate before clone or
+fingerprinting. IDs are unique across retained live/deleted records. Stored ID,
+birth kind, key and Map/List membership semantics are immutable. Same key with
+different IDs remains legal. Tagged finite scalars/root or retained collection
+references must match their declared kind. Forward refs within a batch are
+allowed. Hidden/deleted records and LWW losers cannot hide malicious writes.
+Birth values must be explicit tags, including{scalar:null}; omitted empty key is
+allowed because compiler elides that default. Guarded encoding is stricter than
+the broad generic Schema defaults.
+
+All semantic checks precede onAppend and live doc/clock/log/lastSeq/receipts/
+broadcast mutation. Corrected rejected actor sequences remain available;
+accepted exact retries remain idempotent. Ordinary/conditional/recovery/staged
+submission and change replay share admission; raw receipt/negative seal paths
+also validate before inspecting untrusted JSON. Append failure still allows an
+exact retry. The fixed schema identity is unchanged:
+sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f.
+
+**References/client reads.** A queued reference to a known retained hidden
+collection is legal. DataClient.read no longer poisons unrelated root keys:
+it can return a retained handle; operations on that hidden collection reject
+until undo/restoration makes it visible. Readonly Client.snapshot and
+LocalClient.snapshot return detached document storage including hidden/current
+pending nodes, without History/recovery proof. Reads are safe in notification
+callbacks and pending local state, emit nothing and alter no clock/History.
+Returned-object mutation cannot affect engine state. captureState keeps its
+existing settled-state/recovery boundary; it is not used inside read observers.
+
+**GC limitation.** createDataHub gc returns null; replayGc rejects. Existing
+compaction erases attrs required to reserve deleted IDs/resolve hidden targets,
+so guarded data retains tombstones and storage grows. Generic DocHub GC remains
+unchanged. Compacted legacy data logs cannot be transparently adopted. Change
+records replay through submit; reset creates a new epoch/identity domain.
+Metadata-aware compaction/durable identity reservation remains P2 follow-up.
+Local business validate callbacks, auth/actor binding/quotas/durable I/O and hub
+serialization are separate responsibilities. Trusted direct hub.doc mutation
+is outside admission. Full P2 is not complete merely because this slice passes.
+
+**Verification.** Full workspace1616cases=1614PASS/two expected platform SKIP/
+zeroFAIL: Core1174, Lexical7, React2, Solid3, Svelte2, UI4, Vue2, Slate4, Bot53,
+Demo141, Docs43, MCP181/179PASS. Data60(older32+admission5+independent20+HTTP3)
+and legacy focused35 overlap the full count. Build/root tsc/diff-checkPASS.
+Independent checks cover tombstone UUID collision, LWW-losing bad values,
+identity/membership writes, raw descriptors, hidden queued child/ref+undo,
+forwardrefs/cycles/root kinds, empty/Unicode/__proto__/null compatibility,
+conditional/staged rejection, append failure exact retry, GC/schema lock/reset,
+observer/pending snapshot reads and nested snapshot ownership.
+
+Actual HTTP/SSE3PASS on final code: eleven ordinary malformed mixed batches
+with valid prefix reject409 without append/state/seq/receipt/peer exposure;
+corrected same actor/seq and exact retries pass. Conditional/recovery rejection
+and correction also pass. Three actors edit map/list/moves, undo/redo and pending
+reconnect with exact model convergence. Accepted journals replay into fresh
+in-process guarded hubs. Full process/server restart NOT_RUN. Final evidence:
+output/data-admission-proof/final-http.log, raw requests, journals/receipts,
+final-source-sha256.json(10files), final-artifact-sha256.json. Earlier artifacts
+remain before-source-freeze/ and before-final-envelope-guard/.
+
+Ten tarballs/12consumersPASS including guarded server runtime/types, generic
+compatibility and owned snapshot APIs; original native binding/isolation checks
+remain. Changesets temp rehearsalPASS: ten0.1.0, compatible peers, independent
+Slate0.1.1, source manifests/lock/private apps unchanged. Actual packages remain
+private0.0.0. Docs43PASS;55pages/2594linksPASS; English/local-path checksPASS.
+No fresh browser/mobile proof; prior SolidChrome27 is historical. No latency/
+large-data resource qualification for candidate snapshot/index staging.
+
+**Corrections.** Initial actual HTTP run exposed legitimate synthetic list-head
+rejection; attempt-02.log is preserved. Positive review caught compiler-elided
+empty key, cross-kind movement and hidden-reference facade reads. The snapshot
+accessor avoids using captureState during notifications. The first root tsc
+started during build's dist cleanup and failed module resolution; post-build
+sequential tsc passes without a new runtime change. Preserve failed attempts
+separately from the final receipts; do not label them all product regressions.
+
+**Docs/evidence.** Shared-data guide now explains DataClient rationale, guarded
+server setup, GC policy and snapshot boundaries. API/package/roadmap/README
+updated; maintained common-data-roadmap records delivered intrinsic admission
+and remaining resource/restart/compaction gates. Report/source seal:
+docs/reports/data-admission-2026-11-03/. No user service or browser state changed.
+All current/inherited changes remain uncommitted with no push or deployment.
+
+
+### 5.130 Map/List access on the existing Client (2026-11-03)
+
+**Request.** Replaced the separate unreleased DataClient/DataClientOptions
+exports with Client.data. No compatibility wrapper or second Client remains.
+Core /data exports createDataSchema, SharedMap, SharedList and their types,
+including the SharedData interface. Construct Client with
+{schema:createDataSchema(), data?:{validate}}. Use client.data.root,
+createMap/createList/getMap/getList for collections and Client for transport,
+subscriptions, History, selection and save/open. Client.fromState accepts the
+optional local data policy; callbacks are not stored in snapshots.
+
+**Ownership.** Sol Medium implementation, migration and independent review
+lanes worked on separate files. Root integrated package consumers, English
+documentation, full tests and evidence. All inherited WIP, user services,
+browser tabs and prior reports remain. No commit, push, deployment or npm
+publication was performed.
+
+**Compatibility and safety.** Access is lazy and stable per Client. It creates
+no backend, subscription or saved state. Exact data schema identity is required;
+other Document/Graphic models reject without mutation. Cached access and retained
+handles recheck identity after schema transitions. Storage IDs, schema
+fingerprint, local state format, pending transport and actor-owned History keep
+their existing rules. Same-Client references work; cross-Client handles reject.
+Local validation is captured in private state; validator mutation reentry through
+Client/data methods rejects. Raw Client.edit remains an advanced API that bypasses
+this optional local business policy. Use createDataHub for server admission.
+
+Eight files are byte-identical to the prior P2 seal: data/schema.ts,
+data/admission.ts, server/data.ts, server/hub.ts, crdt/doc.ts, crdt/history.ts,
+crdt/schema.ts and local/client.ts. Intrinsic server validation still precedes
+persistence/application. Generic Schema behavior and CRDT arbitration are
+unchanged. Guarded data GC remains disabled, reserving retained deleted IDs;
+metadata-aware compaction, resource budgets and full P2 qualification remain
+open. This refactor does not add a separate Text engine or storage extraction.
+
+**Verification.** Final full workspace run: 1635 cases, 1633 PASS, two expected
+platform SKIP, zero FAIL. Core1193; Lexical7; React2; Solid3; Svelte2; UI4; Vue2;
+Slate4; Bot53; Demo141; Docs43; MCP181/179PASS. New focused implementation5 and
+independent14 cases are included in Core. Existing data60 migration tests also
+pass, including six actual HTTP/SSE cases. They cover concurrent Map/List writes,
+moves, actor-owned undo/redo, pending reconnect, malformed mixed batches,
+corrected same-sequence retries, conditional/recovery admission and journal replay
+into fresh in-process hubs. Three guarded journals retain accepted append counts
+11,16,2 and matching hashes. The final run's HTTP artifacts are captured separately
+from the migration lane's earlier non-frozen receipt.
+
+The first full run had one bot unknown-restart barrier timeout; original cause
+is NOT_PROVEN because temporary state had been removed. Focused unknown1/1,
+unmodified runner8/8, diagnostic runner8/8 and the final full run pass. The only
+bot change adds early-exit and persisted mission/request diagnostics. Timeouts,
+restart scenarios and assertions are unchanged; no bot production fix is claimed.
+The initial failed run is retained beside the successful final evidence.
+
+Build and final root TypeScript checks PASS. Ten package tarballs and twelve
+installed runtime/type consumers PASS, including Client.data, absence of the old
+DataClient export and unchanged server guard. Changesets temporary rehearsal
+PASS; source manifests and lock are unchanged. Actual packages remain private
+0.0.0. Docs43 tests, build and 55-page/2600-link English/local-path checks PASS.
+No fresh browser, mobile or latency/resource benchmark was run for this API
+refactor. Existing bot restart tests are current; new data HTTP replay proves
+in-process replay, not a new full-process durability qualification.
+
+**Documentation and evidence.** README, Client/shared-data/custom-schema/package/
+API guides, common-data roadmap and status notes use Client.data. The guide covers
+local/sync setup, validation, save/open, migration and remaining limits. A minor
+Changeset records removal of the unreleased facade. Report, immutable evidence
+copies and source seal: docs/reports/client-data-access-2026-11-03/.
+
+
+### 5.131 Final main checkpoint and Presence lifetime review (2026-11-03)
+
+**Scope.** Consolidates the pending sections5.123–5.130: stable Spreadsheet
+axes/structural History and live text Presence, optional DOM/React/Vue/Svelte/
+Solid components, common Map/List access, guarded server admission and Client.data.
+The prior local9334e59 commit was also ahead of origin/main at the initial audit.
+Publication scope is commit/push to main. All ten libraries remain private0.0.0;
+no registry publish, release tag or package version change is part of this task.
+
+**API decision.** Keep client.data as the fixed Map/List namespace. Application
+keys/collections live inside it. It is not the entire document model or an engine
+selector. Client.edit/model remain the schema editing/reading APIs. Access still
+requires the exact createDataSchema identity; arbitrary Document/Graphic models
+are not converted or given hidden Map/List storage. P4 storage/schema separation
+is still open. Connection, pending edits, History, selection and save/open remain
+owned by Client. Local business validation does not replace createDataHub
+admission or host authorization. Guarded data GC stays disabled.
+
+**Final review fixes.** Three Sol Medium lanes reviewed Client/data/server,
+Spreadsheet, and Presence/framework/package changes. Root reviewed the final
+test diffs and integrated docs, evidence and the main checkpoint.
+
+1. The core Presence bridge now delivers every accepted newer sequence to the
+   store, even when state is identical. This refreshes receipt-time TTL and can
+   restore locally expired state. Earlier/replayed packets still fail the
+   sequence fence. Identical active state does not notify a new snapshot.
+2. Updated SheetSession sends a server-issued Presence generation from join and
+   SSE hello. Join retires old stream ownership. Close/leave rotate the generation
+   and clear Presence; late preview/leave requests cannot revive an offline
+   selection or remove a newer one. Old stream callbacks cannot mutate a new
+   session. HTTP-only sessions use the same generation. Legacy direct requests
+   omitting it retain sequence-only behavior. An old in-flight Presence request
+   can delay a fresh preview, independently of document edits.
+3. Graphic HTTP/SSE test now holds the pointer request until the prior selection
+   packet is observed. It verifies that first cursor-null packet, then waits for
+   the requested cursor and selection. The old Boolean readiness gate could
+   accept the first packet too early. Exact payload/model/History/disconnect
+   assertions remain. No Graphic production fix was needed.
+
+**MCP test resource/diagnostic boundary.** An early full run failed the bot unknown
+restart case before conditional submission: nested MCP connection closed, with
+no pending edit and only schema GET observed. The original cause remains
+NOT_PROVEN. A later instrumented run passed Bot53 but hit many MCP deadlines
+during high host load and left test children alive. The restart-history child
+was cancelled by its parent120s deadline, not a demonstrated undo assertion.
+Only the owned run's process tree was captured and interrupted; all thirteen
+captured descendants were verified gone. User services/tabs were preserved.
+Raw failed and cancelled runs remain in the new evidence archive.
+
+MCP now executes four independent test files at once instead of a CPU-derived
+pool (about13 on this host). Within-file multi-agent scenarios, individual
+timeouts and expected results remain. Full bounded MCP181/179PASS/twoSKIP took
+36.44s; an external300s watchdog did not trigger. Bot fixture now forwards nested
+MCP stderr and fails on an unexpected mission return. Proxy diagnostics include
+HTTP completion/server errors. AI fixture drains bounded stderr, cleans up a
+failed startup before registration and labels restart failure stages. These are
+test observability/cleanup changes, not a proven bot/MCP production fix. Bot53
+and twenty concurrent isolated startup attempts pass; they do not explain the
+prior fast startup failure. Host load as the sole cause is also NOT_PROVEN.
+
+**Final verification.** The final standard workspace invocation passes all1638
+cases:1636PASS/two expected platformSKIP/zeroFAIL/zeroCANCEL. Core1194; Lexical7;
+React2; Solid3; Svelte2; UI4; Vue2; Slate4; Bot53; Demo143; Docs43;
+MCP181/179PASS. All552 captured runtime/test/build source hashes remain unchanged
+after the run. Data HTTP/SSE6 are included. Guarded journal append counts11/16/2
+and hashes match. New regressions cover receipt TTL/expiry/replay and late HTTP/
+SSE disconnect, replacement and reconnect. Focused Graphic2 and Demo143 also pass.
+Build/root TypeScript, docs build55pages/2600links and release rehearsal pass.
+Final tarball/consumer verification is recorded in the checkpoint report.
+No fresh browser/mobile/Rust/performance run was performed during this final
+review. Historical browser and benchmark reports retain their source boundary.
+
+**Documentation/evidence.** Fixed obsolete five-package text in the package
+READMEs and getting-started/releasing/graphic guides. Core README lists /data and
+/presence. Shared-data guide explains fixed namespace versus model/engine and
+the exact-schema boundary. Presence guides describe TTL receipt refresh and
+the private Spreadsheet generation limit. Maintained source/evidence seal and
+final gate records: docs/reports/main-checkpoint-2026-11-03/.

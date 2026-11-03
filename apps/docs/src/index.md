@@ -44,6 +44,6 @@ console.log(client.model());
 
 ## Know the current limits
 
-The five packages export compiled JavaScript and declarations but remain `private: true`. They are not yet npm releases. The macOS MCP app has bounded restart and lease-expiry recovery with the demo server; production recovery, authorization, incompatible schema migration and long-term deployment validation remain open. Convergence does not guarantee every user's semantic intent.
+The ten packages export compiled JavaScript and declarations but remain `private: true`. They are not yet npm releases. The macOS MCP app has bounded restart and lease-expiry recovery with the demo server; production recovery, authorization, incompatible schema migration and long-term deployment validation remain open. Convergence does not guarantee every user's semantic intent.
 
 [Read status and limits →](./status)

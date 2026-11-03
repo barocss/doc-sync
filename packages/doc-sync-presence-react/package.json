@@ -1,0 +1,40 @@
+{
+  "name": "@barocss/doc-sync-presence-react",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "DocSync Presence react bindings",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "test": "node --test test/*.test.mjs"
+  },
+  "peerDependencies": {
+    "@barocss/doc-sync": ">=0.0.0 <0.1.0",
+    "@barocss/doc-sync-presence-ui": ">=0.0.0 <0.1.0",
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "jsdom": "^26.1.0",
+    "react-dom": "^19.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

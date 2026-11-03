@@ -9,3 +9,7 @@ output/
 .doc-sync-bots/
 
 packages/doc-sync*/dist/
+
+# Public shared-data source, not runtime document storage.
+!packages/doc-sync/src/data/
+!packages/doc-sync/src/data/**

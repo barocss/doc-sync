@@ -1,0 +1,38 @@
+{
+  "name": "@barocss/doc-sync-presence-svelte",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "DocSync Presence svelte bindings",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "browser": "./dist/client/index.js",
+      "node": "./dist/server/index.js",
+      "default": "./dist/client/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "test": "node --test test/*.test.mjs"
+  },
+  "peerDependencies": {
+    "@barocss/doc-sync": ">=0.0.0 <0.1.0",
+    "@barocss/doc-sync-presence-ui": ">=0.0.0 <0.1.0",
+    "svelte": "^5.43.0"
+  },
+  "svelte": "./dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  }
+}

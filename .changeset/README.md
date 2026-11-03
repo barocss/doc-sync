@@ -1,6 +1,6 @@
 # Release notes
 
-Use `npm run changeset` to record changes to one or more of the five library packages.
+Use `npm run changeset` to record changes to one or more library packages.
 Versions are independent: a binding-only fix does not require matching sibling versions.
 
 `npm run release:status` shows the proposed version changes. `npm run release:version`

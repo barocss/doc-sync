@@ -18,13 +18,14 @@ receipts preserve the boundary; no WAN/100k-populated-cell gate is claimed. The 
 contract is data support; the existing PixiJS demo still renders the earlier
 basic canvas profile. It does not render paths/gradients/instances yet.
 
-Spreadsheet S2 interval axes/stable IDs is the next structural priority; S3
-Client/protocol integration follows. Runtime custom field admission is
-implemented separately and does not complete the shared Client gate. The early S5a browser demo
-does not close either gate or full durable recovery. Formula calculation,
+TypeScript S2 interval axes/stable IDs and opt-in structural demo are now
+implemented. S3 Client/protocol/recovery integration is next. Custom field and
+structural admission do not complete that shared Client gate. The opt-in structural demo does not
+close shared Client integration or full durable recovery. Formula calculation,
 compaction/GC, engine-neutral graphic object reads, rendering/layout/Boolean
 solvers, mixed-runtime wire exchange, and WASM/browser backends remain open.
-No commit, push, registry publish or hosted docs deployment is included.
+The inherited checkpoint was committed as 9334e59 before S2. New S2 work has
+no push, registry publish or hosted docs deployment.
 
 > Historical execution record. For the current ordered work and acceptance criteria, see the [roadmap](../apps/docs/src/roadmap.md) and the latest integration section in `HANDOFF.md`. The stage assessments and measurements below describe their original checkpoints and are not current-source acceptance results.
 
@@ -131,3 +132,40 @@ Final integration review also fixed editing paths after lazy replacement-gap rec
 HANDOFF §5.23 records a bounded structural event improvement on main `d46db51`. The receiver keeps actual whole before/after reads, then compares and validates at most eight top-level nodes when unchanged prefix/suffix and stable non-group boundaries establish a safe window. It retains whole verification for small documents, root child-count rules, group boundaries and wider spans. This reduces repeated canonicalization during event verification; it does not remove whole-model reads/copies, full structural scans, native conversion or screen work. Source-bound ABBA measurements and controls are in benchmarks/results/structural-events-2026-10-24/.
 
 At §5.23, archived baseline and structural-optimization code had the same Lexical extra-column and PM hidden-reference mismatch while merged. §5.24 fixes that separate defect: Lexical native tables contain only visible cells and retain covered data in serialized NodeState; PM demo readback supplies the matching reference and copies covered-cell attributes and content. New regression checks cover hidden foreign edits, history, unmerge and native grid geometry. Historical performance receipts retain their original source and explicit failure boundary.
+
+
+## Shared Presence components
+
+Core `/presence` provides bounded immutable state, stable target types and a
+Client bridge. Optional DOM/React/Vue/Svelte packages share one renderer.
+See HANDOFF section5.127 for qualification. Existing private sheet Presence is
+not automatically migrated. Server-wide ordering for wholly new observers and
+unseen/evicted sessions remains open; current bridge sequence protection applies
+to observers that retain session history. This does not change CRDT History.
+
+
+## Common Map/List API and SolidJS
+
+P1 `/data` and the separation roadmap are delivered at HANDOFF section5.128.
+The fixed internal Schema and local-only value policy do not complete storage
+extraction or authoritative admission. Text reuses existing nodes; no second
+engine/facade. Solid joins the optional Presence UI packages. See
+[Common Data Roadmap](common-data-roadmap.md) for remaining P2–P5 gates.
+
+
+## P2 intrinsic server data admission
+
+Delivered at HANDOFF section5.129: createDataHub checks retained IDs, tagged
+values and references before persistence/application. Generic DocHub keeps its
+existing rules. Guarded data GC is deliberately disabled; metadata-aware
+compaction, resource budgets and process restart qualification remain open.
+Client detached snapshots support safe retained-reference reads.
+
+## Map/List access on Client
+
+HANDOFF section5.130 replaces the unreleased DataClient facade with Client.data.
+Client owns connection, pending edits, History and save/open. The lazy namespace
+adds only collection access and requires the exact createDataSchema identity.
+Existing documents are not converted. Local write policy remains optional;
+createDataHub retains authoritative semantic admission. This API consolidation
+does not complete P2 compaction/resource gates or P4 storage/schema extraction.

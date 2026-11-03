@@ -1,7 +1,7 @@
 # Packages and engines
 
-The package split is complete in this checkout. Five npm packages have compiled
-JavaScript exports and type declarations. All five remain `private: true` at
+The package split is complete in this checkout. Ten npm packages provide compiled
+JavaScript exports and type declarations. All remain `private: true` at
 version `0.0.0`. They have not been published to the npm registry.
 
 DocumentSchema and GraphicSchema are domain types inside the same core package.
@@ -18,6 +18,14 @@ is a separate integration. See [Document and graphic schemas](./graphic-schema).
 | `@barocss/doc-sync-tiptap` | Tiptap extension and generated schema | Core; ProseMirror binding; `@tiptap/core` and `@tiptap/pm` at `3.32.2`. |
 | `@barocss/doc-sync-slate` | Slate binding and codec | Core; `slate`. |
 | `@barocss/doc-sync-lexical` | Lexical binding, node classes, and conversion | Core; `lexical`, `@lexical/rich-text`, `@lexical/table`. |
+| `@barocss/doc-sync-presence-ui` | Shared DOM cursor, selection, draft and avatar overlays | Core types; no UI framework runtime. |
+| `@barocss/doc-sync-presence-react` | React components and hooks | Core; Presence UI; React 19. |
+| `@barocss/doc-sync-presence-vue` | Vue components and composables | Core; Presence UI; Vue 3. |
+| `@barocss/doc-sync-presence-svelte` | Compiled browser/server Svelte component and readable store | Core; Presence UI; Svelte 5. |
+| `@barocss/doc-sync-presence-solid` | SolidJS components and owner-scoped snapshot accessors | Core; Presence UI; SolidJS 1.9. |
+
+Presence state lives in Core at `/presence`; UI packages are optional. See
+[Presence components](./presence-components) for DOM, React, Vue, Svelte and SolidJS usage.
 
 Core does not import an editor binding. Each binding can be maintained and
 packed separately. Tiptap uses the ProseMirror binding. `@barocss/doc-sync`
@@ -42,12 +50,21 @@ This list shows available imports. Install only the bindings that your
 application uses, together with their required peers.
 
 The root and `/client` entries export `Client`. The core also provides `/local`,
-`/sync`, `/editor`, `/engine`, `/node`, and `/server`. Import each editor binding
+`/sync`, `/editor`, `/engine`, `/node`, `/presence`, `/data`, and `/server`. Import each editor binding
 from its independent package. Editor subpaths under `@barocss/doc-sync` are not
 available.
 
 For a memory-only document, use the [local editing guide](./local-editing).
 The `/local` entry belongs to Core and imports no native editor package.
+
+## Shared data without an application schema
+
+Core `/data` exports `SharedMap`, `SharedList`, `SharedData` types and
+`createDataSchema`. Use new Client({schema:createDataSchema()}) and client.data.
+The Client owns lifecycle, History and save/open; no separate DataClient exists. Application write validation is a separate optional local policy.
+Server `/server` exports createDataHub for intrinsic pre-application admission.
+Guarded data GC is disabled while identity-aware compaction remains open.
+See [Shared maps and lists](./shared-data) for API, History and admission limits.
 
 ## Save a local document
 
@@ -67,13 +84,14 @@ npm run build
 npm run check:packages
 ```
 
-The build processes Core first, then the four bindings. Each package
+The build processes Core first, then editor bindings and shared Presence UI,
+then the four optional UI-framework adapters. Each package
 exports `dist/*.js` and `dist/*.d.ts`. Application imports use the public package
 names. Do not import a package's source files.
 
-`check:packages` packs all five packages and installs the tarballs in isolated
+`check:packages` packs all ten packages and installs the tarballs in isolated
 consumer directories. It checks runtime exports, type declarations, absence of
-unrelated editors, public package imports, and the Tiptap transaction tests. It
+unrelated editors, public package imports, the Tiptap transaction tests, and isolated Presence package imports/types. It
 also packs a Slate `0.0.1` test copy and loads it with the unchanged core.
 The helper writes tarballs and `pack-consumers.json` to
 `output/binding-packages/`. This is local package evidence, not a registry release.

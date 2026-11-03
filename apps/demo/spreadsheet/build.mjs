@@ -5,7 +5,7 @@ import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const directory = fileURLToPath(new URL('.', import.meta.url));
 const repository = resolve(directory, '../../..');
-const output = resolve(repository, 'output/spreadsheet-demo');
+const output = resolve(repository, process.env.SPREADSHEET_OUTPUT_DIR??'output/spreadsheet-demo');
 await mkdir(output, {recursive: true});
 const result = await build({absWorkingDir: repository, entryPoints: [resolve(directory, 'main.ts')], outfile: resolve(output, 'main.js'), bundle: true, format: 'esm', platform: 'browser', target: 'es2022', sourcemap: true, metafile: true});
 await writeFile(resolve(output, 'metafile.json'), JSON.stringify(result.metafile, null, 2) + '\n');

@@ -1,23 +1,54 @@
 # Public API
 
-Five packages provide the dependency-free Core and four editor bindings. All remain private before registry release. The demo, documentation, and benchmark workspaces are private. See [packages and engines](../guide/packages) for independent imports and peer dependencies.
+Ten packages provide the dependency-free Core, four editor bindings and five
+optional Presence UI packages. All remain private before registry release. The demo, documentation, and benchmark workspaces are private. See [packages and engines](../guide/packages) for independent imports and peer dependencies.
 
 ## Entry points
 
 | Import | Main exports |
 |---|---|
-| `@barocss/doc-sync` | `Client`, `LocalClientState`, `Doc`, `History`, `commands`, model/schema/position helpers, `createGraphicHelpers`, `SpreadsheetSchema`, `SparseSheet`, and shared types. |
+| `@barocss/doc-sync` | `Client`, `LocalClientState`, `Doc`, `History`, `commands`, model/schema/position helpers, `createGraphicHelpers`, `SpreadsheetSchema`, `SparseSheet`, `StructuralSheet`, and shared types. |
 | `@barocss/doc-sync/client` | `Client`, `createEditorHost`, `BindingClient`, client options and types. |
 | `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `typescriptClientEngineFactory`, `ClientEngineFactory`, `upgradeOpenEditorSchema`, `OpenEditorSchemaHost`, `ModelRange`, protocol constants and types. |
 | `@barocss/doc-sync/node` | `NodeHttpTransport`, `NodeHttpTransportOptions` for Node.js HTTP and SSE synchronization. |
 | `@barocss/doc-sync/editor` | Editor host contracts, `inspectEditorSchema`, `inspectSpreadsheetSchema` and capability declarations. |
-| `@barocss/doc-sync/server` | `DocHub`, `HubOptions`. |
+| `@barocss/doc-sync/server` | `DocHub`, `HubOptions`, `createDataHub`, `DataHubOptions`. |
+| `@barocss/doc-sync/data` | `SharedMap`, `SharedList`, `createDataSchema`, `SharedData` and value/ID/local validator types; access through `Client.data`. |
+| `@barocss/doc-sync/presence` | `createPresenceStore`, `connectClientPresence`, validated state/target/draft types. |
+| `@barocss/doc-sync-presence-ui` | `mountPresence`, `createPresenceProjector`, clipping and projection types. |
+| `@barocss/doc-sync-presence-react` | `PresenceProvider`, `PresenceOverlay`, primitive components, `usePresence`. |
+| `@barocss/doc-sync-presence-vue` | `PresenceProvider`, `PresenceOverlay`, primitive components, `usePresence`. |
+| `@barocss/doc-sync-presence-svelte` | `PresenceOverlay`, `presenceReadable`. |
+| `@barocss/doc-sync-presence-solid` | `PresenceProvider`, `PresenceOverlay`, named layers, `createPresence`/`usePresence`, `usePresenceStore`. |
 | `@barocss/doc-sync-prosemirror` | `PmBinding`, `buildPmSchema`, model/position conversion. |
 | `@barocss/doc-sync-tiptap` | `DocSync`, `createTiptapExtensions`, Tiptap options and storage types. |
 | `@barocss/doc-sync-slate` | `SlateBinding`, schema codecs and selection conversion. |
 | `@barocss/doc-sync-lexical` | `LexicalBinding`, `buildLexicalSchema`, schema nodes and selection conversion. |
 
 The core entry points and independent binding packages form the public API. Current package exports resolve compiled ESM JavaScript and declarations. Local tarball installation is verified; registry publication and release policy remain separate gates.
+
+## Shared Map/List data
+
+Construct the existing Client with createDataSchema and access client.data.
+Core `/data` supplies collection handles/types and a fixed internal encoding.
+There is no separate data Client, connection or History.
+Map keys merge independently; List entries retain opaque IDs through moves.
+Values are finite scalars or explicit same-client collection handles. Strings
+remain atomic. Business validation is optional and local. Authoritative
+application policy and complete schema-independent storage remain roadmap work.
+Use createDataHub for intrinsic pre-application data admission; plain DocHub
+remains generic. Guarded data GC is disabled until identity-aware compaction
+exists.
+See [Shared maps and lists](../guide/shared-data).
+
+## Presence components
+
+The framework-free store has stable immutable snapshots and explicit expiry.
+The bridge carries validated state through an existing ephemeral metadata
+namespace, preserving editor anchors and document History. UI packages only
+subscribe and project positions. Framework unmount disposes its view without
+disconnecting the client. See [Presence components](../guide/presence-components)
+for lifecycle, projection and framework examples.
 
 ## Schema domains
 
@@ -51,6 +82,20 @@ experimental root exports. Custom sheets validate scalar fields and bind
 operations/checkpoints to the descriptor identity. They do not use tree Schema,
 Client, DocHub or the public sync wire. Read [custom schema recipes](../schemas/custom).
 
+## Stable-axis spreadsheet
+
+`StructuralSheet` is an experimental standalone TypeScript API. It exposes
+visible `rows`/`columns`, ID/index mapping, ID-based cell reads/writes, row/column
+insert/delete/move, shared local History, exact pending-prefix acknowledgement
+and replay-validated state. `AxisId`, `AxisSpan`, `AxisAction` and structural
+operation/state types are exported from the root. Numeric move destinations
+refer to the remaining axis after removing the target range.
+
+`receive(ops, {requireKnownReferences: true})` requires known causal sources for
+fresh operations. Use it consistently from server creation; it does not
+retroactively revalidate unresolved duplicates previously admitted in default
+mode. See [the structural contract](../schemas/spreadsheet-structure).
+
 ## Client
 
 Core `/client` exports `Client`, `BindingClient`, `ClientOptions`,
@@ -63,9 +108,15 @@ construction. No transport creates only a LocalClient. A transport requires an
 actor and selects the existing SyncClient. `edit(edits, record?)` applies and
 records once; sync mode also queues the exact operations. Do not commit its
 return value again. `model()` returns a borrowed immutable model.
+`snapshot()` returns detached retained document storage, including pending edits,
+without History/recovery proof; read notifications may use it.
 
 Common methods cover History, anchors, selections, observers, status, connection
-and presence. Local status remains offline/unsynchronized and presence empty.
+and presence.
+The lazy `client.data` namespace supplies root/createMap/createList/getMap/getList
+for the exact data Schema; other schemas reject access without conversion.
+ClientOptions.data.validate supplies optional local policy. Client.fromState
+accepts the same data option; callbacks are not saved. Local status remains offline/unsynchronized and presence empty.
 `client.sync` is null locally and is the actual SyncClient in sync mode. Use it
 for advanced conditional editing, recovery and schema transition APIs. The
 client supplies local capture/open values but writes no storage and adds no

@@ -11,7 +11,7 @@ const output = join(root, 'output/binding-packages');
 mkdirSync(output, {recursive: true});
 const temp = mkdtempSync(join(tmpdir(), 'doc-sync-pack-'));
 const cache = process.env.DOC_SYNC_NPM_CACHE ?? '/tmp/doc-sync-binding-npm-cache';
-const names = ['doc-sync', 'doc-sync-prosemirror', 'doc-sync-slate', 'doc-sync-lexical', 'doc-sync-tiptap'];
+const names = ['doc-sync', 'doc-sync-prosemirror', 'doc-sync-slate', 'doc-sync-lexical', 'doc-sync-tiptap', 'doc-sync-presence-ui', 'doc-sync-presence-react', 'doc-sync-presence-vue', 'doc-sync-presence-svelte', 'doc-sync-presence-solid'];
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const run = (cmd, args, cwd = root) => execFileSync(cmd, args, {cwd, encoding: 'utf8', env: {...process.env, NODE_PATH: '', NODE_OPTIONS: '', npm_config_cache: cache}, maxBuffer: 16 * 1024 * 1024});
 const json = path => JSON.parse(readFileSync(path, 'utf8'));
@@ -47,7 +47,7 @@ for (const name of names) {
 }
 assert.deepEqual(manifest['doc-sync'].dependencies ?? {}, {});
 assert(!manifest['doc-sync'].peerDependencies);
-assert.deepEqual(Object.keys(manifest['doc-sync'].exports).sort(), ['.','./client','./editor','./engine','./local','./node','./server','./sync']);
+assert.deepEqual(Object.keys(manifest['doc-sync'].exports).sort(), ['.','./client','./data','./editor','./engine','./local','./node','./presence','./server','./sync']);
 for (const name of names) {
     assert.equal(manifest[name].private, true, `${name}: package must remain private`);
     assert.equal(manifest[name].version, '0.0.0', `${name}: preparation must not advance versions`);
@@ -82,7 +82,7 @@ const core = consumer('core-only', ['doc-sync']);
 script(core, `import assert from 'node:assert/strict';
 import * as core from '@barocss/doc-sync';
 assert.equal(typeof core.Doc,'function'); assert.equal(typeof core.History,'function');
-for (const entry of ['client','sync','server','node','editor','engine','local']) assert(Object.keys(await import('@barocss/doc-sync/'+entry)).length);
+for (const entry of ['client','sync','server','node','editor','engine','local','presence','data']) assert(Object.keys(await import('@barocss/doc-sync/'+entry)).length);
 for (const entry of ['prosemirror','tiptap','slate','lexical']) await assert.rejects(import('@barocss/doc-sync/'+entry),{code:'ERR_PACKAGE_PATH_NOT_EXPORTED'});
 await import('@barocss/doc-sync/editor'); await import('@barocss/doc-sync/engine');
 const {LocalClient,LocalEditorHost,createLocalEditorHost}=await import('@barocss/doc-sync/local');
@@ -131,6 +131,35 @@ writeFileSync(join(core, 'loader.mjs'), `import {appendFileSync} from 'node:fs';
 run(process.execPath, ['--loader', './loader.mjs', 'check.mjs'], core);
 assert(!/node_modules\/(?:prosemirror-|slate|lexical|pixi\.js|@visactor\/|@tiptap\/|@lexical\/|@barocss\/doc-sync-(?:prosemirror|tiptap|slate|lexical))/.test(readFileSync(join(core, 'loads.log'), 'utf8')));
 types(core, `import {Client,type ClientOptions,clientOwner,createEditorHost,type BindingClient,type LocalClientState} from '@barocss/doc-sync/client'; import {Doc,History,type Schema,type HistorySnapshot,typescriptEngine} from '@barocss/doc-sync'; import {SyncClient} from '@barocss/doc-sync/sync'; import {DocHub} from '@barocss/doc-sync/server'; import {NodeHttpTransport} from '@barocss/doc-sync/node'; import type * as Engine from '@barocss/doc-sync/engine'; import {LocalClient,LocalEditorHost,createLocalEditorHost,type LocalNotificationError} from '@barocss/doc-sync/local'; import type {EditorHost} from '@barocss/doc-sync/editor'; const captured:LocalClientState|null=null; const restore:(state:unknown,options:{schema:Schema})=>Client=Client.fromState; const options:ClientOptions={schema:{} as Schema}; const client:BindingClient=new Client(options); const createLocal:(client:LocalClient)=>EditorHost=createLocalEditorHost; const notify=(error:LocalNotificationError)=>error.message; void [captured,restore,clientOwner(client),createEditorHost(client),Doc,History,SyncClient,DocHub,NodeHttpTransport,typescriptEngine,LocalClient,LocalEditorHost,createLocal,notify];`);
+script(core, `import assert from 'node:assert/strict';
+import * as dataExports from '@barocss/doc-sync/data';
+assert.equal('DataClient' in dataExports,false);
+import {Client} from '@barocss/doc-sync/client';
+import {createDataSchema,SharedList} from '@barocss/doc-sync/data';
+const client=new Client({schema:createDataSchema(),actor:'packed-data'}),data=client.data;
+assert.equal(data,client.data);assert.equal('connect' in data,false);assert.equal('undo' in data,false);assert.equal('client' in data,false);
+data.root.set('__proto__',null);assert(data.root.has('__proto__'));assert.equal(data.root.get('__proto__'),null);
+const list=data.createList();data.root.set('tasks',list);const a=list.push('A'),b=list.push('B');list.move(b,0);assert.equal(list.at(0).id,b);assert.equal(list.get(a),'A');
+list.set(a,'A2');client.undo();assert.equal(list.get(a),'A');client.redo();assert.equal(list.get(a),'A2');
+const reopened=Client.fromState(JSON.parse(JSON.stringify(client.captureState())),{schema:createDataSchema()});const restored=reopened.data.root.get('tasks');assert(restored instanceof SharedList);assert.equal(restored.get(a),'A2');assert.equal(restored.at(0).id,b);
+assert.throws(()=>data.root.set('bad',{}),/finite scalar/);assert.equal(data.root.has('bad'),false);reopened.dispose();client.dispose();
+`, 'data.mjs');
+script(core, `import assert from 'node:assert/strict';
+import {Doc} from '@barocss/doc-sync';
+import {createDataSchema} from '@barocss/doc-sync/data';
+import {createDataHub,DocHub} from '@barocss/doc-sync/server';
+const doc=new Doc('package-admission',createDataSchema());
+const change={actor:'package-admission',seq:1,ops:doc.edit([{op:'insert',at:[0],content:[{type:'entry',attrs:{id:'data:00000000-0000-4000-8000-000000000001',key:'x',value:{scalar:1}}}]}]).ops};
+const invalid=structuredClone(change);invalid.ops.find(op=>op.t==='node').attrs.value={scalar:{bad:true}};
+const hub=createDataHub();let appends=0;hub.onAppend=()=>appends++;
+assert.throws(()=>hub.submit(invalid),/Data:/);assert.equal(hub.serverSeq,0);assert.equal(appends,0);
+assert.equal(hub.submit(change).serverSeq,1);assert.equal(hub.submit(change),null);assert.equal(appends,1);
+assert.equal(hub.gc(0),null);assert.throws(()=>hub.replayGc(0),/unsupported/);
+const legacy=new DocHub({schema:createDataSchema()});assert.equal(legacy.submit(invalid).serverSeq,1);
+`, 'data-admission.mjs');
+types(core, `import {Client,type Snapshot} from '@barocss/doc-sync';import {LocalClient} from '@barocss/doc-sync/local';import {createDataSchema} from '@barocss/doc-sync/data';import {createDataHub,type DataHubOptions,type HubOptions} from '@barocss/doc-sync/server';const options:DataHubOptions={};const hub=createDataHub(options);const schema=createDataSchema();const client=new Client({schema}),local=new LocalClient({schema});const a:Snapshot=client.snapshot(),b:Snapshot=local.snapshot();const policies:HubOptions={validatePayload:change=>{void change.actor},validateChange:(doc,change)=>{void [doc,change]}};void [hub,a,b,policies];`);
+types(core, `import {Client,type ClientOptions} from '@barocss/doc-sync/client';import {SharedMap,SharedList,createDataSchema,type SharedData,type DataValue,type DataValidator} from '@barocss/doc-sync/data';const validate:DataValidator=write=>{void write.collection;};const options:ClientOptions={schema:createDataSchema(),actor:'typed-data',data:{validate}};const client=new Client(options);const data:SharedData=client.data;const list:SharedList=data.createList();const map:SharedMap=data.root;const id=list.push(null);const value:DataValue|undefined=list.get(id);map.set('list',list);void [value,createDataSchema()];`);
+
 const publicProfileTypes = `
 import {Client} from '@barocss/doc-sync/client';
 import type {ActorProfile,ResolvedActorProfile,ProfileJSON} from '@barocss/doc-sync';
@@ -164,7 +193,7 @@ const capability:'containers-v1'=CONTAINER_CAPABILITY;
 const client=new Client({schema:graphic});client.edit([{op:'insert',at:[0],content:[]}]);client.dispose();
 void [schemas,ordered,domain,capability];`);
 
-cases.push({name:'core-only',status:'PASS',directory:core,noEditorInstalled:true,noEditorLoaded:true,types:'PASS',unifiedClientLocalRuntime:'PASS',publicProfileTypes:'PASS',schemaDomainTypes:'PASS',emptyGraphicClientRuntime:'PASS'});
+cases.push({name:'core-only',status:'PASS',directory:core,noEditorInstalled:true,noEditorLoaded:true,types:'PASS',unifiedClientLocalRuntime:'PASS',publicProfileTypes:'PASS',schemaDomainTypes:'PASS',emptyGraphicClientRuntime:'PASS',sharedDataRuntime:'PASS',sharedDataTypes:'PASS',preApplicationDataAdmission:'PASS',ownedClientSnapshotTypes:'PASS'});
 const editorPeers = {
     'doc-sync-prosemirror': ['prosemirror-model','prosemirror-state','prosemirror-transform','prosemirror-view'],
     'doc-sync-tiptap': ['@tiptap/core','@tiptap/pm'],
@@ -287,7 +316,25 @@ binding.redo(); assert.equal(client.doc.toJSON().children[0].runs[0].text,'A😀
     types(directory, `import * as binding from '@barocss/${binding}'; import {Doc,type Schema} from '@barocss/doc-sync'; void [binding,Doc];`);
     cases.push({name:binding,status:'PASS',directory,types:'PASS',unrelatedEditorsAbsent:true,unifiedClientTypes:'PASS',...(binding !== 'doc-sync-tiptap' ? {unifiedClientNativeLifecycle:'PASS'} : {})});
 }
-const all = consumer('all-five-packages', names, {...versions(Object.values(editorPeers).flat()),jsdom:'26.1.0'});
+
+// Presence packages remain independent from native editor and unrelated UI peers.
+const uiPeers = {'doc-sync-presence-ui': [], 'doc-sync-presence-react': ['react','@types/react'], 'doc-sync-presence-vue': ['vue'], 'doc-sync-presence-svelte': ['svelte'], 'doc-sync-presence-solid': ['solid-js']};
+for (const [name, peers] of Object.entries(uiPeers)) {
+    const packages = ['doc-sync', 'doc-sync-presence-ui', ...(name === 'doc-sync-presence-ui' ? [] : [name])];
+    const directory = consumer(name, packages, versions(peers));
+    script(directory, `import assert from 'node:assert/strict';
+const core=await import('@barocss/doc-sync/presence');
+const ui=await import('@barocss/${name}');
+assert.equal(typeof core.createPresenceStore,'function');
+assert(Object.keys(ui).length>0);
+assert.equal(typeof globalThis.document,'undefined');
+const store=core.createPresenceStore({actor:'packed'});store.updateLocal({activity:'active'});assert.equal(store.getSnapshot().length,1);store.dispose();`);
+    types(directory, `import {createPresenceStore,type PresenceTarget} from '@barocss/doc-sync/presence';import * as ui from '@barocss/${name}';const store=createPresenceStore({actor:'types'});const target:PresenceTarget={kind:'spreadsheet',sheetId:'sheet',rowId:'row',columnId:'col'};store.updateLocal({cursor:target});void ui;`);
+    for (const unrelated of ['prosemirror-model','slate','lexical',...['react','vue','svelte','solid-js'].filter(peer=>!peers.includes(peer))]) assert(!existsSync(join(directory,'node_modules',unrelated)), `${name} installed unrelated ${unrelated}`);
+    cases.push({name,status:'PASS',directory,types:'PASS',ssrImport:'PASS',unrelatedPeersAbsent:true});
+}
+
+const all = consumer('all-library-packages', names, {...versions([...Object.values(editorPeers).flat(),'react','@types/react','vue','svelte','solid-js']),jsdom:'26.1.0'});
 script(all, `import assert from 'node:assert/strict';
 for (const name of ['prosemirror','tiptap','slate','lexical']) assert(Object.keys(await import('@barocss/doc-sync-'+name)).length);
 for(const part of ['model','state','transform','view']) { const upstream=await import('prosemirror-'+part), tiptap=await import('@tiptap/pm/'+part); for(const key of Object.keys(upstream)) if(typeof upstream[key]==='function') assert.equal(upstream[key],tiptap[key],part+'.'+key); }
@@ -308,7 +355,7 @@ for (const name of ['harness.ts','native.test.ts']) {
 }
 const nativeResult = run(process.execPath, ['--test','native.test.ts'], all);
 writeFileSync(join(output,'tarball-tiptap-tests.log'),nativeResult);
-cases.push({name:'all-five-independent-packages',status:'PASS',directory:all,types:'PASS',singlePmClassGraph:true,nativeTiptapTests:'PASS',unifiedClientTypes:'PASS'});
+cases.push({name:'all-ten-independent-packages',status:'PASS',directory:all,types:'PASS',singlePmClassGraph:true,nativeTiptapTests:'PASS',unifiedClientTypes:'PASS'});
 // Prove a binding patch can be packed independently without changing its siblings or core.
 const before = Object.fromEntries(names.map(name=>[name,walk(join(root,'packages',name,'dist')).map(file=>[file,digest(file)])]));
 const releaseRoot = join(temp,'independent-release'); mkdirSync(join(releaseRoot,'packages'), {recursive:true});

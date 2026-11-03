@@ -228,3 +228,28 @@ Automatic background saving, local schema transitions, live engine switching and
 local-to-sync handoff remain open. Existing Node/MCP durable recovery still uses
 its synchronized session and server/GC evidence. Omitting a transport does not
 turn that recovery protocol into local persistence.
+
+
+## Shared Map/List access
+
+Use the same Client for shared records and lists:
+
+```ts
+import {Client} from '@barocss/doc-sync/client';
+import {createDataSchema} from '@barocss/doc-sync/data';
+
+const client = new Client({schema: createDataSchema()});
+client.data.root.set('title', 'Project');
+const items = client.data.createList();
+client.data.root.set('items', items);
+const id = items.push('Design');
+items.set(id, 'Review');
+client.undo();
+```
+
+The data namespace owns no connection or History. Local/sync mode and save/open
+use the existing Client methods. ClientOptions.data.validate is optional local
+policy. The exact data schema is required: this does not insert Map/List storage
+into an arbitrary Document/Graphic schema. Other schemas reject data access
+without changing the document. Read [Shared maps and lists](./shared-data) for
+server admission, references, schema identity and GC boundaries.

@@ -142,19 +142,24 @@ for(const scenario of ['retained','cleared','unknown','repeat'] as const)test(`a
     const start=async()=>{
         const p=spawn(process.execPath,[demo],{env:{...process.env,PORT:"0",DATA_DIR:join(dir,"server"),NO_SCHEMA:""},stdio:["ignore","pipe","pipe"]});let errors="";p.stderr.on("data",b=>errors+=String(b));
         const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(`server timeout ${errors}`)),10000);p.once("exit",c=>reject(Error(`server exited ${c} ${errors}`)));p.stdout.on("data",b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`)}})});
-        return {p,origin};
+        return {p,origin,errors:()=>errors};
     };
     try {
         let started=await start();server=started.p;let accepted!:()=>void;const barrier=new Promise<void>(resolve=>accepted=resolve);
+        const proxyRequests: string[]=[];
         proxy=createServer((req,res)=>{
+            proxyRequests.push(`${req.method} ${req.url}`);
             if(scenario==='unknown'&&req.method==='POST'&&req.url?.endsWith('/conditional')){req.resume();req.on('end',accepted);return;}
             const upstream=request(`${started.origin}${req.url?.replace(/^\/profiles\/word/,"")}`,{method:req.method,headers:{...req.headers,host:new URL(started.origin).host}},response=>{
+                proxyRequests.push(`response ${req.method} ${req.url}: ${response.statusCode}`);
+                response.on("end",()=>proxyRequests.push(`complete ${req.method} ${req.url}: ${response.complete}`));
+                response.on("error",error=>proxyRequests.push(`response error ${req.method} ${req.url}: ${error.message}`));
                 if(req.method==="POST"&&req.url?.endsWith("/conditional")){
                     let body="";response.on("data",b=>body+=String(b));response.on("end",()=>{try{const parsed=JSON.parse(body);if(response.statusCode===200&&parsed.status==="accepted")accepted();else {res.writeHead(response.statusCode??500);res.end(body);}}catch{res.writeHead(500);res.end();}});return;
                 }
                 res.writeHead(response.statusCode??502,response.headers);response.pipe(res);
             });
-            upstream.on("error",()=>{if(!res.headersSent)res.writeHead(502);res.end();});res.on("close",()=>upstream.destroy());req.pipe(upstream);
+            upstream.on("error",error=>{proxyRequests.push(`upstream error ${req.method} ${req.url}: ${error.message}`);if(!res.headersSent)res.writeHead(502);res.end();});res.on("close",()=>upstream.destroy());req.pipe(upstream);
         });
         proxy.listen(0,"127.0.0.1");await once(proxy,"listening");const address=proxy.address();assert.ok(address&&typeof address!=="string");
         const origin=`http://127.0.0.1:${address.port}`,url=`${origin}/profiles/word`,stateDir=join(dir,"state");
@@ -162,8 +167,23 @@ for(const scenario of ['retained','cleared','unknown','repeat'] as const)test(`a
         const actor=profileActor(profile,url,"kill-test");
         child=spawn(process.execPath,[worker,url,stateDir,"kill"],{stdio:["ignore","ignore","pipe"]});let workerError="";child.stderr!.on("data",b=>workerError+=String(b));
         let barrierTimer: ReturnType<typeof setTimeout> | undefined;
-        try { await Promise.race([barrier,new Promise<never>((_,reject)=>{barrierTimer=setTimeout(()=>reject(Error(`conditional barrier timeout ${workerError}`)),15000);})]); }
-        finally { if(barrierTimer)clearTimeout(barrierTimer); }
+        let onWorkerExit!: (code: number | null, signal: NodeJS.Signals | null) => void;
+        const workerExited=new Promise<never>((_,reject)=>{
+            onWorkerExit=(code,signal)=>reject(Error(`worker exited before conditional barrier: code=${code} signal=${signal}`));
+            child!.once("exit",onWorkerExit);
+        });
+        try { await Promise.race([barrier,workerExited,new Promise<never>((_,reject)=>{barrierTimer=setTimeout(()=>reject(Error("conditional barrier timeout")),15000);})]); }
+        catch(error) {
+            const missionDirectory=join(dir,"state","missions"), missions=[];
+            for(const name of await readdir(missionDirectory).catch(()=>[])) {
+                try {
+                    const mission=JSON.parse(await readFile(join(missionDirectory,name),"utf8"));
+                    missions.push({id:mission.id,status:mission.status,error:mission.error,pending:!!mission.pending,steps:mission.steps});
+                } catch(readError) {missions.push({file:name,readError:String(readError)});}
+            }
+            throw Error(`${error instanceof Error?error.message:String(error)}; ${JSON.stringify({workerExitCode:child.exitCode,workerSignal:child.signalCode,workerError,serverError:started.errors(),missions,proxyRequests})}`);
+        }
+        finally { if(barrierTimer)clearTimeout(barrierTimer);child.off("exit",onWorkerExit); }
         const names=await readdir(join(dir,"state","missions"));assert.equal(names.length,1);
         const missionPath=join(dir,"state","missions",names[0]), before=JSON.parse(await readFile(missionPath,"utf8"));
         assert.equal(before.status,"running");assert.equal(before.pending.plan.text,"X");

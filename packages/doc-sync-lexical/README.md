@@ -2,7 +2,7 @@
 
 Draft package. This workspace is private and has not been published. `publishConfig.access` records the intended public registry access. Remove `private` only in a separately approved registry release.
 
-Run `npm install` and `npm run build` from the repository root with Node 24. The package exports ESM JavaScript and TypeScript declarations from `dist`. `npm run check:packages` packs all five packages and installs the tarballs into isolated consumers.
+Run `npm install` and `npm run build` from the repository root with Node 24. The package exports ESM JavaScript and TypeScript declarations from `dist`. `npm run check:packages` packs all library packages and installs the tarballs into isolated consumers.
 
 Install this package with `@barocss/doc-sync` and its required editor peers listed in `package.json`. The package does not bundle core or editor code.
 

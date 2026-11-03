@@ -33,7 +33,7 @@ test('five primary destinations lead to separate reader categories', () => {
 test('VitePress marks exactly one primary category active for current pages', () => {
     const fixtures = {
         'Guide': ['index.md', 'guide/getting-started.md', 'guide/client.md', 'guide/local-editing.md'],
-        'Schemas': ['schemas/custom.md', 'schemas/index.md', 'schemas/document.md', 'schemas/spreadsheets.md', 'guide/schema.md', 'guide/graphic-schema.md', 'guide/schema-transition.md', 'guide/full-schema.md', 'guide/product-schemas.md'],
+        'Schemas': ['schemas/custom.md', 'schemas/index.md', 'schemas/document.md', 'schemas/spreadsheets.md', 'schemas/spreadsheet-structure.md', 'guide/schema.md', 'guide/graphic-schema.md', 'guide/schema-transition.md', 'guide/full-schema.md', 'guide/product-schemas.md'],
         'Editor integrations': ['guide/editors.md', 'guide/slate.md', 'guide/lexical.md', 'guide/custom-editor.md', 'guide/runnable-examples.md', 'guide/graphic-editor.md'],
         'AI & bots': ['ai/index.md', 'ai/server.md', 'guide/ai.md', 'guide/ai-walkthrough.md', 'guide/bots.md'],
         'Reference': ['reference/api.md', 'reference/recovery-plan.md', 'status.md', 'guide/rust.md', 'roadmap.md'],
@@ -93,7 +93,7 @@ test('Schemas presents Document, Graphic and Spreadsheet in order', () => {
         ['/schemas/', '/schemas/custom'],
         ['/schemas/document', '/guide/schema', '/guide/full-schema', '/guide/product-schemas', '/guide/schema-transition'],
         ['/guide/graphic-schema'],
-        ['/schemas/spreadsheets'],
+        ['/schemas/spreadsheets', '/schemas/spreadsheet-structure'],
     ]);
     const source = readFileSync(new URL('../src/schemas/index.md', import.meta.url), 'utf8');
     assert.deepEqual([...source.matchAll(/^## (.+)$/gm)].map(match => match[1]), ['Document', 'Graphic', 'Spreadsheet']);

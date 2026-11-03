@@ -15,6 +15,35 @@ Keep application rendering functions outside the schema. The existing tree
 existing `ui` data out of a schema changes its identity; do not do this during
 an active session without a supported transition.
 
+## Stored data and live interaction
+
+DocumentSchema, GraphicSchema and SpreadsheetSchema describe accepted document
+data. Keep transient cursor, selection, drag and typing previews in a separate
+presence protocol. A view can choose its preview renderer without changing the
+replicated schema identity.
+
+For example, a numeric cell can temporarily contain the input text `-` or `1e`.
+The peer may display that text while the committed model still contains a
+number. Validate the final parsed value when the user commits it. Do not relax
+the stored field rule merely to admit partial input.
+
+| State | Contract | Lifetime |
+| --- | --- | --- |
+| Accepted cell or object value | Data schema and existing CRDT operations | Stored, synchronized and part of History |
+| Active typing or selection | Validated presence target, field, bounded text, actor identity and sequence | Temporary; cleared on cancel/disconnect |
+| A draft that must survive restart | Separate application persistence and recovery policy | Application-defined; ephemeral presence alone is insufficient |
+
+The current spreadsheet adapter can also send optional UTF-16 text caret and
+selection positions inside its preview. Document token selection and Graphic
+pointer/object selection use their own adapters. Shared text/drag draft
+rendering is not implied by metadata transport.
+
+Presence still needs validation. Check target IDs, schema/mode binding, declared
+field names, text length and update order. This is a transport contract, not a
+new data shape or schema flag. The spreadsheet demo implements this separation;
+it does not add a universal draft API to every public editor binding. Read
+[Spreadsheet live previews](../guide/presence#spreadsheet-live-previews).
+
 ## Document nodes
 
 `DocumentSchema` uses the existing tree shapes. Applications choose the names.
@@ -179,8 +208,10 @@ Omitting `schema` keeps the legacy five-field v1 state and operation format.
 Explicitly supplying even the default descriptor opts into schema-bound v2.
 These modes are not interchangeable. Select the mode before editing.
 
-The sheet API does not implement `Client`, `DocHub`, live schema transitions,
-structural axis edits, formulas, durable transport or GC. See the
+Fixed-axis `SparseSheet` does not implement structural edits. The separate
+[`StructuralSheet`](./spreadsheet-structure) uses the same custom field
+descriptor with stable axis identities. Neither API implements `Client`,
+`DocHub`, live schema transitions, formulas, durable transport or GC. See the
 [sparse API and collaborative demo](./spreadsheets).
 
 ## Native Rust support
@@ -201,3 +232,13 @@ not imply that all tree shapes are supported by the runtime API.
 See [Rust runtime examples](../guide/rust#runtime-custom-schemas) for Cargo use.
 These APIs are native Rust only. They do not provide a WASM CRDT engine, npm
 engine selector, live schema transition or cross-runtime transport adapter.
+
+
+## Shared maps and lists
+
+Use [Shared maps and lists](../guide/shared-data) when your application needs
+keywise records or ordered shared values without supplying an application
+Schema. Use Client with createDataSchema and client.data. This access layer still uses a fixed internal encoding Schema. Its optional
+local value validator does not replace authoritative remote admission or make
+existing domain schemas interchangeable. Collaborative text keeps using
+existing text nodes; Map string values are atomic.

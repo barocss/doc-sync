@@ -1,6 +1,6 @@
 # Release preparation
 
-The library has five independently versioned packages:
+The library has ten independently versioned packages:
 
 | Package | Responsibility |
 | --- | --- |
@@ -9,13 +9,18 @@ The library has five independently versioned packages:
 | `@barocss/doc-sync-tiptap` | Tiptap extension, using the ProseMirror binding |
 | `@barocss/doc-sync-slate` | Slate binding and conversion |
 | `@barocss/doc-sync-lexical` | Lexical binding and conversion |
+| `@barocss/doc-sync-presence-ui` | Framework-free Presence DOM renderer |
+| `@barocss/doc-sync-presence-react` | React components and hooks |
+| `@barocss/doc-sync-presence-vue` | Vue components and composables |
+| `@barocss/doc-sync-presence-svelte` | Svelte component and readable store |
+| `@barocss/doc-sync-presence-solid` | SolidJS components and reactive snapshot accessors |
 
 The engine has no runtime dependencies or editor peers. Install only the binding
 you use and its declared peers. The old `@barocss/doc-sync-core` package and
 `@barocss/doc-sync/prosemirror`, `/tiptap`, `/slate`, and `/lexical` subpaths are
 removed. See [Packages and engines](./packages) for the import migration.
 
-All five packages are currently private at `0.0.0`. The apps, documentation,
+All ten packages are currently private at `0.0.0`. The apps, documentation,
 benchmarks, and Rust experiments remain private development workspaces. These
 instructions prepare releases; they do not establish an npm publication.
 
@@ -40,7 +45,7 @@ other binding version. A core contract change can require binding changes too.
 Check the actual peer ranges rather than assuming all versions must match.
 
 The configuration has no fixed or linked version groups. It can version the
-five private library candidates during preparation, while `@doc-sync/*` apps
+ten private library candidates during preparation, while `@doc-sync/*` apps
 remain ignored and private. It does not create commits or private-package tags.
 See the [configuration reference](https://changesets.dev/guide/config).
 
@@ -57,7 +62,8 @@ app versions, and a later Slate-only `0.1.1` patch. It verifies that the source
 manifests and lockfile did not change. The receipt is written to
 `output/release-preparation/report.json`.
 
-The checked-in minor changeset describes the five-package API transition. It
+The checked-in minor changesets describe the core/binding transition and optional
+Presence components. It
 does not mean these versions have been assigned or published. When the initial
 version changeset has been consumed, replace this first-release rehearsal with
 the plan appropriate to the next release.
@@ -99,10 +105,10 @@ version, and npm account or trusted-publishing configuration. Add the chosen
 license and package metadata before publication. Recheck package name ownership,
 all peer ranges, the packed contents, and the final tests. The current workspace
 also has a pre-existing Zod advisory in the private MCP application; it is not a
-runtime dependency of the five library packages and needs its own compatibility
+runtime dependency of the library packages and needs its own compatibility
 review before deploying that application.
 
-Only after the release is approved should the five selected library manifests
+Only after the release is approved should the selected library manifests
 be made publishable. Keep apps and benchmarks private. There is no publish script
 or automatic npm release workflow in this preparation. No `npm publish` or
 `changeset publish` command is run by the checks above.

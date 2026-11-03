@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 
 const directory = resolve(process.argv[2] ?? process.cwd());
 const manifest = JSON.parse(readFileSync(join(directory, 'package.json'), 'utf8'));
-const packages = ['doc-sync', 'doc-sync-prosemirror', 'doc-sync-tiptap', 'doc-sync-slate', 'doc-sync-lexical'];
+const packages = ['doc-sync', 'doc-sync-prosemirror', 'doc-sync-tiptap', 'doc-sync-slate', 'doc-sync-lexical', 'doc-sync-presence-ui'];
 if (!packages.some(name => manifest.name === `@barocss/${name}`)) throw new Error(`Unsupported build package: ${manifest.name}`);
 rmSync(join(directory, 'dist'), {recursive: true, force: true});
 const compiler = fileURLToPath(new URL('../node_modules/typescript/bin/tsc', import.meta.url));

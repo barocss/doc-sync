@@ -109,7 +109,7 @@ provided by this adapter.
 
 This is a demo adapter API. The core API does not gain a `getNode(id)` or
 PixiJS binding export. PixiJS is a dependency of the private demo workspace;
-the five library packages retain their existing dependency boundaries.
+the library packages retain their existing dependency boundaries.
 
 ## Verify and measure
 

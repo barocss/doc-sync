@@ -83,5 +83,7 @@ The document `grid` uses dense JSON with all rows and cells. The separate
 fields through `SpreadsheetSchema`, exported from `@barocss/doc-sync`.
 It stores writes rather than all coordinates. It is not integrated with
 tree `Schema`, `Client`, `DocHub` or the public sync wire protocol.
+Use [stable rows and columns](./spreadsheet-structure) for opt-in structural
+edits without allocating the logical grid.
 See the [grid limits](../guide/schema#document-tables-and-sparse-sheets) before
 choosing a document table for a worksheet.

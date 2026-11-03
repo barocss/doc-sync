@@ -5,6 +5,7 @@ const guideSidebar = [
         {text: "Overview", link: "/"},
         {text: "Getting started", link: "/guide/getting-started"},
         {text: "Packages and engines", link: "/guide/packages"},
+        {text: "Shared maps and lists", link: "/guide/shared-data"},
         {text: "Release preparation", link: "/guide/releasing"},
     ]},
     {text: "Build an editor", items: [
@@ -16,6 +17,7 @@ const guideSidebar = [
         {text: "Document rules and annotations", link: "/guide/document-rules"},
         {text: "Synchronization", link: "/guide/sync"},
         {text: "Cursors and selections", link: "/guide/presence"},
+        {text: "Presence components", link: "/guide/presence-components"},
     ]},
 ];
 const schemaSidebar = [
@@ -35,6 +37,7 @@ const schemaSidebar = [
     ]},
     {text: "Spreadsheet", items: [
         {text: "Sparse spreadsheets", link: "/schemas/spreadsheets"},
+        {text: "Stable rows and columns", link: "/schemas/spreadsheet-structure"},
     ]},
 ];
 const editorSidebar = [
@@ -76,6 +79,7 @@ const referenceSidebar = [
         {text: "Native Rust SDK", link: "/guide/rust#use-the-native-rust-sdk"},
         {text: "WASM storage examples", link: "/guide/rust#use-the-storage-only-wasm-adapter"},
         {text: "Roadmap", link: "/roadmap"},
+        {text: "Common data roadmap", link: "/reference/common-data-roadmap"},
         {text: "Troubleshooting", link: "/guide/troubleshooting"},
         {text: "Operations and performance", link: "/guide/operations-performance"},
         {text: "Performance evidence", link: "/performance"},

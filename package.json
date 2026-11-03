@@ -48,7 +48,10 @@
     "dev:spreadsheet": "node apps/demo/spreadsheet/start.mjs",
     "predev:spreadsheet": "npm run build",
     "check:spreadsheet": "node apps/demo/spreadsheet/check-browser.mjs",
-    "bench:spreadsheet": "node apps/demo/spreadsheet/check-performance.mjs"
+    "bench:spreadsheet": "node apps/demo/spreadsheet/check-performance.mjs",
+    "dev:presence": "node apps/demo/presence/start.mjs",
+    "predev:presence": "npm run build",
+    "check:presence": "node apps/demo/presence/check-browser.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.3",

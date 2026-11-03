@@ -101,6 +101,8 @@ export class LocalClient {
     }
     stamp() { this.alive(); return this.engine.stamp(); }
     model(): NodeJSON { this.alive(); return this.engine.model(); }
+    /** Detached document storage. Pending edits are included without recording or notifying. */
+    snapshot(): Snapshot { this.alive(); return structuredClone(this.engine.snapshot()); }
     historyStatus() { this.alive(); return this.engine.historyStatus(); }
     captureAnchor(path: ModelPath): string | null { this.alive(); return this.engine.captureAnchor(path); }
     locateAnchor(key: string, visibility: "visible" | "retained" = "visible"): ModelPath | null { this.alive(); return this.engine.locateAnchor(key, visibility); }

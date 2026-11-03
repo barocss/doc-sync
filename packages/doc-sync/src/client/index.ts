@@ -1,6 +1,8 @@
+import {assertDataSchema, createDataAccess} from "../data/access.ts";
+import type {DataValidator, SharedData} from "../data/access.ts";
 export type {ActorProfile, ResolvedActorProfile, ProfileJSON} from "./profile.ts";
 import type {ActorProfile} from "./profile.ts";
-import type {Op} from "../crdt/doc.ts";
+import type {Op, Snapshot} from "../crdt/doc.ts";
 import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, ModelPath} from "../crdt/model.ts";
 import type {Schema} from "../crdt/schema.ts";
@@ -19,6 +21,8 @@ import type {Presence, PresenceInput, Transport} from "../sync/protocol.ts";
 
 export interface ClientOptions {
     schema: Schema;
+    /** Application policy for writes through client.data. Remote writes need server admission. */
+    data?: {validate?: DataValidator};
     actor?: string;
     profile?: ActorProfile;
     transport?: Transport;
@@ -166,10 +170,23 @@ export function createEditorHost(client: BindingClient, options: {input?: SyncCl
 /** A fixed local or sync document. Omitting transport creates only a LocalClient. */
 export class Client {
     readonly #backend: LocalClient | SyncClient;
+    readonly #dataValidator?: DataValidator;
+    #dataAccess?: SharedData;
+    #validatingData = false;
+    #assertDataMutationAllowed() { if (this.#validatingData) throw new Error("Data: validator mutation is not allowed"); }
+    get data(): SharedData {
+        assertDataSchema(this);
+        return this.#dataAccess ??= createDataAccess(this, write => {
+            this.#assertDataMutationAllowed(); this.#validatingData = true;
+            try { this.#dataValidator?.(write); } finally { this.#validatingData = false; }
+        }, () => this.#assertDataMutationAllowed());
+    }
     get mode(): "local" | "sync" { return this.#backend instanceof LocalClient ? "local" : "sync"; }
     private readonly host: EditorHost;
     constructor(options: ClientOptions) {
         const restored = (options as InternalClientOptions)[restoredLocal];
+        if (options.data?.validate !== undefined && typeof options.data.validate !== "function") throw new Error("Data: validate must be a function");
+        this.#dataValidator = options.data?.validate;
         if (Object.hasOwn(options, "engineFactory")) throw new Error("Put engineFactory in syncOptions with a transport");
         if (options.syncOptions && Object.keys(options.syncOptions).some(key => !["engineFactory", "ackDelay", "beforeSend"].includes(key))) throw new Error("Unsupported syncOptions");
         if (restored) this.#backend = restored;
@@ -184,10 +201,10 @@ export class Client {
         clientBackends.set(this, this.#backend);
         this.host = createEditorHost(this.#backend);
     }
-    static fromState(state: unknown, options: {schema: Schema; profile?: ActorProfile}): Client {
+    static fromState(state: unknown, options: {schema: Schema; profile?: ActorProfile; data?: ClientOptions["data"]}): Client {
         const backend = LocalClient.fromState(state, options);
         try {
-            const internal: InternalClientOptions = {schema: backend.schema, [restoredLocal]: backend};
+            const internal: InternalClientOptions = {schema: backend.schema, data: options.data, [restoredLocal]: backend};
             return new Client(internal);
         } catch (error) { backend.dispose(); throw error; }
     }
@@ -201,15 +218,22 @@ export class Client {
     get sync(): SyncClient | null { return this.#backend instanceof SyncClient ? this.#backend : null; }
     get notificationErrors() { return this.#backend instanceof LocalClient ? this.#backend.notificationErrors : bridge(this.#backend).errors.slice(); }
     model() { return this.host.model().model; }
+    /** Detached document storage, including retained hidden nodes. Safe during read notifications. */
+    snapshot(): Snapshot {
+        return this.#backend instanceof LocalClient ? this.#backend.snapshot() : structuredClone(this.#backend.engine.snapshot());
+    }
     stamp() { return this.host.stamp(); }
+    /** Raw schema edits bypass the optional client.data application policy. */
     edit(edits: EditOp[], record?: RecordOptions | null): Op[] {
+        this.#assertDataMutationAllowed();
         if (this.#backend instanceof LocalClient) return this.#backend.edit(edits, record);
         const ops = this.host.apply(edits); this.host.commit(ops, record); return ops;
     }
     historyStatus() { return this.host.historyStatus(); }
-    undo() { return this.host.undo(); }
-    redo() { return this.host.redo(); }
+    undo() { this.#assertDataMutationAllowed(); return this.host.undo(); }
+    redo() { this.#assertDataMutationAllowed(); return this.host.redo(); }
     clearHistory() {
+        this.#assertDataMutationAllowed();
         if (this.#backend instanceof SyncClient) bridge(this.#backend).settled();
         this.#backend.clearHistory();
         if (this.#backend instanceof SyncClient) bridge(this.#backend).emit("update", observer => observer.update?.());
@@ -233,11 +257,12 @@ export class Client {
     get online() { return this.status().online; }
     get synchronized() { return this.status().synchronized; }
     get capabilities() { return {sync: this.mode === "sync", presence: this.mode === "sync"}; }
-    connect() { if (this.sync) { bridge(this.sync).settled(); this.sync.connect(); } }
-    disconnect() { if (this.sync) { bridge(this.sync).mutable(); this.sync.disconnect(); } }
+    connect() { this.#assertDataMutationAllowed(); if (this.sync) { bridge(this.sync).settled(); this.sync.connect(); } }
+    disconnect() { this.#assertDataMutationAllowed(); if (this.sync) { bridge(this.sync).mutable(); this.sync.disconnect(); } }
     presence(): Iterable<Presence> { return this.host.presence(); }
     setPresence(value: PresenceInput) { this.host.setPresence(value); }
     dispose() {
+        this.#assertDataMutationAllowed();
         if (this.sync) bridge(this.sync).settled();
         this.#backend.dispose();
         if (this.sync) bridge(this.sync).dispose();

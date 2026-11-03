@@ -61,3 +61,42 @@ A mismatch blocks synchronization while preserving the client's pending work.
 There is no live profile switch, browser reload durability or server persistence.
 Choose a fresh room for another schema; do not reload a live pending session.
 See [custom schema recipes](../../docs/src/schemas/custom.md).
+
+## Live presence and typed drafts
+
+The demo projects each actor's colored selection and current input on peers.
+Native/inspector previews are ephemeral; only Enter/Apply creates an accepted
+cell edit. Empty or incomplete numeric input may be previewed while committed
+data remains unchanged. Cancel/disconnect clears previews. S2 targets retain
+IDs through structural moves.
+
+Preview payloads are validated, bounded to 8,192 UTF-16 units, coalesced at50ms
+and ordered per actor. This is not durable draft storage. Desktop checks run
+with check-live-presence-browser.mjs. Mobile testing is excluded by the current
+project instruction.
+
+SheetSession sends the server-issued presence generation from join/SSE hello.
+Disconnect uses presence-leave to remove the full selection and draft. Session
+generation checks reject delayed preview/leave requests after close or reconnect;
+old stream callbacks cannot change a newer session. Legacy direct HTTP requests
+without a generation retain sequence-only behavior. The single in-flight
+Presence request can delay fresh Presence after reconnect; it does not block
+document edits.
+
+## Selection rendering
+
+Live text uses ordinary cell typography and matching native input padding.
+Actor color belongs to range tint/outline, not to preview text. The SVG remote
+outline is independent of the neutral VTable grid and the local native range.
+Exact overlaps use bounded inset lanes; clipping follows headers, scrolling
+and the current window without inventing cut-edge borders.
+
+## Character cursor and selection
+
+PresenceEditing.selection optionally carries UTF-16 start/end/direction for
+the transmitted text. Native text inputs and text-capable inspector controls
+publish caret-only moves as well as typing. The remote preview uses DOM Range
+shaping, actor-colored caret/character highlights and the same normal cell
+font. It reveals the active caret for long text in the recipient viewport.
+Code-point-safe truncation and schema validation stay in their separate paths.
+No cursor update creates cell operations or undo entries.

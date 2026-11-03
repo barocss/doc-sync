@@ -51,6 +51,10 @@ export type HubOptions = {
      * 똑같이 한다 — 서버는 블록 종류를 몰라도 된다.
      */
     schema?: Schema | null;
+    /** Trusted, read-only policy. Runs before cloning; must not mutate hub state. */
+    validatePayload?: (change: Change) => void;
+    /** Trusted, read-only semantic policy after owned payload validation and before persistence. */
+    validateChange?: (doc: Doc, change: Change) => void;
     /** 끊긴 참여자의 핀을 얼마나 지켜 줄지 (ms). 지나면 그 참여자를 기다리지 않고 GC 한다 */
     lease?: number;
     now?: () => number;
@@ -97,12 +101,16 @@ export class DocHub {
     /** Storage owners must discard this in-memory hub and reopen the durable log. */
     onPostPersistError: ((error: unknown) => void) | null = null;
 
+    private readonly validatePayload?: (change: Change) => void;
+    private readonly validateChange?: (doc: Doc, change: Change) => void;
     private schema: Schema | null;
     /** The schema identity is derived from the complete canonical schema. */
     schemaVersion: string | null;
     onSchemaChange: ((entry: {from: string; to: string; schema: Schema}) => void) | null = null;
 
     constructor(options: HubOptions = {}) {
+        this.validatePayload = options.validatePayload;
+        this.validateChange = options.validateChange;
         this.generation = options.generation ?? null;
         if (options.schema) schemaVersion(options.schema);
         this.schema = options.schema ? structuredClone(options.schema) : null;
@@ -124,6 +132,7 @@ export class DocHub {
      * @throws 순서가 비었거나 적용할 수 없는 연산이면 — 이때 서버 문서는 전혀 바뀌지 않는다
      */
     submit(change: Change, conditionalBase?: ConditionalBase): Envelope | null {
+        this.validatePayload?.(change);
         const last = this.lastSeq.get(change.actor) ?? 0;
 
         if (change.seq <= last) {
@@ -147,6 +156,7 @@ export class DocHub {
         change = structuredClone(change);
         const retainedProblem = this.doc.check(change.ops);
         if (retainedProblem) throw new Error(retainedProblem);
+        this.validateChange?.(this.doc, change);
         // Hash only the owned, validated payload. Serializing an untrusted body can invoke accessors.
         if (this.conditionalSeals.size > 0 && this.conditionalSeals.has(JSON.stringify([change.actor, change.seq, sha256(JSON.stringify(change))]))) throw new Error("conditional_sealed");
         const envelope: Envelope = {serverSeq: this.log.length + 1, change};
@@ -176,6 +186,7 @@ export class DocHub {
 
     /** Atomically check the authoritative revision and accept a change, or identify an exact retry. */
     submitConditional(change: Change, base: ConditionalBase): Envelope {
+        this.validatePayload?.(change);
         // A reset can reuse actor/sequence/payload in a different document generation.
         // Never report that later change as confirmation of an earlier generation.
         if (base.epoch !== this.epoch) throw new Error("conditional_epoch");
@@ -195,6 +206,7 @@ export class DocHub {
 
     /** Persist an exact rejection fence before returning negative evidence. Storage must serialize this with submit. */
     settleConditional(generation: string, base: ConditionalBase, change: Change): ConditionalSettlement {
+        this.validatePayload?.(change);
         if (!this.generation || generation !== this.generation || !this.onConditionalSeal) return {status: "unknown"};
         // A body accepted under any base must never receive negative evidence.
         const accepted = this.findConditionalReceipt(generation, base, change);
@@ -215,6 +227,7 @@ export class DocHub {
 
     /** Replay validates every durable seal. Consumed actor sequences do not need an active fence. */
     replayConditionalSeal(seal: ConditionalSeal): void {
+        if (seal?.change) this.validatePayload?.(seal.change);
         if (!seal || seal.generation !== this.generation || !seal.base || typeof seal.base.epoch !== "string" ||
             !Number.isSafeInteger(seal.base.serverSeq) || seal.base.serverSeq < 0 ||
             !(seal.base.schemaVersion === null || typeof seal.base.schemaVersion === "string") ||
@@ -232,6 +245,7 @@ export class DocHub {
 
     /** A matching receipt proves acceptance; every other result remains unknown. */
     findConditionalReceipt(generation: string, base: ConditionalBase, change: Change): {status: "accepted"; generation: string; serverSeq: number} | {status: "unknown"} {
+        this.validatePayload?.(change);
         if (!this.generation || generation !== this.generation) return {status: "unknown"};
         const receipt = this.conditionalReceipts.get(JSON.stringify([change.actor, change.seq]));
         if (!receipt || receipt.base.epoch !== base.epoch || receipt.base.serverSeq !== base.serverSeq ||
@@ -248,6 +262,7 @@ export class DocHub {
 
     /** Prove that the exact ordinary or conditional change was durably accepted. */
     findChangeReceipt(generation: string, change: Change): {status: "accepted"; generation: string; serverSeq: number} | {status: "unknown"} {
+        this.validatePayload?.(change);
         if (!this.generation || generation !== this.generation) return {status: "unknown"};
         const serverSeq = this.acceptedChanges.get(JSON.stringify([change.actor, change.seq]));
         if (!serverSeq || JSON.stringify(this.log[serverSeq - 1]?.change) !== JSON.stringify(change)) return {status: "unknown"};
@@ -301,6 +316,7 @@ export class DocHub {
     /** Recover an exact original change only while its durable reservation exists. */
     submitRecovery(generation: string, reservationId: string, version: string | null, change: Change):
         {status: "accepted"; generation: string; serverSeq: number} | {status: "unsafe"} | {status: "conflict"} {
+        this.validatePayload?.(change);
         if (!this.onRecoveryPin || !this.generation || generation !== this.generation || version !== this.schemaVersion ||
             !reservationId || !this.recoveryPins.has(JSON.stringify([change.actor, reservationId]))) return {status: "unsafe"};
         const prior = this.findChangeReceipt(generation, change);

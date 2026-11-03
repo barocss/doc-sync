@@ -4,3 +4,5 @@ export {DocHub, PostPersistUncertainError, RecoveryCompactionDeferredError} from
 export {prepareDurableMutation} from "./staged.ts";
 export type {DurableHubRecord, PreparedHubMutation} from "./staged.ts";
 export type {HubOptions, ConditionalSeal, ConditionalSettlement} from "./hub.ts";
+export {createDataHub} from "./data.ts";
+export type {DataHubOptions} from "./data.ts";

@@ -1,4 +1,8 @@
 import {execFileSync} from 'node:child_process';
-for (const name of ['', 'prosemirror', 'slate', 'lexical', 'tiptap']) {
-    execFileSync(process.execPath, ['scripts/build-package.mjs', `packages/doc-sync${name ? `-${name}` : ''}`], {stdio: 'inherit'});
+const standard = ['doc-sync', 'doc-sync-prosemirror', 'doc-sync-slate', 'doc-sync-lexical', 'doc-sync-tiptap', 'doc-sync-presence-ui'];
+for (const name of standard) {
+    execFileSync(process.execPath, ['scripts/build-package.mjs', `packages/${name}`], {stdio: 'inherit'});
+}
+for (const framework of ['react', 'vue', 'svelte', 'solid']) {
+    execFileSync(process.execPath, [`packages/doc-sync-presence-${framework}/build.mjs`], {stdio: 'inherit'});
 }

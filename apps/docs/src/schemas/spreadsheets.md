@@ -6,6 +6,10 @@ the document/graphic tree union. The sheet API has no `Client`, `DocHub` or
 public sync transport backend. The old experiment source path re-exports the
 same implementation. See [custom fields and editor mappings](./custom#spreadsheet-fields).
 
+For insert, delete and move operations with stable row/column IDs, use the
+separate experimental [`StructuralSheet` API](./spreadsheet-structure).
+The fixed-axis `SparseSheet` API and its v1/v2 formats remain unchanged.
+
 ## Why a separate model
 
 The existing document `grid` model expands all rows and cells into dense JSON.
@@ -138,10 +142,10 @@ controlled concurrent edits, undo local changes, and reconnect a live client.
 The demo uses a private sheet protocol. It does not use public `Client` or
 provide a public spreadsheet transport API.
 
-Rooms remain in server memory. Server restart durability, structural axis edits,
-formula evaluation and production recovery are not provided. The grid demo is
-an early **S5a** lane beside S2 and S3. It does not complete stable row/column
-identity, public schema/Client integration or the full S5 recovery gate.
+Rooms remain in server memory. The default fixed-axis route has no structural
+axis edits. The separate [`?axes=stable` route](./spreadsheet-structure) supports
+S2 structure. Neither route provides server restart durability, formula
+evaluation, public Client integration or the full S5 recovery gate.
 See the [spreadsheet roadmap](https://github.com/barocss/doc-sync/blob/main/docs/spreadsheet-roadmap.md).
 
 Final Chrome checks pass 21/21 for the scoped demo. Backend-only A–B–B–A
@@ -178,7 +182,7 @@ parity. The field-register and history contracts above require their own tests.
 | Stage | Scope |
 | --- | --- |
 | S1 | Private sparse primitive: implicit fixed numeric axes, field registers, bounded sparse reads, local history, snapshots and exact pending retries. |
-| S2 | Interval-based axes with stable row and column IDs, plus insert, delete and move operations. |
+| S2 | Opt-in TypeScript StructuralSheet: interval axes, stable IDs, insert/delete/move and own structural History; native axis parity remains open. |
 | S3 | Runtime `SpreadsheetSchema` and schema-bound operations are available; shared `Client`, protocol, transitions and conditional History integration remain open. |
 | S4 | Formula references, dependency tracking and calculation. |
 | S5 | Virtual UI renderer and binding, HTTP sync and recovery, plus Chrome product checks. |
@@ -186,7 +190,8 @@ parity. The field-register and history contracts above require their own tests.
 
 S1 has TypeScript and native Rust implementations. The experimental public
 TypeScript API adds runtime custom fields, constraints and schema-bound state. S5a adds
-the private HTTP/SSE VTable demo above. S2, S3 and the complete S4–S6 gates remain
+the private HTTP/SSE VTable demo above. The opt-in S2 route adds stable-axis
+structure; S3 and the complete S4–S6 gates remain
 open. S1 does not provide row or column edits, formula evaluation, XLSX import
 or export, public renderer bindings or production server adapters. It is not production-ready. The existing
 [graphic editor checks](../guide/graphic-editor) and

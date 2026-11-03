@@ -15,7 +15,7 @@ import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 type Revision = {epoch: string; serverSeq: number; schemaVersion: string | null};
 type Model = {children: Array<{runs?: Array<{text: string; marks?: Record<string, unknown>}>}>};
 type View = {document: Model; revision: Revision; pending: number; conditionalPending: boolean};
-type Agent = {client: Client; close: () => Promise<void>};
+type Agent = {client: Client; close: () => Promise<void>; stderr: () => string};
 const call = (client: Client, name: string, args: Record<string, unknown> = {}) => client.callTool({name, arguments: args});
 const value = <T>(result: Awaited<ReturnType<typeof call>>): T => {
     assert.equal(result.isError, undefined, JSON.stringify(result));
@@ -61,8 +61,15 @@ test("AI and user collaboration scenarios", {timeout: 120000}, async t => {
             const transport = new StdioClientTransport({command: process.execPath, args: [mcp], stderr: "pipe", env: {...env,
                 DOC_SYNC_URL: origin, DOC_SYNC_DOCUMENT: doc, DOC_SYNC_ACTOR: actor,
                 DOC_SYNC_JOURNAL: durable ? "on" : "off", DOC_SYNC_JOURNAL_DIR: join(root, doc, actor)}});
-            await client.connect(transport);
-            const participant = {client, close: () => client.close()}; agents.push(participant); return participant;
+            let errors = "";
+            transport.stderr?.on("data", chunk => { errors = (errors + String(chunk)).slice(-65536); });
+            try { await client.connect(transport); }
+            catch (error) {
+                await client.close().catch(() => undefined);
+                await transport.close().catch(() => undefined);
+                throw new Error(`Agent startup failed (${doc}/${actor}): ${error instanceof Error ? error.message : String(error)}; stderr: ${errors}`, {cause: error});
+            }
+            const participant = {client, close: () => client.close(), stderr: () => errors}; agents.push(participant); return participant;
         }
         async function human(doc: string) {
             const transport = new NodeHttpTransport(doc, "human", origin);
@@ -165,13 +172,22 @@ test("AI and user collaboration scenarios", {timeout: 120000}, async t => {
             assert.equal(await status(a, "edit_document", {base: (await read(a)).revision, edits: [insert(0, "A")]}), "confirmed"); await converge(h, [a], "AabcH");
         });
         await t.test("agent restart restores its history without undoing a later user edit", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
-            const h = await human("restart-history"); let a = await agent("restart-history", "agent-restart", true);
-            assert.equal(await status(a, "edit_document", {base: (await read(a)).revision, edits: [insert(0, "A")]}), "confirmed"); await converge(h, [a], "Aabc");
-            await a.close(); agents.splice(agents.indexOf(a), 1);
-            h.commit(h.doc.edit([insert(4, "H")]).ops); await until(() => !h.pending.length && text(h.doc.toJSON() as Model) === "AabcH", "later user edit");
-            a = await agent("restart-history", "agent-restart", true); await converge(h, [a], "AabcH");
-            assert.equal(await status(a, "undo"), "confirmed"); await converge(h, [a], "abcH");
-            assert.equal(await status(a, "redo"), "confirmed"); await converge(h, [a], "AabcH");
+            let phase = "connect human", a: Agent | undefined;
+            try {
+                const h = await human("restart-history");
+                phase = "start durable agent"; a = await agent("restart-history", "agent-restart", true);
+                phase = "agent edit";
+                assert.equal(await status(a, "edit_document", {base: (await read(a)).revision, edits: [insert(0, "A")]}), "confirmed"); await converge(h, [a], "Aabc");
+                phase = "close durable agent"; await a.close(); agents.splice(agents.indexOf(a), 1);
+                phase = "later user edit";
+                h.commit(h.doc.edit([insert(4, "H")]).ops); await until(() => !h.pending.length && text(h.doc.toJSON() as Model) === "AabcH", "later user edit");
+                phase = "restart durable agent"; a = await agent("restart-history", "agent-restart", true);
+                phase = "converge after restart"; await converge(h, [a], "AabcH");
+                phase = "agent undo"; assert.equal(await status(a, "undo"), "confirmed"); await converge(h, [a], "abcH");
+                phase = "agent redo"; assert.equal(await status(a, "redo"), "confirmed"); await converge(h, [a], "AabcH");
+            } catch (error) {
+                throw new Error(`Restart scenario failed during ${phase}: ${error instanceof Error ? error.message : String(error)}; agent stderr: ${a?.stderr() ?? ""}; server stderr: ${stderr}`, {cause: error});
+            }
         });
     } finally {
         for (const a of agents) await a.close().catch(() => undefined);

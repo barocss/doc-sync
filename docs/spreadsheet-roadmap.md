@@ -10,6 +10,9 @@ and public Client integration, but it does not close S2, S3 or all of S5.
   exact pending retries and validated state. The old experiment path re-exports it.
 - Native Rust S1: independent typed SparseSheet API, with authored-operation,
   model, history and checkpoint comparisons against TypeScript.
+- TypeScript S2: opt-in StructuralSheet with implicit interval axes, stable
+  row/column IDs, insert/delete/move, own-action structural undo/redo, exact
+  cell-writer fences and schema-bound replay state. Native S2 remains open.
 - The production document grid remains a dense document-table projection.
 - Public tree Schema still has document and graphic domains. A separate public
   experimental SpreadsheetSchema supports constrained custom fields, canonical
@@ -27,7 +30,9 @@ and public Client integration, but it does not close S2, S3 or all of S5.
 | S5 | Virtual UI, transport and recovery | Bounded viewport; real peer input/selection/history/reconnect; model/render agreement; durable accepted changes and unconfirmed exact retry after process/server failure; browser performance and memory budgets. |
 | S6 | Native Rust/WASM parity and production qualification | Matching schema/operation/checkpoint contracts; TS/TS, TS/WASM and WASM/WASM peer corpus; resource lifetimes; backend selection through the same binding; packaging, upgrade and operational gates. |
 
-S2 is the next structural-engine priority. S3 is partial: custom schema admission
+S2 has a TypeScript core and opt-in browser route. Its structural replay cost
+tracks retained actions/runs; this is not a native or production resource gate.
+S3 is the next common-client priority and remains partial: custom schema admission
 and schema-bound operations are implemented; shared Client, protocol and
 transition integration remain open. Formula strings in S1 do not close
 S4. An in-memory demo with live reconnect does not close S5 durability.
@@ -79,4 +84,24 @@ removed whole-range reads from view status; final p95 was26.8ms. Atomic batch,
 identity collision, retry, pending and epoch tests remain passing. These are
 local observations with separate source/bundle receipts, not a production
 resource budget. Initial join, explicit capture/export/range reads and retained
-history still scale with stored work. S2 and S3 remain separate open gates.
+history still scale with stored work. S2 TypeScript structure and S3 shared Client delivery remain separate gates.
+
+## S2 structural contract
+
+StructuralSheet stores cells by immutable row/column ID pairs. Initial axes are
+one implicit run. Inserts create another run; moves reorder captured identity
+spans, and deletes hide them. Numeric move destinations are measured after
+removal. Axis actions replay in Ticket order, including late delivery. Own
+structural undo toggles only that actor's original action; cell undo preserves
+the existing exact writer fence and linked compensation behavior.
+
+The dedicated S2 operation/state format is opt-in. No live S1 conversion or
+native-axis parity is claimed. Client receive supports unresolved earlier causal
+references for out-of-order delivery. The demo server uses strict known-source
+admission consistently from room creation and rejects malformed cross-axis or
+non-birth references before mutation.
+
+The new route is ?axes=stable in a fresh room. Native and inspector input bind
+to IDs at edit start; a deleted target cannot redirect a draft into a neighbor.
+See [the API guide](../apps/docs/src/schemas/spreadsheet-structure.md) and
+[the S2 report](reports/spreadsheet-s2-2026-11-03/README.md).

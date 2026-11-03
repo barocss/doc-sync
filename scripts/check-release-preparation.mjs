@@ -9,7 +9,7 @@ import {fileURLToPath} from 'node:url';
 
 // Rehearse local version changes only. This script never invokes publish or tags.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const names = ['doc-sync', 'doc-sync-prosemirror', 'doc-sync-tiptap', 'doc-sync-slate', 'doc-sync-lexical'];
+const names = ['doc-sync', 'doc-sync-prosemirror', 'doc-sync-tiptap', 'doc-sync-slate', 'doc-sync-lexical', 'doc-sync-presence-ui', 'doc-sync-presence-react', 'doc-sync-presence-vue', 'doc-sync-presence-svelte', 'doc-sync-presence-solid'];
 const read = path => JSON.parse(readFileSync(path, 'utf8'));
 const write = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2) + '\n');
 const manifests = ['package.json', 'package-lock.json', ...['packages', 'apps'].flatMap(parent =>

@@ -3,7 +3,7 @@ import {mkdirSync, readFileSync, writeFileSync} from "node:fs";
 import {fileURLToPath} from "node:url";
 
 const root = new URL("../../../", import.meta.url);
-const pages = ["spec.md", "collaboration-intent.md", "edit-api.md", "recovery-plan.md"];
+const pages = ["spec.md", "collaboration-intent.md", "edit-api.md", "recovery-plan.md", "common-data-roadmap.md"];
 
 for (const name of pages) {
     const source = readFileSync(new URL(`docs/${name}`, root), "utf8");
