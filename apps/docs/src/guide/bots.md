@@ -141,6 +141,36 @@ at most 64 nonnegative integer indexes. These checks are exact value predicates,
 not full schema validation; they do not execute patterns or normalize values.
 The aggregate brief/model limits also apply to these kinds. They do not validate every attribute or schema cardinality rule. Existing version-1 briefs remain supported. A failed or unchecked requirement stops the mission for attention. A passing report proves only the declared checks at its saved revision; it does not establish general document quality, provenance, placement intent, or preservation of undeclared content.
 
+## Bounded planning context
+
+For a large document, opt into one stored text block with
+`--planning-path '[1]'` (or `BotOptions.planningPath`). This is a canonical model
+child path, not a text offset. The runner requests that complete child through
+`read_document_slice` with a one-child, 2048-node, 32768-text-unit, 128 KiB tool
+result budget. An oversized target fails before calling the planner; it is not
+truncated. A sibling cursor is not followed. Synthetic/default blocks, group
+wrappers and structural containers are unsupported in this initial mode.
+
+The planner receives an explicit `bounded_subtree` wrapper containing only the
+selected text block, its original absolute path and stored ID. Edits still use
+the original absolute path plus one UTF-16 offset. Only plain-string text
+insertion, text deletion and text-position updates are allowed. Structural
+inserts, node/type/grouping changes, move/split/merge, deleting the target itself
+and out-of-scope selections are rejected before submitting an edit.
+
+The target ID, path, epoch and schema fingerprint are persisted before planning
+and checked on every read and resume. A moved, replaced, deleted or schema-changed
+target requires review rather than automatic rebinding. Changes elsewhere can
+advance the revision without changing this binding; stale conditional edits still
+re-read and replan. Confirmed operations are not replayed after recovery.
+
+This limits planner context, not server authority or internal reading. The runner
+still reads the full document and uses the existing authoritative revision check
+and full-model brief verification at completion. Partial context never counts as
+whole-document verification. With no brief, completion remains model-reported.
+The schema and other explicit mission context still count toward the planner's
+512 KiB input limit. Deterministic fixture tests are not actual-model evaluation.
+
 ## Rust experiment
 
 Keep the bot and human in separate actors. Bot undo removes its own edit and preserves the human edit. Deliver undo operations to peers as well as insertion operations.

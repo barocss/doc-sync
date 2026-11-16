@@ -40,6 +40,15 @@ An accepted exact request can recover after restart without resend when receipt,
 
 **Acceptance gate:** test adjacent and overlapping bot work, reviewer isolation, independent undo, user edits, restart, cancellation, deduplication, and self-trigger suppression. Define what missed changes mean and how a resumed watcher processes them. Keep uncertain recovery blocked. Record incorrect completion claims, latency, and cost as separate measures.
 
+### Bounded planning context slice
+
+An opt-in stored text-block path now uses the existing bounded MCP slice read,
+persists its ID/path/epoch/schema binding and restricts edits to text positions.
+Oversized or changed targets fail closed. Full authoritative reads and completion
+verification remain separate. Arbitrary structural subtrees, automatic identity
+relocation and general context retrieval remain open; no model-quality or
+long-duration load claim is made.
+
 ## B6. Operations, sources, and memory
 
 **Status: private hosted MCP foundation implemented; broader operations remain planned.** The single-host service uses static bearer grants, configured routes and upstream credentials, bounded sessions and requests, private durable journals, and restart recovery. macOS and Linux use kernel locks; Linux requires `/usr/bin/flock` from util-linux. This does not establish OAuth, TLS termination, distributed storage, production tenant isolation, or the full stage gate. Define audit retention, failure recovery, and deployment limits. Start source checking with explicitly supplied material. Add external retrieval and cross-document memory only with access rules, provenance, retention, user-visible deletion, and budgets. Treat source text as data, not as permission to act.

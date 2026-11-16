@@ -15,7 +15,7 @@ const PROPOSAL_CREATE_OPTIONS = Object.freeze(["--input"]);
 const PROPOSAL_DECIDE_OPTIONS = Object.freeze(["--id", "--input"]);
 const PROPOSAL_INSPECT_OPTIONS = Object.freeze(["--id"]);
 const WATCH_OPTIONS = Object.freeze(["--url", "--doc", "--mission", "--state-dir", "--model", "--interval", "--max-runs"]);
-const RUN_OPTIONS = Object.freeze(["--url", "--doc", "--actor", "--name", "--color", "--mission", "--state-dir", "--max-steps", "--ephemeral", "--model", "--character", "--personality", "--role", "--profile", "--brief"]);
+const RUN_OPTIONS = Object.freeze(["--url", "--doc", "--actor", "--name", "--color", "--mission", "--state-dir", "--max-steps", "--ephemeral", "--model", "--character", "--personality", "--role", "--profile", "--brief", "--planning-path"]);
 const PROFILE_CREATE_OPTIONS = Object.freeze(["--id", "--name", "--character", "--personality", "--role", "--color", "--state-dir"]);
 const RESUME_OPTIONS = Object.freeze(["--id","--state-dir","--model"]);
 const ID_STATE_OPTIONS = Object.freeze(["--id", "--state-dir"]);
@@ -92,7 +92,7 @@ async function main() {
         configured=await loadProfile(stateDir,profileId);actualUrl=profileUrl(url);
     }
     const actor = configured ? profileActor(configured,actualUrl,document) : options.get("--actor") ?? `bot-${randomUUID()}`;
-    const result = await runMission({url:actualUrl, document, mission, brief, actor, stateDir, profileId:configured?.id,
+    const result = await runMission({url:actualUrl, document, mission, brief, planningPath:options.has("--planning-path")?JSON.parse(options.get("--planning-path")!):undefined, actor, stateDir, profileId:configured?.id,
         ephemeral: options.get("--ephemeral") === "true", maxSteps: Number(options.get("--max-steps") ?? "4"),
         name: configured?.name ?? options.get("--name"), color: configured?.color ?? options.get("--color"), character: (configured?.character ?? options.get("--character")) as "cat" | "fox" | "owl" | "robot" | undefined,
         personality: (configured?.personality ?? options.get("--personality")) as "curious" | "careful" | "creative" | "concise" | undefined,

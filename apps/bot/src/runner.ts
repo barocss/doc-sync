@@ -14,6 +14,9 @@ import {DocumentSession} from "../../mcp/src/session.ts";
 import {parseBrief, verifyBrief} from "./brief.ts";
 import type {Brief, VerificationReport} from "./brief.ts";
 
+import {parsePlanningPath, readPlanningContext, assertPlanningEdits, assertPlanningSelection, assertPlanningTarget, assertPersistedPlanningState} from "./planning-context.ts";
+import type {PlanningBinding} from "./planning-context.ts";
+
 const path = (v: unknown) => Array.isArray(v) && v.length >= 1 && v.length <= 64 && v.every(i => Number.isSafeInteger(i) && i >= 0);
 const object = (v: unknown) => v !== null && typeof v === "object" && !Array.isArray(v);
 
@@ -40,8 +43,8 @@ export type Plan = {action: "insert" | "delete" | "edit" | "inspect" | "finish" 
 export type Role = "writer" | "reviewer" | "organizer";
 export type Personality = "curious" | "careful" | "creative" | "concise";
 export type Planner = (input: {mission: string; brief?: Brief; personality: Personality; role: Role; schema: unknown; document: unknown; revision: Revision; previous: string[]; lastConfirmed: {edits: EditOp[]; revision: Revision} | null; inspection: {anchor: number[]; focus: number[]} | null}) => Promise<Plan>;
-export type BotOptions = {brief?: Brief; url: string; document: string; actor: string; mission: string; stateDir: string; maxSteps?: number; ephemeral?: boolean; name?: string; color?: string; character?: BotCharacter; personality?: Personality; role?: Role; profileId?: string};
-export type Mission = {brief?: Brief; completion?: "verified" | "model_reported"; verification?: VerificationReport | {version: 1; status: "not_checked"; checkedRevision: Revision; requirements: []; reason: string}; id: string; profileId?: string; recoveryProtocol?: 1; resume?: {version:1; maxSteps:number; used:number; ready:boolean}; url: string; document: string; actor: string; mission: string; name: string; color: string; character: BotCharacter; personality: Personality; role: Role; expression: BotExpression; status: "queued" | "running" | "completed" | "needs_attention"; createdAt: string; updatedAt: string; steps: string[]; history: Array<{kind: "confirmed" | "stale"; base: Revision; plan: Plan; revision?: Revision}>; pending: {revision: Revision; plan: Plan; stepId?: string} | null; result?: string; error?: string};
+export type BotOptions = {planningPath?: number[]; brief?: Brief; url: string; document: string; actor: string; mission: string; stateDir: string; maxSteps?: number; ephemeral?: boolean; name?: string; color?: string; character?: BotCharacter; personality?: Personality; role?: Role; profileId?: string};
+export type Mission = {planningPath?: number[]; planningBinding?: PlanningBinding; brief?: Brief; completion?: "verified" | "model_reported"; verification?: VerificationReport | {version: 1; status: "not_checked"; checkedRevision: Revision; requirements: []; reason: string}; id: string; profileId?: string; recoveryProtocol?: 1; resume?: {version:1; maxSteps:number; used:number; ready:boolean}; url: string; document: string; actor: string; mission: string; name: string; color: string; character: BotCharacter; personality: Personality; role: Role; expression: BotExpression; status: "queued" | "running" | "completed" | "needs_attention"; createdAt: string; updatedAt: string; steps: string[]; history: Array<{kind: "confirmed" | "stale"; base: Revision; plan: Plan; revision?: Revision}>; pending: {revision: Revision; plan: Plan; stepId?: string} | null; result?: string; error?: string};
 
 const mcpFile = fileURLToPath(new URL("../../mcp/src/main.ts", import.meta.url));
 const env = Object.fromEntries(Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined));
@@ -150,6 +153,7 @@ function planEdits(plan:Plan):EditOp[] {
 /** Reconcile a claimed mission without replaying or replanning any edit. */
 export async function recoverMission(stateDir:string,id:string):Promise<Mission> {
     const initial=await loadMission(stateDir,id);
+    assertPersistedPlanningState(initial);
     if(initial.brief !== undefined)parseBrief(initial.brief);
     if(initial.recoveryProtocol!==1 || !initial.profileId) throw Error("Legacy mission requires manual recovery inspection");
     const profile=await loadProfile(stateDir,initial.profileId),url=profileUrl(initial.url);
@@ -157,6 +161,7 @@ export async function recoverMission(stateDir:string,id:string):Promise<Mission>
     const release=await claimProfile(stateDir,initial.actor);
     try {
         const state=await loadMission(stateDir,id);
+        assertPersistedPlanningState(state);
         if(state.brief !== undefined)parseBrief(state.brief);
         if(state.recoveryProtocol!==1 || state.profileId!==profile.id || state.actor!==initial.actor || state.url!==url || state.document!==initial.document)throw Error("Mission identity changed");
         if(state.resume?.ready && !state.pending && state.status==="queued")return state;
@@ -215,14 +220,14 @@ export async function resumeMission(stateDir:string,id:string,planner:Planner):P
         if(state.actor!==recovered.actor||state.profileId!==profile.id||state.url!==recovered.url||state.document!==recovered.document||profileActor(profile,state.url,state.document)!==state.actor||!state.resume?.ready||state.status!=="queued"||state.pending)throw Error("Mission changed before continuation");
         const others=await listMissions(stateDir);
         if(others.some(m=>m.id!==id&&m.profileId===state.profileId&&m.document===state.document&&m.url===state.url&&(m.pending||m.status==="running"||m.status==="queued")))throw Error("Another task requires recovery inspection");
-        return await runMissionClaimed({url:state.url,document:state.document,actor:state.actor,mission:state.mission,brief:state.brief,stateDir,profileId:state.profileId,maxSteps:state.resume.maxSteps,name:state.name,color:state.color,character:state.character,personality:state.personality,role:state.role},planner,state);
+        return await runMissionClaimed({url:state.url,document:state.document,actor:state.actor,mission:state.mission,brief:state.brief,planningPath:state.planningPath,stateDir,profileId:state.profileId,maxSteps:state.resume.maxSteps,name:state.name,color:state.color,character:state.character,personality:state.personality,role:state.role},planner,state);
     } finally {await release();}
 }
 
 /** One bounded, user-requested mission; uncertain steps are retained for inspection, never replayed automatically. */
 export async function runMission(options: BotOptions, planner: Planner): Promise<Mission> {
     // Reject invalid requirements before creating state, claiming a profile, or starting a session.
-    options = {...options, ...(options.brief !== undefined ? {brief: parseBrief(options.brief)} : {})};
+    options = {...options, ...(options.planningPath !== undefined ? {planningPath:parsePlanningPath(options.planningPath)} : {}), ...(options.brief !== undefined ? {brief: parseBrief(options.brief)} : {})};
     if (!options.profileId) return runMissionClaimed(options, planner);
     if (options.ephemeral) throw new Error("A profile requires durable recovery");
     const profile=await loadProfile(options.stateDir,options.profileId);
@@ -239,6 +244,8 @@ export async function runMission(options: BotOptions, planner: Planner): Promise
 async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?: Mission): Promise<Mission> {
     const {url, document, actor, mission} = options;
     const brief = resumed?.brief !== undefined ? parseBrief(resumed.brief) : options.brief !== undefined ? parseBrief(options.brief) : undefined;
+    if(resumed)assertPersistedPlanningState(resumed);
+    const planningPath = resumed?.planningPath !== undefined ? parsePlanningPath(resumed.planningPath) : options.planningPath !== undefined ? parsePlanningPath(options.planningPath) : undefined;
     validateId(document, "document ID"); validateId(actor, "actor ID");
     const parsed = new URL(url); if (!SERVER_URL_PROTOCOLS.includes(parsed.protocol) || parsed.username || parsed.password) throw new Error("Invalid server URL");
     if (!mission.trim() || mission.length > 4000) throw new Error("Mission must contain 1–4000 characters");
@@ -254,7 +261,7 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
     if (!/^#[0-9a-f]{6}$/i.test(color) || !name.trim() || name.length > 80) throw new Error("Invalid bot name or color");
     const directory = join(resolve(options.stateDir), "missions"); await mkdir(directory, {recursive: true, mode: 0o700});
     const id = resumed?.id ?? randomUUID(), path = join(directory, `${id}.json`), now = new Date().toISOString();
-    const state: Mission = resumed ?? {id, ...(brief ? {brief} : {}), ...(options.profileId ? {profileId: options.profileId,recoveryProtocol:1 as const,resume:{version:1 as const,maxSteps,used:0,ready:false}} : {}), url, document, actor, mission, name, color, character, personality, role, expression: "thinking", status: "queued", createdAt: now, updatedAt: now, steps: [], history: [], pending: null};
+    const state: Mission = resumed ?? {id, ...(planningPath ? {planningPath:[...planningPath]} : {}), ...(brief ? {brief} : {}), ...(options.profileId ? {profileId: options.profileId,recoveryProtocol:1 as const,resume:{version:1 as const,maxSteps,used:0,ready:false}} : {}), url, document, actor, mission, name, color, character, personality, role, expression: "thinking", status: "queued", createdAt: now, updatedAt: now, steps: [], history: [], pending: null};
     const persist = async () => {state.updatedAt = new Date().toISOString(); await save(path, state);};
     await persist();
     let client: Client | null = null;
@@ -298,11 +305,19 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
             state.expression = inspection ? "focused" : "thinking";if(state.resume)state.resume.used=i+1;await persist();
             // Whole-document context has no implied caret. A range is shown only when explicitly requested.
             await publish(view.revision, inspection?.anchor ?? null, inspection ? "focused" : "thinking", "reading", inspection?.focus ?? null);
-            const plan = await planner({mission, ...(brief ? {brief: structuredClone(brief)} : {}), personality, role, schema: server.schema, document: view.document, revision: view.revision, previous: [...state.steps], lastConfirmed, inspection: inspection ? {anchor: inspection.anchor, focus: inspection.focus} : null});
+            let planningDocument = view.document;
+            if (planningPath) {
+                const context = await readPlanningContext((name,args)=>callTool(client!,name,args),planningPath,view.revision,state.planningBinding);
+                assertPlanningTarget(context.document.node,server.schema as Schema);
+                state.planningBinding=context.binding; await persist();
+                planningDocument=context.document;
+            }
+            const plan = await planner({mission, ...(brief ? {brief: structuredClone(brief)} : {}), personality, role, schema: server.schema, document: planningDocument, revision: view.revision, previous: [...state.steps], lastConfirmed, inspection: inspection ? {anchor: inspection.anchor, focus: inspection.focus} : null});
             checkPlan(plan);
             if (role === "reviewer" && MUTATING_PLANNER_ACTIONS.includes(plan.action)) throw new Error("Reviewer role cannot edit the document");
             if (plan.action === "inspect") {
                 const focus = plan.focus!;
+                if(planningPath){assertPlanningSelection(plan.at,planningPath);assertPlanningSelection(focus,planningPath);}
                 // Validate both endpoints against the same revision before displaying the selection.
                 await callTool(client!, "set_presence", {base: view.revision, name, color, anchor: plan.at, focus, character, expression: "focused", activity: "reading"});
                 inspection = {anchor: plan.at, focus, revision: view.revision};
@@ -338,6 +353,7 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
             }
             if (plan.action === "needs_attention") {state.error = plan.message || "The planner needs user input"; state.expression = "concerned"; state.status = "needs_attention"; await persist(); await publish(view.revision, null, "concerned", "needs_attention"); await new Promise(resolve => setTimeout(resolve, 750)); return state;}
             const edits = planEdits(plan);
+            if(planningPath)assertPlanningEdits(edits,planningPath);
             if (lastConfirmed && (resumedGuard || JSON.stringify(lastConfirmed.revision) === JSON.stringify(view.revision)) && editFingerprint(lastConfirmed.edits) === editFingerprint(edits)) throw new Error("The planner repeated the last confirmed edit; inspect the result before continuing");
             resumedGuard=false;
             // Presence is best-effort; structural paths are not text cursors.
