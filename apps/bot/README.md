@@ -385,3 +385,31 @@ of external transmission; this implementation is not permission to do so. Usage
 budgets are not persistent across process restart. Creator/owner credentials remain
 separate; creating a proposal never approves or applies it. Issue #10 and actual-model
 qualification remain open.
+
+### Durable planning-attempt guard (opt-in API)
+
+Pass `recordPlanningAttempt: true` to `runProposalMission` when an injected planner
+may make a paid or otherwise consequential model request. After capturing the
+authorized target, the runner durably writes a private, identity-bound attempt
+before invoking the planner. If the planner fails or produces no valid decision,
+`planning_unknown` and its attempt ID are returned. Resume never calls the planner,
+reads a fresh target or creates a proposal for that saved attempt, even if the flag
+is later omitted. A fresh provider-planner instance cannot reset this mission gate.
+
+A valid decision replaces the attempt with the existing durable proposal request
+or abstention. Unknown proposal creation still retries only the exact saved request,
+not the model. The existing default prepared-data behavior is unchanged. This is a
+private mission checkpoint, not a History format or a change to issue #32.
+
+`planning_unknown` means no trustworthy durable decision is available; it does not
+prove whether a provider received, completed or charged for the call. It can also
+conservatively block an attempt that failed before transmission. There is no automatic
+reset, retry or rebase. Keep the original mission and inspect the provider/account
+and intended action before authorizing any new attempt. Do not delete its checkpoint
+or use a new mission filename just to bypass uncertainty. A process crash retains
+the existing lock; dead-owner inspection and manual lock recovery are still required.
+
+This guard prevents automatic repeated planner invocation for one protected mission.
+It is not a global spending cap across missions, provider idempotency or full call
+accounting. API/CLI authorization and the existing live-model qualification gates
+remain separate; no CLI mode or live call is enabled by this option.
