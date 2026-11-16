@@ -1,6 +1,6 @@
 # Document proposals and owner approval
 
-The private hosted service stores a proposed text change for review. A separate owner credential can inspect, reject, or explicitly approve its exact stored change. Creation and preview do not edit the document. Approval and recovery use HTTP or CLI commands. There is no proposal MCP tool, planner integration, or editor review UI.
+The private hosted service stores a proposed text change for review. A separate owner credential can inspect, reject, or explicitly approve its exact stored change. Creation and preview do not edit the document. Approval and recovery use HTTP or CLI commands. There is no proposal MCP tool or planner integration. An opt-in local owner review workspace embeds the supported ProseMirror demo beside the existing bounded proposal controls.
 
 ## Enable and separate credentials
 
@@ -164,4 +164,26 @@ The private store uses a separate namespace derived from the physical target and
 
 Capture uses an anonymous upstream wire stream. It sends no ACK, change, presence, recovery lease, or fixed-actor disconnect. Existing pending intents, checkpoint changes, and release work block capture. Initial synchronization still hydrates the upstream snapshot: bounded previews do not bound total-document transport or startup memory.
 
-These checks do not establish physical power-loss durability, distributed operation, public production security, or full B3 completion. Full editor UI, planner integration, general structural authorization, and remaining failure qualification remain on the [roadmap](../roadmap). B3 remains in progress. No browser or actual-model proposal-acceptance result is established here.
+These checks do not establish physical power-loss durability, distributed operation, public production security, or full B3 completion. Broader editor product integration, planner integration, general structural authorization, and remaining failure qualification remain on the [roadmap](../roadmap). B3 remains in progress. The local workspace has deterministic Chrome coverage, not an actual-model evaluation.
+
+
+## Local owner review workspace
+
+The optional `apps/demo/proposal-review/bridge.mjs` workspace presents stored
+proposals beside the ProseMirror demo. It is off by default and runs in a separate
+process with a private `0600` configuration file. Do not add an owner token to the
+demo or bot environment: demo launchers can pass environment variables to children.
+See the [setup and trust boundary](https://github.com/barocss/doc-sync/blob/main/apps/demo/proposal-review/README.md).
+
+The browser receives an origin-specific, short-lived review session, never the
+upstream owner token. Exact Host/Origin and session/CSRF checks protect the local
+bridge; loopback alone is not authorization. A fixed configured editor must show
+the same physical document as the hosted route. The owner must verify that mapping.
+
+Approve/reject confirmations use the inspected digest. Cancel/close do not apply
+changes. Duplicate and cross-tab decisions are constrained; a lost response remains
+unconfirmed until stored evidence is inspected. Reload does not replay edits.
+Reconcile uses the original decision and cannot initiate an unreceived approval.
+Stale versions need a new proposal and fresh review. Human-editor Undo remains
+separate from the configured proposal actor's History. This does not expand the
+plain-text proposal schema or constitute production security qualification.

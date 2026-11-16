@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "node server.ts",
-    "test": "node --test test/*.test.ts",
+    "test": "node --test test/*.test.ts proposal-review/bridge.test.mjs",
+    "check:proposal-review-browser": "node proposal-review/check-browser.mjs",
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {

@@ -108,3 +108,13 @@ Original captures survive resume; identity/placement/schema/value conflicts stop
 for review without restoring human data. General structural edits, relocation,
 nested fields and history-wide invariant monitoring remain outside this scope.
 See [verification report](reports/protected-attributes-2026-11-16/README.md).
+
+
+### Issue #4: opt-in local owner review workspace
+
+Added a separate loopback owner bridge and bounded proposal review panel beside
+the supported ProseMirror demo. Private config credentials never enter the browser
+or spawned bot environment. Explicit review/confirm, stale refusal, lost-response
+inspection, original-decision reconciliation and cross-tab decision coordination
+use the existing hosted protocol, not new direct editor writes. Broader product
+embedding and production qualification remain outside this initial scope.
