@@ -175,3 +175,24 @@ compile exception; null-reset semantics remain unchanged.
 Atomic `values` retains its existing reference-equality behavior for objects,
 while nested field leaf enums use JSON deep equality. This diagnostic slice does
 not normalize those contracts, reinterpret defaults or migrate existing data.
+
+## Read-only transition preview
+
+`preflightSchemaTransition(before, after)` returns `invalid` (with `side` and
+`reason`), or `compatible`/`incompatible` with both schema versions and descriptor
+`changes`. Incompatible results include the existing assertion's rejection
+reason. It validates before then after using `schemaVersion`, and delegates the
+actual verdict to `assertCompatibleSchema`; it does not invent a second policy.
+
+Changes have `kind: "add" | "remove" | "replace"` and exact string-segment `path`.
+Object keys are sorted, arrays are replaced as a whole, and explicit document
+domain is normalized just as in schema identity. Changes omit descriptor values;
+error reasons can contain schema names/references and are not redacted messages.
+Different fingerprints or a nonempty diff do not by themselves mean incompatible.
+
+This typed-schema API neither mutates nor installs anything. It does not inspect
+stored documents, estimate affected nodes, check editor renderers or server/bot
+permissions, execute migrations, or guarantee compatibility with future edits.
+The report is a preview of supplied descriptors, not an approval token: the
+actual transition must still enforce its own current-state checks. General
+untrusted Proxy isolation and input size limits are not added by this wrapper.

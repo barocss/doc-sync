@@ -161,3 +161,40 @@ export function assertCompatibleSchema(oldSchema: Schema, newSchema: Schema): vo
         }
     }
 }
+
+/** Descriptor changes, not document impact or executable migration operations. */
+export type SchemaDescriptorChange = {kind: "add" | "remove" | "replace"; path: string[]};
+export type SchemaTransitionPreflight =
+    | {status: "invalid"; side: "before" | "after"; reason: string}
+    | {status: "compatible"; beforeVersion: string; afterVersion: string; changes: SchemaDescriptorChange[]}
+    | {status: "incompatible"; beforeVersion: string; afterVersion: string; changes: SchemaDescriptorChange[]; reason: string};
+
+/** Read-only preview of the same conservative policy enforced by assertCompatibleSchema.
+ * Does not inspect documents, renderer support, permissions, or migrate/install anything.
+ * Changes use normalized identity descriptors and treat arrays as atomic replacements.
+ */
+export function preflightSchemaTransition(before: Schema, after: Schema): SchemaTransitionPreflight {
+    const reason = (error: unknown): string => error instanceof Error ? error.message : "Schema validation failed";
+    let beforeVersion: string, afterVersion: string;
+    try { beforeVersion = schemaVersion(before); }
+    catch (error) { return {status: "invalid", side: "before", reason: reason(error)}; }
+    try { afterVersion = schemaVersion(after); }
+    catch (error) { return {status: "invalid", side: "after", reason: reason(error)}; }
+    const changes: SchemaDescriptorChange[] = [];
+    const visit = (a: unknown, b: unknown, path: string[]): void => {
+        if (canonical(a) === canonical(b)) return;
+        if (a !== null && b !== null && typeof a === "object" && typeof b === "object" && !Array.isArray(a) && !Array.isArray(b)) {
+            const left = a as Record<string, unknown>, right = b as Record<string, unknown>;
+            for (const key of [...new Set([...Object.keys(left), ...Object.keys(right)])].sort()) {
+                const next = [...path, key];
+                if (!Object.hasOwn(left, key)) changes.push({kind: "add", path: next});
+                else if (!Object.hasOwn(right, key)) changes.push({kind: "remove", path: next});
+                else visit(left[key], right[key], next);
+            }
+        } else changes.push({kind: "replace", path});
+    };
+    visit(JSON.parse(canonical(identitySchema(before))), JSON.parse(canonical(identitySchema(after))), []);
+    try { assertCompatibleSchema(before, after); }
+    catch (error) { return {status: "incompatible", beforeVersion, afterVersion, changes, reason: reason(error)}; }
+    return {status: "compatible", beforeVersion, afterVersion, changes};
+}

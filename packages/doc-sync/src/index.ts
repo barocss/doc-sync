@@ -14,7 +14,7 @@ export {anchorAt, blockPath, childCount, compileEdits, flowPath, gridPath, pathA
 export {History} from "./crdt/history.ts";
 export {applyEdit, applyEdits, canonMarks, canonical, diffModels, inheritedMarks, markOrder, runsToUnits, unitsToRuns} from "./crdt/model.ts";
 export {acceptsText, attrValueOk, checkSchema, diagnoseAtomicAttributePatterns, gridParts, groupOf, inlineTypes, storedTypes} from "./crdt/schema.ts";
-export {assertCompatibleSchema, schemaVersion} from "./crdt/schema-version.ts";
+export {assertCompatibleSchema, preflightSchemaTransition, schemaVersion} from "./crdt/schema-version.ts";
 export {Clock, ROOT, compareTicket, keyOf, shortOf, ticketOf} from "./crdt/ticket.ts";
 export type {AtomBlock, Block, FlowBlock, GridBlock, Item, Line, Op, Pos, Snapshot, SpanValue, TextBlock} from "./crdt/doc.ts";
 export type {HistorySnapshot, RecordOptions} from "./crdt/history.ts";
@@ -39,3 +39,5 @@ export type {ClientOptions, BindingClient, LocalClientState} from "./client/inde
 export type {ActorProfile, ResolvedActorProfile, ProfileJSON} from "./client/profile.ts";
 export * from "./graphic/index.ts";
 export * from "./spreadsheet/index.ts";
+
+export type {SchemaDescriptorChange, SchemaTransitionPreflight} from "./crdt/schema-version.ts";

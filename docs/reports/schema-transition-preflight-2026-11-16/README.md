@@ -1,0 +1,28 @@
+# Read-only schema transition preflight (#20)
+
+Baseline d98a7dd has schemaVersion and assertCompatibleSchema, plus a separate
+renderer-declaration preflight. It lacks a descriptor transition preview.
+
+The new public preflightSchemaTransition calls the existing validators/assertion
+and supplies normalized, deterministic descriptor paths without values. Invalid
+input is reported before diff with no partial identity/changes. Changes operate
+on validated canonical JSON snapshots; arrays are atomic. Reasons retain existing
+validation text, potentially including schema references, and are not redacted.
+
+No document state, migration, renderer support, access policy, affected count or
+safe deployment is inferred. Differences and hashes are not compatibility
+heuristics. Actual transition checks remain mandatory. Original WIP, actual
+model calls, and long load are outside this work.
+
+## Evidence
+
+- Focused preflight and existing version tests: 11/11 PASS.
+- Package build and core TypeScript check: PASS.
+- Independent review found no blocking defect; added actual two-child reorder
+  and own `__proto__` path tests following review.
+- Intermediate fixture failures were corrected: invalid schemas are classified
+  separately from valid-but-incompatible transitions; readonly arrays are replaced
+  rather than mutated, and narrowed discriminants are checked consistently.
+
+- Full core suite: 1642/1642 PASS (about 56 seconds).
+- Docs build and link check: PASS, 55 pages / 2615 internal links.
