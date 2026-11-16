@@ -184,9 +184,35 @@ export const diagnoseAtomicAttributePatterns = (schema: Schema): AtomicAttribute
     return diagnostics;
 };
 
+/** Atomic numeric descriptor checks; unrelated metadata and nested fields are unchanged. */
+export type AtomicAttributeBoundsDiagnostic = {
+    code: "bound_type" | "bound_order"; path: string[]; message: string;
+};
+function atomicBoundsProblems(spec: AttrSpec, path: string[]): AtomicAttributeBoundsDiagnostic[] {
+    if (isFieldSpec(spec) || typeof spec.default !== "number") return [];
+    const problems: AtomicAttributeBoundsDiagnostic[] = [];
+    for (const key of ["min", "max"] as const) {
+        if (spec[key] !== undefined && (typeof spec[key] !== "number" || !Number.isFinite(spec[key]))) {
+            problems.push({code: "bound_type", path: [...path, key], message: "Numeric bound must be a finite number"});
+        }
+    }
+    if (!problems.length && spec.min !== undefined && spec.max !== undefined && spec.min > spec.max) {
+        problems.push({code: "bound_order", path, message: "Minimum must not exceed maximum"});
+    }
+    return problems;
+}
+export const diagnoseAtomicAttributeBounds = (schema: Schema): AtomicAttributeBoundsDiagnostic[] => {
+    const problems: AtomicAttributeBoundsDiagnostic[] = [];
+    for (const [type, node] of Object.entries(schema.nodes)) {
+        for (const [name, spec] of Object.entries(node.attrs ?? {})) problems.push(...atomicBoundsProblems(spec, ["nodes", type, "attrs", name]));
+    }
+    for (const [name, spec] of Object.entries(schema.markValues ?? {})) problems.push(...atomicBoundsProblems(spec, ["markValues", name]));
+    return problems;
+};
+
 /** 스키마 자체가 앞뒤가 맞는지 본다. 틀리면 설명 목록 */
 export const checkSchema = (schema: Schema): string[] => {
-    const problems = diagnoseAtomicAttributePatterns(schema).map(diagnostic => `${JSON.stringify(diagnostic.path)}: ${diagnostic.message}`);
+    const problems = [...diagnoseAtomicAttributePatterns(schema), ...diagnoseAtomicAttributeBounds(schema)].map(diagnostic => `${JSON.stringify(diagnostic.path)}: ${diagnostic.message}`);
     const shapeOf = (type: string) => schema.nodes[type]?.shape;
     const missing = (owner: string, list: readonly string[]) =>
         list.filter(c => !schema.nodes[c]).forEach(c => problems.push(`${owner}.children 의 "${c}" 가 없다`));
@@ -336,7 +362,9 @@ export const attrValueOk = (spec: AttrSpec, value: unknown): boolean => {
     }
 
     if (typeof spec.default === "number") {
-        return typeof value === "number" && Number.isFinite(value) && value >= (spec.min ?? -Infinity) && value <= (spec.max ?? Infinity);
+        return (spec.min === undefined || typeof spec.min === "number" && Number.isFinite(spec.min)) &&
+            (spec.max === undefined || typeof spec.max === "number" && Number.isFinite(spec.max)) &&
+            typeof value === "number" && Number.isFinite(value) && value >= (spec.min ?? -Infinity) && value <= (spec.max ?? Infinity);
     }
 
     return spec.default === undefined || spec.default === null || typeof value === typeof spec.default;

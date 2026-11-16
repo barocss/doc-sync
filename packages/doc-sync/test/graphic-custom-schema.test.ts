@@ -75,7 +75,7 @@ test("custom graphics validate real attrs, shape, children, content and canonica
     for (const invalid of [null, [], 1, true, "text"]) {
         assert.throws(() => h.createNode("caption", {}, invalid as never), /Graphic: invalid content options/);
     }
-    assert.throws(() => createGraphicHelpers({...board, nodes: {...board.nodes, tile: {shape: "atom", attrs: {rank: {default: 0, min: "bad"}}}}} as never), /malformed attribute/);
+    assert.throws(() => createGraphicHelpers({...board, nodes: {...board.nodes, tile: {shape: "atom", attrs: {rank: {default: 0, min: "bad"}}}}} as never), /Numeric bound must be a finite number/);
     assert.throws(() => createGraphicHelpers({...scene, nodes: {...scene.nodes, caption: {shape: "text", text: "yes"}}} as never), /malformed text/);
 });
 

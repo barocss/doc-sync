@@ -204,3 +204,17 @@ require the baseline document capabilities even when a particular document uses
 none of those features; graphic schemas additionally require `containers-v1`.
 They are not snapshot feature detection, installed-renderer checks, or evidence
 that any peer supports the proposal. Invalid inputs have no capability report.
+
+## Atomic numeric bound diagnostics
+
+`diagnoseAtomicAttributeBounds(schema)` checks atomic attributes and value marks
+whose default is numeric. It reports `bound_type` for present non-finite or
+non-number bounds, and `bound_order` when minimum exceeds maximum, with exact
+path segments and messages. The same errors participate in `checkSchema`, schema
+versioning and document creation. Omit a bound for an unlimited side; explicit
+infinity is not a finite JSON schema value.
+
+Valid equal bounds remain supported. This slice does not enforce that defaults
+satisfy their constraints, reinterpret bounds on nonnumeric defaults, change
+null resets or enum policy, or replace nested-field diagnostics. Direct numeric
+validation does not coerce malformed bounds to numbers.
