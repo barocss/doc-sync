@@ -7,6 +7,7 @@ const guideSidebar = [
         {text: "Packages and engines", link: "/guide/packages"},
         {text: "Shared maps and lists", link: "/guide/shared-data"},
         {text: "Release preparation", link: "/guide/releasing"},
+        {text: "Documentation maintenance", link: "/guide/documentation"},
     ]},
     {text: "Build an editor", items: [
         {text: "Client: local or synchronized", link: "/guide/client"},

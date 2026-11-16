@@ -1,40 +1,145 @@
 # @barocss/doc-sync
 
-Draft package. This workspace is private and has not been published. `publishConfig.access` records the intended public registry access. Remove `private` only in a separately approved registry release.
+Dependency-free TypeScript document CRDT, local/synchronized clients, schema
+operations, editor hosts, server primitives and ephemeral Presence. Editor
+bindings live in separate `@barocss/doc-sync-*` packages.
 
-Run `npm install` and `npm run build` from the repository root with Node 24. The package exports ESM JavaScript and TypeScript declarations from `dist`. `npm run check:packages` packs all library packages and installs the tarballs into isolated consumers.
+## Status and installation
 
-The core has no external runtime dependencies. Public entries are the root, `/sync`, `/server`, `/node`, `/editor`, `/engine`, `/local`, `/client`, `/presence`, and `/data`. Root and sync imports do not require an editor.
+This is a **private, unpublished `0.0.0` workspace**, not an npm release.
+Use Node.js **22.18+**. From the repository root:
 
-`Client.data` provides Map/List handles when the Client uses `createDataSchema()` from `/data`. Client owns transport, History and save/open. Other document schemas are not converted by accessing this namespace. Use `createDataHub` from `/server` for intrinsic data admission; guarded data GC is currently disabled. `/presence` supplies optional ephemeral collaboration state separately from document History.
+```sh
+npm ci
+npm run build
+npm run check:packages
+```
 
-`SyncClient` accepts `engineFactory: typescriptClientEngineFactory` from `/engine` or `/sync`. The selected engine owns live document and History state and drives the client, editor hosts and input sessions. TypeScript is the default and the only production implementation. The separate immutable `typescriptEngine` API remains an experiment. See [ENGINE-CONTRACT.md](./ENGINE-CONTRACT.md) for ownership, checkpoint and compatibility rules. No Rust/WASM backend is supplied.
+To try the compiled core in another ESM project, run `npm pack` from this package
+directory, then install the resulting `barocss-doc-sync-0.0.0.tgz` by its local
+path. `prepack` rebuilds outputs. No registry publication or version change is
+performed. The package contains `dist` JavaScript, TypeScript declarations, this
+README and the engine contract; no external runtime dependencies or editor peers
+are required. [Full local consumer recipe](https://barocss.github.io/doc-sync/guide/packages.html).
 
-The draft internal compatibility range is `>=0.0.0 <0.1.0`. A binding patch can advance within this range without changing core or sibling package versions. This is a local artifact policy, not registry release evidence. A future 0.1 minor release must set and verify its own supported ranges.
+## Quick start: local editing and explicit save/open
 
-## Schema domains
+Save this as `example.ts` in a built repository or an ESM consumer with the local
+tarball installed; run `node example.ts` on Node 22.18+.
 
-`Schema` remains the common engine input. An omitted domain keeps the document
-flow rules. `DocumentSchema` can explicitly use `domain: 'document'` with the
-same schema fingerprint as the equivalent legacy object. `GraphicSchema` uses
-`domain: 'graphic'` and a root `container` that can stay empty. Stored frames and
-object groups use container shape; the computed document `group` is unchanged.
-Containers, object edits, movement, History, local state and synchronization use
-the TypeScript engine. Root graphic attributes and container childRules are
-currently rejected. A graphic sync peer must advertise `containers-v1` and the
-matching schema identity. Existing text bindings reject graphic schemas; they do
-not supply a canvas renderer. The repository guide is
-`apps/docs/src/guide/graphic-schema.md`.
+<!-- readme-example:local -->
+```ts
+import assert from 'node:assert/strict';
+import {Client} from '@barocss/doc-sync/client';
+import type {Schema} from '@barocss/doc-sync';
 
-## Unified client
+const schema: Schema = {
+    root: 'document', marks: ['bold'],
+    nodes: {
+        document: {shape: 'flow', children: ['paragraph'], default: 'paragraph'},
+        paragraph: {shape: 'text'},
+    },
+};
+const client = new Client({schema, actor: 'example'});
+client.edit([{op: 'insert', at: [0, 0], content: 'Hello'}]);
+const first = client.model().children?.[0]?.runs?.[0];
+assert(first && 'text' in first);
+assert.equal(first.text, 'Hello');
+client.undo();
+assert.deepEqual(client.model().children?.[0]?.runs, []);
+client.redo();
+const saved = JSON.parse(JSON.stringify(client.captureState()));
+const restored = Client.fromState(saved, {schema});
+assert.deepEqual(restored.model(), client.model());
+restored.undo(); // History survives a local save/open.
+restored.dispose();
+client.dispose();
+```
 
-`/client` exports `Client`, `BindingClient` and `createEditorHost`. The root also
-exports Client. Construct `new Client({schema})` for a LocalClient backend, or
-provide `actor` and `transport` for SyncClient. Mode is fixed. Native bindings
-create per-view hosts internally and accept both legacy clients. `edit()` applies,
-records and (in sync mode) queues once. `client.sync` exposes sync-only recovery
-and schema APIs; it is null locally. The unified entry imports sync code; `/local`
-remains the narrower module entry. See the repository Client guide for lifecycle
-and limits. `captureState()` and `Client.fromState(state, {schema})` support explicit local save/open through caller storage. No Rust/WASM factory is supplied.
+The example does not persist to disk or start a server. Your application owns
+storage writes, retention and profile restoration. `captureState()` is local-only
+on the unified client; synchronized recovery has a separate proof/checkpoint
+contract. Never reuse an actor ID in simultaneously active independent replicas.
 
-`/local` exports `LocalClient`, `LocalEditorHost` and `createLocalEditorHost` for memory-only editing with the production TS engine. Each native editor view needs its own host. LocalClient also provides captureState/fromState with saved actor, IDs and History. Capture rejects pending operations and active drafts. Storage media, successful writes, background saving and automatic server attachment belong to the application. See the repository local editing guide.
+## Public entry points
+
+| Import | Purpose |
+| --- | --- |
+| `@barocss/doc-sync` | `Doc`, `History`, schema/model types, operations and `Client` |
+| `/client` | `Client`, `BindingClient`, `createEditorHost` |
+| `/local` | `LocalClient`, `LocalEditorHost`, `createLocalEditorHost` |
+| `/sync` | `SyncClient`, browser `HttpTransport`, synchronization APIs |
+| `/server` | `DocHub`, server protocol and `createDataHub` |
+| `/node` | `NodeHttpTransport` for Node HTTP/SSE consumers |
+| `/editor` | Editor hosts, input and schema-transition support |
+| `/engine` | Engine contracts and TypeScript client engine factory |
+| `/presence` | Ephemeral participant state and bridge |
+| `/data` | `createDataSchema`, SharedMap/SharedList and data types |
+
+The root and `/sync` do not import editor bindings. `/client` does include sync
+code even in local mode; use `/local` when the narrower module boundary matters.
+There is no core `/slate`, `/lexical`, `/tiptap` or `/prosemirror` entry.
+
+## Synchronization and lifecycle
+
+For a browser served with compatible document routes, reuse the schema above:
+
+```ts
+import {Client} from '@barocss/doc-sync/client';
+import {HttpTransport} from '@barocss/doc-sync/sync';
+
+const actor = crypto.randomUUID();
+const client = new Client({
+    schema,
+    actor,
+    transport: new HttpTransport('example-document', actor),
+});
+client.connect();
+// Mount a binding and edit through Client or that binding.
+// When the document owner is finished, after handling pending/recovery state:
+client.dispose();
+```
+
+This fragment requires an application server; `DocHub` is not an HTTP server by
+itself. See [server and sync setup](https://barocss.github.io/doc-sync/guide/sync.html).
+Mode is fixed at construction. Disconnection does not turn a synchronized client
+into a local one or guarantee durability. A single client shared by views is one
+actor with one History; distinct collaborators need distinct clients/actors.
+
+`edit()` applies, records and queues once. Its returned operations must not be
+committed again. `model()` is borrowed immutable state. `subscribe(observer)`
+returns an unsubscribe function; do not mutate synchronously from post-commit
+notifications. Dispose view bindings first and their shared client only when its
+owner closes. [Client contract](https://barocss.github.io/doc-sync/guide/client.html).
+
+## Schema and supported boundaries
+
+- Document schemas describe flow/text/atom/group rules. Graphic schemas add stored
+  containers; existing text bindings reject graphic schemas and do not render canvases.
+- Compatible additive schema changes use the existing transition protocol. Read-only
+  preflight reports compatibility and handshake requirements; it does not migrate
+  incompatible documents or prove renderer support.
+- Shared maps/lists require `createDataSchema()` and `createDataHub`. Arbitrary schemas
+  are not converted by `client.data`; data GC remains disabled. Strings in shared data
+  are atomic, not collaborative text.
+- Spreadsheet APIs are experimental and are not synchronized through Client/DocHub.
+- The TypeScript engine is the supported client implementation. The experimental Rust
+  SDK and storage-only WASM APIs do not supply a selectable Client backend.
+- Presence and participant profiles are display state, not authorization. The host
+  owns authentication, permissions, routing, durable storage and deployment security.
+- Low-level `Doc.apply()` replication alone does not implement network sequencing,
+  reconnect recovery, persistence or GC protection.
+
+See [schema guide](https://barocss.github.io/doc-sync/guide/schema.html),
+[schema transitions](https://barocss.github.io/doc-sync/guide/schema-transition.html),
+[shared data](https://barocss.github.io/doc-sync/guide/shared-data.html), and
+[ENGINE-CONTRACT.md](./ENGINE-CONTRACT.md).
+
+## Verification and contributing
+
+From the repository root, run `npm run check:readmes`, `npm run typecheck`,
+`npm test --workspace @barocss/doc-sync` and `npm run check:packages`.
+README examples are executed by the first command; package checks test compiled
+exports and isolated local consumers. Neither constitutes long-duration load,
+real-model or browser/IME qualification. See the
+[documentation maintenance guide](https://barocss.github.io/doc-sync/guide/documentation.html).
