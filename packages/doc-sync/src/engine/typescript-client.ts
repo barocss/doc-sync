@@ -13,6 +13,7 @@ import {assertCompatibleSchema, schemaVersion} from "../crdt/schema-version.ts";
 import {keyOf} from "../crdt/ticket.ts";
 import type {Ticket} from "../crdt/ticket.ts";
 import {modelEventWindow, textEventScopes} from "../sync/model-events.ts";
+import {validateCheckpointDocument} from "./checkpoint-validation.ts";
 import {commitModelEdits} from "./editing.ts";
 import {ENGINE_CONTRACT_VERSION} from "./contract.ts";
 import type {EngineCapability, EngineCheckpoint, EngineSelection, EngineAnchoredSelection} from "./contract.ts";
@@ -342,6 +343,7 @@ class TypeScriptClientEngine implements ClientEngine, TypeScriptClientCompatibil
         if (!Array.isArray(value.identity.capabilities) || value.identity.capabilities.length !== CAPABILITIES.length || CAPABILITIES.some(capability => !value.identity.capabilities.includes(capability))) invalid("capabilities mismatch");
         if (!Number.isSafeInteger(value.revision) || value.revision < 0) invalid("revision");
         const doc = Doc.fromSnapshot(this.actor, value.document as Snapshot, this.definition), history = History.fromSnapshot(value.history);
+        validateCheckpointDocument(doc, history.snapshot(), value.document as Snapshot, this.actor, invalid);
         const handle = {} as EnginePreparedState; this.states.set(handle, {doc, history, schema: this.definition}); return handle;
     }
     installCheckpoint(value: EnginePreparedState): void { this.alive(); const state = this.states.get(value); if (!state) throw new Error("Foreign or consumed prepared state"); this.replaceTypeScriptDocument(state.doc); this.history = state.history; this.states.delete(value); }

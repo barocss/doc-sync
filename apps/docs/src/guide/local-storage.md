@@ -127,3 +127,19 @@ a transport. See [synchronized recovery](./sync#reconnect-and-history).
 The native Rust SDK uses its separate checkpoint format. This TypeScript local
 envelope does not enable a Rust/WASM production factory, cross-engine restore,
 local schema migration or automatic background durability.
+
+### History and document coupling
+
+Production TypeScript client checkpoint preparation shares the local-state
+coupling validator. It checks known document/History ticket fields, saved clock
+bounds, retained targets and insertion/deletion ownership before returning a
+prepared handle. SyncClient restore formats 1 and 2 pass through this check.
+Rejected preparation does not install a document or replace live History.
+
+Ownership is stack-aware: an undo insertion must belong to the actor; retained
+deletion tickets must also belong to that actor. A redo step with a null deletion
+ticket may legitimately refer to foreign text after the actor undid its own
+deletion. Such redo remains supported. The snapshot does not retain complete
+provenance for that case, so structural validation is not authentication of every
+possible forged History. Trusted storage and recovery generation/GC proofs still
+matter. User attribute JSON is not interpreted as ticket metadata.
