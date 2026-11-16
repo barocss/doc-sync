@@ -9,7 +9,7 @@ import {KeyIndex} from "./key-index.ts";
 import type {MoveOp, Placement, PlacementProjection} from "./placement.ts";
 import {compileEdits, resolvePath} from "./edit.ts";
 import {applyEdits, canonMarks, canonical, canonicalWithTextCache, canonicalBlock, diffModels, unitsToRuns, withGroupBoundary} from "./model.ts";
-import {acceptsText, attrValueOk, checkSchema, diagnoseAtomicAttributePatterns, diagnoseAtomicAttributeBounds, gridParts, groupOf, inlineTypes, storedTypes} from "./schema.ts";
+import {acceptsText, attrValueOk, checkSchema, diagnoseAtomicAttributePatterns, diagnoseAtomicAttributeBounds, diagnoseAtomicAttributeEnums, gridParts, groupOf, inlineTypes, storedTypes} from "./schema.ts";
 import {Clock, ROOT, compareTicket, keyOf, ticketOf} from "./ticket.ts";
 import type {EditOp, Marks, NodeJSON, Run, Unit} from "./model.ts";
 import type {AttrSpec, FlowSpec, NodeSpec, Schema, Shape, TextSpec} from "./schema.ts";
@@ -338,7 +338,7 @@ export class Doc {
             if (problems.length) throw new Error(`Invalid schema: ${problems.join("; ")}`);
         }
         if (schema) {
-            const patterns = [...diagnoseAtomicAttributePatterns(schema), ...diagnoseAtomicAttributeBounds(schema)];
+            const patterns = [...diagnoseAtomicAttributePatterns(schema), ...diagnoseAtomicAttributeBounds(schema), ...diagnoseAtomicAttributeEnums(schema)];
             if (patterns.length) throw new Error(`Invalid schema: ${patterns.map(d => `${JSON.stringify(d.path)}: ${d.message}`).join("; ")}`);
         }
         this.clock = new Clock(actor);

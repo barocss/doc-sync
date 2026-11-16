@@ -218,3 +218,16 @@ Valid equal bounds remain supported. This slice does not enforce that defaults
 satisfy their constraints, reinterpret bounds on nonnumeric defaults, change
 null resets or enum policy, or replace nested-field diagnostics. Direct numeric
 validation does not coerce malformed bounds to numbers.
+
+## Atomic enum container diagnostics
+
+`diagnoseAtomicAttributeEnums(schema)` reports `enum_type` with an exact path
+when atomic `values` is present but not an array. These errors are included in
+schema validation/versioning and document creation. Direct value validation
+fails closed rather than invoking a non-array `includes` method.
+
+An empty array remains valid and admits no non-null values. Atomic object enum
+members retain reference equality, while nested leaves retain their existing
+JSON deep equality. Defaults are not rewritten and null-reset semantics do not
+change. This check does not validate arbitrary untrusted executable objects or
+add full member/default diagnostics.

@@ -210,9 +210,25 @@ export const diagnoseAtomicAttributeBounds = (schema: Schema): AtomicAttributeBo
     return problems;
 };
 
+export type AtomicAttributeEnumDiagnostic = {code: "enum_type"; path: string[]; message: string};
+/** Checks only the atomic enum container, not member normalization/equality. */
+export const diagnoseAtomicAttributeEnums = (schema: Schema): AtomicAttributeEnumDiagnostic[] => {
+    const problems: AtomicAttributeEnumDiagnostic[] = [];
+    const inspect = (spec: AttrSpec, path: string[]): void => {
+        if (!isFieldSpec(spec) && spec.values !== undefined && !Array.isArray(spec.values)) {
+            problems.push({code: "enum_type", path: [...path, "values"], message: "Atomic enum values must be an array"});
+        }
+    };
+    for (const [type, node] of Object.entries(schema.nodes)) {
+        for (const [name, spec] of Object.entries(node.attrs ?? {})) inspect(spec, ["nodes", type, "attrs", name]);
+    }
+    for (const [name, spec] of Object.entries(schema.markValues ?? {})) inspect(spec, ["markValues", name]);
+    return problems;
+};
+
 /** 스키마 자체가 앞뒤가 맞는지 본다. 틀리면 설명 목록 */
 export const checkSchema = (schema: Schema): string[] => {
-    const problems = [...diagnoseAtomicAttributePatterns(schema), ...diagnoseAtomicAttributeBounds(schema)].map(diagnostic => `${JSON.stringify(diagnostic.path)}: ${diagnostic.message}`);
+    const problems = [...diagnoseAtomicAttributePatterns(schema), ...diagnoseAtomicAttributeBounds(schema), ...diagnoseAtomicAttributeEnums(schema)].map(diagnostic => `${JSON.stringify(diagnostic.path)}: ${diagnostic.message}`);
     const shapeOf = (type: string) => schema.nodes[type]?.shape;
     const missing = (owner: string, list: readonly string[]) =>
         list.filter(c => !schema.nodes[c]).forEach(c => problems.push(`${owner}.children 의 "${c}" 가 없다`));
@@ -347,6 +363,7 @@ export const attrValueOk = (spec: AttrSpec, value: unknown): boolean => {
         return true;
     }
 
+    if (spec.values !== undefined && !Array.isArray(spec.values)) return false;
     if (spec.values && !spec.values.includes(value)) {
         return false;
     }
