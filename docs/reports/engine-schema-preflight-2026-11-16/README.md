@@ -34,3 +34,28 @@ followed by an update to new storage in one batch.
 Independent source review confirmed preflight ordering and original-base check;
 it also identified fast-path scope and legacy raw Doc boundaries above.
 No actual-model, native parity, remote CI or long-duration load claim.
+
+
+## No-text fast-path follow-up
+
+Independent in-memory review found that a physical `text:false` target could
+still take the single-string fast path, mutate locally, then produce operations
+rejected by Doc.check. Schemas containing any no-text text rule now route inserts
+through detached compilation and the original-base wire check. This conservatively
+prioritizes admission correctness over insertion speed for those schemas; it is
+not a new universal projection-level prohibition. Document mixed-type flows retain
+their existing flow-level wire policy, while graphic container admission retains
+its birth-type restriction. No schema wire-policy change or raw Doc change.
+
+Focused tests cover string/marked-run refusal, unchanged clock/checkpoint,
+pending/History/events, retained peer block, mixed document-flow acceptance and
+graphic no-text versus caption behavior. Expanded focused regression 14/14 PASS;
+existing engine fast-path tests also pass (combined earlier focused run 30/30).
+Package build PASS. No performance qualification for no-text schemas or long load.
+
+Final full core 1685/1685 PASS (40.6 seconds), package typecheck and docs
+56 pages/2684 links PASS.
+
+Independent diff review found no blocking issue. The admission guard scans
+schema node metadata on insertion even for ordinary schemas; no unchanged
+performance claim is made.

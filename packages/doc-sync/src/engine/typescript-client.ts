@@ -139,6 +139,10 @@ class TypeScriptClientEngine implements ClientEngine, TypeScriptClientCompatibil
         if (block.virtual || !doc.hasStoredToken(block.marker.key) || block.marker.kind === "char") return false;
         let allocation = 0;
         if (edit.op === "insert") {
+            // Text admission can depend on flow and birth identity, not only the
+            // projected block type. Keep schemas with no-text rules on full proof.
+            const schema = doc.schema ?? this.definition;
+            if (Object.values(schema.nodes).some(spec => spec.shape === "text" && spec.text === false)) return false;
             if (typeof edit.content === "string") allocation = edit.content.length;
             else {
                 if (!Array.isArray(edit.content) || edit.content.some(run => !("text" in run) || typeof run.text !== "string" || !run.marks || typeof run.marks !== "object")) return false;

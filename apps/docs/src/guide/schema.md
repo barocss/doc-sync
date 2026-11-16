@@ -259,6 +259,7 @@ accepted local edits whose invalid values were hidden by projection and later
 rejected by the server. Valid pending edits and peer changes are not discarded.
 
 This is not a new guarantee for raw `Doc.edit`: its lower-level projection and
-compilation semantics are unchanged. Existing bounded fast text/structural paths
-remain separate, and this does not replace server authorization or claim every
+compilation semantics are unchanged. Schemas containing `text: false` rules route insertions through detached wire
+validation because admission depends on flow/birth identity. Other bounded fast
+text/structural paths remain separate, and this does not replace server authorization or claim every
 possible command/server policy is equivalent.

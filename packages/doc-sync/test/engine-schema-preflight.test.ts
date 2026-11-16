@@ -37,3 +37,37 @@ test('valid detached batch creates then updates new storage before wire delivery
   assert.equal(a.doc.toJSON().children![0].attrs!.n,8);assert.deepEqual(a.doc.toJSON(),b.doc.toJSON());assert.deepEqual(a.doc.toJSON(),net.hub.doc.toJSON());
  }finally{a.disconnect();b.disconnect();}
 });
+
+
+for(const mixed of [false,true])test(`no-text schema insertion uses wire admission, mixed flow=${mixed}`,async()=>{
+ const restricted:Schema={root:'root',marks:[],nodes:{root:{shape:'flow',children:mixed?['label','p']:['label'],default:'label'},label:{shape:'text',text:false},...(mixed?{p:{shape:'text' as const}}:{})}};
+ const net=new MemoryNet({schema:restricted,clientSchema:restricted}),a=net.add('local'),b=net.add('peer');a.connect();b.connect();await net.settle();
+ try{
+  a.commit(a.engine.apply([{op:'insert',at:[0],content:[{type:'label',runs:[]}]}]));await net.settle();
+  b.commit(b.engine.apply([{op:'insert',at:[1],content:[{type:'label',runs:[]}]}]));await net.settle();
+  const before=a.engine.checkpoint(),stamp=a.engine.stamp(),pending=structuredClone(a.pending),history=a.history.snapshot(),events=structuredClone(a.eventStats),peer=b.doc.snapshot();
+  if(!mixed){
+   for(const content of ['bad',[{text:'bad',marks:{}}]]){
+    assert.throws(()=>a.engine.apply([{op:'insert',at:[0,0],content}]),/Invalid compiled edit batch/);
+    assert.deepEqual(a.engine.checkpoint(),before);assert.deepEqual(a.engine.stamp(),stamp);assert.deepEqual(a.pending,pending);assert.deepEqual(a.history.snapshot(),history);assert.deepEqual(a.eventStats,events);assert.deepEqual(b.doc.snapshot(),peer);
+   }
+  }else{
+   // Existing wire policy is flow-level for document schemas. Do not invent a stricter rule.
+   a.commit(a.engine.apply([{op:'insert',at:[0,0],content:'allowed by flow'}]));await net.settle();
+   assert.deepEqual(a.doc.toJSON(),b.doc.toJSON());assert.deepEqual(a.doc.toJSON(),net.hub.doc.toJSON());
+  }
+ }finally{a.disconnect();b.disconnect();}
+});
+
+test('graphic no-text birth rejects character insertion even beside text-enabled types',async()=>{
+ const restricted:Schema={domain:'graphic',root:'stage',marks:[],nodes:{stage:{shape:'container',children:['label','caption']},label:{shape:'text',text:false},caption:{shape:'text'}}};
+ const net=new MemoryNet({schema:restricted,clientSchema:restricted}),a=net.add('local'),b=net.add('peer');a.connect();b.connect();await net.settle();
+ try{
+  a.commit(a.engine.apply([{op:'insert',at:[0],content:[{type:'label',runs:[]},{type:'caption',runs:[]}]}]));await net.settle();
+  const before=a.engine.checkpoint(),pending=structuredClone(a.pending),events=structuredClone(a.eventStats);
+  assert.throws(()=>a.engine.apply([{op:'insert',at:[0,0],content:'forbidden'}]));
+  assert.deepEqual(a.engine.checkpoint(),before);assert.deepEqual(a.pending,pending);assert.deepEqual(a.eventStats,events);
+  a.commit(a.engine.apply([{op:'insert',at:[1,0],content:'caption'}]));await net.settle();
+  assert.deepEqual(a.doc.toJSON(),b.doc.toJSON());assert.deepEqual(a.doc.toJSON(),net.hub.doc.toJSON());
+ }finally{a.disconnect();b.disconnect();}
+});
