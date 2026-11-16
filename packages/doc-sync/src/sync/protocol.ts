@@ -1,3 +1,4 @@
+import type {Schema} from "../crdt/schema.ts";
 import type {Op, Snapshot} from "../crdt/doc.ts";
 
 /**
@@ -15,6 +16,10 @@ import type {Op, Snapshot} from "../crdt/doc.ts";
 export const PROTOCOL_VERSION = 3 as const;
 export const CONTAINER_CAPABILITY = "containers-v1" as const;
 export const DOCUMENT_CAPABILITIES = Object.freeze(["placement-v1", "fields-v1", "annotations-v1", "cardinality-v1"] as const);
+
+/** Required hello capabilities, not feature usage inferred from document contents. */
+export const requiredDocumentCapabilities = (schema: Schema | null): string[] =>
+    schema?.domain === "graphic" ? [...DOCUMENT_CAPABILITIES, CONTAINER_CAPABILITY] : [...DOCUMENT_CAPABILITIES];
 
 export type Change = {
     actor: string;

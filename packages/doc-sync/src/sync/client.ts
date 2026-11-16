@@ -12,7 +12,7 @@ import {typescriptClientEngineFactory} from "../engine/typescript-client.ts";
 import {ENGINE_CONTRACT_VERSION} from "../engine/contract.ts";
 import type {EngineCheckpoint} from "../engine/contract.ts";
 import type {ClientEngine, ClientEngineFactory, EnginePreparedDocument, EngineEventCapture, TypeScriptClientCompatibility} from "../engine/client-contract.ts";
-import {CONTAINER_CAPABILITY, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "./protocol.ts";
+import {requiredDocumentCapabilities, PROTOCOL_VERSION} from "./protocol.ts";
 import type {Change, Envelope, Outbound, Presence, PresenceInput, ServerEvent, Transport} from "./protocol.ts";
 
 const REQUIRED_CLIENT_ENGINE_METHODS = /* @__PURE__ */ Object.freeze(["identity", "schema", "requireCapabilities", "setEditHooks", "assertEditing", "stamp", "model", "apply", "applyModelEdits", "deleteRange", "captureAnchor", "locateAnchor", "record", "receive", "emitLocal", "check", "undo", "redo", "historyStatus", "clearHistory", "historyDeletionKeys", "historyPin", "compact", "snapshot", "allocationFloor", "prepareSnapshot", "replayPrepared", "compilePrepared", "installPrepared", "checkpoint", "prepareCheckpoint", "installCheckpoint", "previewSchema", "upgradeSchema", "reset", "beginEvents", "finishEvents", "createSession", "dispose"] as const);
@@ -690,8 +690,7 @@ export class SyncClient {
             this.schemaVerified = event.schemaVersion !== null;
             if (event.protocol !== PROTOCOL_VERSION || !Array.isArray(event.capabilities) ||
                 !event.capabilities.every(capability => typeof capability === "string") ||
-                DOCUMENT_CAPABILITIES.some(capability => !event.capabilities!.includes(capability)) ||
-                (this.schema.domain === "graphic" && !event.capabilities.includes(CONTAINER_CAPABILITY)) ||
+                requiredDocumentCapabilities(this.schema).some(capability => !event.capabilities!.includes(capability)) ||
                 typeof event.epoch !== "string" || !event.epoch.length) {
                 this.connectionError = new Error("Incompatible doc-sync protocol, document capabilities, or epoch");
                 this.disconnect();

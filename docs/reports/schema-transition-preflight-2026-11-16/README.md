@@ -26,3 +26,24 @@ model calls, and long load are outside this work.
 
 - Full core suite: 1642/1642 PASS (about 56 seconds).
 - Docs build and link check: PASS, 55 pages / 2615 internal links.
+
+## Remaining acceptance follow-up
+
+The initial close was corrected because capability reporting and a direct state
+invariance test were still missing. The follow-up shares
+`requiredDocumentCapabilities` among server hello advertisement, client hello
+validation and preflight. It reports protocol-level before/after requirements,
+not inferred content usage or verified peer/renderer support. A real disconnected
+client with a pending local edit checks document snapshot, pending queue, history
+snapshot/object identity and hub snapshot/revision/schema identity across
+compatible, incompatible and invalid previews.
+
+- Focused follow-up suites: 18/18 PASS; package build/core typecheck PASS.
+- Independent review confirmed exact handshake semantics and no runtime cycle
+  (protocol schema/doc imports are type-only).
+- One initial fixture incorrectly used a flow root for graphic domain and was
+  correctly rejected as invalid. Replaced it with a valid container-root schema;
+  the document-to-graphic transition remains incompatible while requirements are
+  accurately reported.
+
+- Follow-up full core: 1644/1644 PASS (~41 seconds); docs build/check PASS (55 pages, 2615 links).

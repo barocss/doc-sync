@@ -1,3 +1,4 @@
+import {PROTOCOL_VERSION, requiredDocumentCapabilities} from "../sync/protocol.ts";
 import {checkSchema} from "./schema.ts";
 import type {Schema} from "./schema.ts";
 
@@ -164,10 +165,11 @@ export function assertCompatibleSchema(oldSchema: Schema, newSchema: Schema): vo
 
 /** Descriptor changes, not document impact or executable migration operations. */
 export type SchemaDescriptorChange = {kind: "add" | "remove" | "replace"; path: string[]};
+export type SchemaProtocolRequirements = {protocol: number; before: string[]; after: string[]};
 export type SchemaTransitionPreflight =
     | {status: "invalid"; side: "before" | "after"; reason: string}
-    | {status: "compatible"; beforeVersion: string; afterVersion: string; changes: SchemaDescriptorChange[]}
-    | {status: "incompatible"; beforeVersion: string; afterVersion: string; changes: SchemaDescriptorChange[]; reason: string};
+    | {status: "compatible"; beforeVersion: string; afterVersion: string; requiredCapabilities: SchemaProtocolRequirements; changes: SchemaDescriptorChange[]}
+    | {status: "incompatible"; beforeVersion: string; afterVersion: string; requiredCapabilities: SchemaProtocolRequirements; changes: SchemaDescriptorChange[]; reason: string};
 
 /** Read-only preview of the same conservative policy enforced by assertCompatibleSchema.
  * Does not inspect documents, renderer support, permissions, or migrate/install anything.
@@ -180,6 +182,7 @@ export function preflightSchemaTransition(before: Schema, after: Schema): Schema
     catch (error) { return {status: "invalid", side: "before", reason: reason(error)}; }
     try { afterVersion = schemaVersion(after); }
     catch (error) { return {status: "invalid", side: "after", reason: reason(error)}; }
+    const requiredCapabilities = {protocol: PROTOCOL_VERSION, before: requiredDocumentCapabilities(before), after: requiredDocumentCapabilities(after)};
     const changes: SchemaDescriptorChange[] = [];
     const visit = (a: unknown, b: unknown, path: string[]): void => {
         if (canonical(a) === canonical(b)) return;
@@ -195,6 +198,6 @@ export function preflightSchemaTransition(before: Schema, after: Schema): Schema
     };
     visit(JSON.parse(canonical(identitySchema(before))), JSON.parse(canonical(identitySchema(after))), []);
     try { assertCompatibleSchema(before, after); }
-    catch (error) { return {status: "incompatible", beforeVersion, afterVersion, changes, reason: reason(error)}; }
-    return {status: "compatible", beforeVersion, afterVersion, changes};
+    catch (error) { return {status: "incompatible", beforeVersion, afterVersion, requiredCapabilities, changes, reason: reason(error)}; }
+    return {status: "compatible", beforeVersion, afterVersion, requiredCapabilities, changes};
 }

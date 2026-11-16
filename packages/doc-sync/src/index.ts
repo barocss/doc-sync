@@ -40,4 +40,4 @@ export type {ActorProfile, ResolvedActorProfile, ProfileJSON} from "./client/pro
 export * from "./graphic/index.ts";
 export * from "./spreadsheet/index.ts";
 
-export type {SchemaDescriptorChange, SchemaTransitionPreflight} from "./crdt/schema-version.ts";
+export type {SchemaDescriptorChange, SchemaProtocolRequirements, SchemaTransitionPreflight} from "./crdt/schema-version.ts";

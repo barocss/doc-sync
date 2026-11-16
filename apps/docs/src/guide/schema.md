@@ -196,3 +196,11 @@ permissions, execute migrations, or guarantee compatibility with future edits.
 The report is a preview of supplied descriptors, not an approval token: the
 actual transition must still enforce its own current-state checks. General
 untrusted Proxy isolation and input size limits are not added by this wrapper.
+
+For valid descriptors, `requiredCapabilities` reports `protocol`, `before`, and
+`after` using the same helper as the sync client's hello check and the server's
+hello advertisement. These are protocol-level requirements: all document schemas
+require the baseline document capabilities even when a particular document uses
+none of those features; graphic schemas additionally require `containers-v1`.
+They are not snapshot feature detection, installed-renderer checks, or evidence
+that any peer supports the proposal. Invalid inputs have no capability report.

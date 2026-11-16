@@ -17,7 +17,7 @@ test('preflight shares real compatibility verdict across descriptor changes',()=
  ]){const b=structuredClone(a);mutate(b);const input=JSON.stringify([a,b]);const r=preflightSchemaTransition(a,b);let compatible=true;try{assertCompatibleSchema(a,b);}catch{compatible=false;}let valid=true;try{schemaVersion(b);}catch{valid=false;}assert.equal(r.status,!valid?'invalid':compatible?'compatible':'incompatible');assert.equal(JSON.stringify([a,b]),input);if(r.status!=='invalid'){assert.equal(r.beforeVersion,schemaVersion(a));assert.equal(r.afterVersion,schemaVersion(b));}}
 });
 test('normalized domain has no changes; arrays atomic and path segments preserve punctuation',()=>{
- const a=base(),b=base();b.domain='document';assert.deepEqual(preflightSchemaTransition(a,b),{status:'compatible',beforeVersion:schemaVersion(a),afterVersion:schemaVersion(a),changes:[]});
+ const a=base(),b=base();b.domain='document';assert.deepEqual(preflightSchemaTransition(a,b),{status:'compatible',beforeVersion:schemaVersion(a),afterVersion:schemaVersion(a),requiredCapabilities:{protocol:3,before:['placement-v1','fields-v1','annotations-v1','cardinality-v1'],after:['placement-v1','fields-v1','annotations-v1','cardinality-v1']},changes:[]});
  b.nodes['x.y']={shape:'atom'};b.marks=['bold'];const r=preflightSchemaTransition(a,b);assert.equal(r.status,'compatible');assert.deepEqual(r.changes,[{kind:'replace',path:['marks']},{kind:'add',path:['nodes','x.y']}]);
  const removed=preflightSchemaTransition(b,a);assert.equal(removed.status,'incompatible');assert.deepEqual(removed.changes,[{kind:'replace',path:['marks']},{kind:'remove',path:['nodes','x.y']}]);
 });
@@ -31,4 +31,7 @@ test('diff is not a migration or a compatibility heuristic',()=>{
 test('real child reorder is rejected and own special keys remain exact',()=>{
  const a=base();a.nodes.q={shape:'text'};if(a.nodes.root.shape==='flow')a.nodes.root.children=[...a.nodes.root.children,'q'];const b=structuredClone(a);if(b.nodes.root.shape==='flow')b.nodes.root.children=[...b.nodes.root.children].reverse();const r=preflightSchemaTransition(a,b);assert.equal(r.status,'incompatible');assert.throws(()=>assertCompatibleSchema(a,b));assert.deepEqual(r.changes,[{kind:'replace',path:['nodes','root','children']}]);
  const c=base();Object.defineProperty(c.nodes,'__proto__',{enumerable:true,value:{shape:'atom'}});const special=preflightSchemaTransition(base(),c);assert.equal(special.status,'compatible');assert.deepEqual(special.changes,[{kind:'add',path:['nodes','__proto__']}]);
+});
+test('protocol requirements are actual handshake requirements, not feature-use inference',()=>{
+ const a=base(),b:Schema={domain:'graphic',root:'canvas',marks:[],nodes:{canvas:{shape:'container',children:['object']},object:{shape:'atom'}}};const r=preflightSchemaTransition(a,b);assert.equal(r.status,'incompatible');assert.equal(r.requiredCapabilities.protocol,3);assert.deepEqual(r.requiredCapabilities.after,[...r.requiredCapabilities.before,'containers-v1']);
 });
