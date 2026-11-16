@@ -12,7 +12,7 @@ export function authenticate(req: IncomingMessage, grants: HostedGrant[]): Hoste
     return found;
 }
 const permissions: Record<string, "read" | "write" | "schema"> = {
-    get_schema: "read", get_server_schema: "read", read_document: "read", read_document_slice: "read", recovery_status: "read",
+    get_schema: "read", get_server_schema: "read", read_document: "read", read_document_slice: "read", preview_edits: "read", recovery_status: "read",
     edit_document: "write", retry_edit: "write", undo: "write", redo: "write", discard_history: "write", set_presence: "write",
     upgrade_schema: "schema", transition_schema: "schema",
 };

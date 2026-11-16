@@ -121,3 +121,27 @@ The repository's demo server implements the reference contract. Its local tests 
 The stdio CLI has no environment setting for custom document-server credentials. For application integrations, `NodeHttpTransport` accepts an optional fourth argument, `{headers: {...}}`. Header-bearing requests require an absolute HTTP or HTTPS base URL. Configured headers apply to schema, synchronization, edits, presence, receipts, and recovery requests. Redirects are rejected. Headerless relative URLs, including an empty base and `/profiles/word`, remain supported.
 
 The [hosted service](./hosted) supplies upstream headers from its private configuration. It does not forward the incoming MCP bearer token. An actor ID identifies collaboration history; it is not an authenticated user identity. The demo document server has no authentication or authorization and is not a public deployment template.
+
+## Preview schema edits before applying
+
+`preview_edits` accepts the same `base` revision and `edits` shape as
+`edit_document`, but applies them only to an isolated TypeScript engine candidate.
+It returns `{status: "preview", base, document, scope}`. The live document,
+History, pending operations, journal and transport are unchanged by this call.
+Hosted use requires the existing `read` permission; it does not grant `write`.
+Current read permission covers the document, not a target-limited subsection.
+
+A session must be online, schema-verified and settled without recovery work.
+A stale base refuses the preview. The base identifies the local replica, not a
+fresh authoritative server check: remote changes may still be in transit.
+A later apply always requires existing write authorization and server revision
+checks. Preview success does not establish route-policy acceptance, create a
+proposal, or expand the single-block proposal approval scope.
+
+Input is at most 100 edits and 32768 bytes of edits JSON. The local result is
+limited to 60000 bytes and the successful MCP tool-result JSON, including its
+text/structured duplication, to 131072 bytes. These are response/input limits,
+not CPU or peak-memory guarantees: the full document is cloned before result
+size is checked. Large documents can be refused. Smaller scope previews are not
+provided by this first version. Hosted session bootstrap may perform its existing
+connection/recovery work; the no-write claim applies to the preview call itself.

@@ -89,3 +89,14 @@ intentionally conservative, including refusal of MCP session start when any old
 checkpoint exists. Unconfigured routes preserve their previous grants. Creator
 grants still cannot combine with write/schema/owner proposal permissions. No
 credentials are stored in policy, proposal bodies, model input or diagnostics.
+
+### Read-only edit preview
+
+`preview_edits({base, edits})` uses the existing model-edit shape on a detached
+TypeScript candidate and returns a bounded local model preview. Requires a settled,
+schema-verified online session and matching local revision. It does not mutate
+live History/document/pending/journal or send edits. Hosted `read` permission
+allows preview but does not authorize application. It is not owner approval,
+server policy acceptance, a frozen server revision or an installable plan.
+Limits: 100 edits, 32768 input-JSON bytes, 60000 local output bytes, 131072 successful
+MCP result bytes. Full clone cost is not bounded by those output limits.

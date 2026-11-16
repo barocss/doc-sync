@@ -86,6 +86,17 @@ export function createServer(session: DocumentSession, options: ServerOptions = 
     }, async ({base: revision, name, color, anchor, focus, character, expression, activity}) => run("set_presence", async () => {
         try { return result(await session.setPresence(revision, name, color, anchor, focus, character, expression, activity)); } catch (error) { return toolError(error); }
     }));
+    server.registerTool("preview_edits", {
+        description: "Simulate schema edits on a detached local candidate at the exact read revision. No live edits, history, pending changes, journal or network writes. The result is not approval or a server acceptance guarantee. Input edits JSON is limited to 32768 bytes; successful tool-result JSON to 131072 bytes. Large documents may be refused.",
+        inputSchema: z.object({base, edits: z.array(edit).min(1).max(100)}).strict(),
+        annotations: {readOnlyHint: true},
+    }, async ({base: revision, edits}) => run("preview_edits", async () => {
+        try {
+            const output = result(await session.previewEdits(revision, edits as EditOp[]));
+            if (Buffer.byteLength(JSON.stringify(output), "utf8") > 131072) throw Error("Preview MCP tool result exceeds output limit");
+            return output;
+        } catch (error) { return toolError(error); }
+    }));
     server.registerTool("edit_document", {
         description: "Apply model edits only if the server atomically confirms the revision from read_document. On an unconfirmed result call retry_edit, not edit_document again.",
         inputSchema: z.object({base, edits: z.array(edit).min(1).max(100), stepId: z.guid().optional()}).strict(),
