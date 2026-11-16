@@ -11,7 +11,10 @@ export type PlannedProposalRequest = {requestId:string;base:ProposalBase;change:
 export type CreatorOnlyClient = {binding:string;readTarget(path:[number]):Promise<CreatorTarget>;create(request:PlannedProposalRequest):Promise<{id:string;requestId:string}>};
 export type ProposalPlanner = (input:{brief:string;target:CreatorTarget})=>Promise<unknown>;
 export type ProposalMissionOptions = {missionPath:string;brief:string;path:[number]};
-type Mission = {format:1;binding:string;brief:string;target:CreatorTarget;request:PlannedProposalRequest;created?:{id:string;requestId:string}};
+export type ProposalAbstention = {kind:'abstain';reason:'missing_information'|'unsupported'|'uncertain';explanation:string;questions:string[]};
+type AbstainedMission = {format:2;binding:string;brief:string;target:CreatorTarget;abstention:ProposalAbstention};
+type EditMission = {format:1;binding:string;brief:string;target:CreatorTarget;request:PlannedProposalRequest;created?:{id:string;requestId:string}};
+type Mission = EditMission | AbstainedMission;
 const MAX=262144, hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const fail=():never=>{throw Error('Invalid bounded proposal mission');};
 function object(v:unknown):Record<string,any>{if(!v||typeof v!=='object'||Array.isArray(v)||Object.getPrototypeOf(v)!==Object.prototype)fail();return v as Record<string,any>;}
@@ -35,9 +38,18 @@ function output(v:unknown,text:string){
  if(!Array.isArray(o.checks)||o.checks.length>16)fail();for(const c of o.checks){keys(c,['reference','status']);str(c.reference,256,1);if(c.status!=='unchecked')fail();}
  return o as {start:number;end:number;replacement:string;explanation:string;assumptions:string[];questions:string[];checks:{reference:string;status:'unchecked'}[]};
 }
+function abstention(v:unknown):ProposalAbstention{
+ const o=keys(v,['kind','reason','explanation','questions']);
+ if(o.kind!=='abstain'||!['missing_information','unsupported','uncertain'].includes(o.reason))fail();
+ str(o.explanation,4000,1);if(!o.explanation.trim())fail();
+ if(!Array.isArray(o.questions)||o.questions.length>16)fail();for(const q of o.questions)str(q,1000);
+ return o as ProposalAbstention;
+}
 function bounded<T>(v:T):T{const s=JSON.stringify(v);if(Buffer.byteLength(s)>MAX)fail();return JSON.parse(s);}
 function validateMission(value:unknown):Mission{
- const m=object(value);keys(m,m.created===undefined?['format','binding','brief','target','request']:['format','binding','brief','target','request','created']);
+ const m=object(value);
+ if(m.format===2){keys(m,['format','binding','brief','target','abstention']);str(m.binding,1024,1);str(m.brief,8000,1);target(m.target);abstention(m.abstention);return bounded(m) as AbstainedMission;}
+ keys(m,m.created===undefined?['format','binding','brief','target','request']:['format','binding','brief','target','request','created']);
  if(m.format!==1)fail();str(m.binding,1024,1);str(m.brief,8000,1);target(m.target);
  const r=keys(m.request,['requestId','base','change','explanation','assumptions','questions','checks','briefDigest']);
  if(typeof r.requestId!=='string'||!/^[-a-f0-9]{36}$/.test(r.requestId)||r.briefDigest!==hash(m.brief)||JSON.stringify(r.base)!==JSON.stringify(m.target.base))fail();
@@ -56,7 +68,7 @@ async function write(file:string,value:Mission){
  try{await rename(temp,file);const d=await open(dirname(file),constants.O_RDONLY);try{await d.sync();}finally{await d.close();}}finally{await unlink(temp).catch(()=>{});}
 }
 /** Opt-in creator path. The injected planner receives data only, never credentials/client methods. */
-export async function runProposalMission(options:ProposalMissionOptions,planner:ProposalPlanner,client:CreatorOnlyClient):Promise<{status:'created';id:string;requestId:string}|{status:'unknown';requestId:string}>{
+export async function runProposalMission(options:ProposalMissionOptions,planner:ProposalPlanner,client:CreatorOnlyClient):Promise<{status:'created';id:string;requestId:string}|{status:'unknown';requestId:string}|{status:'abstained';reason:ProposalAbstention['reason'];explanation:string;questions:string[]}>{
  str(options.brief,8000,1);path(options.path);str(client.binding,1024,1);
  if(!process.getuid)throw Error('Private missions require ownership checks');
  const file=resolve(options.missionPath),dir=await lstat(dirname(file));
@@ -68,10 +80,17 @@ export async function runProposalMission(options:ProposalMissionOptions,planner:
   else{
    let captured:CreatorTarget,planned:unknown;
    try{captured=bounded(await client.readTarget([...options.path]));target(captured);if(JSON.stringify(captured.target.path)!==JSON.stringify(options.path))fail();planned=await planner(bounded({brief:options.brief,target:captured}));}catch{throw Error('Authorized target read or planning failed');}
+   if(planned && typeof planned==='object' && (planned as {kind?:unknown}).kind==='abstain'){
+    let a:ProposalAbstention;try{a=abstention(bounded(planned));}catch{throw Error('Planner output rejected');}
+    mission={format:2,binding:client.binding,brief:options.brief,target:captured,abstention:a};
+    validateMission(mission);await write(file,mission);
+    return {status:'abstained',reason:a.reason,explanation:a.explanation,questions:[...a.questions]};
+   }
    let p:ReturnType<typeof output>;try{p=output(bounded(planned),captured.target.text);}catch{throw Error('Planner output rejected');}
    mission={format:1,binding:client.binding,brief:options.brief,target:captured,request:{requestId:randomUUID(),base:captured.base,change:{kind:'replace_text',path:captured.target.path,blockId:captured.target.blockId,start:p.start,end:p.end,replacement:p.replacement},explanation:p.explanation,assumptions:p.assumptions,questions:p.questions,checks:p.checks,briefDigest:hash(options.brief)}};
    validateMission(mission);await write(file,mission); // durable intent BEFORE any network create
   }
+  if(mission.format===2){const a=mission.abstention;return {status:'abstained',reason:a.reason,explanation:a.explanation,questions:[...a.questions]};}
   if(mission.created)return {status:'created',...mission.created};
   let result;try{result=await client.create(bounded(mission.request));keys(result,['id','requestId']);if(!/^[a-f0-9]{64}$/.test(result.id)||result.requestId!==mission.request.requestId)fail();}catch{return {status:'unknown',requestId:mission.request.requestId};}
   mission.created=result;await write(file,mission);return {status:'created',...result};

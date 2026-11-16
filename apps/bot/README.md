@@ -231,3 +231,17 @@ Keep original objective, target binding, checks, decision IDs and evidence. Do n
 clear pending/history to make a new schema appear clean. A new proposal is not
 permission to undo somebody else's edits. `created` and `applied` remain storage
 and receipt outcomes respectively, not an actual-model quality assertion.
+
+### Creator abstention (no proposal)
+
+A trusted planner or private prepared plan may return exactly
+`{kind:"abstain",reason:"missing_information"|"unsupported"|"uncertain",explanation:string,questions:string[]}`.
+The explanation is nonblank (maximum 4,000 characters); questions are at most 16
+strings of 1,000 characters each. This is not an edit or successful completion.
+The runtime saves a private terminal format2 mission without a proposal/request;
+resume returns `status:"abstained"` without reading the target or calling the
+planner/creator again. `proposal-plan` exits 1. A changed objective requires a new
+mission, not overwriting the old record. Legacy format1 edit recovery remains
+supported. Actual-model invocation and quality evaluation remain unimplemented;
+see `docs/reports/synthetic-proposal-evaluation-2026-11-16/README.md` for synthetic
+fixtures and explicit unmeasured outcomes.

@@ -48,7 +48,7 @@ async function main() {
         if (!missionPath || !brief || !input || !/^[A-Za-z_][A-Za-z0-9_]{0,79}$/.test(tokenName)) throw new Error("proposal-plan requires --mission-file, --brief, --path and --plan-file");
         const client = creatorClient(options.get("--endpoint") ?? "", process.env[tokenName] ?? "");
         const result = await runProposalMission({missionPath, brief, path}, async () => readProposalPlan(input), client);
-        console.log(JSON.stringify(result, null, 2)); if (result.status === "unknown") process.exitCode = 1; return;
+        console.log(JSON.stringify(result, null, 2)); if (result.status !== "created") process.exitCode = 1; return;
     }
     if (command?.startsWith("proposal-")) { console.log(JSON.stringify(await proposalCommand(command, options), null, 2)); return; }
     if (options.has("--ephemeral") && !BOOLEAN_OPTION_VALUES.includes(options.get("--ephemeral")!)) throw new Error("--ephemeral must be true or false");
