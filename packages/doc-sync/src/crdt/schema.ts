@@ -226,9 +226,16 @@ export const diagnoseAtomicAttributeEnums = (schema: Schema): AtomicAttributeEnu
     return problems;
 };
 
+export type MarkNameConflictDiagnostic = {code: "mark_kind_conflict"; path: string[]; message: string};
+/** A mark name cannot identify both boolean and value-mark semantics. */
+export const diagnoseMarkNameConflicts = (schema: Schema): MarkNameConflictDiagnostic[] =>
+    schema.marks.flatMap((name, index) => Object.hasOwn(schema.markValues ?? {}, name)
+        ? [{code: "mark_kind_conflict" as const, path: ["marks", String(index)], message: "Mark name is declared as both boolean and value mark"}]
+        : []);
+
 /** 스키마 자체가 앞뒤가 맞는지 본다. 틀리면 설명 목록 */
 export const checkSchema = (schema: Schema): string[] => {
-    const problems = [...diagnoseAtomicAttributePatterns(schema), ...diagnoseAtomicAttributeBounds(schema), ...diagnoseAtomicAttributeEnums(schema)].map(diagnostic => `${JSON.stringify(diagnostic.path)}: ${diagnostic.message}`);
+    const problems = [...diagnoseAtomicAttributePatterns(schema), ...diagnoseAtomicAttributeBounds(schema), ...diagnoseAtomicAttributeEnums(schema), ...diagnoseMarkNameConflicts(schema)].map(diagnostic => `${JSON.stringify(diagnostic.path)}: ${diagnostic.message}`);
     const shapeOf = (type: string) => schema.nodes[type]?.shape;
     const missing = (owner: string, list: readonly string[]) =>
         list.filter(c => !schema.nodes[c]).forEach(c => problems.push(`${owner}.children 의 "${c}" 가 없다`));

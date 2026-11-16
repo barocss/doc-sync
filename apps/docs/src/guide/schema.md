@@ -231,3 +231,12 @@ members retain reference equality, while nested leaves retain their existing
 JSON deep equality. Defaults are not rewritten and null-reset semantics do not
 change. This check does not validate arbitrary untrusted executable objects or
 add full member/default diagnostics.
+
+## Mark name conflicts
+
+`diagnoseMarkNameConflicts(schema)` reports `mark_kind_conflict` when one name is
+both a boolean `marks` entry and an own `markValues` key. Its path identifies the
+boolean declaration by array index, such as `["marks", "1"]`. Schema validation,
+versioning and creation reject the ambiguity rather than choosing a declaration.
+Disjoint boolean/value mark ordering and semantics are unchanged. This is not
+full mark-name validation or automatic renaming of existing schemas.
