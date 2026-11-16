@@ -149,14 +149,21 @@ child path, not a text offset. The runner requests that complete child through
 `read_document_slice` with a one-child, 2048-node, 32768-text-unit, 128 KiB tool
 result budget. An oversized target fails before calling the planner; it is not
 truncated. A sibling cursor is not followed. Synthetic/default blocks, group
-wrappers and structural containers are unsupported in this initial mode.
+wrappers and structural containers are unsupported in this initial mode. Targets
+with inline objects or structural span runs (including link spans) also require
+review before the planner is called. Empty runs and ordinary marked text runs
+are supported.
 
 The planner receives an explicit `bounded_subtree` wrapper containing only the
 selected text block, its original absolute path and stored ID. Edits still use
 the original absolute path plus one UTF-16 offset. Only plain-string text
 insertion, text deletion and text-position updates are allowed. Structural
 inserts, node/type/grouping changes, move/split/merge, deleting the target itself
-and out-of-scope selections are rejected before submitting an edit.
+and out-of-scope selections are rejected before submitting an edit. Updates need
+an explicit nonnegative safe-integer `length`; zero-length no-ops are allowed.
+Length-less inline attribute updates are not part of this text-only mode.
+The target shape is checked again on each read and resume, so a peer-added inline
+object stops replanning after the existing revision fence rejects a stale edit.
 
 The target ID, path, epoch and schema fingerprint are persisted before planning
 and checked on every read and resume. A moved, replaced, deleted or schema-changed

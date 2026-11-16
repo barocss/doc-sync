@@ -44,6 +44,10 @@ An accepted exact request can recover after restart without resend when receipt,
 
 An opt-in stored text-block path now uses the existing bounded MCP slice read,
 persists its ID/path/epoch/schema binding and restricts edits to text positions.
+Bounded targets now require plain text runs (ordinary marks allowed); inline
+objects and structural span runs require review before planning/replanning/resume.
+Text updates require an explicit nonnegative length (#30). This narrows runner
+behavior, not server permissions.
 Oversized or changed targets fail closed. Full authoritative reads and completion
 verification remain separate. Arbitrary structural subtrees, automatic identity
 relocation and general context retrieval remain open; no model-quality or
