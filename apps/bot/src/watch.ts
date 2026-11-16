@@ -2,6 +2,17 @@
 export type WatchState = {generation: string | null; epoch: string; schemaVersion: string | null; serverSeq: number};
 export type ReviewOutcome = {status: string};
 
+function snapshot(state: WatchState): WatchState {
+    const value = {generation:state.generation, epoch:state.epoch, schemaVersion:state.schemaVersion, serverSeq:state.serverSeq};
+    if (typeof value.generation !== "string" || !value.generation || typeof value.epoch !== "string" || !value.epoch || typeof value.schemaVersion !== "string" || !value.schemaVersion || !Number.isSafeInteger(value.serverSeq) || value.serverSeq < 0) throw new Error("Document state is unavailable");
+    return value;
+}
+function compatible(current: WatchState, previous: WatchState): void {
+    if (current.generation !== previous.generation || current.epoch !== previous.epoch || current.schemaVersion !== previous.schemaVersion || current.serverSeq < previous.serverSeq) {
+        throw new Error("Document generation, epoch, schema or sequence changed; restart the watcher after inspection");
+    }
+}
+
 export class ReviewWatch {
     private baseline: WatchState | null = null;
     private busy = false;
@@ -21,17 +32,20 @@ export class ReviewWatch {
         if (this.busy) throw new Error("A review poll is already in progress");
         this.busy = true;
         try {
-            const current = await this.read();
+            const observed = await this.read();
             if (this.stopped) return "stopped";
-            if (!current.generation || !current.epoch || !current.schemaVersion || !Number.isSafeInteger(current.serverSeq) || current.serverSeq < 0) throw new Error("Document state is unavailable");
+            const current = snapshot(observed);
             if (!this.baseline) { this.baseline = {...current}; return "baseline"; }
-            if (current.generation !== this.baseline.generation || current.epoch !== this.baseline.epoch || current.schemaVersion !== this.baseline.schemaVersion || current.serverSeq < this.baseline.serverSeq) {
-                throw new Error("Document generation, epoch, schema or sequence changed; restart the watcher after inspection");
-            }
+            compatible(current, this.baseline);
             if (current.serverSeq === this.baseline.serverSeq) return "unchanged";
             const outcome = await this.review({from: this.baseline.serverSeq, to: current.serverSeq});
             this.runs++;
+            if (this.stopped) return "stopped";
             if (outcome.status !== "completed") throw new Error("Review needs attention; watcher stopped");
+            const afterReview = await this.read();
+            if (this.stopped) return "stopped";
+            compatible(snapshot(afterReview), current);
+            // Newer peer changes were not covered by this review. Leave them for the next poll.
             this.baseline = {...current};
             return "reviewed";
         } catch (error) { this.stopped = true; throw error; }

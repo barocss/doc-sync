@@ -20,7 +20,7 @@ The checks support exact text, node type, exact non-overlapping UTF-16 occurrenc
 
 ## B3. Plan, proposal, and server authorization
 
-**Status: bounded owner approval and recovery implemented; B3 remains in progress.** The private hosted HTTP/CLI path stores immutable plain-text proposals separately from History. A creator has read + proposal_create; a separate owner can inspect/reject and use read + proposal_accept to approve or reconcile. Both `proposals.enabled` and `proposals.acceptanceEnabled` default to false. Inspect before explicit owner approval. Keep owner secrets outside the planner. No acceptance MCP tool or planner adapter is included. The opt-in local owner review workspace now embeds the ProseMirror demo, with explicit confirmation, stale refusal, original-decision recovery and cross-tab coordination (#4); it is not a production-wide editor integration.
+**Status: bounded owner approval and recovery implemented; B3 remains in progress.** The private hosted HTTP/CLI path stores immutable plain-text proposals separately from History. A creator has read + proposal_create; a separate owner can inspect/reject and use read + proposal_accept to approve or reconcile. Both `proposals.enabled` and `proposals.acceptanceEnabled` default to false. Inspect before explicit owner approval. Keep owner secrets outside the planner. No acceptance MCP tool is included. A trusted injected/prepared-data creator planner is available; an actual-model adapter remains unimplemented. The opt-in local owner review workspace now embeds the ProseMirror demo, with explicit confirmation, stale refusal, original-decision recovery and cross-tab coordination (#4); it is not a production-wide editor integration.
 
 Acceptance checks the exact base and prepared CRDT operations before journal preparation/submission. It permits only one visible plain unstyled text block physically stored in root MAIN, with source at most 16,384 UTF-16 units and selection/replacement at most 4,096 each. Structure, moves, marks, cells, and promotion remain outside scope. Preview and immutable proposal policy remain unchanged; approval has a separate policy fingerprint. Each applied proposal has a separate fixed-actor undo group; undo/redo does not rewrite historical applied status.
 
@@ -36,7 +36,7 @@ An accepted exact request can recover after restart without resend when receipt,
 
 ## B5. Coordination and persistent watcher
 
-**Status: planned.** Add explicit assignments, distinct actors, a shared task view, cancellation, and restart-safe trigger state. The existing experimental watcher is a bounded local reviewer with an in-memory baseline. It does not persist its cursor or restore missed changes after restart.
+**Status: planned.** Add explicit assignments, distinct actors, a shared task view, cancellation, and restart-safe trigger state. The existing experimental watcher is a bounded local reviewer with an in-memory baseline. Its #15 completion-boundary checks snapshot identity, revalidate after review and leave intervening peer sequences for the next poll; this does not complete B5. It does not persist its cursor or restore missed changes after restart.
 
 **Acceptance gate:** test adjacent and overlapping bot work, reviewer isolation, independent undo, user edits, restart, cancellation, deduplication, and self-trigger suppression. Define what missed changes mean and how a resumed watcher processes them. Keep uncertain recovery blocked. Record incorrect completion claims, latency, and cost as separate measures.
 
@@ -63,7 +63,7 @@ uncommitted schema/native experiments and their private roadmaps.
 
 Status at 2026-11-16: #10 is partial (trusted injected/prepared planner seam only);
 #11 and #12 are delivered bounded slices; #13 qualifies conservative interruption
-without implicit migration. #14 remains unrun pending actual-model isolation.
+without implicit migration. #14 has synthetic qualification and durable abstention; actual-model evaluation remains unrun pending isolation and an authorized connection.
 
 1. **B3 proposal flow — [#10](https://github.com/barocss/doc-sync/issues/10).**
    Connect bounded planning to creator-only proposal creation, persisted exact
