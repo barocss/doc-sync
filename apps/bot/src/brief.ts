@@ -7,16 +7,21 @@ const TEXT_REQUIREMENT_FIELDS = Object.freeze(["id", "kind", "path", "text"]);
 const NODE_REQUIREMENT_FIELDS = Object.freeze(["id", "kind", "path", "type"]);
 const OCCURRENCE_REQUIREMENT_FIELDS = Object.freeze(["id", "kind", "path", "text", "count"]);
 const CHILD_TYPES_REQUIREMENT_FIELDS = Object.freeze(["id", "kind", "path", "types"]);
+const ATTRIBUTE_REQUIREMENT_FIELDS = Object.freeze(["id", "kind", "path", "runPath", "attribute", "value"]);
+const MARK_REQUIREMENT_FIELDS = Object.freeze(["id", "kind", "path", "runPath", "mark", "value"]);
 const TEXT_RUN_FIELDS = Object.freeze(["text", "marks"]);
 const NODE_RUN_FIELDS = Object.freeze(["type", "attrs", "runs"]);
 const ATOM_RUN_FIELDS = Object.freeze(["type", "attrs"]);
 const MODEL_NODE_FIELDS = Object.freeze(["type", "attrs", "children", "runs"]);
 
+export type JSONLeaf = string | number | boolean | null;
 export type Requirement =
     | {id: string; kind: "exact_text"; path: number[]; text: string}
     | {id: string; kind: "node_type"; path: number[]; type: string}
     | {id: string; kind: "text_occurrences"; path: number[]; text: string; count: number}
     | {id: string; kind: "child_types"; path: number[]; types: string[]}
+    | {id: string; kind: "attribute_equals"; path: number[]; runPath?: number[]; attribute: string[]; value: JSONLeaf}
+    | {id: string; kind: "mark_equals"; path: number[]; runPath: number[]; mark: string; value: JSONLeaf}
     | {id: string; kind: "manual"; description: string};
 export type Brief = {version: 1; objective: string; requirements: Requirement[]};
 export type CheckedRevision = {epoch: string; serverSeq: number; schemaVersion: string | null};
@@ -29,11 +34,15 @@ const fields = (value: ObjectValue, keys: readonly string[]) => Object.keys(valu
 const string = (value: unknown, max: number): value is string => typeof value === "string" && value.length > 0 && value.length <= max;
 const path = (value: unknown): value is number[] => Array.isArray(value) && value.length <= 64 && Array.from(value).every(index => Number.isSafeInteger(index) && index >= 0);
 
+const leaf = (value: unknown): value is JSONLeaf => value === null || typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value)) || (typeof value === "string" && value.length <= 8192);
+const valueRequirement = (kind: unknown) => kind === "attribute_equals" || kind === "mark_equals";
+const extendedRequirement = (kind: unknown) => kind === "text_occurrences" || kind === "child_types" || valueRequirement(kind);
+
 /** Validate user requirements before persistence and return an independently owned value. */
 export function parseBrief(value: unknown): Brief {
     if (!object(value) || !fields(value, BRIEF_FIELDS) || value.version !== 1 || !string(value.objective, 4000) || !value.objective.trim() || !Array.isArray(value.requirements) || value.requirements.length < 1 || value.requirements.length > 32) throw Error("Invalid or oversized structured brief");
     // Keep every previously valid v1 contract valid. The aggregate budget applies to extensions.
-    if (value.requirements.some(item => object(item) && (item.kind === "text_occurrences" || item.kind === "child_types"))) boundedJSON(value, 1024 * 1024);
+    if (value.requirements.some(item => object(item) && extendedRequirement(item.kind))) boundedJSON(value, 1024 * 1024);
     const ids = new Set<string>();
     const requirements: Requirement[] = Array.from(value.requirements).map(item => {
         if (!object(item) || !string(item.id, 80) || !/^[a-zA-Z0-9_-]+$/.test(item.id) || ids.has(item.id)) throw Error("Invalid or duplicate requirement ID");
@@ -43,6 +52,8 @@ export function parseBrief(value: unknown): Brief {
         if (item.kind === "node_type" && fields(item, NODE_REQUIREMENT_FIELDS) && path(item.path) && string(item.type, 120) && item.type.trim()) return {id: item.id, kind: "node_type", path: [...item.path], type: item.type};
         if (item.kind === "text_occurrences" && fields(item, OCCURRENCE_REQUIREMENT_FIELDS) && path(item.path) && string(item.text, 8192) && Number.isSafeInteger(item.count) && (item.count as number) >= 0 && (item.count as number) <= 1024 * 1024) return {id: item.id, kind: "text_occurrences", path: [...item.path], text: item.text, count: item.count as number};
         if (item.kind === "child_types" && fields(item, CHILD_TYPES_REQUIREMENT_FIELDS) && path(item.path) && Array.isArray(item.types) && item.types.length <= 1024 && Array.from(item.types).every(type => string(type, 120) && type.trim())) return {id: item.id, kind: "child_types", path: [...item.path], types: [...item.types]};
+        if (item.kind === "attribute_equals" && fields(item, ATTRIBUTE_REQUIREMENT_FIELDS) && path(item.path) && (item.runPath === undefined || (path(item.runPath) && item.runPath.length > 0)) && Array.isArray(item.attribute) && item.attribute.length > 0 && item.attribute.length <= 16 && Array.from(item.attribute).every(key => string(key, 120)) && leaf(item.value)) return {id: item.id, kind: "attribute_equals", path: [...item.path], ...(item.runPath === undefined ? {} : {runPath: [...item.runPath]}), attribute: [...item.attribute], value: item.value};
+        if (item.kind === "mark_equals" && fields(item, MARK_REQUIREMENT_FIELDS) && path(item.path) && path(item.runPath) && item.runPath.length > 0 && string(item.mark, 120) && leaf(item.value)) return {id: item.id, kind: "mark_equals", path: [...item.path], runPath: [...item.runPath], mark: item.mark, value: item.value};
         throw Error("Invalid or oversized brief requirement");
     });
     return {version: 1, objective: value.objective, requirements};
@@ -212,24 +223,65 @@ function textOccurrences(node: ObjectValue, schema: Schema, text: string): numbe
     return context.count;
 }
 
+/** A run path indexes runs only; it never traverses arbitrary object properties. */
+function runAt(node: ObjectValue, schema: Schema, indices: number[]): ObjectValue {
+    if (schema.nodes[node.type as string].shape !== "text") throw Error("Run path requires a text node");
+    let current = node;
+    for (let i = 0; i < indices.length; i++) {
+        if (!Array.isArray(current.runs)) throw Error("Run path does not select runs");
+        const next = current.runs[indices[i]];
+        if (!object(next)) throw Error("Run path is missing");
+        if (i < indices.length - 1 && (typeof next.type !== "string" || schema.nodes[next.type]?.shape !== "span")) throw Error("Run path can descend only through declared spans");
+        current = next;
+    }
+    return current;
+}
+function ownLeaf(value: unknown, keys: string[]): JSONLeaf {
+    for (const key of keys) {
+        if (!object(value) || !Object.hasOwn(value, key)) throw Error("Required value is absent; defaults are not inferred");
+        value = value[key];
+    }
+    if (!leaf(value)) throw Error("Required value is not a supported JSON leaf");
+    return value;
+}
+function attributeEquals(node: ObjectValue, schema: Schema, requirement: Extract<Requirement, {kind: "attribute_equals"}>): boolean {
+    const target = requirement.runPath ? runAt(node, schema, requirement.runPath) : node;
+    if (typeof target.type !== "string" || !Object.hasOwn(schema.nodes, target.type)) throw Error("Attribute target requires a declared node");
+    const spec = schema.nodes[target.type];
+    const name = requirement.attribute[0];
+    const declared = ("attrs" in spec && spec.attrs !== undefined && Object.hasOwn(spec.attrs, name)) || (spec.shape === "span" && spec.attr === name);
+    if (!declared) throw Error("Attribute is not declared by the current schema");
+    return ownLeaf(target.attrs, requirement.attribute) === requirement.value;
+}
+function markEquals(node: ObjectValue, schema: Schema, requirement: Extract<Requirement, {kind: "mark_equals"}>): boolean {
+    const target = runAt(node, schema, requirement.runPath);
+    if (typeof target.text !== "string") throw Error("Mark target requires a text run");
+    const booleanMark = schema.marks.includes(requirement.mark);
+    if (!booleanMark && !Object.hasOwn(schema.markValues ?? {}, requirement.mark)) throw Error("Mark is not declared by the current schema");
+    if (booleanMark && typeof requirement.value !== "boolean") throw Error("Boolean mark requires a boolean value");
+    return ownLeaf(target.marks, [requirement.mark]) === requirement.value;
+}
+
 /** Evaluate settled document evidence. Model messages and planner claims are not inputs. */
 export function verifyBrief(input: Brief, document: unknown, schema: Schema, revision: CheckedRevision): VerificationReport {
     const brief = parseBrief(input);
     if (!object(revision) || !string(revision.epoch, 512) || !Number.isSafeInteger(revision.serverSeq) || revision.serverSeq < 0 || !(revision.schemaVersion === null || string(revision.schemaVersion, 512))) throw Error("Invalid checked revision");
     if (revision.schemaVersion !== schemaVersion(schema)) throw Error("Checked revision schema version does not match the supplied schema");
     let modelError: string | undefined;
-    if (brief.requirements.some(item => item.kind === "text_occurrences" || item.kind === "child_types")) {
+    if (brief.requirements.some(item => extendedRequirement(item.kind))) {
         try {validateModel(document, schema);} catch (error) {modelError = error instanceof Error ? error.message : "Invalid model";}
     }
     const requirements: RequirementResult[] = brief.requirements.map(requirement => {
         if (requirement.kind === "manual") return {id: requirement.id, status: "not_checked", message: "This requirement needs manual review."};
         try {
-            if ((requirement.kind === "text_occurrences" || requirement.kind === "child_types") && modelError) throw Error(modelError);
+            if (extendedRequirement(requirement.kind) && modelError) throw Error(modelError);
             const node = nodeAt(document, schema, requirement.path);
             let passed: boolean;
             if (requirement.kind === "node_type") passed = node.type === requirement.type;
             else if (requirement.kind === "exact_text") passed = exactNodeText(node, schema) === requirement.text;
             else if (requirement.kind === "text_occurrences") passed = textOccurrences(node, schema, requirement.text) === requirement.count;
+            else if (requirement.kind === "attribute_equals") passed = attributeEquals(node, schema, requirement);
+            else if (requirement.kind === "mark_equals") passed = markEquals(node, schema, requirement);
             else {
                 if (!containers.has(schema.nodes[node.type as string].shape) || !Array.isArray(node.children)) throw Error("Child types requires a model container");
                 const actual = node.children.map(child => (child as ObjectValue).type);

@@ -107,11 +107,39 @@ Use node types from the actual server schema. Paths follow canonical model `chil
 | `node_type` | Exact node type at one declared model path. |
 | `text_occurrences` | Exact non-overlapping UTF-16 matches within the selected subtree. |
 | `child_types` | Exact ordered list of direct canonical child types. |
+| `attribute_equals` | Exact declared node/inline/span attribute JSON leaf. |
+| `mark_equals` | Exact own mark value on one selected text run. |
 | `manual` | Retained for review; reported as `not_checked`. |
 
 For `text_occurrences`, adjacent text runs and spans join into one sequence. Inline objects and text-node boundaries break sequences. Retained hidden table-cell content counts because the check uses the canonical model. Attributes and metadata are not text. This is exact substring matching, with no case folding or word-boundary rule.
 
-The two new check kinds validate bounded model structure and schema shapes before evaluation. They do not validate every attribute or schema cardinality rule. Existing version-1 briefs remain supported. A failed or unchecked requirement stops the mission for attention. A passing report proves only the declared checks at its saved revision; it does not establish general document quality, provenance, placement intent, or preservation of undeclared content.
+Occurrence, child-type, attribute and mark checks validate bounded model structure
+and schema shapes before evaluation. Attribute checks select `path` through model
+children, optionally `runPath` through nested runs, then `attribute` keys through
+own JSON object properties. The first attribute key must be declared by the node
+schema; a span's mapped attribute (such as hyperlink `url`) also qualifies.
+Arrays, object equality, inherited properties and arbitrary expressions are not
+supported. `value` is a finite number, boolean, null or string up to 8192 UTF-16
+units. Attribute paths contain 1–16 nonempty keys, each up to 120 units.
+
+Mark checks require a nonempty `runPath` ending at a text run and a declared
+`mark`. Boolean marks require boolean values. Only the selected run's own marks
+are checked: span ancestor values are not inherited or inferred. For example,
+check a link URL on its span and bold on its contained text run:
+
+```json
+[
+  {"id":"url","kind":"attribute_equals","path":[0],"runPath":[0],"attribute":["url"],"value":"https://example.com"},
+  {"id":"bold","kind":"mark_equals","path":[0],"runPath":[0,0],"mark":"bold","value":true}
+]
+```
+
+Missing values fail, even if a schema default would match. Explicit null, false,
+zero and empty string remain distinct from absence; no normalization or coercion
+is performed. Run paths use canonical run indexes, not text ranges, and contain
+at most 64 nonnegative integer indexes. These checks are exact value predicates,
+not full schema validation; they do not execute patterns or normalize values.
+The aggregate brief/model limits also apply to these kinds. They do not validate every attribute or schema cardinality rule. Existing version-1 briefs remain supported. A failed or unchecked requirement stops the mission for attention. A passing report proves only the declared checks at its saved revision; it does not establish general document quality, provenance, placement intent, or preservation of undeclared content.
 
 ## Rust experiment
 
