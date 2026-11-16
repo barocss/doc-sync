@@ -1,3 +1,4 @@
+import {projectProposalTemplate} from "./project-template.ts";
 import {meetingNotesTemplate} from "./meeting-template.ts";
 import {creatorClient} from "./proposal-client.ts";
 import {runProposalMission} from "./proposal-planner.ts";
@@ -40,12 +41,13 @@ async function main() {
         if (!key?.startsWith("--") || value === undefined || options.has(key)) throw new Error("Use unique --option value pairs");
         options.set(key, value);
     }
-    const permitted = command === "template-meeting" ? new Set(["--input"]) : command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-plan" ? PROPOSAL_PLAN_OPTIONS : command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
+    const permitted = (command === "template-meeting" || command === "template-project") ? new Set(["--input"]) : command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-plan" ? PROPOSAL_PLAN_OPTIONS : command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
     for (const key of options.keys()) if (!permitted.has(key)) throw new Error(`Unknown option: ${key}`);
-    if (command === "template-meeting") {
+    if (command === "template-meeting" || command === "template-project") {
         const file = options.get("--input");
-        if (!file) throw Error("template-meeting requires --input JSON-file");
-        const result = meetingNotesTemplate(JSON.parse(await readFile(file, "utf8")));
+        if (!file) throw Error(`${command} requires --input JSON-file`);
+        const template = command === "template-meeting" ? meetingNotesTemplate : projectProposalTemplate;
+        const result = template(JSON.parse(await readFile(file, "utf8")));
         console.log(JSON.stringify(result, null, 2));
         if (result.status !== "ready") process.exitCode = 1;
         return;

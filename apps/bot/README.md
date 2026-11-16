@@ -305,3 +305,18 @@ current document, not historical versions. Checkpoint binding excludes the rando
 review actor because each read-only invocation uses a fresh ephemeral actor.
 Supported local locking remains macOS/Linux only. Synthetic integration tests do
 not establish real model quality, exactly-once execution or production durability.
+
+## Offline schema-aware templates
+
+`template-meeting --input meeting.json` emits four fact-preserving sections.
+`template-project --input project.json` emits five: title, problem, objectives,
+approach and successCriteria. Each input supplies an explicit document schema,
+role-to-text-type mapping and all facts. Missing or unsupported input returns
+`needs_input` (CLI exit 1), never inferred content. A ready result contains a
+schema fingerprint, a detached draft and a deterministic completion brief.
+
+See the [template examples](../docs/src/guide/bots.md#prepare-a-project-proposal-without-a-model-call).
+Both commands are offline: no model, server write, proposal or owner approval.
+Completion checks are relative to the new document root and do not establish
+semantic quality or preservation of unrelated content. Multi-block drafts remain
+outside the bounded single-block proposal approval path.

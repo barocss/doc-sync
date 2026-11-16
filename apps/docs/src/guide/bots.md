@@ -335,3 +335,50 @@ Missed changes produce a coalesced review of the current document, not replay of
 historical snapshots. This remains a local macOS/Linux single-writer facility,
 not a scheduler or model isolation guarantee. The command uses the existing Codex
 planner when you run it, so only use an authorized connection and document.
+
+## Prepare a project proposal without a model call
+
+Use `template-project` for a five-section project proposal. Like the meeting
+helper, this command reads supplied facts and creates a detached draft and brief:
+
+```sh
+npm run start -w @doc-sync/bot -- template-project --input project.json
+```
+
+Example `project.json` (replace the sample facts and schema with your own):
+
+```json
+{
+  "schema": {
+    "root": "proposal", "marks": [],
+    "nodes": {
+      "proposal": {"shape": "flow", "children": ["heading", "body"], "default": "body"},
+      "heading": {"shape": "text"},
+      "body": {"shape": "text"}
+    }
+  },
+  "mapping": {"title": "heading", "problem": "body", "objectives": "body", "approach": "body", "successCriteria": "body"},
+  "inputs": {
+    "title": "Shared draft pilot",
+    "problem": "Reviewers duplicate edits.",
+    "objectives": "Keep one shared draft.",
+    "approach": "Run one synthetic pilot.",
+    "successCriteria": "Preserve both participants' edits."
+  }
+}
+```
+
+All five roles are required in this exact order: `title`, `problem`, `objectives`,
+`approach`, `successCriteria`. The helper never invents budgets, schedules, owners,
+commitments or success criteria. Missing input returns `needs_input` and CLI exit
+code 1. The schema restrictions and 8192 UTF-16-unit per-field limit are the same
+as for meeting notes. Both helpers share the same schema and completion checks.
+
+A ready result has exactly five blocks and six deterministic requirements:
+ordered child types plus the exact text of each section. These checks establish
+content and structure, not feasibility, business quality, or that the proposed
+project's success criteria have actually been achieved. The brief is relative to
+the new document root; adapt its scope explicitly before insertion into an
+existing document. This is not a preservation policy for unrelated content.
+No model call, document write, proposal submission, or approval is performed.
+The existing single-block approval path cannot apply this multi-block draft.
