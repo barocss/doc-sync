@@ -36,7 +36,7 @@ An accepted exact request can recover after restart without resend when receipt,
 
 ## B5. Coordination and persistent watcher
 
-**Status: planned.** Add explicit assignments, distinct actors, a shared task view, cancellation, and restart-safe trigger state. The existing experimental watcher is a bounded local reviewer with an in-memory baseline. Its #15 completion-boundary checks snapshot identity, revalidate after review and leave intervening peer sequences for the next poll; this does not complete B5. It does not persist its cursor or restore missed changes after restart.
+**Status: planned.** Add explicit assignments, distinct actors, a shared task view, cancellation, and restart-safe trigger state. The existing experimental watcher is a bounded local reviewer with an in-memory baseline. Its #15 completion-boundary checks snapshot identity, revalidate after review and leave intervening peer sequences for the next poll; this does not complete B5. The CLI does not persist its cursor or restore missed changes after restart. A separate opt-in API checkpoint (#18) preserves a clean cursor and budget under a local writer lock; interrupted callbacks stay blocked rather than automatically rerunning. No CLI integration, scheduler, automatic repair or actual-model qualification is implied.
 
 **Acceptance gate:** test adjacent and overlapping bot work, reviewer isolation, independent undo, user edits, restart, cancellation, deduplication, and self-trigger suppression. Define what missed changes mean and how a resumed watcher processes them. Keep uncertain recovery blocked. Record incorrect completion claims, latency, and cost as separate measures.
 

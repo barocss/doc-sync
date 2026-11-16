@@ -256,3 +256,22 @@ optional `editsJson`. Even unused `editsJson` is limited to 64 KiB UTF-8 and
 hit the aggregate limit before the raw string limit. Existing text, message,
 position and action-specific limits still apply. This is not a sandbox for a
 trusted JavaScript planner or a substitute for provider transport limits.
+
+### Opt-in persistent reviewer API (not the `watch` command)
+
+`PersistentReviewWatch` in `src/persistent-watch.ts` offers
+`open({file,binding,maxRuns}, read, review)`, `poll()`, `stop()` and `close()` for
+trusted integrations. Supply an existing owned directory with mode0700 and a
+64-lowercase-hex digest of the explicit nonsecret endpoint/document/task/reviewer
+configuration. This digest is a caller contract, not server authorization or
+proof of a model identity. No credentials should be hashed into it.
+
+A clean checkpoint preserves the reviewed sequence and consumed budget. Before
+review, an in-flight marker is synced; unfinished/blocked/stopped checkpoints
+refuse automatic restart and require inspection. `stop()` is durable when
+awaited. `close()` drains active work and releases the writer claim, but is not
+cancellation; it leaves clean checkpoints resumable. Do not await either from
+inside that watch's own read/review callback. No reset/repair API is supplied.
+The supported local kernel lock is held until active work has drained, including
+when it is slow or stuck. This is not distributed coordination or exactly-once
+model execution. The existing CLI watcher still has an in-memory cursor.
