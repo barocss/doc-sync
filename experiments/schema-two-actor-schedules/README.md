@@ -1,17 +1,17 @@
-# Bounded two-actor schema schedules (issue #6, partial)
+# Bounded two-actor schema schedules (issue #6)
 
 From the workspace root, using Node 22.19.0 or newer:
 
 ```sh
 npm run build
-node --test experiments/schema-two-actor-schedules/test.mjs
+node --test experiments/schema-two-actor-schedules/test.mjs experiments/schema-two-actor-schedules/v2.test.mjs
 ```
 
 This independent experiment imports only published package entry points. It does
 not import the original local runtime-document-schema-contract experiment or any
 unpublished native API. No network or browser is used.
 
-## Achieved contract
+## Version 1 foundation (retained unchanged)
 
 Four deterministic renamed schemas (seeds 0, 1, 7, 65535), each with two complete
 rounds: A and B insert on separate stored text blocks before delivery, selected
@@ -50,7 +50,7 @@ injects a round-dependent oracle failure; no real engine bug is claimed. A succe
 is not reduced into an artificial failure. The two-actor targeted checks are not
 yet represented as reducer inputs.
 
-## Remaining scope (keep #6 open)
+## Version 1 limitations (addressed in part by version 2 below)
 
 Generated structural/group/grid schedules, actual attribute/mark mutations,
 arbitrary command and schema shrinking, same-position conflicting inserts,
@@ -64,3 +64,40 @@ Node 22.19.0: 11 tests passed, 0 failed. Earlier failures were fixture setup and
 public API contract mistakes (transport presence method, synthetic initial
 paragraph, protected-history disposal, fallback observer semantics, move endpoint)
 and were corrected without changing the engine. No engine defect found.
+
+
+## Version 2: explicit replay and reducible targeted rounds
+
+`v2.mjs` exports generateV2 / validateV2 / serializeV2 / deserializeV2 /
+replayV2 / reduceV2. Version 1 is still readable through the original API;
+version 2 deliberately has separate entry points and rejects format 1.
+
+Each serialized round now includes its full initial model, exact actor edits,
+ordered flushes, capture/guard actions, undo actions, and independent literal
+expected model/history checkpoints. Six round kinds run in both A/B orders:
+concurrent text, scalar attribute plus boolean mark, same-block foreign writes,
+peer move, peer delete, and late invalid batch. Four renamed descriptors run all
+12 rounds. Each round starts a fresh two-actor network, so deleting a round cannot
+remove a prerequisite for a later round. Reducer candidates retain the original
+schema and complete legal action templates; malformed actions/orphan guards or
+changed expected models fail validation before execution.
+
+Actual generated attribute and mark names are mutated and checked, then both
+undo orders restore only the owning actor's change. Targeted peer/batch cases
+are now serialized and participate in the same-class round reducer. The guard
+still belongs to the caller, not an intrinsic strict-ID path-edit API feature.
+Stale rejection compares model, snapshot, history, pending and event counts.
+
+Version 2 is a deliberately closed finite schedule grammar. Validation compares
+rounds against their canonical grammar expansion, not against engine output.
+It is not an arbitrary user command executor or general schema shrinking engine.
+Independent expected models are constructed as small JSON literals; applyEdits
+is used only for the secondary public-event mirror. Fallback limitations above
+still apply. The reducer proof tests inject a distinct failure for each round
+kind after successful real execution, distinguish a different failure on empty
+input, and reproduce the retained one-round fixture. No engine defect discovered.
+
+Final bounded check: Node 22.19.0, version 1's 11 tests plus version 2's 12 tests
+pass (23 total). No grid, native, durability, load or arbitrary-command minimizer
+claim is made. All #6 named scenario categories now have bounded coverage, while
+the broader schema-editing roadmap is not declared complete.

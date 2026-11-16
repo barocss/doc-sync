@@ -14,9 +14,9 @@ export function validate(f) {
  assert.deepEqual(f.schema,generate(f.seed).schema);assert(Array.isArray(f.rounds)&&f.rounds.length<=4);
  const ids=new Set();for(const r of f.rounds){assert(/^r[0-9]+$/.test(r.id)&&!ids.has(r.id));ids.add(r.id);for(const k of ['up','down','undo'])assert.deepEqual([...r[k]].sort(),['A','B']);}
 }
-function invariant(kind, fn) { try { fn(); } catch(error) { error.failureClass=kind; error.message=`[${kind}] ${error.message}`; throw error; } }
+export function invariant(kind, fn) { try { fn(); } catch(error) { error.failureClass=kind; error.message=`[${kind}] ${error.message}`; throw error; } }
 const tick=()=>new Promise(r=>setImmediate(r));
-class Net {
+export class Net {
  constructor(schema){this.schema=schema;this.hub=new DocHub({schema});this.boxes=new Map();this.upstream=[];this.clients={};this.mirrors={};this.events=0;}
  add(actor){const box={events:[],receive:null,stop:null};this.boxes.set(actor,box);const transport={sendPresence:()=>{},subscribe:(since,receive,epoch)=>{box.receive=receive;box.events.push(this.hub.hello(since,epoch));box.stop=this.hub.listen(e=>box.events.push(e));return()=>{box.stop?.();box.receive=null;};},send:async message=>{this.upstream.push({actor,message});}};
  const c=new Client({schema:this.schema,actor,transport});this.clients[actor]=c;this.mirrors[actor]=structuredClone(c.model());c.subscribe({modelEvents:(edits,info)=>{this.events++;this.mirrors[actor]=info.fallback?structuredClone(c.model()):applyEdits(this.schema,this.mirrors[actor],edits);invariant('event-mirror',()=>assert.deepEqual(this.mirrors[actor],c.model()));}});c.connect();return c;}
