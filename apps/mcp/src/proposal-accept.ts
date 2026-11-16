@@ -1,3 +1,4 @@
+import {enforcePolicy, policyFingerprint} from "./proposal-policy.ts";
 import {createHash} from "node:crypto";
 import {join} from "node:path";
 import {Doc, History, MAIN, readDocumentSlice, schemaVersion, type EditOp} from "@barocss/doc-sync";
@@ -22,6 +23,7 @@ const key = (id: {lamport: number; actor: string}) => `${id.lamport}@${id.actor}
 /** Validate the detached candidate before the journal or upstream sees it. */
 export function authorizeProposalIntent(record: ProposalRecord, intent: PreparedIntent): void {
     const request = record.payload.request, c = request.change;
+    enforcePolicy(record.payload.routePolicy, request.base, c);
     if (record.status !== "applying" || !record.attempt || record.decision?.kind !== "accept" || record.decision.approvalPolicyFingerprint !== ACCEPTANCE_POLICY_FINGERPRINT || record.proposalDigest !== digest(record.payload) ||
         intent.change.actor !== record.payload.owner.actor || intent.generation !== request.base.generation ||
         digest(intent.base) !== digest({epoch: request.base.epoch, serverSeq: request.base.serverSeq, schemaVersion: request.base.schemaVersion}) ||
@@ -92,12 +94,21 @@ export async function acceptProposal(config: HostedConfig, route: HostedRoute, g
     let journal: IntentJournal | undefined, session: DocumentSession | undefined;
     try {
         let record = await store.get(id);
-        if (!record || record.proposalDigest !== decision.proposalDigest || record.payload.policyFingerprint !== POLICY_FINGERPRINT) throw new ProposalConflict("Proposal does not match");
+        if (!record || record.proposalDigest !== decision.proposalDigest || record.payload.policyFingerprint !== policyFingerprint(route.proposalPolicy, POLICY_FINGERPRINT)) throw new ProposalConflict("Proposal does not match");
+        try { enforcePolicy(route.proposalPolicy, record.payload.request.base, record.payload.request.change); } catch { throw new ProposalConflict("Proposal outside current policy"); }
         if (record.status === "pending" && (reconcileOnly || record.payload.request.questions.length || record.payload.before === record.payload.after)) throw new ProposalConflict("Proposal cannot be accepted");
         if (record.status !== "pending" && (record.decision?.kind !== "accept" || record.decision.requestId !== decision.requestId || record.decision.grantId !== grant.id)) throw new ProposalConflict("Different decision already exists");
         if (PROPOSAL_RECONCILIATION_STATUSES.includes(record.status)) return (await store.beginAccept(id, decision.requestId, decision.proposalDigest, grant.id))!;
         const fresh = record.status === "pending";
         if (fresh && (await store.list()).some(other => other.payload.id !== id && UNSETTLED_PROPOSAL_STATUSES.includes(other.status))) throw new ProposalConflict("Another approved attempt requires reconciliation");
+        // Policy denial must precede actor journal creation/start/restore. Terminal receipt
+        // reconciliation above remains possible after the accepted revision advanced.
+        if (fresh && route.proposalPolicy) {
+            const probe = new NodeHttpTransport(route.upstreamDocument, "", route.upstream, {headers: route.headers});
+            const current = await probe.getRecoveryState();
+            try { enforcePolicy(route.proposalPolicy, {generation: current.generation ?? "", epoch: current.epoch, serverSeq: current.serverSeq, schemaVersion: current.schemaVersion ?? ""}); }
+            catch { throw new ProposalConflict("Current document revision is outside policy"); }
+        }
         // Opening the actor journal does not start or acknowledge a participant.
         const identity = JSON.stringify([route.upstream, route.upstreamDocument, route.actor]);
         journal = await IntentJournal.open(join(config.dataDir, createHash("sha256").update(identity).digest("hex") + ".json"), {document: route.upstreamDocument, actor: route.actor});

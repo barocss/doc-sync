@@ -1,3 +1,4 @@
+import {enforcePolicy, policyFingerprint} from "./proposal-policy.ts";
 import type {IncomingMessage, ServerResponse} from "node:http";
 import type {HostedConfig, HostedGrant, HostedRoute} from "./hosted-config.ts";
 import {routePath} from "./hosted-config.ts";
@@ -43,12 +44,13 @@ export async function handleProposal(options: {req: IncomingMessage; res: Server
     try { store = await ProposalStore.open(config.dataDir, owner); } catch { throw new ProposalHttpError(503); }
     try {
         if (request) {
+            try { enforcePolicy(route.proposalPolicy, request.base, request.change); } catch { throw new ProposalHttpError(403); }
             const existing = await store.get(proposalId(owner, request.requestId));
-            if (existing) { if (digest(existing.payload.request) !== digest(request)) throw new ProposalConflict(); const record = await store.create(existing.payload); respond({id: record.payload.id, status: record.status, proposalDigest: record.proposalDigest}); return; }
+            if (existing) { if (existing.payload.policyFingerprint !== policyFingerprint(route.proposalPolicy, POLICY_FINGERPRINT)) throw new ProposalHttpError(403); if (digest(existing.payload.request) !== digest(request)) throw new ProposalConflict(); const record = await store.create(existing.payload); respond({id: record.payload.id, status: record.status, proposalDigest: record.proposalDigest}); return; }
             if ((await store.list()).some(r => UNSETTLED_PROPOSAL_STATUSES.includes(r.status))) throw new ProposalHttpError(409);
             const captured = await capture(route, grant, request);
             if (captured.source === undefined) throw new Error("Missing source");
-            const payload = {format: 1 as const, id: proposalId(owner, request.requestId), owner, request, ...previewReplacement(captured.source, request.change), policyFingerprint: POLICY_FINGERPRINT};
+            const payload = {format: 1 as const, id: proposalId(owner, request.requestId), owner, request, ...previewReplacement(captured.source, request.change), policyFingerprint: policyFingerprint(route.proposalPolicy, POLICY_FINGERPRINT), ...(route.proposalPolicy ? {routePolicy: structuredClone(route.proposalPolicy)} : {})};
             const record = await store.create(payload);
             respond({id: record.payload.id, status: record.status, proposalDigest: record.proposalDigest});
         } else if (capability === "proposal_decide") {

@@ -1,6 +1,6 @@
 import {createHash, timingSafeEqual} from "node:crypto";
 import type {IncomingMessage} from "node:http";
-import type {HostedGrant} from "./hosted-config.ts";
+import type {HostedGrant, HostedRoute} from "./hosted-config.ts";
 const digest = (s: string) => createHash("sha256").update(s).digest();
 export function authenticate(req: IncomingMessage, grants: HostedGrant[]): HostedGrant | null {
     const values = req.rawHeaders.filter((_, i) => i % 2 === 0 && req.rawHeaders[i]!.toLowerCase() === "authorization");
@@ -16,9 +16,9 @@ const permissions: Record<string, "read" | "write" | "schema"> = {
     edit_document: "write", retry_edit: "write", undo: "write", redo: "write", discard_history: "write", set_presence: "write",
     upgrade_schema: "schema", transition_schema: "schema",
 };
-export function authorizeTool(grant: HostedGrant, name: string): void {
+export function authorizeTool(grant: HostedGrant, name: string, route?: HostedRoute): void {
     const permission = permissions[name];
-    if (!permission || !grant.permissions.includes(permission)) throw new Error("Tool permission denied");
+    if (!permission || route?.proposalPolicy && permission !== "read" || !grant.permissions.includes(permission)) throw new Error("Tool permission denied");
 }
 export function binding(grant: HostedGrant, path: string, actor: string): string {
     return JSON.stringify([grant.id, grant.principal, path, actor, [...grant.permissions].sort()]);
