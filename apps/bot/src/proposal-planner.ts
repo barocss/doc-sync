@@ -45,6 +45,15 @@ function abstention(v:unknown):ProposalAbstention{
  if(!Array.isArray(o.questions)||o.questions.length>16)fail();for(const q of o.questions)str(q,1000);
  return o as ProposalAbstention;
 }
+/** Shared local decision gate; provider formatting never grants authority. Returns owned data. */
+export function validateProposalDecision(value:unknown,text:string):ReturnType<typeof output>|ProposalAbstention {
+ str(text,16384);
+ try {
+  const decision=bounded(value);
+  return decision && typeof decision==='object' && (decision as {kind?:unknown}).kind==='abstain'
+   ? abstention(decision) : output(decision,text);
+ } catch { throw Error('Planner output rejected'); }
+}
 function bounded<T>(v:T):T{const s=JSON.stringify(v);if(Buffer.byteLength(s)>MAX)fail();return JSON.parse(s);}
 function validateMission(value:unknown):Mission{
  const m=object(value);

@@ -320,3 +320,33 @@ Both commands are offline: no model, server write, proposal or owner approval.
 Completion checks are relative to the new document root and do not establish
 semantic quality or preservation of unrelated content. Multi-block drafts remain
 outside the bounded single-block proposal approval path.
+
+### Data-only model boundary (synthetic transport)
+
+`dataOnlyProposalPlanner` in `src/proposal-model-boundary.ts` can be injected into
+`runProposalMission`. It is an API-level, tested preparation for a provider adapter,
+not a new CLI mode or a live model integration. No provider, account, authentication,
+HTTP request or tool execution is supplied by this module.
+
+The trusted transport receives a frozen packet containing only fixed instructions,
+the original brief and bounded target text. Target path, block identity, revision,
+route, mission filename and client methods are excluded. This is field minimization,
+not secret detection: user-supplied brief/text still needs transmission authorization.
+The response is UTF-8 JSON checked by the same local replacement/abstention rules as
+the creator workflow. Extra authority fields, unsupported edits and malformed data
+fail before proposal creation; a valid result still requires separate owner review.
+
+Limits: 131,072 encoded request bytes; 65,536 response bytes; 1,024 chunks; one call
+per planner instance by default (explicit maximum 8); 10-second deadline by default
+(explicit maximum 30 seconds). Attempts consume the instance budget on timeout or
+failure and are never automatically retried. Existing durable mission recovery
+reuses a saved proposal request or abstention without another transport invocation.
+These are not restart-persistent usage or billing budgets. Interruptions before
+saving a decision still require a separately authorized retry policy.
+
+The injected transport is trusted in-process code, not an isolation sandbox.
+AbortSignal and iterator cleanup are cooperative: a hostile callback cannot be
+force-stopped. A live adapter must independently fix an approved destination and
+model, reject redirects, keep its credential in transport authentication, constrain
+provider output tokens and enforce authorized data/cost limits. No live-call,
+semantic-quality or production-security claim follows from synthetic tests.
