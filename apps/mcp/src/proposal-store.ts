@@ -171,7 +171,10 @@ export class ProposalStore {
         if (existing) { if (existing.proposalDigest !== digest(payload)) throw new ProposalConflict("Create UUID has different content"); return this.confirmDurable(existing); }
         const records = await this.loadAll();
         if (records.length >= 256 || records.filter(r => !FINAL_PROPOSAL_STATUSES.includes(r.status)).length >= 128) throw new ProposalQuota("Proposal quota reached");
-        if (payload.request.supersedes && !await this.load(payload.request.supersedes)) throw new ProposalConflict("Missing previous proposal");
+        if (payload.request.supersedes) {
+            const prior = await this.load(payload.request.supersedes);
+            if (!prior || !["stale", "not_applied", "rejected"].includes(prior.status)) throw new ProposalConflict("Previous proposal must have a resolved non-applied outcome");
+        }
         const partial = {payload, proposalDigest: digest(payload), status: "pending" as const, stateVersion: 1};
         return this.save({...partial, recordDigest: digest(partial)});
     }

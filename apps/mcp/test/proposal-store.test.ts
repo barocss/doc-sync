@@ -53,3 +53,19 @@ test("FIFO record and lock fail without waiting or removing evidence", async () 
         await store.close(); const lock = join(directory, "writer.lock"); await rm(lock); assert.equal(spawnSync("/usr/bin/mkfifo", ["-m", "600", lock]).status, 0); await assert.rejects(ProposalStore.open(dir, owner));
     } finally { await store.close(); await rm(dir, {recursive: true, force: true}); }
 });
+
+test("successor linkage cannot bypass unresolved approval and never transfers a decision", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "proposal-successor-")); const store = await ProposalStore.open(dir, owner);
+    try {
+        const original = payload(), first = await store.create(original), next = payload();
+        const linked = {...next, request: {...next.request, supersedes: original.id}};
+        await assert.rejects(store.create(linked), /resolved non-applied/);
+        await store.reject(original.id, randomUUID(), first.proposalDigest, "owner");
+        const successor = await store.create(linked); assert.equal(successor.status, "pending"); assert.equal(successor.decision, undefined);
+        assert.deepEqual(await store.create(linked), successor);
+        const applying = payload(), pending = await store.create(applying), decision = randomUUID();
+        await store.beginAccept(applying.id, decision, pending.proposalDigest, "owner");
+        const other = payload(); await assert.rejects(store.create({...other, request: {...other.request, supersedes: applying.id}}), /resolved non-applied/);
+        const missing = payload(); await assert.rejects(store.create({...missing, request: {...missing.request, supersedes: "a".repeat(64)}}), /resolved non-applied/);
+    } finally { await store.close(); await rm(dir, {recursive: true, force: true}); }
+});
