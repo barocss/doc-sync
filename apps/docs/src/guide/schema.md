@@ -240,3 +240,11 @@ boolean declaration by array index, such as `["marks", "1"]`. Schema validation,
 versioning and creation reject the ambiguity rather than choosing a declaration.
 Disjoint boolean/value mark ordering and semantics are unchanged. This is not
 full mark-name validation or automatic renaming of existing schemas.
+
+Nested field leaves also reject malformed constraint types through their
+existing `fieldsSchemaProblems`/`checkSchema`/`schemaVersion` path: enum values
+must be arrays, patterns strings, and numeric-default bounds finite numbers in
+order. Direct leaf validation returns false rather than coercing these malformed
+rules. Null resets and valid deep enum comparisons remain unchanged. The legacy
+raw Doc constructor's broader nested validation gate is not expanded by this
+change; validate schema identity before installing untrusted descriptors.
