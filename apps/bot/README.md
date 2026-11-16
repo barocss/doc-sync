@@ -203,3 +203,31 @@ untrusted executable code. Brief is a bounded objective string, not the full
 structured brief verifier. Actual-model invocation with credential/process
 isolation, conversational review integration and model quality evaluation are
 not delivered by this slice. Issue #10 stays open; evaluation is tracked in #14.
+
+### Schema interruption contract (#13)
+
+Bounded missions never silently adopt a different schema or stored target after
+planning. Treat the schema fingerprint, epoch and block identity as part of the
+intent, not merely display metadata. The supported conservative workflow is:
+
+| Observation | Action |
+| --- | --- |
+| New mission, schema changed before initial authorized capture | Read the currently verified target/schema. A new plan uses that actual context. Unsupported shapes/marks remain rejected. |
+| Schema/target changes while an existing planner is working | Stop. Direct bounded runner retains its binding; creator stores the original request and may return unknown. Do not rebind or call it successful. |
+| Create outcome unknown, including HTTP conflict | Retry/reconcile only the original request. A conflict alone does not prove an earlier application absent. No new base or request ID to escape uncertainty. |
+| Stored proposal is stale, rejected or proven not_applied | Owner may review the current schema/target and explicitly renew any route policy. Creator can prepare a new linked successor with a new request and new owner review. Prior approval never transfers. |
+| A prior application is unresolved | Retain exact mission, proposal and journal evidence. No fresh replan, forced unlock, history discard or schema upgrade to bypass recovery. |
+| Receipt confirmed, schema later changes | Receipt remains historical evidence; it is not verification of current content. Preserve old checkpoint/history and stop any unsupported resume. |
+
+There is no automatic compatibility migration in the AI workflow. Core/editor
+explicit schema-transition APIs are a separate capability: in particular an
+explicit core upgrade can send pending operations, so it is **not** a generic safe
+recovery button. This workflow does not enable native-engine transitions or move
+unpublished local experiments into the public contract. Fresh compatibility and
+owner review must be established separately; do not infer them from an additive
+schema name or a model's claim.
+
+Keep original objective, target binding, checks, decision IDs and evidence. Do not
+clear pending/history to make a new schema appear clean. A new proposal is not
+permission to undo somebody else's edits. `created` and `applied` remain storage
+and receipt outcomes respectively, not an actual-model quality assertion.

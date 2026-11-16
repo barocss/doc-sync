@@ -55,11 +55,15 @@ long-duration load claim is made.
 
 **Acceptance gate:** test unauthorized access, unavailable sources, fabricated-reference rejection, deletion, quota enforcement, storage failure, and restart. Report inaccessible or judgment-based requirements as unchecked. A hosted-service claim needs evidence from the selected deployment boundary.
 
-## Ordered next slices (public implementation boundary)
+## Ordered slices (public implementation boundary)
 
 Proceed one issue at a time in this order; passing a slice does not complete its
 entire B-stage. The public implementation and tests above are distinct from local
 uncommitted schema/native experiments and their private roadmaps.
+
+Status at 2026-11-16: #10 is partial (trusted injected/prepared planner seam only);
+#11 and #12 are delivered bounded slices; #13 qualifies conservative interruption
+without implicit migration. #14 remains unrun pending actual-model isolation.
 
 1. **B3 proposal flow — [#10](https://github.com/barocss/doc-sync/issues/10).**
    Connect bounded planning to creator-only proposal creation, persisted exact

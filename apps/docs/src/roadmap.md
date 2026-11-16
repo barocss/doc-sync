@@ -282,10 +282,13 @@ Removing a validation pass without proof is not accepted. This work does not
 close P2 GC/resource budgets, S3 Spreadsheet integration, or the Rust/WASM client
 delivery gates.
 
-## Next AI delivery slices
+## AI delivery slices
 
 The public [bot roadmap](https://github.com/barocss/doc-sync/blob/main/docs/bot-roadmap.md)
-keeps B1–B6 as the stage authority. The next bounded slices are:
+keeps B1–B6 as the stage authority. Status at 2026-11-16: #10 is partial
+(injected/prepared planner, not isolated actual-model invocation); #11 and #12 are
+delivered; #13 qualifies conservative schema interruption without implicit
+migration. #14 remains unrun. The ordered bounded slices are:
 
 1. [Creator-only planner → proposal → explicit owner review (#10)](https://github.com/barocss/doc-sync/issues/10).
 2. [Hosted server target/range enforcement (#11)](https://github.com/barocss/doc-sync/issues/11).
