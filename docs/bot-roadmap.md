@@ -99,3 +99,12 @@ server recovery or a complete CRDT port. R5 and R6 remain planned, with separate
 integration and product gates. Production server and client code remain TypeScript.
 
 The [recorded experiment results](../experiments/rust-core/RESULTS.md) include 265 passing Node 24 differential operations and an isolated Chrome 156 storage-batch check. Chrome matched checksum `719347296`; JavaScript/WASM medians were 1.700/7.300 ms. Node 24 medians were 1.759/8.050 ms. WASM was slower in both measured batches. Timing includes allocation, initialization, edits, and hashing; it excludes text transfer and per-edit boundary calls. Full CRDT equivalence, production Rust integration, and editor performance acceptance remain **NOT_RUN**. Each later stage needs separate evidence. No production speedup follows from the baseline.
+
+### Issue #3: bounded identity-bound preservation
+
+Implemented the first conservative preservation contract: selected scalar schema
+attributes on separate stored text blocks, paired with text-only bounded planning.
+Original captures survive resume; identity/placement/schema/value conflicts stop
+for review without restoring human data. General structural edits, relocation,
+nested fields and history-wide invariant monitoring remain outside this scope.
+See [verification report](reports/protected-attributes-2026-11-16/README.md).

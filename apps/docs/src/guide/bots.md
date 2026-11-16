@@ -236,3 +236,30 @@ The reviewer has an empty History. Writer undo retains `Hi`. The driver does not
 This uses the fixed base text schema. Rust has no production editor, bot, or MCP adapter. See the [Rust engine guide](./rust) for the separate v1 through v6 capabilities and limits.
 
 </details>
+
+### Identity-bound protected attributes
+
+A bounded text mission can preserve selected attributes of **other stored text
+blocks** with `--protect-attributes '[{"path":[2,0],"attribute":"level"}]'`
+(or `BotOptions.protectedAttributes`). This requires `--planning-path`; the edit
+target and each protected block must differ. Only existing schema-declared,
+top-level scalar attributes are supported, with at most 16 targets. Missing is
+captured separately from explicit `null`, `false`, zero or an empty string; no
+schema default is inferred.
+
+Before the first planner call, the runner persists the original attribute's
+presence/value plus stored ID, canonical path, node type, epoch and schema
+fingerprint. Each subsequent planning step and authoritative completion checks
+that capture again. A peer can edit unprotected text without invalidating the
+attribute condition. A changed attribute, replacement, deletion, moved target,
+schema transition or restored epoch instead requires review. The runner never
+restores an old value or silently captures the new one. Interrupted missions
+retain the original capture; incomplete recovery records fail closed.
+
+This is a conservative first scope: text-only edits in a separate block, not
+structural preservation, nested object comparison, automatic target relocation,
+or general semantic merging. It verifies the observed authoritative revision;
+it is not a lock against edits after completion, nor a guarantee that a value
+never changed and changed back between observations. Human text changes and
+actor-local undo remain independent. A plain model-reported completion without
+a structured brief remains model-reported even when preservation checks pass.
