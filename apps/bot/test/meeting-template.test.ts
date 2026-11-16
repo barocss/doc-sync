@@ -10,7 +10,7 @@ test('explicit custom schema mapping creates a detached verifiable draft',()=>{
  const source=input(),before=structuredClone(source),result=meetingNotesTemplate(source);assert.equal(result.status,'ready');if(result.status!=='ready')return;
  assert.deepEqual(source,before);assert.equal(result.schemaVersion,schemaVersion(schema));
  assert.equal(verifyBrief(result.brief,result.draft,schema,{epoch:'e',serverSeq:0,schemaVersion:result.schemaVersion}).status,'passed');
- result.draft.children![0].runs=[{text:'invented'}];assert.equal(source.inputs.title,'Weekly meeting');
+ result.draft.children![0].runs=[{text:'invented',marks:{}}];assert.equal(source.inputs.title,'Weekly meeting');
  assert.equal(verifyBrief(result.brief,result.draft,schema,{epoch:'e',serverSeq:0,schemaVersion:result.schemaVersion}).status,'failed');
 });
 test('missing facts and invalid text are actionable, never invented',()=>{
