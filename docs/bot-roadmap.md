@@ -20,13 +20,13 @@ The checks support exact text, node type, exact non-overlapping UTF-16 occurrenc
 
 ## B3. Plan, proposal, and server authorization
 
-**Status: bounded owner approval and recovery implemented; B3 remains in progress.** The private hosted HTTP/CLI path stores immutable plain-text proposals separately from History. A creator has read + proposal_create; a separate owner can inspect/reject and use read + proposal_accept to approve or reconcile. Both `proposals.enabled` and `proposals.acceptanceEnabled` default to false. Inspect before explicit owner approval. Keep owner secrets outside the planner. No acceptance MCP tool, planner adapter, or editor approval UI is included.
+**Status: bounded owner approval and recovery implemented; B3 remains in progress.** The private hosted HTTP/CLI path stores immutable plain-text proposals separately from History. A creator has read + proposal_create; a separate owner can inspect/reject and use read + proposal_accept to approve or reconcile. Both `proposals.enabled` and `proposals.acceptanceEnabled` default to false. Inspect before explicit owner approval. Keep owner secrets outside the planner. No acceptance MCP tool or planner adapter is included. The opt-in local owner review workspace now embeds the ProseMirror demo, with explicit confirmation, stale refusal, original-decision recovery and cross-tab coordination (#4); it is not a production-wide editor integration.
 
 Acceptance checks the exact base and prepared CRDT operations before journal preparation/submission. It permits only one visible plain unstyled text block physically stored in root MAIN, with source at most 16,384 UTF-16 units and selection/replacement at most 4,096 each. Structure, moves, marks, cells, and promotion remain outside scope. Preview and immutable proposal policy remain unchanged; approval has a separate policy fingerprint. Each applied proposal has a separate fixed-actor undo group; undo/redo does not rewrite historical applied status.
 
 An accepted exact request can recover after restart without resend when receipt, private evidence, protected History, and checkpoint agree, including after later foreign edits. Missing/corrupt proof or unknown receipts remain blocked. Unsettled attempts block ordinary MCP startup, new base/capture work, and other approvals. Initial stale checks produce terminal stale without a proposal edit. For a foreign edit after the checks, reconciliation can produce terminal not_applied only after an exact durable server seal and checkpoint retirement. The seal prevents delayed application across restart; local cleanup preserves confirmed History and does not resend. Unknown outcomes and incomplete proof remain blocked. This does not establish universal automatic unblocking.
 
-**Remaining acceptance gates:** qualify remaining failure windows, supported-editor review controls, planner integration, and general document operation/scope authorization, including structural operations that cross a scope boundary. Create and review a new proposal after a stale base; never refresh under an old approval. Preserve concurrent edits and separate actor undo groups. Rejection must leave the document unchanged. The [proposal guide](../apps/docs/src/ai/proposals.md) gives command/API instructions. Browser and actual-model proposal acceptance remain unqualified.
+**Remaining acceptance gates:** qualify remaining failure windows, broader supported-editor embedding, creator-only planner integration, and general document operation/scope authorization, including structural operations that cross a scope boundary. Create and review a new proposal after a stale base; never refresh under an old approval. Preserve concurrent edits and separate actor undo groups. Rejection must leave the document unchanged. The [proposal guide](../apps/docs/src/ai/proposals.md) gives command/API instructions. Bounded synthetic-service Chrome review flows are covered by the [review report](reports/proposal-review-ui-2026-11-16/README.md). Actual-model end-to-end proposal acceptance and production qualification remain unverified.
 
 ## B4. Templates and schema-specific authoring
 
@@ -54,6 +54,43 @@ long-duration load claim is made.
 **Status: private hosted MCP foundation implemented; broader operations remain planned.** The single-host service uses static bearer grants, configured routes and upstream credentials, bounded sessions and requests, private durable journals, and restart recovery. macOS and Linux use kernel locks; Linux requires `/usr/bin/flock` from util-linux. This does not establish OAuth, TLS termination, distributed storage, production tenant isolation, or the full stage gate. Define audit retention, failure recovery, and deployment limits. Start source checking with explicitly supplied material. Add external retrieval and cross-document memory only with access rules, provenance, retention, user-visible deletion, and budgets. Treat source text as data, not as permission to act.
 
 **Acceptance gate:** test unauthorized access, unavailable sources, fabricated-reference rejection, deletion, quota enforcement, storage failure, and restart. Report inaccessible or judgment-based requirements as unchecked. A hosted-service claim needs evidence from the selected deployment boundary.
+
+## Ordered next slices (public implementation boundary)
+
+Proceed one issue at a time in this order; passing a slice does not complete its
+entire B-stage. The public implementation and tests above are distinct from local
+uncommitted schema/native experiments and their private roadmaps.
+
+1. **B3 proposal flow — [#10](https://github.com/barocss/doc-sync/issues/10).**
+   Connect bounded planning to creator-only proposal creation, persisted exact
+   mission/base/request identity and the existing explicit owner review. No owner
+   credential in the planner, direct-write fallback or automatic approval.
+2. **B3 server scope — [#11](https://github.com/barocss/doc-sync/issues/11).**
+   Enforce owner-configured stored-text target/range policy before capture,
+   creation and acceptance. Client planning/preservation checks are not this
+   authorization boundary. Prove rejection without journal/document mutation.
+3. **B3 conflict recovery — [#12](https://github.com/barocss/doc-sync/issues/12).**
+   Guide stale, proven not_applied, applied and unresolved outcomes. Fresh plans
+   need fresh review; missing proof stays blocked and never gets a new decision
+   ID merely to bypass uncertainty.
+4. **B1/B4 schema and recovery — [#13](https://github.com/barocss/doc-sync/issues/13).**
+   Stop safely when schema/target identity changes, retain original intent and
+   proof, and qualify compatible fresh planning versus unresolved old application.
+   This does not enable native schema transitions or migrate protected History.
+5. **B2/B4 short actual-model evaluation — [#14](https://github.com/barocss/doc-sync/issues/14).**
+   After preceding gates, predeclare a few schema/brief tasks and bounded
+   step/time budgets using an already-authorized connection. Separate deterministic
+   checks from judgment, record failures/interference/usage, and keep owner approval
+   explicit. No new paid service or long-duration load is implied.
+
+B5 persistent coordination and B6 deployment/source/memory gates remain separate,
+not silently delivered by these slices. The [bounded two-actor corpus](../experiments/schema-two-actor-schedules/README.md)
+now covers generated attribute/mark edits, both undo orders, peer structural
+staleness and late batch rejection with explicit replay/checkpoints and same-class
+whole-round reduction (#6). It is not arbitrary schema shrinking, production
+reliability, native equivalence or a long-load result. Dependency remediation (#8)
+passed its scoped compatibility checks and current audit; that is not a universal
+resource-exhaustion safety claim.
 
 ## Separate experiment lane
 
