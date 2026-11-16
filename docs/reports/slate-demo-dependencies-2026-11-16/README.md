@@ -14,7 +14,7 @@ Validation: frozen `npm ci --ignore-scripts`, workspace build, full demo suite
 checks explicit pinned runtimes; the existing client/local tests exercise real
 bundling rather than stubs. No long-duration load or browser UI result is claimed.
 
-The full dependency audit reports three existing advisories (two moderate, one
+The full dependency audit reports three existing vulnerable package entries (two moderate, one
 high) in unchanged hono, @hono/node-server and zod entries. They are not Slate
 runtime additions; this fix does not claim a clean overall security audit or run
 an unrelated breaking `audit fix --force`.
