@@ -83,8 +83,9 @@ must test every write boundary using the actual storage adapter before rollout.
 
 The companion `history-provenance-compatibility.test.ts` exercises current v1:
 local/foreign-target deletion cycles, original-ticket loss, forward-version
-rejection with no live/event mutation and unchanged empty pending queues.
-Non-empty pending migration is not covered by these fixtures. These are baseline constraints,
+rejection with no live/event mutation. Non-empty pending is preserved by the
+existing unsettled-client guard, which runs before history parsing.
+This does not validate a successful pending migration. These are baseline constraints,
 not evidence that migration or v2 works.
 
 Still required: dual-reader/v2 writer fixtures, old-reader downgrade refusal,
@@ -94,7 +95,47 @@ migration and unchanged original bytes. No long-duration load or real model call
 
 ## Checks for this design checkpoint
 
-- Current-reader fixtures: 4/4 pass.
-- Combined #31/#32 restore regression: 10/10 pass.
+- Current-reader fixtures: 8/8 pass after policy follow-up.
+- Combined #31/#32 restore regression: 14/14 pass after policy follow-up.
 - Core TypeScript check passes. Full core suite was not rerun (no runtime edits).
 - Independent read-only review found no blocking design inconsistency.
+
+## Dual-reader admission and explicit legacy policy (design follow-up)
+
+A future dual reader should have a detached parsing stage that returns version,
+legacy step count and validated candidate; it must not install into a live client.
+The caller must supply an explicit policy before creating an install handle:
+
+| Input | Policy | Proposed result |
+| --- | --- | --- |
+| v1 with existence entries | compatibility | Preserve exact v1 behavior, expose unverified status |
+| v1 with existence entries | strict | Retain source/candidate, block legacy undo/redo |
+| v2 with any legacy entries | strict | Same blocked behavior; do not infer trust from envelope version |
+| v2 with complete origins | either | Check document coupling/actor/phase before admission |
+| unknown version or malformed origin | either | Reject before install/write |
+| omitted/unknown policy | migration entry point | Reject, not a permissive fallback |
+
+The existing v1-only API stays compatible until a coordinated opt-in API is
+available. Do not silently change existing applications to strict or automatically
+promote their data. Provenance status describes format validation only, never
+trusted authorship. V2 reader cannot merely run the old parser and drop unknown
+fields; the baseline proves that v1 step extensions are silently discarded.
+
+Strict mode must check the entire next group before popping any stack or creating
+operations. If one step is unverified, leave the group, caret, document, pending,
+clock, pins, and events unchanged. Newly recorded actions cannot upgrade an older
+legacy step. Clear-history is an explicit user operation, never a migration
+fallback. Capability/status UI needs to distinguish available-but-blocked history
+from an empty stack. Policy switching must be explicit and cannot trigger replay.
+
+Current follow-up fixtures exercise non-empty pending preservation for both Sync
+formats, v1 extension-field loss, and retry from the unchanged serialized source
+after a future-version rejection. They do not simulate a disk crash, implement a
+dual reader, or supply the strict-mode UI. Those remain rollout requirements.
+
+Follow-up test correction: non-empty pending triggers the existing settled-client
+precondition before the history version parser, so it proves rejection/preservation,
+not dual-reader handling of pending changes. A successful fallback install resets
+the engine revision as documented; compare document/history and original source
+bytes, not revision identity. Initial 3 assertion failures exposed these assumptions
+and were corrected without altering runtime behavior.
