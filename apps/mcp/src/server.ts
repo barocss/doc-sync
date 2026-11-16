@@ -9,9 +9,9 @@ const HISTORY_TOOL_ACTIONS = Object.freeze(["undo", "redo"] as const);
 
 const path = z.array(z.number().int().nonnegative()).min(1);
 const edit = z.discriminatedUnion("op", [
-    z.object({op: z.literal("insert"), at: path, content: z.union([z.string(), z.array(z.record(z.unknown()))])}).strict(),
+    z.object({op: z.literal("insert"), at: path, content: z.union([z.string(), z.array(z.record(z.string(), z.unknown()))])}).strict(),
     z.object({op: z.literal("delete"), at: path, count: z.number().int().nonnegative()}).strict(),
-    z.object({op: z.literal("update"), at: path, attrs: z.record(z.unknown()), length: z.number().int().nonnegative().optional()}).strict(),
+    z.object({op: z.literal("update"), at: path, attrs: z.record(z.string(), z.unknown()), length: z.number().int().nonnegative().optional()}).strict(),
     z.object({op: z.literal("split"), at: path}).strict(),
     z.object({op: z.literal("merge"), at: path}).strict(),
     z.object({op: z.literal("move"), from: path, at: path}).strict(),
@@ -60,7 +60,7 @@ export function createServer(session: DocumentSession, options: ServerOptions = 
     }));
     server.registerTool("transition_schema", {
         description: "Request a compatible schema transition using an exact server epoch, sequence and schema version. Network failure leaves the outcome unknown; inspect get_server_schema before retrying.",
-        inputSchema: z.object({base: base.extend({schemaVersion: z.string().min(1)}).strict(), schema: z.record(z.unknown())}).strict(),
+        inputSchema: z.object({base: base.extend({schemaVersion: z.string().min(1)}).strict(), schema: z.record(z.string(), z.unknown())}).strict(),
     }, async ({base: transitionBase, schema}) => run("transition_schema", async () => {
         try { return result(await session.transitionSchema(transitionBase, schema as unknown as typeof session.client.schema)); } catch (error) { return toolError(error); }
     }));
@@ -88,7 +88,7 @@ export function createServer(session: DocumentSession, options: ServerOptions = 
     }));
     server.registerTool("edit_document", {
         description: "Apply model edits only if the server atomically confirms the revision from read_document. On an unconfirmed result call retry_edit, not edit_document again.",
-        inputSchema: z.object({base, edits: z.array(edit).min(1).max(100), stepId: z.string().uuid().optional()}).strict(),
+        inputSchema: z.object({base, edits: z.array(edit).min(1).max(100), stepId: z.guid().optional()}).strict(),
     }, async ({base: revision, edits, stepId}) => run("edit_document", async () => {
         try { return result(await session.edit(revision, edits as EditOp[], stepId)); } catch (error) { return toolError(error); }
     }));

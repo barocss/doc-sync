@@ -17,8 +17,8 @@ export type ProposalEvidence = {format: 1; physical: ProposalPhysicalOwner; prop
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const schema = z.object({format: z.literal(1), physical: z.object({origin: z.string().min(1).max(2048), document: z.string().regex(/^[a-z0-9-]{1,40}$/), actor: z.string().regex(/^[\w~-]{1,256}$/)}).strict(),
     proposalId: hash, proposalDigest: hash, owner: z.object({principal: z.string(), routeKey: hash, actor: z.string()}).strict(),
-    decision: z.object({kind: z.literal("accept"), requestId: z.string().uuid(), principal: z.string(), grantId: z.string(), proposalDigest: hash, approvalPolicyFingerprint: hash}).strict(),
-    attemptId: z.string().uuid(), journal: z.unknown(), evidenceDigest: hash}).strict();
+    decision: z.object({kind: z.literal("accept"), requestId: z.guid(), principal: z.string(), grantId: z.string(), proposalDigest: hash, approvalPolicyFingerprint: hash}).strict(),
+    attemptId: z.guid(), journal: z.unknown(), evidenceDigest: hash}).strict();
 
 export function parseProposalEvidence(value: unknown, record: ProposalRecord, physical: ProposalPhysicalOwner): ProposalEvidence {
     parseProposalRecord(record, record.payload.owner);
