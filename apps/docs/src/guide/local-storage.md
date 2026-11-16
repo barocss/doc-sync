@@ -143,3 +143,18 @@ deletion. Such redo remains supported. The snapshot does not retain complete
 provenance for that case, so structural validation is not authentication of every
 possible forged History. Trusted storage and recovery generation/GC proofs still
 matter. User attribute JSON is not interpreted as ticket metadata.
+
+## Inspect History format without opening it
+
+Core exports `inspectHistorySnapshot(history, {legacyPolicy: 'strict'})` for
+read-only format inspection. Pass a History payload, not the entire local-state
+envelope. It accepts v1 and the proposed v2 origin format, but returns only a
+`scope: 'format-only'` report: source version, legacy/origin existence-step counts
+and a `legacyActionsBlocked` policy signal. Use `'compatibility'` explicitly to
+inspect without recommending a legacy-action block.
+
+This signal does not block live undo/redo. V1 entries remain unverified even if
+extra fields resemble provenance. The inspector cannot verify document ownership,
+GC protection or stored allocation floors. It does not return an install handle,
+migrate storage or enable v2 writing. Current normal restore APIs still reject
+v2. A successful inspection is not permission to install or downgrade a checkpoint.

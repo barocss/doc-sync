@@ -1,6 +1,6 @@
 # History provenance migration design (#32)
 
-Status: design and current-reader baseline fixtures only. No v2 writer, migration,
+Status: design, detached format inspector, and current-reader baseline fixtures. No v2 writer, migration,
 legacy quarantine UI, or new runtime guarantee is implemented. #32 remains open.
 
 ## Evidence and boundary
@@ -139,3 +139,32 @@ not dual-reader handling of pending changes. A successful fallback install reset
 the engine revision as documented; compare document/history and original source
 bytes, not revision identity. Initial 3 assertion failures exposed these assumptions
 and were corrected without altering runtime behavior.
+
+## Implemented detached inspection slice
+
+`inspectHistorySnapshot(input, {legacyPolicy: 'strict' | 'compatibility'})` is now
+exported from Core. It validates JSON/common tables/groups and the proposed v2
+existence origins/phases, returning only `scope: 'format-only'`, source version,
+legacy/origin step counts, and `legacyActionsBlocked` policy signal. The latter
+is a recommendation for a future caller, NOT enforcement of live undo/redo.
+It produces no History object, install handle, migrated snapshot or disk write.
+The v1-only reader and writer remain unchanged and continue rejecting version 2.
+
+V1 origin-looking fields still count as unverified. V2 explicitly tagged legacy
+steps remain unverified even alongside valid origins. Invalid/missing policy,
+unsupported version, malformed origin, wrong phase, inconsistent deletion actor
+and invalid insert ticket range throw before any external state is touched.
+This inspector cannot prove actor ownership relative to a document, saved clock
+floor, token existence, GC safety or trusted authorship. Checkpoint installation
+still needs those checks. Non-existence step provenance is outside this slice.
+
+The internal v1 projection only reuses common shape validation on an already
+JSON-validated detached copy. It is never returned or installed and does not
+constitute a v2-to-v1 migration. No consumer is automatically switched to v2.
+
+Inspector verification: 7 focused tests, core build/typecheck and final full Core
+suite 1706/1706 pass (53.6 seconds). Docs build/check passes: 56 pages, 2686 links.
+Independent review prompted internal causal-clock checks and an explicit field
+comment that the policy signal is not runtime enforcement. An initial full run
+overlapped a rebuild and had two missing-dist import failures; the final suite was
+rerun after the completed build and passed. No long-duration load was performed.
