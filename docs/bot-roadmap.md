@@ -30,7 +30,7 @@ An accepted exact request can recover after restart without resend when receipt,
 
 ## B4. Templates and schema-specific authoring
 
-**Status: planned after B3.** Add project proposal, meeting notes, and presentation templates using the actual server schema. Define required sections, node relationships, exact content, placement, preservation, and missing-information handling for each template. Extend B2 checks where the template needs stronger guarantees.
+**Status: first offline meeting-notes draft/brief helper implemented (#33); broader authoring remains planned.** The opt-in `template-meeting` command takes an explicit schema, four role-to-text-type mappings and supplied facts. It produces a draft and deterministic brief only, with no document write or model call. Direct root flow/text schemas without childRules are supported; unsupported mappings and missing facts are reported. Add project proposal and presentation templates using the actual server schema. Define required sections, node relationships, exact content, placement, preservation, and missing-information handling for each template. Extend B2 checks where the template needs stronger guarantees.
 
 **Acceptance gate:** run shared deterministic fixtures with valid and invalid outputs for each schema. Test concurrent edits and unsupported schema transitions. Measure actual model task success separately from fixture success. Do not infer full Word, Notion, or presentation compatibility from these templates.
 

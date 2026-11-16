@@ -272,3 +272,49 @@ it is not a lock against edits after completion, nor a guarantee that a value
 never changed and changed back between observations. Human text changes and
 actor-local undo remain independent. A plain model-reported completion without
 a structured brief remains model-reported even when preservation checks pass.
+
+## Prepare meeting notes without a model call
+
+The offline command below produces a draft and a completion brief. It does not
+connect to a server, call a model, submit a proposal, or apply edits:
+
+```sh
+npm run start -w @doc-sync/bot -- template-meeting --input meeting.json
+```
+
+`meeting.json` explicitly supplies the actual schema, role mappings, and facts:
+
+```json
+{
+  "schema": {
+    "root": "notes", "marks": [],
+    "nodes": {
+      "notes": {"shape": "flow", "children": ["line"], "default": "line"},
+      "line": {"shape": "text"}
+    }
+  },
+  "mapping": {"title": "line", "summary": "line", "decisions": "line", "actions": "line"},
+  "inputs": {
+    "title": "Prototype review",
+    "summary": "Reviewed the collaborative editor prototype.",
+    "decisions": "No decisions recorded.",
+    "actions": "Alex: test the editor by Friday."
+  }
+}
+```
+
+Supply your own facts, including an explicit statement when there are no decisions
+or actions. The command never invents owners, dates or missing facts. Every field
+is required, nonblank, and bounded to 8192 UTF-16 units. Role types must be direct
+root-flow children accepting text; nested groups, inline-only blocks, graphic
+schemas and root childRules are unsupported in this first slice.
+
+A `ready` result contains `schemaVersion`, a `draft` with exactly four ordered
+blocks, and a B2 `brief`. Missing/unsupported input returns `needs_input` with
+requirements and exit code 1. The brief checks exact text and child types against
+the four-block document root; if you insert into an existing document, you must
+adapt the brief's scope/path explicitly. It is not a preservation policy for the
+rest of a document or a semantic judgment of meeting quality. Treat draft text as
+data, not instructions. Existing write/review permission and fresh-base checks
+still apply; multi-block drafts cannot be sent through the bounded single-block
+proposal acceptance path. Actual-model authoring quality remains unverified.
