@@ -8,9 +8,9 @@ import {previewReplacement} from "./proposal-preview.ts";
 const UNSETTLED_PROPOSAL_STATUSES = Object.freeze(["applying", "unconfirmed", "needs_attention"]);
 
 export class ProposalHttpError extends Error { readonly status: number; constructor(status: number) { super("Proposal request rejected"); this.status = status; } }
-export type ProposalCapture = (route: HostedRoute, grant: HostedGrant, request?: CreateProposal) => Promise<{base: CreateProposal["base"]; source?: string}>;
+export type ProposalCapture = (route: HostedRoute, grant: HostedGrant, request?: CreateProposal, targetPath?: [number]) => Promise<{base: CreateProposal["base"]; source?: string; blockId?: string}>;
 export function proposalCapability(method: string | undefined, suffix: string): "proposal_create" | "proposal_read" | "proposal_decide" | "proposal_accept" {
-    if (suffix === "/base" && method === "GET" || suffix === "" && method === "POST") return "proposal_create";
+    if ((suffix === "/base" && method === "GET" || suffix === "/target" && method === "POST") || suffix === "" && method === "POST") return "proposal_create";
     if (/^\/[a-f0-9]{64}\/(accept|reconcile)$/.test(suffix) && method === "POST") return "proposal_accept";
     if (/^\/[a-f0-9]{64}\/reject$/.test(suffix) && method === "POST") return "proposal_decide";
     if ((suffix === "" || /^\/[a-f0-9]{64}$/.test(suffix)) && method === "GET") return "proposal_read";
@@ -27,6 +27,13 @@ export async function handleProposal(options: {req: IncomingMessage; res: Server
         try { rejectProposalSchema.parse(parsed); } catch { throw new ProposalHttpError(400); }
         try { if (!options.accept) throw new ProposalHttpError(405); respond(await options.accept(suffix.split("/")[1]!, parsed, suffix.endsWith("/reconcile"))); return; }
         catch (error) { if (error instanceof ProposalConflict) throw new ProposalHttpError(409); if (error instanceof ProposalHttpError) throw error; throw new ProposalHttpError(503); }
+    }
+    if (suffix === "/target") {
+        const value = parsed as {path?: unknown};
+        if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).length !== 1 || !Array.isArray(value.path) || value.path.length !== 1 || !Number.isSafeInteger(value.path[0]) || value.path[0] < 0) throw new ProposalHttpError(400);
+        const path: [number] = [value.path[0]], captured = await capture(route, grant, undefined, path);
+        if (captured.source === undefined || !captured.blockId) throw new ProposalHttpError(503);
+        respond({base: captured.base, target: {path, blockId: captured.blockId, text: captured.source}}); return;
     }
     if (suffix === "/base") { respond((await capture(route, grant)).base); return; }
     let request: CreateProposal | undefined;

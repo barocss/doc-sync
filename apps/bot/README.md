@@ -150,3 +150,56 @@ An accepted exact request can recover after restart without resubmission when it
 Initial base mismatches become terminal `stale`; create and review a new proposal. For concurrent edits after the last base check, reconciliation can finish as `not_applied` only after the server durably seals the exact request and private checkpoint cleanup completes. No edit is resent. Unknown outcomes or incomplete proof remain blocked. Create and review a new proposal for changed content.
 
 The initial scope is one visible plain unstyled root `MAIN` text block, with at most 16,384 source UTF-16 units and 4,096 selected/replacement units. Structure, move, mark, cell, and promotion operations are refused before journal preparation or submission. Each applied proposal has a separate undo group for the fixed configured actor. Actor MCP undo/redo requires a separate write grant, preserves other actors' edits within this scope, and does not rewrite the proposal's historical `applied` status. A human editor's undo stack is separate. B3 remains in progress; full UI, planner integration, general structural authorization, and remaining failure qualification are open. This path has no browser or actual-model proposal-acceptance claim.
+
+### Creator-only prepared proposal slice (issue #10, partial)
+
+`proposal-plan` is opt-in and does **not** run Codex or another model. It reads one
+private structured-plan JSON file, captures one authorized root stored unstyled
+text target, and stores a proposal for the separate owner review workspace. This
+is not the direct-writing `run` mode, and never falls back to it.
+
+```sh
+mkdir -m 700 ./proposal-missions
+# Prepare ./plan.json privately (chmod 600); do not put tokens in this file.
+node apps/bot/src/main.ts proposal-plan \
+  --endpoint https://example.test/mcp/tenant/document/slot \
+  --token-env DOC_SYNC_PROPOSAL_TOKEN \
+  --mission-file ./proposal-missions/draft.json \
+  --brief 'Draft a short introduction for owner review' --path '[0]' \
+  --plan-file ./plan.json
+```
+
+The environment credential must be a configured `read` + `proposal_create`
+grant. Hosted configuration forbids combining this with write/schema/owner
+permissions. Use a separately configured owner credential in the review workspace;
+never pass it to this command or a planner. Outside numeric loopback, the new
+creator client requires HTTPS and refuses redirects. The input schema is exactly:
+
+```json
+{"start":0,"end":0,"replacement":"Draft introduction.","explanation":"Prepared draft for review","assumptions":[],"questions":[],"checks":[{"reference":"Owner checks accuracy","status":"unchecked"}]}
+```
+
+`start/end` are UTF-16 offsets in the captured text (no split surrogate pairs).
+One replacement is bounded to 4096 units; a target is at most 16384. Structural,
+marked, virtual, missing or unsettled targets are rejected. The server rechecks
+the exact base and identity during creation and later owner acceptance. Capture
+is available as authenticated `POST .../proposals/target` with `{"path":[0]}`.
+This provides no new owner-defined target policy; that is issue #11.
+
+Mission intent is saved before sending. Retry the **same** mission path, brief,
+path and credential after an unknown result: it resends the exact request, never
+replans or refreshes the base. `created` means proposal storage acknowledged,
+**not** approved, applied, or requirements verified. A changed peer base fails
+closed; unknown remains unknown even for a rejected request. Owner rejection does
+not cause another proposal. Owner cancel before send means do not invoke this
+command. After send, use the separate owner rejection flow. A crash can leave a
+`.lock`; do not delete it until the previous process and persisted attempt have
+been inspected. There is no automatic force-unlock or uncertainty bypass.
+
+The library `runProposalMission(options, planner, creatorClient)` supplies a
+cloned `{brief,target}` data object to a trusted injected planner, never the client
+or bearer. This is a **data boundary, not a process sandbox**: do not inject
+untrusted executable code. Brief is a bounded objective string, not the full
+structured brief verifier. Actual-model invocation with credential/process
+isolation, conversational review integration and model quality evaluation are
+not delivered by this slice. Issue #10 stays open; evaluation is tracked in #14.

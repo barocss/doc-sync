@@ -1,3 +1,6 @@
+import {creatorClient} from "./proposal-client.ts";
+import {runProposalMission} from "./proposal-planner.ts";
+import {readProposalPlan} from "./proposal-plan-input.ts";
 import {proposalCommand} from "./proposals.ts";
 import {readFile} from "node:fs/promises";
 import {parseBrief} from "./brief.ts";
@@ -11,6 +14,7 @@ import {listMissions, loadMission, runMission, recoverMission, resumeMission} fr
 import {createProfile, listProfiles, loadProfile, profileActor, profileUrl} from "./profiles.ts";
 import type {ProfileInput} from "./profiles.ts";
 
+const PROPOSAL_PLAN_OPTIONS = Object.freeze(["--plan-file", "--mission-file", "--brief", "--path"]);
 const PROPOSAL_CREATE_OPTIONS = Object.freeze(["--input"]);
 const PROPOSAL_DECIDE_OPTIONS = Object.freeze(["--id", "--input"]);
 const PROPOSAL_INSPECT_OPTIONS = Object.freeze(["--id"]);
@@ -35,8 +39,17 @@ async function main() {
         if (!key?.startsWith("--") || value === undefined || options.has(key)) throw new Error("Use unique --option value pairs");
         options.set(key, value);
     }
-    const permitted = command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
+    const permitted = command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-plan" ? PROPOSAL_PLAN_OPTIONS : command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
     for (const key of options.keys()) if (!permitted.has(key)) throw new Error(`Unknown option: ${key}`);
+    if (command === "proposal-plan") {
+        const missionPath = options.get("--mission-file"), brief = options.get("--brief"), input = options.get("--plan-file");
+        const path = JSON.parse(options.get("--path") ?? "null");
+        const tokenName = options.get("--token-env") ?? "DOC_SYNC_PROPOSAL_TOKEN";
+        if (!missionPath || !brief || !input || !/^[A-Za-z_][A-Za-z0-9_]{0,79}$/.test(tokenName)) throw new Error("proposal-plan requires --mission-file, --brief, --path and --plan-file");
+        const client = creatorClient(options.get("--endpoint") ?? "", process.env[tokenName] ?? "");
+        const result = await runProposalMission({missionPath, brief, path}, async () => readProposalPlan(input), client);
+        console.log(JSON.stringify(result, null, 2)); if (result.status === "unknown") process.exitCode = 1; return;
+    }
     if (command?.startsWith("proposal-")) { console.log(JSON.stringify(await proposalCommand(command, options), null, 2)); return; }
     if (options.has("--ephemeral") && !BOOLEAN_OPTION_VALUES.includes(options.get("--ephemeral")!)) throw new Error("--ephemeral must be true or false");
     const stateDir = resolve(process.env.INIT_CWD ?? process.cwd(), options.get("--state-dir") ?? ".doc-sync-bots");

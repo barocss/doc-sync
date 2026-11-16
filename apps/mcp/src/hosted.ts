@@ -96,7 +96,7 @@ export function createHostedService(rawConfig: unknown) {
         try { return await acceptProposal(config, route, grant, id, input, reconcileOnly); }
         finally { registry.release(e.identity, e); complete(); }
     };
-    const captureProposal: ProposalCapture = async (route, grant, request) => {
+    const captureProposal: ProposalCapture = async (route, grant, request, targetPath) => {
         const e: Entry = {identity: JSON.stringify([route.upstream, route.upstreamDocument, route.actor]), binding: "proposal-capture", principal: grant.principal, state: "starting", lastUsed: Date.now(), calls: new Set()};
         try { registry.reserve(e.identity, grant.principal, e); } catch { throw new ProposalHttpError(409); }
         let complete!: () => void; e.ready = new Promise<void>(resolve => { complete = resolve; });
@@ -124,21 +124,22 @@ export function createHostedService(rawConfig: unknown) {
             const base = {generation: before.generation!, epoch: before.epoch, serverSeq: before.serverSeq, schemaVersion: before.schemaVersion!};
             const settled = () => !!base.generation && !!base.schemaVersion && client!.synchronized && !client!.pending.length && client!.epoch === base.epoch && client!.serverSeq === base.serverSeq && schemaVersion(client!.schema) === base.schemaVersion;
             if (!settled() || request && JSON.stringify(base) !== JSON.stringify(request.base)) throw new ProposalHttpError(409);
-            let source: string | undefined;
-            if (request) {
-                const child = readDocumentSlice(client.doc, {path: [], start: request.change.path[0], limit: 1, maxNodes: 1024, maxTextUnits: 16384, maxBytes: 131072}).children[0];
-                const blocks = client.doc.blocks(), block = blocks.find(b => b.marker.key === request.change.blockId);
-                if (!child || child.blockId !== request.change.blockId || !block || block.kind !== "text" || block.virtual || block.parts || block.aliases.length || block.marker.line.key !== MAIN ||
+            let source: string | undefined, blockId: string | undefined;
+            if (request || targetPath) {
+                const child = readDocumentSlice(client.doc, {path: [], start: request ? request.change.path[0] : targetPath![0], limit: 1, maxNodes: 1024, maxTextUnits: 16384, maxBytes: 131072}).children[0];
+                blockId = child?.blockId ?? undefined;
+                const blocks = client.doc.blocks(), block = blocks.find(b => b.marker.key === blockId);
+                if (!child || request && child.blockId !== request.change.blockId || !block || block.kind !== "text" || block.virtual || block.parts || block.aliases.length || block.marker.line.key !== MAIN ||
                     block.chars.some(char => char.kind !== "char" || Object.keys(client!.doc.marksOf(char)).length) ||
                     blocks.filter(b => b.marker.key === child.blockId).length !== 1 || client.schema.nodes[child.node.type]?.shape !== "text" || child.node.children ||
                     child.node.runs?.some(run => !("text" in run) || Object.keys(run.marks).length)) throw new ProposalHttpError(422);
                 source = (child.node.runs ?? []).map(run => "text" in run ? run.text : "").join("");
                 if (source !== block.text || source.length > 16384) throw new ProposalHttpError(422);
-                try { previewReplacement(source, request.change); } catch { throw new ProposalHttpError(422); }
+                try { if (request) previewReplacement(source, request.change); } catch { throw new ProposalHttpError(422); }
             }
             const after = await transport.getRecoveryState();
             if (JSON.stringify(before) !== JSON.stringify(after) || version !== client.doc.version || !settled()) throw new ProposalHttpError(409);
-            return {base, ...(source !== undefined ? {source} : {})};
+            return {base, ...(source !== undefined ? {source, blockId} : {})};
         } finally { try { client?.disconnect(); await journal?.close(); } finally { registry.release(e.identity, e); complete(); } }
     };
     const server = createHttpServer({maxHeaderSize: 65536, headersTimeout: config.limits.requestMs, requestTimeout: config.limits.requestMs}, (req, res) => {
