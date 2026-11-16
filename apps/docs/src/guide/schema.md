@@ -153,3 +153,25 @@ tracking, ranges, and sparse history/GC need their own contracts.
 These are requirements for future spreadsheet support. Adding a
 `SpreadsheetSchema` name or cell attributes to today's grid does not implement
 them. Existing document table behavior remains unchanged.
+
+## Atomic pattern descriptor diagnostics
+
+`diagnoseAtomicAttributePatterns(schema)` returns read-only diagnostics for
+atomic node attributes and value marks. Each result has `code` (`pattern_type`
+or `invalid_pattern`), `path` as exact string segments, and `message`. For example,
+`["nodes", "paragraph", "attrs", "label", "pattern"]` identifies one descriptor
+without treating dots inside names as path separators. Invalid atomic patterns
+also appear in `checkSchema`'s existing string problems and are rejected by
+normal document construction and `schemaVersion` preflight.
+
+This initial API takes a typed `Schema`; it is not a general untrusted-JSON parser
+or complete descriptor diagnostics. Nested collaborative field diagnostics
+remain with their existing checker and are not duplicated here. Regex syntax
+success is not proof of safe execution cost or protection against pathological
+regular expressions. Valid pattern behavior and empty pattern behavior remain
+unchanged. Direct `attrValueOk` rejects a bad pattern rather than throwing a
+compile exception; null-reset semantics remain unchanged.
+
+Atomic `values` retains its existing reference-equality behavior for objects,
+while nested field leaf enums use JSON deep equality. This diagnostic slice does
+not normalize those contracts, reinterpret defaults or migrate existing data.

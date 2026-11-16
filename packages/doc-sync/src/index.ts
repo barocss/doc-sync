@@ -13,13 +13,13 @@ export {Doc, MAIN, cellAttrKey, cellSlot, comparePos, isAlive, samePos, slotKey,
 export {anchorAt, blockPath, childCount, compileEdits, flowPath, gridPath, pathAt, pathOfPos, posOfPath, resolvePath, visibleBlocks} from "./crdt/edit.ts";
 export {History} from "./crdt/history.ts";
 export {applyEdit, applyEdits, canonMarks, canonical, diffModels, inheritedMarks, markOrder, runsToUnits, unitsToRuns} from "./crdt/model.ts";
-export {acceptsText, attrValueOk, checkSchema, gridParts, groupOf, inlineTypes, storedTypes} from "./crdt/schema.ts";
+export {acceptsText, attrValueOk, checkSchema, diagnoseAtomicAttributePatterns, gridParts, groupOf, inlineTypes, storedTypes} from "./crdt/schema.ts";
 export {assertCompatibleSchema, schemaVersion} from "./crdt/schema-version.ts";
 export {Clock, ROOT, compareTicket, keyOf, shortOf, ticketOf} from "./crdt/ticket.ts";
 export type {AtomBlock, Block, FlowBlock, GridBlock, Item, Line, Op, Pos, Snapshot, SpanValue, TextBlock} from "./crdt/doc.ts";
 export type {HistorySnapshot, RecordOptions} from "./crdt/history.ts";
 export type {EditOp, Marks, ModelPath, NodeJSON, Run, Unit} from "./crdt/model.ts";
-export type {AtomSpec, AttrSpec, CellSpec, ContainerSpec, DocumentSchema, FlowSpec, GraphicSchema, GridSpec, GroupSpec, InlineSpec, NodeSpec, OrderedSpec, RowSpec, Schema, SchemaDomain, Shape, SpanSpec, TextSpec, UiSpec} from "./crdt/schema.ts";
+export type {AtomicAttributePatternDiagnostic, AtomSpec, AttrSpec, CellSpec, ContainerSpec, DocumentSchema, FlowSpec, GraphicSchema, GridSpec, GroupSpec, InlineSpec, NodeSpec, OrderedSpec, RowSpec, Schema, SchemaDomain, Shape, SpanSpec, TextSpec, UiSpec} from "./crdt/schema.ts";
 export type {Ticket} from "./crdt/ticket.ts";
 
 export type {MoveOp} from "./crdt/placement.ts";

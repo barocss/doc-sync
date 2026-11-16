@@ -155,9 +155,38 @@ export const gridParts = (schema: Schema, grid: string): {row: string; cell: str
     return row && cell && body && schema.nodes[body]?.shape === "flow" ? {row, cell, body} : null;
 };
 
+/** Initial typed-descriptor diagnostics; not a general unknown-JSON schema parser. */
+export type AtomicAttributePatternDiagnostic = {
+    code: "pattern_type" | "invalid_pattern";
+    path: string[];
+    message: string;
+};
+
+/** Read-only syntax checks for atomic node attributes and value marks.
+ * Nested collaborative fields retain their existing fieldsSchemaProblems contract.
+ * Successful compilation says nothing about regex execution complexity.
+ */
+export const diagnoseAtomicAttributePatterns = (schema: Schema): AtomicAttributePatternDiagnostic[] => {
+    const diagnostics: AtomicAttributePatternDiagnostic[] = [];
+    const inspect = (spec: AttrSpec, path: string[]): void => {
+        if (isFieldSpec(spec) || spec.pattern === undefined) return;
+        if (typeof spec.pattern !== "string") {
+            diagnostics.push({code: "pattern_type", path: [...path, "pattern"], message: "Attribute pattern must be a string"});
+            return;
+        }
+        try { new RegExp(spec.pattern); }
+        catch { diagnostics.push({code: "invalid_pattern", path: [...path, "pattern"], message: "Invalid regular expression pattern"}); }
+    };
+    for (const [type, node] of Object.entries(schema.nodes)) {
+        for (const [name, spec] of Object.entries(node.attrs ?? {})) inspect(spec, ["nodes", type, "attrs", name]);
+    }
+    for (const [name, spec] of Object.entries(schema.markValues ?? {})) inspect(spec, ["markValues", name]);
+    return diagnostics;
+};
+
 /** 스키마 자체가 앞뒤가 맞는지 본다. 틀리면 설명 목록 */
 export const checkSchema = (schema: Schema): string[] => {
-    const problems: string[] = [];
+    const problems = diagnoseAtomicAttributePatterns(schema).map(diagnostic => `${JSON.stringify(diagnostic.path)}: ${diagnostic.message}`);
     const shapeOf = (type: string) => schema.nodes[type]?.shape;
     const missing = (owner: string, list: readonly string[]) =>
         list.filter(c => !schema.nodes[c]).forEach(c => problems.push(`${owner}.children 의 "${c}" 가 없다`));
@@ -300,8 +329,10 @@ export const attrValueOk = (spec: AttrSpec, value: unknown): boolean => {
         return false;
     }
 
-    if (spec.pattern && (typeof value !== "string" || !new RegExp(spec.pattern).test(value))) {
-        return false;
+    if (spec.pattern !== undefined && typeof spec.pattern !== "string") return false;
+    if (spec.pattern) {
+        try { if (typeof value !== "string" || !new RegExp(spec.pattern).test(value)) return false; }
+        catch { return false; }
     }
 
     if (typeof spec.default === "number") {
