@@ -26,6 +26,15 @@ editor binding; no host construction is required in ordinary application code.
 Run `npm run dev:client` for all four editors. Existing low-level and legacy
 client APIs remain supported.
 
+### Native editor bindings
+
+Choose the guide for your editor: [ProseMirror](./prosemirror),
+[Tiptap](./tiptap), [Slate](./slate), or [Lexical](./lexical).
+The Tiptap package is `@barocss/doc-sync-tiptap`; it exposes `DocSync` and
+`createTiptapExtensions` and requires the ProseMirror binding plus matching
+Tiptap 3.32.2 peers. Do not combine its generated schema with StarterKit schema
+or history extensions. See the [Tiptap setup and limits](./tiptap).
+
 ## Choose a runtime
 
 - For a networked browser editor, use the TypeScript client and an editor binding. See [editor integration](./editors).

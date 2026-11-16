@@ -95,6 +95,16 @@ apps/docs/src/guide/packages.md), not an unverified registry install command.
 `npm run check:packages` builds, packs and installs all ten packages in isolated
 local consumers; it does not publish them.
 
+### Using Tiptap
+
+The Tiptap binding is implemented as `@barocss/doc-sync-tiptap`, with `DocSync`
+and `createTiptapExtensions`. Start with the [Tiptap guide](https://barocss.github.io/doc-sync/guide/tiptap.html)
+or its [package README](packages/doc-sync-tiptap/README.md). Run
+`node apps/demo/tiptap/start.mjs` after the workspace build for its two-editor demo.
+It uses Tiptap 3.32.2 and the separate ProseMirror binding; its generated schema
+must not be mixed with StarterKit schema/history extensions. It remains a private,
+unpublished workspace, like the other bindings.
+
 ## Build an editor
 
 1. Define the [schema](apps/docs/src/guide/schema.md) and use

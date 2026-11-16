@@ -124,3 +124,14 @@ test('every navigation destination resolves to a documentation page', () => {
         assert.ok(authored || generated, destination);
     }
 });
+
+
+test('home and getting started expose all four implemented editor bindings', () => {
+    for (const [file, prefix] of [['index.md', './guide/'], ['guide/getting-started.md', './']]) {
+        const source = readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8');
+        for (const binding of ['prosemirror', 'tiptap', 'slate', 'lexical']) {
+            assert.ok(source.includes(`](${prefix}${binding})`), `${file}: missing direct ${binding} guide link`);
+        }
+        assert.ok(source.includes('@barocss/doc-sync-tiptap'), `${file}: name the standalone Tiptap package`);
+    }
+});
