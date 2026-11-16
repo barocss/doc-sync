@@ -1,0 +1,8 @@
+import assert from 'node:assert/strict';
+import {test} from 'node:test';
+import {generate,validate,replay,serialize,deserialize,reduce,targeted} from './schedules.mjs';
+for(const seed of [0,1,7,65535])test(`generated ${seed}: two-actor deliveries, foreign writes and both undo orders`,async()=>{const f=generate(seed),a=await replay(f),b=await replay(deserialize(serialize(f)));assert.equal(a.ok,true,JSON.stringify(a));assert.deepEqual(a,b);});
+test('bounded validator rejects malformed causal round and altered schema; serialization detects corruption',()=>{const f=generate();f.rounds[0].undo=['A','A'];assert.throws(()=>validate(f));const g=generate();delete g.schema.nodes[g.schema.root];assert.throws(()=>validate(g));const j=JSON.parse(serialize(generate()));j.fixture.seed++;assert.throws(()=>deserialize(JSON.stringify(j)));});
+test('same-class reducer preserves valid complete causal rounds and independent inputs',async()=>{const f=generate(),before=serialize(f);const oracle=async x=>{const replayed=await replay(x);assert.equal(replayed.ok,true);return x.rounds.some(r=>r.id==='r1')?{ok:false,failureClass:'injected-r1'}:{ok:false,failureClass:'different'};};const r=await reduce(f,oracle);assert.deepEqual(r.fixture.rounds.map(x=>x.id),['r1']);assert.equal(r.result.failureClass,'injected-r1');assert.equal(serialize(f),before);assert.deepEqual((await reduce(deserialize(serialize(r.fixture)),oracle)).fixture,r.fixture);});
+test('successful schedules are not reduced into artificial failures',async()=>{const f=generate();assert.deepEqual((await reduce(f)).fixture,f);});
+for(const kind of ['foreign-same-block','late-batch','peer-delete','peer-move'])test(`public two-actor contract: ${kind}`,()=>targeted(kind));
