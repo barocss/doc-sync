@@ -350,3 +350,38 @@ force-stopped. A live adapter must independently fix an approved destination and
 model, reject redirects, keep its credential in transport authentication, constrain
 provider output tokens and enforce authorized data/cost limits. No live-call,
 semantic-quality or production-security claim follows from synthetic tests.
+
+### Opt-in Responses adapter (mock-qualified, no CLI activation)
+
+`openAIProposalPlanner` implements a provider-specific request/response contract
+around the data-only boundary. A trusted host must explicitly supply an authorized
+API key, model and fetch implementation. The module reads no environment variables
+or credential files, has no default fetch and is not selected by the existing CLI.
+All qualification uses in-memory fake fetches and synthetic credentials.
+
+The destination is fixed to `https://api.openai.com/v1/responses`; redirects are
+rejected. Requests disable tools, background execution, streaming and response
+storage, use a strict `decision` JSON wrapper and set `max_output_tokens` (default
+1,024, maximum 4,096). A storage request flag is not a zero-retention guarantee.
+This contract follows the [Responses reference](https://developers.openai.com/api/reference/resources/responses/methods/create)
+and [Structured Outputs guide](https://developers.openai.com/api/docs/guides/structured-outputs),
+checked on 2026-11-16. Live model/account compatibility has not been established.
+
+Response parsing accepts only a completed response with one completed assistant
+message containing one unannotated text decision or refusal. Extra output items,
+including reasoning items, are conservatively rejected in this initial slice.
+Refusals become a fixed abstention without retaining raw provider refusal text.
+Truncated/error/tool outputs cannot become proposals. HTTP bodies are bounded to
+262,144 bytes and 1,024 chunks, with the existing deadline and call budget applying
+to fetch and body reading. Timeout does not prove provider work or charges were
+canceled. Errors do not expose raw provider diagnostics. Known
+provider-key reflections are rejected in outgoing body and decoded responses;
+this is not detection of arbitrary secrets in user-supplied material.
+
+Before real use, the owner must approve provider/account/model, API credential use,
+exact data disclosure and a cost/call/token budget. The caller must also establish
+account retention settings and live compatibility. Passing a real fetch is capable
+of external transmission; this implementation is not permission to do so. Usage
+budgets are not persistent across process restart. Creator/owner credentials remain
+separate; creating a proposal never approves or applies it. Issue #10 and actual-model
+qualification remain open.
