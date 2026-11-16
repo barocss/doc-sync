@@ -110,14 +110,20 @@ export async function listMissions(stateDir: string): Promise<Mission[]> {
     const ids = names.filter(name => /^[0-9a-f-]+\.json$/i.test(name)).map(name => name.slice(0, -5));
     return (await Promise.all(ids.map(id => loadMission(stateDir, id)))).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
-function checkPlan(value: Plan): void {
+/** Validate the entire model JSON plan before any durable pending/history record. */
+export function checkPlan(value: Plan): void {
+    const allowed = ["action", "at", "text", "count", "message", "focus", "editsJson"];
+    if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some(key => !allowed.includes(key))) throw new Error("Invalid model plan fields");
+    if (value.editsJson !== undefined && (typeof value.editsJson !== "string" || Buffer.byteLength(value.editsJson, "utf8") > 64 * 1024)) throw new Error("Model plan editsJson exceeds 64 KiB");
+    if (value.focus !== undefined && (!Array.isArray(value.focus) || value.focus.length > 64 || Array.from(value.focus).some(i => !Number.isSafeInteger(i) || i < 0))) throw new Error("Invalid model plan focus");
     if (!value || !PLANNER_ACTION_KINDS.includes(value.action) || !Array.isArray(value.at) || value.at.length > 64 ||
-        value.at.some(i => !Number.isSafeInteger(i) || i < 0) || typeof value.text !== "string" || value.text.length > 512 ||
+        Array.from(value.at).some(i => !Number.isSafeInteger(i) || i < 0) || typeof value.text !== "string" || value.text.length > 512 ||
         !Number.isSafeInteger(value.count) || value.count < 0 || value.count > 512 || typeof value.message !== "string" || value.message.length > 4000) throw new Error("Invalid or oversized model plan");
     if (!POSITION_OPTIONAL_PLANNER_ACTIONS.includes(value.action) && value.at.length < 2) throw new Error("A text edit needs a valid model position");
     if (value.action === "inspect" && (!Array.isArray(value.focus) || value.focus.length < 2 || value.focus.length > 64 || value.focus.some(i => !Number.isSafeInteger(i) || i < 0) || JSON.stringify(value.at) === JSON.stringify(value.focus))) throw new Error("An inspection needs a valid selection");
     if (value.action === "insert" && !value.text) throw new Error("An insertion needs text");
     if (value.action === "delete" && !value.count) throw new Error("A deletion needs a positive count");
+    if (Buffer.byteLength(JSON.stringify(value), "utf8") > 96 * 1024) throw new Error("Model plan exceeds the 96 KiB aggregate limit");
 }
 
 /** Parse an untrusted model plan before it enters the durable pending state. */

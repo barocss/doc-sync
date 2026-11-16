@@ -245,3 +245,14 @@ mission, not overwriting the old record. Legacy format1 edit recovery remains
 supported. Actual-model invocation and quality evaluation remain unimplemented;
 see `docs/reports/synthetic-proposal-evaluation-2026-11-16/README.md` for synthetic
 fixtures and explicit unmeasured outcomes.
+
+### Direct planner output limits
+
+Before recording a direct-runner plan in pending/history, runtime validation
+accepts only `action`, `at`, `text`, `count`, `message`, optional `focus`, and
+optional `editsJson`. Even unused `editsJson` is limited to 64 KiB UTF-8 and
+`focus` to 64 canonical indexes. The complete JSON representation must fit
+96 KiB, including escaping overhead; unusually escape-heavy inputs may therefore
+hit the aggregate limit before the raw string limit. Existing text, message,
+position and action-specific limits still apply. This is not a sandbox for a
+trusted JavaScript planner or a substitute for provider transport limits.
