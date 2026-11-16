@@ -222,7 +222,13 @@ class TypeScriptClientEngine implements ClientEngine, TypeScriptClientCompatibil
             if (edit.op === "delete" && (!Number.isSafeInteger(edit.count) || edit.count < 0)) throw new Error("Invalid delete count");
         }
         return withPathMemo(doc, () => doc.edit(input, {...options, preflight: () => {
-            if (!this.fastText(doc, input) && !this.fastStructure(doc, input)) this.clone(doc).edit(input, {normalize: true});
+            if (!this.fastText(doc, input) && !this.fastStructure(doc, input)) {
+                const candidate = this.clone(doc).edit(input, {normalize: true});
+                // Compilation alone can retain invalid atomic values that projection hides.
+                // Prove the generated wire batch against the untouched live base first.
+                const problem = doc.check(candidate.ops);
+                if (problem) throw new Error(`Invalid compiled edit batch: ${problem}`);
+            }
         }}));
     }
     apply(edits: EditOp[], options?: {normalize?: boolean; accepted?: boolean}): Op[] {

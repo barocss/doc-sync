@@ -248,3 +248,17 @@ order. Direct leaf validation returns false rather than coercing these malformed
 rules. Null resets and valid deep enum comparisons remain unchanged. The legacy
 raw Doc constructor's broader nested validation gate is not expanded by this
 change; validate schema identity before installing untrusted descriptors.
+
+### Client edit batch validation
+
+The TypeScript client engine's detached edit preflight validates generated CRDT
+operations against the unchanged document before live compilation. Invalid
+atomic enum, numeric range, pattern or mark updates are rejected early, including
+when they follow a valid insertion in the same batch. This changes previously
+accepted local edits whose invalid values were hidden by projection and later
+rejected by the server. Valid pending edits and peer changes are not discarded.
+
+This is not a new guarantee for raw `Doc.edit`: its lower-level projection and
+compilation semantics are unchanged. Existing bounded fast text/structural paths
+remain separate, and this does not replace server authorization or claim every
+possible command/server policy is equivalent.
