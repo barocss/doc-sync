@@ -124,7 +124,7 @@ npm run start --workspace @doc-sync/bot -- watch \
 
 The first observation establishes a baseline and does not run a review. Later changes between polls are coalesced into one review of the current document; the sequence range is a trigger, not a claim that the bot inspected only that range. Server sequence changes can include non-content events. The process prints the mission ID and result as JSON. Ctrl-C stops future polls; a review already in progress finishes before exit. The interval is 5–3600 seconds and the run limit is 1–100. Each review can call Codex and use account resources. Mission records may contain document content.
 
-This watcher uses an ephemeral, local reviewer actor. The runner rejects reviewer edits, but the demo server does not enforce read-only access. It does not persist its cursor, restore missed changes after a watcher restart, create proposals or comments, operate in the browser, or automatically edit documents. A server restart, schema or generation change, unavailable state, or uncertain review stops it; start it again only after inspection. Browser pending-edit recovery is a separate opt-in product feature with saved origin-local checkpoints and exact proof. The watcher does not provide that recovery.
+This watcher uses an ephemeral, local reviewer actor. The runner rejects reviewer edits, but the demo server does not enforce read-only access. Without `--checkpoint`, it does not persist its cursor or restore missed changes after restart. Neither mode creates proposals/comments, operates in the browser, or automatically edits documents. A server restart, schema or generation change, unavailable state, or uncertain review stops it; start it again only after inspection. Browser pending-edit recovery is a separate opt-in product feature with saved origin-local checkpoints and exact proof. The watcher does not provide that recovery.
 
 ## Hosted proposals and approval
 
@@ -257,7 +257,7 @@ hit the aggregate limit before the raw string limit. Existing text, message,
 position and action-specific limits still apply. This is not a sandbox for a
 trusted JavaScript planner or a substitute for provider transport limits.
 
-### Opt-in persistent reviewer API (not the `watch` command)
+### Opt-in persistent reviewer checkpoint
 
 `PersistentReviewWatch` in `src/persistent-watch.ts` offers
 `open({file,binding,maxRuns}, read, review)`, `poll()`, `stop()` and `close()` for
@@ -274,4 +274,34 @@ cancellation; it leaves clean checkpoints resumable. Do not await either from
 inside that watch's own read/review callback. No reset/repair API is supplied.
 The supported local kernel lock is held until active work has drained, including
 when it is slow or stuck. This is not distributed coordination or exactly-once
-model execution. The existing CLI watcher still has an in-memory cursor.
+model execution. The CLI uses this API only when `--checkpoint` is supplied.
+
+
+To opt the CLI in, prepare a private directory and use the same configuration on restart:
+
+```sh
+mkdir -m 700 .review-cursor
+npm run start -w @doc-sync/bot -- watch \
+  --url http://127.0.0.1:5410 --doc bot-example \
+  --mission 'Review missing project goals.' --model YOUR_AUTHORIZED_MODEL \
+  --max-runs 5 --checkpoint .review-cursor/watch.json
+```
+
+No watcher is started by installation. Running this command can call the existing
+Codex planner and consume account resources; use it only for documents/connections
+you authorize. A clean restart retains the cursor and total consumed run budget,
+not a fresh budget. Endpoint/document/mission/model or max-runs changes refuse
+reuse. Changing interval is allowed. Binding hashes are configuration identity,
+not model-version proof or authorization. Default-model settings may resolve to
+a different model later; pin a model when reproducibility matters. Checkpoint
+mode rejects endpoint credentials, query and fragment; never put secrets in URLs.
+
+Ctrl-C/SIGTERM prevents future polls and drains an active review before releasing
+the local lock; a clean checkpoint remains resumable. Forced interruption leaves
+an in-flight marker that cannot automatically rerun. Blocked/stopped checkpoints
+require inspection; there is no reset/repair command. Do not delete a checkpoint
+to bypass an unknown review outcome. Missed sequences trigger one review of the
+current document, not historical versions. Checkpoint binding excludes the random
+review actor because each read-only invocation uses a fresh ephemeral actor.
+Supported local locking remains macOS/Linux only. Synthetic integration tests do
+not establish real model quality, exactly-once execution or production durability.

@@ -318,3 +318,20 @@ rest of a document or a semantic judgment of meeting quality. Treat draft text a
 data, not instructions. Existing write/review permission and fresh-base checks
 still apply; multi-block drafts cannot be sent through the bounded single-block
 proposal acceptance path. Actual-model authoring quality remains unverified.
+
+
+## Resume a review watcher cursor
+
+`watch --checkpoint /private-directory/watch.json` opts into the existing durable
+review cursor. Prepare an owned mode-0700 directory; the checkpoint is mode 0600.
+Reuse the same endpoint, document, mission, model setting and max-runs to resume
+cleanly. The budget is cumulative across restarts. Without this option the watcher
+remains in-memory. Endpoint credentials/query/fragment are rejected in this mode.
+
+Ctrl-C/SIGTERM drains the current review and closes the lock; it does not cancel
+an already-running model call. In-flight, blocked or stopped checkpoints cannot
+silently restart. Inspect them instead of bypassing uncertainty by deleting them.
+Missed changes produce a coalesced review of the current document, not replay of
+historical snapshots. This remains a local macOS/Linux single-writer facility,
+not a scheduler or model isolation guarantee. The command uses the existing Codex
+planner when you run it, so only use an authorized connection and document.

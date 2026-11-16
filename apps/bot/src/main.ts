@@ -8,7 +8,7 @@ import {parseBrief} from "./brief.ts";
 import {randomUUID} from "node:crypto";
 import {setTimeout as delay} from "node:timers/promises";
 import {NodeHttpTransport} from "@barocss/doc-sync/node";
-import {ReviewWatch} from "./watch.ts";
+import {openCommandWatch} from "./watch-command.ts";
 import {resolve} from "node:path";
 import {codexPlanner} from "./codex.ts";
 import {listMissions, loadMission, runMission, recoverMission, resumeMission} from "./runner.ts";
@@ -19,7 +19,7 @@ const PROPOSAL_PLAN_OPTIONS = Object.freeze(["--plan-file", "--mission-file", "-
 const PROPOSAL_CREATE_OPTIONS = Object.freeze(["--input"]);
 const PROPOSAL_DECIDE_OPTIONS = Object.freeze(["--id", "--input"]);
 const PROPOSAL_INSPECT_OPTIONS = Object.freeze(["--id"]);
-const WATCH_OPTIONS = Object.freeze(["--url", "--doc", "--mission", "--state-dir", "--model", "--interval", "--max-runs"]);
+const WATCH_OPTIONS = Object.freeze(["--url", "--doc", "--mission", "--state-dir", "--model", "--interval", "--max-runs", "--checkpoint"]);
 const RUN_OPTIONS = Object.freeze(["--url", "--doc", "--actor", "--name", "--color", "--mission", "--state-dir", "--max-steps", "--ephemeral", "--model", "--character", "--personality", "--role", "--profile", "--brief", "--planning-path", "--protect-attributes"]);
 const PROFILE_CREATE_OPTIONS = Object.freeze(["--id", "--name", "--character", "--personality", "--role", "--color", "--state-dir"]);
 const RESUME_OPTIONS = Object.freeze(["--id","--state-dir","--model"]);
@@ -81,23 +81,24 @@ async function main() {
         const interval = Number(options.get("--interval") ?? "10"), maxRuns = Number(options.get("--max-runs") ?? "5");
         if (!Number.isSafeInteger(interval) || interval < 5 || interval > 3600) throw new Error("Interval must be 5–3600 seconds");
         const actor = `bot-${randomUUID()}`, transport = new NodeHttpTransport(document, actor, url);
-        const watcher = new ReviewWatch(() => transport.getRecoveryState(), async ({from, to}) => {
+        const watcher = await openCommandWatch({url,document,mission,model:options.get("--model"),maxRuns,checkpoint:options.get("--checkpoint")}, () => transport.getRecoveryState(), async ({from, to}) => {
             const result = await runMission({url, document, mission, actor, stateDir, ephemeral: true, role: "reviewer", maxSteps: 4}, codexPlanner({model:options.get("--model")}));
             console.log(JSON.stringify({event:"review", from, to, missionId:result.id, status:result.status, result:result.result, error:result.error}));
             return result;
-        }, maxRuns);
+        });
         const abort = new AbortController();
-        const stop = () => { watcher.stop(); abort.abort(); };
+        let stopping = false;
+        const stop = () => { stopping = true; abort.abort(); };
         process.once("SIGINT", stop); process.once("SIGTERM", stop);
         try {
             await watcher.poll();
             console.log(JSON.stringify({event:"watching", document, interval, maxRuns}));
-            while (!watcher.done) {
+            while (!stopping && !watcher.done) {
                 try { await delay(interval * 1000, undefined, {signal: abort.signal}); }
                 catch (error) { if (!abort.signal.aborted) throw error; }
-                if (!watcher.done) await watcher.poll();
+                if (!stopping && !watcher.done) await watcher.poll();
             }
-        } finally { process.removeListener("SIGINT", stop); process.removeListener("SIGTERM", stop); }
+        } finally { process.removeListener("SIGINT", stop); process.removeListener("SIGTERM", stop); await watcher.close(); }
         return;
     }
     if (command !== "run") throw new Error("Use run, list or inspect. See apps/bot/README.md.");
