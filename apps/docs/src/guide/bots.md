@@ -152,7 +152,9 @@ truncated. A sibling cursor is not followed. Synthetic/default blocks, group
 wrappers and structural containers are unsupported in this initial mode. Targets
 with inline objects or structural span runs (including link spans) also require
 review before the planner is called. Empty runs and ordinary marked text runs
-are supported.
+are supported. This editable-target restriction does not apply to separate
+read-only protected-attribute blocks: they may retain inline/span content while
+their stored identity and selected scalar attribute are checked.
 
 The planner receives an explicit `bounded_subtree` wrapper containing only the
 selected text block, its original absolute path and stored ID. Edits still use

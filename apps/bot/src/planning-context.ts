@@ -28,8 +28,11 @@ export async function readPlanningContext(call:(name:string,args:Record<string,u
     if(previous&&(JSON.stringify(previous.path)!==JSON.stringify(path)||previous.blockId!==blockId||previous.epoch!==revision.epoch||previous.schemaVersion!==revision.schemaVersion))throw Error("Planning target identity, placement or schema changed; review required");
     return {document:{view:"bounded_subtree",partial:true,path:[...path],blockId,node:children[0].node},binding};
 }
-export function assertPlanningTarget(node:unknown,schema:Schema):void {
+export function assertStoredTextTarget(node:unknown,schema:Schema):asserts node is {type:string;runs?:unknown} {
     if(!node||typeof node!=="object"||Array.isArray(node)||!("type" in node)||typeof node.type!=="string"||!Object.hasOwn(schema.nodes,node.type)||schema.nodes[node.type].shape!=="text")throw Error("Bounded planning currently requires a stored text block; structural subtrees need review");
+}
+export function assertPlanningTarget(node:unknown,schema:Schema):void {
+    assertStoredTextTarget(node,schema);
     if (!("runs" in node) || !Array.isArray(node.runs) || !node.runs.every(run =>
         run && typeof run === "object" && !Array.isArray(run) &&
         Object.hasOwn(run,"text") && typeof run.text === "string" &&

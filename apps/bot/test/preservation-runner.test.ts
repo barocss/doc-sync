@@ -22,12 +22,13 @@ test("protected schema attribute stays identity-bound across peer edits",{timeou
  const dir=await mkdtemp(join(tmpdir(),"preservation-"));const server=spawn(process.execPath,[fileURLToPath(new URL("../../demo/server.ts",import.meta.url))],{env:{...process.env,PORT:"0",DATA_DIR:join(dir,"server"),NO_SCHEMA:""},stdio:["ignore","pipe","pipe"]});let errors="";server.stderr.on("data",b=>errors+=String(b));
  try{
  const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(errors||"server timeout")),10000);server.once("exit",()=>{clearTimeout(timer);reject(Error(errors));});server.stdout.on("data",b=>{out+=String(b);const m=out.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);if(m){clearTimeout(timer);resolve(`http://127.0.0.1:${m[1]}`);}});});
- for(const scenario of ["unchanged","human-text","human-attribute","replace","delete","move","forbidden","undo-human-first","undo-bot-first"])await t.test(scenario,async()=>{
+ for(const scenario of ["rich-protected","unchanged","human-text","human-attribute","replace","delete","move","forbidden","undo-human-first","undo-bot-first"])await t.test(scenario,async()=>{
   const transport=new NodeHttpTransport(scenario,"human",origin),human=new SyncClient("human",transport,{schema:DEMO_SCHEMA});human.connect();
   try{
    await wait(()=>human.synchronized);
    const item={type:"list",children:[{type:"list-item",attrs:{listType:"bullet",level:1},runs:[{text:"Protected",marks:{}}]}]};
    human.commit(human.doc.edit([{op:"insert",at:[1],content:[p("Target"),item]}]).ops);await wait(()=>human.pending.length===0);
+   if(scenario==="rich-protected"){human.commit(human.doc.edit([{op:"insert",at:[2,0,9],content:[{type:"inline-image",attrs:{src:"https://example.com/protected.png"}}]}]).ops);await wait(()=>human.pending.length===0);}
    let calls=0;
    const result=await runMission({url:origin,document:scenario,actor:`bot-${scenario}`,mission:"Append exclamation",stateDir:join(dir,"missions"),ephemeral:!scenario.startsWith("undo-"),maxSteps:6,planningPath:[1],protectedAttributes:[{path:[2,0],attribute:"level"}]},async input=>{
     calls++;
@@ -39,8 +40,9 @@ test("protected schema attribute stays identity-bound across peer edits",{timeou
     return input.lastConfirmed?finish():{action:"insert",at:[1,6],text:"!",count:0,message:"Append"};
    });
    const saved=await loadMission(join(dir,"missions"),result.id);assert.deepEqual(saved.preservation,result.preservation);assert.equal(saved.preservation?.[0].value,1);
-   if(scenario==="unchanged"||scenario==="human-text"||scenario.startsWith("undo-")){assert.equal(result.status,"completed",JSON.stringify(result));assert.equal(result.history.filter(x=>x.kind==="confirmed").length,1);if(scenario==="human-text")assert.match(JSON.stringify(human.doc.toJSON()),/human/);}
+   if(scenario==="rich-protected"||scenario==="unchanged"||scenario==="human-text"||scenario.startsWith("undo-")){assert.equal(result.status,"completed",JSON.stringify(result));assert.equal(result.history.filter(x=>x.kind==="confirmed").length,1);if(scenario==="human-text")assert.match(JSON.stringify(human.doc.toJSON()),/human/);}
    else {assert.equal(result.status,"needs_attention",JSON.stringify(result));assert.equal(result.history.filter(x=>x.kind==="confirmed").length,0);if(scenario==="human-attribute")assert.match(JSON.stringify(human.doc.toJSON()),/"level":2/);}
+   if(scenario==="rich-protected")assert.match(JSON.stringify(human.doc.toJSON()),/protected.png/);
    if(scenario.startsWith("undo-")){
     await wait(()=>JSON.stringify(human.doc.toJSON()).includes("Target!"));
     const undoBot=async()=>{

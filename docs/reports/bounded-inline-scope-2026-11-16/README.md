@@ -37,3 +37,19 @@ preserving arbitrary semantic formatting or full document quality is implied.
 Independent read-only review checked scope narrowing and requested explicit
 restart/peer tests. Tests use deterministic injected planners, not a real model.
 Original native WIP is untouched; no long-duration load or remote CI claim.
+
+
+## Shared-helper follow-up
+
+Post-publication inspection found that preservation reused the planning target
+helper, unintentionally rejecting read-only protected blocks containing rich
+runs. Split the stored-text type check from the writable plain-run check;
+preservation uses the former, while the bounded planner retains the latter.
+Tests capture/persist/re-read rich targets, refuse changed identity/scalar without
+recapture, and complete a real mission editing a separate plain target while
+retaining the protected inline image. Initial added unit fixture missed a closing
+brace; corrected before the assertions ran. Full bot suite 165/165 PASS before
+the additional real-server rich-protected scenario.
+
+Expanded real-server preservation suite: 12/12 PASS; docs build/link check
+56 pages/2684 links PASS.
