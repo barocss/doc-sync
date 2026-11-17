@@ -1,3 +1,7 @@
+<script setup>
+import EngineLab from "../components/EngineLab.vue";
+</script>
+
 # How the schema-driven engine works
 
 DocSync separates the **shared document contract**, the **replicated token state**,
@@ -5,6 +9,22 @@ and the **editor view**. On narrow screens, scroll a figure horizontally to read
 A schema is not a UI component, a lock, or an access policy.
 The figures below explain the current TypeScript engine. They are explanatory
 schematics, not browser screenshots or a promise of every possible conflict outcome.
+
+<ClientOnly>
+<EngineLab />
+<template #fallback><p>The live engine example loads in your browser. Enable JavaScript to use Next step; the explanations below remain readable without it.</p></template>
+</ClientOnly>
+
+Use **Next step** to watch the hub reject an actual table proposal, two independent local
+insertions, convergence, A’s Undo, and A’s offline edit followed by reconnect.
+The rejected proposal is created on a separate scratch document so neither client
+is poisoned by an intentionally invalid edit. Low-level `Doc.edit()` can construct
+that operation; the rejection occurs at `DocHub.submit()`, not automatically at
+every local edit boundary. Applications must validate their editing inputs.
+The three document cards, pending counts, models and operations are read from the
+running engine. The transport deliberately waits for the delivery steps; this
+makes concurrency visible without claiming real network or restart testing.
+The explanatory diagrams below are a separate overview, not the live output.
 
 ## 1. One schema, several representations
 
@@ -123,5 +143,6 @@ and [local save/open](./local-storage).
 | Broader concurrent/History cases | [`scenarios.test.ts`](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/scenarios.test.ts), [`history-recovery.test.ts`](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/history-recovery.test.ts) |
 | Reconnect and recovery gates | [`reconnect.test.ts`](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/reconnect.test.ts), [`recovery-reservation.test.ts`](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/test/recovery-reservation.test.ts) |
 
+The live example uses `components/engine-lab.mjs`, shared with its regression tests.
 The diagrams' editable SVG sources live in `apps/docs/src/public/engine-diagrams`.
 When the protocol changes, review the prose, diagrams and linked tests together.
