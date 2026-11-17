@@ -344,6 +344,17 @@ reuses a saved proposal request or abstention without another transport invocati
 These are not restart-persistent usage or billing budgets. Interruptions before
 saving a decision still require a separately authorized retry policy.
 
+Hosts may pass an explicit `signal: AbortSignal` in the planner limits (also accepted
+by `openAIProposalPlanner`). A pre-aborted signal prevents transport invocation;
+abort during opening or response reading rejects the decision, aborts the injected
+transport signal and keeps the consumed call budget. Abort reasons are not exposed.
+A signal belongs to that planner instance: after cancellation, create no automatic
+replacement instance or retry. Use `recordPlanningAttempt: true` for durable mission
+protection; cancellation then leaves an unresolved attempt and no proposal creation,
+even when the transport eventually returns a valid decision. Cancellation after the
+planner has already returned does not cancel or roll back proposal creation. This is
+cooperative local cancellation, not proof of remote termination or avoided charges.
+
 The injected transport is trusted in-process code, not an isolation sandbox.
 AbortSignal and iterator cleanup are cooperative: a hostile callback cannot be
 force-stopped. A live adapter must independently fix an approved destination and

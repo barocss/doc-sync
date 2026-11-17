@@ -111,3 +111,45 @@ test('explicit two-call budget permits exactly two attempts',async()=>{
  let count=0;const planner=dataOnlyProposalPlanner(async(p,s)=>{count++;return chunks(decision())(p,s);},{maxCalls:2});
  await planner(input());await planner(input());await assert.rejects(planner(input()),rejected);assert.equal(count,2);
 });
+
+test('host pre-cancellation never invokes transport and rejects invalid signals',async()=>{
+ const controller=new AbortController();controller.abort('PRIVATE_REASON');let calls=0;
+ const planner=dataOnlyProposalPlanner(async(p,s)=>{calls++;return chunks(decision())(p,s);},{signal:controller.signal});
+ await assert.rejects(planner(input()),rejected);assert.equal(calls,0);
+ assert.throws(()=>dataOnlyProposalPlanner(chunks(decision()),{signal:{} as AbortSignal}));
+});
+test('host cancellation aborts opening and reading, suppresses late decisions and never retries',async()=>{
+ for(const phase of ['open','read']){
+  const controller=new AbortController();let signal!:AbortSignal,calls=0,release!:()=>void,entered!:()=>void;
+  const gate=new Promise<void>(r=>release=r),started=new Promise<void>(r=>entered=r);
+  const planner=dataOnlyProposalPlanner(async(p,s)=>{signal=s;calls++;if(phase==='open'){entered();await gate;return chunks(decision())(p,s);}return {async *[Symbol.asyncIterator](){entered();await gate;yield Buffer.from(JSON.stringify(decision()));}};},{signal:controller.signal});
+  const work=planner(input());await started;controller.abort('PRIVATE_REASON');await assert.rejects(work,rejected);assert(signal.aborted);
+  release();await new Promise(r=>setImmediate(r));await assert.rejects(planner(input()),rejected);assert.equal(calls,1);
+ }
+});
+test('cancellation immediately after stream completion cannot return a decision',async()=>{
+ const controller=new AbortController();
+ const planner=dataOnlyProposalPlanner(async()=>({async *[Symbol.asyncIterator](){yield Buffer.from(JSON.stringify(decision()));controller.abort();}}),{signal:controller.signal});
+ await assert.rejects(planner(input()),rejected);
+});
+test('cancelled durable planning remains unresolved with zero creates, even with a fresh planner',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'model-cancel-'));await chmod(dir,0o700);
+ const controller=new AbortController();let entered!:()=>void,release!:()=>void,calls=0,creates=0;
+ const started=new Promise<void>(r=>entered=r),gate=new Promise<void>(r=>release=r);
+ const planner=dataOnlyProposalPlanner(async(p,s)=>{calls++;entered();await gate;return chunks(decision())(p,s);},{signal:controller.signal});
+ const opts={missionPath:join(dir,'mission.json'),brief:'Clarify',path:[7] as [number],recordPlanningAttempt:true};
+ const client={binding:'b',readTarget:async()=>structuredClone(target),create:async(r:any)=>{creates++;return {id:'a'.repeat(64),requestId:r.requestId};}};
+ try{
+  const work=runProposalMission(opts,planner,client);await started;controller.abort();const first=await work;assert.equal(first.status,'planning_unknown');
+  release();await new Promise(r=>setImmediate(r));
+  const fresh=dataOnlyProposalPlanner(async(p,s)=>{calls++;return chunks(decision())(p,s);});
+  assert.deepEqual(await runProposalMission(opts,fresh,client),first);assert.equal(calls,1);assert.equal(creates,0);
+ }finally{release();await rm(dir,{recursive:true,force:true});}
+});
+
+test('late opening after cancellation closes its iterator exactly once without reading',async()=>{
+ const controller=new AbortController();let release!:()=>void,entered!:()=>void,closed=0,reads=0;
+ const started=new Promise<void>(r=>entered=r),gate=new Promise<void>(r=>release=r);
+ const planner=dataOnlyProposalPlanner(async()=>{entered();await gate;return {[Symbol.asyncIterator](){return {async next(){reads++;return {done:true,value:undefined};},async return(){closed++;return {done:true,value:undefined};}};}};},{signal:controller.signal});
+ const work=planner(input());await started;controller.abort();await assert.rejects(work,rejected);release();await new Promise(r=>setImmediate(r));assert.equal(closed,1);assert.equal(reads,0);
+});

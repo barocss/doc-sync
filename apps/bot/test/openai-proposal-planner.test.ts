@@ -76,3 +76,13 @@ test('provider refusal is durably abstained and resumed without another provider
  const client={binding:'b',readTarget:async()=>input().target,create:async(r:any)=>{creates++;return {id:'a'.repeat(64),requestId:r.requestId};}};
  try{assert.equal((await runProposalMission(mission,planner,client)).status,'abstained');assert.equal((await runProposalMission(mission,planner,client)).status,'abstained');assert.equal(calls,1);assert.equal(creates,0);}finally{await rm(dir,{recursive:true,force:true});}
 });
+
+test('explicit host cancellation reaches mock fetch and cancels its response body',async()=>{
+ const controller=new AbortController();let signal:AbortSignal|undefined,cancelled=false,entered!:()=>void;
+ const started=new Promise<void>(r=>entered=r);
+ const planner=openAIProposalPlanner({...options(),signal:controller.signal},async(_url,init)=>{
+  signal=init.signal as AbortSignal;return new Response(new ReadableStream<Uint8Array>({pull(){entered();},cancel(){cancelled=true;}}),{headers:{'content-type':'application/json'}});
+ });
+ const work=planner(input());await started;controller.abort('PRIVATE_REASON');await assert.rejects(work,fail);assert(signal?.aborted);assert(cancelled);
+ let calls=0;const before=openAIProposalPlanner({...options(),signal:controller.signal},async()=>{calls++;return response();});await assert.rejects(before(input()),fail);assert.equal(calls,0);
+});

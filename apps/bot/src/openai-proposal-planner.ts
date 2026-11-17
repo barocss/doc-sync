@@ -19,7 +19,7 @@ const decisionSchema=shape({decision:{anyOf:[
  * authorize account, model, credential use, data and cost before injecting real fetch.
  */
 export function openAIProposalPlanner(options:Options,fetcher:ProposalFetch):ProposalPlanner {
- const allowed=['apiKey','model','maxOutputTokens','maxCalls','timeoutMs'];
+ const allowed=['apiKey','model','maxOutputTokens','maxCalls','timeoutMs','signal'];
  if(!object(options)||Object.keys(options).some(k=>!allowed.includes(k))||typeof fetcher!=='function'||typeof options.apiKey!=='string'||!/^[-_A-Za-z0-9]{16,512}$/.test(options.apiKey)||typeof options.model!=='string'||!/^[-_.:A-Za-z0-9]{1,128}$/.test(options.model))throw Error('Invalid provider planning options');
  // Copy primitive configuration once; caller mutation cannot redirect or change credentials.
  const {apiKey,model}=options,maxOutputTokens=options.maxOutputTokens??1024;
@@ -58,5 +58,5 @@ export function openAIProposalPlanner(options:Options,fetcher:ProposalFetch):Pro
    return {async *[Symbol.asyncIterator](){yield Buffer.from(serialized);}};
   }catch{throw fail();}
   finally{signal.removeEventListener('abort',onAbort);onAbort();}
- },{maxCalls:options.maxCalls,timeoutMs:options.timeoutMs});
+ },{maxCalls:options.maxCalls,timeoutMs:options.timeoutMs,signal:options.signal});
 }
