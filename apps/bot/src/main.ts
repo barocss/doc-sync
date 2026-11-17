@@ -83,24 +83,30 @@ async function main() {
         const interval = Number(options.get("--interval") ?? "10"), maxRuns = Number(options.get("--max-runs") ?? "5");
         if (!Number.isSafeInteger(interval) || interval < 5 || interval > 3600) throw new Error("Interval must be 5–3600 seconds");
         const actor = `bot-${randomUUID()}`, transport = new NodeHttpTransport(document, actor, url);
-        const watcher = await openCommandWatch({url,document,mission,model:options.get("--model"),maxRuns,checkpoint:options.get("--checkpoint")}, () => transport.getRecoveryState(), async ({from, to}) => {
-            const result = await runMission({url, document, mission, actor, stateDir, ephemeral: true, role: "reviewer", maxSteps: 4}, codexPlanner({model:options.get("--model")}));
+        const watcher = await openCommandWatch({url,document,mission,model:options.get("--model"),maxRuns,checkpoint:options.get("--checkpoint")}, () => transport.getRecoveryState(), async ({from, to}, signal) => {
+            const result = await runMission({url, document, mission, actor, stateDir, ephemeral: true, role: "reviewer", maxSteps: 4}, codexPlanner({model:options.get("--model"),signal}));
+            if (signal.aborted) {
+                console.log(JSON.stringify({event:"review", from, to, missionId:result.id, status:"cancelled", missionStatus:result.status}));
+                return {status:"cancelled"};
+            }
             console.log(JSON.stringify({event:"review", from, to, missionId:result.id, status:result.status, result:result.result, error:result.error}));
             return result;
         });
         const abort = new AbortController();
-        let stopping = false;
-        const stop = () => { stopping = true; abort.abort(); };
+        let stopping = false, polling = false;
+        let stopWork: Promise<void> | undefined;
+        const poll = async () => { polling = true; try { await watcher.poll(); } finally { polling = false; } };
+        const stop = () => { stopping = true; abort.abort(); if (polling) { stopWork ??= watcher.stop(); void stopWork.catch(() => {}); } };
         process.once("SIGINT", stop); process.once("SIGTERM", stop);
         try {
-            await watcher.poll();
+            await poll();
             console.log(JSON.stringify({event:"watching", document, interval, maxRuns}));
             while (!stopping && !watcher.done) {
                 try { await delay(interval * 1000, undefined, {signal: abort.signal}); }
                 catch (error) { if (!abort.signal.aborted) throw error; }
-                if (!stopping && !watcher.done) await watcher.poll();
+                if (!stopping && !watcher.done) await poll();
             }
-        } finally { process.removeListener("SIGINT", stop); process.removeListener("SIGTERM", stop); await watcher.close(); }
+        } finally { process.removeListener("SIGINT", stop); process.removeListener("SIGTERM", stop); try { await stopWork; } finally { await watcher.close(); } }
         return;
     }
     if (command !== "run") throw new Error("Use run, list or inspect. See apps/bot/README.md.");

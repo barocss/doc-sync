@@ -406,6 +406,18 @@ the signal, stop and close continue waiting and retain the writer lock until it 
 stop or close from that same watcher's callback. No timeout-based forced unlock,
 new model call, edit permission or automatic repair is introduced.
 
-This is an opt-in host API contract. The existing `watch` CLI's signal handling and
-Codex subprocess behavior are unchanged; this API feature does not claim immediate
-CLI process cancellation or complete the multi-bot coordination roadmap.
+The `watch` CLI now forwards cancellation during an active poll when it receives
+Ctrl+C (`SIGINT`) or `SIGTERM`. The local Codex planner refuses a new invocation
+when already canceled. For its active direct child, it requests `SIGTERM`, escalates
+to `SIGKILL` after two seconds if needed, and waits for child close before completing
+the cancellation. Signal-delivery failure does not release recovery ownership
+before child close. A canceled review event reports `cancelled` separately from
+the recorded mission status, not as verified watcher completion. With a
+checkpoint, its attempt and consumed budget remain stopped for inspection.
+
+An idle CLI between polls still closes cleanly, leaving a ready checkpoint resumable.
+The commit boundary above still applies if a final verified cursor save has begun.
+Uncancellable reads may still delay shutdown. This does not guarantee termination
+of all descendant processes, cancellation of remote provider work or avoided
+charges, and it does not complete the multi-bot coordination roadmap. Qualification
+used fake local planner processes only, not a real model/provider call.

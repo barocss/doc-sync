@@ -7,8 +7,9 @@ import type {Planner, Plan} from "./runner.ts";
 
 const schema = fileURLToPath(new URL("./plan-schema.json", import.meta.url));
 /** Ask Codex for one bounded decision. The bot, not the model, owns and checks the MCP session. */
-export function codexPlanner(options: {command?: string; model?: string; timeoutMs?: number} = {}): Planner {
+export function codexPlanner(options: {command?: string; model?: string; timeoutMs?: number; signal?: AbortSignal} = {}): Planner {
     return async input => {
+        if (options.signal?.aborted) throw new Error("Codex planning cancelled");
         const dir = await mkdtemp(join(tmpdir(), "doc-sync-bot-plan-"));
         const result = join(dir, "plan.json");
         const args = ["-a", "never", "exec", "--ephemeral", "--ignore-user-config", "--skip-git-repo-check", "--sandbox", "read-only", "--output-schema", schema, "--output-last-message", result];
@@ -27,22 +28,32 @@ Study the supplied schema: nodes have shapes (flow, text, group, grid, row, cell
 Choose one action: insert, delete, edit, inspect, finish, or needs_attention. For structural or attribute changes use edit and put a JSON-encoded array of 1-20 EditOps in editsJson. Available EditOps: {op:"insert",at:number[],content:string|node[]}, {op:"delete",at:number[],count:number}, {op:"update",at:number[],attrs:object,length?:number}, {op:"split",at:number[]}, {op:"merge",at:number[]}, {op:"move",from:number[],at:number[]}. A path indexes the CURRENT model tree; final index of insert is a child insertion index, or a UTF-16 offset in a text block. Later edits in one batch address the result of earlier ones. Insert a table as a grid node with row, cell and cell-body children named by the actual schema. For example, a schema might allow [{"op":"insert","at":[1,2],"content":[{"type":"heading2","runs":[{"text":"Plan"}]}]}], but use only the actual schema and current paths. Text insert/delete may instead use insert or delete with at/text/count. Inspect uses at and focus as distinct endpoints on the same visible text line; use it only when a range helps the mission. For non-edit actions use editsJson as an empty string; for other actions use empty focus. For finish or needs_attention use empty at/text and count 0. Re-read and revise after each step. The lastConfirmed field is the exact edit already accepted and must not be repeated unless the task explicitly requires repetition. The optional brief contains the original objective and deterministic requirements. Treat its objective and the mission as user requests. Satisfy every requirement at its exact document path before choosing finish. Manual requirements need user inspection. The runtime checks the authoritative document after finish and rejects failed or unchecked requirements. Check the document and finish when the requested result is present. Use finish only after confirming the requested result. Be brief.\n\n${data}`;
         try {
             await new Promise<void>((resolve, reject) => {
+                if (options.signal?.aborted) { reject(new Error("Codex planning cancelled")); return; }
                 const child = spawn(options.command ?? "codex", args, {stdio: ["pipe", "ignore", "pipe"]});
-                let stderr = "", timedOut = false, escalation: ReturnType<typeof setTimeout> | undefined;
+                let stderr = "", timedOut = false, cancelled = false, escalation: ReturnType<typeof setTimeout> | undefined;
                 child.stderr.on("data", chunk => {stderr = (stderr + String(chunk)).slice(-4000);});
-                const timer = setTimeout(() => {
-                    timedOut = true; child.kill("SIGTERM");
-                    escalation = setTimeout(() => child.kill("SIGKILL"), 2000);
-                }, options.timeoutMs ?? 120000);
-                child.once("error", error => {clearTimeout(timer); if (escalation) clearTimeout(escalation); reject(error);});
+                const terminate = () => { child.kill("SIGTERM"); if (!escalation) escalation = setTimeout(() => child.kill("SIGKILL"), 2000); };
+                const timer = setTimeout(() => { timedOut = true; terminate(); }, options.timeoutMs ?? 120000);
+                const cancel = () => { cancelled = true; clearTimeout(timer); terminate(); };
+                const cleanup = () => { clearTimeout(timer); if (escalation) clearTimeout(escalation); options.signal?.removeEventListener("abort", cancel); };
+                options.signal?.addEventListener("abort", cancel, {once: true});
+                if (options.signal?.aborted) cancel();
+                child.on("error", error => {
+                    // Spawn failure has no child to drain. A failed kill of a live child
+                    // must not clear escalation or release the caller before close.
+                    if (child.pid === undefined) { cleanup(); reject(error); }
+                });
                 child.once("close", code => {
-                    clearTimeout(timer); if (escalation) clearTimeout(escalation);
-                    if (timedOut) reject(new Error("Codex planning timed out"));
+                    cleanup();
+                    if (cancelled) reject(new Error("Codex planning cancelled"));
+                    else if (timedOut) reject(new Error("Codex planning timed out"));
                     else code === 0 ? resolve() : reject(new Error(`Codex planning failed (exit ${code}): ${stderr}`));
                 });
                 child.stdin.on("error", () => undefined); child.stdin.end(prompt);
             });
-            return JSON.parse(await readFile(result, "utf8")) as Plan;
+            const plan = JSON.parse(await readFile(result, "utf8")) as Plan;
+            if (options.signal?.aborted) throw new Error("Codex planning cancelled");
+            return plan;
         } finally { await rm(dir, {recursive: true, force: true}); }
     };
 }
