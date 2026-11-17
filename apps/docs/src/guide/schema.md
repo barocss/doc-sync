@@ -1,5 +1,7 @@
 # Define a schema
 
+[See the schema-driven engine in diagrams →](./engine-visual-guide)
+
 See [Custom schemas and editor mappings](../schemas/custom) for per-editor
 capability checks and the separate sparse field contract.
 

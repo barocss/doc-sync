@@ -1,5 +1,7 @@
 # Synchronization
 
+[See the schema-driven engine in diagrams →](./engine-visual-guide)
+
 `SyncClient` manages a local document, pending changes, acknowledgments, model events, history, and presence. `DocHub` validates and orders changes for one document. A `Transport` connects them.
 
 For an editor that needs no server session, see the
