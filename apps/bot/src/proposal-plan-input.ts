@@ -9,6 +9,6 @@ export async function readProposalPlan(path: string): Promise<unknown> {
         const buffer = Buffer.alloc(32769); let length = 0;
         while (length < buffer.length) { const part = await file.read(buffer, length, buffer.length - length, null); if (!part.bytesRead) break; length += part.bytesRead; }
         if (length > 32768) throw new Error("Plan input exceeds limit");
-        try { return JSON.parse(buffer.subarray(0, length).toString("utf8")); } catch { throw new Error("Invalid structured plan JSON"); }
+        try { return JSON.parse(new TextDecoder("utf-8", {fatal: true, ignoreBOM: true}).decode(buffer.subarray(0, length))); } catch { throw new Error("Invalid structured plan JSON"); }
     } finally { await file.close(); }
 }

@@ -20,7 +20,7 @@ export function creatorClient(endpointValue: string, token: string): CreatorOnly
         try { while (true) { const part = await reader.read(); if (part.done) break; size += part.value.length; if (size > 262144) throw new Error("Creator response exceeds limit"); chunks.push(part.value); } }
         finally { await reader.cancel(); }
         try {
-            const raw = Buffer.concat(chunks).toString("utf8"), parsed = JSON.parse(raw);
+            const raw = new TextDecoder("utf-8", {fatal: true, ignoreBOM: true}).decode(Buffer.concat(chunks)), parsed = JSON.parse(raw);
             if (raw.includes(token) || JSON.stringify(parsed).includes(token)) throw new Error("Credential reflection");
             return parsed;
         } catch { throw new Error("Invalid creator response"); }
