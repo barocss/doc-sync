@@ -15,17 +15,27 @@ function snapshot(value:WatchState):Snapshot{
 }
 function compatible(current:Snapshot,previous:Snapshot){if(current.generation!==previous.generation||current.epoch!==previous.epoch||current.schemaVersion!==previous.schemaVersion||current.serverSeq<previous.serverSeq)throw Error('Watch identity or sequence changed; inspection required');}
 function exact(value:unknown,keys:string[]):asserts value is Record<string,any>{if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).sort().join(',')!==keys.sort().join(','))throw Error('Invalid watch checkpoint');}
-function parse(value:unknown,options:PersistentWatchOptions):State{
+function parse(value:unknown,options?:PersistentWatchOptions):State{
  exact(value,['version','binding','maxRuns','used','phase','baseline',...(Object.hasOwn(value as object,'attempt')?['attempt']:[])]);
- if(value.version!==1||value.binding!==options.binding||value.maxRuns!==options.maxRuns||!Number.isSafeInteger(value.used)||value.used<0||value.used>value.maxRuns||!['ready','in_flight','blocked','stopped'].includes(value.phase))throw Error('Watch checkpoint identity or state differs');
+ if(value.version!==1||typeof value.binding!=='string'||!/^[a-f0-9]{64}$/.test(value.binding)||!Number.isSafeInteger(value.maxRuns)||value.maxRuns<1||value.maxRuns>100||(options&&(value.binding!==options.binding||value.maxRuns!==options.maxRuns))||!Number.isSafeInteger(value.used)||value.used<0||value.used>value.maxRuns||!['ready','in_flight','blocked','stopped'].includes(value.phase))throw Error('Watch checkpoint identity or state differs');
  if(value.baseline!==null){exact(value.baseline,['generation','epoch','schemaVersion','serverSeq']);snapshot(value.baseline as WatchState);}
  if(value.attempt!==undefined){exact(value.attempt,['from','captured']);exact(value.attempt.captured,['generation','epoch','schemaVersion','serverSeq']);const captured=snapshot(value.attempt.captured as WatchState);if(!value.baseline||value.used<1||value.attempt.from!==value.baseline.serverSeq||captured.serverSeq<=value.attempt.from)throw Error('Invalid watch attempt');compatible(captured,value.baseline);}
  if((value.phase==='in_flight'&&!value.attempt)||(value.phase==='ready'&&value.attempt)||(!value.baseline&&value.used!==0))throw Error('Invalid watch checkpoint phase');
  return value as State;
 }
-async function load(file:string,options:PersistentWatchOptions):Promise<State|null>{
+async function load(file:string,options?:PersistentWatchOptions):Promise<State|null>{
  let f;try{f=await open(file,constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);}catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT')return null;throw e;}
  try{const s=await f.stat();if(!s.isFile()||s.nlink!==1||(s.mode&0o777)!==0o600||s.uid!==process.getuid!()||s.size>MAX)throw Error('Watch checkpoint must be private owned bounded regular file');const bytes=Buffer.alloc(MAX+1);let size=0;while(size<bytes.length){const r=await f.read(bytes,size,bytes.length-size,null);if(!r.bytesRead)break;size+=r.bytesRead;}if(size>MAX)throw Error('Watch checkpoint exceeds limit');return parse(JSON.parse(bytes.subarray(0,size).toString()),options);}finally{await f.close();}
+}
+export type WatchInspection={phase:State['phase'];used:number;maxRuns:number;remaining:number;baselineServerSeq:number|null;pendingRange:{from:number;to:number}|null;activity:'not_checked';liveStatus:'not_checked'};
+/** Private read-only snapshot, never a lock probe, recovery authorization or liveness claim. */
+export async function inspectWatchCheckpoint(checkpoint:string):Promise<WatchInspection>{
+ if(typeof checkpoint!=='string'||!checkpoint.trim()||!process.getuid)throw Error('Invalid watch checkpoint path');
+ const file=resolve(checkpoint),dir=await lstat(dirname(file));
+ if(!dir.isDirectory()||dir.isSymbolicLink()||(dir.mode&0o777)!==0o700||dir.uid!==process.getuid())throw Error('Watch parent must be private owned directory (0700)');
+ let state:State|null;try{state=await load(file);}catch{throw Error('Invalid private watch checkpoint');}
+ if(!state)throw Error('No saved watch checkpoint');
+ return {phase:state.phase,used:state.used,maxRuns:state.maxRuns,remaining:state.maxRuns-state.used,baselineServerSeq:state.baseline?.serverSeq??null,pendingRange:state.attempt?{from:state.attempt.from,to:state.attempt.captured.serverSeq}:null,activity:'not_checked',liveStatus:'not_checked'};
 }
 /** API only. Binding is a caller-supplied identity hash, not proof of model isolation.
  * Local supported kernel locks only; never repair or resume an unfinished review.

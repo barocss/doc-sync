@@ -9,6 +9,7 @@ import {parseBrief} from "./brief.ts";
 import {randomUUID} from "node:crypto";
 import {setTimeout as delay} from "node:timers/promises";
 import {NodeHttpTransport} from "@barocss/doc-sync/node";
+import {inspectWatchCheckpoint} from "./persistent-watch.ts";
 import {openCommandWatch} from "./watch-command.ts";
 import {resolve} from "node:path";
 import {codexPlanner} from "./codex.ts";
@@ -41,7 +42,7 @@ async function main() {
         if (!key?.startsWith("--") || value === undefined || options.has(key)) throw new Error("Use unique --option value pairs");
         options.set(key, value);
     }
-    const permitted = (command === "template-meeting" || command === "template-project") ? new Set(["--input"]) : command === "proposal-mission-inspect" ? new Set(["--mission-file"]) : command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-plan" ? PROPOSAL_PLAN_OPTIONS : command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
+    const permitted = (command === "template-meeting" || command === "template-project") ? new Set(["--input"]) : command === "proposal-mission-inspect" ? new Set(["--mission-file"]) : command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-plan" ? PROPOSAL_PLAN_OPTIONS : command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch-inspect" ? new Set(["--checkpoint"]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
     for (const key of options.keys()) if (!permitted.has(key)) throw new Error(`Unknown option: ${key}`);
     if (command === "template-meeting" || command === "template-project") {
         const file = options.get("--input");
@@ -50,6 +51,12 @@ async function main() {
         const result = template(JSON.parse(await readFile(file, "utf8")));
         console.log(JSON.stringify(result, null, 2));
         if (result.status !== "ready") process.exitCode = 1;
+        return;
+    }
+    if (command === "watch-inspect") {
+        const file = options.get("--checkpoint");
+        if (!file) throw Error("watch-inspect requires --checkpoint");
+        console.log(JSON.stringify(await inspectWatchCheckpoint(file), null, 2));
         return;
     }
     if (command === "proposal-mission-inspect") {

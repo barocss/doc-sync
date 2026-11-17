@@ -328,8 +328,9 @@ Reuse the same endpoint, document, mission, model setting and max-runs to resume
 cleanly. The budget is cumulative across restarts. Without this option the watcher
 remains in-memory. Endpoint credentials/query/fragment are rejected in this mode.
 
-Ctrl-C/SIGTERM drains the current review and closes the lock; it does not cancel
-an already-running model call. In-flight, blocked or stopped checkpoints cannot
+Ctrl-C/SIGTERM requests cancellation during an active review and drains the local
+planner child before closing the lock. Remote model termination or billing cancellation
+is not established. In-flight, blocked or stopped checkpoints cannot
 silently restart. Inspect them instead of bypassing uncertainty by deleting them.
 Missed changes produce a coalesced review of the current document, not replay of
 historical snapshots. This remains a local macOS/Linux single-writer facility,
@@ -421,3 +422,23 @@ Uncancellable reads may still delay shutdown. This does not guarantee terminatio
 of all descendant processes, cancellation of remote provider work or avoided
 charges, and it does not complete the multi-bot coordination roadmap. Qualification
 used fake local planner processes only, not a real model/provider call.
+
+### Inspect a saved review without restarting it
+
+```bash
+npm run start --workspace @doc-sync/bot -- watch-inspect --checkpoint /private-directory/watch.json
+```
+
+`watch-inspect` reads only the explicitly named private checkpoint. It requires no
+server URL, model or credentials and invokes no reviewer. It reports the saved
+`phase`, `used`, `maxRuns`, `remaining`, `baselineServerSeq` and `pendingRange`
+(`from`/`to`, or null). It omits endpoint/configuration binding and document identity.
+The private directory and file ownership, size, mode and link checks still apply.
+
+This is a saved snapshot, not a live task view: `activity` and `liveStatus` are
+always `not_checked`. An `in_flight` snapshot may belong to an active callback;
+`ready` does not prove that the writer is idle or that the current server/configuration
+allows restart. Remaining budget is saved accounting, not authorization to retry.
+The command does not acquire/remove a lock, change the cursor/budget, clear a stopped
+attempt or contact the server. Keep blocked/stopped/unfinished evidence for explicit
+review. Do not delete the checkpoint or create a replacement just to bypass a block.
