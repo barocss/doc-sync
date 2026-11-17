@@ -1,6 +1,8 @@
 /** A bounded, read-only watcher. It does not persist a cursor or resume after restart. */
 export type WatchState = {generation: string | null; epoch: string; schemaVersion: string | null; serverSeq: number};
 export type ReviewOutcome = {status: string};
+export type WatchRead = (signal: AbortSignal) => Promise<WatchState>;
+export type WatchReview = (change: {from: number; to: number}, signal: AbortSignal) => Promise<ReviewOutcome>;
 
 function snapshot(state: WatchState): WatchState {
     const value = {generation:state.generation, epoch:state.epoch, schemaVersion:state.schemaVersion, serverSeq:state.serverSeq};
@@ -14,41 +16,42 @@ function compatible(current: WatchState, previous: WatchState): void {
 }
 
 export class ReviewWatch {
+    private readonly cancellation = new AbortController();
     private baseline: WatchState | null = null;
     private busy = false;
     private stopped = false;
     private runs = 0;
-    private readonly read: () => Promise<WatchState>;
-    private readonly review: (change: {from: number; to: number}) => Promise<ReviewOutcome>;
+    private readonly read: WatchRead;
+    private readonly review: WatchReview;
     readonly maxRuns: number;
-    constructor(read: () => Promise<WatchState>, review: (change: {from: number; to: number}) => Promise<ReviewOutcome>, maxRuns: number) {
+    constructor(read: WatchRead, review: WatchReview, maxRuns: number) {
         this.read = read; this.review = review; this.maxRuns = maxRuns;
         if (!Number.isSafeInteger(maxRuns) || maxRuns < 1 || maxRuns > 100) throw new Error("Review limit must be 1–100");
     }
-    stop(): void { this.stopped = true; }
+    stop(): void { this.stopped = true; this.cancellation.abort(); }
     get done(): boolean { return this.stopped || this.runs >= this.maxRuns; }
     async poll(): Promise<"baseline" | "unchanged" | "reviewed" | "stopped"> {
         if (this.done) return "stopped";
         if (this.busy) throw new Error("A review poll is already in progress");
         this.busy = true;
         try {
-            const observed = await this.read();
+            const observed = await this.read(this.cancellation.signal);
             if (this.stopped) return "stopped";
             const current = snapshot(observed);
             if (!this.baseline) { this.baseline = {...current}; return "baseline"; }
             compatible(current, this.baseline);
             if (current.serverSeq === this.baseline.serverSeq) return "unchanged";
-            const outcome = await this.review({from: this.baseline.serverSeq, to: current.serverSeq});
+            const outcome = await this.review({from: this.baseline.serverSeq, to: current.serverSeq}, this.cancellation.signal);
             this.runs++;
             if (this.stopped) return "stopped";
             if (outcome.status !== "completed") throw new Error("Review needs attention; watcher stopped");
-            const afterReview = await this.read();
+            const afterReview = await this.read(this.cancellation.signal);
             if (this.stopped) return "stopped";
             compatible(snapshot(afterReview), current);
             // Newer peer changes were not covered by this review. Leave them for the next poll.
             this.baseline = {...current};
             return "reviewed";
-        } catch (error) { this.stopped = true; throw error; }
+        } catch (error) { if (this.stopped) return "stopped"; this.stopped = true; throw error; }
         finally { this.busy = false; }
     }
 }

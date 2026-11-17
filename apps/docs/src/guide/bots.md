@@ -382,3 +382,30 @@ the new document root; adapt its scope explicitly before insertion into an
 existing document. This is not a preservation policy for unrelated content.
 No model call, document write, proposal submission, or approval is performed.
 The existing single-block approval path cannot apply this multi-block draft.
+
+## Cooperatively cancel an API review watcher
+
+The `ReviewWatch` and `PersistentReviewWatch` host APIs pass an `AbortSignal` to
+both callbacks: `read(signal)` and `review(range, signal)`. Calling `stop()` signals
+cooperative cancellation immediately. Hosts should forward that signal to their
+own cancellable reads and review operations. The `openCommandWatch` factory also
+exposes `stop()` for hosts using either variant.
+
+For a persistent watcher, await `stop()` and then `close()`. Cancellation during
+a callback or completion read keeps the consumed budget, captured attempt and
+previous cursor; late callback success does not mark it reviewed. Once the final
+verified cursor save has started, however, that review is committing: a later stop
+drains the save, returns `reviewed` if it succeeds, and then stores the terminal
+stop with the advanced cursor. It does not roll back a completed review. Reopening the stopped checkpoint requires inspection,
+not an automatic retry. A normal `close()` still drains work without requesting
+cancellation and keeps its existing clean-resume behavior.
+
+Cancellation is cooperative, not a guarantee that an external operation stopped
+or that provider charges were avoided. For persistent watchers, if a callback ignores
+the signal, stop and close continue waiting and retain the writer lock until it settles. Do not await
+stop or close from that same watcher's callback. No timeout-based forced unlock,
+new model call, edit permission or automatic repair is introduced.
+
+This is an opt-in host API contract. The existing `watch` CLI's signal handling and
+Codex subprocess behavior are unchanged; this API feature does not claim immediate
+CLI process cancellation or complete the multi-bot coordination roadmap.
