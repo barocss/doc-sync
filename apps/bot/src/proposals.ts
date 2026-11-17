@@ -9,6 +9,7 @@ const MAX = 262144;
 export async function proposalCommand(command: string, options: Map<string, string>, env: NodeJS.ProcessEnv = process.env) {
     const endpoint = new URL(options.get("--endpoint") ?? "");
     if (!SERVER_URL_PROTOCOLS.includes(endpoint.protocol) || endpoint.username || endpoint.password || endpoint.search || endpoint.hash || !/^\/mcp\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/.test(endpoint.pathname)) throw new Error("Use an exact hosted route endpoint");
+    if (endpoint.protocol === "http:" && !["127.0.0.1", "[::1]"].includes(endpoint.hostname)) throw new Error("Proposal credentials require HTTPS outside numeric loopback");
     const tokenName = options.get("--token-env") ?? "DOC_SYNC_PROPOSAL_TOKEN", token = env[tokenName];
     if (!/^[A-Za-z_][A-Za-z0-9_]{0,79}$/.test(tokenName) || !token || !/^[A-Za-z0-9_-]{43,256}$/.test(token)) throw new Error("Set the bearer token environment variable");
     let suffix = "", method = "GET", body: string | undefined;
