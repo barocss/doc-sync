@@ -442,3 +442,28 @@ allows restart. Remaining budget is saved accounting, not authorization to retry
 The command does not acquire/remove a lock, change the cursor/budget, clear a stopped
 attempt or contact the server. Keep blocked/stopped/unfinished evidence for explicit
 review. Do not delete the checkpoint or create a replacement just to bypass a block.
+
+
+### Keep other blocks' text unchanged
+
+For bounded writing, add `--protect-text '[[2],[3,0]]'` alongside an explicit
+`--planning-path '[1]'`. Up to 16 separate stored plain-text blocks (8192 UTF-16
+units each) are captured by original text and identity. The editing target cannot
+be protected this way. Inline objects and spans require review rather than being
+flattened. Empty text is supported; marks and run segmentation are not protected.
+
+Before later planning and at authoritative completion, a peer's text change, moved
+or replaced target, or schema/epoch change stops the mission for attention. Profile
+resume retains the original capture. Missing captures fail closed. No peer text is
+restored and no new original is silently adopted. `--protect-attributes` remains a
+separate scalar-attribute contract and may be combined with text protection.
+
+Only the bounded editing target enters the planner context. The private mission
+file does retain the protected original text, so preserve its confidentiality and
+apply your normal retention policy. This is a local mission check, not a server
+permission or continuous freeze on other participants' work. General structural
+preservation and source provenance remain outside this slice.
+
+Recovery alone validates saved capture structure; comparison with the current
+document occurs before resumed planning and at completion, not merely by inspecting
+or reconciling a mission.

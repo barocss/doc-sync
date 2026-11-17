@@ -451,3 +451,33 @@ Exit code zero means the snapshot was read successfully, not that the mission
 finished or it is safe to retry. The summary can become stale immediately. Keep
 checkpoint/lock recovery and new-call authorization separate; inspection never
 changes or bypasses either gate.
+
+
+### Preserve other text blocks while editing one target
+
+`run --planning-path '[1]' --protect-text '[[2],[3,0]]'` adds opt-in, identity-bound
+text preservation to the existing bounded writer. Provide the usual explicit URL,
+document and mission options. API callers use `protectedText: [[2], [3, 0]]`.
+The 1–16 protected canonical model paths must differ from the editing target. Each
+must resolve to a stored plain-text block of at most 8192 UTF-16 units. Empty text
+is valid. Inline objects and structured spans are not silently flattened.
+
+The first settled capture saves original text, block identity, node type, placement,
+epoch and schema binding in the private mission. Later checks and profile resume
+compare against that original, never adopt a changed peer value or restore the old
+text. Missing evidence, peer text edits, replacement, movement or schema changes
+stop for inspection. The planner still receives only the bounded editing target,
+not these additional captured texts. Private mission retention includes the original
+protected text; treat the mission file accordingly.
+
+This protects exact text only: mark changes and equivalent plain-run segmentation
+are permitted, and unrelated attributes are not checked. Use `--protect-attributes`
+separately for supported scalar attributes. Both options can coexist. Checks occur
+before planning and at authoritative completion; normal conditional edit fences
+still apply. This is not continuous monitoring, a server permission boundary,
+general structural preservation or a guarantee that people cannot edit the text.
+Never overwrite a person's changed content to make a preservation check pass.
+
+Recovery alone validates saved capture structure; comparison with the current
+document occurs before resumed planning and at completion, not merely by inspecting
+or reconciling a mission.

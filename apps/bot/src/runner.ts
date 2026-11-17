@@ -1,3 +1,5 @@
+import {parseTextProtection,checkTextPreservation,assertTextPreservationState} from './text-preservation.ts';
+import type {TextPreservationCapture} from './text-preservation.ts';
 import {parseProtection,checkPreservation,assertPreservationState} from "./preservation.ts";
 import type {ProtectedAttribute,PreservationCapture} from "./preservation.ts";
 import {randomUUID, createHash} from "node:crypto";
@@ -45,8 +47,8 @@ export type Plan = {action: "insert" | "delete" | "edit" | "inspect" | "finish" 
 export type Role = "writer" | "reviewer" | "organizer";
 export type Personality = "curious" | "careful" | "creative" | "concise";
 export type Planner = (input: {mission: string; brief?: Brief; personality: Personality; role: Role; schema: unknown; document: unknown; revision: Revision; previous: string[]; lastConfirmed: {edits: EditOp[]; revision: Revision} | null; inspection: {anchor: number[]; focus: number[]} | null}) => Promise<Plan>;
-export type BotOptions = {protectedAttributes?:ProtectedAttribute[]; planningPath?: number[]; brief?: Brief; url: string; document: string; actor: string; mission: string; stateDir: string; maxSteps?: number; ephemeral?: boolean; name?: string; color?: string; character?: BotCharacter; personality?: Personality; role?: Role; profileId?: string};
-export type Mission = {protectedAttributes?:ProtectedAttribute[]; preservation?:PreservationCapture[]; planningPath?: number[]; planningBinding?: PlanningBinding; brief?: Brief; completion?: "verified" | "model_reported"; verification?: VerificationReport | {version: 1; status: "not_checked"; checkedRevision: Revision; requirements: []; reason: string}; id: string; profileId?: string; recoveryProtocol?: 1; resume?: {version:1; maxSteps:number; used:number; ready:boolean}; url: string; document: string; actor: string; mission: string; name: string; color: string; character: BotCharacter; personality: Personality; role: Role; expression: BotExpression; status: "queued" | "running" | "completed" | "needs_attention"; createdAt: string; updatedAt: string; steps: string[]; history: Array<{kind: "confirmed" | "stale"; base: Revision; plan: Plan; revision?: Revision}>; pending: {revision: Revision; plan: Plan; stepId?: string} | null; result?: string; error?: string};
+export type BotOptions = {protectedText?:number[][]; protectedAttributes?:ProtectedAttribute[]; planningPath?: number[]; brief?: Brief; url: string; document: string; actor: string; mission: string; stateDir: string; maxSteps?: number; ephemeral?: boolean; name?: string; color?: string; character?: BotCharacter; personality?: Personality; role?: Role; profileId?: string};
+export type Mission = {protectedText?:number[][]; textPreservation?:TextPreservationCapture[]; protectedAttributes?:ProtectedAttribute[]; preservation?:PreservationCapture[]; planningPath?: number[]; planningBinding?: PlanningBinding; brief?: Brief; completion?: "verified" | "model_reported"; verification?: VerificationReport | {version: 1; status: "not_checked"; checkedRevision: Revision; requirements: []; reason: string}; id: string; profileId?: string; recoveryProtocol?: 1; resume?: {version:1; maxSteps:number; used:number; ready:boolean}; url: string; document: string; actor: string; mission: string; name: string; color: string; character: BotCharacter; personality: Personality; role: Role; expression: BotExpression; status: "queued" | "running" | "completed" | "needs_attention"; createdAt: string; updatedAt: string; steps: string[]; history: Array<{kind: "confirmed" | "stale"; base: Revision; plan: Plan; revision?: Revision}>; pending: {revision: Revision; plan: Plan; stepId?: string} | null; result?: string; error?: string};
 
 const mcpFile = fileURLToPath(new URL("../../mcp/src/main.ts", import.meta.url));
 const env = Object.fromEntries(Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined));
@@ -161,7 +163,7 @@ function planEdits(plan:Plan):EditOp[] {
 /** Reconcile a claimed mission without replaying or replanning any edit. */
 export async function recoverMission(stateDir:string,id:string):Promise<Mission> {
     const initial=await loadMission(stateDir,id);
-    assertPersistedPlanningState(initial); assertPreservationState(initial);
+    assertPersistedPlanningState(initial); assertPreservationState(initial);assertTextPreservationState(initial);
     if(initial.brief !== undefined)parseBrief(initial.brief);
     if(initial.recoveryProtocol!==1 || !initial.profileId) throw Error("Legacy mission requires manual recovery inspection");
     const profile=await loadProfile(stateDir,initial.profileId),url=profileUrl(initial.url);
@@ -169,7 +171,7 @@ export async function recoverMission(stateDir:string,id:string):Promise<Mission>
     const release=await claimProfile(stateDir,initial.actor);
     try {
         const state=await loadMission(stateDir,id);
-        assertPersistedPlanningState(state); assertPreservationState(state);
+        assertPersistedPlanningState(state); assertPreservationState(state);assertTextPreservationState(state);
         if(state.brief !== undefined)parseBrief(state.brief);
         if(state.recoveryProtocol!==1 || state.profileId!==profile.id || state.actor!==initial.actor || state.url!==url || state.document!==initial.document)throw Error("Mission identity changed");
         if(state.resume?.ready && !state.pending && state.status==="queued")return state;
@@ -228,7 +230,7 @@ export async function resumeMission(stateDir:string,id:string,planner:Planner):P
         if(state.actor!==recovered.actor||state.profileId!==profile.id||state.url!==recovered.url||state.document!==recovered.document||profileActor(profile,state.url,state.document)!==state.actor||!state.resume?.ready||state.status!=="queued"||state.pending)throw Error("Mission changed before continuation");
         const others=await listMissions(stateDir);
         if(others.some(m=>m.id!==id&&m.profileId===state.profileId&&m.document===state.document&&m.url===state.url&&(m.pending||m.status==="running"||m.status==="queued")))throw Error("Another task requires recovery inspection");
-        return await runMissionClaimed({url:state.url,document:state.document,actor:state.actor,mission:state.mission,brief:state.brief,planningPath:state.planningPath,protectedAttributes:state.protectedAttributes,stateDir,profileId:state.profileId,maxSteps:state.resume.maxSteps,name:state.name,color:state.color,character:state.character,personality:state.personality,role:state.role},planner,state);
+        return await runMissionClaimed({url:state.url,document:state.document,actor:state.actor,mission:state.mission,brief:state.brief,planningPath:state.planningPath,protectedAttributes:state.protectedAttributes,protectedText:state.protectedText,stateDir,profileId:state.profileId,maxSteps:state.resume.maxSteps,name:state.name,color:state.color,character:state.character,personality:state.personality,role:state.role},planner,state);
     } finally {await release();}
 }
 
@@ -236,6 +238,7 @@ export async function resumeMission(stateDir:string,id:string,planner:Planner):P
 export async function runMission(options: BotOptions, planner: Planner): Promise<Mission> {
     // Reject invalid requirements before creating state, claiming a profile, or starting a session.
     options = {...options, ...(options.planningPath !== undefined ? {planningPath:parsePlanningPath(options.planningPath)} : {}), ...(options.brief !== undefined ? {brief: parseBrief(options.brief)} : {})};
+    if(options.protectedText!==undefined)options={...options,protectedText:parseTextProtection(options.protectedText,options.planningPath)};
     if(options.protectedAttributes!==undefined)options={...options,protectedAttributes:parseProtection(options.protectedAttributes,options.planningPath)};
     if (!options.profileId) return runMissionClaimed(options, planner);
     if (options.ephemeral) throw new Error("A profile requires durable recovery");
@@ -253,8 +256,9 @@ export async function runMission(options: BotOptions, planner: Planner): Promise
 async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?: Mission): Promise<Mission> {
     const {url, document, actor, mission} = options;
     const brief = resumed?.brief !== undefined ? parseBrief(resumed.brief) : options.brief !== undefined ? parseBrief(options.brief) : undefined;
-    if(resumed){assertPersistedPlanningState(resumed);assertPreservationState(resumed);}
+    if(resumed){assertPersistedPlanningState(resumed);assertPreservationState(resumed);assertTextPreservationState(resumed);}
     const planningPath = resumed?.planningPath !== undefined ? parsePlanningPath(resumed.planningPath) : options.planningPath !== undefined ? parsePlanningPath(options.planningPath) : undefined;
+    const protectedText=resumed?.protectedText??options.protectedText;
     const protectedAttributes=resumed?.protectedAttributes??options.protectedAttributes;
     validateId(document, "document ID"); validateId(actor, "actor ID");
     const parsed = new URL(url); if (!SERVER_URL_PROTOCOLS.includes(parsed.protocol) || parsed.username || parsed.password) throw new Error("Invalid server URL");
@@ -271,7 +275,7 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
     if (!/^#[0-9a-f]{6}$/i.test(color) || !name.trim() || name.length > 80) throw new Error("Invalid bot name or color");
     const directory = join(resolve(options.stateDir), "missions"); await mkdir(directory, {recursive: true, mode: 0o700});
     const id = resumed?.id ?? randomUUID(), path = join(directory, `${id}.json`), now = new Date().toISOString();
-    const state: Mission = resumed ?? {id, ...(protectedAttributes?{protectedAttributes:structuredClone(protectedAttributes)}:{}), ...(planningPath ? {planningPath:[...planningPath]} : {}), ...(brief ? {brief} : {}), ...(options.profileId ? {profileId: options.profileId,recoveryProtocol:1 as const,resume:{version:1 as const,maxSteps,used:0,ready:false}} : {}), url, document, actor, mission, name, color, character, personality, role, expression: "thinking", status: "queued", createdAt: now, updatedAt: now, steps: [], history: [], pending: null};
+    const state: Mission = resumed ?? {id, ...(protectedText?{protectedText:structuredClone(protectedText)}:{}), ...(protectedAttributes?{protectedAttributes:structuredClone(protectedAttributes)}:{}), ...(planningPath ? {planningPath:[...planningPath]} : {}), ...(brief ? {brief} : {}), ...(options.profileId ? {profileId: options.profileId,recoveryProtocol:1 as const,resume:{version:1 as const,maxSteps,used:0,ready:false}} : {}), url, document, actor, mission, name, color, character, personality, role, expression: "thinking", status: "queued", createdAt: now, updatedAt: now, steps: [], history: [], pending: null};
     const persist = async () => {state.updatedAt = new Date().toISOString(); await save(path, state);};
     await persist();
     let client: Client | null = null;
@@ -323,6 +327,7 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
                 planningDocument=context.document;
             }
             if(protectedAttributes){state.preservation=await checkPreservation((name,args)=>callTool(client!,name,args),protectedAttributes,view.revision,server.schema as Schema,state.preservation);await persist();}
+            if(protectedText){state.textPreservation=await checkTextPreservation((name,args)=>callTool(client!,name,args),protectedText,view.revision,server.schema as Schema,state.textPreservation);await persist();}
             const plan = await planner({mission, ...(brief ? {brief: structuredClone(brief)} : {}), personality, role, schema: server.schema, document: planningDocument, revision: view.revision, previous: [...state.steps], lastConfirmed, inspection: inspection ? {anchor: inspection.anchor, focus: inspection.focus} : null});
             checkPlan(plan);
             if (role === "reviewer" && MUTATING_PLANNER_ACTIONS.includes(plan.action)) throw new Error("Reviewer role cannot edit the document");
@@ -341,12 +346,13 @@ async function runMissionClaimed(options: BotOptions, planner: Planner, resumed?
                 if (!latest.revision || !latest.sessionOnline || latest.pending || latest.conditionalPending || latest.recoveryRequired) throw new Error("Session is not settled; inspect recovery before finishing");
                 // A settled MCP read is a local replica. Fence structured verification against
                 // the server sequence so delayed stream delivery cannot prove stale content.
-                const authority = (brief||protectedAttributes) ? await new NodeHttpTransport(document, actor, url).getRecoveryState() : latest.revision;
+                const authority = (brief||protectedAttributes||protectedText) ? await new NodeHttpTransport(document, actor, url).getRecoveryState() : latest.revision;
                 if (JSON.stringify(latest.revision) !== JSON.stringify(view.revision) ||
                     latest.revision.epoch !== authority.epoch || latest.revision.serverSeq !== authority.serverSeq || latest.revision.schemaVersion !== authority.schemaVersion) {
                     state.steps.push("Document changed while planning; read again before finishing."); await persist(); continue;
                 }
                 if(protectedAttributes)await checkPreservation((name,args)=>callTool(client!,name,args),protectedAttributes,latest.revision,server.schema as Schema,state.preservation);
+                if(protectedText)await checkTextPreservation((name,args)=>callTool(client!,name,args),protectedText,latest.revision,server.schema as Schema,state.textPreservation);
                 if (brief) {
                     state.verification = verifyBrief(brief, latest.document, server.schema as Schema, latest.revision);
                     if (state.verification.status !== "passed") {

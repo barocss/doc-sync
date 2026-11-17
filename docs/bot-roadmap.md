@@ -151,7 +151,7 @@ The [recorded experiment results](../experiments/rust-core/RESULTS.md) include 2
 
 Implemented the first conservative preservation contract: selected scalar schema
 attributes on separate stored text blocks, paired with text-only bounded planning.
-Original captures survive resume; identity/placement/schema/value conflicts stop
+The opt-in `--protect-text` extension also captures up to 16 separate plain-text blocks with original text and identity, excluding spans/inline objects and allowing mark-only changes. Original captures survive resume; identity/placement/schema/value conflicts stop
 for review without restoring human data. General structural edits, relocation,
 nested fields and history-wide invariant monitoring remain outside this scope.
 See [verification report](reports/protected-attributes-2026-11-16/README.md).
