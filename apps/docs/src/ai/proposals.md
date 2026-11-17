@@ -1,6 +1,6 @@
 # Document proposals and owner approval
 
-The private hosted service stores a proposed text change for review. A separate owner credential can inspect, reject, or explicitly approve its exact stored change. Creation and preview do not edit the document. Approval and recovery use HTTP or CLI commands. There is no proposal MCP tool or planner integration. An opt-in local owner review workspace embeds the supported ProseMirror demo beside the existing bounded proposal controls.
+The private hosted service stores a proposed text change for review. A separate owner credential can inspect, reject, or explicitly approve its exact stored change. Creation and preview do not edit the document. Approval and recovery use HTTP or CLI commands. There is no proposal MCP tool. An opt-in creator-only prepared-plan CLI and injected planner API can create proposals, but never approve or apply them; actual-model end-to-end qualification remains open. An opt-in local owner review workspace embeds the supported ProseMirror demo beside the existing bounded proposal controls.
 
 ## Enable and separate credentials
 
@@ -164,7 +164,7 @@ The private store uses a separate namespace derived from the physical target and
 
 Capture uses an anonymous upstream wire stream. It sends no ACK, change, presence, recovery lease, or fixed-actor disconnect. Existing pending intents, checkpoint changes, and release work block capture. Initial synchronization still hydrates the upstream snapshot: bounded previews do not bound total-document transport or startup memory.
 
-These checks do not establish physical power-loss durability, distributed operation, public production security, or full B3 completion. Broader editor product integration, planner integration, general structural authorization, and remaining failure qualification remain on the [roadmap](../roadmap). B3 remains in progress. The local workspace has deterministic Chrome coverage, not an actual-model evaluation.
+These checks do not establish physical power-loss durability, distributed operation, public production security, or full B3 completion. Broader editor product integration, actual-model creator planning qualification, general structural authorization, and remaining failure qualification remain on the [roadmap](../roadmap). B3 remains in progress. The local workspace has deterministic Chrome coverage, not an actual-model evaluation.
 
 
 ## Local owner review workspace
@@ -187,6 +187,19 @@ Reconcile uses the original decision and cannot initiate an unreceived approval.
 Stale versions need a new proposal and fresh review. Human-editor Undo remains
 separate from the configured proposal actor's History. This does not expand the
 plain-text proposal schema or constitute production security qualification.
+
+## Creator planning is separate from owner approval
+
+`proposal-plan` reads a prepared private plan file and the authorized target. It does
+not invoke Codex or another model. The injected planner API can instead produce a
+bounded decision, using only creator authority; neither path receives an owner
+credential or applies the proposal. The saved mission retains the original request
+identity so uncertain creation does not silently become a different request.
+
+The optional Responses adapter is mock-qualified only and has no CLI activation.
+A live provider call, its data sharing and cost require separate authorization.
+Synthetic checks are not evidence of actual-model quality or production readiness.
+See the [creator-only setup and limits](https://github.com/barocss/doc-sync/blob/main/apps/bot/README.md#creator-only-prepared-proposal-slice-issue-10-partial).
 
 ## Inspect local creator progress offline
 
