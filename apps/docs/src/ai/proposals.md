@@ -187,3 +187,24 @@ Reconcile uses the original decision and cannot initiate an unreceived approval.
 Stale versions need a new proposal and fresh review. Human-editor Undo remains
 separate from the configured proposal actor's History. This does not expand the
 plain-text proposal schema or constitute production security qualification.
+
+## Inspect local creator progress offline
+
+For a saved creator mission, use the local read-only command:
+
+```sh
+node apps/bot/src/main.ts proposal-mission-inspect --mission-file ./private-missions/mission.json
+```
+
+It requires the private mission file only, with no server endpoint, token or model
+call. The summary excludes the document text, brief and proposed replacement.
+`planning_unresolved` means no durable decision is saved; the planner may still be
+running. `proposal_unconfirmed` means a request is saved without acknowledgement;
+it may already exist remotely. `proposal_recorded` means a historical storage
+acknowledgement, not current application. `abstained` means a saved no-proposal
+decision. All results mark current activity and live server status as `not_checked`.
+
+A successful command exit means inspection succeeded, not that the mission completed
+or retry is safe. It never clears locks, resets uncertainty, creates proposals or
+authorizes owner actions. Preserve the original request/checkpoint and use the
+separate authorized server inspection workflow for current proposal status.
