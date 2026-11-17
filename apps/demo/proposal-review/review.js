@@ -1,10 +1,11 @@
+import {reviewQueue} from './review-list.js';
 const $=id=>document.getElementById(id),sessionKey='doc-sync-review-session-v1';
-let auth,selected=null,record=null,busy=false,sequence=0,confirmation=null;
+let auth,selected=null,record=null,busy=false,sequence=0,confirmation=null,items=[];
 const terminal=new Set(['applied','rejected','stale','not_applied']),uncertain=new Set(['applying','unconfirmed','needs_attention']);
 function text(tag,value,cls){const e=document.createElement(tag);e.textContent=String(value);if(cls)e.className=cls;return e;}
 function notify(value){$('notice').textContent=value;}
 const decisionKey=id=>`doc-sync-review-decision-v1:${id}`;
-function savedDecision(id){const raw=localStorage.getItem(decisionKey(id));if(!raw)return null;const d=JSON.parse(raw);if(!['accept','reject'].includes(d.kind)||!/^[-a-f0-9]{36}$/.test(d.requestId)||!/^[a-f0-9]{64}$/.test(d.proposalDigest))throw Error('Invalid local decision. Retain evidence and inspect outside this page.');return d;}
+function savedDecision(id){const raw=localStorage.getItem(decisionKey(id));if(raw===null)return null;const d=JSON.parse(raw);if(!['accept','reject'].includes(d.kind)||!/^[-a-f0-9]{36}$/.test(d.requestId)||!/^[a-f0-9]{64}$/.test(d.proposalDigest))throw Error('Invalid local decision. Retain evidence and inspect outside this page.');return d;}
 async function request(path,body){const response=await fetch(path,{method:body===undefined?'GET':'POST',headers:{'x-review-session':auth.session,...(body===undefined?{}:{'content-type':'application/json','x-csrf-token':auth.csrf})},...(body===undefined?{}:{body:JSON.stringify(body)}),redirect:'error',cache:'no-store'});if(!response.ok)throw Error(`Request not confirmed (HTTP ${response.status}). Refresh and inspect; do not assume the document is unchanged.`);return response.json();}
 function action(label,fn,cls=''){const b=text('button',label,cls);b.type='button';b.disabled=busy;b.addEventListener('click',fn);return b;}
 function section(title,value,cls){$('detail').append(text('h4',title),text('pre',value,cls));}
@@ -30,8 +31,17 @@ function recovery(prior){
  if(previous&&/^[a-f0-9]{64}$/.test(previous)&&previous!==selected){box.append(text('p','Stored successor link: this proposal supersedes '+previous+'. Its base, change and decision are separate; prior approval never transfers.'),action('Inspect prior proposal',()=>inspect(previous)));}
  $('detail').append(box);
 }
+function renderList(){
+ const queue=reviewQueue(items,$('filter').value,id=>{try{return localStorage.getItem(decisionKey(id))!==null;}catch{return true;}});
+ $('list').replaceChildren();
+ for(const item of queue.rows){const b=action(item.id.slice(0,10),()=>inspect(item.id));b.append(text('span',item.localDecisionPending?'unresolved · local decision':item.status));$('list').append(b);}
+ const c=queue.counts;$('queue-counts').textContent=`Stored proposals: ${c.all} total · ${c.pending} pending · ${c.unresolved} unresolved · ${c.closed} closed. ${queue.rows.length} shown.`;
+ if(!queue.rows.length)$('list').append(text('p','No stored proposals in this view.'));
+ $('filter').disabled=busy;
+}
+function changeFilter(){if(busy)return;selected=null;record=null;confirmation=null;sequence++;renderList();render();notify('View changed. Choose a proposal and inspect its exact stored evidence before deciding.');}
 function render(){
- const detail=$('detail');detail.replaceChildren();detail.hidden=!record;$('refresh').disabled=busy;for(const b of $('list').querySelectorAll('button'))b.disabled=busy;if(!record)return;
+ const detail=$('detail');detail.replaceChildren();detail.hidden=!record;$('refresh').disabled=busy;$('filter').disabled=busy;for(const b of $('list').querySelectorAll('button'))b.disabled=busy;if(!record)return;
  const p=record.payload,r=p.request,c=r.change;detail.append(text('h3',`Review · ${record.status}`));
  section('Selected text',p.preview.removed,'removed');section('Replacement',p.preview.inserted,'inserted');section('Surrounding context',p.preview.prefix+'⟦'+p.preview.removed+'⟧'+p.preview.suffix);section('Explanation',r.explanation);section('Assumptions',(r.assumptions??[]).join('\n')||'None');section('Questions',(r.questions??[]).join('\n')||'None');section('Checks',(r.checks??[]).map(v=>`${v.reference}: unchecked`).join('\n')||'None');section('Exact target and base',JSON.stringify({path:c.path,blockId:c.blockId,start:c.start,end:c.end,base:r.base,proposalDigest:record.proposalDigest},null,2),'metadata');
  const actions=text('div','','actions');actions.append(action('Close preview',()=>{selected=null;record=null;confirmation=null;sequence++;render();}));let prior;
@@ -45,11 +55,11 @@ function render(){
  if(confirmation&&!busy){const kind=confirmation;const retry=kind==='retry';const box=text('div',`Confirm ${retry?'retry of the identical saved approval (same ID, digest and base)':confirmation==='accept'?'approval of exactly this stored change':'rejection of this version'}? No other edits are authorized.`,'confirm');box.append(text('p',record.proposalDigest,'metadata'),action(retry?'Retry exact original approval':confirmation==='accept'?'Approve exact change':'Reject this version',()=>submit(retry?'accept':kind,retry?prior:undefined),confirmation==='reject'?'danger':'primary'),action('Cancel',()=>{confirmation=null;render();}));detail.append(box);}
 }
 async function inspect(id){if(busy)return;selected=id;record=null;confirmation=null;const token=++sequence;render();notify('Loading stored evidence…');try{const value=await request(`/api/proposals/${id}`);if(token!==sequence)return;record=checkedRecord(value);notify('Review the stored change and its exact base. Checks are not quality verification.');render();}catch(error){if(token===sequence)notify(error.message);}}
-async function refresh(){if(busy)return;const token=++sequence;confirmation=null;notify('Refreshing…');try{const items=await request('/api/proposals');if(token!==sequence)return;if(!Array.isArray(items)||items.length>256)throw Error('Invalid proposal list');$('list').replaceChildren();for(const item of items){if(!/^[a-f0-9]{64}$/.test(item.id))throw Error('Invalid proposal identity');const b=action(item.id.slice(0,10),()=>inspect(item.id));b.append(text('span',item.status));$('list').append(b);}notify(items.length?'Choose a stored proposal to inspect.':'No stored proposals.');if(selected)await inspect(selected);else render();}catch(error){if(token===sequence)notify(error.message);}}
+async function refresh(){if(busy)return;const token=++sequence;confirmation=null;render();notify('Refreshing…');try{const incoming=await request('/api/proposals');if(token!==sequence)return;reviewQueue(incoming);items=incoming;renderList();notify(items.length?'Choose a stored proposal to inspect.':'No stored proposals.');if(selected)await inspect(selected);else render();}catch(error){if(token===sequence)notify(error.message);}}
 async function submit(kind,original){
  if(busy||!record||!selected)return;const id=selected,digest=record.proposalDigest,decision=original??{kind,requestId:crypto.randomUUID(),proposalDigest:digest};if(decision.proposalDigest!==digest)return;busy=true;confirmation=null;sequence++;render();
- try{if(!navigator.locks)throw Error('Safe cross-tab decision locking is unavailable.');await navigator.locks.request(decisionKey(id),async()=>{const existing=savedDecision(id);if(kind==='accept'&&original&&(!existing||existing.kind!==original.kind||existing.requestId!==original.requestId||existing.proposalDigest!==original.proposalDigest))throw Error('Saved original approval changed. Refresh and inspect; no retry was sent.');if(!original&&existing)throw Error('Another tab already saved a decision. Refresh and inspect its original outcome.');localStorage.setItem(decisionKey(id),JSON.stringify(decision));notify(kind==='reconcile'?'Checking the original attempt without starting a new approval…':'Submitting the exact stored decision…');record=checkedRecord(await request(`/api/proposals/${id}/${kind}`,{requestId:decision.requestId,proposalDigest:decision.proposalDigest}));notify(`Stored result: ${record.status}.`);});}
- catch(error){notify(`Outcome unconfirmed. ${error.message}\nRefresh to inspect and reconcile the original decision. Never manually replay the replacement.`);}finally{busy=false;render();}
+ try{if(!navigator.locks)throw Error('Safe cross-tab decision locking is unavailable.');await navigator.locks.request(decisionKey(id),async()=>{const existing=savedDecision(id);if(kind==='accept'&&original&&(!existing||existing.kind!==original.kind||existing.requestId!==original.requestId||existing.proposalDigest!==original.proposalDigest))throw Error('Saved original approval changed. Refresh and inspect; no retry was sent.');if(!original&&existing)throw Error('Another tab already saved a decision. Refresh and inspect its original outcome.');localStorage.setItem(decisionKey(id),JSON.stringify(decision));notify(kind==='reconcile'?'Checking the original attempt without starting a new approval…':'Submitting the exact stored decision…');record=checkedRecord(await request(`/api/proposals/${id}/${kind}`,{requestId:decision.requestId,proposalDigest:decision.proposalDigest}));items=items.map(item=>item.id===id?{...item,status:record.status}:item);notify(`Stored result: ${record.status}.`);});}
+ catch(error){notify(`Outcome unconfirmed. ${error.message}\nRefresh to inspect and reconcile the original decision. Never manually replay the replacement.`);}finally{busy=false;renderList();render();}
 }
 let ownsEditor=false;
 async function mountEditor(){
@@ -63,7 +73,7 @@ async function mountEditor(){
 }
 window.addEventListener('pageshow',event=>{if(event.persisted&&auth?.editorUrl)void mountEditor();});
 $('open-editor').addEventListener('click',()=>void mountEditor());
-$('refresh').addEventListener('click',refresh);window.addEventListener('storage',e=>{if(e.key===decisionKey(selected)){confirmation=null;render();}});
+$('filter').addEventListener('change',changeFilter);$('refresh').addEventListener('click',refresh);window.addEventListener('storage',e=>{if(e.key===null||e.key?.startsWith('doc-sync-review-decision-v1:')){confirmation=null;renderList();render();}});
 try{
  const secret=location.hash.slice(1);history.replaceState(null,'',location.pathname);
  if(secret){const response=await fetch('/session',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({secret}),redirect:'error',cache:'no-store'});if(!response.ok)throw Error('Review access was not authorized. Open a fresh owner access link.');auth=await response.json();sessionStorage.setItem(sessionKey,JSON.stringify({session:auth.session}));}

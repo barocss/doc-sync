@@ -41,7 +41,7 @@ export async function startReviewServer({configPath,port=0,assetsDir=dirname(fil
    if(req.headers.origin!==undefined&&req.headers.origin!==origin)throw new Rejected(403);
    if(req.headers['sec-fetch-site']&&!['same-origin','none'].includes(req.headers['sec-fetch-site']))throw new Rejected(403);
    const u=new URL(req.url,origin);if(u.origin!==origin||u.search||u.hash)throw new Rejected(400);
-   if(req.method==='GET'&&['/','/review.html','/review.js','/review.css'].includes(u.pathname)){
+   if(req.method==='GET'&&['/','/review.html','/review.js','/review-list.js','/review.css'].includes(u.pathname)){
     const name=u.pathname==='/'?'review.html':u.pathname.slice(1);const content=await readFile(join(assetsDir,name));
     res.writeHead(200,{...headers,'content-type':name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});res.end(content);return;
    }

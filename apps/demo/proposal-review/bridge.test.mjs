@@ -15,7 +15,7 @@ async function setup(t){
  const dir=await mkdtemp(join(tmpdir(),'review-bridge-'));let handler=(req,res)=>res.end(JSON.stringify({status:'pending'}));const requests=[];
  const upstream=createServer(async(req,res)=>{let body='';for await(const b of req)body+=b;requests.push({path:req.url,authorization:req.headers.authorization,body});handler(req,res);});await new Promise(r=>upstream.listen(0,'127.0.0.1',r));
  const endpoint=`http://127.0.0.1:${upstream.address().port}/mcp/t/d/owner`,path=join(dir,'config.json');const config={enabled:true,endpoint,token,editorUrl:'http://127.0.0.1:9999/pm?doc=doc',document:'doc'};
- await writeFile(path,JSON.stringify(config),{mode:0o600});for(const name of ['review.html','review.js','review.css'])await writeFile(join(dir,name),'safe asset');
+ await writeFile(path,JSON.stringify(config),{mode:0o600});for(const name of ['review.html','review.js','review-list.js','review.css'])await writeFile(join(dir,name),'safe asset');
  const bridge=await startReviewServer({configPath:path,assetsDir:dir});
  t.after(async()=>{await bridge.close();await new Promise(r=>{upstream.closeAllConnections();upstream.close(r);});await rm(dir,{recursive:true,force:true});});
  const post=(url,body,headers={})=>fetch(bridge.origin+url,{method:'POST',headers:{origin:bridge.origin,'content-type':'application/json',...headers},body:JSON.stringify(body)});
@@ -63,4 +63,8 @@ test('CLI emits no bootstrap or upstream credential; access file is exclusive060
  for(let n=0;n<100&&!output.includes('listening');n++)await new Promise(r=>setTimeout(r,25));
  assert.match(output,/listening/);const url=(await readFile(file,'utf8')).trim();assert.match(url,/^http:\/\/127.0.0.1:\d+\/#/);assert.equal((await stat(file)).mode&0o777,0o600);assert(!output.includes(new URL(url).hash.slice(1)));assert(!output.includes(token));
  const again=launch();let second='';again.stdout.on('data',b=>second+=b);again.stderr.on('data',b=>second+=b);const [code]=await once(again,'exit');assert.equal(code,1);assert(!second.includes(token));assert.equal((await readFile(file,'utf8')).trim(),url);
+});
+
+test('queue module is served as an allowlisted local JavaScript asset',async t=>{
+ const s=await setup(t);const response=await fetch(s.bridge.origin+'/review-list.js');assert.equal(response.status,200);assert.match(response.headers.get('content-type'),/javascript/);assert.equal(await response.text(),'safe asset');assert.equal(s.requests.length,0);
 });

@@ -208,3 +208,19 @@ A successful command exit means inspection succeeded, not that the mission compl
 or retry is safe. It never clears locks, resets uncertainty, creates proposals or
 authorizes owner actions. Preserve the original request/checkpoint and use the
 separate authorized server inspection workflow for current proposal status.
+
+
+### Triage the local owner review queue
+
+The opt-in owner review workspace groups its bounded stored proposal list into
+pending review, unresolved decisions and closed versions, with counts and an
+all-proposals view. A pending server record with any retained local decision is
+shown as unresolved, including local evidence that cannot be read. Applied,
+rejected, stale and proven not-applied versions remain closed, not eligible for
+another approval. These labels describe stored evidence, not the live document.
+
+Changing a filter closes the selected preview and its confirmation. It does not
+send an approval, rejection, reconciliation or model request. Select and inspect
+the exact proposal again before deciding. Refresh remains explicit; this is not a
+live activity feed, pagination or a complete audit history beyond the service's
+bounded list. Existing original-decision recovery and cross-tab locks still apply.
