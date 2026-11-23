@@ -1,0 +1,24 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+Error: Command failed: agent-browser --session editor-host-87258-mvyth7n0 --json open http://127.0.0.1:5419/?profile=word&doc=h1-wo-s-mvyth7n0&engine=typescript
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:943:11)
+    at execFileSync (node:child_process:979:15)
+    at run (file:///Users/user/github/doc-sync-d1/output/d1-engine-selection/after/check-editor-host-selected.mjs:15:31)
+    at file:///Users/user/github/doc-sync-d1/output/d1-engine-selection/after/check-editor-host-selected.mjs:56:9 {
+  status: 1,
+  signal: null,
+  output: [
+    null,
+    '{"success":false,"data":null,"error":"Navigation failed: net::ERR_CONNECTION_REFUSED"}\n',
+    ''
+  ],
+  pid: 87309,
+  stdout: '{"success":false,"data":null,"error":"Navigation failed: net::ERR_CONNECTION_REFUSED"}\n',
+  stderr: ''
+}
+
+Node.js v24.22.1

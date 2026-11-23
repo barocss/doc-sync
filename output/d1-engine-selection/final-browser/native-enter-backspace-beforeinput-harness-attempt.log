@@ -1,0 +1,19 @@
+{"profile":"word","editor":"Slate","result":"PASS","calls":{"historyDeletionKeys":2,"historyPin":2,"model":4,"record":2,"schema":237,"session.applyModelEdits":2,"session.capture":6,"session.model":3,"session.reserveClock":4,"session.stamp":4,"stamp":4}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(entry.input.some(e=>e.trusted&&e.type==='insertParagraph'))
+
+    at file:///Users/user/github/doc-sync-d1/output/d1-engine-selection/final-browser/check-native-enter-backspace.mjs:71:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.22.1

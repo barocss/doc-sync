@@ -1,0 +1,43 @@
+{
+  "format": 1,
+  "started": "2026-11-02T05:52:40.987Z",
+  "origin": "http://127.0.0.1:5419",
+  "session": "d1-after-owned",
+  "boundary": "Real Google Chrome native trusted beforeinput; DOM mutation and second requestAnimationFrame are rendering opportunity proxies, not physical paint. Localhost SSE. Three existing product editors; no CodeMirror product adapter.",
+  "node": "v24.22.1",
+  "cpu": {
+    "model": "Apple M3 Max",
+    "speed": 2400,
+    "times": {
+      "user": 659766900,
+      "nice": 0,
+      "sys": 389533060,
+      "idle": 395321620,
+      "irq": 0
+    }
+  },
+  "platform": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "24.6.0"
+  },
+  "samples": 8,
+  "warmups": 2,
+  "rows": [],
+  "harnessHash": "de311257fe97e00c85266c0901c4f3a86674c23e408c85bedf4175e87ae6a89b",
+  "inputs": {
+    "fixtures/product-documents.ts": "39e175f8683010f82f57f3b88011a762b74222ff660d1e76455077b992b25995",
+    "fixtures/product-schemas.ts": "bde6915197476167d30124260d25e2e9ae4aa9542c60bb1cc74e07a5350cf2a6",
+    "apps/demo/products/documents.ts": "c99756dc1826f4307085f3de909a63bcc4933e48580a948bb36bc32d86896a7e",
+    "apps/demo/products/main.jsx": "33534cb07bd4419953988c909d77ed485f2783985fcb2e623c2db8c86ae5ddca",
+    "package-lock.json": "dbaadec431a259115dd3733d4a2629d75a6f4055ad6ded0005d51c3196ddb084",
+    "word": {
+      "modelHash": "b122f4099cd7d0f6638b9dc6d4f96c6a2a42164096783689090fac85788bee31",
+      "utf16": 181543
+    }
+  },
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "result": "FAIL",
+  "firstFailure": "Error: Selected engine diagnostics absent {\"peers\":[{\"calls\":{\"beginEvents\":1,\"clearHistory\":1,\"create\":1,\"createSession\":1,\"finishEvents\":1,\"historyDeletionKeys\":12,\"historyPin\":12,\"identity\":1,\"installPrepared\":1,\"model\":13,\"prepareSnapshot\":1,\"record\":10,\"replayPrepared\":1,\"requireCapabilities\":1,\"schema\":7869,\"session.applyModelEdits\":10,\"session.capture\":40,\"session.model\":11,\"session.reserveClock\":22,\"session.resolve\":2,\"session.stamp\":20,\"setEditHooks\":1,\"stamp\":26},\"factory\":\"doc-sync-typescript\",\"identity\":{\"actor\":\"Slate-5a1a58ad\",\"capabilities\":[\"edit\",\"receive\",\"history\",\"anchors\",\"checkpoint\",\"composition\",\"events\",\"gc\",\"schema-transition\"],\"contractVersion\":1,\"engine\":\"doc-sync-typescript\",\"schemaVersion\":\"sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8\"},\"name\":\"Slate\"},{\"calls\":{\"beginEvents\":11,\"clearHistory\":1,\"create\":1,\"createSession\":1,\"finishEvents\":11,\"historyDeletionKeys\":12,\"historyPin\":12,\"identity\":1,\"installPrepared\":1,\"model\":1,\"prepareSnapshot\":1,\"receive\":10,\"replayPrepared\":1,\"requireCapabilities\":1,\"schema\":4,\"session.model\":12,\"session.reserveClock\":23,\"session.resolve\":12,\"session.stamp\":24,\"setEditHooks\":1},\"factory\":\"doc-sync-typescript\",\"identity\":{\"actor\":\"Lexical-008ae2f7\",\"capabilities\":[\"edit\",\"receive\",\"history\",\"anchors\",\"checkpoint\",\"composition\",\"events\",\"gc\",\"schema-transition\"],\"contractVersion\":1,\"engine\":\"doc-sync-typescript\",\"schemaVersion\":\"sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8\"},\"name\":\"Lexical\"},{\"calls\":{\"beginEvents\":11,\"captureAnchor\":11,\"clearHistory\":1,\"create\":1,\"finishEvents\":11,\"historyDeletionKeys\":12,\"historyPin\":12,\"identity\":1,\"installPrepared\":1,\"model\":13,\"prepareSnapshot\":1,\"receive\":10,\"replayPrepared\":1,\"requireCapabilities\":1,\"schema\":26,\"setEditHooks\":1,\"stamp\":48,\"typescriptDocument\":1},\"factory\":\"doc-sync-typescript\",\"identity\":{\"actor\":\"ProseMirror-74f68a5d\",\"capabilities\":[\"edit\",\"receive\",\"history\",\"anchors\",\"checkpoint\",\"composition\",\"events\",\"gc\",\"schema-transition\"],\"contractVersion\":1,\"engine\":\"doc-sync-typescript\",\"schemaVersion\":\"sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8\"},\"name\":\"ProseMirror\"}],\"selection\":\"typescript\"}\n    at file:///Users/user/github/doc-sync-d1/output/d1-engine-selection/after/chrome-performance-selected.mjs:35:193\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)",
+  "ended": "2026-11-02T05:52:58.036Z"
+}

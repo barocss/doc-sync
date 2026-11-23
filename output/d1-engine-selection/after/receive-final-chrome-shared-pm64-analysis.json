@@ -1,0 +1,247 @@
+{
+  "result": "FUNCTIONAL_PASS_CLIENT_ISOLATION_DIAGNOSTIC",
+  "boundary": "16measuredpairs/sameChrome2tabs/2warmups/2rAFactivation settle; commonfreshbackend+equalproxies where applicable. Original8scores/criteria unchanged. Timestamps locate observedelapsed intervals, do not identify network/OS/GC causes. Quantiles notadditive; meanstage deltas provided.",
+  "rows": [
+    {
+      "profile": "notion",
+      "source": "ProseMirror",
+      "target": "ProseMirror",
+      "metrics": {
+        "inputToCommit": {
+          "A": {
+            "p50": 3.400000095338328,
+            "p95": 4.1000001430511475
+          },
+          "B": {
+            "p50": 3.4000000953674316,
+            "p95": 4.6000001430511475
+          },
+          "meanA": 3.445312511173256,
+          "meanB": 3.604687504469098,
+          "meanDelta": 0.1593749932958417,
+          "pairedDeltaP50": 0.09999966621398926,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 2,
+              "delta": 2.9103830456733704e-11,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 4,
+              "delta": 0.5,
+              "trigger": false
+            }
+          }
+        },
+        "commit": {
+          "A": {
+            "p50": 0.3000001907348633,
+            "p95": 0.5
+          },
+          "B": {
+            "p50": 0.299999952345388,
+            "p95": 0.5
+          },
+          "meanA": 0.3624999746712092,
+          "meanB": 0.33906250819825345,
+          "meanDelta": -0.023437466472955748,
+          "pairedDeltaP50": 0,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 2,
+              "delta": -2.3838947527110577e-7,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 4,
+              "delta": 0,
+              "trigger": false
+            }
+          }
+        },
+        "send": {
+          "A": {
+            "p50": 19,
+            "p95": 42.799999952316284
+          },
+          "B": {
+            "p50": 18,
+            "p95": 31.199999809265137
+          },
+          "meanA": 21.273437481375026,
+          "meanB": 18.968750000001478,
+          "meanDelta": -2.3046874813735485,
+          "pairedDeltaP50": -1.7999999523162842,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 2,
+              "delta": -1,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 6.419999992847442,
+              "delta": -11.600000143051147,
+              "trigger": false
+            }
+          }
+        },
+        "inputDom": {
+          "A": {
+            "p50": 4.099999904632568,
+            "p95": 5
+          },
+          "B": {
+            "p50": 4.099999904632568,
+            "p95": 5.5
+          },
+          "meanA": 4.143750004470348,
+          "meanB": 4.289062496274141,
+          "meanDelta": 0.1453124918037929,
+          "pairedDeltaP50": 2.3838947527110577e-7,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 2,
+              "delta": 0,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 4,
+              "delta": 0.5,
+              "trigger": false
+            }
+          }
+        },
+        "rafAfterDom": {
+          "A": {
+            "p50": 5.799999952316284,
+            "p95": 14
+          },
+          "B": {
+            "p50": 5.8000001907057595,
+            "p95": 14.399999856948853
+          },
+          "meanA": 6.714062489569187,
+          "meanB": 7.2078125178799155,
+          "meanDelta": 0.49375002831072834,
+          "pairedDeltaP50": 0.10000014305114746,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 2,
+              "delta": 2.3838947527110577e-7,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 4,
+              "delta": 0.39999985694885254,
+              "trigger": false
+            }
+          }
+        },
+        "inputRaf2": {
+          "A": {
+            "p50": 10,
+            "p95": 17.90000009536743
+          },
+          "B": {
+            "p50": 10.099999904632568,
+            "p95": 18.799999952316284
+          },
+          "meanA": 10.857812494039536,
+          "meanB": 11.496875014154057,
+          "meanDelta": 0.6390625201145212,
+          "pairedDeltaP50": 0.39999985694885254,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 2,
+              "delta": 0.09999990463256836,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 4,
+              "delta": 0.8999998569488525,
+              "trigger": false
+            }
+          }
+        },
+        "receiveBegin": {
+          "A": {
+            "p50": 39.299999952316284,
+            "p95": 62.299999952316284
+          },
+          "B": {
+            "p50": 37.59999990463257,
+            "p95": 50.299999952316284
+          },
+          "meanA": 41.784375000746195,
+          "meanB": 38.82812501489889,
+          "meanDelta": -2.9562499858473075,
+          "pairedDeltaP50": -2.4999997616105247,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 3.9299999952316287,
+              "delta": -1.7000000476837158,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 9.344999992847443,
+              "delta": -12,
+              "trigger": false
+            }
+          }
+        },
+        "receiveDuration": {
+          "A": {
+            "p50": 0,
+            "p95": 0.10000014302204363
+          },
+          "B": {
+            "p50": 0,
+            "p95": 0.09999990466167219
+          },
+          "meanA": 0.01718749850920176,
+          "meanB": 0.017187494784593582,
+          "meanDelta": -3.7246081774355844e-9,
+          "pairedDeltaP50": 0,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 2,
+              "delta": 0,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 4,
+              "delta": -2.3836037144064903e-7,
+              "trigger": false
+            }
+          }
+        },
+        "domAfterReceiveEnd": {
+          "A": {
+            "p50": -35.5,
+            "p95": -26.09999990463257
+          },
+          "B": {
+            "p50": -33.5,
+            "p95": -23.799999952316284
+          },
+          "meanA": -37.65781249478505,
+          "meanB": -34.55625001340934,
+          "meanDelta": 3.1015624813757086,
+          "pairedDeltaP50": 2.3999998569488525,
+          "budgetTriggers": {
+            "p50": {
+              "threshold": 2,
+              "delta": 2,
+              "trigger": false
+            },
+            "p95": {
+              "threshold": 4,
+              "delta": 2.299999952316284,
+              "trigger": false
+            }
+          }
+        }
+      }
+    }
+  ]
+}

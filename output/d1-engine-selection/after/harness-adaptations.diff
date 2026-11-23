@@ -1,0 +1,72 @@
+--- /Users/user/github/doc-sync/output/d1-engine-selection/baseline/chrome-performance.mjs
++++ output/d1-engine-selection/after/chrome-performance-selected.mjs
+@@ -3,7 +3,8 @@
+ import {createHash} from 'node:crypto';
+ import os from 'node:os';
+ const [origin='http://127.0.0.1:5418', output='output/d1-engine-selection/baseline/chrome-performance.json', prefix='d1-base']=process.argv.slice(2);
+-const session='d1-baseline-owned';
++const engine=process.argv[5];if(engine&&engine!=='typescript')throw Error('Unsupported controlled engine option');
++const session='d1-after-owned';
+ const run=(...args)=>{const r=JSON.parse(execFileSync('agent-browser',['--session',session,'--json',...args],{encoding:'utf8',timeout:90000,maxBuffer:20000000}));if(!r.success)throw Error(JSON.stringify(r));return r.data;};
+ const ev=code=>run('eval','-b',Buffer.from(code).toString('base64')).result;
+ const wait=code=>run('wait','--fn',code);
+@@ -13,7 +14,7 @@
+ const save=()=>writeFileSync(output,JSON.stringify(report,null,2)+'\n');
+ try{
+  for(const profile of ['word','notion','presentation']){
+-  run('open',`${origin}/?profile=${profile}&size=large&doc=${prefix}-${profile}`);
++  run('open',`${origin}/?profile=${profile}&size=large&doc=${prefix}-${profile}${engine?"&engine="+engine:""}`);
+   wait('!!window.products?.ready()&&!products.errors.length&&products.status().every(p=>p.online&&!p.pending)');
+   run('set','viewport','1680','1100');
+   report.browser??=ev('navigator.userAgent');
+@@ -31,9 +32,11 @@
+     const row=ev('products.measurement()');if(row.error||!row.complete||!row.input?.trusted||Object.keys(row.receive).length!==3)throw Error('invalid row '+JSON.stringify(row));
+     wait('products.status().every(p=>p.online&&!p.pending)');
+    }
++   const diagnostics=ev('products.engine??null');if(engine&&(diagnostics?.selection!==engine||diagnostics.peers.length!==3||diagnostics.peers.some(p=>!p.calls.create||!p.calls.receive)))throw Error('Selected engine diagnostics absent '+JSON.stringify(diagnostics));
++   const ownEngine=diagnostics?.peers.find(p=>p.name===source);if(engine&&(!ownEngine?.calls.record||!(ownEngine.calls.apply||ownEngine.calls.applyModelEdits||ownEngine.calls['session.apply']||ownEngine.calls['session.applyModelEdits'])))throw Error('Selected source record missing');
+    const final=ev('(async()=>{const s=await products.snapshot();return {equal:s.equal,peers:s.peers.map(({name,seq,pending,fallbacks})=>({name,seq,pending,fallbacks})),errors:products.errors,records:products.records()}})()');
+    if(!final.equal||final.errors.length||final.peers.some(p=>p.fallbacks))throw Error('final mismatch '+JSON.stringify(final));
+-   const row={profile,source,...final,records:final.records.slice(2)};report.rows.push(row);save();console.log(JSON.stringify({profile,source,result:'PASS',samples:row.records.length}));
++   const row={profile,source,engine:diagnostics,...final,records:final.records.slice(2)};report.rows.push(row);save();console.log(JSON.stringify({profile,source,result:'PASS',samples:row.records.length}));
+   }
+  }
+  report.result='PASS';
+--- apps/demo/products/check-editor-host.mjs
++++ output/d1-engine-selection/after/check-editor-host-selected.mjs
+@@ -53,7 +53,7 @@
+         const doc = `h1-${profile.slice(0,2)}-${name[0].toLowerCase()}-${Date.now().toString(36)}`;
+         const entry = {profile, editor: name, doc, result: 'RUNNING'};
+         receipt.cases.push(entry);
+-        run('open', `${origin}/?profile=${profile}&doc=${doc}`);
++        run('open', `${origin}/?profile=${profile}&doc=${doc}&engine=typescript`);
+         run('wait', '--fn', '!!window.products?.ready()');
+         receipt.browser ??= evaluate('navigator.userAgent');
+         const initial = await converge();
+@@ -106,6 +106,7 @@
+         assert.equal(sameMounted,true);
+         entry.offline={selectedOnline:disconnected.online,selectedNative:modelText(nodeAt(disconnected.native,target.path)),othersReceived:true};
+         entry.reconnect={sameMounted,equal:replayed.equal,pending:replayed.peers.map(peer=>peer.pending),seq:replayed.peers.map(peer=>peer.seq)};
++        entry.engine=evaluate('products.engine');assert.equal(entry.engine.selection,'typescript');assert.equal(entry.engine.peers.length,3);assert.ok(entry.engine.peers.every(p=>p.calls.create&&p.calls.receive));const ownEngine=entry.engine.peers.find(p=>p.name===name);assert.ok(ownEngine.calls.record&&ownEngine.calls.undo&&ownEngine.calls.redo,'selected history routing');
+         entry.errors=evaluate('products.errors');assert.deepEqual(entry.errors,[]);
+         entry.browserErrors=run('errors');assert.deepEqual(entry.browserErrors.errors??[],[]);
+         run('screenshot',resolve(output,`${profile}-${name}.png`));
+--- /Users/user/github/doc-sync/benchmarks/editor-host.mjs
++++ output/d1-engine-selection/after/node-editor-host-selected.mjs
+@@ -41,6 +41,7 @@
+  const original=object[key]; object[key]=function(...values){if(tracing)counters[counter]++; return original.apply(this,values);};
+ }
+ function measure(fn) { for(const k in counters)counters[k]=0; tracing=true; const start=performance.now(); try {fn(); return {ms:performance.now()-start,counts:{...counters}};} finally {tracing=false;} }
++const {typescriptClientEngineFactory}=await imp('packages/doc-sync-core/dist/engine/index.js');
+ const fixtures=new Map();
+ for(const size of sizes) {
+  const seed=new Doc('seed',schema), children=Array.from({length:size/100},(_,i)=>({type:'paragraph',runs:[{text:('abcdefghij'.repeat(10)),marks:{}}]}));
+@@ -50,7 +51,7 @@
+ }
+ function setup(size) {
+  let receive; const sent=[];
+- const client=new SyncClient('A',{subscribe:(_s,cb)=>{receive=cb;return()=>{};},send:async change=>{sent.push(change);},sendPresence:()=>{}},{schema});
++ const client=new SyncClient('A',{subscribe:(_s,cb)=>{receive=cb;return()=>{};},send:async change=>{sent.push(change);},sendPresence:()=>{}},{schema,engineFactory:typescriptClientEngineFactory});
+  client.connect(); receive({type:'hello',schemaVersion:schemaVersion(schema),protocol:PROTOCOL_VERSION,capabilities:DOCUMENT_CAPABILITIES,epoch:'host-h0',serverSeq:1,snapshot:fixtures.get(size),presence:[],delSeqs:[]});
+  const binding=new PmBinding(client,info); assert.equal(binding.client,client);
+  let remoteCoreCounts=null, delivering=false; const pull=binding.pull.bind(binding); binding.pull=(...args)=>{if(delivering&&remoteCoreCounts===null)remoteCoreCounts={...counters};return pull(...args);};

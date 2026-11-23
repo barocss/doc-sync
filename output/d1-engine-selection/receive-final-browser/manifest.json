@@ -1,0 +1,334 @@
+{
+  "result": "PASS",
+  "boundary": "Chrome156 non-timing receive-final frozen runtime functional regression; OSIME NOT_RUN; performance NOT_RUN",
+  "fingerprints": {
+    "capturedAt": "2026-11-02T05:45:58.155844+00:00",
+    "sha256": {
+      "apps/demo/tiptap/main.ts": "4d592d3c6364f1a15ef485f706b9fa851e10592e65c889361471c4fa306e1b92",
+      "apps/demo/tiptap/start.mjs": "b2556682b2996fc38f6957f7edcb96d3831625666be25a98a155911b47812db5",
+      "apps/demo/tiptap/check-browser.mjs": "be1f5d2ddf1f1ddae15ea69e443770ed95ca2df1dd11b40badc470b4ce485523",
+      "packages/doc-sync-core/dist/engine/typescript-client.js": "a1f56fadd886db734245ee69f7f8af229ea59f21cf0da0e271aa2912c9859063",
+      "packages/doc-sync-core/dist/sync/client.js": "2800b609f56147a5b4c01a47ae47daed3c306250b9c5bbec0730caa6f5d65d6a",
+      "packages/doc-sync-tiptap/dist/index.js": "683c999c3d1d336f7e910f4de3de7bfc940a99a975b68f71462ac39f75af1542",
+      "packages/doc-sync-prosemirror/dist/host-binding.js": "bd22bfc3bcd83ba8f8756148d1a67380803d93aa6365ef9bc386ac1a0f57a6af"
+    },
+    "servedBundles": {
+      "5422": "15c49c6330d3a2317a08fe7250b616f82f86f9e86eee2fd17abc414f6ee3c1e3",
+      "5419": "e0dbefc32dbb63209ee47bf2fbc1de8de94ce650328d5231098c15ffdee71320"
+    },
+    "afterSHA256": {
+      "apps/demo/tiptap/main.ts": "4d592d3c6364f1a15ef485f706b9fa851e10592e65c889361471c4fa306e1b92",
+      "apps/demo/tiptap/start.mjs": "b2556682b2996fc38f6957f7edcb96d3831625666be25a98a155911b47812db5",
+      "apps/demo/tiptap/check-browser.mjs": "be1f5d2ddf1f1ddae15ea69e443770ed95ca2df1dd11b40badc470b4ce485523",
+      "packages/doc-sync-core/dist/engine/typescript-client.js": "a1f56fadd886db734245ee69f7f8af229ea59f21cf0da0e271aa2912c9859063",
+      "packages/doc-sync-core/dist/sync/client.js": "2800b609f56147a5b4c01a47ae47daed3c306250b9c5bbec0730caa6f5d65d6a",
+      "packages/doc-sync-tiptap/dist/index.js": "683c999c3d1d336f7e910f4de3de7bfc940a99a975b68f71462ac39f75af1542",
+      "packages/doc-sync-prosemirror/dist/host-binding.js": "bd22bfc3bcd83ba8f8756148d1a67380803d93aa6365ef9bc386ac1a0f57a6af"
+    },
+    "unchanged": true
+  },
+  "tiptap": {
+    "selected": {
+      "result": "PASS",
+      "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "engine": {
+        "calls": {
+          "alice": {
+            "apply": 14,
+            "beginEvents": 6,
+            "captureAnchor": 256,
+            "clearHistory": 1,
+            "create": 1,
+            "finishEvents": 6,
+            "historyDeletionKeys": 20,
+            "historyPin": 20,
+            "historyStatus": 2,
+            "identity": 1,
+            "installPrepared": 1,
+            "locateAnchor": 87,
+            "model": 129,
+            "prepareSnapshot": 1,
+            "receive": 3,
+            "record": 14,
+            "redo": 1,
+            "replayPrepared": 1,
+            "requireCapabilities": 1,
+            "reset": 1,
+            "schema": 383,
+            "setEditHooks": 1,
+            "stamp": 526,
+            "undo": 1
+          },
+          "bob": {
+            "allocationFloor": 1,
+            "apply": 3,
+            "beginEvents": 16,
+            "captureAnchor": 186,
+            "clearHistory": 1,
+            "create": 1,
+            "finishEvents": 16,
+            "historyDeletionKeys": 13,
+            "historyPin": 13,
+            "identity": 1,
+            "installPrepared": 1,
+            "locateAnchor": 64,
+            "model": 130,
+            "prepareSnapshot": 1,
+            "receive": 16,
+            "record": 3,
+            "replayPrepared": 1,
+            "requireCapabilities": 1,
+            "reset": 1,
+            "schema": 268,
+            "setEditHooks": 1,
+            "stamp": 395
+          }
+        },
+        "selected": "typescript",
+        "sessions": "NOT_APPLICABLE: Tiptap uses ProseMirror transactions",
+        "tracked": true
+      },
+      "errors": {
+        "errors": []
+      },
+      "receipt": "tiptap-selected/chrome-receipt.json"
+    },
+    "default": {
+      "result": "PASS",
+      "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "engine": {
+        "calls": {},
+        "selected": "default",
+        "sessions": "NOT_APPLICABLE: Tiptap uses ProseMirror transactions",
+        "tracked": false
+      },
+      "errors": {
+        "errors": []
+      },
+      "receipt": "tiptap-default/chrome-receipt.json"
+    },
+    "unsupported": {
+      "result": "PASS",
+      "state": {
+        "demo": false,
+        "editors": 0,
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+      },
+      "errors": {
+        "errors": [
+          {
+            "column": 72,
+            "line": 26825,
+            "text": "Error: Unsupported engine selection: rust\n    at http://127.0.0.1:5422/bundle.js:26826:73",
+            "url": null
+          }
+        ]
+      },
+      "boundary": "Expected selector rejection; zero mounted editors; exactly one expected browser error"
+    }
+  },
+  "nativeStructure": {
+    "result": "PASS",
+    "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "receipt": "native-enter-backspace/receipt.json",
+    "cases": [
+      {
+        "profile": "word",
+        "editor": "Slate",
+        "result": "PASS",
+        "ownCallDelta": {
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 4,
+          "record": 2,
+          "schema": 237,
+          "session.applyModelEdits": 2,
+          "session.capture": 6,
+          "session.model": 3,
+          "session.reserveClock": 4,
+          "session.stamp": 4,
+          "stamp": 4
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      },
+      {
+        "profile": "word",
+        "editor": "Lexical",
+        "result": "PASS",
+        "ownCallDelta": {
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 2,
+          "record": 2,
+          "schema": 1,
+          "session.apply": 1,
+          "session.applyModelEdits": 1,
+          "session.capture": 6,
+          "session.locateAnchor": 1,
+          "session.model": 3,
+          "session.reserveClock": 4,
+          "session.stamp": 6
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      },
+      {
+        "profile": "word",
+        "editor": "ProseMirror",
+        "result": "PASS",
+        "ownCallDelta": {
+          "apply": 2,
+          "captureAnchor": 6,
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 4,
+          "record": 2,
+          "schema": 10,
+          "stamp": 14,
+          "typescriptDocument": 6
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      },
+      {
+        "profile": "notion",
+        "editor": "Slate",
+        "result": "PASS",
+        "ownCallDelta": {
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 4,
+          "record": 2,
+          "schema": 181,
+          "session.applyModelEdits": 2,
+          "session.capture": 6,
+          "session.model": 3,
+          "session.reserveClock": 4,
+          "session.stamp": 4,
+          "stamp": 4
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      },
+      {
+        "profile": "notion",
+        "editor": "Lexical",
+        "result": "PASS",
+        "ownCallDelta": {
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 2,
+          "record": 2,
+          "schema": 1,
+          "session.apply": 1,
+          "session.applyModelEdits": 1,
+          "session.capture": 6,
+          "session.locateAnchor": 1,
+          "session.model": 3,
+          "session.reserveClock": 4,
+          "session.stamp": 6
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      },
+      {
+        "profile": "notion",
+        "editor": "ProseMirror",
+        "result": "PASS",
+        "ownCallDelta": {
+          "apply": 2,
+          "captureAnchor": 6,
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 4,
+          "record": 2,
+          "schema": 10,
+          "stamp": 14,
+          "typescriptDocument": 6
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      },
+      {
+        "profile": "presentation",
+        "editor": "Slate",
+        "result": "PASS",
+        "ownCallDelta": {
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 4,
+          "record": 2,
+          "schema": 238,
+          "session.applyModelEdits": 2,
+          "session.capture": 6,
+          "session.model": 3,
+          "session.reserveClock": 4,
+          "session.stamp": 4,
+          "stamp": 4
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      },
+      {
+        "profile": "presentation",
+        "editor": "Lexical",
+        "result": "PASS",
+        "ownCallDelta": {
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 2,
+          "record": 2,
+          "schema": 1,
+          "session.apply": 1,
+          "session.applyModelEdits": 1,
+          "session.capture": 6,
+          "session.locateAnchor": 1,
+          "session.model": 3,
+          "session.reserveClock": 4,
+          "session.stamp": 6
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      },
+      {
+        "profile": "presentation",
+        "editor": "ProseMirror",
+        "result": "PASS",
+        "ownCallDelta": {
+          "apply": 2,
+          "captureAnchor": 6,
+          "historyDeletionKeys": 2,
+          "historyPin": 2,
+          "model": 4,
+          "record": 2,
+          "schema": 10,
+          "stamp": 14,
+          "typescriptDocument": 6
+        },
+        "errors": [],
+        "browserErrors": {
+          "errors": []
+        }
+      }
+    ]
+  },
+  "completedAt": "2026-11-02T05:47:01.110988+00:00",
+  "resources": "Owned Tiptap5422 and all browser sessions closed; baseline-owned5419 preserved."
+}

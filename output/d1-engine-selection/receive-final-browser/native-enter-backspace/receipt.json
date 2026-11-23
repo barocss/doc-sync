@@ -1,0 +1,3182 @@
+{
+  "boundary": "Non-timing native Chrome Enter and Backspace; OS IME NOT_RUN",
+  "result": "PASS",
+  "session": "editor-host-52529-mvyu5hbh",
+  "origin": "http://127.0.0.1:5419",
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "cases": [
+    {
+      "profile": "word",
+      "editor": "Slate",
+      "doc": "eb-w-s-mvyu5hbh",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 512,
+              "session.capture": 10,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-2dbd64d3",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-b0dd8842",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 6,
+              "setEditHooks": 1,
+              "stamp": 8,
+              "typescriptDocument": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-a1cac9f0",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Ope",
+        "right": "ning text",
+        "range": {
+          "anchor": [
+            1,
+            1,
+            0
+          ],
+          "focus": [
+            1,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            1,
+            0,
+            3
+          ],
+          "focus": [
+            1,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [
+        {
+          "data": null,
+          "trusted": true,
+          "type": "insertParagraph"
+        },
+        {
+          "data": null,
+          "trusted": true,
+          "type": "deleteContentBackward"
+        }
+      ],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 749,
+              "session.applyModelEdits": 2,
+              "session.capture": 16,
+              "session.model": 3,
+              "session.reserveClock": 6,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-2dbd64d3",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 4,
+              "session.reserveClock": 7,
+              "session.resolve": 4,
+              "session.stamp": 8,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-b0dd8842",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "captureAnchor": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-a1cac9f0",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 4,
+        "record": 2,
+        "schema": 237,
+        "session.applyModelEdits": 2,
+        "session.capture": 6,
+        "session.model": 3,
+        "session.reserveClock": 4,
+        "session.stamp": 4,
+        "stamp": 4
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    },
+    {
+      "profile": "word",
+      "editor": "Lexical",
+      "doc": "eb-w-l-mvyu5n6v",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 414,
+              "session.capture": 6,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-4c8f14e0",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-13851e5a",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 6,
+              "setEditHooks": 1,
+              "stamp": 8,
+              "typescriptDocument": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-9e39eb51",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Ope",
+        "right": "ning text",
+        "range": {
+          "anchor": [
+            1,
+            1,
+            0
+          ],
+          "focus": [
+            1,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            1,
+            0,
+            3
+          ],
+          "focus": [
+            1,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 1170,
+              "session.capture": 14,
+              "session.reserveClock": 4,
+              "session.resolve": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-4c8f14e0",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 5,
+              "session.apply": 1,
+              "session.applyModelEdits": 1,
+              "session.capture": 6,
+              "session.locateAnchor": 1,
+              "session.model": 5,
+              "session.reserveClock": 7,
+              "session.resolve": 2,
+              "session.stamp": 10,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-13851e5a",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "captureAnchor": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-9e39eb51",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 2,
+        "record": 2,
+        "schema": 1,
+        "session.apply": 1,
+        "session.applyModelEdits": 1,
+        "session.capture": 6,
+        "session.locateAnchor": 1,
+        "session.model": 3,
+        "session.reserveClock": 4,
+        "session.stamp": 6
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    },
+    {
+      "profile": "word",
+      "editor": "ProseMirror",
+      "doc": "eb-w-p-mvyu5s4x",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 414,
+              "session.capture": 6,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-8472eece",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-0de5555b",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 5,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-15bc0b7b",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Ope",
+        "right": "ning text",
+        "range": {
+          "anchor": [
+            1,
+            1,
+            0
+          ],
+          "focus": [
+            1,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            1,
+            0,
+            3
+          ],
+          "focus": [
+            1,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 1170,
+              "session.capture": 14,
+              "session.reserveClock": 4,
+              "session.resolve": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-8472eece",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 4,
+              "session.reserveClock": 7,
+              "session.resolve": 4,
+              "session.stamp": 8,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-0de5555b",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "apply": 2,
+              "beginEvents": 1,
+              "captureAnchor": 11,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 20,
+              "setEditHooks": 1,
+              "stamp": 30,
+              "typescriptDocument": 9
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-15bc0b7b",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:03149070bd42bf344652ab68106ab3182932703f55366378e14a8ae6d45aa4a8"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "apply": 2,
+        "captureAnchor": 6,
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 4,
+        "record": 2,
+        "schema": 10,
+        "stamp": 14,
+        "typescriptDocument": 6
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    },
+    {
+      "profile": "notion",
+      "editor": "Slate",
+      "doc": "eb-n-s-mvyu5xgb",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 599,
+              "session.capture": 10,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-8fb5a126",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-275b0eb1",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 6,
+              "setEditHooks": 1,
+              "stamp": 8,
+              "typescriptDocument": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-fddbafe8",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Det",
+        "right": "ails",
+        "range": {
+          "anchor": [
+            5,
+            1,
+            0
+          ],
+          "focus": [
+            5,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            5,
+            0,
+            3
+          ],
+          "focus": [
+            5,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [
+        {
+          "data": null,
+          "trusted": true,
+          "type": "insertParagraph"
+        },
+        {
+          "data": null,
+          "trusted": true,
+          "type": "deleteContentBackward"
+        }
+      ],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 780,
+              "session.applyModelEdits": 2,
+              "session.capture": 16,
+              "session.model": 3,
+              "session.reserveClock": 6,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-8fb5a126",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 4,
+              "session.reserveClock": 7,
+              "session.resolve": 4,
+              "session.stamp": 8,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-275b0eb1",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "captureAnchor": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-fddbafe8",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 4,
+        "record": 2,
+        "schema": 181,
+        "session.applyModelEdits": 2,
+        "session.capture": 6,
+        "session.model": 3,
+        "session.reserveClock": 4,
+        "session.stamp": 4,
+        "stamp": 4
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    },
+    {
+      "profile": "notion",
+      "editor": "Lexical",
+      "doc": "eb-n-l-mvyu620r",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 541,
+              "session.capture": 6,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-55aaa2e8",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-7c3535cc",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 6,
+              "setEditHooks": 1,
+              "stamp": 8,
+              "typescriptDocument": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-cf2210af",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Det",
+        "right": "ails",
+        "range": {
+          "anchor": [
+            5,
+            1,
+            0
+          ],
+          "focus": [
+            5,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            5,
+            0,
+            3
+          ],
+          "focus": [
+            5,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 687,
+              "session.capture": 14,
+              "session.reserveClock": 4,
+              "session.resolve": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-55aaa2e8",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 5,
+              "session.apply": 1,
+              "session.applyModelEdits": 1,
+              "session.capture": 6,
+              "session.locateAnchor": 1,
+              "session.model": 5,
+              "session.reserveClock": 7,
+              "session.resolve": 2,
+              "session.stamp": 10,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-7c3535cc",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "captureAnchor": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-cf2210af",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 2,
+        "record": 2,
+        "schema": 1,
+        "session.apply": 1,
+        "session.applyModelEdits": 1,
+        "session.capture": 6,
+        "session.locateAnchor": 1,
+        "session.model": 3,
+        "session.reserveClock": 4,
+        "session.stamp": 6
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    },
+    {
+      "profile": "notion",
+      "editor": "ProseMirror",
+      "doc": "eb-n-p-mvyu66le",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 541,
+              "session.capture": 6,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-388a9ff4",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-87d1ba82",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 5,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-b13e1050",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Det",
+        "right": "ails",
+        "range": {
+          "anchor": [
+            5,
+            1,
+            0
+          ],
+          "focus": [
+            5,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            5,
+            0,
+            3
+          ],
+          "focus": [
+            5,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 687,
+              "session.capture": 14,
+              "session.reserveClock": 4,
+              "session.resolve": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-388a9ff4",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 4,
+              "session.reserveClock": 7,
+              "session.resolve": 4,
+              "session.stamp": 8,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-87d1ba82",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "apply": 2,
+              "beginEvents": 1,
+              "captureAnchor": 11,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 20,
+              "setEditHooks": 1,
+              "stamp": 30,
+              "typescriptDocument": 9
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-b13e1050",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:3874659a20249882948f160cb7f56dd4d10a7547b74466ff6cf581cd6b4a9a92"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "apply": 2,
+        "captureAnchor": 6,
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 4,
+        "record": 2,
+        "schema": 10,
+        "stamp": 14,
+        "typescriptDocument": 6
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    },
+    {
+      "profile": "presentation",
+      "editor": "Slate",
+      "doc": "eb-p-s-mvyu6b83",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 490,
+              "session.capture": 10,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-df6829e3",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-2de448f9",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 6,
+              "setEditHooks": 1,
+              "stamp": 8,
+              "typescriptDocument": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-510b6d47",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Res",
+        "right": "ult summary",
+        "range": {
+          "anchor": [
+            2,
+            1,
+            1,
+            0
+          ],
+          "focus": [
+            2,
+            1,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            2,
+            1,
+            0,
+            3
+          ],
+          "focus": [
+            2,
+            1,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [
+        {
+          "data": null,
+          "trusted": true,
+          "type": "insertParagraph"
+        },
+        {
+          "data": null,
+          "trusted": true,
+          "type": "deleteContentBackward"
+        }
+      ],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 728,
+              "session.applyModelEdits": 2,
+              "session.capture": 16,
+              "session.model": 3,
+              "session.reserveClock": 6,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-df6829e3",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 4,
+              "session.reserveClock": 7,
+              "session.resolve": 4,
+              "session.stamp": 8,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-2de448f9",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "captureAnchor": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-510b6d47",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 4,
+        "record": 2,
+        "schema": 238,
+        "session.applyModelEdits": 2,
+        "session.capture": 6,
+        "session.model": 3,
+        "session.reserveClock": 4,
+        "session.stamp": 4,
+        "stamp": 4
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    },
+    {
+      "profile": "presentation",
+      "editor": "Lexical",
+      "doc": "eb-p-l-mvyu6fps",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 393,
+              "session.capture": 6,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-c163fd21",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-551af872",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 6,
+              "setEditHooks": 1,
+              "stamp": 8,
+              "typescriptDocument": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-98a65da2",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Res",
+        "right": "ult summary",
+        "range": {
+          "anchor": [
+            2,
+            1,
+            1,
+            0
+          ],
+          "focus": [
+            2,
+            1,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            2,
+            1,
+            0,
+            3
+          ],
+          "focus": [
+            2,
+            1,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 855,
+              "session.capture": 14,
+              "session.reserveClock": 4,
+              "session.resolve": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-c163fd21",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 5,
+              "session.apply": 1,
+              "session.applyModelEdits": 1,
+              "session.capture": 6,
+              "session.locateAnchor": 1,
+              "session.model": 5,
+              "session.reserveClock": 7,
+              "session.resolve": 2,
+              "session.stamp": 10,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-551af872",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "captureAnchor": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-98a65da2",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 2,
+        "record": 2,
+        "schema": 1,
+        "session.apply": 1,
+        "session.applyModelEdits": 1,
+        "session.capture": 6,
+        "session.locateAnchor": 1,
+        "session.model": 3,
+        "session.reserveClock": 4,
+        "session.stamp": 6
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    },
+    {
+      "profile": "presentation",
+      "editor": "ProseMirror",
+      "doc": "eb-p-p-mvyu6k9t",
+      "result": "PASS",
+      "engineBefore": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 393,
+              "session.capture": 6,
+              "session.reserveClock": 2,
+              "session.resolve": 2,
+              "setEditHooks": 1,
+              "stamp": 6
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-bb4b7017",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 1,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 2,
+              "session.reserveClock": 3,
+              "session.resolve": 2,
+              "session.stamp": 4,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-a5fb5236",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "beginEvents": 1,
+              "captureAnchor": 5,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 2,
+              "historyPin": 2,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 10,
+              "setEditHooks": 1,
+              "stamp": 16,
+              "typescriptDocument": 3
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-6dbff2e1",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "split": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "left": "Res",
+        "right": "ult summary",
+        "range": {
+          "anchor": [
+            2,
+            1,
+            1,
+            0
+          ],
+          "focus": [
+            2,
+            1,
+            1,
+            0
+          ]
+        }
+      },
+      "merge": {
+        "equal": true,
+        "pending": [
+          0,
+          0,
+          0
+        ],
+        "range": {
+          "anchor": [
+            2,
+            1,
+            0,
+            3
+          ],
+          "focus": [
+            2,
+            1,
+            0,
+            3
+          ]
+        }
+      },
+      "input": [],
+      "keys": [
+        {
+          "key": "ArrowLeft",
+          "trusted": true
+        },
+        {
+          "key": "ArrowRight",
+          "trusted": true
+        },
+        {
+          "key": "Enter",
+          "trusted": true
+        },
+        {
+          "key": "Backspace",
+          "trusted": true
+        }
+      ],
+      "engine": {
+        "peers": [
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 855,
+              "session.capture": 14,
+              "session.reserveClock": 4,
+              "session.resolve": 4,
+              "setEditHooks": 1,
+              "stamp": 10
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Slate-bb4b7017",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Slate"
+          },
+          {
+            "calls": {
+              "beginEvents": 3,
+              "clearHistory": 1,
+              "create": 1,
+              "createSession": 1,
+              "finishEvents": 3,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 3,
+              "prepareSnapshot": 1,
+              "receive": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 4,
+              "session.model": 4,
+              "session.reserveClock": 7,
+              "session.resolve": 4,
+              "session.stamp": 8,
+              "setEditHooks": 1
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "Lexical-a5fb5236",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "Lexical"
+          },
+          {
+            "calls": {
+              "apply": 2,
+              "beginEvents": 1,
+              "captureAnchor": 11,
+              "clearHistory": 1,
+              "create": 1,
+              "finishEvents": 1,
+              "historyDeletionKeys": 4,
+              "historyPin": 4,
+              "identity": 1,
+              "installPrepared": 1,
+              "model": 7,
+              "prepareSnapshot": 1,
+              "record": 2,
+              "replayPrepared": 1,
+              "requireCapabilities": 1,
+              "schema": 20,
+              "setEditHooks": 1,
+              "stamp": 30,
+              "typescriptDocument": 9
+            },
+            "factory": "doc-sync-typescript",
+            "identity": {
+              "actor": "ProseMirror-6dbff2e1",
+              "capabilities": [
+                "edit",
+                "receive",
+                "history",
+                "anchors",
+                "checkpoint",
+                "composition",
+                "events",
+                "gc",
+                "schema-transition"
+              ],
+              "contractVersion": 1,
+              "engine": "doc-sync-typescript",
+              "schemaVersion": "sha256:6e3d9aca524fe290a17f67eff047a4568370f496fa2569f05ea15d085a154ffc"
+            },
+            "name": "ProseMirror"
+          }
+        ],
+        "selection": "typescript"
+      },
+      "ownCallDelta": {
+        "apply": 2,
+        "captureAnchor": 6,
+        "historyDeletionKeys": 2,
+        "historyPin": 2,
+        "model": 4,
+        "record": 2,
+        "schema": 10,
+        "stamp": 14,
+        "typescriptDocument": 6
+      },
+      "errors": [],
+      "browserErrors": {
+        "errors": []
+      }
+    }
+  ],
+  "osIME": "NOT_RUN",
+  "reconnectScope": "products.disconnect(name)/connect(name), remote edit while disconnected, exact replay on the same mounted editor"
+}

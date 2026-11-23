@@ -1,0 +1,204 @@
+{
+  "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "input": {
+    "destroyed": [
+      false,
+      false
+    ],
+    "equal": true,
+    "online": [
+      true,
+      true
+    ],
+    "pending": [
+      0,
+      0
+    ],
+    "text": [
+      "AliceBob",
+      "AliceBob"
+    ]
+  },
+  "undo": {
+    "destroyed": [
+      false,
+      false
+    ],
+    "equal": true,
+    "online": [
+      true,
+      true
+    ],
+    "pending": [
+      0,
+      0
+    ],
+    "text": [
+      "Bob",
+      "Bob"
+    ]
+  },
+  "redo": {
+    "destroyed": [
+      false,
+      false
+    ],
+    "equal": true,
+    "online": [
+      true,
+      true
+    ],
+    "pending": [
+      0,
+      0
+    ],
+    "text": [
+      "AliceBob",
+      "AliceBob"
+    ]
+  },
+  "selection": {
+    "decorations": 1,
+    "presence": [
+      {
+        "actor": "alice",
+        "anchor": "2@alice",
+        "color": "#2274a5",
+        "focus": "0@~root",
+        "name": "Alice"
+      },
+      {
+        "actor": "bob",
+        "anchor": "8@bob",
+        "color": "#a64d79",
+        "focus": null,
+        "name": "Bob"
+      }
+    ],
+    "range": [
+      1,
+      3
+    ]
+  },
+  "offline": {
+    "destroyed": [
+      false,
+      false
+    ],
+    "equal": false,
+    "online": [
+      true,
+      false
+    ],
+    "pending": [
+      0,
+      0
+    ],
+    "text": [
+      "AliceBob offline",
+      "AliceBob"
+    ]
+  },
+  "reconnect": {
+    "destroyed": [
+      false,
+      false
+    ],
+    "equal": true,
+    "online": [
+      true,
+      true
+    ],
+    "pending": [
+      0,
+      0
+    ],
+    "text": [
+      "AliceBob offline",
+      "AliceBob offline"
+    ]
+  },
+  "remount": {
+    "destroyed": [
+      false,
+      false
+    ],
+    "equal": true,
+    "online": [
+      true,
+      true
+    ],
+    "pending": [
+      0,
+      0
+    ],
+    "text": [
+      "AliceBob offlineAlice ",
+      "AliceBob offlineAlice "
+    ]
+  },
+  "errors": {
+    "errors": []
+  },
+  "engine": {
+    "calls": {
+      "alice": {
+        "apply": 14,
+        "beginEvents": 6,
+        "captureAnchor": 256,
+        "check": 3,
+        "clearHistory": 1,
+        "create": 1,
+        "finishEvents": 6,
+        "historyDeletionKeys": 20,
+        "historyPin": 20,
+        "historyStatus": 2,
+        "identity": 1,
+        "installPrepared": 1,
+        "locateAnchor": 87,
+        "model": 134,
+        "prepareSnapshot": 1,
+        "receive": 3,
+        "record": 14,
+        "redo": 1,
+        "replayPrepared": 1,
+        "requireCapabilities": 1,
+        "reset": 1,
+        "schema": 383,
+        "setEditHooks": 1,
+        "stamp": 526,
+        "undo": 1
+      },
+      "bob": {
+        "allocationFloor": 1,
+        "apply": 3,
+        "beginEvents": 16,
+        "captureAnchor": 186,
+        "check": 16,
+        "clearHistory": 1,
+        "create": 1,
+        "finishEvents": 16,
+        "historyDeletionKeys": 13,
+        "historyPin": 13,
+        "identity": 1,
+        "installPrepared": 1,
+        "locateAnchor": 64,
+        "model": 135,
+        "prepareSnapshot": 1,
+        "receive": 16,
+        "record": 3,
+        "replayPrepared": 1,
+        "requireCapabilities": 1,
+        "reset": 1,
+        "schema": 268,
+        "setEditHooks": 1,
+        "stamp": 395
+      }
+    },
+    "selected": "typescript",
+    "sessions": "NOT_APPLICABLE: Tiptap uses ProseMirror transactions",
+    "tracked": true
+  },
+  "osIME": "NOT_RUN",
+  "result": "PASS"
+}

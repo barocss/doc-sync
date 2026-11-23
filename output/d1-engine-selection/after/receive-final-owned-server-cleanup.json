@@ -1,0 +1,69 @@
+{
+  "started": "2026-11-02T06:31:06.086Z",
+  "scope": "SIGTERM only owned5418/5419parentservers after PID+cwd+command verification; parentshutdown handles ownchildren. Preservealltempdata,artifacts,unrelatedprocesses.",
+  "before": [
+    {
+      "pid": 4418,
+      "ppid": 36889,
+      "command": "/Users/user/.volta/tools/image/node/24.22.1/bin/node apps/demo/products/serve.mjs"
+    },
+    {
+      "pid": 4453,
+      "ppid": 4418,
+      "command": "/Users/user/.volta/tools/image/node/24.22.1/bin/node /Users/user/github/doc-sync/apps/demo/server.ts"
+    },
+    {
+      "pid": 4460,
+      "ppid": 4418,
+      "command": "/Users/user/.volta/tools/image/node/24.22.1/bin/node /Users/user/github/doc-sync/apps/demo/server.ts"
+    },
+    {
+      "pid": 4461,
+      "ppid": 4418,
+      "command": "/Users/user/.volta/tools/image/node/24.22.1/bin/node /Users/user/github/doc-sync/apps/demo/server.ts"
+    },
+    {
+      "pid": 50418,
+      "ppid": 36889,
+      "command": "/Users/user/.volta/tools/image/node/24.22.1/bin/node apps/demo/products/serve.mjs"
+    },
+    {
+      "pid": 50432,
+      "ppid": 50418,
+      "command": "/Users/user/.volta/tools/image/node/24.22.1/bin/node /Users/user/github/doc-sync-d1/apps/demo/server.ts"
+    },
+    {
+      "pid": 50434,
+      "ppid": 50418,
+      "command": "/Users/user/.volta/tools/image/node/24.22.1/bin/node /Users/user/github/doc-sync-d1/apps/demo/server.ts"
+    },
+    {
+      "pid": 50437,
+      "ppid": 50418,
+      "command": "/Users/user/.volta/tools/image/node/24.22.1/bin/node /Users/user/github/doc-sync-d1/apps/demo/server.ts"
+    }
+  ],
+  "cwd": {
+    "4418": "p4418\nfcwd\nn/Users/user/github/doc-sync\n",
+    "50418": "p50418\nfcwd\nn/Users/user/github/doc-sync-d1\n"
+  },
+  "tempDataAndLogEvidence": [
+    "receive-final-baseline-server.log",
+    "receive-final-server.log"
+  ],
+  "signals": [
+    {
+      "pid": 4418,
+      "signal": "SIGTERM",
+      "time": "2026-11-02T06:31:06.087Z"
+    },
+    {
+      "pid": 50418,
+      "signal": "SIGTERM",
+      "time": "2026-11-02T06:31:06.087Z"
+    }
+  ],
+  "remaining": [],
+  "result": "PASS",
+  "ended": "2026-11-02T06:31:06.189Z"
+}

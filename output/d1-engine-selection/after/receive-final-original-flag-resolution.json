@@ -1,0 +1,444 @@
+{
+  "result": "ALL12_ORIGINAL_FLAG_CELLS_INVESTIGATED_WITHIN_EXACT_CLIENT_ISOLATION_GUARDS",
+  "boundary": "Original12/27separate-serverE2Eflags unchanged. Alloriginalflagmetrics mappedtoexactprofile/source/target commonbackendcontrols. Newsharedserverconditions notsubstitutionfororiginaldeployment; noall27globalPASSclaim.",
+  "flags": [
+    {
+      "profile": "word",
+      "source": "Slate",
+      "target": "Lexical",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputDomP50",
+          "original": {
+            "before": 36.69999980926514,
+            "after": 44.5,
+            "delta": 7.800000190734863,
+            "threshold": 3.669999980926514,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-backend.json",
+            "samples": 16,
+            "A": 49.299999952316284,
+            "B": 43.29999995230901,
+            "delta": -6.000000000007276,
+            "threshold": 4.929999995231629
+          }
+        }
+      ]
+    },
+    {
+      "profile": "word",
+      "source": "Lexical",
+      "target": "Slate",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputDomP95",
+          "original": {
+            "before": 65.90000009536743,
+            "after": 89,
+            "delta": 23.09999990463257,
+            "threshold": 9.885000014305115,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-backend.json",
+            "samples": 16,
+            "A": 67.89999985694885,
+            "B": 65.59999990464712,
+            "delta": -2.2999999523017323,
+            "threshold": 10.184999978542328
+          }
+        },
+        {
+          "metric": "inputRaf2P95",
+          "original": {
+            "before": 80.29999995231628,
+            "after": 93.10000014305115,
+            "delta": 12.800000190734863,
+            "threshold": 12.044999992847442,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-backend.json",
+            "samples": 16,
+            "A": 80.69999980926514,
+            "B": 74.5,
+            "delta": -6.199999809265137,
+            "threshold": 12.10499997138977
+          }
+        }
+      ]
+    },
+    {
+      "profile": "word",
+      "source": "Lexical",
+      "target": "Lexical",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputRaf2P95",
+          "original": {
+            "before": 48.10000014305115,
+            "after": 57.40000009536743,
+            "delta": 9.299999952316284,
+            "threshold": 7.215000021457672,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-backend.json",
+            "samples": 16,
+            "A": 42.09999990463257,
+            "B": 27,
+            "delta": -15.099999904632568,
+            "threshold": 6.314999985694885
+          }
+        }
+      ]
+    },
+    {
+      "profile": "word",
+      "source": "Lexical",
+      "target": "ProseMirror",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputDomP95",
+          "original": {
+            "before": 59.700000047683716,
+            "after": 77.90000009536743,
+            "delta": 18.200000047683716,
+            "threshold": 8.955000007152558,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-backend.json",
+            "samples": 16,
+            "A": 53.69999980926514,
+            "B": 59.299999952316284,
+            "delta": 5.6000001430511475,
+            "threshold": 8.05499997138977
+          }
+        },
+        {
+          "metric": "inputRaf2P95",
+          "original": {
+            "before": 67.10000014305115,
+            "after": 93,
+            "delta": 25.899999856948853,
+            "threshold": 10.065000021457672,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-backend.json",
+            "samples": 16,
+            "A": 80.59999990463257,
+            "B": 66.59999990464712,
+            "delta": -13.999999999985448,
+            "threshold": 12.089999985694885
+          }
+        }
+      ]
+    },
+    {
+      "profile": "word",
+      "source": "ProseMirror",
+      "target": "Slate",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputRaf2P50",
+          "original": {
+            "before": 56.90000009535288,
+            "after": 65.20000004768372,
+            "delta": 8.299999952330836,
+            "threshold": 5.6900000095352885,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-remaining32.json",
+            "samples": 32,
+            "A": 51.799999952316284,
+            "B": 56.5,
+            "delta": 4.700000047683716,
+            "threshold": 5.179999995231629
+          }
+        }
+      ]
+    },
+    {
+      "profile": "word",
+      "source": "ProseMirror",
+      "target": "ProseMirror",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputRaf2P50",
+          "original": {
+            "before": 6.70000004767644,
+            "after": 13.799999952316284,
+            "delta": 7.099999904639844,
+            "threshold": 2,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-remaining32.json",
+            "samples": 32,
+            "A": 10.600000143051147,
+            "B": 8.099999904632568,
+            "delta": -2.500000238418579,
+            "threshold": 2
+          }
+        }
+      ]
+    },
+    {
+      "profile": "notion",
+      "source": "Slate",
+      "target": "Lexical",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputDomP95",
+          "original": {
+            "before": 50.299999952316284,
+            "after": 94,
+            "delta": 43.700000047683716,
+            "threshold": 7.544999992847442,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-slate64.json",
+            "samples": 64,
+            "A": 60.89999985694885,
+            "B": 61.799999952316284,
+            "delta": 0.9000000953674316,
+            "threshold": 9.134999978542327
+          }
+        },
+        {
+          "metric": "inputRaf2P95",
+          "original": {
+            "before": 63.299999952316284,
+            "after": 96.09999990463257,
+            "delta": 32.799999952316284,
+            "threshold": 9.494999992847442,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-slate64.json",
+            "samples": 64,
+            "A": 75.89999985694885,
+            "B": 69.89999985694885,
+            "delta": -6,
+            "threshold": 11.384999978542327
+          }
+        }
+      ]
+    },
+    {
+      "profile": "notion",
+      "source": "Slate",
+      "target": "ProseMirror",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputDomP95",
+          "original": {
+            "before": 53.69999980926514,
+            "after": 84.20000004768372,
+            "delta": 30.50000023841858,
+            "threshold": 8.05499997138977,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-slate64.json",
+            "samples": 64,
+            "A": 65.5,
+            "B": 66.09999990464712,
+            "delta": 0.5999999046471203,
+            "threshold": 9.825
+          }
+        },
+        {
+          "metric": "inputRaf2P95",
+          "original": {
+            "before": 63.299999952316284,
+            "after": 96,
+            "delta": 32.700000047683716,
+            "threshold": 9.494999992847442,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-slate64.json",
+            "samples": 64,
+            "A": 75.89999985694885,
+            "B": 70,
+            "delta": -5.8999998569488525,
+            "threshold": 11.384999978542327
+          }
+        }
+      ]
+    },
+    {
+      "profile": "notion",
+      "source": "Lexical",
+      "target": "Lexical",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputRaf2P95",
+          "original": {
+            "before": 32.19999980926514,
+            "after": 41.90000009536743,
+            "delta": 9.700000286102295,
+            "threshold": 4.82999997138977,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-remaining32.json",
+            "samples": 32,
+            "A": 36.299999952316284,
+            "B": 35,
+            "delta": -1.2999999523162842,
+            "threshold": 5.444999992847443
+          }
+        },
+        {
+          "metric": "localCommitP95",
+          "original": {
+            "before": 8.899999856948853,
+            "after": 14,
+            "delta": 5.1000001430511475,
+            "threshold": 4,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-remaining32.json",
+            "samples": 32,
+            "A": 9,
+            "B": 9,
+            "delta": 0,
+            "threshold": 4
+          }
+        }
+      ]
+    },
+    {
+      "profile": "notion",
+      "source": "Lexical",
+      "target": "ProseMirror",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "receiveP95",
+          "original": {
+            "before": 3.700000047683716,
+            "after": 7.800000190734863,
+            "delta": 4.1000001430511475,
+            "threshold": 4,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-remaining32.json",
+            "samples": 32,
+            "A": 5.200000047669164,
+            "B": 4.200000047683716,
+            "delta": -0.9999999999854481,
+            "threshold": 4
+          }
+        }
+      ]
+    },
+    {
+      "profile": "notion",
+      "source": "ProseMirror",
+      "target": "ProseMirror",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputRaf2P50",
+          "original": {
+            "before": 8.600000143043872,
+            "after": 11.399999856948853,
+            "delta": 2.799999713904981,
+            "threshold": 2,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-pm64.json",
+            "samples": 64,
+            "A": 10,
+            "B": 10.099999904632568,
+            "delta": 0.09999990463256836,
+            "threshold": 2
+          }
+        },
+        {
+          "metric": "inputRaf2P95",
+          "original": {
+            "before": 19.40000009536743,
+            "after": 52.20000004767644,
+            "delta": 32.79999995230901,
+            "threshold": 4,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-shared-pm64.json",
+            "samples": 64,
+            "A": 17.90000009536743,
+            "B": 18.799999952316284,
+            "delta": 0.8999998569488525,
+            "threshold": 4
+          }
+        }
+      ]
+    },
+    {
+      "profile": "presentation",
+      "source": "ProseMirror",
+      "target": "ProseMirror",
+      "originalScore": "ORIGINAL_TRIGGER_RETAINED_SEPARATE_SERVER_E2E",
+      "metrics": [
+        {
+          "metric": "inputRaf2P50",
+          "original": {
+            "before": 11.5,
+            "after": 14.79999995232356,
+            "delta": 3.29999995232356,
+            "threshold": 2,
+            "trigger": true
+          },
+          "status": "NOT_PERSISTENT_IN_EXACT_CLIENT_ISOLATION",
+          "controlled": {
+            "file": "receive-final-chrome-remaining32.json",
+            "samples": 32,
+            "A": 9.5,
+            "B": 7.700000047654612,
+            "delta": -1.799999952345388,
+            "threshold": 2
+          }
+        }
+      ]
+    }
+  ]
+}

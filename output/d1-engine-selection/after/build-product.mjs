@@ -1,0 +1,3 @@
+import {build} from '../../../node_modules/esbuild/lib/main.js';
+const root='/Users/user/github/doc-sync-d1/';
+await build({entryPoints:[root+'apps/demo/products/main.jsx'],outfile:root+'output/d1-engine-selection/after/bundle.js',bundle:true,nodePaths:[root+'apps/demo/compat/node_modules','/Users/user/github/doc-sync/apps/demo/compat/node_modules'],format:'esm',platform:'browser',sourcemap:true,alias:{slate:root+'node_modules/slate',lexical:root+'node_modules/lexical','@lexical/rich-text':root+'node_modules/@lexical/rich-text','@lexical/table':root+'node_modules/@lexical/table'},jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'}});

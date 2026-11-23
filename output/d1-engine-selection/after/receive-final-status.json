@@ -1,0 +1,61 @@
+{
+  "status": "CLIENT_MIGRATION_QUALIFIED_WITH_RETAINED_END_TO_END_AND_BLOCK_TAIL_LIMITS",
+  "time": "2026-11-02T06:58:12.330Z",
+  "boundary": "D1client migration controlledscope; notalllatency/globalproductE2EPASS. Alloriginalscores/thresholds/rawresults retained.",
+  "counts": {
+    "original20": "PASS_EXACT_COUNTS_MODEL_OPS_HISTORY",
+    "localNativeSplitJoin8": "PASS_EXACT_COUNTS_MODEL_OPS_HISTORY"
+  },
+  "functional": {
+    "selectedProductCases": 9,
+    "result": "PASS",
+    "factoryRouting": "LIVE_APPLY_OR_SESSION_APPLY_RECORD_RECEIVE_UNDO_REDO_PROVEN"
+  },
+  "clientIsolation": {
+    "originalFlagCells": 12,
+    "originalFlagMetrics": 18,
+    "exactControlledCoveredCells": 12,
+    "allMappedMetricsWithinOriginalGuards": true,
+    "source": "receive-final-original-flag-resolution.json",
+    "method": "SameChrome156 ownedtabs ABBA, freshcommonunchangedbaselinebackend, symmetricproxies, exactprofile/source/target nativeinput,2warmups+16/32/64pairs accordingrecord"
+  },
+  "nodeRemote8": {
+    "pooledSamplesPerVersion": 128,
+    "blocks": 4,
+    "blockSamples": 32,
+    "p95Rank": 122,
+    "p50": {
+      "A": 2.1635839999999007,
+      "B": 2.2631669999998394,
+      "delta": 0.09958299999993869,
+      "threshold": 0.21635839999999007,
+      "trigger": false
+    },
+    "p95": {
+      "A": 3.6810419999997066,
+      "B": 3.6632089999998243,
+      "delta": -0.017832999999882304,
+      "threshold": 0.552156299999956,
+      "trigger": false
+    },
+    "individualBlockP95Triggers": [
+      2,
+      3
+    ],
+    "individualBlockTailLimits": "RETAINED_2_OF_4_BLOCK_P95_FLAGS",
+    "gc": "Observedoverlapassociation; notcausalproof; noCPUacceptancethreshold"
+  },
+  "retainedOriginalEndToEnd": {
+    "flagCells": 12,
+    "totalCells": 27,
+    "status": "ORIGINAL_SEPARATE_SERVER_E2E_FLAGS_RETAINED_NOT_REPLACED",
+    "physicalDisplay": "NOT_MEASURED_DOM_PLUS_SECOND_RAF_PROXY_ONLY"
+  },
+  "ownedResources": "ALL_OWNED_CHROME_CONTROL_BACKENDS_PROXIES_AND_5418_5419_SERVERS_CLOSED_TEMP_DATA_PRESERVED",
+  "artifacts": {
+    "report": "receive-final-report.md",
+    "flagMatrix": "receive-final-original-flag-resolution.json",
+    "node128": "receive-final-node-remote8-128-analysis.json",
+    "manifest": "receive-final-evidence-manifest.json"
+  }
+}

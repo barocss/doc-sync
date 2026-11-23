@@ -1,0 +1,869 @@
+{
+  "result": "FAIL",
+  "boundary": "Counts-only diagnostic. No timing conclusion. Candidate original hard gate fails mark snapshot1 versus expected0. Diagnostic copy suppresses only snapshot/fromSnapshot count assertions and retains semantic/history/pending/remote/full-model/event assertions. Baseline and candidate mode=counts each run same 2 iterations, unlike timing schedule states.",
+  "candidateSourceFrozen": true,
+  "baselineSourceFrozen": true,
+  "semanticHashesPass": true,
+  "rows": [
+    {
+      "size": 10000,
+      "scenario": "insert",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "delete",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "mark",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "countsEqual": false,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "selection",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "presence",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote1",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        "after": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote2",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        "after": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote8",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        "after": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "composition",
+      "before": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "structure",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 205
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 205
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "insert",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "delete",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "mark",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "countsEqual": false,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "selection",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "presence",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote1",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        "after": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote2",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        "after": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote8",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        "after": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "composition",
+      "before": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "structure",
+      "before": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2005
+        }
+      ],
+      "after": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2005
+        }
+      ],
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true,
+      "remoteCoreCounts": {
+        "before": null,
+        "after": null
+      }
+    }
+  ]
+}

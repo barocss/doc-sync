@@ -1,0 +1,17 @@
+{
+  "result": "FAIL",
+  "session": "editor-host-87258-mvyth7n0",
+  "origin": "http://127.0.0.1:5419",
+  "browser": null,
+  "cases": [
+    {
+      "profile": "word",
+      "editor": "Slate",
+      "doc": "h1-wo-s-mvyth7n0",
+      "result": "FAIL"
+    }
+  ],
+  "osIME": "NOT_RUN",
+  "reconnectScope": "products.disconnect(name)/connect(name), remote edit while disconnected, exact replay on the same mounted editor",
+  "firstFailure": "Error: Command failed: agent-browser --session editor-host-87258-mvyth7n0 --json open http://127.0.0.1:5419/?profile=word&doc=h1-wo-s-mvyth7n0&engine=typescript\n    at genericNodeError (node:internal/errors:986:15)\n    at wrappedFn (node:internal/errors:540:14)\n    at checkExecSyncError (node:child_process:943:11)\n    at execFileSync (node:child_process:979:15)\n    at run (file:///Users/user/github/doc-sync-d1/output/d1-engine-selection/after/check-editor-host-selected.mjs:15:31)\n    at file:///Users/user/github/doc-sync-d1/output/d1-engine-selection/after/check-editor-host-selected.mjs:56:9"
+}

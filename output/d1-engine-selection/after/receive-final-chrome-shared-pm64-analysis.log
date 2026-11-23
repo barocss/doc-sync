@@ -1,0 +1,207 @@
+[
+  {
+    "profile": "notion",
+    "source": "ProseMirror",
+    "target": "ProseMirror",
+    "summary": {
+      "inputToCommit": {
+        "A": {
+          "p50": 3.400000095338328,
+          "p95": 4.1000001430511475
+        },
+        "B": {
+          "p50": 3.4000000953674316,
+          "p95": 4.6000001430511475
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 2,
+            "delta": 2.9103830456733704e-11,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 4,
+            "delta": 0.5,
+            "trigger": false
+          }
+        }
+      },
+      "commit": {
+        "A": {
+          "p50": 0.3000001907348633,
+          "p95": 0.5
+        },
+        "B": {
+          "p50": 0.299999952345388,
+          "p95": 0.5
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 2,
+            "delta": -2.3838947527110577e-7,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 4,
+            "delta": 0,
+            "trigger": false
+          }
+        }
+      },
+      "send": {
+        "A": {
+          "p50": 19,
+          "p95": 42.799999952316284
+        },
+        "B": {
+          "p50": 18,
+          "p95": 31.199999809265137
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 2,
+            "delta": -1,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 6.419999992847442,
+            "delta": -11.600000143051147,
+            "trigger": false
+          }
+        }
+      },
+      "inputDom": {
+        "A": {
+          "p50": 4.099999904632568,
+          "p95": 5
+        },
+        "B": {
+          "p50": 4.099999904632568,
+          "p95": 5.5
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 2,
+            "delta": 0,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 4,
+            "delta": 0.5,
+            "trigger": false
+          }
+        }
+      },
+      "rafAfterDom": {
+        "A": {
+          "p50": 5.799999952316284,
+          "p95": 14
+        },
+        "B": {
+          "p50": 5.8000001907057595,
+          "p95": 14.399999856948853
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 2,
+            "delta": 2.3838947527110577e-7,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 4,
+            "delta": 0.39999985694885254,
+            "trigger": false
+          }
+        }
+      },
+      "inputRaf2": {
+        "A": {
+          "p50": 10,
+          "p95": 17.90000009536743
+        },
+        "B": {
+          "p50": 10.099999904632568,
+          "p95": 18.799999952316284
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 2,
+            "delta": 0.09999990463256836,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 4,
+            "delta": 0.8999998569488525,
+            "trigger": false
+          }
+        }
+      },
+      "receiveBegin": {
+        "A": {
+          "p50": 39.299999952316284,
+          "p95": 62.299999952316284
+        },
+        "B": {
+          "p50": 37.59999990463257,
+          "p95": 50.299999952316284
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 3.9299999952316287,
+            "delta": -1.7000000476837158,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 9.344999992847443,
+            "delta": -12,
+            "trigger": false
+          }
+        }
+      },
+      "receiveDuration": {
+        "A": {
+          "p50": 0,
+          "p95": 0.10000014302204363
+        },
+        "B": {
+          "p50": 0,
+          "p95": 0.09999990466167219
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 2,
+            "delta": 0,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 4,
+            "delta": -2.3836037144064903e-7,
+            "trigger": false
+          }
+        }
+      },
+      "domAfterReceiveEnd": {
+        "A": {
+          "p50": -35.5,
+          "p95": -26.09999990463257
+        },
+        "B": {
+          "p50": -33.5,
+          "p95": -23.799999952316284
+        },
+        "triggers": {
+          "p50": {
+            "threshold": 2,
+            "delta": 2,
+            "trigger": false
+          },
+          "p95": {
+            "threshold": 4,
+            "delta": 2.299999952316284,
+            "trigger": false
+          }
+        }
+      }
+    }
+  }
+]

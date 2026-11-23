@@ -1,0 +1,15 @@
+import {Doc} from '../../packages/doc-sync-core/src/crdt/doc.ts';
+import {ROOT} from '../../packages/doc-sync-core/src/crdt/ticket.ts';
+import {createHash} from 'node:crypto';
+import {readFileSync,writeFileSync} from 'node:fs';
+const kind=a=>({length:a.length,dictionary:%HasDictionaryElements(a),holey:%HasHoleyElements(a),objects:%HasObjectElements(a),fast:%HasFastElements(a)});
+const d=new Doc('array-check');
+d.apply({t:'text',id:{lamport:1,actor:'seed'},origin:ROOT,text:'x'.repeat(100000)});
+const before=kind(d.items);
+d.apply({t:'text',id:{lamport:200000,actor:'edit'},origin:d.items[50000].id,text:'y'});
+const after=kind(d.items);
+const packed=[];for(let i=0;i<1000000;i++)packed.push({id:i});
+const sparse=[];sparse[10000000]={id:1};
+const output={node:process.version,v8:process.versions.v8,sourceSha256:createHash('sha256').update(readFileSync('packages/doc-sync-core/src/crdt/doc.ts')).digest('hex'),before,after,syntheticMillion:kind(packed),sparseControl:kind(sparse),textItems:d.items.filter(i=>i.kind==='char').length};
+writeFileSync('output/array-storage-investigation/node-kind.json',JSON.stringify(output,null,2));
+console.log(JSON.stringify(output,null,2));

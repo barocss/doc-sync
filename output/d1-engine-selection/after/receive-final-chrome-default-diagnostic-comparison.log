@@ -1,0 +1,639 @@
+{
+  "result": "INVESTIGATION_REQUIRED",
+  "triggers": [
+    {
+      "profile": "word",
+      "source": "Slate",
+      "target": "Slate",
+      "inputDomP50": {
+        "before": 1.0999999046325684,
+        "after": 1.1999998092651367,
+        "delta": 0.09999990463256836,
+        "threshold": 2,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 1.3000001907348633,
+        "after": 1.2000000476837158,
+        "delta": -0.10000014305114746,
+        "threshold": 4,
+        "trigger": false
+      },
+      "inputRaf2P50": {
+        "before": 18.09999990463257,
+        "after": 29.09999990463257,
+        "delta": 11,
+        "threshold": 2,
+        "trigger": true
+      },
+      "inputRaf2P95": {
+        "before": 42.90000009536743,
+        "after": 46.39999985694885,
+        "delta": 3.499999761581421,
+        "threshold": 6.435000014305115,
+        "trigger": false
+      },
+      "receiveP50": {
+        "before": 1,
+        "after": 0.9000000953674316,
+        "delta": -0.09999990463256836,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 1.0999999046325684,
+        "after": 1,
+        "delta": -0.09999990463256836,
+        "threshold": 4,
+        "trigger": false
+      },
+      "localCommitP50": {
+        "before": 0.3000001907348633,
+        "after": 0.40000009536743164,
+        "delta": 0.09999990463256836,
+        "threshold": 2,
+        "trigger": false
+      },
+      "localCommitP95": {
+        "before": 0.5,
+        "after": 0.5,
+        "delta": 0,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "word",
+      "source": "ProseMirror",
+      "target": "Slate",
+      "inputDomP50": {
+        "before": 54.29999995230901,
+        "after": 55.10000014305115,
+        "delta": 0.8000001907421392,
+        "threshold": 5.429999995230901,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 76,
+        "after": 67,
+        "delta": -9,
+        "threshold": 11.4,
+        "trigger": false
+      },
+      "inputRaf2P50": {
+        "before": 56.90000009535288,
+        "after": 62.59999990463257,
+        "delta": 5.699999809279689,
+        "threshold": 5.6900000095352885,
+        "trigger": true
+      },
+      "inputRaf2P95": {
+        "before": 80.20000004769099,
+        "after": 69.5,
+        "delta": -10.700000047690992,
+        "threshold": 12.030000007153648,
+        "trigger": false
+      },
+      "receiveP50": {
+        "before": 13.399999856956128,
+        "after": 13.700000047683716,
+        "delta": 0.3000001907275873,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 18.89999985695613,
+        "after": 17.5,
+        "delta": -1.3999998569561285,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "notion",
+      "source": "Slate",
+      "target": "Slate",
+      "inputDomP50": {
+        "before": 1.1000001430511475,
+        "after": 1.0999999046325684,
+        "delta": -2.384185791015625e-7,
+        "threshold": 2,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 1.2000000476837158,
+        "after": 1.1000001430529665,
+        "delta": -0.09999990463074937,
+        "threshold": 4,
+        "trigger": false
+      },
+      "inputRaf2P50": {
+        "before": 16.600000143051147,
+        "after": 16.199999809263318,
+        "delta": -0.40000033378782973,
+        "threshold": 2,
+        "trigger": false
+      },
+      "inputRaf2P95": {
+        "before": 29.90000009536743,
+        "after": 39.10000014305297,
+        "delta": 9.200000047685535,
+        "threshold": 4.485000014305115,
+        "trigger": true
+      },
+      "receiveP50": {
+        "before": 0.7000000476837158,
+        "after": 0.5999999046325684,
+        "delta": -0.10000014305114746,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 0.8000001907348633,
+        "after": 1,
+        "delta": 0.19999980926513672,
+        "threshold": 4,
+        "trigger": false
+      },
+      "localCommitP50": {
+        "before": 0.3000001907348633,
+        "after": 0.2999999523162842,
+        "delta": -2.384185791015625e-7,
+        "threshold": 2,
+        "trigger": false
+      },
+      "localCommitP95": {
+        "before": 0.5,
+        "after": 0.39999985694885254,
+        "delta": -0.10000014305114746,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "notion",
+      "source": "Slate",
+      "target": "Lexical",
+      "inputDomP50": {
+        "before": 40.40000009536743,
+        "after": 44.89999985694885,
+        "delta": 4.499999761581421,
+        "threshold": 4.040000009536743,
+        "trigger": true
+      },
+      "inputDomP95": {
+        "before": 50.299999952316284,
+        "after": 54.19999980926332,
+        "delta": 3.8999998569470335,
+        "threshold": 7.544999992847442,
+        "trigger": false
+      },
+      "inputRaf2P50": {
+        "before": 49.10000014305115,
+        "after": 51.39999985694885,
+        "delta": 2.299999713897705,
+        "threshold": 4.9100000143051155,
+        "trigger": false
+      },
+      "inputRaf2P95": {
+        "before": 63.299999952316284,
+        "after": 62.700000047683716,
+        "delta": -0.5999999046325684,
+        "threshold": 9.494999992847442,
+        "trigger": false
+      },
+      "receiveP50": {
+        "before": 9.400000095367432,
+        "after": 9.600000143051147,
+        "delta": 0.20000004768371582,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 10.399999856948853,
+        "after": 15.200000047683716,
+        "delta": 4.800000190734863,
+        "threshold": 4,
+        "trigger": true
+      }
+    },
+    {
+      "profile": "notion",
+      "source": "Lexical",
+      "target": "Lexical",
+      "inputDomP50": {
+        "before": 0.9000000953674316,
+        "after": 0.8999998569488525,
+        "delta": -2.384185791015625e-7,
+        "threshold": 2,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 1,
+        "after": 1,
+        "delta": 0,
+        "threshold": 4,
+        "trigger": false
+      },
+      "inputRaf2P50": {
+        "before": 21.59999990463257,
+        "after": 22.799999952316284,
+        "delta": 1.2000000476837158,
+        "threshold": 2.1599999904632567,
+        "trigger": false
+      },
+      "inputRaf2P95": {
+        "before": 32.19999980926514,
+        "after": 56.5,
+        "delta": 24.300000190734863,
+        "threshold": 4.82999997138977,
+        "trigger": true
+      },
+      "receiveP50": {
+        "before": 6.400000095367432,
+        "after": 6.300000190734863,
+        "delta": -0.09999990463256836,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 6.799999952316284,
+        "after": 7.8999998569488525,
+        "delta": 1.0999999046325684,
+        "threshold": 4,
+        "trigger": false
+      },
+      "localCommitP50": {
+        "before": 7.599999904632568,
+        "after": 8,
+        "delta": 0.40000009536743164,
+        "threshold": 2,
+        "trigger": false
+      },
+      "localCommitP95": {
+        "before": 8.899999856948853,
+        "after": 9.5,
+        "delta": 0.6000001430511475,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "notion",
+      "source": "ProseMirror",
+      "target": "ProseMirror",
+      "inputDomP50": {
+        "before": 4,
+        "after": 4.200000047683716,
+        "delta": 0.20000004768371582,
+        "threshold": 2,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 6.200000047690992,
+        "after": 6.700000047683716,
+        "delta": 0.49999999999272404,
+        "threshold": 4,
+        "trigger": false
+      },
+      "inputRaf2P50": {
+        "before": 8.600000143043872,
+        "after": 15.599999904632568,
+        "delta": 6.999999761588697,
+        "threshold": 2,
+        "trigger": true
+      },
+      "inputRaf2P95": {
+        "before": 19.40000009536743,
+        "after": 40.200000047683716,
+        "delta": 20.799999952316284,
+        "threshold": 4,
+        "trigger": true
+      },
+      "receiveP50": {
+        "before": 0,
+        "after": 0,
+        "delta": 0,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 0.10000014305114746,
+        "after": 0,
+        "delta": -0.10000014305114746,
+        "threshold": 4,
+        "trigger": false
+      },
+      "localCommitP50": {
+        "before": 0.40000009536743164,
+        "after": 0.40000009536743164,
+        "delta": 0,
+        "threshold": 2,
+        "trigger": false
+      },
+      "localCommitP95": {
+        "before": 0.5,
+        "after": 0.5,
+        "delta": 0,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "presentation",
+      "source": "Slate",
+      "target": "Lexical",
+      "inputDomP50": {
+        "before": 42.700000047683716,
+        "after": 49.90000009536743,
+        "delta": 7.200000047683716,
+        "threshold": 4.270000004768372,
+        "trigger": true
+      },
+      "inputDomP95": {
+        "before": 49.799999952316284,
+        "after": 116.5,
+        "delta": 66.70000004768372,
+        "threshold": 7.469999992847442,
+        "trigger": true
+      },
+      "inputRaf2P50": {
+        "before": 49.60000014305115,
+        "after": 59.700000047683716,
+        "delta": 10.099999904632568,
+        "threshold": 4.960000014305115,
+        "trigger": true
+      },
+      "inputRaf2P95": {
+        "before": 62.90000009536743,
+        "after": 123.40000009536743,
+        "delta": 60.5,
+        "threshold": 9.435000014305114,
+        "trigger": true
+      },
+      "receiveP50": {
+        "before": 10.700000047683716,
+        "after": 12.599999904632568,
+        "delta": 1.8999998569488525,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 12.200000047683716,
+        "after": 15.900000095367432,
+        "delta": 3.700000047683716,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "presentation",
+      "source": "Slate",
+      "target": "ProseMirror",
+      "inputDomP50": {
+        "before": 46.5,
+        "after": 54.200000047683716,
+        "delta": 7.700000047683716,
+        "threshold": 4.65,
+        "trigger": true
+      },
+      "inputDomP95": {
+        "before": 53.90000009536743,
+        "after": 121,
+        "delta": 67.09999990463257,
+        "threshold": 8.085000014305114,
+        "trigger": true
+      },
+      "inputRaf2P50": {
+        "before": 49.60000014305115,
+        "after": 59.700000047683716,
+        "delta": 10.099999904632568,
+        "threshold": 4.960000014305115,
+        "trigger": true
+      },
+      "inputRaf2P95": {
+        "before": 63,
+        "after": 123.5,
+        "delta": 60.5,
+        "threshold": 9.45,
+        "trigger": true
+      },
+      "receiveP50": {
+        "before": 3.5,
+        "after": 4,
+        "delta": 0.5,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 3.8999998569488525,
+        "after": 5,
+        "delta": 1.1000001430511475,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "presentation",
+      "source": "Lexical",
+      "target": "Slate",
+      "inputDomP50": {
+        "before": 58.59999990463257,
+        "after": 54.09999990463257,
+        "delta": -4.5,
+        "threshold": 5.859999990463257,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 74.70000004768372,
+        "after": 93.29999995231628,
+        "delta": 18.59999990463257,
+        "threshold": 11.205000007152558,
+        "trigger": true
+      },
+      "inputRaf2P50": {
+        "before": 71.79999995231628,
+        "after": 70.5,
+        "delta": -1.2999999523162842,
+        "threshold": 7.179999995231629,
+        "trigger": false
+      },
+      "inputRaf2P95": {
+        "before": 77.79999995231628,
+        "after": 95.5,
+        "delta": 17.700000047683716,
+        "threshold": 11.669999992847442,
+        "trigger": true
+      },
+      "receiveP50": {
+        "before": 13.200000047683716,
+        "after": 12.5,
+        "delta": -0.7000000476837158,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 17.90000009536743,
+        "after": 16.700000047683716,
+        "delta": -1.2000000476837158,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "presentation",
+      "source": "Lexical",
+      "target": "Lexical",
+      "inputDomP50": {
+        "before": 0.9000000953674316,
+        "after": 1,
+        "delta": 0.09999990463256836,
+        "threshold": 2,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 1.5,
+        "after": 1.5,
+        "delta": 0,
+        "threshold": 4,
+        "trigger": false
+      },
+      "inputRaf2P50": {
+        "before": 24.200000047683716,
+        "after": 27,
+        "delta": 2.799999952316284,
+        "threshold": 2.420000004768372,
+        "trigger": true
+      },
+      "inputRaf2P95": {
+        "before": 48.799999952316284,
+        "after": 49.09999990463257,
+        "delta": 0.2999999523162842,
+        "threshold": 7.319999992847443,
+        "trigger": false
+      },
+      "receiveP50": {
+        "before": 7.099999904632568,
+        "after": 7.1000001430511475,
+        "delta": 2.384185791015625e-7,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 8.299999952316284,
+        "after": 10.400000095367432,
+        "delta": 2.1000001430511475,
+        "threshold": 4,
+        "trigger": false
+      },
+      "localCommitP50": {
+        "before": 8.900000095367432,
+        "after": 9,
+        "delta": 0.09999990463256836,
+        "threshold": 2,
+        "trigger": false
+      },
+      "localCommitP95": {
+        "before": 10.799999952316284,
+        "after": 10.900000095367432,
+        "delta": 0.10000014305114746,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "presentation",
+      "source": "Lexical",
+      "target": "ProseMirror",
+      "inputDomP50": {
+        "before": 54.5,
+        "after": 50.200000047683716,
+        "delta": -4.299999952316284,
+        "threshold": 5.45,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 68.5,
+        "after": 90,
+        "delta": 21.5,
+        "threshold": 10.275,
+        "trigger": true
+      },
+      "inputRaf2P50": {
+        "before": 61.799999952316284,
+        "after": 57.200000047683716,
+        "delta": -4.599999904632568,
+        "threshold": 6.179999995231629,
+        "trigger": false
+      },
+      "inputRaf2P95": {
+        "before": 75.90000009536743,
+        "after": 95.40000009536743,
+        "delta": 19.5,
+        "threshold": 11.385000014305115,
+        "trigger": true
+      },
+      "receiveP50": {
+        "before": 3.6000001430511475,
+        "after": 3.700000047683716,
+        "delta": 0.09999990463256836,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 5.099999904632568,
+        "after": 6.300000190734863,
+        "delta": 1.200000286102295,
+        "threshold": 4,
+        "trigger": false
+      }
+    },
+    {
+      "profile": "presentation",
+      "source": "ProseMirror",
+      "target": "Lexical",
+      "inputDomP50": {
+        "before": 48.29999995230901,
+        "after": 41.5,
+        "delta": -6.799999952309008,
+        "threshold": 4.829999995230901,
+        "trigger": false
+      },
+      "inputDomP95": {
+        "before": 53.10000014305842,
+        "after": 59.19999980926514,
+        "delta": 6.099999666206713,
+        "threshold": 7.9650000214587635,
+        "trigger": false
+      },
+      "inputRaf2P50": {
+        "before": 54.200000047683716,
+        "after": 47.5,
+        "delta": -6.700000047683716,
+        "threshold": 5.420000004768372,
+        "trigger": false
+      },
+      "inputRaf2P95": {
+        "before": 59,
+        "after": 78.79999995231628,
+        "delta": 19.799999952316284,
+        "threshold": 8.85,
+        "trigger": true
+      },
+      "receiveP50": {
+        "before": 11.200000047683716,
+        "after": 10.900000095367432,
+        "delta": -0.2999999523162842,
+        "threshold": 2,
+        "trigger": false
+      },
+      "receiveP95": {
+        "before": 19.199999809265137,
+        "after": 12,
+        "delta": -7.199999809265137,
+        "threshold": 4,
+        "trigger": false
+      }
+    }
+  ]
+}

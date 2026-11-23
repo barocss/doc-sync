@@ -1,0 +1,41 @@
+✔ Slate round trip preserves Korean, emoji, marks and 2x3 table (2.548958ms)
+✔ Lexical conversion preserves marks and rejects unsupported inline nodes (0.515042ms)
+✔ Enter and join retain semantic intent, including Unicode offsets (1.561ms)
+✔ simultaneous Enter remains one boundary in two adapter clients (3.718292ms)
+✔ adapter maps Unicode model offsets to UTF-16 CRDT tokens for split, insertion and delete (1.291291ms)
+✔ Slate reset drops a removed selection path and clamps a surviving offset (0.141959ms)
+✔ token selection survives prefix (13.218458ms)
+✔ token selection survives suffix (1.875458ms)
+✔ token selection survives delete-before (1.697792ms)
+✔ token selection survives delete-anchor (1.800167ms)
+✔ token selection survives forward (4.539167ms)
+✔ token selection survives backward (2.052625ms)
+✔ token selection survives split (1.585833ms)
+✔ token selection survives format (1.43475ms)
+✔ composition preserves prefix remote edit and undoes as one group (4.17525ms)
+✔ composition preserves same-boundary remote edit and undoes as one group (4.525417ms)
+✔ composition preserves other-paragraph remote edit and undoes as one group (2.058584ms)
+✔ composition cancellation and reset discard drafts without resurrecting text (3.441792ms)
+✔ recovery pause preserves a composition until the live client can accept it (3.260375ms)
+✔ local composition IDs observe later remote clocks and facade keeps transport state live (4.156ms)
+✔ draft tickets stay distinct from live undo and later input after cancellation (1.326541ms)
+✔ a reconnect snapshot cannot release tickets reserved by an active draft (2.376459ms)
+✔ Slate positions cross formatted leaves and UTF-16 emoji offsets (0.230042ms)
+✔ Lexical maps formatted text and table cell-body paths using real nodes (4.357ms)
+✔ operation trace is off by default and does not clone values (0.765791ms)
+✔ opt-in operation trace keeps 150 independent records and can clear them (7.205125ms)
+✔ translated edit observation cannot change Unicode edits sent to the CRDT (4.483209ms)
+✔ remote edit reads SSE comments and unrelated frames, then submits a separate actor (29.274667ms)
+✔ remote edit with no operations does not submit a change (5.735584ms)
+✔ remote edit rejects invalid document names and edit containers before fetching (0.442333ms)
+✔ remote edit rejects HTTP errors, missing hello and malformed SSE data (3.959625ms)
+✔ remote edit reports rejected change submission (4.580625ms)
+✔ remote edit refuses a mismatched schema before submitting (1.940834ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 305.508792

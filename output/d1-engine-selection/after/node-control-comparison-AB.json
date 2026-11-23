@@ -1,0 +1,1453 @@
+{
+  "before": "output/d1-engine-selection/after/node-control-baseline-A.json",
+  "after": "output/d1-engine-selection/after/node-control-candidate-B.json",
+  "method": "Two independent version runs, each uses within-version ABBA self-control labels. Not cross-version paired ABBA. Node median of four block p50/p95 summaries. Trigger threshold max(relative,absolute) declared before measurement.",
+  "sourceFrozen": true,
+  "hardInvariantPass": true,
+  "rows": [
+    {
+      "size": 10000,
+      "scenario": "insert",
+      "p50": {
+        "before": 0.27062499999919964,
+        "after": 0.373290999999881,
+        "delta": 0.10266600000068138,
+        "relative": 0.3793662817588361,
+        "threshold": 0.1,
+        "trigger": true
+      },
+      "p95": {
+        "before": 1.030917000000045,
+        "after": 1.2071249999999623,
+        "delta": 0.17620799999991732,
+        "relative": 0.17092355640649018,
+        "threshold": 0.2,
+        "trigger": false
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "delete",
+      "p50": {
+        "before": 0.2937499999970896,
+        "after": 0.36258299999462906,
+        "delta": 0.06883299999753945,
+        "relative": 0.234325106376924,
+        "threshold": 0.1,
+        "trigger": false
+      },
+      "p95": {
+        "before": 0.5535409999999956,
+        "after": 0.7126659999999561,
+        "delta": 0.15912499999996044,
+        "relative": 0.2874674143378028,
+        "threshold": 0.2,
+        "trigger": false
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "mark",
+      "p50": {
+        "before": 0.2668340000000171,
+        "after": 0.38741700000537094,
+        "delta": 0.12058300000535382,
+        "relative": 0.45190268108766535,
+        "threshold": 0.1,
+        "trigger": true
+      },
+      "p95": {
+        "before": 0.31762499999967986,
+        "after": 0.806416999999783,
+        "delta": 0.48879200000010314,
+        "relative": 1.5388964974438277,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "selection",
+      "p50": {
+        "before": 0.02583299999969313,
+        "after": 0.03800000000046566,
+        "delta": 0.012167000000772532,
+        "relative": 0.47098672244482115,
+        "threshold": 0.1,
+        "trigger": false
+      },
+      "p95": {
+        "before": 0.05179200000020501,
+        "after": 0.08591599999999744,
+        "delta": 0.03412399999979243,
+        "relative": 0.6588662341608232,
+        "threshold": 0.2,
+        "trigger": false
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "presence",
+      "p50": {
+        "before": 0.08408299999973678,
+        "after": 0.10195799999928568,
+        "delta": 0.01787499999954889,
+        "relative": 0.21258756228494283,
+        "threshold": 0.1,
+        "trigger": false
+      },
+      "p95": {
+        "before": 0.12179199999809498,
+        "after": 0.21862500000133878,
+        "delta": 0.0968330000032438,
+        "relative": 0.7950686416575672,
+        "threshold": 0.2,
+        "trigger": false
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote1",
+      "p50": {
+        "before": 0.5533329999998386,
+        "after": 0.6029579999958514,
+        "delta": 0.049624999996012775,
+        "relative": 0.08968378895895825,
+        "threshold": 0.1,
+        "trigger": false
+      },
+      "p95": {
+        "before": 0.6106249999975262,
+        "after": 0.8908339999979944,
+        "delta": 0.2802090000004682,
+        "relative": 0.4588888434007835,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote2",
+      "p50": {
+        "before": 0.8509580000027199,
+        "after": 0.8804579999996349,
+        "delta": 0.029499999996914994,
+        "relative": 0.03466681081418907,
+        "threshold": 0.1,
+        "trigger": false
+      },
+      "p95": {
+        "before": 1.0342500000006112,
+        "after": 1.5077500000006694,
+        "delta": 0.4735000000000582,
+        "relative": 0.4578196760935735,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote8",
+      "p50": {
+        "before": 2.091374999999971,
+        "after": 2.496791999999914,
+        "delta": 0.4054169999999431,
+        "relative": 0.19385189169802103,
+        "threshold": 0.2091374999999971,
+        "trigger": true
+      },
+      "p95": {
+        "before": 3.4862080000000333,
+        "after": 4.659959000000526,
+        "delta": 1.1737510000004931,
+        "relative": 0.33668415653927763,
+        "threshold": 0.5229312000000049,
+        "trigger": true
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "composition",
+      "p50": {
+        "before": 13.148458000000005,
+        "after": 13.441792000000078,
+        "delta": 0.2933340000000726,
+        "relative": 0.02230938411181543,
+        "threshold": 1.3148458000000005,
+        "trigger": false
+      },
+      "p95": {
+        "before": 15.821708000003127,
+        "after": 17.53641700000003,
+        "delta": 1.7147089999969012,
+        "relative": 0.10837698433042516,
+        "threshold": 2.373256200000469,
+        "trigger": false
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "structure",
+      "p50": {
+        "before": 1.918333999999959,
+        "after": 1.8162090000005264,
+        "delta": -0.10212499999943248,
+        "relative": -0.05323629774556186,
+        "threshold": 0.1918333999999959,
+        "trigger": false
+      },
+      "p95": {
+        "before": 2.654166000000032,
+        "after": 3.700458000000026,
+        "delta": 1.046291999999994,
+        "relative": 0.3942074459547675,
+        "threshold": 0.3981249000000048,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "insert",
+      "p50": {
+        "before": 2.084040999999843,
+        "after": 2.966415999999981,
+        "delta": 0.8823750000001382,
+        "relative": 0.42339618078540914,
+        "threshold": 0.2084040999999843,
+        "trigger": true
+      },
+      "p95": {
+        "before": 4.566959000001589,
+        "after": 4.932290999999168,
+        "delta": 0.36533199999757926,
+        "relative": 0.0799945872072537,
+        "threshold": 0.6850438500002383,
+        "trigger": false
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "delete",
+      "p50": {
+        "before": 2.0354580000000624,
+        "after": 2.663583000001381,
+        "delta": 0.6281250000013188,
+        "relative": 0.30859148162295635,
+        "threshold": 0.20354580000000624,
+        "trigger": true
+      },
+      "p95": {
+        "before": 3.3536669999998594,
+        "after": 4.393665999999939,
+        "delta": 1.0399990000000798,
+        "relative": 0.31010801012745853,
+        "threshold": 0.5030500499999789,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "mark",
+      "p50": {
+        "before": 2.1281669999998485,
+        "after": 3.5114169999978913,
+        "delta": 1.3832499999980428,
+        "relative": 0.6499724880604488,
+        "threshold": 0.21281669999998487,
+        "trigger": true
+      },
+      "p95": {
+        "before": 3.2255409999997937,
+        "after": 13.075417000000016,
+        "delta": 9.849876000000222,
+        "relative": 3.0537128500306934,
+        "threshold": 0.483831149999969,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "selection",
+      "p50": {
+        "before": 0.2191250000000764,
+        "after": 0.3636660000011034,
+        "delta": 0.144541000001027,
+        "relative": 0.6596280661767329,
+        "threshold": 0.1,
+        "trigger": true
+      },
+      "p95": {
+        "before": 0.5234170000001086,
+        "after": 2.0976249999985157,
+        "delta": 1.574207999998407,
+        "relative": 3.007559937866138,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "presence",
+      "p50": {
+        "before": 0.7376670000012382,
+        "after": 1.3591669999987062,
+        "delta": 0.621499999997468,
+        "relative": 0.8425210833566159,
+        "threshold": 0.1,
+        "trigger": true
+      },
+      "p95": {
+        "before": 0.822041999999783,
+        "after": 2.42554200000086,
+        "delta": 1.6035000000010768,
+        "relative": 1.950630259769574,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote1",
+      "p50": {
+        "before": 2.44329099999959,
+        "after": 3.031750000001921,
+        "delta": 0.5884590000023309,
+        "relative": 0.24084687415556708,
+        "threshold": 0.244329099999959,
+        "trigger": true
+      },
+      "p95": {
+        "before": 6.793290999999954,
+        "after": 9.680707999999868,
+        "delta": 2.887416999999914,
+        "relative": 0.4250394985287593,
+        "threshold": 1.018993649999993,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote2",
+      "p50": {
+        "before": 3.227500000000873,
+        "after": 3.607332999999926,
+        "delta": 0.37983299999905284,
+        "relative": 0.117686444616251,
+        "threshold": 0.32275000000008736,
+        "trigger": true
+      },
+      "p95": {
+        "before": 6.35254200000054,
+        "after": 8.971125000003667,
+        "delta": 2.6185830000031274,
+        "relative": 0.41221026165634245,
+        "threshold": 0.9528813000000809,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote8",
+      "p50": {
+        "before": 5.379874999998719,
+        "after": 8.17958400000498,
+        "delta": 2.79970900000626,
+        "relative": 0.5204040986095265,
+        "threshold": 0.5379874999998719,
+        "trigger": true
+      },
+      "p95": {
+        "before": 9.361958999999842,
+        "after": 24.86554199999955,
+        "delta": 15.503582999999708,
+        "relative": 1.6560191088211311,
+        "threshold": 1.4042938499999764,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "composition",
+      "p50": {
+        "before": 146.75845800000025,
+        "after": 226.41879200000403,
+        "delta": 79.66033400000379,
+        "relative": 0.542798930198651,
+        "threshold": 14.675845800000026,
+        "trigger": true
+      },
+      "p95": {
+        "before": 171.0916670000006,
+        "after": 441.8184159999946,
+        "delta": 270.726748999994,
+        "relative": 1.5823491216553116,
+        "threshold": 25.66375005000009,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "structure",
+      "p50": {
+        "before": 15.792500000001382,
+        "after": 26.759584000006726,
+        "delta": 10.967084000005343,
+        "relative": 0.6944488839641845,
+        "threshold": 1.5792500000001384,
+        "trigger": true
+      },
+      "p95": {
+        "before": 23.842916999999943,
+        "after": 52.47750000000087,
+        "delta": 28.63458300000093,
+        "relative": 1.2009681114102355,
+        "threshold": 3.576437549999991,
+        "trigger": true
+      }
+    }
+  ],
+  "invariants": [
+    {
+      "size": 10000,
+      "scenario": "insert",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "delete",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "mark",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "selection",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "presence",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote1",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote2",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote8",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "composition",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "structure",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "insert",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "delete",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "mark",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "selection",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "presence",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote1",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote2",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote8",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "composition",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "structure",
+      "block": 0,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "insert",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "delete",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "mark",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "selection",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "presence",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote1",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote2",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote8",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "composition",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "structure",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "insert",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "delete",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "mark",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "selection",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "presence",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote1",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote2",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote8",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "composition",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "structure",
+      "block": 1,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "insert",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "delete",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "mark",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "selection",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "presence",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote1",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote2",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote8",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "composition",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "structure",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "insert",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "delete",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "mark",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "selection",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "presence",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote1",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote2",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote8",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "composition",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "structure",
+      "block": 2,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "insert",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "delete",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "mark",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "selection",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "presence",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote1",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote2",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "remote8",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "composition",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 10000,
+      "scenario": "structure",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "insert",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "delete",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "mark",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "selection",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "presence",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote1",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote2",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "remote8",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "composition",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    },
+    {
+      "size": 100000,
+      "scenario": "structure",
+      "block": 3,
+      "countsEqual": true,
+      "modelHash": true,
+      "generatedHash": true,
+      "historyHash": true
+    }
+  ],
+  "triggers": [
+    {
+      "size": 10000,
+      "scenario": "insert",
+      "p50": {
+        "before": 0.27062499999919964,
+        "after": 0.373290999999881,
+        "delta": 0.10266600000068138,
+        "relative": 0.3793662817588361,
+        "threshold": 0.1,
+        "trigger": true
+      },
+      "p95": {
+        "before": 1.030917000000045,
+        "after": 1.2071249999999623,
+        "delta": 0.17620799999991732,
+        "relative": 0.17092355640649018,
+        "threshold": 0.2,
+        "trigger": false
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "mark",
+      "p50": {
+        "before": 0.2668340000000171,
+        "after": 0.38741700000537094,
+        "delta": 0.12058300000535382,
+        "relative": 0.45190268108766535,
+        "threshold": 0.1,
+        "trigger": true
+      },
+      "p95": {
+        "before": 0.31762499999967986,
+        "after": 0.806416999999783,
+        "delta": 0.48879200000010314,
+        "relative": 1.5388964974438277,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote1",
+      "p50": {
+        "before": 0.5533329999998386,
+        "after": 0.6029579999958514,
+        "delta": 0.049624999996012775,
+        "relative": 0.08968378895895825,
+        "threshold": 0.1,
+        "trigger": false
+      },
+      "p95": {
+        "before": 0.6106249999975262,
+        "after": 0.8908339999979944,
+        "delta": 0.2802090000004682,
+        "relative": 0.4588888434007835,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote2",
+      "p50": {
+        "before": 0.8509580000027199,
+        "after": 0.8804579999996349,
+        "delta": 0.029499999996914994,
+        "relative": 0.03466681081418907,
+        "threshold": 0.1,
+        "trigger": false
+      },
+      "p95": {
+        "before": 1.0342500000006112,
+        "after": 1.5077500000006694,
+        "delta": 0.4735000000000582,
+        "relative": 0.4578196760935735,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "remote8",
+      "p50": {
+        "before": 2.091374999999971,
+        "after": 2.496791999999914,
+        "delta": 0.4054169999999431,
+        "relative": 0.19385189169802103,
+        "threshold": 0.2091374999999971,
+        "trigger": true
+      },
+      "p95": {
+        "before": 3.4862080000000333,
+        "after": 4.659959000000526,
+        "delta": 1.1737510000004931,
+        "relative": 0.33668415653927763,
+        "threshold": 0.5229312000000049,
+        "trigger": true
+      }
+    },
+    {
+      "size": 10000,
+      "scenario": "structure",
+      "p50": {
+        "before": 1.918333999999959,
+        "after": 1.8162090000005264,
+        "delta": -0.10212499999943248,
+        "relative": -0.05323629774556186,
+        "threshold": 0.1918333999999959,
+        "trigger": false
+      },
+      "p95": {
+        "before": 2.654166000000032,
+        "after": 3.700458000000026,
+        "delta": 1.046291999999994,
+        "relative": 0.3942074459547675,
+        "threshold": 0.3981249000000048,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "insert",
+      "p50": {
+        "before": 2.084040999999843,
+        "after": 2.966415999999981,
+        "delta": 0.8823750000001382,
+        "relative": 0.42339618078540914,
+        "threshold": 0.2084040999999843,
+        "trigger": true
+      },
+      "p95": {
+        "before": 4.566959000001589,
+        "after": 4.932290999999168,
+        "delta": 0.36533199999757926,
+        "relative": 0.0799945872072537,
+        "threshold": 0.6850438500002383,
+        "trigger": false
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "delete",
+      "p50": {
+        "before": 2.0354580000000624,
+        "after": 2.663583000001381,
+        "delta": 0.6281250000013188,
+        "relative": 0.30859148162295635,
+        "threshold": 0.20354580000000624,
+        "trigger": true
+      },
+      "p95": {
+        "before": 3.3536669999998594,
+        "after": 4.393665999999939,
+        "delta": 1.0399990000000798,
+        "relative": 0.31010801012745853,
+        "threshold": 0.5030500499999789,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "mark",
+      "p50": {
+        "before": 2.1281669999998485,
+        "after": 3.5114169999978913,
+        "delta": 1.3832499999980428,
+        "relative": 0.6499724880604488,
+        "threshold": 0.21281669999998487,
+        "trigger": true
+      },
+      "p95": {
+        "before": 3.2255409999997937,
+        "after": 13.075417000000016,
+        "delta": 9.849876000000222,
+        "relative": 3.0537128500306934,
+        "threshold": 0.483831149999969,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "selection",
+      "p50": {
+        "before": 0.2191250000000764,
+        "after": 0.3636660000011034,
+        "delta": 0.144541000001027,
+        "relative": 0.6596280661767329,
+        "threshold": 0.1,
+        "trigger": true
+      },
+      "p95": {
+        "before": 0.5234170000001086,
+        "after": 2.0976249999985157,
+        "delta": 1.574207999998407,
+        "relative": 3.007559937866138,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "presence",
+      "p50": {
+        "before": 0.7376670000012382,
+        "after": 1.3591669999987062,
+        "delta": 0.621499999997468,
+        "relative": 0.8425210833566159,
+        "threshold": 0.1,
+        "trigger": true
+      },
+      "p95": {
+        "before": 0.822041999999783,
+        "after": 2.42554200000086,
+        "delta": 1.6035000000010768,
+        "relative": 1.950630259769574,
+        "threshold": 0.2,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote1",
+      "p50": {
+        "before": 2.44329099999959,
+        "after": 3.031750000001921,
+        "delta": 0.5884590000023309,
+        "relative": 0.24084687415556708,
+        "threshold": 0.244329099999959,
+        "trigger": true
+      },
+      "p95": {
+        "before": 6.793290999999954,
+        "after": 9.680707999999868,
+        "delta": 2.887416999999914,
+        "relative": 0.4250394985287593,
+        "threshold": 1.018993649999993,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote2",
+      "p50": {
+        "before": 3.227500000000873,
+        "after": 3.607332999999926,
+        "delta": 0.37983299999905284,
+        "relative": 0.117686444616251,
+        "threshold": 0.32275000000008736,
+        "trigger": true
+      },
+      "p95": {
+        "before": 6.35254200000054,
+        "after": 8.971125000003667,
+        "delta": 2.6185830000031274,
+        "relative": 0.41221026165634245,
+        "threshold": 0.9528813000000809,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "remote8",
+      "p50": {
+        "before": 5.379874999998719,
+        "after": 8.17958400000498,
+        "delta": 2.79970900000626,
+        "relative": 0.5204040986095265,
+        "threshold": 0.5379874999998719,
+        "trigger": true
+      },
+      "p95": {
+        "before": 9.361958999999842,
+        "after": 24.86554199999955,
+        "delta": 15.503582999999708,
+        "relative": 1.6560191088211311,
+        "threshold": 1.4042938499999764,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "composition",
+      "p50": {
+        "before": 146.75845800000025,
+        "after": 226.41879200000403,
+        "delta": 79.66033400000379,
+        "relative": 0.542798930198651,
+        "threshold": 14.675845800000026,
+        "trigger": true
+      },
+      "p95": {
+        "before": 171.0916670000006,
+        "after": 441.8184159999946,
+        "delta": 270.726748999994,
+        "relative": 1.5823491216553116,
+        "threshold": 25.66375005000009,
+        "trigger": true
+      }
+    },
+    {
+      "size": 100000,
+      "scenario": "structure",
+      "p50": {
+        "before": 15.792500000001382,
+        "after": 26.759584000006726,
+        "delta": 10.967084000005343,
+        "relative": 0.6944488839641845,
+        "threshold": 1.5792500000001384,
+        "trigger": true
+      },
+      "p95": {
+        "before": 23.842916999999943,
+        "after": 52.47750000000087,
+        "delta": 28.63458300000093,
+        "relative": 1.2009681114102355,
+        "threshold": 3.576437549999991,
+        "trigger": true
+      }
+    }
+  ]
+}
