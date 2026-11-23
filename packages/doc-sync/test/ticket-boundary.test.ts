@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Clock} from "../src/crdt/ticket.ts";
+import {Clock} from "../../doc-sync-core/dist/crdt/ticket.js";
 
 test("clock exhaustion fails before repeating or rounding an identity", () => {
     const clock = new Clock("A");

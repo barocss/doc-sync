@@ -1,0 +1,11 @@
+import { readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { runGapSuite, SOURCE_FILES, WASM_FILE } from './gap-compare-suite.mjs';
+const base = new URL('../', import.meta.url);
+const hashes = {};
+for (const path of [...SOURCE_FILES, WASM_FILE]) hashes[path] = createHash('sha256').update(await readFile(new URL(path, base))).digest('hex');
+const { instance } = await WebAssembly.instantiate(await readFile(new URL(WASM_FILE, base)), {});
+const receipt = { ...runGapSuite(instance.exports), node: process.version, executable: process.execPath, platform: process.platform, architecture: process.arch, sourceAndWasmSha256: hashes };
+const destination = process.argv[2];
+if (destination) await writeFile(destination, JSON.stringify(receipt, null, 2) + '\n');
+console.log(JSON.stringify(receipt));
