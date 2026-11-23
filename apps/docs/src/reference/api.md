@@ -1,6 +1,6 @@
 # Public API
 
-The library has one package and seven entry points. The demo, documentation, and benchmark workspaces are private npm packages.
+Six packages provide Core, four editor bindings, and a compatibility facade. All remain private before registry release. The demo, documentation, and benchmark workspaces are private. See [packages and engines](../guide/packages) for independent imports and peer dependencies.
 
 ## Entry points
 
@@ -11,10 +11,19 @@ The library has one package and seven entry points. The demo, documentation, and
 | `@barocss/doc-sync/node` | `NodeHttpTransport` for Node.js HTTP and SSE synchronization. |
 | `@barocss/doc-sync/server` | `DocHub`, `HubOptions`. |
 | `@barocss/doc-sync/prosemirror` | `PmBinding`, `buildPmSchema`, model/position conversion. |
+| `@barocss/doc-sync/tiptap` | `DocSync`, `createTiptapExtensions`, Tiptap options and storage types. |
 | `@barocss/doc-sync/slate` | `SlateBinding`, schema codecs and selection conversion. |
 | `@barocss/doc-sync/lexical` | `LexicalBinding`, `buildLexicalSchema`, schema nodes and selection conversion. |
 
-The current exports point to TypeScript source. A published npm release still needs a distribution build and API/version policy.
+These eight compatibility entry points re-export the independent packages. Current package exports resolve compiled ESM JavaScript and declarations. Local tarball installation is verified; registry publication and release policy remain separate gates.
+
+## Editor host
+
+`@barocss/doc-sync-core/editor` exports `EditorHost`, `EditorSession`, and `createSyncClientEditorHost(client)`. The adapter uses the existing TypeScript SyncClient/InputSession without a full snapshot per ordinary edit. Model values are borrowed immutable views with generation/revision stamps.
+
+The independent binding packages export `PmHostBinding`, `SlateHostBinding`, and `LexicalHostBinding`. Legacy client constructors share those implementations and preserve `.client`; Lexical preserves its original `.input` session. Tiptap uses the shared PM implementation. See [host integration](../guide/packages#connect-prosemirror-through-an-editor-host) for examples. A Rust/WASM host and backend selector remain unimplemented.
+
+`OpenEditorSchemaHost` below is the application-owned native editor rebuild lifecycle. It is separate from the backend-facing `EditorHost` interface.
 
 ## Doc
 
@@ -51,14 +60,16 @@ The [schema-driven block operations guide](../guide/blocks) includes executable 
 
 Use `upgradeOpenEditorSchema(client, next, host, timeoutMs?)` when an editor is mounted. The application-owned `OpenEditorSchemaHost` blocks input, captures a `ModelRange`, builds and installs the replacement editor, and resumes input. The helper retains the client, its history and pending changes, anchors the selection and waits for a verified connection. The default reconnect timeout is 10 seconds. See [change an open editor's schema](../guide/schema-transition) for lifecycle steps, examples for the three editors and failure handling.
 
-The private MCP app exposes schema inspection, compatible transitions and conditional edits to a headless participant. See [AI and headless clients](../guide/ai).
+The private MCP app exposes schema inspection, compatible transitions and conditional edits to a headless participant. See the separate [AI and bots section](../ai/) and [document server connection guide](../ai/server).
 
 ## Authoritative source
 
-- [Core exports](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/index.ts)
-- [Client and protocol](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/sync)
-- [Server](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/server)
-- [ProseMirror binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/pm)
+- [Core exports](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync-core/src/index.ts)
+- [Client and protocol](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-core/src/sync)
+- [Server](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-core/src/server)
+- [ProseMirror binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-prosemirror/src)
 
-- [Slate binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/slate)
-- [Lexical binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/lexical)
+- [Slate binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-slate/src)
+- [Lexical binding](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-lexical/src)
+
+- [Tiptap extension](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync-tiptap/src)

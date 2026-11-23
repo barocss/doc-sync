@@ -26,7 +26,7 @@ async function waitFor(check: () => Promise<boolean>) {
     }
 }
 
-test("two MCP agents use separate histories and reconcile a stale concurrent base", {timeout: 30000, skip: process.platform !== "darwin"}, async () => {
+test("two MCP agents use separate histories and reconcile a stale concurrent base", {timeout: 30000, skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-two-agents-"));
     const serverFile = fileURLToPath(new URL("../../demo/server.ts", import.meta.url));
     const mcpFile = fileURLToPath(new URL("../src/main.ts", import.meta.url));

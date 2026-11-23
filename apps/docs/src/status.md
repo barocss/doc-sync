@@ -10,7 +10,8 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 - Local-first editing, validated changes, HTTP/SSE demo transport, and snapshot/GC support.
 - Per-user undo and redo that retain independent changes under the stated ownership rules.
 - Remote cursors and selection ranges, including backward and overlapping selection.
-- Public ProseMirror, Slate and Lexical binding subpaths in one library package.
+- Independent ProseMirror, Tiptap, Slate and Lexical binding packages, with the original compatibility subpaths.
+- Shared EditorHost/EditorSession integration backed by the existing TypeScript client, with preserved legacy client/input references.
 - Identity-preserving paragraph, block and group placement, with conditional undo.
 - Required-child and maximum-count projection with retained overflow.
 - Declared nested-attribute field registers and persistent annotations.
@@ -20,7 +21,26 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 
 ## Regression coverage
 
-The latest integration passed 688 library, 57 demo, 28 documentation and 59 MCP tests, with one platform-specific MCP test skipped, plus 32 comparison-editor tests. Real process checks covered MCP termination, server restart, GC, receipts and another participant's edit. Chrome passed 90 native editing checks and 37 open-editor schema checks, including 27 across three profiles and bindings, nine Word-profile checks without a concurrent remote edit, and a synthetic composition guard. The earlier 39 structure checks were not repeated after the recovery storage changes. A separate real Codex session edited a Word-profile document alongside browser input and confirmed its own undo and redo; all three panels showed the final text. These tests do not establish real OS IME or production acceptance. Performance results below describe their earlier source-bound runs.
+The current package/host integration passes 983 tests: 982 PASS and one existing
+platform-specific MCP SKIP. This includes 748 library cases, 27 Core engine/host
+cases, eight native Host cases, 38 bot, 64 demo, 28 documentation and 70 MCP
+cases. The separate comparison suite passes 33/33. Seven isolated tarball
+consumers pass, including actual Host edit/undo/redo for PM, Slate and Lexical.
+
+Chrome passes nine rich-profile combinations (Word, Notion and presentation ×
+Slate, Lexical and ProseMirror) for trusted Unicode input, foreign changes,
+one-group undo/redo, bidirectional selection and same-editor reconnect. Tiptap
+also passes keyboard, range, history, reconnect and remount checks. Actual OS
+IME remains NOT_RUN. These checks do not establish full product acceptance.
+
+The final Core/PM operation-count gate matches the pre-host baseline for all
+20 size/scenario pairs: no additional ordinary-edit snapshots or selection/
+presence model conversions. H1 timing remains UNRESOLVED: three of twenty
+fixed guards were exceeded in the full run; targeted repeats did not reproduce
+them. The earlier H1 timing checkpoint is not relabeled as final H2 latency
+evidence. See [packages and engines](./guide/packages) for the backend scope.
+
+An earlier recovery integration passed 688 library, 57 demo, 28 documentation and 59 MCP tests, with one platform-specific MCP test skipped, plus 32 comparison-editor tests. Real process checks covered MCP termination, server restart, GC, receipts and another participant's edit. Chrome passed 90 native editing checks and 37 open-editor schema checks, including 27 across three profiles and bindings, nine Word-profile checks without a concurrent remote edit, and a synthetic composition guard. The earlier 39 structure checks were not repeated after the recovery storage changes. A separate real Codex session edited a Word-profile document alongside browser input and confirmed its own undo and redo; all three panels showed the final text. These tests do not establish real OS IME or production acceptance. Performance results below describe their earlier source-bound runs.
 
 Receive model materialization passes 622 library, 16 demo and 27 documentation tests with `FUZZ_SEEDS=3000 PM_SEEDS=300`, plus 31 compatibility unit tests. Chrome passes 460 functional assertions and captures 30 separate operation traces, with zero console errors. Long-paragraph core receive/model p95 improves 64.5–69.3% across the measured live workloads, while the compressed ID index and cold heap footprint remain essentially unchanged. Short-paragraph and alternating-format controls do not show the same gain. See the [comparison report and limits](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/receive-model-2026-10-24/report.md).
 

@@ -1,9 +1,9 @@
 import {chainCommands, deleteSelection, joinBackward, selectNodeBackward, setBlockType, splitBlock, toggleMark} from "prosemirror-commands";
 import {TextSelection} from "prosemirror-state";
 import {CellSelection, addColumnAfter, addRowAfter, deleteColumn, deleteRow, mergeCells, splitCell} from "prosemirror-tables";
-import {PmBinding} from "../src/pm/binding.ts";
-import {toPmJSON} from "../src/pm/convert.ts";
-import {buildPmSchema} from "../src/pm/schema.ts";
+import {PmBinding} from "../../doc-sync-prosemirror/dist/binding.js";
+import {toPmJSON} from "../../doc-sync-prosemirror/dist/convert.js";
+import {buildPmSchema} from "../../doc-sync-prosemirror/dist/schema.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 import {MemoryNet, rng} from "./harness.ts";
 import type {Node as PmNode} from "prosemirror-model";

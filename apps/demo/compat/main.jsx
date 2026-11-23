@@ -9,7 +9,8 @@ import {registerRichText, HeadingNode, QuoteNode, $createHeadingNode, $createQuo
 import {TableNode, TableRowNode, TableCellNode, $createTableNode, $createTableRowNode, $createTableCellNode, $createTableNodeWithDimensions, $insertTableColumnAtNode, $insertTableRowAtNode, registerTablePlugin, registerTableSelectionObserver} from '@lexical/table';
 import {createAnnotation, updateAnnotation, deleteAnnotation, getAnnotations} from '@barocss/doc-sync';
 import {SyncClient, HttpTransport} from '@barocss/doc-sync/sync';
-import {PmBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@barocss/doc-sync/prosemirror';
+import {PmHostBinding, buildPmSchema, fromPmJSON, pmPosToPath, pathToPmPos} from '@barocss/doc-sync/prosemirror';
+import {createSyncClientEditorHost} from '@barocss/doc-sync-core/editor';
 import {TextSelection} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {keymap} from 'prosemirror-keymap';
@@ -329,7 +330,7 @@ function mountProseMirror(name) {
   const info=buildPmSchema(schema,{
     paragraph:()=>['p',0],heading1:()=>['h1',0],heading2:()=>['h2',0],quote:()=>['blockquote',0],
   });
-  const binding=new PmBinding(peer.input.bindingClient(),info,[keymap({
+  const binding=new PmHostBinding(createSyncClientEditorHost(peer.client,{input:peer.input}),info,[keymap({
     'Mod-z':()=>{binding.undo();return true;},'Mod-y':()=>{binding.redo();return true;},
     'Shift-Mod-z':()=>{binding.redo();return true;},'Mod-b':toggleMark(info.pm.marks.bold),'Mod-i':toggleMark(info.pm.marks.italic),
   }),keymap(baseKeymap),tableEditing()]);
@@ -350,6 +351,7 @@ function mountProseMirror(name) {
   });
   binding.view=view;
   binding.onChange=()=>view.updateState(binding.state);
+  peer.dispose=()=>{binding.dispose();view.destroy();};
   peer.readRange=()=>view.state.selection instanceof TextSelection?{anchor:pmPosToPath(schema,view.state.doc,view.state.selection.anchor,peer.input.doc.toJSON()),focus:pmPosToPath(schema,view.state.doc,view.state.selection.head,peer.input.doc.toJSON())}:null;
   peer.pull=()=>{
     if(peer.input.active)return;

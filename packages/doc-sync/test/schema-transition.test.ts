@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import {schemaVersion} from "../src/crdt/schema-version.ts";
-import type {Schema} from "../src/crdt/schema.ts";
-import type {NodeJSON} from "../src/crdt/model.ts";
-import {DocHub} from "../src/server/hub.ts";
-import {SyncClient} from "../src/sync/client.ts";
+import {schemaVersion} from "../../doc-sync-core/dist/crdt/schema-version.js";
+import type {Schema} from "../../doc-sync-core/dist/crdt/schema.js";
+import type {NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
+import {DocHub} from "../../doc-sync-core/dist/server/hub.js";
+import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
 import {MemoryNet} from "./harness.ts";
 
 function extended(): Schema {

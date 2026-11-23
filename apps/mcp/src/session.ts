@@ -1,9 +1,9 @@
 import {SyncClient} from "@barocss/doc-sync/sync";
-import {Doc} from "@barocss/doc-sync";
+import {Doc, MAIN, anchorAt, posOfPath} from "@barocss/doc-sync";
 import {assertCompatibleSchema, schemaVersion} from "@barocss/doc-sync";
 import type {NodeHttpTransport} from "@barocss/doc-sync/node";
 import type {EditOp, Schema} from "@barocss/doc-sync";
-import type {Transport} from "@barocss/doc-sync/sync";
+import type {Transport, BotCharacter, BotExpression, BotActivity} from "@barocss/doc-sync/sync";
 import type {IntentJournal, JournalRecord} from "./journal.ts";
 import type {RecoveryCheckpoint} from "./journal.ts";
 import {randomUUID} from "node:crypto";
@@ -27,10 +27,13 @@ export class DocumentSession {
     private checkpoint: RecoveryCheckpoint | null = null;
     private reservationId: string | null = null;
     private recoveryError: string | null = null;
-    constructor(actor: string, transport: Transport & Pick<NodeHttpTransport, "submitConditional" | "getSchema" | "transitionSchema"> & Partial<Pick<NodeHttpTransport, "getRecoveryState" | "getRecoveryReceipt" | "reserveRecovery" | "releaseRecovery" | "getChangeReceipt" | "recoverChange">>, schema: Schema, timeoutMs = 10_000, journal: IntentJournal | null = null) {
+    private stepId: string | undefined;
+    private readonly saveStep?: (step: string, record: JournalRecord) => Promise<void>;
+    constructor(actor: string, transport: Transport & Pick<NodeHttpTransport, "submitConditional" | "getSchema" | "transitionSchema"> & Partial<Pick<NodeHttpTransport, "getRecoveryState" | "getRecoveryReceipt" | "reserveRecovery" | "releaseRecovery" | "getChangeReceipt" | "recoverChange">>, schema: Schema, timeoutMs = 10_000, journal: IntentJournal | null = null, saveStep?: (step: string, record: JournalRecord) => Promise<void>) {
         this.timeoutMs = timeoutMs;
         this.transport = transport;
         this.journal = journal;
+        this.saveStep = saveStep;
         this.client = new SyncClient(actor, transport, {schema});
         this.submitConditional = async (base, change) => {
             try {
@@ -39,7 +42,11 @@ export class DocumentSession {
                     if (!evidence || JSON.stringify(evidence.base) !== JSON.stringify(base) || JSON.stringify(evidence.change) !== JSON.stringify(change)) throw new Error("Conditional recovery evidence is unavailable");
                     if (!this.generation || this.generation.epoch !== base.epoch) throw new Error("Server generation or epoch is unavailable; read again before editing");
                     this.journalDirty = true;
-                    await this.journal.prepare({...evidence, generation: this.generation.value});
+                    const record=await this.journal.prepare({...evidence, generation: this.generation.value});
+                    if (this.saveStep) {
+                        if (!this.stepId) throw new Error("A mission step ID is required");
+                        await this.saveStep(this.stepId,record);
+                    }
                 }
             } catch (error) {
                 if (this.conditionalMayHaveSent) throw error;
@@ -217,8 +224,15 @@ export class DocumentSession {
         });
     }
 
+    /** Wait for all operations admitted before shutdown. */
+    async drain(): Promise<void> { await this.queue; }
+
+    /** Stop the local stream while the caller retains the journal lock. */
+    disconnect(): void { this.client.disconnect(); }
+
     async close(): Promise<void> {
-        this.client.disconnect();
+        await this.drain();
+        this.disconnect();
         await this.journal?.close();
     }
 
@@ -291,8 +305,37 @@ export class DocumentSession {
         });
     }
 
-    async edit(base: Revision, edits: EditOp[]) {
+    /** Publish an explicitly supplied position; this is transient and has no delivery receipt. */
+    async setPresence(base: Revision, name: string, color: string, anchor: number[] | null, focus: number[] | null, character?: BotCharacter, expression?: BotExpression, activity?: BotActivity) {
         return this.serial(async () => {
+            await this.requireSettled();
+            const current = this.revision();
+            if (!this.client.synchronized) throw new Error("Document session is not synchronized");
+            if (base.epoch !== current.epoch || base.serverSeq !== current.serverSeq || base.schemaVersion !== current.schemaVersion) {
+                throw new Error("The local document or schema changed since it was read. Read it again before setting presence.");
+            }
+            if (!anchor && focus) throw new Error("A selection requires an active anchor");
+            const endpoint = (path: number[] | null): string | null => {
+                if (!path) return null;
+                const doc = this.client.doc, pos = posOfPath(doc, path);
+                if (!pos || pos.o !== path.at(-1) || !doc.visible(pos.line ?? MAIN)) throw new Error("Presence path is not a visible text position");
+                const key = anchorAt(doc, path);
+                if (!key || !doc.get(key) || !doc.tokenLocation(key)?.visible) throw new Error("Presence path is not a visible text position");
+                return key;
+            };
+            const active = endpoint(anchor), other = endpoint(focus);
+            if (active && other && this.client.doc.tokenLocation(active)?.line !== this.client.doc.tokenLocation(other)?.line) {
+                throw new Error("Presence selection endpoints must be in the same visible document line");
+            }
+            this.client.setPresence({name, color, anchor: active, focus: active === other ? null : other, ...(character ? {character} : {}), ...(expression ? {expression} : {}), ...(activity ? {activity} : {})});
+            return {status: "sent", delivery: "unconfirmed"};
+        });
+    }
+
+    async edit(base: Revision, edits: EditOp[], stepId?: string) {
+        return this.serial(async () => {
+            if (this.saveStep && (!stepId || !/^[0-9a-f-]{36}$/i.test(stepId))) throw new Error("A valid mission step ID is required");
+            this.stepId=stepId;
             await this.requireSettled();
             const current = this.revision();
             if (base.epoch !== current.epoch || base.serverSeq !== current.serverSeq || base.schemaVersion !== current.schemaVersion) {
