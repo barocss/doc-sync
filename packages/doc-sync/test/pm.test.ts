@@ -3,7 +3,7 @@ import {test} from "node:test";
 import {splitBlock} from "prosemirror-commands";
 import {TextSelection} from "prosemirror-state";
 import {addColumnAfter} from "prosemirror-tables";
-import {PmBinding} from "../src/pm/binding.ts";
+import {PmBinding} from "../../doc-sync-prosemirror/dist/binding.js";
 import {MemoryNet, show} from "./harness.ts";
 import {INFO, runPmSeed} from "./pm-fuzz.ts";
 import type {Command} from "prosemirror-state";

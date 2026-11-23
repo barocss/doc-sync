@@ -21,7 +21,7 @@ import type {Schema} from "@barocss/doc-sync";
  *   GET  /                          데모 페이지
  *   GET  /multi?n=10&doc=이름        여러 창 시험 (창마다 a.localhost, b.localhost … 로 연다)
  *   GET  /pm?doc=이름                데모 편집기와 ProseMirror 편집기가 같은 문서를 편집
- *   GET  /packages/doc-sync/src/**.ts, /apps/demo/ui/**.ts    TypeScript 를 타입만 벗겨 브라우저에 내준다 (번들러 없음)
+ *   GET  /packages/<named-doc-sync-package>/src/**.ts (allowlist), /apps/demo/ui/**.ts    TypeScript 를 타입만 벗겨 브라우저에 내준다 (번들러 없음)
  *   GET  /api/docs/:doc/stream      SSE — hello(스냅숏) → 밀린 변경 → 이후 변경·presence
  *   POST /api/docs/:doc/changes     Change 하나
  *   POST /api/docs/:doc/ack         여기까지 받았다 + 되돌리기 핀
@@ -639,7 +639,7 @@ const serveStatic = (res: ServerResponse, urlPath: string) => {
     const file = normalize(join(ROOT, relative));
     // 라이브러리·데모 UI·공유 스키마, 그리고 node_modules 의 js·css 만 (ProseMirror 를 import map 으로 바로 읽는다 — 번들러 없음)
     const within = (directory: string) => file.startsWith(join(ROOT, directory) + sep);
-    const allowed = within("packages/doc-sync/src") || within("apps/demo/ui") || file === join(ROOT, "fixtures/demo-schema.ts") || (within("node_modules") && /\.(m?js|css)$/.test(file));
+    const allowed = ["doc-sync", "doc-sync-core", "doc-sync-prosemirror", "doc-sync-tiptap", "doc-sync-slate", "doc-sync-lexical"].some(name => within(`packages/${name}/src`)) || within("apps/demo/ui") || file === join(ROOT, "fixtures/demo-schema.ts") || (within("node_modules") && /\.(m?js|css)$/.test(file));
 
     if (!allowed || !existsSync(file)) {
         return send(res, 404, "없음", "text/plain; charset=utf-8");

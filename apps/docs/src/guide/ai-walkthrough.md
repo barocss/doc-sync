@@ -1,8 +1,10 @@
-# Try AI and user editing together
+# Local AI collaboration walkthrough
+
+For an application server connection, start with [connect to a document server](../ai/server). This page is a development exercise. Its loopback URLs and journal setting are for the local demo.
 
 This walkthrough connects one Codex MCP participant and the three browser editors to the same local Word-style document. A browser user and the AI keep separate actor IDs and separate undo histories. The server checks the AI's edit against the exact revision it read.
 
-The commands use an isolated demo document. The demo server has no authentication; use it only on your own machine. This walkthrough disables the MCP journal for portability. Pending work and AI history are then lost if the MCP process exits. For durable macOS recovery, use a stable private journal directory instead; see [recover a session](./ai#recover-a-session-after-restart).
+The commands use an isolated demo document. The demo server has no authentication; use it only on your own machine. This walkthrough disables the MCP journal for portability. Pending work and AI history are then lost if the MCP process exits. For durable macOS or Linux recovery, use a stable private journal directory instead; see [recover a session](./ai#recover-a-session-after-restart).
 
 ## 1. Open the shared document
 
@@ -62,3 +64,98 @@ If an edit is `unconfirmed`, do not submit a replacement operation. While the se
 ## What this example proves
 
 The repository has exercised actual Codex MCP edits and browser editors together in a bounded local test. This exercise is not evidence of production authorization, real OS IME, reliable recovery with the journal disabled, or all possible concurrent editing intents. For the exact test scope and limits, see [status and limits](../status).
+
+## Automated collaboration scenarios
+
+The repository also tests separate MCP processes against a local demo server and an independent user synchronization client. These are deterministic client scenarios, not autonomous model evaluations:
+
+| Scenario | Expected result |
+| --- | --- |
+| Three agents edit from the same revision | One edit is confirmed. The others read the latest revision before trying again. Each participant's undo preserves the others' edits. |
+| Offline user and AI insert at the same position | Both insertions converge. Each participant can undo and redo its own insertion. |
+| Offline user deletes text while AI applies bold | User undo reveals the text with bold. AI undo and redo change only the formatting. |
+| Offline user splits a paragraph while AI inserts text | The split and text converge. Both participants' undo and redo preserve the other's change. |
+| User deletes text inserted by AI | AI undo and redo do not reverse the user's deletion. User undo can restore the text. |
+| User edit makes an AI revision stale | The old revision is rejected. An invalid batch applies no partial change; a fresh edit can then be confirmed. |
+| AI process restarts with a protected journal | On supported macOS and Linux systems, its restored undo and redo history preserves a later user edit. |
+
+Run the scenarios from the repository root with Node 22.18 or later:
+
+```sh
+node --test apps/mcp/test/ai-scenarios.test.ts
+```
+
+The test uses actual MCP stdio servers and a simulated user client. The durable journal supports macOS and Linux. Linux requires `/usr/bin/flock` from util-linux. Check the current test receipt for the platform actually exercised; the older macOS-only checkpoint does not establish a Linux result. It does not prove power-loss recovery, production service behavior, or real OS IME behavior.
+
+A separate local test used an actual Codex CLI session and a scripted user client. After the user changed the document, Codex's saved revision was rejected by the local session; Codex then read the new revision, edited, and confirmed its own undo and redo. This check does not simulate a person typing in a browser.
+
+## Show the agent's current position
+
+In a host that can use `set_presence`, ask the agent to report the position it is working on. For example:
+
+```text
+Read the document. Set your presence to the range you plan to inspect,
+using your actual position and the revision you just read. After any edit,
+read again and update your presence to your new position. When you finish,
+hide your presence.
+```
+
+The Word-style product demo displays the agent's name, caret and selection in its three panels when the position can be resolved. The agent must call the tool explicitly; edits do not automatically move its reported caret. A `sent` result is best effort, not a delivery receipt. See [show an agent's position](./ai#show-an-agent-s-position) for the tool arguments and limits.
+
+## Rust experiment
+
+A native host can resume an agent session from a checkpoint, deliver pending changes, and then undo or redo its own edit. The SDK does not provide the Codex runner, MCP tools, or approval UI from this walkthrough.
+
+Use the [native SDK crate setup](./rust#use-the-native-rust-sdk) to run this complete Rust program.
+
+```rust
+use doc_sync_native_sdk::{Attributes, Document, EditOptions, Key, Result, SchemaPreset};
+
+fn main() -> Result<()> {
+    let mut doc = Document::new("walkthrough-agent", SchemaPreset::Text)?;
+    let mut peer = Document::new("walkthrough-viewer", SchemaPreset::Text)?;
+    let inserted = doc.insert_text(
+        &Key::root(),
+        "Hi",
+        Attributes::new(),
+        EditOptions::default(),
+        0.0,
+    )?;
+    peer.apply_remote(&inserted.ops)?;
+    let before = doc.model()?;
+    let mut resumed = Document::restore(&doc.checkpoint()?)?;
+    let undo = resumed.undo()?;
+    peer.apply_remote(&undo.ops)?;
+    assert_ne!(resumed.model()?, before);
+    let redo = resumed.redo()?;
+    peer.apply_remote(&redo.ops)?;
+    assert_eq!(resumed.model()?, before);
+    assert_eq!(peer.model()?, before);
+    Ok(())
+}
+```
+
+The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+
+<details>
+<summary>Raw protocol probe and reference checks</summary>
+
+The walkthrough above runs through TypeScript. The private native driver can check one lower-layer undo case without an AI account: a human inserts text, then a bot formats it and undoes only that formatting.
+
+Build the driver with [Run the private experiment](./rust#run-the-private-experiment), then run this from the repository root:
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"bot","actor":"bot","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"bot","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"human"},"origin":{"lamport":0,"actor":"~root"},"units":[65]}]}
+{"cmd":"history_record","replica":"bot","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"set","at":{"lamport":3,"actor":"bot"},"ids":[{"lamport":1,"actor":"human"}],"key":"bold","value":true}],"options":{"caretBefore":"0@~root","caretAfter":"1@human"},"now":10}
+{"cmd":"history_undo","replica":"bot"}
+{"cmd":"history_redo","replica":"bot"}
+JSONL
+```
+
+Undo keeps the human `A`; redo restores the bot bold mark. Each response includes the generated operations and History. This does not reproduce an actual Codex session, MCP tool calls, stale-revision rejection, or browser typing.
+
+This uses the fixed base text schema. Rust has no production editor, bot, or MCP adapter. See the [Rust engine guide](./rust) for the separate v1 through v6 capabilities and limits.
+
+</details>

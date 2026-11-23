@@ -1,0 +1,45 @@
+✔ proposal CLI authenticates hosted-only exact endpoint and reads private bounded input (34.884875ms)
+✔ canonical actor aliases and invalid journal document IDs fail configuration (104.563417ms)
+✔ read grants cannot directly invoke any mutation or schema tool (289.609875ms)
+✔ duplicate initialize and provisional capacity reserve before schema discovery (238.38525ms)
+✔ DELETE drains a delayed edit, retains its journal lock, and sends no late leave (351.318083ms)
+✔ idle cleanup closes the actor and repeated shutdown shares one promise (258.654333ms)
+✔ shutdown refuses initialize whose body completes after shutdown starts (4113.51ms)
+✔ chunked overflow gets 413 and bounded raw-body readers reject slow parallel bodies (108.229083ms)
+✔ admitted tool calls are bounded while a schema read is delayed (226.658416ms)
+✔ failed initialize releases provisional capacity and rejects unsafe existing data directories (221.513875ms)
+✔ retargeted route cannot load the previous physical actor checkpoint (286.611875ms)
+✔ read credential cannot replay a pending checkpoint; write credential recovers it and preserves user text (313.327042ms)
+✔ foreign routes, guessed sessions and forged identity headers cannot change selected actor (189.01075ms)
+✔ schema permission changes only the configured document (244.781417ms)
+✔ stdio shutdown reads settled state after its admitted queue drains (1.31175ms)
+✔ browser HttpTransport retains default and product-relative recovery fetch targets (15.076958ms)
+✔ configured upstream headers require an absolute valid HTTP URL (0.652375ms)
+✔ all upstream requests use only configured credentials and refuse redirects (3.587209ms)
+✔ real redirect target receives no schema, SSE or mutation request and no secret (24.961083ms)
+✔ strict configuration and synchronous capacity reservations (1.623583ms)
+✔ every tool authorization runs before session access (11.187ms)
+✔ HTTP boundary rejects credentials, host, origin and bodies before upstream (25.899125ms)
+✔ SDK HTTP initialize, grant binding, edit, DELETE and stable reconnect history (492.134791ms)
+✔ proposal creation and rejection leave actual upstream snapshot/sequence unchanged; owner boundary (294.027ms)
+✔ unauthorized/unsupported proposals deny before any upstream access and default is disabled (164.570167ms)
+✔ busy actor and unresolved journal refuse capture before upstream; owner list stays available (286.451292ms)
+✔ exact generation, schema and revision are mandatory; retargeted store is isolated (227.368167ms)
+✔ proposal HTTP host/origin/session/body bounds and slow readers retain existing admission (151.61825ms)
+✔ owner GET holds bounded admission through store cleanup and shutdown drains it (112.544709ms)
+✔ pure UTF16 preview matches independent string oracle and refuses scalar splits (0.657709ms)
+✔ schema refuses authority fields, structural changes, deep paths and claimed check status (1.566042ms)
+✔ creator capability cannot be combined with write or owner decisions (2.903791ms)
+✔ durable immutable create/reject and private store isolation (40.83575ms)
+✔ corrupt, symlink, hardlink and public record remain untouched (25.95375ms)
+✔ hard unresolved quota never deletes; store close drains admitted operation (2896.828167ms)
+✔ SIGKILL releases permanent kernel inode; persisted proposal survives restart (89.765209ms)
+✔ FIFO record and lock fail without waiting or removing evidence (8.735459ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7161.794

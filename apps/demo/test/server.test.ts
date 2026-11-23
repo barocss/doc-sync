@@ -111,9 +111,9 @@ test("데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경�
             const html = await response.text();
             const imports = JSON.parse(html.match(/<script type="importmap">\s*([\s\S]*?)<\/script>/)![1]).imports as Record<string, string>;
 
-            assert.equal(imports["@barocss/doc-sync"], "/packages/doc-sync/src/index.ts");
-            assert.equal(imports["@barocss/doc-sync/sync"], "/packages/doc-sync/src/sync/index.ts");
-            assert.equal(imports["@barocss/doc-sync/prosemirror"], "/packages/doc-sync/src/pm/index.ts");
+            assert.equal(imports["@barocss/doc-sync"], "/packages/doc-sync-core/src/index.ts");
+            assert.equal(imports["@barocss/doc-sync/sync"], "/packages/doc-sync-core/src/sync/index.ts");
+            assert.equal(imports["@barocss/doc-sync/prosemirror"], "/packages/doc-sync-prosemirror/src/index.ts");
             const queue = [...html.matchAll(/(?:src|href)="([^"?]+)(?:\?[^"]*)?"/g)]
                 .map(match => new URL(match[1], server.base + page).href);
             const visited = new Set<string>();
@@ -142,6 +142,9 @@ test("데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경�
         }
         assert.equal((await fetch(`${server.base}/HANDOFF.md`)).status, 404);
         assert.equal((await fetch(`${server.base}/packages/doc-sync/src-other/index.ts`)).status, 404);
+        for (const path of ["/packages/doc-sync-core/package.json", "/packages/doc-sync-core/tsconfig.build.json", "/packages/doc-sync-prosemirror/package.json", "/scripts/build-packages.mjs"]) {
+            assert.equal((await fetch(server.base + path)).status, 404, path);
+        }
     } finally {
         await server.stop();
         await rm(data, {recursive: true, force: true});
