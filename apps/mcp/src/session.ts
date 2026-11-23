@@ -1,19 +1,24 @@
 import {SyncClient} from "@barocss/doc-sync/sync";
-import {Doc} from "@barocss/doc-sync";
+import {Doc, MAIN, anchorAt, posOfPath, readDocumentSlice, validateSliceQuery} from "@barocss/doc-sync";
 import {assertCompatibleSchema, schemaVersion} from "@barocss/doc-sync";
 import type {NodeHttpTransport} from "@barocss/doc-sync/node";
-import type {EditOp, Schema} from "@barocss/doc-sync";
-import type {Transport} from "@barocss/doc-sync/sync";
+import type {EditOp, Schema, SliceQuery} from "@barocss/doc-sync";
+import type {Transport, BotCharacter, BotExpression, BotActivity} from "@barocss/doc-sync/sync";
 import type {IntentJournal, JournalRecord} from "./journal.ts";
 import type {RecoveryCheckpoint} from "./journal.ts";
-import {randomUUID} from "node:crypto";
+import {randomUUID, randomBytes, createHmac, timingSafeEqual} from "node:crypto";
 import {History} from "@barocss/doc-sync";
+
+export type PreparedIntent = NonNullable<SyncClient["conditionalEvidence"]> & {generation: string};
+export type PreparedIntentAuthorizer = (intent: PreparedIntent) => void | Promise<void>;
 
 export type Revision = {epoch: string; serverSeq: number; schemaVersion: string | null};
 
 /** One persistent actor owns its undo history for the lifetime of this session. */
 export class DocumentSession {
     readonly client: SyncClient;
+    private readonly readCursorKey = randomBytes(32);
+    private readonly readDocumentIds = new WeakMap<Doc, string>();
     private queue: Promise<void> = Promise.resolve();
     readonly timeoutMs: number;
     private readonly submitConditional: NodeHttpTransport["submitConditional"];
@@ -27,10 +32,16 @@ export class DocumentSession {
     private checkpoint: RecoveryCheckpoint | null = null;
     private reservationId: string | null = null;
     private recoveryError: string | null = null;
-    constructor(actor: string, transport: Transport & Pick<NodeHttpTransport, "submitConditional" | "getSchema" | "transitionSchema"> & Partial<Pick<NodeHttpTransport, "getRecoveryState" | "getRecoveryReceipt" | "reserveRecovery" | "releaseRecovery" | "getChangeReceipt" | "recoverChange">>, schema: Schema, timeoutMs = 10_000, journal: IntentJournal | null = null) {
+    private stepId: string | undefined;
+    private readonly preservePreparedIntent: boolean;
+    private readonly saveStep?: (step: string, record: JournalRecord) => Promise<void>;
+    constructor(actor: string, transport: Transport & Pick<NodeHttpTransport, "submitConditional" | "getSchema" | "transitionSchema"> & Partial<Pick<NodeHttpTransport, "getRecoveryState" | "getRecoveryReceipt" | "reserveRecovery" | "releaseRecovery" | "getChangeReceipt" | "recoverChange">>, schema: Schema, timeoutMs = 10_000, journal: IntentJournal | null = null, saveStep?: (step: string, record: JournalRecord) => Promise<void>, authorizePreparedIntent?: PreparedIntentAuthorizer) {
+        if (authorizePreparedIntent && !journal) throw new Error("Prepared authorization requires a durable journal");
         this.timeoutMs = timeoutMs;
         this.transport = transport;
         this.journal = journal;
+        this.saveStep = saveStep;
+        this.preservePreparedIntent = !!authorizePreparedIntent;
         this.client = new SyncClient(actor, transport, {schema});
         this.submitConditional = async (base, change) => {
             try {
@@ -38,8 +49,13 @@ export class DocumentSession {
                     const evidence = this.client.conditionalEvidence;
                     if (!evidence || JSON.stringify(evidence.base) !== JSON.stringify(base) || JSON.stringify(evidence.change) !== JSON.stringify(change)) throw new Error("Conditional recovery evidence is unavailable");
                     if (!this.generation || this.generation.epoch !== base.epoch) throw new Error("Server generation or epoch is unavailable; read again before editing");
+                    await authorizePreparedIntent?.({...evidence, generation: this.generation.value});
                     this.journalDirty = true;
-                    await this.journal.prepare({...evidence, generation: this.generation.value});
+                    const record=await this.journal.prepare({...evidence, generation: this.generation.value});
+                    if (this.saveStep) {
+                        if (!this.stepId) throw new Error("A mission step ID is required");
+                        await this.saveStep(this.stepId,record);
+                    }
                 }
             } catch (error) {
                 if (this.conditionalMayHaveSent) throw error;
@@ -217,8 +233,15 @@ export class DocumentSession {
         });
     }
 
+    /** Wait for all operations admitted before shutdown. */
+    async drain(): Promise<void> { await this.queue; }
+
+    /** Stop the local stream while the caller retains the journal lock. */
+    disconnect(): void { this.client.disconnect(); }
+
     async close(): Promise<void> {
-        this.client.disconnect();
+        await this.drain();
+        this.disconnect();
         await this.journal?.close();
     }
 
@@ -265,8 +288,7 @@ export class DocumentSession {
         if (this.journal && await this.journal.read()) throw new Error("A durable recovery record remains; inspect it before editing");
     }
 
-    read() {
-        return this.serial(async () => {
+    private async prepareRead(): Promise<void> {
             if (this.journal && !this.recovered && this.client.online && this.client.epoch && this.generation?.epoch !== this.client.epoch) {
                 try { await this.refreshGeneration(); }
                 catch (error) { if (!this.recoveryError) throw error; }
@@ -275,24 +297,110 @@ export class DocumentSession {
                 try { await this.saveCheckpoint(this.acceptedRecord); await this.journal.clearAfterConfirmed(this.acceptedRecord); this.acceptedRecord = null; this.journalDirty = false; }
                 catch { /* Preserve the record and keep edits blocked until it can be reconciled. */ }
             }
-            return {
-            document: this.client.doc.toJSON(),
+    }
+
+    private readMetadata(includeConditionalRequest = true) {
+        return {
             revision: this.client.online && !this.client.connectionError && this.client.epoch ? this.revision() : null,
             pending: this.client.pending.length,
             conditionalPending: this.client.conditionalPending,
-            conditionalRequest: this.client.conditionalRequest,
+            ...(includeConditionalRequest ? {conditionalRequest: this.client.conditionalRequest} : {}),
             recoveryRequired: this.recoveryRequired,
             durability: this.reservationId ? "protected_checkpoint" : this.journal ? "conditional_journal_only" : "disabled",
             schemaVersion: this.client.schemaVerified ? schemaVersion(this.client.schema) : null,
             sessionOnline: this.client.online,
             connectionError: this.client.connectionError?.message ?? null,
             revisionScope: "local replica; edit_document checks the revision atomically on the server",
-            };
+        };
+    }
+
+    read() {
+        return this.serial(async () => {
+            await this.prepareRead();
+            return {document: this.client.doc.toJSON(), ...this.readMetadata()};
         });
     }
 
-    async edit(base: Revision, edits: EditOp[]) {
+    private sliceBinding() {
+        let documentInstance = this.readDocumentIds.get(this.client.doc);
+        if (!documentInstance) { documentInstance = randomUUID(); this.readDocumentIds.set(this.client.doc, documentInstance); }
+        return {documentInstance, epoch: this.client.epoch ?? null, serverSeq: this.client.serverSeq,
+            schemaVersion: schemaVersion(this.client.schema), verified: this.client.schemaVerified,
+            documentRevision: this.client.doc.version};
+    }
+
+    private signCursor(payload: string): string {
+        return createHmac("sha256", this.readCursorKey).update(payload).digest("base64url");
+    }
+
+    /** Bounded canonical model children, bound to this local replica revision. */
+    readSlice(input: SliceQuery & {cursor?: string} = {}) {
         return this.serial(async () => {
+            let query = validateSliceQuery(input);
+            let cursorBinding: unknown;
+            if (input.cursor !== undefined) {
+                if (Object.keys(input).some(key => key !== "cursor")) throw new Error("Supply a cursor alone");
+                if (input.cursor.length > 4096) throw new Error("Invalid slice cursor");
+                const parts = input.cursor.split(".");
+                if (parts.length !== 2) throw new Error("Invalid slice cursor");
+                const actual = Buffer.from(parts[1]), expected = Buffer.from(this.signCursor(parts[0]));
+                if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) throw new Error("Invalid slice cursor");
+                let decoded;
+                try { decoded = JSON.parse(Buffer.from(parts[0], "base64url").toString("utf8")); }
+                catch { throw new Error("Invalid slice cursor"); }
+                query = validateSliceQuery(decoded.query);
+                cursorBinding = decoded.binding;
+                if (JSON.stringify(cursorBinding) !== JSON.stringify(this.sliceBinding())) throw new Error("Stale slice cursor; start a new read");
+            }
+            // A bounded read never writes a checkpoint or clears a recovery journal.
+            const slice = readDocumentSlice(this.client.doc, query);
+            const binding = this.sliceBinding();
+            let nextCursor: string | null = null;
+            if (slice.nextIndex !== null) {
+                const payload = Buffer.from(JSON.stringify({query: {...query, start: slice.nextIndex}, binding})).toString("base64url");
+                nextCursor = `${payload}.${this.signCursor(payload)}`;
+            }
+            const response = {...slice, ...this.readMetadata(false), documentRevision: binding.documentRevision, nextCursor,
+                responseBytes: 0, byteBudget: query.maxBytes,
+                budgetScope: "maxBytes covers this complete response; counts.bytes covers the Core slice",
+                pathSemantics: "canonical model child indexes; text offsets and direct grid row/cell slicing are unsupported"};
+            for (let i = 0; i < 4; i++) response.responseBytes = Buffer.byteLength(JSON.stringify(response), "utf8");
+            if (response.responseBytes > query.maxBytes) throw new Error("Slice response exceeds JSON byte budget");
+            return response;
+        });
+    }
+
+    /** Publish an explicitly supplied position; this is transient and has no delivery receipt. */
+    async setPresence(base: Revision, name: string, color: string, anchor: number[] | null, focus: number[] | null, character?: BotCharacter, expression?: BotExpression, activity?: BotActivity) {
+        return this.serial(async () => {
+            await this.requireSettled();
+            const current = this.revision();
+            if (!this.client.synchronized) throw new Error("Document session is not synchronized");
+            if (base.epoch !== current.epoch || base.serverSeq !== current.serverSeq || base.schemaVersion !== current.schemaVersion) {
+                throw new Error("The local document or schema changed since it was read. Read it again before setting presence.");
+            }
+            if (!anchor && focus) throw new Error("A selection requires an active anchor");
+            const endpoint = (path: number[] | null): string | null => {
+                if (!path) return null;
+                const doc = this.client.doc, pos = posOfPath(doc, path);
+                if (!pos || pos.o !== path.at(-1) || !doc.visible(pos.line ?? MAIN)) throw new Error("Presence path is not a visible text position");
+                const key = anchorAt(doc, path);
+                if (!key || !doc.get(key) || !doc.tokenLocation(key)?.visible) throw new Error("Presence path is not a visible text position");
+                return key;
+            };
+            const active = endpoint(anchor), other = endpoint(focus);
+            if (active && other && this.client.doc.tokenLocation(active)?.line !== this.client.doc.tokenLocation(other)?.line) {
+                throw new Error("Presence selection endpoints must be in the same visible document line");
+            }
+            this.client.setPresence({name, color, anchor: active, focus: active === other ? null : other, ...(character ? {character} : {}), ...(expression ? {expression} : {}), ...(activity ? {activity} : {})});
+            return {status: "sent", delivery: "unconfirmed"};
+        });
+    }
+
+    async edit(base: Revision, edits: EditOp[], stepId?: string) {
+        return this.serial(async () => {
+            if (this.saveStep && (!stepId || !/^[0-9a-f-]{36}$/i.test(stepId))) throw new Error("A valid mission step ID is required");
+            this.stepId=stepId;
             await this.requireSettled();
             const current = this.revision();
             if (base.epoch !== current.epoch || base.serverSeq !== current.serverSeq || base.schemaVersion !== current.schemaVersion) {
@@ -369,8 +477,8 @@ export class DocumentSession {
             if (this.journal) {
                 try {
                     const record = await this.journal.read();
-                    if (record) await this.journal.clearAfterConfirmed(record.recordDigest);
-                    this.journalDirty = false;
+                    if (record && this.preservePreparedIntent) { this.journalDirty = true; warning = " Approved attempt evidence is retained for owner reconciliation."; }
+                    else { if (record) await this.journal.clearAfterConfirmed(record.recordDigest); this.journalDirty = false; }
                 } catch { warning = " Journal cleanup could not be confirmed; inspect storage before further edits."; }
             }
             throw new Error(`Conditional edit rejected (${result.code}): ${result.error}. Read the document again.${warning}`);

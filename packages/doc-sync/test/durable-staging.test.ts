@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../src/crdt/doc.ts";
-import {DocHub} from "../src/server/hub.ts";
-import {prepareDurableMutation} from "../src/server/staged.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {DocHub} from "../../doc-sync-core/dist/server/hub.js";
+import {prepareDurableMutation} from "../../doc-sync-core/dist/server/staged.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 
 function durableHub() {

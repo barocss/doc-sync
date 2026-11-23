@@ -4,6 +4,11 @@ When the server accepts a compatible schema, a client with the old schema stops 
 
 This guide describes the host contract used by the product demo for **ProseMirror, Slate and Lexical**. The library coordinates the transition; your application owns the editor, plugins and rendering.
 
+The APIs below use the production TypeScript engine. The private Rust engine
+does not yet load arbitrary runtime schemas or transition an open document.
+Its planned schema compiler and compatible transition have separate gates;
+see [Rust schema delivery](./rust#can-a-document-use-a-dynamic-schema).
+
 ## What changes
 
 <div class="operation-figure" tabindex="0" role="region" aria-label="Open editor schema transition diagram">
@@ -23,7 +28,7 @@ Only compatible additions are supported. Existing rules, node types and mark ord
 First obtain the schema accepted by the server. In an MCP session, `get_server_schema` returns it; the demo HTTP server also exposes a schema endpoint. Resolve an unconfirmed conditional edit before proceeding.
 
 ```ts
-import {upgradeOpenEditorSchema} from "@barocss/doc-sync/sync";
+import {upgradeOpenEditorSchema} from "@barocss/doc-sync-core/sync";
 
 // Implement editorHost for your mounted editor. nextSchema must be the
 // compatible schema already accepted by the server.
@@ -55,7 +60,7 @@ Capture with `slateRangeToModel` before the old editor is detached. After mounti
 
 ```ts
 import {Transforms} from "slate";
-import {slateRangeToModel, modelRangeToSlate} from "@barocss/doc-sync/slate";
+import {slateRangeToModel, modelRangeToSlate} from "@barocss/doc-sync-slate";
 
 const captured = slateRangeToModel(client.schema, editor.children, editor.selection);
 // After mounting the replacement editor and receiving `selection` from the helper:
@@ -72,7 +77,7 @@ Build new schema information and register its node classes when creating the rep
 
 ```ts
 import {SKIP_DOM_SELECTION_TAG} from "lexical";
-import {$lexicalSelection, $setLexicalSelection, LEXICAL_REMOTE_TAG} from "@barocss/doc-sync/lexical";
+import {$lexicalSelection, $setLexicalSelection, LEXICAL_REMOTE_TAG} from "@barocss/doc-sync-lexical";
 
 const captured = editor.getEditorState().read(() => $lexicalSelection(info), {editor});
 // After mounting newEditor and newInfo:
@@ -94,7 +99,7 @@ Convert the old text selection to model paths before destroying the view. Conver
 
 ```ts
 import {TextSelection} from "prosemirror-state";
-import {pmPosToPath, pathToPmPos} from "@barocss/doc-sync/prosemirror";
+import {pmPosToPath, pathToPmPos} from "@barocss/doc-sync-prosemirror";
 
 const oldSelection = binding.state.selection;
 if (!(oldSelection instanceof TextSelection)) throw new Error("Unsupported selection");

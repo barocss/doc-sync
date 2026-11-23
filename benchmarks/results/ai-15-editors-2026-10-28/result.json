@@ -1,0 +1,418 @@
+{
+  "doc": "ai15-mvrvylsy",
+  "session": "ai15-1793178131938",
+  "start": "2026-10-28T09:02:11.938Z",
+  "environment": {
+    "node": "v24.22.1",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "groups": {
+    "Slate": [
+      "editor0-agent0",
+      "editor0-agent1",
+      "editor0-agent2",
+      "editor0-agent3",
+      "editor0-agent4"
+    ],
+    "Lexical": [
+      "editor1-agent0",
+      "editor1-agent1",
+      "editor1-agent2",
+      "editor1-agent3",
+      "editor1-agent4"
+    ],
+    "ProseMirror": [
+      "editor2-agent0",
+      "editor2-agent1",
+      "editor2-agent2",
+      "editor2-agent3",
+      "editor2-agent4"
+    ]
+  },
+  "server": {
+    "url": "http://127.0.0.1:55843",
+    "backends": {
+      "word": {
+        "url": "http://localhost:55839"
+      },
+      "notion": {
+        "url": "http://localhost:55840"
+      },
+      "presentation": {
+        "url": "http://localhost:55842"
+      }
+    }
+  },
+  "browserInit": {
+    "browser": "156.0.8078.48",
+    "target": {
+      "path": [
+        1,
+        0
+      ],
+      "text": "Opening text"
+    },
+    "status": [
+      {
+        "name": "Slate",
+        "online": true,
+        "pending": 0,
+        "seq": 1
+      },
+      {
+        "name": "Lexical",
+        "online": true,
+        "pending": 0,
+        "seq": 1
+      },
+      {
+        "name": "ProseMirror",
+        "online": true,
+        "pending": 0,
+        "seq": 1
+      }
+    ]
+  },
+  "startupMs": 611.831416,
+  "agentMemory": {
+    "sampling": "one ps sample after all clients connect, process RSS in KiB; shared pages may be counted multiple times",
+    "sumKiB": 2561552,
+    "minKiB": 163680,
+    "maxKiB": 177872,
+    "processes": 15
+  },
+  "waveStartedWallMs": 1793178137390,
+  "waveFinishedWallMs": 1793178137455,
+  "firstWaveMs": 64.83645799999977,
+  "userInputs": {
+    "inputs": [
+      {
+        "name": "Slate",
+        "marker": "{U0}",
+        "startedWallMs": 1793178137528,
+        "finishedWallMs": 1793178137533,
+        "inputMs": 5
+      },
+      {
+        "name": "Lexical",
+        "marker": "{U1}",
+        "startedWallMs": 1793178137630,
+        "finishedWallMs": 1793178137635,
+        "inputMs": 5
+      },
+      {
+        "name": "ProseMirror",
+        "marker": "{U2}",
+        "startedWallMs": 1793178137662,
+        "finishedWallMs": 1793178137663,
+        "inputMs": 1
+      }
+    ],
+    "editorOpsStartedWallMs": 1793178137407,
+    "editorOpsFinishedWallMs": 1793178137417,
+    "startedWallMs": 1793178137407,
+    "finishedWallMs": 1793178137663,
+    "elapsedMs": 256
+  },
+  "firstWave": {
+    "confirmed": 1,
+    "rejected": 14,
+    "other": []
+  },
+  "afterWave": {
+    "equal": true,
+    "status": [
+      {
+        "name": "Slate",
+        "online": true,
+        "pending": 0,
+        "seq": 22
+      },
+      {
+        "name": "Lexical",
+        "online": true,
+        "pending": 0,
+        "seq": 22
+      },
+      {
+        "name": "ProseMirror",
+        "online": true,
+        "pending": 0,
+        "seq": 22
+      }
+    ],
+    "text": "{A24}{A23}{A22}{A21}{A20}{A14}{A13}{A12}{A11}{A10}{A04}{A02}{A01}{A00}{A03}{E0}{E2}{E1}Opening text{U0}{U1}{U2}",
+    "errors": []
+  },
+  "offline": {
+    "status": [
+      {
+        "name": "Slate",
+        "online": true,
+        "pending": 1,
+        "seq": 22
+      },
+      {
+        "name": "Lexical",
+        "online": true,
+        "pending": 0,
+        "seq": 22
+      },
+      {
+        "name": "ProseMirror",
+        "online": true,
+        "pending": 0,
+        "seq": 22
+      }
+    ]
+  },
+  "afterReconnect": {
+    "equal": true,
+    "status": [
+      {
+        "name": "Slate",
+        "online": true,
+        "pending": 0,
+        "seq": 24
+      },
+      {
+        "name": "Lexical",
+        "online": true,
+        "pending": 0,
+        "seq": 24
+      },
+      {
+        "name": "ProseMirror",
+        "online": true,
+        "pending": 0,
+        "seq": 24
+      }
+    ],
+    "text": "{REC}{A24}{A23}{A22}{A21}{A20}{A14}{A13}{A12}{A11}{A10}{A04}{A02}{A01}{A00}{A03}{E0}{E2}{E1}Opening text{U0}{U1}{U2}{OFF}",
+    "errors": []
+  },
+  "afterRedo": {
+    "equal": true,
+    "status": [
+      {
+        "name": "Slate",
+        "online": true,
+        "pending": 0,
+        "seq": 26
+      },
+      {
+        "name": "Lexical",
+        "online": true,
+        "pending": 0,
+        "seq": 26
+      },
+      {
+        "name": "ProseMirror",
+        "online": true,
+        "pending": 0,
+        "seq": 26
+      }
+    ],
+    "text": "{REC}{A24}{A23}{A22}{A21}{A20}{A14}{A13}{A12}{A11}{A10}{A04}{A02}{A01}{A00}{A03}{E0}{E2}{E1}Opening text{U0}{U1}{U2}{OFF}",
+    "errors": []
+  },
+  "calls": [
+    {
+      "actor": "editor0-agent4",
+      "token": "{A04}",
+      "outcome": "rejected",
+      "ms": 43.03120899999976,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor1-agent2",
+      "token": "{A12}",
+      "outcome": "rejected",
+      "ms": 43.18775000000005,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor0-agent2",
+      "token": "{A02}",
+      "outcome": "rejected",
+      "ms": 43.3334590000004,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor1-agent3",
+      "token": "{A13}",
+      "outcome": "rejected",
+      "ms": 43.30816699999923,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor1-agent0",
+      "token": "{A10}",
+      "outcome": "rejected",
+      "ms": 43.40024999999969,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor2-agent0",
+      "token": "{A20}",
+      "outcome": "rejected",
+      "ms": 43.39966699999968,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor0-agent0",
+      "token": "{A00}",
+      "outcome": "rejected",
+      "ms": 43.62779200000023,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor1-agent1",
+      "token": "{A11}",
+      "outcome": "rejected",
+      "ms": 43.56220900000062,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor1-agent4",
+      "token": "{A14}",
+      "outcome": "rejected",
+      "ms": 43.595791000000645,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor2-agent2",
+      "token": "{A22}",
+      "outcome": "rejected",
+      "ms": 43.740209000000505,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor2-agent1",
+      "token": "{A21}",
+      "outcome": "rejected",
+      "ms": 43.85054200000013,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor2-agent3",
+      "token": "{A23}",
+      "outcome": "rejected",
+      "ms": 38.1738749999995,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor0-agent1",
+      "token": "{A01}",
+      "outcome": "rejected",
+      "ms": 44.06708299999991,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor2-agent4",
+      "token": "{A24}",
+      "outcome": "rejected",
+      "ms": 51.67170800000076,
+      "message": "Conditional edit rejected (stale): conditional_stale. Read the document again."
+    },
+    {
+      "actor": "editor0-agent3",
+      "token": "{A03}",
+      "outcome": "confirmed",
+      "ms": 64.71529100000043
+    },
+    {
+      "actor": "editor0-agent0",
+      "token": "{A00}",
+      "outcome": "confirmed",
+      "ms": 51.568584000000556
+    },
+    {
+      "actor": "editor0-agent1",
+      "token": "{A01}",
+      "outcome": "confirmed",
+      "ms": 60.29691699999967
+    },
+    {
+      "actor": "editor0-agent2",
+      "token": "{A02}",
+      "outcome": "confirmed",
+      "ms": 41.53987500000039
+    },
+    {
+      "actor": "editor0-agent4",
+      "token": "{A04}",
+      "outcome": "confirmed",
+      "ms": 34.56833299999926
+    },
+    {
+      "actor": "editor1-agent0",
+      "token": "{A10}",
+      "outcome": "confirmed",
+      "ms": 34.28770900000018
+    },
+    {
+      "actor": "editor1-agent1",
+      "token": "{A11}",
+      "outcome": "confirmed",
+      "ms": 34.28020800000013
+    },
+    {
+      "actor": "editor1-agent2",
+      "token": "{A12}",
+      "outcome": "confirmed",
+      "ms": 35.839749999999185
+    },
+    {
+      "actor": "editor1-agent3",
+      "token": "{A13}",
+      "outcome": "confirmed",
+      "ms": 36.68379199999981
+    },
+    {
+      "actor": "editor1-agent4",
+      "token": "{A14}",
+      "outcome": "confirmed",
+      "ms": 36.074333999999
+    },
+    {
+      "actor": "editor2-agent0",
+      "token": "{A20}",
+      "outcome": "confirmed",
+      "ms": 36.81424999999945
+    },
+    {
+      "actor": "editor2-agent1",
+      "token": "{A21}",
+      "outcome": "confirmed",
+      "ms": 35.95066600000064
+    },
+    {
+      "actor": "editor2-agent2",
+      "token": "{A22}",
+      "outcome": "confirmed",
+      "ms": 38.14445900000101
+    },
+    {
+      "actor": "editor2-agent3",
+      "token": "{A23}",
+      "outcome": "confirmed",
+      "ms": 39.20249999999942
+    },
+    {
+      "actor": "editor2-agent4",
+      "token": "{A24}",
+      "outcome": "confirmed",
+      "ms": 35.998084000000745
+    },
+    {
+      "actor": "editor0-agent0",
+      "token": "{REC}",
+      "outcome": "confirmed",
+      "ms": 60.39050000000134
+    }
+  ],
+  "finished": "2026-10-28T09:02:40.429Z",
+  "scope": "Single local Word sample, one browser with three editor peers; 15 scripted MCP processes, journals disabled, finite workload. Input automation is not OS IME or actual users."
+}

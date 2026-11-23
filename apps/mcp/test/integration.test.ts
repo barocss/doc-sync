@@ -10,6 +10,7 @@ import {Client} from "@modelcontextprotocol/sdk/client/index.js";
 import {StdioClientTransport} from "@modelcontextprotocol/sdk/client/stdio.js";
 import {NodeHttpTransport} from "@barocss/doc-sync/node";
 import {SyncClient} from "@barocss/doc-sync/sync";
+import {pathAt} from "@barocss/doc-sync";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 
 type Revision = {epoch: string; serverSeq: number; schemaVersion: string | null};
@@ -55,13 +56,13 @@ test("SDK stdio client: schema, validated edits, concurrent user changes and act
     const {base, child} = await startDemo(data).catch(async error => { await rm(data, {recursive: true, force: true}); throw error; });
     const env = Object.fromEntries(Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined));
     const mcp = new Client({name: "doc-sync-test", version: "1.0"});
-    const journalEnv: Record<string, string> = process.platform === "darwin" ? {DOC_SYNC_JOURNAL: "on", DOC_SYNC_JOURNAL_DIR: join(data, "journal")} : {DOC_SYNC_JOURNAL: "off"};
+    const journalEnv: Record<string, string> = (process.platform === "darwin" || process.platform === "linux") ? {DOC_SYNC_JOURNAL: "on", DOC_SYNC_JOURNAL_DIR: join(data, "journal")} : {DOC_SYNC_JOURNAL: "off"};
     const stdio = new StdioClientTransport({command: process.execPath, args: [fileURLToPath(new URL("../src/main.ts", import.meta.url))], env: {...env, DOC_SYNC_URL: base, DOC_SYNC_DOCUMENT: "integration", DOC_SYNC_ACTOR: "ai-test", ...journalEnv}, stderr: "pipe"});
     const humanTransport = new NodeHttpTransport("integration", "human", base);
     const human = new SyncClient("human", humanTransport, {schema: DEMO_SCHEMA});
     try {
         await mcp.connect(stdio);
-        assert.deepEqual((await mcp.listTools()).tools.map(tool => tool.name).sort(), ["discard_history", "edit_document", "get_schema", "get_server_schema", "read_document", "recovery_status", "redo", "retry_edit", "transition_schema", "undo", "upgrade_schema"]);
+        assert.deepEqual((await mcp.listTools()).tools.map(tool => tool.name).sort(), ["discard_history", "edit_document", "get_schema", "get_server_schema", "read_document", "read_document_slice", "recovery_status", "redo", "retry_edit", "set_presence", "transition_schema", "undo", "upgrade_schema"]);
         const schema = await call(mcp, "get_schema");
         assert.equal((schema.structuredContent as {verifiedAgainstServer: boolean}).verifiedAgainstServer, true);
         let view = payload(await call(mcp, "read_document"));
@@ -82,6 +83,41 @@ test("SDK stdio client: schema, validated edits, concurrent user changes and act
 
         human.connect();
         await waitFor(() => human.epoch !== undefined && text(human.doc.toJSON() as Model) === "abc", "human snapshot");
+        // Presence is transient and uses token positions, not document edits.
+        const present = await call(mcp, "set_presence", {base: view.revision, name: "AI", color: "#7c3aed", anchor: [0, 3], focus: [0, 1], character: "fox", expression: "focused", activity: "reading"});
+        assert.deepEqual(present.structuredContent, {status: "sent", delivery: "unconfirmed"});
+        await waitFor(() => human.others.has("ai-test"), "AI presence delivered");
+        const presence = human.others.get("ai-test")!;
+        assert.equal(presence.character, "fox"); assert.equal(presence.expression, "focused"); assert.equal(presence.activity, "reading");
+        assert.deepEqual(pathAt(human.doc, presence.anchor!), [0, 3]);
+        assert.deepEqual(pathAt(human.doc, presence.focus!), [0, 1]);
+        assert.equal(payload(await call(mcp, "read_document")).revision.serverSeq, view.revision.serverSeq);
+        const invalidCharacter = await call(mcp, "set_presence", {base: view.revision, name: "AI", color: "#7c3aed", anchor: [0, 1], focus: null, character: "<script>", expression: "editing"});
+        assert.equal(invalidCharacter.isError, true);
+        const invalidActivity = await call(mcp, "set_presence", {base: view.revision, name: "AI", color: "#7c3aed", anchor: null, focus: null, activity: "teleporting"});
+        assert.equal(invalidActivity.isError, true);
+        const invalidPresence = await call(mcp, "set_presence", {base: view.revision, name: "AI", color: "#7c3aed", anchor: [0, 999], focus: null});
+        assert.equal(invalidPresence.isError, true);
+        const stalePresence = await call(mcp, "set_presence", {base: {...view.revision, serverSeq: 0}, name: "AI", color: "#7c3aed", anchor: [0, 0], focus: null});
+        assert.equal(stalePresence.isError, true);
+        human.commit(human.doc.edit([{op: "insert", at: [0, 0], content: "H"}]).ops);
+        await waitFor(() => human.pending.length === 0 && text(human.doc.toJSON() as Model) === "Habc", "user edit before AI selection");
+        assert.deepEqual(pathAt(human.doc, presence.anchor!), [0, 4]);
+        assert.deepEqual(pathAt(human.doc, presence.focus!), [0, 2]);
+        human.undo();
+        await waitFor(() => human.pending.length === 0 && text(human.doc.toJSON() as Model) === "abc", "user undo");
+        const seq = human.serverSeq;
+        let presenceView = payload(await call(mcp, "read_document"));
+        const presenceDeadline = Date.now() + 5000;
+        while (presenceView.revision.serverSeq < seq && Date.now() < presenceDeadline) {
+            await new Promise(resolve => setTimeout(resolve, 20));
+            presenceView = payload(await call(mcp, "read_document"));
+        }
+        assert.equal(presenceView.revision.serverSeq, seq);
+        view = presenceView;
+        const hidden = await call(mcp, "set_presence", {base: view.revision, name: "AI", color: "#7c3aed", anchor: null, focus: null});
+        assert.equal(hidden.isError, undefined);
+        await waitFor(() => human.others.get("ai-test")?.anchor === null, "AI presence hidden");
         // Both actors edit the same c from the same starting view. Human is offline,
         // so the AI formats c while the human deletion has not reached the server.
         human.disconnect();
