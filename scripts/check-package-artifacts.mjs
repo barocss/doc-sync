@@ -78,13 +78,26 @@ import * as old from '@barocss/doc-sync'; import * as core from '@barocss/doc-sy
 assert.equal(old.Doc, core.Doc); assert.equal(old.History, core.History);
 for (const entry of ['sync','server','node']) { const a=await import('@barocss/doc-sync/'+entry), b=await import('@barocss/doc-sync-core/'+entry); for(const key of Object.keys(a)) assert.equal(a[key],b[key]); }
 await import('@barocss/doc-sync-core/editor'); await import('@barocss/doc-sync-core/engine');
+const {LocalClient,LocalEditorHost,createLocalEditorHost}=await import('@barocss/doc-sync-core/local');
+const schema={root:'content',marks:[],nodes:{content:{shape:'flow',children:['p'],default:'p'},p:{shape:'text'}}};
+const originalFetch=globalThis.fetch;let network=0;
+globalThis.fetch=()=>{network++;throw Error('Local editing attempted network access');};
+try {
+ const local=new LocalClient({schema,actor:'package-local'}), host=createLocalEditorHost(local);
+ assert(host instanceof LocalEditorHost);assert.deepEqual(host.status(),{online:false,synchronized:false});
+ local.edit([{op:'insert',at:[0,0],content:'local'}]);assert.equal(local.model().children[0].runs[0].text,'local');
+ host.undo();assert.deepEqual(local.model().children[0].runs,[]);host.redo();assert.equal(local.model().children[0].runs[0].text,'local');
+ assert.equal(network,0);assert.equal('transport' in local,false);assert.equal([...host.presence()].length,0);
+ local.dispose();
+} finally {globalThis.fetch=originalFetch;}
+
 for (const name of ['@barocss/doc-sync-prosemirror','@barocss/doc-sync-tiptap','@barocss/doc-sync-slate','@barocss/doc-sync-lexical','prosemirror-model','@tiptap/core','slate','lexical']) assert.throws(()=>import.meta.resolve(name));
 `);
 // Node's loader records every actual loaded module. No editor may enter the core graph.
 writeFileSync(join(core, 'loader.mjs'), `import {appendFileSync} from 'node:fs'; export async function load(url,context,next){ appendFileSync(new URL('./loads.log',import.meta.url),url+'\\n'); return next(url,context); }`);
 run(process.execPath, ['--loader', './loader.mjs', 'check.mjs'], core);
 assert(!/node_modules\/(?:prosemirror-|slate|lexical|@tiptap\/|@lexical\/|@barocss\/doc-sync-(?:prosemirror|tiptap|slate|lexical))/.test(readFileSync(join(core, 'loads.log'), 'utf8')));
-types(core, `import {Doc,History,type Schema,type HistorySnapshot} from '@barocss/doc-sync'; import {Doc as CoreDoc,typescriptEngine} from '@barocss/doc-sync-core'; import {SyncClient} from '@barocss/doc-sync/sync'; import {DocHub} from '@barocss/doc-sync/server'; import {NodeHttpTransport} from '@barocss/doc-sync/node'; import type * as Engine from '@barocss/doc-sync-core/engine'; const ctor:typeof CoreDoc=Doc; void [ctor,History,SyncClient,DocHub,NodeHttpTransport,typescriptEngine];`);
+types(core, `import {Doc,History,type Schema,type HistorySnapshot} from '@barocss/doc-sync'; import {Doc as CoreDoc,typescriptEngine} from '@barocss/doc-sync-core'; import {SyncClient} from '@barocss/doc-sync/sync'; import {DocHub} from '@barocss/doc-sync/server'; import {NodeHttpTransport} from '@barocss/doc-sync/node'; import type * as Engine from '@barocss/doc-sync-core/engine'; import {LocalClient,LocalEditorHost,createLocalEditorHost,type LocalNotificationError} from '@barocss/doc-sync-core/local'; import type {EditorHost} from '@barocss/doc-sync-core/editor'; const ctor:typeof CoreDoc=Doc; const createLocal:(client:LocalClient)=>EditorHost=createLocalEditorHost; const notify=(error:LocalNotificationError)=>error.message; void [ctor,History,SyncClient,DocHub,NodeHttpTransport,typescriptEngine,LocalClient,LocalEditorHost,createLocal,notify];`);
 cases.push({name:'facade-core-only',status:'PASS',directory:core,noEditorInstalled:true,noEditorLoaded:true,types:'PASS'});
 const editorPeers = {
     'doc-sync-prosemirror': ['prosemirror-model','prosemirror-state','prosemirror-transform','prosemirror-view'],

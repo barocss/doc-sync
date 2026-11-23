@@ -8,7 +8,7 @@ version `0.0.0`. They have not been published to the npm registry.
 
 | Package | Contents | Required package peers |
 | --- | --- | --- |
-| `@barocss/doc-sync-core` | CRDT, sync client, server, Node transport, input session, production and immutable engine contracts | None. No external runtime dependencies. |
+| `@barocss/doc-sync-core` | CRDT, local/sync clients, editor hosts, server, Node transport, input session, engine contracts | None. No external runtime dependencies. |
 | `@barocss/doc-sync-prosemirror` | ProseMirror schema, conversion, and binding | Core; `prosemirror-model`, `prosemirror-state`, `prosemirror-transform`, `prosemirror-view`. |
 | `@barocss/doc-sync-tiptap` | Tiptap extension and generated schema | Core; ProseMirror binding; `@tiptap/core` and `@tiptap/pm` at `3.32.2`. |
 | `@barocss/doc-sync-slate` | Slate binding and codec | Core; `slate`. |
@@ -24,6 +24,7 @@ Use the independent names in new applications:
 ```ts
 import {Doc, type Schema} from '@barocss/doc-sync-core';
 import {SyncClient, HttpTransport} from '@barocss/doc-sync-core/sync';
+import {LocalClient, LocalEditorHost} from '@barocss/doc-sync-core/local';
 import {NodeHttpTransport} from '@barocss/doc-sync-core/node';
 import {DocHub} from '@barocss/doc-sync-core/server';
 import {PmBinding} from '@barocss/doc-sync-prosemirror';
@@ -42,6 +43,9 @@ The eight existing facade imports remain available: `@barocss/doc-sync`,
 `@barocss/doc-sync/lexical`. An editor subpath requires its selected binding
 package and that binding's editor peers. Importing the facade's core, sync,
 server, or Node entry does not load editor packages.
+
+For a memory-only document, use the [local editing guide](./local-editing).
+The `/local` entry belongs to Core and imports no native editor package.
 
 ## Build and use local packages
 

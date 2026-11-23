@@ -10,9 +10,11 @@ export interface EditorStamp { readonly generation: number; readonly revision: n
 /** The model is a borrowed immutable view. Consumers must not mutate it. */
 export interface EditorModelView { readonly stamp: EditorStamp; readonly model: NodeJSON }
 export type AnchorVisibility = "visible" | "retained";
+/** Local hosts publish editor changes without a server event. */
+export type EditorEventCause = EventCause | "local";
 export interface EditorObserver {
     beforeEvent?(event: ServerEvent): void;
-    modelEvents?(edits: readonly EditOp[], info: {cause: EventCause; fallback: boolean}): void;
+    modelEvents?(edits: readonly EditOp[], info: {cause: EditorEventCause; fallback: boolean}): void;
     update?(): void;
 }
 export interface EditorEditingView {

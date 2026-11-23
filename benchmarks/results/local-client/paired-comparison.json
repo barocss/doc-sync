@@ -1,0 +1,201 @@
+{
+  "format": 1,
+  "inputs": [
+    "/Users/user/github/doc-sync-local/output/local-client/paired-A-aggregate.json",
+    "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json"
+  ],
+  "rows": [
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 10000,
+      "scenario": "insert",
+      "baselineP50": 0.5337500000023283,
+      "candidateP50": 0.46687500000552973,
+      "baselineP95": 1.0505419999999503,
+      "candidateP95": 0.7627080000020214,
+      "medianBudgetMs": 0.1,
+      "p95BudgetMs": 0.2,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 10000,
+      "scenario": "delete",
+      "baselineP50": 0.4756250000000364,
+      "candidateP50": 0.4413750000021537,
+      "baselineP95": 1.3510839999999007,
+      "candidateP95": 0.6297500000000582,
+      "medianBudgetMs": 0.1,
+      "p95BudgetMs": 0.2026625999999851,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 10000,
+      "scenario": "mark",
+      "baselineP50": 0.5603750000000218,
+      "candidateP50": 0.448207999997976,
+      "baselineP95": 2.081625000000031,
+      "candidateP95": 0.5882499999970605,
+      "medianBudgetMs": 0.1,
+      "p95BudgetMs": 0.31224375000000465,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 10000,
+      "scenario": "selection",
+      "baselineP50": 0.06841700000222772,
+      "candidateP50": 0.06816599999729078,
+      "baselineP95": 0.16841699999986304,
+      "candidateP95": 0.10479099999793107,
+      "medianBudgetMs": 0.1,
+      "p95BudgetMs": 0.2,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 10000,
+      "scenario": "composition",
+      "baselineP50": 13.100583999999799,
+      "candidateP50": 11.379791999999725,
+      "baselineP95": 31.38779200000863,
+      "candidateP95": 15.094874999998865,
+      "medianBudgetMs": 1.31005839999998,
+      "p95BudgetMs": 4.708168800001294,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 10000,
+      "scenario": "external",
+      "baselineP50": 0.3670840000122553,
+      "candidateP50": 0.37383300000146846,
+      "baselineP95": 0.9516660000003867,
+      "candidateP95": 0.4702919999981532,
+      "medianBudgetMs": 0.1,
+      "p95BudgetMs": 0.2,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 10000,
+      "scenario": "undo",
+      "baselineP50": 2.603124999999636,
+      "candidateP50": 2.1722910000025877,
+      "baselineP95": 3.4326250000012806,
+      "candidateP95": 2.605541999997513,
+      "medianBudgetMs": 0.26031249999996364,
+      "p95BudgetMs": 0.5148937500001921,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 10000,
+      "scenario": "redo",
+      "baselineP50": 2.5934580000002825,
+      "candidateP50": 2.0851670000047307,
+      "baselineP95": 3.5064580000034766,
+      "candidateP95": 5.757834000000003,
+      "medianBudgetMs": 0.25934580000002827,
+      "p95BudgetMs": 0.5259687000005214,
+      "timingStatus": "INVESTIGATE"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 100000,
+      "scenario": "insert",
+      "baselineP50": 3.137125000008382,
+      "candidateP50": 3.2784170000013546,
+      "baselineP95": 4.8215000000054715,
+      "candidateP95": 4.628166000002238,
+      "medianBudgetMs": 0.3137125000008382,
+      "p95BudgetMs": 0.7232250000008207,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 100000,
+      "scenario": "delete",
+      "baselineP50": 3.305999999996857,
+      "candidateP50": 3.6896249999990687,
+      "baselineP95": 4.164082999996026,
+      "candidateP95": 4.144124999998894,
+      "medianBudgetMs": 0.3305999999996857,
+      "p95BudgetMs": 0.6246124499994039,
+      "timingStatus": "INVESTIGATE"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 100000,
+      "scenario": "mark",
+      "baselineP50": 2.973666999998386,
+      "candidateP50": 3.2142499999972642,
+      "baselineP95": 4.067457999999533,
+      "candidateP95": 4.03925000000163,
+      "medianBudgetMs": 0.2973666999998386,
+      "p95BudgetMs": 0.61011869999993,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 100000,
+      "scenario": "selection",
+      "baselineP50": 0.39279199999873526,
+      "candidateP50": 0.40874999999505235,
+      "baselineP95": 2.008750000000873,
+      "candidateP95": 0.6624579999988782,
+      "medianBudgetMs": 0.1,
+      "p95BudgetMs": 0.30131250000013093,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 100000,
+      "scenario": "composition",
+      "baselineP50": 124.5227079999895,
+      "candidateP50": 119.97495899999922,
+      "baselineP95": 204.55629099999896,
+      "candidateP95": 127.12862499999756,
+      "medianBudgetMs": 12.452270799998951,
+      "p95BudgetMs": 30.683443649999845,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 100000,
+      "scenario": "external",
+      "baselineP50": 2.6589999999996508,
+      "candidateP50": 2.7684169999993173,
+      "baselineP95": 3.3207079999992857,
+      "candidateP95": 3.2007080000039423,
+      "medianBudgetMs": 0.2658999999999651,
+      "p95BudgetMs": 0.4981061999998928,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 100000,
+      "scenario": "undo",
+      "baselineP50": 12.957583000010345,
+      "candidateP50": 12.47950000000128,
+      "baselineP95": 20.39604099999997,
+      "candidateP95": 20.066957999995793,
+      "medianBudgetMs": 1.2957583000010346,
+      "p95BudgetMs": 3.059406149999995,
+      "timingStatus": "PASS"
+    },
+    {
+      "candidate": "/Users/user/github/doc-sync-local/output/local-client/paired-B-aggregate.json",
+      "size": 100000,
+      "scenario": "redo",
+      "baselineP50": 21.216207999998005,
+      "candidateP50": 20.833082999997714,
+      "baselineP95": 27.35979199999929,
+      "candidateP95": 30.981209000005038,
+      "medianBudgetMs": 2.1216207999998007,
+      "p95BudgetMs": 4.103968799999893,
+      "timingStatus": "PASS"
+    }
+  ]
+}

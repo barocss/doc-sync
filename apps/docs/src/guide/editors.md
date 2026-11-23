@@ -1,6 +1,6 @@
-# Editor integration
+# Editor integrations {#editor-integration}
 
-Choose an editor binding, give it a `SyncClient`, and keep `doc.edit()` as the shared document interface. All bindings use the same document engine and collaboration history.
+Choose a binding for an existing editor, or build a custom editor with Core. Use a `SyncClient` for server synchronization. Use a `LocalClient` and an editor host for supported in-memory integrations. All four editor bindings use the same TypeScript document engine.
 
 | Editor | Public entry point | Guide |
 | --- | --- | --- |
@@ -8,7 +8,9 @@ Choose an editor binding, give it a `SyncClient`, and keep `doc.edit()` as the s
 | Tiptap | `@barocss/doc-sync-tiptap`: `DocSync` extension and `createTiptapExtensions` | [Tiptap](./tiptap) |
 | Slate | `@barocss/doc-sync-slate`: `SlateBinding`, schema codec, selection helpers | [Slate](./slate) |
 | Lexical | `@barocss/doc-sync-lexical`: `LexicalBinding`, schema builder, codecs, selection helpers | [Lexical](./lexical) |
-| Custom editor | `@barocss/doc-sync-core`: `doc.edit()` and model operations | [Editing](./editing) and [blocks](./blocks) |
+| Custom editor | `@barocss/doc-sync-core/local`: `LocalClient`; Core `EditorHost` contract for structured bindings | [Custom editor](./custom-editor) |
+
+Start with the [runnable editor examples](./runnable-examples) to inspect the existing bindings. The [custom editor example](./custom-editor) shows a small textarea adapter. For shared model operations, read the [Guide](./editing).
 
 Each binding is a separate npm package. Use built repository workspaces or local tarballs until registry release. The old `@barocss/doc-sync/<editor>` imports remain compatibility exports and require the selected binding peer. See [Packages and engines](./packages) for the dependency graph and release workflow.
 

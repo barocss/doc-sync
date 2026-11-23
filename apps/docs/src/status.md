@@ -1,4 +1,4 @@
-# Status and limits
+# Verification and limits {#status-and-limits}
 
 This documentation describes the current implementation and its verification limits. A passing bounded test is not a production release or a guarantee for every editor and workload.
 
@@ -8,6 +8,7 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 
 - Schema-defined text, inline content, lists, nested flows, tables, spans, and attributes.
 - Local-first editing, validated changes, HTTP/SSE demo transport, and snapshot/GC support.
+- A memory-only TypeScript LocalClient and per-view LocalEditorHost, with edits, anchored selections, undo/redo and composition drafts. ProseMirror, Slate and Lexical accept local hosts; the current Tiptap extension requires SyncClient. Local persistence and restart recovery remain open.
 - Per-user undo and redo that retain independent changes under the stated ownership rules.
 - Remote cursors and selection ranges, including backward and overlapping selection.
 - Independent ProseMirror, Tiptap, Slate and Lexical binding packages, with the original compatibility subpaths.
@@ -24,6 +25,27 @@ For the ordered work and acceptance conditions, see the [roadmap](./roadmap).
 - A host-based open-editor schema transition with text selection restoration. The product demo uses it with Slate, Lexical and ProseMirror after a compatible server transition.
 
 ## Regression coverage
+
+The local-client checkpoint passes **1,226 full-workspace cases on macOS:
+1,224 PASS, two platform SKIPs, zero FAIL**, with the default 500 fuzz seeds.
+It adds memory-only editing without changing existing synchronized runtime
+JavaScript. Later focused runs pass all **136 Core cases**, including six added
+Word/Notion/presentation structure and hidden-content cases, and the current
+documentation tests. Four actual headless binding tests cover ProseMirror,
+Slate and Lexical input, external edits, selection, History and draft publication.
+Type checking and six-package/seven-consumer verification pass. These are
+headless local API results, not new local-browser or OS IME acceptance.
+
+All 68 existing JavaScript files in the frozen Core/PM/Slate/Lexical/facade
+scope match main `12da94d`. The offline PM count comparison passes 48 size/scenario
+checks without added ordinary-edit snapshots or conversion calls. Original
+full timing retains 14 investigation flags out of 32 comparisons; seven also
+occur in the unchanged Sync control. Same-process ABBA retains two flags out of
+16; focused repeated-input profiles place both within the original guards.
+No persistent Local-only hotspot was established. These narrower results do
+not turn every original timing into a PASS. See the
+[local comparison report](https://github.com/barocss/doc-sync/blob/main/benchmarks/results/local-client/report.md).
+
 
 The selected-TypeScript engine checkpoint passes **1,199 full-workspace cases
 on macOS: 1,197 PASS, two platform SKIPs, zero FAIL** with `FUZZ_SEEDS=3000` and

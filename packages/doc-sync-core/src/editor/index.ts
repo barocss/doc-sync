@@ -150,6 +150,6 @@ export function subscribeClient(client: SyncClient, observer: Observer): () => v
     };
 }
 
-export type {AnchorVisibility, EditorStamp, EditorModelView, EditorObserver, EditorEditingView, EditorSession, EditorHost} from "./host-contract.ts";
+export type {AnchorVisibility, EditorStamp, EditorModelView, EditorEventCause, EditorObserver, EditorEditingView, EditorSession, EditorHost} from "./host-contract.ts";
 export {createSyncClientEditorHost, createSyncClientEditorSession, getSyncClientEditorHostOwner} from "./sync-client-host.ts";
 export type {SyncClientEditorInput} from "./sync-client-host.ts";

@@ -14,6 +14,28 @@ The opt-in product recovery mode saves origin-local checkpoints and exact recove
 
 The local document bot has a separate ordered [bot roadmap](https://github.com/barocss/doc-sync/blob/main/docs/bot-roadmap.md). Its structured brief includes exact text, node type, occurrence-count, and direct-child-type checks. Proposal flow and broader product verification remain open. The Rust storage experiment is a separate investigation, described below.
 
+## Local editing delivery
+
+1. **L1: Memory-only TypeScript client and host — implemented within the tested scope.**
+   `LocalClient` and `LocalEditorHost` provide model edits, anchored selections,
+   per-client undo/redo and composition drafts without a transport. Real headless
+   ProseMirror, Slate and Lexical bindings pass. Word, Notion and presentation
+   model tests cover structure and hidden cell content. See [Local editing](./guide/local-editing).
+2. **L2: Local browser acceptance and Tiptap host option — open.** Qualify native
+   browser input, composition, selection and lifecycle for local bindings. The
+   current Tiptap extension still requires SyncClient. Actual OS IME remains a
+   separate acceptance check.
+3. **L3: Explicit persistence and recovery — open.** Define save/open formats,
+   failures, migrations and History retention. A refresh currently loses local
+   state; synchronized recovery is not a local persistence API.
+4. **L4: Local schema transitions and synchronized-session handoff — open.**
+   Define identity, pending work, History and conflict behavior before converting
+   sessions. Rust/WASM local engines depend on the separate engine delivery gates.
+
+This local lane does not renumber engine items 1–9 or Rust D1–D9. Timing reports
+retain original guard crossings and their narrower controlled investigations;
+local headless timings do not establish browser latency acceptance.
+
 ## Ordered work
 
 ### 1. Validate the current integration

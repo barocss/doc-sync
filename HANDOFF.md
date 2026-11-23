@@ -4332,3 +4332,108 @@ The exact final commit, remote ref, workflow runs, deployment result and public
 HTTP byte checks are recorded separately in
 output/checkpoints/d1-main-push.json and output/d1-final-publication. Local
 preflight PASS alone does not establish a successful push or deployment.
+
+### 5.106 Memory-only LocalClient and documentation categories
+
+The new `@barocss/doc-sync-core/local` entry exports `LocalClient`,
+`LocalEditorHost` and `createLocalEditorHost`. It owns the production TypeScript
+client engine directly, without a transport, SyncClient, presence service or
+server. No new package is introduced. Models are borrowed immutable views;
+convenience edits apply and record once. Native adapters use complete, ordered
+apply/commit batches. Cloned, partial, reordered, duplicate or foreign batches
+are rejected. Per-view origins prevent self-echo; each mounted native view needs
+its own host even when several hosts share one local client.
+
+Selections use identity anchors and UTF-16 offsets. Engine-created composition
+drafts reserve clocks, keep external live edits and publish original owned
+operations once. Recorded segments form one History group; null-record segments
+remain outside History, including mixed sessions. Cancel keeps live edits.
+Session cleanup is safe after client disposal. Observer errors remain visible in
+a bounded message-only log without reversing accepted edits; synchronous
+observer mutation is rejected. The local cause is additive to the editor type
+contract and does not change server wire events.
+
+The guide documents setup, native binding use, selections, apply/commit,
+composition, notifications and lifecycle. The textarea example computes one
+changed UTF-16 interval, preserves unchanged identities, and is executed against
+the public Core entry. It is one plain paragraph, not a full structured browser
+adapter. Local state remains memory-only: persistence, refresh/restart recovery,
+local schema transitions, synchronized-session conversion and Rust/WASM local
+engines are open. The current Tiptap extension still requires SyncClient.
+L1–L4 in the site roadmap record this separate local delivery lane.
+
+Documentation now has exactly four primary categories: Guide, Editor
+integrations, AI & bots, and Reference. ProseMirror, Tiptap, Slate, Lexical,
+custom-editor and runnable examples share the editor category. Status is removed
+from primary navigation; its existing URL and heading anchor remain available
+as Verification and limits under Reference. Existing published guide URLs remain
+unchanged. A real Chrome check found that VitePress's slash-depth sort chose the
+root Guide fallback before same-depth Reference pages. Moving the root fallback
+last fixes status, roadmap and performance. Regression tests use the installed
+VitePress sidebar resolver and active helper, including every sidebar destination.
+
+Validation was performed in the isolated `codex/local-client` worktree based on
+main `12da94d527d4a9edcca7d0a5752f73ea615f6459`, using Node 24.22.1 on macOS:
+
+- Full default-fuzz workspace run: 1,226 cases, 1,224 PASS, two platform SKIPs,
+  zero FAIL. Groups: library 755, Core 130, Lexical 4, Slate 4, bot 53, demo 68,
+  docs 31 and MCP 181. This uses default 500 fuzz seeds, not the previous
+  enhanced 3,000-seed D1 run.
+- Later focused Core run: 136/136 PASS, including six added rich-profile cases
+  for Word, Notion and presentation. They cover structural edits, attributes,
+  exact undo/redo, merged hidden cells and preserved independent unrecorded edits.
+- Actual headless PM/Slate/Lexical local-binding run: 4/4 PASS. Native changes,
+  external edits, selection, History, multi-apply commit and draft/live editing
+  are covered. These four tests are also included in the workspace library group.
+- Final docs: 34/34 PASS; typecheck PASS; six package tarballs/seven isolated
+  consumers PASS. The Core-only consumer disables fetch and checks local
+  editing/history with zero network calls and without editor dependencies.
+- Production docs build and English/link checks PASS: 42 pages. The final link
+  count and main integration hashes are recorded in the integration receipt.
+- Chrome 156 documentation checks: 14 desktop routes with correct primary and
+  sidebar category; 390px main/sidebar menus; AI category navigation; local
+  search-result navigation; no page or console errors or document overflow.
+  This is documentation UI proof, not Local browser/OS IME acceptance.
+
+One docs run overlapped a package rebuild and failed with missing generated
+Core modules. The log is retained. Repeating after the build, and again after
+navigation correction, passes all documentation cases. The npm install cache
+permission failure was bypassed with a task-local cache; user cache ownership
+was not changed. No test failure was hidden by changing assertions or budgets.
+
+Performance uses the same frozen baseline, real offline Sync editor host and
+Local host, at 10k and 100k UTF-16 units. All 48 count cells match model/operation
+hashes and conversion counts. Ordinary input adds no snapshot or conversion;
+existing whole-model/native conversion costs remain. All 68 existing JavaScript
+files in the frozen Core/PM/Slate/Lexical/facade scope are byte-identical. This
+scope excludes Tiptap and is not every generated repository file.
+
+The original full timing keeps 18 PASS / 14 INVESTIGATE comparisons, including
+seven flags in unchanged Sync control. Same-process ABBA keeps 14 PASS /
+2 INVESTIGATE. Focused equally profiled repeated-input checks resolve those two
+within the original guards: redo10k median 1.932→1.916 ms, p95 2.285→2.304 ms;
+delete100k median 1.722→1.681 ms, p95 1.897→1.808 ms. No persistent Local-only
+hotspot was established. The narrower checks do not relabel original scores or
+qualify all browser latency. The initial heap-exhaustion attempt was harness
+fixture retention; the corrected helper yields outside timed intervals and is
+used for all final targets. No product memory result is inferred from that abort.
+See `benchmarks/results/local-client/report.md` and its retained comparison JSON.
+Raw inputs, profiles, scripts and logs remain under ignored
+`output/local-client` in the preserved isolated worktree.
+
+Main integration requires a clean original main at the stated baseline. It
+backs up overwritten source/generated artifacts and verifies copied source and
+built JavaScript against the tested candidate. Fresh main checks and hashes are
+in `output/local-client/integration/verification.json`; candidate full-suite
+results are qualified by those hashes, not called a fresh full main suite.
+This checkpoint does not commit, push, release packages or deploy Pages. Existing
+user browser tabs/services, other worktrees and temporary evidence are preserved.
+
+Fresh main integration passes Core 136/136, native local bindings 4/4,
+documentation 34/34, TypeScript checking, and six-package/seven-consumer checks.
+All 146 generated files match the tested candidate; all 70 pre-existing runtime
+JavaScript files match baseline. The performance archive's smaller 68-file scope
+remains stated separately. All 162 built documentation files match the Chrome-
+tested candidate byte for byte; checks cover 42 English pages and 1,845 internal
+links. Task-owned Chrome and preview processes were closed. The existing user
+preview on port 5415 remains running from the main workspace.
