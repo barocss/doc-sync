@@ -2,6 +2,7 @@ import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import {z} from "zod";
 import type {EditOp} from "@barocss/doc-sync";
 import type {DocumentSession} from "./session.ts";
+import {sliceToolResult} from "./slice-result.ts";
 
 const path = z.array(z.number().int().nonnegative()).min(1);
 const edit = z.discriminatedUnion("op", [
@@ -58,11 +59,26 @@ export function createServer(session: DocumentSession): McpServer {
     }, async () => {
         try { return result(await session.read()); } catch (error) { return toolError(error); }
     });
+    server.registerTool("read_document_slice", {
+        description: "Read bounded canonical model children from this local replica. Paths are child indexes. Covered table-cell data is retained, as in read_document. Use nextCursor alone for the next page; any document/revision change invalidates it. Direct row/cell slicing is unsupported; target a cell body at [table,row,col,0]. maxBytes bounds successful MCP tool-result JSON including text/structuredContent duplication; JSON-RPC frames and transport headers are excluded.",
+        inputSchema: z.object({path: z.array(z.number().int().nonnegative()).max(32).optional(), start: z.number().int().nonnegative().optional(),
+            limit: z.number().int().min(1).max(100).optional(), maxNodes: z.number().int().min(1).max(4096).optional(),
+            maxTextUnits: z.number().int().min(1).max(65536).optional(), maxBytes: z.number().int().min(1).max(262144).optional(), cursor: z.string().max(4096).optional()}).strict(),
+        annotations: {readOnlyHint: true},
+    }, async query => {
+        try { return sliceToolResult(await session.readSlice(query)); } catch (error) { return toolError(error); }
+    });
+    server.registerTool("set_presence", {
+        description: "Publish the agent's actual caret or selection in the current document. Use the revision from read_document; anchor is the active end and focus is the other end. Pass null endpoints to hide. Presence is transient and delivery is unconfirmed.",
+        inputSchema: z.object({base, name: z.string().min(1).max(80), color: z.string().regex(/^#[0-9a-fA-F]{6}$/), anchor: path.min(2).nullable(), focus: path.min(2).nullable(), character: z.enum(["cat", "fox", "owl", "robot"]).optional(), expression: z.enum(["thinking", "editing", "happy", "concerned", "curious", "focused", "surprised"]).optional(), activity: z.enum(["reading", "thinking", "editing", "done", "needs_attention"]).optional()}).strict(),
+    }, async ({base: revision, name, color, anchor, focus, character, expression, activity}) => {
+        try { return result(await session.setPresence(revision, name, color, anchor, focus, character, expression, activity)); } catch (error) { return toolError(error); }
+    });
     server.registerTool("edit_document", {
         description: "Apply model edits only if the server atomically confirms the revision from read_document. On an unconfirmed result call retry_edit, not edit_document again.",
-        inputSchema: z.object({base, edits: z.array(edit).min(1).max(100)}).strict(),
-    }, async ({base: revision, edits}) => {
-        try { return result(await session.edit(revision, edits as EditOp[])); } catch (error) { return toolError(error); }
+        inputSchema: z.object({base, edits: z.array(edit).min(1).max(100), stepId: z.string().uuid().optional()}).strict(),
+    }, async ({base: revision, edits, stepId}) => {
+        try { return result(await session.edit(revision, edits as EditOp[], stepId)); } catch (error) { return toolError(error); }
     });
     server.registerTool("retry_edit", {
         description: "Resolve an unconfirmed conditional edit by retrying the exact same request. Do not submit a new edit until it is resolved.",
