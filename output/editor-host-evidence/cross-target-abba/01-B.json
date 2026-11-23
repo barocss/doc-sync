@@ -1,0 +1,2176 @@
+{
+  "format": 1,
+  "mode": "timing",
+  "target": "/Users/user/github/doc-sync-host",
+  "node": "v24.22.1",
+  "execPath": "/Users/user/.nvm/versions/node/v24.22.1/bin/node",
+  "date": "2026-11-01T16:38:32.952Z",
+  "boundary": "Node headless PM dispatch; excludes Chrome paint/native input/OS IME",
+  "schema": {
+    "root": "content",
+    "marks": [
+      "bold",
+      "italic"
+    ],
+    "nodes": {
+      "content": {
+        "shape": "flow",
+        "children": [
+          "paragraph"
+        ],
+        "default": "paragraph"
+      },
+      "paragraph": {
+        "shape": "text"
+      }
+    }
+  },
+  "actors": [
+    "seed",
+    "A",
+    "B"
+  ],
+  "content": "100-character ASCII paragraphs",
+  "sizes": [
+    10000,
+    100000
+  ],
+  "reps": 8,
+  "warmups": 2,
+  "schedule": [
+    "B"
+  ],
+  "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1",
+  "before": {
+    "aggregate": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+    "files": {
+      "packages/doc-sync-core/src/crdt/annotations.ts": "32b06a1977bc191647c663ba50d321313826d37aa974b5390185359839cb3eca",
+      "packages/doc-sync-core/src/crdt/cardinality.ts": "7ec912022c1cb848e6e65494b7d28c39af0b0c0658ccd76649031078cc4e082e",
+      "packages/doc-sync-core/src/crdt/commands.ts": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10",
+      "packages/doc-sync-core/src/crdt/doc.ts": "154ccc060b8fcb842a208910f81dbb7f13010ff74e176946601822efbf7cbbdb",
+      "packages/doc-sync-core/src/crdt/edit.ts": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f",
+      "packages/doc-sync-core/src/crdt/fields.ts": "9ba7bd8fe7b23f2513b67460f4a418340cedff8c6939b10b4e8fa91e53e21b2d",
+      "packages/doc-sync-core/src/crdt/history.ts": "ef0d644d33d3fef22e66841bad9e924a858094ca8a24db636102417b98a031e3",
+      "packages/doc-sync-core/src/crdt/key-index.ts": "ff447129ce1d006ae1cb24430b21d448fbb41dc043098145b07a3bcee126a1dd",
+      "packages/doc-sync-core/src/crdt/model.ts": "caf25d46ecf9b4806f4a588c3dc2ceb76cc1b857d3609dbd89d508d62c541d79",
+      "packages/doc-sync-core/src/crdt/placement.ts": "ad27804d11d719f95a6e138e3eabcf904cec515df84108a3e264471d41845e1d",
+      "packages/doc-sync-core/src/crdt/schema-version.ts": "11fdbedce179d343f0e610980da26dd99fee804e99cef183c72518075f3ad501",
+      "packages/doc-sync-core/src/crdt/schema.ts": "6c7e6ab70dc2e12d3f81ea45122f7782acc7e816137a919162b742d9c9034b63",
+      "packages/doc-sync-core/src/crdt/text-storage.ts": "ff94666e0a3f1e06d89a347e80d9692414abc43445076f036fff6e0d7bfd6b34",
+      "packages/doc-sync-core/src/crdt/ticket.ts": "70f8b71bac19b6f9039056570256ac41890f99fdc46da1675e91bd875aed8298",
+      "packages/doc-sync-core/src/editor/host-contract.ts": "e11614a47da68de370c43a45f3b55ece27ff88b0c59a75ab058bb2a13eaeea19",
+      "packages/doc-sync-core/src/editor/index.ts": "0d90600812f64be99674a9a9526fd59789a2e7853d565701b06eb10dbc179333",
+      "packages/doc-sync-core/src/editor/schema-transition.ts": "e88b2dafee94c2c60c00f57cd0c32280375070d5c2135c7487fcb89fcb376201",
+      "packages/doc-sync-core/src/editor/sync-client-host.ts": "d75ec9362240c420b81e5fc9de96102903b0efa04fdf071ed3d3ac449267a8e9",
+      "packages/doc-sync-core/src/engine/contract.ts": "6d0f82603a19c83ce1cf4786493bf0613b9f728618acdc427214e257c5755758",
+      "packages/doc-sync-core/src/engine/index.ts": "4d4a84f84e61479cd12caf5ef80f314117473762b9a6e1a069638cb1e8c71b04",
+      "packages/doc-sync-core/src/engine/typescript.ts": "231b1bca7c45ba2b0ad614d2d420bca7bcf8970edd5d0c1d97d98219ed81d0e3",
+      "packages/doc-sync-core/src/index.ts": "b473d2af80ed935ec420284b51504b99f796e5a3c74e0c60622756a8ac3ba913",
+      "packages/doc-sync-core/src/node.ts": "d208d9686d05a6f028ef2f4ffb9f81ade77e4986b2931d6e23e278b0b5c07871",
+      "packages/doc-sync-core/src/server/hub.ts": "048514754fe1108dac31dcc9680830ea0ebc5a1803e2d04683e671ab72811f50",
+      "packages/doc-sync-core/src/server/index.ts": "c397c8ac49e827d760b060b1b39afc1e5d5fc074b9c98b26083942194c8e06eb",
+      "packages/doc-sync-core/src/server/staged.ts": "8239a2af71cafe2c4e478df9b45ac189e45169e05e451a49570d069fde7578d0",
+      "packages/doc-sync-core/src/sync/browser-recovery.ts": "561e8d9c1ce1bc93444a36e0d25f7b43c6b62ee4d0c9c36eb18f04541dc61c76",
+      "packages/doc-sync-core/src/sync/character.ts": "7daab4f42af2ee4ff3924c8637ac96553ffb896201cb7bcda1997eeeff063a31",
+      "packages/doc-sync-core/src/sync/client.ts": "1ff5285d472f433e0411797a547fdb667464abf336a7b37ad6457097b445cc50",
+      "packages/doc-sync-core/src/sync/http-transport.ts": "1f74bceaa25f1c833e821e47fe49f20756d24729d9695ea5c6d08cd2d912f18b",
+      "packages/doc-sync-core/src/sync/index.ts": "90d734c31b7f4fc4e5cd635064c107e06fb80221b8225cf74d6968363f374ce2",
+      "packages/doc-sync-core/src/sync/live-recovery.ts": "5249235a6112206d12ecb1c022fa891e3f0bbff0a3ee9ab401d51572e8b932e0",
+      "packages/doc-sync-core/src/sync/model-events.ts": "91010edc78978a3ed8abc24ebd55c7410d32021c260ad73caeac14e977daab55",
+      "packages/doc-sync-core/src/sync/node-http-transport.ts": "2c363f16634d307fbe5741551aa82ece89ee0a08de59acb6f29c19b55272c15e",
+      "packages/doc-sync-core/src/sync/protocol.ts": "f841c76224bb9e81f68571f9888fa2ef0a3dc17a5f2efe1ab5c5522288af855b",
+      "packages/doc-sync-core/dist/crdt/annotations.d.ts": "41cfa550c11e9f15a51a5510ea582d42b888ec1acf66977f2363a3fff7eda7e4",
+      "packages/doc-sync-core/dist/crdt/annotations.js": "4695422598676eabc3b19c7dfde638709e9dfb9226d210ce097659c160ade6d7",
+      "packages/doc-sync-core/dist/crdt/cardinality.d.ts": "3effba877b20ef1e975c3dbed4467e64f65fb3e716b55086511120da602f3b3b",
+      "packages/doc-sync-core/dist/crdt/cardinality.js": "ba47ad026937ae24138652395778391d750db2da678db31aef0c9f15fd451dfb",
+      "packages/doc-sync-core/dist/crdt/commands.d.ts": "a72e8cf99faf115accbdd3e388170daa29275876f056f0a1a7645aaa7c134bb6",
+      "packages/doc-sync-core/dist/crdt/commands.js": "3072a1aa80303a5c1571e170d5e1d55197d2a492c083157682dd5a389dd58f9f",
+      "packages/doc-sync-core/dist/crdt/doc.d.ts": "b49a4325159f932e4eebb137969d2df4bb0d58ad5b9b626e3e520158a8a63844",
+      "packages/doc-sync-core/dist/crdt/doc.js": "86ec437e69109e37ce1571bfcf6130a15dc55cabb0960a45dec7eb645f9a279b",
+      "packages/doc-sync-core/dist/crdt/edit.d.ts": "c3c67a4d90a032658a1ad73dd9e33a03a068af30d6c1b3434c8d7a63692f49a9",
+      "packages/doc-sync-core/dist/crdt/edit.js": "e66b6ed4a9d0da9c9dcdf0cd0cbe386e52684076e536f0dc533ab1746d08da02",
+      "packages/doc-sync-core/dist/crdt/fields.d.ts": "18e1c3e00c379813c938a5c8516180700ec7c4fcaa3830f666e726bd3fde5903",
+      "packages/doc-sync-core/dist/crdt/fields.js": "3178d4dc73d73beeb97ba541b2e959cf7d78e6ef3350c86554de04657116079d",
+      "packages/doc-sync-core/dist/crdt/history.d.ts": "08983e9545d33d886a414eb8b6f03caa1fc8ac8ec9e07809aa3e2244ff0f3a78",
+      "packages/doc-sync-core/dist/crdt/history.js": "c0a2e2bcabb9d9a8a42d112e3fd5a161bd91c1ca3b2724890e1437f72191559d",
+      "packages/doc-sync-core/dist/crdt/key-index.d.ts": "69d27a3d0589d24b9ce3536d0e4307ea9c3c5a0ef9e570d1cbf90ceb29eea71a",
+      "packages/doc-sync-core/dist/crdt/key-index.js": "b2766dd659ca8ea08ac46e8b667e5487dd019adfd42fd6d4b7695ede27c78463",
+      "packages/doc-sync-core/dist/crdt/model.d.ts": "44e11ab43a9f2fc9b30952d1bfbfc907d90f7204e1e64c74300e1744f7d563c3",
+      "packages/doc-sync-core/dist/crdt/model.js": "3b4e478c244ef4e0ea0ae6cf80db49fbaf3cecc976b36537c6330ec81bfa7d75",
+      "packages/doc-sync-core/dist/crdt/placement.d.ts": "c8c2c964ed63bfbfefd8c4ad323e88dfe778bc8b1e8301ba78745986c4f48945",
+      "packages/doc-sync-core/dist/crdt/placement.js": "6da00d46128a12e9a9e364620d9229aedcea5d4a93ee3db3c92cc9011d39fb1d",
+      "packages/doc-sync-core/dist/crdt/schema-version.d.ts": "c98c7f5ad67287877a617a866abb4e7455af689435028b66ff0bafa628d0f842",
+      "packages/doc-sync-core/dist/crdt/schema-version.js": "e018ac74f8dfdb9155754042f64a4904986eb75047a8dac04ce65dd2e2671328",
+      "packages/doc-sync-core/dist/crdt/schema.d.ts": "2e641b8962749070b69d3ff51a383878a35a3c77b1328a12d7d4eaba6a621b43",
+      "packages/doc-sync-core/dist/crdt/schema.js": "1e66a7fceb701739f12b6d2278e006b6e3ef7714bab67caa13474899a45773b5",
+      "packages/doc-sync-core/dist/crdt/text-storage.d.ts": "fb1b68325938c00b7c71c6918d4a6e0dfa52127f26a22d9d6aaab48f1709480e",
+      "packages/doc-sync-core/dist/crdt/text-storage.js": "f661e421fc0d4d20097659760003b1174216fdd50090504ffa58ddbb20e7aa07",
+      "packages/doc-sync-core/dist/crdt/ticket.d.ts": "42ea7522715e8afc344a983d2daaf6fe310e7c2cc9a73cea8753d3fd91c396af",
+      "packages/doc-sync-core/dist/crdt/ticket.js": "d600cb5381e48565d928ebe5274de45ba18514c0698b0322d9b49eb5234f3cae",
+      "packages/doc-sync-core/dist/editor/host-contract.d.ts": "8ef42e740e6f3e69995bb1677f5ace10145150e7317bf31bac75593f79fa85be",
+      "packages/doc-sync-core/dist/editor/host-contract.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "packages/doc-sync-core/dist/editor/index.d.ts": "a6dfa8f43588ac928ac11ee9da513459bf0ed307f2b5fa8cb44439dba81a8f74",
+      "packages/doc-sync-core/dist/editor/index.js": "03270ccc59cc1b26e91369f52acd08488635f62f2069447e24717ee3de13f671",
+      "packages/doc-sync-core/dist/editor/schema-transition.d.ts": "0ef861cb28941475bcfc16b4ae123506cfcc987f311a902f4be84bfa51708db6",
+      "packages/doc-sync-core/dist/editor/schema-transition.js": "8db42a70de0a57b7d7adb6e4559f2c576ee2deb28e8bf0509b348bdc98811fb0",
+      "packages/doc-sync-core/dist/editor/sync-client-host.d.ts": "5689f6f71b17fdd11061e41fcfab5264a4f9f6920a12ef0dfdb7b78e4180a476",
+      "packages/doc-sync-core/dist/editor/sync-client-host.js": "6fed238d031b07d127c17b57b5bcf007d79c083b125dfb6d63f382d01972f050",
+      "packages/doc-sync-core/dist/engine/contract.d.ts": "eeb4eb45e5a0b0bd61457a7d6c9d013edc6e2608c5f9b91b107d68c988449897",
+      "packages/doc-sync-core/dist/engine/contract.js": "bfd603bcfe5b03a6eb52bf26841429c33477cbc5910fa6c8b6ec1329d236de81",
+      "packages/doc-sync-core/dist/engine/index.d.ts": "52a09c6906996aeb1f40281d0985749ad38307fb887e8cfc73655e392597345e",
+      "packages/doc-sync-core/dist/engine/index.js": "1ac0844e7779955c7f1b3c493e598b87cca4f83139c0433b162179980b402643",
+      "packages/doc-sync-core/dist/engine/typescript.d.ts": "67a4e82697f55f6ad470f3b79b9df41e60ebb76b435d398a5a2b54da3cce1db5",
+      "packages/doc-sync-core/dist/engine/typescript.js": "601314ffa4a0cedbee5d74d86735878a1b4ba64de4c60f920147b9a42c711f5e",
+      "packages/doc-sync-core/dist/index.d.ts": "d08aa18c34dc7b515305391f00c7c2a516bf89666ca8f3809d2421d257f8cd92",
+      "packages/doc-sync-core/dist/index.js": "d9552545ebcc12795d25444939045b312d487a5373bdbb058a21f76509093a3f",
+      "packages/doc-sync-core/dist/node.d.ts": "6ee32cc46b9b0e1b37ba3a8815d1be995c73bd2521eecab24865d5edc8eee9ad",
+      "packages/doc-sync-core/dist/node.js": "73ab7aa2a1bd982a45b493a2dfdcc096ee970d937a9b9f55ebd85d6b52ebe2e0",
+      "packages/doc-sync-core/dist/server/hub.d.ts": "1ac40a04c3f486f82ab82d25cb7d10e2fdc0855b8b88d76774c417c4a2c13eac",
+      "packages/doc-sync-core/dist/server/hub.js": "556ce900d89b8d5334c4ffc40c652d0d59219f537153b1aee120c98da2273a28",
+      "packages/doc-sync-core/dist/server/index.d.ts": "65a2185fb7bc6c857cffb6a5714a11aedfc4d4ae46004c3d7673aefdaaddf519",
+      "packages/doc-sync-core/dist/server/index.js": "01db7b6b44c98f100a3f5f82d1cbd78cc566f32a894b9696e16838cba05f0935",
+      "packages/doc-sync-core/dist/server/staged.d.ts": "a2e9ba12c7c68296f92cb465aa8fa0b900301db3808f1a32566348d394329e23",
+      "packages/doc-sync-core/dist/server/staged.js": "8046bea68895f3d13663e9ab2ff104c65af750cdebe6e208cb841b67b18be417",
+      "packages/doc-sync-core/dist/sync/browser-recovery.d.ts": "518c375d0ea4d5fe91bc0245c306b5e3416223368b6d7db2aed2d80158bf663e",
+      "packages/doc-sync-core/dist/sync/browser-recovery.js": "f9e9221af87303b77911b37eb4c9a7d56c5c48452111da737a0cea0793751fe9",
+      "packages/doc-sync-core/dist/sync/character.d.ts": "7925eef339d36070369651e2ff3724f26d88287b1892d1d647e3a8214c2afe5e",
+      "packages/doc-sync-core/dist/sync/character.js": "5acedeb57ad63db83a1051a31c04183b006fbf7cdb10e4c718992fc226442938",
+      "packages/doc-sync-core/dist/sync/client.d.ts": "f2771042df6f0e12f01536db417db72bb7ea5abada4bd245036927e12c636bb9",
+      "packages/doc-sync-core/dist/sync/client.js": "7925b4b2877b94e540d72696bbc7d7ea2953cae5f0dd6901002a549b4a374d14",
+      "packages/doc-sync-core/dist/sync/http-transport.d.ts": "d508c2a59317da357a3094e8da14647a3c8099d1136edd4b96aafb8494e5b749",
+      "packages/doc-sync-core/dist/sync/http-transport.js": "3bb259383bee36ac878c75aa373a91038a93ade625d5d9e5a3bf782c02da6e08",
+      "packages/doc-sync-core/dist/sync/index.d.ts": "09c7409acb8799b6fa376c6d7fb9ef8dfccd928df29e99e5a542d24935bf5219",
+      "packages/doc-sync-core/dist/sync/index.js": "f164503ac8593fa1158207dc6667ebd5fcdb27bcdbcf2c4df1795ca36cc230f0",
+      "packages/doc-sync-core/dist/sync/live-recovery.d.ts": "d22840db4e42189e8b7841d27322a530cf83dc0726c7f62200e5fe62c655ae92",
+      "packages/doc-sync-core/dist/sync/live-recovery.js": "b17549d92505fc11613a4248788089ef37b11038ce61a5706b76d5105e1eefd6",
+      "packages/doc-sync-core/dist/sync/model-events.d.ts": "363e665f1d0b52b7e1c9a526015cfe9d6c98e43d20be48479225a20d9c009659",
+      "packages/doc-sync-core/dist/sync/model-events.js": "e1eec7e2141c4d5f2a01b1d82ae5da65e3ec5f2e48835c7192706596bd618aa1",
+      "packages/doc-sync-core/dist/sync/node-http-transport.d.ts": "703b786660357a25eac610cc9878143baddbc4b93df990c3a1f7eff83acb20a4",
+      "packages/doc-sync-core/dist/sync/node-http-transport.js": "c2d2272fd37e72deeabb3c178c5da459033ea8eb7a76816d39e493e3f5e22d0b",
+      "packages/doc-sync-core/dist/sync/protocol.d.ts": "4da150a2bd52baa99004c822e4361b8214f5ace35a3ed2bf7cf4f485faed98c2",
+      "packages/doc-sync-core/dist/sync/protocol.js": "0066d5900ba339d82810a8e3ef8b38f60dbd7f7b29d98a99e29bfa5ba306cb22",
+      "packages/doc-sync-prosemirror/src/binding.ts": "3b34cbcdfe8461e0cce6db148acd31c1773b374c07006969c480c4488ebbad9d",
+      "packages/doc-sync-prosemirror/src/convert.ts": "de93505ad1c3deb2877ad4509110db5ccf4f3eaa00b55efc499b13e8ee9c3b5f",
+      "packages/doc-sync-prosemirror/src/host-binding.ts": "cdeae6e2ac9796e926f7c6132f63c5764a487a9e5caa45c9c51636091383f6bd",
+      "packages/doc-sync-prosemirror/src/index.ts": "6656779d6d930a2af14146544c9b0defbf9e069ddd086a22fdb2cdb8d73b58ff",
+      "packages/doc-sync-prosemirror/src/schema.ts": "70bf5d12da84b56bb5906769fa2a2986f839732e1552d38eb7e348b4ae2c6ed3",
+      "packages/doc-sync-prosemirror/dist/binding.d.ts": "e6d722417e3e632ad6e1fe7efb194cac69d0b46f49166f0f33e65a4f844ef568",
+      "packages/doc-sync-prosemirror/dist/binding.js": "ad1b244ea8e94b7ef980495362871893f634fe92befb6ee717e80bb910a9ea92",
+      "packages/doc-sync-prosemirror/dist/convert.d.ts": "9d7c87ec382d6a0315877a1f3c9beff2120316578167dce242b5a96be965db04",
+      "packages/doc-sync-prosemirror/dist/convert.js": "001a1572f6646fc9bfd014f7dc057542e6c0b0a2c56d7c13d16430f04ac22885",
+      "packages/doc-sync-prosemirror/dist/host-binding.d.ts": "36f11c29125173b033b5a1f7346bba2eba9b6e59432b8769867b08ee344af5dd",
+      "packages/doc-sync-prosemirror/dist/host-binding.js": "bd22bfc3bcd83ba8f8756148d1a67380803d93aa6365ef9bc386ac1a0f57a6af",
+      "packages/doc-sync-prosemirror/dist/index.d.ts": "bc0b9e54c2b7fa8540ff2a3f2ab097fc81203fa1f2eaa5af7622a9e45d360fd8",
+      "packages/doc-sync-prosemirror/dist/index.js": "2e1aebe6d4a4652d378b89815d9e1bac2d1cf3ec8282d851d7916e643be15393",
+      "packages/doc-sync-prosemirror/dist/schema.d.ts": "74a222265edf9b8a1917fda2289b6da738019f78cd4fdddc0367aeb07e92a8ad",
+      "packages/doc-sync-prosemirror/dist/schema.js": "878894e88101a2c8076876c374f45b714096ba73666a5668e0a68791563c1d0b",
+      "package-lock.json": "a8b4e0620fd5be9ab93091939230dd6525ec8da26e703c637458bcdc6735935a",
+      "scripts/build-package.mjs": "12a3d9150aa2642e4ecf5eef3aa3de636fdaa53efe8154ff9d27273a687aa130",
+      "scripts/build-packages.mjs": "9efc44a742128c7cf1dc66be7af3be9d21f6726ca50c05ed65bd576752145db2"
+    },
+    "head": "3bbb4651a497494339c15f6984ceafb8410d8fe3"
+  },
+  "after": {
+    "aggregate": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+    "files": {
+      "packages/doc-sync-core/src/crdt/annotations.ts": "32b06a1977bc191647c663ba50d321313826d37aa974b5390185359839cb3eca",
+      "packages/doc-sync-core/src/crdt/cardinality.ts": "7ec912022c1cb848e6e65494b7d28c39af0b0c0658ccd76649031078cc4e082e",
+      "packages/doc-sync-core/src/crdt/commands.ts": "738883aed8b367fd19a8081892b72c5b4f54f4580a21643e9d16633ece745e10",
+      "packages/doc-sync-core/src/crdt/doc.ts": "154ccc060b8fcb842a208910f81dbb7f13010ff74e176946601822efbf7cbbdb",
+      "packages/doc-sync-core/src/crdt/edit.ts": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f",
+      "packages/doc-sync-core/src/crdt/fields.ts": "9ba7bd8fe7b23f2513b67460f4a418340cedff8c6939b10b4e8fa91e53e21b2d",
+      "packages/doc-sync-core/src/crdt/history.ts": "ef0d644d33d3fef22e66841bad9e924a858094ca8a24db636102417b98a031e3",
+      "packages/doc-sync-core/src/crdt/key-index.ts": "ff447129ce1d006ae1cb24430b21d448fbb41dc043098145b07a3bcee126a1dd",
+      "packages/doc-sync-core/src/crdt/model.ts": "caf25d46ecf9b4806f4a588c3dc2ceb76cc1b857d3609dbd89d508d62c541d79",
+      "packages/doc-sync-core/src/crdt/placement.ts": "ad27804d11d719f95a6e138e3eabcf904cec515df84108a3e264471d41845e1d",
+      "packages/doc-sync-core/src/crdt/schema-version.ts": "11fdbedce179d343f0e610980da26dd99fee804e99cef183c72518075f3ad501",
+      "packages/doc-sync-core/src/crdt/schema.ts": "6c7e6ab70dc2e12d3f81ea45122f7782acc7e816137a919162b742d9c9034b63",
+      "packages/doc-sync-core/src/crdt/text-storage.ts": "ff94666e0a3f1e06d89a347e80d9692414abc43445076f036fff6e0d7bfd6b34",
+      "packages/doc-sync-core/src/crdt/ticket.ts": "70f8b71bac19b6f9039056570256ac41890f99fdc46da1675e91bd875aed8298",
+      "packages/doc-sync-core/src/editor/host-contract.ts": "e11614a47da68de370c43a45f3b55ece27ff88b0c59a75ab058bb2a13eaeea19",
+      "packages/doc-sync-core/src/editor/index.ts": "0d90600812f64be99674a9a9526fd59789a2e7853d565701b06eb10dbc179333",
+      "packages/doc-sync-core/src/editor/schema-transition.ts": "e88b2dafee94c2c60c00f57cd0c32280375070d5c2135c7487fcb89fcb376201",
+      "packages/doc-sync-core/src/editor/sync-client-host.ts": "d75ec9362240c420b81e5fc9de96102903b0efa04fdf071ed3d3ac449267a8e9",
+      "packages/doc-sync-core/src/engine/contract.ts": "6d0f82603a19c83ce1cf4786493bf0613b9f728618acdc427214e257c5755758",
+      "packages/doc-sync-core/src/engine/index.ts": "4d4a84f84e61479cd12caf5ef80f314117473762b9a6e1a069638cb1e8c71b04",
+      "packages/doc-sync-core/src/engine/typescript.ts": "231b1bca7c45ba2b0ad614d2d420bca7bcf8970edd5d0c1d97d98219ed81d0e3",
+      "packages/doc-sync-core/src/index.ts": "b473d2af80ed935ec420284b51504b99f796e5a3c74e0c60622756a8ac3ba913",
+      "packages/doc-sync-core/src/node.ts": "d208d9686d05a6f028ef2f4ffb9f81ade77e4986b2931d6e23e278b0b5c07871",
+      "packages/doc-sync-core/src/server/hub.ts": "048514754fe1108dac31dcc9680830ea0ebc5a1803e2d04683e671ab72811f50",
+      "packages/doc-sync-core/src/server/index.ts": "c397c8ac49e827d760b060b1b39afc1e5d5fc074b9c98b26083942194c8e06eb",
+      "packages/doc-sync-core/src/server/staged.ts": "8239a2af71cafe2c4e478df9b45ac189e45169e05e451a49570d069fde7578d0",
+      "packages/doc-sync-core/src/sync/browser-recovery.ts": "561e8d9c1ce1bc93444a36e0d25f7b43c6b62ee4d0c9c36eb18f04541dc61c76",
+      "packages/doc-sync-core/src/sync/character.ts": "7daab4f42af2ee4ff3924c8637ac96553ffb896201cb7bcda1997eeeff063a31",
+      "packages/doc-sync-core/src/sync/client.ts": "1ff5285d472f433e0411797a547fdb667464abf336a7b37ad6457097b445cc50",
+      "packages/doc-sync-core/src/sync/http-transport.ts": "1f74bceaa25f1c833e821e47fe49f20756d24729d9695ea5c6d08cd2d912f18b",
+      "packages/doc-sync-core/src/sync/index.ts": "90d734c31b7f4fc4e5cd635064c107e06fb80221b8225cf74d6968363f374ce2",
+      "packages/doc-sync-core/src/sync/live-recovery.ts": "5249235a6112206d12ecb1c022fa891e3f0bbff0a3ee9ab401d51572e8b932e0",
+      "packages/doc-sync-core/src/sync/model-events.ts": "91010edc78978a3ed8abc24ebd55c7410d32021c260ad73caeac14e977daab55",
+      "packages/doc-sync-core/src/sync/node-http-transport.ts": "2c363f16634d307fbe5741551aa82ece89ee0a08de59acb6f29c19b55272c15e",
+      "packages/doc-sync-core/src/sync/protocol.ts": "f841c76224bb9e81f68571f9888fa2ef0a3dc17a5f2efe1ab5c5522288af855b",
+      "packages/doc-sync-core/dist/crdt/annotations.d.ts": "41cfa550c11e9f15a51a5510ea582d42b888ec1acf66977f2363a3fff7eda7e4",
+      "packages/doc-sync-core/dist/crdt/annotations.js": "4695422598676eabc3b19c7dfde638709e9dfb9226d210ce097659c160ade6d7",
+      "packages/doc-sync-core/dist/crdt/cardinality.d.ts": "3effba877b20ef1e975c3dbed4467e64f65fb3e716b55086511120da602f3b3b",
+      "packages/doc-sync-core/dist/crdt/cardinality.js": "ba47ad026937ae24138652395778391d750db2da678db31aef0c9f15fd451dfb",
+      "packages/doc-sync-core/dist/crdt/commands.d.ts": "a72e8cf99faf115accbdd3e388170daa29275876f056f0a1a7645aaa7c134bb6",
+      "packages/doc-sync-core/dist/crdt/commands.js": "3072a1aa80303a5c1571e170d5e1d55197d2a492c083157682dd5a389dd58f9f",
+      "packages/doc-sync-core/dist/crdt/doc.d.ts": "b49a4325159f932e4eebb137969d2df4bb0d58ad5b9b626e3e520158a8a63844",
+      "packages/doc-sync-core/dist/crdt/doc.js": "86ec437e69109e37ce1571bfcf6130a15dc55cabb0960a45dec7eb645f9a279b",
+      "packages/doc-sync-core/dist/crdt/edit.d.ts": "c3c67a4d90a032658a1ad73dd9e33a03a068af30d6c1b3434c8d7a63692f49a9",
+      "packages/doc-sync-core/dist/crdt/edit.js": "e66b6ed4a9d0da9c9dcdf0cd0cbe386e52684076e536f0dc533ab1746d08da02",
+      "packages/doc-sync-core/dist/crdt/fields.d.ts": "18e1c3e00c379813c938a5c8516180700ec7c4fcaa3830f666e726bd3fde5903",
+      "packages/doc-sync-core/dist/crdt/fields.js": "3178d4dc73d73beeb97ba541b2e959cf7d78e6ef3350c86554de04657116079d",
+      "packages/doc-sync-core/dist/crdt/history.d.ts": "08983e9545d33d886a414eb8b6f03caa1fc8ac8ec9e07809aa3e2244ff0f3a78",
+      "packages/doc-sync-core/dist/crdt/history.js": "c0a2e2bcabb9d9a8a42d112e3fd5a161bd91c1ca3b2724890e1437f72191559d",
+      "packages/doc-sync-core/dist/crdt/key-index.d.ts": "69d27a3d0589d24b9ce3536d0e4307ea9c3c5a0ef9e570d1cbf90ceb29eea71a",
+      "packages/doc-sync-core/dist/crdt/key-index.js": "b2766dd659ca8ea08ac46e8b667e5487dd019adfd42fd6d4b7695ede27c78463",
+      "packages/doc-sync-core/dist/crdt/model.d.ts": "44e11ab43a9f2fc9b30952d1bfbfc907d90f7204e1e64c74300e1744f7d563c3",
+      "packages/doc-sync-core/dist/crdt/model.js": "3b4e478c244ef4e0ea0ae6cf80db49fbaf3cecc976b36537c6330ec81bfa7d75",
+      "packages/doc-sync-core/dist/crdt/placement.d.ts": "c8c2c964ed63bfbfefd8c4ad323e88dfe778bc8b1e8301ba78745986c4f48945",
+      "packages/doc-sync-core/dist/crdt/placement.js": "6da00d46128a12e9a9e364620d9229aedcea5d4a93ee3db3c92cc9011d39fb1d",
+      "packages/doc-sync-core/dist/crdt/schema-version.d.ts": "c98c7f5ad67287877a617a866abb4e7455af689435028b66ff0bafa628d0f842",
+      "packages/doc-sync-core/dist/crdt/schema-version.js": "e018ac74f8dfdb9155754042f64a4904986eb75047a8dac04ce65dd2e2671328",
+      "packages/doc-sync-core/dist/crdt/schema.d.ts": "2e641b8962749070b69d3ff51a383878a35a3c77b1328a12d7d4eaba6a621b43",
+      "packages/doc-sync-core/dist/crdt/schema.js": "1e66a7fceb701739f12b6d2278e006b6e3ef7714bab67caa13474899a45773b5",
+      "packages/doc-sync-core/dist/crdt/text-storage.d.ts": "fb1b68325938c00b7c71c6918d4a6e0dfa52127f26a22d9d6aaab48f1709480e",
+      "packages/doc-sync-core/dist/crdt/text-storage.js": "f661e421fc0d4d20097659760003b1174216fdd50090504ffa58ddbb20e7aa07",
+      "packages/doc-sync-core/dist/crdt/ticket.d.ts": "42ea7522715e8afc344a983d2daaf6fe310e7c2cc9a73cea8753d3fd91c396af",
+      "packages/doc-sync-core/dist/crdt/ticket.js": "d600cb5381e48565d928ebe5274de45ba18514c0698b0322d9b49eb5234f3cae",
+      "packages/doc-sync-core/dist/editor/host-contract.d.ts": "8ef42e740e6f3e69995bb1677f5ace10145150e7317bf31bac75593f79fa85be",
+      "packages/doc-sync-core/dist/editor/host-contract.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "packages/doc-sync-core/dist/editor/index.d.ts": "a6dfa8f43588ac928ac11ee9da513459bf0ed307f2b5fa8cb44439dba81a8f74",
+      "packages/doc-sync-core/dist/editor/index.js": "03270ccc59cc1b26e91369f52acd08488635f62f2069447e24717ee3de13f671",
+      "packages/doc-sync-core/dist/editor/schema-transition.d.ts": "0ef861cb28941475bcfc16b4ae123506cfcc987f311a902f4be84bfa51708db6",
+      "packages/doc-sync-core/dist/editor/schema-transition.js": "8db42a70de0a57b7d7adb6e4559f2c576ee2deb28e8bf0509b348bdc98811fb0",
+      "packages/doc-sync-core/dist/editor/sync-client-host.d.ts": "5689f6f71b17fdd11061e41fcfab5264a4f9f6920a12ef0dfdb7b78e4180a476",
+      "packages/doc-sync-core/dist/editor/sync-client-host.js": "6fed238d031b07d127c17b57b5bcf007d79c083b125dfb6d63f382d01972f050",
+      "packages/doc-sync-core/dist/engine/contract.d.ts": "eeb4eb45e5a0b0bd61457a7d6c9d013edc6e2608c5f9b91b107d68c988449897",
+      "packages/doc-sync-core/dist/engine/contract.js": "bfd603bcfe5b03a6eb52bf26841429c33477cbc5910fa6c8b6ec1329d236de81",
+      "packages/doc-sync-core/dist/engine/index.d.ts": "52a09c6906996aeb1f40281d0985749ad38307fb887e8cfc73655e392597345e",
+      "packages/doc-sync-core/dist/engine/index.js": "1ac0844e7779955c7f1b3c493e598b87cca4f83139c0433b162179980b402643",
+      "packages/doc-sync-core/dist/engine/typescript.d.ts": "67a4e82697f55f6ad470f3b79b9df41e60ebb76b435d398a5a2b54da3cce1db5",
+      "packages/doc-sync-core/dist/engine/typescript.js": "601314ffa4a0cedbee5d74d86735878a1b4ba64de4c60f920147b9a42c711f5e",
+      "packages/doc-sync-core/dist/index.d.ts": "d08aa18c34dc7b515305391f00c7c2a516bf89666ca8f3809d2421d257f8cd92",
+      "packages/doc-sync-core/dist/index.js": "d9552545ebcc12795d25444939045b312d487a5373bdbb058a21f76509093a3f",
+      "packages/doc-sync-core/dist/node.d.ts": "6ee32cc46b9b0e1b37ba3a8815d1be995c73bd2521eecab24865d5edc8eee9ad",
+      "packages/doc-sync-core/dist/node.js": "73ab7aa2a1bd982a45b493a2dfdcc096ee970d937a9b9f55ebd85d6b52ebe2e0",
+      "packages/doc-sync-core/dist/server/hub.d.ts": "1ac40a04c3f486f82ab82d25cb7d10e2fdc0855b8b88d76774c417c4a2c13eac",
+      "packages/doc-sync-core/dist/server/hub.js": "556ce900d89b8d5334c4ffc40c652d0d59219f537153b1aee120c98da2273a28",
+      "packages/doc-sync-core/dist/server/index.d.ts": "65a2185fb7bc6c857cffb6a5714a11aedfc4d4ae46004c3d7673aefdaaddf519",
+      "packages/doc-sync-core/dist/server/index.js": "01db7b6b44c98f100a3f5f82d1cbd78cc566f32a894b9696e16838cba05f0935",
+      "packages/doc-sync-core/dist/server/staged.d.ts": "a2e9ba12c7c68296f92cb465aa8fa0b900301db3808f1a32566348d394329e23",
+      "packages/doc-sync-core/dist/server/staged.js": "8046bea68895f3d13663e9ab2ff104c65af750cdebe6e208cb841b67b18be417",
+      "packages/doc-sync-core/dist/sync/browser-recovery.d.ts": "518c375d0ea4d5fe91bc0245c306b5e3416223368b6d7db2aed2d80158bf663e",
+      "packages/doc-sync-core/dist/sync/browser-recovery.js": "f9e9221af87303b77911b37eb4c9a7d56c5c48452111da737a0cea0793751fe9",
+      "packages/doc-sync-core/dist/sync/character.d.ts": "7925eef339d36070369651e2ff3724f26d88287b1892d1d647e3a8214c2afe5e",
+      "packages/doc-sync-core/dist/sync/character.js": "5acedeb57ad63db83a1051a31c04183b006fbf7cdb10e4c718992fc226442938",
+      "packages/doc-sync-core/dist/sync/client.d.ts": "f2771042df6f0e12f01536db417db72bb7ea5abada4bd245036927e12c636bb9",
+      "packages/doc-sync-core/dist/sync/client.js": "7925b4b2877b94e540d72696bbc7d7ea2953cae5f0dd6901002a549b4a374d14",
+      "packages/doc-sync-core/dist/sync/http-transport.d.ts": "d508c2a59317da357a3094e8da14647a3c8099d1136edd4b96aafb8494e5b749",
+      "packages/doc-sync-core/dist/sync/http-transport.js": "3bb259383bee36ac878c75aa373a91038a93ade625d5d9e5a3bf782c02da6e08",
+      "packages/doc-sync-core/dist/sync/index.d.ts": "09c7409acb8799b6fa376c6d7fb9ef8dfccd928df29e99e5a542d24935bf5219",
+      "packages/doc-sync-core/dist/sync/index.js": "f164503ac8593fa1158207dc6667ebd5fcdb27bcdbcf2c4df1795ca36cc230f0",
+      "packages/doc-sync-core/dist/sync/live-recovery.d.ts": "d22840db4e42189e8b7841d27322a530cf83dc0726c7f62200e5fe62c655ae92",
+      "packages/doc-sync-core/dist/sync/live-recovery.js": "b17549d92505fc11613a4248788089ef37b11038ce61a5706b76d5105e1eefd6",
+      "packages/doc-sync-core/dist/sync/model-events.d.ts": "363e665f1d0b52b7e1c9a526015cfe9d6c98e43d20be48479225a20d9c009659",
+      "packages/doc-sync-core/dist/sync/model-events.js": "e1eec7e2141c4d5f2a01b1d82ae5da65e3ec5f2e48835c7192706596bd618aa1",
+      "packages/doc-sync-core/dist/sync/node-http-transport.d.ts": "703b786660357a25eac610cc9878143baddbc4b93df990c3a1f7eff83acb20a4",
+      "packages/doc-sync-core/dist/sync/node-http-transport.js": "c2d2272fd37e72deeabb3c178c5da459033ea8eb7a76816d39e493e3f5e22d0b",
+      "packages/doc-sync-core/dist/sync/protocol.d.ts": "4da150a2bd52baa99004c822e4361b8214f5ace35a3ed2bf7cf4f485faed98c2",
+      "packages/doc-sync-core/dist/sync/protocol.js": "0066d5900ba339d82810a8e3ef8b38f60dbd7f7b29d98a99e29bfa5ba306cb22",
+      "packages/doc-sync-prosemirror/src/binding.ts": "3b34cbcdfe8461e0cce6db148acd31c1773b374c07006969c480c4488ebbad9d",
+      "packages/doc-sync-prosemirror/src/convert.ts": "de93505ad1c3deb2877ad4509110db5ccf4f3eaa00b55efc499b13e8ee9c3b5f",
+      "packages/doc-sync-prosemirror/src/host-binding.ts": "cdeae6e2ac9796e926f7c6132f63c5764a487a9e5caa45c9c51636091383f6bd",
+      "packages/doc-sync-prosemirror/src/index.ts": "6656779d6d930a2af14146544c9b0defbf9e069ddd086a22fdb2cdb8d73b58ff",
+      "packages/doc-sync-prosemirror/src/schema.ts": "70bf5d12da84b56bb5906769fa2a2986f839732e1552d38eb7e348b4ae2c6ed3",
+      "packages/doc-sync-prosemirror/dist/binding.d.ts": "e6d722417e3e632ad6e1fe7efb194cac69d0b46f49166f0f33e65a4f844ef568",
+      "packages/doc-sync-prosemirror/dist/binding.js": "ad1b244ea8e94b7ef980495362871893f634fe92befb6ee717e80bb910a9ea92",
+      "packages/doc-sync-prosemirror/dist/convert.d.ts": "9d7c87ec382d6a0315877a1f3c9beff2120316578167dce242b5a96be965db04",
+      "packages/doc-sync-prosemirror/dist/convert.js": "001a1572f6646fc9bfd014f7dc057542e6c0b0a2c56d7c13d16430f04ac22885",
+      "packages/doc-sync-prosemirror/dist/host-binding.d.ts": "36f11c29125173b033b5a1f7346bba2eba9b6e59432b8769867b08ee344af5dd",
+      "packages/doc-sync-prosemirror/dist/host-binding.js": "bd22bfc3bcd83ba8f8756148d1a67380803d93aa6365ef9bc386ac1a0f57a6af",
+      "packages/doc-sync-prosemirror/dist/index.d.ts": "bc0b9e54c2b7fa8540ff2a3f2ab097fc81203fa1f2eaa5af7622a9e45d360fd8",
+      "packages/doc-sync-prosemirror/dist/index.js": "2e1aebe6d4a4652d378b89815d9e1bac2d1cf3ec8282d851d7916e643be15393",
+      "packages/doc-sync-prosemirror/dist/schema.d.ts": "74a222265edf9b8a1917fda2289b6da738019f78cd4fdddc0367aeb07e92a8ad",
+      "packages/doc-sync-prosemirror/dist/schema.js": "878894e88101a2c8076876c374f45b714096ba73666a5668e0a68791563c1d0b",
+      "package-lock.json": "a8b4e0620fd5be9ab93091939230dd6525ec8da26e703c637458bcdc6735935a",
+      "scripts/build-package.mjs": "12a3d9150aa2642e4ecf5eef3aa3de636fdaa53efe8154ff9d27273a687aa130",
+      "scripts/build-packages.mjs": "9efc44a742128c7cf1dc66be7af3be9d21f6726ca50c05ed65bd576752145db2"
+    },
+    "head": "3bbb4651a497494339c15f6984ceafb8410d8fe3"
+  },
+  "dependencies": {
+    "typescript": {
+      "path": "/Users/user/github/doc-sync-host/node_modules/typescript/lib/typescript.js",
+      "version": "5.8.3"
+    },
+    "esbuild": {
+      "path": "/Users/user/github/doc-sync-host/node_modules/esbuild/lib/main.js",
+      "version": "0.28.2"
+    },
+    "prosemirror-model": {
+      "path": "/Users/user/github/doc-sync-host/node_modules/prosemirror-model/dist/index.cjs",
+      "version": "1.25.12"
+    },
+    "prosemirror-state": {
+      "path": "/Users/user/github/doc-sync-host/node_modules/prosemirror-state/dist/index.cjs",
+      "version": "1.4.4"
+    },
+    "prosemirror-view": {
+      "path": "/Users/user/github/doc-sync-host/node_modules/prosemirror-view/dist/index.cjs",
+      "version": "1.42.6"
+    },
+    "prosemirror-transform": {
+      "path": "/Users/user/github/doc-sync-host/node_modules/prosemirror-transform/dist/index.cjs",
+      "version": "1.12.2"
+    }
+  },
+  "rows": [
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "insert",
+      "samples": [
+        0.5907909999999958,
+        0.4026660000000106,
+        0.43454200000002174,
+        0.4463749999999891,
+        0.325917000000004,
+        0.33174999999999955,
+        0.3536250000000223,
+        0.3738749999999982
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 0.3738749999999982,
+      "p95": 0.5907909999999958,
+      "max": 0.5907909999999958,
+      "invariant": {
+        "modelHash": "d0ef057c5620a228d59ddb97d938b43851d2744bda98f246e5650d41bf9637c1",
+        "generatedHash": "8d8a752ba43fb913ecbabd46bbecf4891b299d22cf27f4c0295e6d4f6c40f18d",
+        "pending": 10,
+        "historyHash": "200223ebfca6aeef39b7f13088b92c416561739dddc41f370b494310b24b1eb3",
+        "stats": {
+          "steps": {
+            "text": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "delete",
+      "samples": [
+        0.4345000000000141,
+        0.4331250000000182,
+        0.378750000000025,
+        0.3282080000000178,
+        0.34133299999996325,
+        0.2997500000000173,
+        0.29854100000000017,
+        0.304916999999989
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 0.3282080000000178,
+      "p95": 0.4345000000000141,
+      "max": 0.4345000000000141,
+      "invariant": {
+        "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+        "generatedHash": "f28cd12c0ee5ca2098652bf473d2929442a26606f88619180ec37f2ceb76a46a",
+        "pending": 20,
+        "historyHash": "2f46bbfa5ebb344a8b4ff44ba5efe08a377b519d53b6bb696f4d7c007d7bde47",
+        "stats": {
+          "steps": {
+            "text": 20
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "mark",
+      "samples": [
+        0.36129199999999173,
+        0.3330829999999878,
+        0.3579169999999863,
+        0.3699589999999944,
+        0.37979100000001154,
+        0.3335419999999658,
+        0.3408330000000319,
+        3.9330830000000105
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 0.3579169999999863,
+      "p95": 3.9330830000000105,
+      "max": 3.9330830000000105,
+      "invariant": {
+        "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+        "generatedHash": "b42419ea8e8a102164d618a308309e1a9f686e2c688acfa04f110feed2d33941",
+        "pending": 30,
+        "historyHash": "7f8716c13f3e6ac575239895681bd406cf3fd96ff20c1ad0a12cf8150fec0def",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "selection",
+      "samples": [
+        0.03350000000000364,
+        0.026292000000012195,
+        0.02375000000000682,
+        0.023167000000000826,
+        0.023000000000024556,
+        0.04137500000001637,
+        0.04137499999995953,
+        0.030624999999986358
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "p50": 0.026292000000012195,
+      "p95": 0.04137500000001637,
+      "max": 0.04137500000001637,
+      "invariant": {
+        "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+        "generatedHash": "b42419ea8e8a102164d618a308309e1a9f686e2c688acfa04f110feed2d33941",
+        "pending": 30,
+        "historyHash": "7f8716c13f3e6ac575239895681bd406cf3fd96ff20c1ad0a12cf8150fec0def",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "presence",
+      "samples": [
+        0.1459169999999972,
+        0.12804199999999355,
+        0.13650000000001228,
+        0.11512500000003456,
+        0.08604199999996354,
+        0.076041000000032,
+        0.08641599999998562,
+        0.09249999999997272
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "p50": 0.09249999999997272,
+      "p95": 0.1459169999999972,
+      "max": 0.1459169999999972,
+      "invariant": {
+        "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+        "generatedHash": "b42419ea8e8a102164d618a308309e1a9f686e2c688acfa04f110feed2d33941",
+        "pending": 30,
+        "historyHash": "7f8716c13f3e6ac575239895681bd406cf3fd96ff20c1ad0a12cf8150fec0def",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "remote1",
+      "samples": [
+        0.6419999999999959,
+        0.6242080000000101,
+        0.629415999999992,
+        0.630457999999976,
+        0.5479579999999942,
+        0.8146670000000427,
+        0.6083750000000236,
+        0.5909580000000005
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 0.6242080000000101,
+      "p95": 0.8146670000000427,
+      "max": 0.8146670000000427,
+      "invariant": {
+        "modelHash": "85b789ca9faaef9163c8ec781a2f83e2003af15e43fa2c83d39c63421f6def9a",
+        "generatedHash": "b42419ea8e8a102164d618a308309e1a9f686e2c688acfa04f110feed2d33941",
+        "pending": 30,
+        "historyHash": "7f8716c13f3e6ac575239895681bd406cf3fd96ff20c1ad0a12cf8150fec0def",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 10,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 10,
+          "events": 10,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "remote2",
+      "samples": [
+        0.8076660000000402,
+        1.0497080000000096,
+        0.9529169999999567,
+        0.8176250000000209,
+        0.9475830000000087,
+        0.7832910000000766,
+        0.9776659999999993,
+        0.9080839999999171
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 0.9080839999999171,
+      "p95": 1.0497080000000096,
+      "max": 1.0497080000000096,
+      "invariant": {
+        "modelHash": "696fce3780503b8e42a78aaa545caac07e6fb025bd909b773db74faacdf471e5",
+        "generatedHash": "b42419ea8e8a102164d618a308309e1a9f686e2c688acfa04f110feed2d33941",
+        "pending": 30,
+        "historyHash": "7f8716c13f3e6ac575239895681bd406cf3fd96ff20c1ad0a12cf8150fec0def",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 20,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 20,
+          "events": 30,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "remote8",
+      "samples": [
+        2.102292000000034,
+        2.0612919999999804,
+        3.140041999999994,
+        1.8700829999999087,
+        2.0862500000000637,
+        1.9438749999999345,
+        2.134249999999952,
+        3.1704579999999396
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 2.0862500000000637,
+      "p95": 3.1704579999999396,
+      "max": 3.1704579999999396,
+      "invariant": {
+        "modelHash": "f373f05f1d2a51e04e5c143f25c300ed69ab9c1897998a08b25bcc54cdad6e20",
+        "generatedHash": "b42419ea8e8a102164d618a308309e1a9f686e2c688acfa04f110feed2d33941",
+        "pending": 30,
+        "historyHash": "7f8716c13f3e6ac575239895681bd406cf3fd96ff20c1ad0a12cf8150fec0def",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 30,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 30,
+          "events": 110,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "composition",
+      "samples": [
+        11.760084000000006,
+        10.252792,
+        10.243208000000095,
+        12.149416999999971,
+        10.591332999999963,
+        12.098584000000074,
+        10.399208999999928,
+        10.60850000000005
+      ],
+      "counts": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 10.591332999999963,
+      "p95": 12.149416999999971,
+      "max": 12.149416999999971,
+      "invariant": {
+        "modelHash": "7863b6fcde1a4c41c8d36096626f3fbd0a34fcda8ebc49f7cf48c25dca49e11d",
+        "generatedHash": "4516aa42901db0b4748127f378e94aa116f66e4dfc630568100aebfb77018953",
+        "pending": 40,
+        "historyHash": "cbcbe5ea8b98d6bc99c0ee1c9504276ca596393f4ead76beb8199b1f60f2e049",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 40,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 30,
+          "events": 110,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 10000,
+      "scenario": "structure",
+      "samples": [
+        1.5904160000000047,
+        1.4821249999999964,
+        1.433416999999963,
+        1.6863749999999982,
+        1.3866669999999885,
+        1.7052499999999782,
+        1.5163750000001528,
+        1.4717920000000504
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 207
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 209
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 211
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 213
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 215
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 217
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 219
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 221
+        }
+      ],
+      "p50": 1.4821249999999964,
+      "p95": 1.7052499999999782,
+      "max": 1.7052499999999782,
+      "invariant": {
+        "modelHash": "8a9b6cda967d8961b1fc28ce721f90aa07082b5acf2060d4abf7e13370f99834",
+        "generatedHash": "4516aa42901db0b4748127f378e94aa116f66e4dfc630568100aebfb77018953",
+        "pending": 40,
+        "historyHash": "cbcbe5ea8b98d6bc99c0ee1c9504276ca596393f4ead76beb8199b1f60f2e049",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 50,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 40,
+          "events": 130,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "insert",
+      "samples": [
+        1.9491659999998774,
+        2.1268749999999272,
+        1.8598749999998745,
+        1.6239579999999023,
+        1.587374999999838,
+        2.0240420000000086,
+        1.8671249999999873,
+        1.771874999999909
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 1.8598749999998745,
+      "p95": 2.1268749999999272,
+      "max": 2.1268749999999272,
+      "invariant": {
+        "modelHash": "21e9c95fd238449dc5f97496bdba4beeaf9603812b2a979cd5bc51144a0d213b",
+        "generatedHash": "18677349f0e9018c3f548e34876346206def8d9a71944febd1498f98a826ea97",
+        "pending": 10,
+        "historyHash": "b1f5496e158dd7ab3f6d7c6194f768cd9d20548f138cff6919b3bb9dfbea0d8f",
+        "stats": {
+          "steps": {
+            "text": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "delete",
+      "samples": [
+        1.896250000000009,
+        1.7694169999999758,
+        1.8376659999998992,
+        2.4900829999999132,
+        1.8021249999999327,
+        1.7909579999998186,
+        1.797207999999955,
+        1.6667079999999714
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 1.797207999999955,
+      "p95": 2.4900829999999132,
+      "max": 2.4900829999999132,
+      "invariant": {
+        "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+        "generatedHash": "1bb757cdb427773ebd98c7b032d268b5095413cb5f44c7c8df0c54cc13e649cf",
+        "pending": 20,
+        "historyHash": "8fcc5261bc3ada2e5f0e06162a3ac6f36b1e77f723a7ef55ca32c52941e1417d",
+        "stats": {
+          "steps": {
+            "text": 20
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "mark",
+      "samples": [
+        1.9607919999998558,
+        1.7536669999999503,
+        1.749749999999949,
+        1.6139160000000174,
+        1.7369590000000699,
+        1.6691249999998945,
+        1.9214999999999236,
+        1.7754170000000613
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 1.749749999999949,
+      "p95": 1.9607919999998558,
+      "max": 1.9607919999998558,
+      "invariant": {
+        "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+        "generatedHash": "4be126c9585b4aa53d629eaef2c551081f7c2dfd962922b42cd9d01bc9b8a448",
+        "pending": 30,
+        "historyHash": "d88a253f9948393c826f75d78182c6dd112ba405ea698d3c1eab7156069ffe8e",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "selection",
+      "samples": [
+        0.1509169999999358,
+        0.2015409999999065,
+        0.15904100000011567,
+        0.15641699999991943,
+        0.16095900000004804,
+        0.17037499999992178,
+        0.16975000000002183,
+        0.15854200000012497
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "p50": 0.15904100000011567,
+      "p95": 0.2015409999999065,
+      "max": 0.2015409999999065,
+      "invariant": {
+        "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+        "generatedHash": "4be126c9585b4aa53d629eaef2c551081f7c2dfd962922b42cd9d01bc9b8a448",
+        "pending": 30,
+        "historyHash": "d88a253f9948393c826f75d78182c6dd112ba405ea698d3c1eab7156069ffe8e",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "presence",
+      "samples": [
+        0.596416999999974,
+        0.795084000000088,
+        0.6510829999999714,
+        2.9957500000000437,
+        0.6155830000000151,
+        0.5346250000000055,
+        0.5530409999998938,
+        0.5536250000000109
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "p50": 0.596416999999974,
+      "p95": 2.9957500000000437,
+      "max": 2.9957500000000437,
+      "invariant": {
+        "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+        "generatedHash": "4be126c9585b4aa53d629eaef2c551081f7c2dfd962922b42cd9d01bc9b8a448",
+        "pending": 30,
+        "historyHash": "d88a253f9948393c826f75d78182c6dd112ba405ea698d3c1eab7156069ffe8e",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 0,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 0,
+          "events": 0,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "remote1",
+      "samples": [
+        2.3922919999999976,
+        2.1738330000000587,
+        2.067916999999852,
+        2.1952080000000933,
+        2.012333000000126,
+        2.021792000000005,
+        4.390250000000378,
+        2.512249999999767
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 2.1738330000000587,
+      "p95": 4.390250000000378,
+      "max": 4.390250000000378,
+      "invariant": {
+        "modelHash": "9b60ea3f0c930c3dc4365226261459827eef69f748f97871c852164773134a08",
+        "generatedHash": "4be126c9585b4aa53d629eaef2c551081f7c2dfd962922b42cd9d01bc9b8a448",
+        "pending": 30,
+        "historyHash": "d88a253f9948393c826f75d78182c6dd112ba405ea698d3c1eab7156069ffe8e",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 10,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 10,
+          "events": 10,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "remote2",
+      "samples": [
+        2.391375000000153,
+        2.424167000000125,
+        2.198707999999897,
+        5.564416999999594,
+        5.238624999999956,
+        2.7316250000003492,
+        2.7889580000000933,
+        2.5587500000001455
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 2.5587500000001455,
+      "p95": 5.564416999999594,
+      "max": 5.564416999999594,
+      "invariant": {
+        "modelHash": "e9d735dc7debe04470c8bc630b2e0f259f59c11446cecdbf55978e3e556612a0",
+        "generatedHash": "4be126c9585b4aa53d629eaef2c551081f7c2dfd962922b42cd9d01bc9b8a448",
+        "pending": 30,
+        "historyHash": "d88a253f9948393c826f75d78182c6dd112ba405ea698d3c1eab7156069ffe8e",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 20,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 20,
+          "events": 30,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "remote8",
+      "samples": [
+        5.527291999999761,
+        5.053207999999358,
+        4.765291999999135,
+        6.910957999999482,
+        7.289999999999964,
+        7.090707999999722,
+        4.446625000000495,
+        7.856957999999395
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 5.527291999999761,
+      "p95": 7.856957999999395,
+      "max": 7.856957999999395,
+      "invariant": {
+        "modelHash": "14f532e5ea8f8494abbd2f4f42e30235c2f92df8ada80a4ae297b8a5e9432882",
+        "generatedHash": "4be126c9585b4aa53d629eaef2c551081f7c2dfd962922b42cd9d01bc9b8a448",
+        "pending": 30,
+        "historyHash": "d88a253f9948393c826f75d78182c6dd112ba405ea698d3c1eab7156069ffe8e",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 30,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 30,
+          "events": 110,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "composition",
+      "samples": [
+        124.30891700000029,
+        121.49625000000015,
+        118.24962500000038,
+        113.74312499999996,
+        141.16633300000012,
+        123.39858400000048,
+        118.76016699999946,
+        116.93370899999991
+      ],
+      "counts": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 118.76016699999946,
+      "p95": 141.16633300000012,
+      "max": 141.16633300000012,
+      "invariant": {
+        "modelHash": "0aab67a263659f505b30b0c86fe0d3304969dace36f57bcf8d44e25cf6a02cbc",
+        "generatedHash": "a9b89f18582bd335c2982e0521e29725e13b4894fc1c33fb693b0b050339e428",
+        "pending": 40,
+        "historyHash": "e96e40e549d28e4c8272fd8b2ee4f30b2d2afe0e4e40e4a724356df98a7a69d6",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 40,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 30,
+          "events": 110,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    },
+    {
+      "block": 0,
+      "label": "B",
+      "size": 100000,
+      "scenario": "structure",
+      "samples": [
+        15.269666999999572,
+        16.752416999999696,
+        13.060583000000406,
+        16.69854200000009,
+        13.07666700000118,
+        13.023917000000438,
+        15.02941699999974,
+        26.269500000000335
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2007
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2009
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2011
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2013
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2015
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2017
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2019
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2021
+        }
+      ],
+      "p50": 15.02941699999974,
+      "p95": 26.269500000000335,
+      "max": 26.269500000000335,
+      "invariant": {
+        "modelHash": "629a115a14796efbae528728730017a1cb236004b78fcdd2a8e8ca54493cad8c",
+        "generatedHash": "a9b89f18582bd335c2982e0521e29725e13b4894fc1c33fb693b0b050339e428",
+        "pending": 40,
+        "historyHash": "e96e40e549d28e4c8272fd8b2ee4f30b2d2afe0e4e40e4a724356df98a7a69d6",
+        "stats": {
+          "steps": {
+            "text": 20,
+            "mark": 10
+          },
+          "reconciled": 0,
+          "pushedBack": 0,
+          "remote": 50,
+          "wholeReplace": 0
+        },
+        "eventStats": {
+          "changes": 40,
+          "events": 130,
+          "fallbacks": 0
+        },
+        "remoteCoreCounts": null
+      }
+    }
+  ]
+}

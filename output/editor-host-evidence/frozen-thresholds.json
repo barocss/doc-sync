@@ -1,0 +1,177 @@
+{
+  "status": "FROZEN_BEFORE_H1",
+  "basis": "self-control A/B/B/A x3, eight measured samples per block, upper median of six block p95 values per label",
+  "harnessHash": "7a16747c7a06c75e45e8dc4bc0078adf6f54b6a004fe630fe28d35a80255bae4",
+  "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+  "guard": "max(10% baseline A p95 upper median, 0.25ms); investigation trigger, not SLO",
+  "controls": [
+    {
+      "scenario": "insert",
+      "size": 10000,
+      "aP95": 0.5415000000000134,
+      "bP95": 0.26745800000207964,
+      "noiseMs": 0.27404199999793377,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "insert",
+      "size": 100000,
+      "aP95": 3.8254999999990105,
+      "bP95": 3.798666000002413,
+      "noiseMs": 0.026833999996597413,
+      "fixedGuardMs": 0.3825499999999011
+    },
+    {
+      "scenario": "delete",
+      "size": 10000,
+      "aP95": 0.27345900000000256,
+      "bP95": 0.27862499999901047,
+      "noiseMs": 0.005165999999007909,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "delete",
+      "size": 100000,
+      "aP95": 2.7338329999984126,
+      "bP95": 2.571083999999246,
+      "noiseMs": 0.1627489999991667,
+      "fixedGuardMs": 0.2733832999998413
+    },
+    {
+      "scenario": "mark",
+      "size": 10000,
+      "aP95": 0.24554200000420678,
+      "bP95": 0.2738339999996242,
+      "noiseMs": 0.028291999995417427,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "mark",
+      "size": 100000,
+      "aP95": 3.1373330000060378,
+      "bP95": 3.1162920000060694,
+      "noiseMs": 0.021040999999968335,
+      "fixedGuardMs": 0.3137333000006038
+    },
+    {
+      "scenario": "selection",
+      "size": 10000,
+      "aP95": 0.023791999999957625,
+      "bP95": 0.021833999999216758,
+      "noiseMs": 0.001958000000740867,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "selection",
+      "size": 100000,
+      "aP95": 0.18545799999992596,
+      "bP95": 0.1777909999982512,
+      "noiseMs": 0.007667000001674751,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "presence",
+      "size": 10000,
+      "aP95": 0.09183399999892572,
+      "bP95": 0.08608300000014424,
+      "noiseMs": 0.005750999998781481,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "presence",
+      "size": 100000,
+      "aP95": 0.6674590000038734,
+      "bP95": 0.6226250000036089,
+      "noiseMs": 0.044834000000264496,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "remote1",
+      "size": 10000,
+      "aP95": 2.463292000000365,
+      "bP95": 0.551500000001397,
+      "noiseMs": 1.911791999998968,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "remote1",
+      "size": 100000,
+      "aP95": 4.797832999996899,
+      "bP95": 3.7645420000008016,
+      "noiseMs": 1.0332909999960975,
+      "fixedGuardMs": 0.47978329999968994
+    },
+    {
+      "scenario": "remote2",
+      "size": 10000,
+      "aP95": 0.7879580000007991,
+      "bP95": 0.808666999990237,
+      "noiseMs": 0.02070899998943787,
+      "fixedGuardMs": 0.25
+    },
+    {
+      "scenario": "remote2",
+      "size": 100000,
+      "aP95": 3.9147919999959413,
+      "bP95": 4.890291999996407,
+      "noiseMs": 0.9755000000004657,
+      "fixedGuardMs": 0.39147919999959413
+    },
+    {
+      "scenario": "remote8",
+      "size": 10000,
+      "aP95": 3.440459000004921,
+      "bP95": 3.3418750000055297,
+      "noiseMs": 0.09858399999939138,
+      "fixedGuardMs": 0.3440459000004921
+    },
+    {
+      "scenario": "remote8",
+      "size": 100000,
+      "aP95": 7.718833999999333,
+      "bP95": 7.5069169999987935,
+      "noiseMs": 0.2119170000005397,
+      "fixedGuardMs": 0.7718833999999334
+    },
+    {
+      "scenario": "composition",
+      "size": 10000,
+      "aP95": 12.564584000007017,
+      "bP95": 12.713666999989073,
+      "noiseMs": 0.1490829999820562,
+      "fixedGuardMs": 1.2564584000007017
+    },
+    {
+      "scenario": "composition",
+      "size": 100000,
+      "aP95": 150.1663329999974,
+      "bP95": 138.70624999999927,
+      "noiseMs": 11.460082999998122,
+      "fixedGuardMs": 15.01663329999974
+    },
+    {
+      "scenario": "structure",
+      "size": 10000,
+      "aP95": 3.172832999989623,
+      "bP95": 1.8805409999986296,
+      "noiseMs": 1.2922919999909936,
+      "fixedGuardMs": 0.3172832999989623
+    },
+    {
+      "scenario": "structure",
+      "size": 100000,
+      "aP95": 16.983166999998502,
+      "bP95": 16.734249999994063,
+      "noiseMs": 0.24891700000443961,
+      "fixedGuardMs": 1.6983166999998502
+    }
+  ],
+  "countsStatus": "PASS",
+  "timingStatus": "CONTROL_NOISE_EXCEEDS_GUARD",
+  "limitations": [
+    "Node headless PM; not Chrome end-to-end or OS IME",
+    "OS indexing and security background processes remained active",
+    "8-sample block p95 is block max; 96 measured observations per scenario/size",
+    "candidate comparison NOT_RUN"
+  ]
+}

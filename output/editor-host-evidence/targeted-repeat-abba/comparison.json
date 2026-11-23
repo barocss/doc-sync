@@ -1,0 +1,193 @@
+{
+  "format": 1,
+  "date": "2026-11-01T16:42:02.752Z",
+  "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe",
+  "schedule": [
+    "A",
+    "B",
+    "B",
+    "A",
+    "A",
+    "B",
+    "B",
+    "A",
+    "A",
+    "B",
+    "B",
+    "A"
+  ],
+  "thresholds": "/Users/user/github/doc-sync-host/output/editor-host-evidence/frozen-thresholds.json",
+  "node": "v24.22.1",
+  "boundary": "Node headless PM; not Chrome or OS IME",
+  "countsStatus": "PASS",
+  "timingStatus": "WITHIN_GUARD_BASELINE_CONTROL_NOISY",
+  "differences": [],
+  "results": [
+    {
+      "scenario": "mark",
+      "size": 10000,
+      "baselineP95": 0.5700829999999826,
+      "candidateP95": 0.5260000000000105,
+      "deltaMs": -0.04408299999997212,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.028291999995417427,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "mark",
+      "size": 100000,
+      "baselineP95": 3.133707999999956,
+      "candidateP95": 2.3467920000000504,
+      "deltaMs": -0.7869159999999056,
+      "fixedGuardMs": 0.3137333000006038,
+      "baselineControlNoiseMs": 0.021040999999968335,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "presence",
+      "size": 10000,
+      "baselineP95": 0.2480419999999981,
+      "candidateP95": 0.23645800000002737,
+      "deltaMs": -0.011583999999970729,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.005750999998781481,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "presence",
+      "size": 100000,
+      "baselineP95": 0.6752079999999978,
+      "candidateP95": 0.7372500000000173,
+      "deltaMs": 0.06204200000001947,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.044834000000264496,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "structure",
+      "size": 10000,
+      "baselineP95": 2.704915999999969,
+      "candidateP95": 1.88412500000004,
+      "deltaMs": -0.8207909999999288,
+      "fixedGuardMs": 0.3172832999989623,
+      "baselineControlNoiseMs": 1.2922919999909936,
+      "baselineControlNoisy": true,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "structure",
+      "size": 100000,
+      "baselineP95": 16.772249999999985,
+      "candidateP95": 16.598582999999962,
+      "deltaMs": -0.1736670000000231,
+      "fixedGuardMs": 1.6983166999998502,
+      "baselineControlNoiseMs": 0.24891700000443961,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    }
+  ],
+  "targets": [
+    {
+      "turn": 0,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 1,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 2,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 3,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 4,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 5,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 6,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 7,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 8,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 9,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 10,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    },
+    {
+      "turn": 11,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "e04cf591aed8ecfd03cdd6097dbdc0542ac2a3824e849fb648ed58ec4438f1fe"
+    }
+  ],
+  "rawReports": [
+    "00-A.json",
+    "01-B.json",
+    "02-B.json",
+    "03-A.json",
+    "04-A.json",
+    "05-B.json",
+    "06-B.json",
+    "07-A.json",
+    "08-A.json",
+    "09-B.json",
+    "10-B.json",
+    "11-A.json"
+  ]
+}

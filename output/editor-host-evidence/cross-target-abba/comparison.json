@@ -1,0 +1,347 @@
+{
+  "format": 1,
+  "date": "2026-11-01T16:40:04.161Z",
+  "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1",
+  "schedule": [
+    "A",
+    "B",
+    "B",
+    "A",
+    "A",
+    "B",
+    "B",
+    "A",
+    "A",
+    "B",
+    "B",
+    "A"
+  ],
+  "thresholds": "/Users/user/github/doc-sync-host/output/editor-host-evidence/frozen-thresholds.json",
+  "node": "v24.22.1",
+  "boundary": "Node headless PM; not Chrome or OS IME",
+  "countsStatus": "PASS",
+  "timingStatus": "INVESTIGATE_PERF",
+  "differences": [],
+  "results": [
+    {
+      "scenario": "insert",
+      "size": 10000,
+      "baselineP95": 0.5964590000000101,
+      "candidateP95": 0.5907909999999958,
+      "deltaMs": -0.005668000000014217,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.27404199999793377,
+      "baselineControlNoisy": true,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "insert",
+      "size": 100000,
+      "baselineP95": 2.174792000000025,
+      "candidateP95": 2.1268749999999272,
+      "deltaMs": -0.04791700000009769,
+      "fixedGuardMs": 0.3825499999999011,
+      "baselineControlNoiseMs": 0.026833999996597413,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "delete",
+      "size": 10000,
+      "baselineP95": 0.5326670000000036,
+      "candidateP95": 0.5584170000000199,
+      "deltaMs": 0.02575000000001637,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.005165999999007909,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "delete",
+      "size": 100000,
+      "baselineP95": 2.5810409999999138,
+      "candidateP95": 2.559834000000137,
+      "deltaMs": -0.0212069999997766,
+      "fixedGuardMs": 0.2733832999998413,
+      "baselineControlNoiseMs": 0.1627489999991667,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "mark",
+      "size": 10000,
+      "baselineP95": 0.5261249999999791,
+      "candidateP95": 2.331666000000041,
+      "deltaMs": 1.805541000000062,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.028291999995417427,
+      "baselineControlNoisy": false,
+      "status": "INVESTIGATE_PERF"
+    },
+    {
+      "scenario": "mark",
+      "size": 100000,
+      "baselineP95": 2.741999999999962,
+      "candidateP95": 1.9607919999998558,
+      "deltaMs": -0.781208000000106,
+      "fixedGuardMs": 0.3137333000006038,
+      "baselineControlNoiseMs": 0.021040999999968335,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "selection",
+      "size": 10000,
+      "baselineP95": 0.03249999999997044,
+      "candidateP95": 0.04137500000001637,
+      "deltaMs": 0.00887500000004593,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.001958000000740867,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "selection",
+      "size": 100000,
+      "baselineP95": 1.0291670000001432,
+      "candidateP95": 0.2243750000000091,
+      "deltaMs": -0.8047920000001341,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.007667000001674751,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "presence",
+      "size": 10000,
+      "baselineP95": 0.15233299999999872,
+      "candidateP95": 0.1459169999999972,
+      "deltaMs": -0.006416000000001532,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.005750999998781481,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "presence",
+      "size": 100000,
+      "baselineP95": 0.7934999999999945,
+      "candidateP95": 2.9957500000000437,
+      "deltaMs": 2.202250000000049,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.044834000000264496,
+      "baselineControlNoisy": false,
+      "status": "INVESTIGATE_PERF"
+    },
+    {
+      "scenario": "remote1",
+      "size": 10000,
+      "baselineP95": 0.7890419999999949,
+      "candidateP95": 0.8146670000000427,
+      "deltaMs": 0.02562500000004775,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 1.911791999998968,
+      "baselineControlNoisy": true,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "remote1",
+      "size": 100000,
+      "baselineP95": 5.467000000000098,
+      "candidateP95": 5.0149169999999685,
+      "deltaMs": -0.4520830000001297,
+      "fixedGuardMs": 0.47978329999968994,
+      "baselineControlNoiseMs": 1.0332909999960975,
+      "baselineControlNoisy": true,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "remote2",
+      "size": 10000,
+      "baselineP95": 2.0206660000000056,
+      "candidateP95": 1.1824170000000436,
+      "deltaMs": -0.838248999999962,
+      "fixedGuardMs": 0.25,
+      "baselineControlNoiseMs": 0.02070899998943787,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "remote2",
+      "size": 100000,
+      "baselineP95": 5.439832999999453,
+      "candidateP95": 5.274083000000246,
+      "deltaMs": -0.16574999999920692,
+      "fixedGuardMs": 0.39147919999959413,
+      "baselineControlNoiseMs": 0.9755000000004657,
+      "baselineControlNoisy": true,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "remote8",
+      "size": 10000,
+      "baselineP95": 3.0297919999999294,
+      "candidateP95": 3.2840830000000096,
+      "deltaMs": 0.2542910000000802,
+      "fixedGuardMs": 0.3440459000004921,
+      "baselineControlNoiseMs": 0.09858399999939138,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "remote8",
+      "size": 100000,
+      "baselineP95": 8.178792000000612,
+      "candidateP95": 6.584374999999454,
+      "deltaMs": -1.5944170000011582,
+      "fixedGuardMs": 0.7718833999999334,
+      "baselineControlNoiseMs": 0.2119170000005397,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "composition",
+      "size": 10000,
+      "baselineP95": 12.581667000000039,
+      "candidateP95": 12.968624999999975,
+      "deltaMs": 0.38695799999993596,
+      "fixedGuardMs": 1.2564584000007017,
+      "baselineControlNoiseMs": 0.1490829999820562,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "composition",
+      "size": 100000,
+      "baselineP95": 140.94433299999946,
+      "candidateP95": 144.0298330000005,
+      "deltaMs": 3.0855000000010477,
+      "fixedGuardMs": 15.01663329999974,
+      "baselineControlNoiseMs": 11.460082999998122,
+      "baselineControlNoisy": false,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "structure",
+      "size": 10000,
+      "baselineP95": 1.885958999999957,
+      "candidateP95": 1.7052499999999782,
+      "deltaMs": -0.18070899999997891,
+      "fixedGuardMs": 0.3172832999989623,
+      "baselineControlNoiseMs": 1.2922919999909936,
+      "baselineControlNoisy": true,
+      "status": "WITHIN_FIXED_GUARD"
+    },
+    {
+      "scenario": "structure",
+      "size": 100000,
+      "baselineP95": 17.799917000000278,
+      "candidateP95": 26.269500000000335,
+      "deltaMs": 8.469583000000057,
+      "fixedGuardMs": 1.6983166999998502,
+      "baselineControlNoiseMs": 0.24891700000443961,
+      "baselineControlNoisy": false,
+      "status": "INVESTIGATE_PERF"
+    }
+  ],
+  "targets": [
+    {
+      "turn": 0,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 1,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 2,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 3,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 4,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 5,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 6,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 7,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 8,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 9,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 10,
+      "label": "B",
+      "target": "/Users/user/github/doc-sync-host",
+      "sourceHash": "77828080f50189184ec464e5e8459de340c9f2bc581b7efd466d9b1eb6a1555f",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    },
+    {
+      "turn": 11,
+      "label": "A",
+      "target": "/Users/user/github/doc-sync",
+      "sourceHash": "7e382c5e759fa1a22008dee3478812a9063f8af9175bdd407375a56697252cd0",
+      "harnessHash": "d24b3d029fc45e00087f9df192982994533510463ebacc3eed22da1c7ae016b1"
+    }
+  ],
+  "rawReports": [
+    "00-A.json",
+    "01-B.json",
+    "02-B.json",
+    "03-A.json",
+    "04-A.json",
+    "05-B.json",
+    "06-B.json",
+    "07-A.json",
+    "08-A.json",
+    "09-B.json",
+    "10-B.json",
+    "11-A.json"
+  ]
+}
