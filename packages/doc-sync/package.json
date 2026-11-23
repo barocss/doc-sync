@@ -14,21 +14,24 @@
     "./server": "./src/server/index.ts",
     "./prosemirror": "./src/pm/index.ts",
     "./slate": "./src/slate/index.ts",
-    "./lexical": "./src/lexical/index.ts"
+    "./lexical": "./src/lexical/index.ts",
+    "./tiptap": "./src/tiptap/index.ts"
   },
   "scripts": {
     "test": "node --test test/*.test.ts",
     "typecheck": "tsc -p tsconfig.json"
   },
   "peerDependencies": {
+    "@lexical/rich-text": "^0.52.0",
+    "@lexical/table": "^0.52.0",
+    "@tiptap/core": "3.32.2",
+    "@tiptap/pm": "3.32.2",
+    "lexical": "^0.52.0",
     "prosemirror-model": "^1.25.0",
     "prosemirror-state": "^1.4.0",
     "prosemirror-transform": "^1.12.0",
     "prosemirror-view": "^1.42.0",
-    "slate": "^0.146.0",
-    "lexical": "^0.52.0",
-    "@lexical/rich-text": "^0.52.0",
-    "@lexical/table": "^0.52.0"
+    "slate": "^0.146.0"
   },
   "peerDependenciesMeta": {
     "prosemirror-model": {
@@ -54,19 +57,29 @@
     },
     "@lexical/table": {
       "optional": true
+    },
+    "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/pm": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@lexical/rich-text": "0.52.0",
+    "@lexical/table": "0.52.0",
+    "@tiptap/core": "3.32.2",
+    "@tiptap/pm": "3.32.2",
+    "@types/jsdom": "^21.1.7",
+    "jsdom": "^26.1.0",
+    "lexical": "0.52.0",
     "prosemirror-commands": "^1.7.2",
     "prosemirror-model": "^1.25.12",
     "prosemirror-state": "^1.4.4",
     "prosemirror-tables": "^1.8.5",
     "prosemirror-transform": "^1.12.2",
     "prosemirror-view": "^1.42.6",
-    "slate": "0.146.0",
-    "lexical": "0.52.0",
-    "@lexical/rich-text": "0.52.0",
-    "@lexical/table": "0.52.0"
+    "slate": "0.146.0"
   },
   "files": [
     "src"

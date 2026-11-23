@@ -69,14 +69,18 @@ function nativePoint(node: ElementNode, offset: number): NativePoint | null {
     }
     return null;
 }
+function pointIn(all: Block[], path: number[]): NativePoint | null {
+    const block = all.find(item => JSON.stringify(item.path) === JSON.stringify(path.slice(0, -1)));
+    return block ? nativePoint(block.node, path.at(-1)!) : null;
+}
+/** Resolve a model text position without changing the local selection. */
+export function $lexicalPoint(info: LexicalSchemaInfo, path: number[]): NativePoint | null {
+    return pointIn(blocks(info), path);
+}
 export function $setLexicalSelection(info: LexicalSchemaInfo, range: ModelRange | null): boolean {
     if (!range) return false;
     const all = blocks(info);
-    const resolve = (path: number[]) => {
-        const block = all.find(item => JSON.stringify(item.path) === JSON.stringify(path.slice(0, -1)));
-        return block ? nativePoint(block.node, path.at(-1)!) : null;
-    };
-    const anchor = resolve(range.anchor), focus = resolve(range.focus);
+    const anchor = pointIn(all, range.anchor), focus = pointIn(all, range.focus);
     if (!anchor || !focus) return false;
     const selection = $createRangeSelection();
     selection.anchor.set(anchor.key, anchor.offset, anchor.type);

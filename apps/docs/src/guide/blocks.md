@@ -463,3 +463,22 @@ This checks operation exchange in memory. It does not test network delivery, rec
 Use `move` for identity-preserving block placement; see [model operations](./editing#move-an-existing-block). A text `split` divides a text block. It does not split an arbitrary subtree. Cell merging retains hidden text. Flow `childRules` provide required-child and maximum-count projection. Attribute `min` and `max` remain numeric value bounds. See [document rules and annotations](./document-rules).
 
 The optional [`commands` helpers](https://github.com/barocss/doc-sync/blob/main/packages/doc-sync/src/crdt/commands.ts) wrap these same edit operations for keyboard actions and add checks such as permitted types and numeric clamping. They are not required to position or edit blocks. These examples do not establish actual OS IME support, product performance targets, or release readiness.
+
+## Rust experiment
+
+The native v6 fixture maps stored blocks to `paragraph`, `heading`, `divider`, `image`, `callout`, `table` and `list-item`. It projects `list` groups, inline images and string-valued link spans. It retains full table cells when a span hides them. These are the pinned rules in `experiments/rust-shadow/schema-move.json`, not the example schema above: heading levels are 1–6, and cell bodies can contain the fixture's recursive block types.
+
+This wire example moves the original paragraph and its `Hi` text into a callout. It changes placement without copying the text tokens.
+
+Build the private executable with the commands in [the Rust guide](./rust#run-the-private-experiment). Run the following command from the repository root. Each input line produces one JSON response.
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"A","actor":"A","schema":"movement-logical-storage:json-attrs:value-marks:v1","capabilities":["movement-logical-storage-v1"]}
+{"cmd":"apply","replica":"A","schema":"movement-logical-storage:json-attrs:value-marks:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"A"},"origin":{"lamport":0,"actor":"~root"},"units":[72,105]},{"t":"node","id":{"lamport":3,"actor":"A"},"origin":{"lamport":2,"actor":"A"},"type":"callout"}]}
+{"cmd":"apply","replica":"A","schema":"movement-logical-storage:json-attrs:value-marks:v1","ops":[{"t":"move","at":{"lamport":4,"actor":"A"},"target":{"lamport":0,"actor":"~root"},"parent":{"lamport":0,"actor":"3@A/body"},"after":null}]}
+{"cmd":"state","replica":"A"}
+JSONL
+```
+
+The final model contains a callout with `Hi` in its body. The text keeps IDs `1@A` and `2@A`; state retains one move record. This checks native placement in the fixed fixture. TypeScript still compiles the public editing commands. Required-child rules, field-level attributes, arbitrary schemas and live transitions remain outside native support. See [current native coverage](./rust#current-coverage).

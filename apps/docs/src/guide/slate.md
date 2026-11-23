@@ -136,3 +136,22 @@ Remote changes currently rebuild the native tree. That has a cost for large docu
 The headless tests use real Slate editing operations and cover conversion, UTF-16 selections, remote edits without echo, concurrent Enter, undo/redo, composition, reset, reconnect, and disposal. Browser/CDP input checks and actual OS IME acceptance are separate evidence. These tests do not approve product performance targets or production readiness.
 
 See [editor integration](./editors), [the editing API](./editing), and [binding source](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/slate).
+
+## Rust experiment
+
+The production Slate binding still converts Slate leaf paths and offsets through TypeScript. Test the core side separately with an emoji. Its two UTF-16 units occupy offsets 0 through 2 in paragraph 0.
+
+Build the driver with [Run the private experiment](./rust#run-the-private-experiment), then run this from the repository root:
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"editor","actor":"editor","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"editor","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"human"},"origin":{"lamport":0,"actor":"~root"},"units":[55357,56832]}]}
+{"cmd":"selection_capture","replica":"editor","range":{"anchor":[0,2],"focus":[0,0]}}
+{"cmd":"selection_resolve","replica":"editor","range":{"anchor":"2@human","focus":"0@~root"}}
+JSONL
+```
+
+The reversed range resolves from `[0, 2]` to `[0, 0]`. This checks UTF-16 direction and token anchors, not Slate leaf mapping, composition, or DOM selection. Inline nodes count once; link spans add no model-path level. Hidden table-cell contents stay in the core; the TypeScript binding maps visible paths and retains the reference contents.
+
+This uses the fixed base text schema. Rust has no production editor, bot, or MCP adapter. See the [Rust engine guide](./rust) for the separate v1 through v6 capabilities and limits.

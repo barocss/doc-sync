@@ -45,6 +45,10 @@ export type Presence = {
     anchor: string | null;
     /** 선택 영역의 다른 끝 */
     focus: string | null;
+    /** Optional bot identity and current reported work state. */
+    character?: import("./character.ts").BotCharacter;
+    expression?: import("./character.ts").BotExpression;
+    activity?: import("./character.ts").BotActivity;
 };
 
 export type ServerEvent =

@@ -50,3 +50,16 @@ The macOS MCP app and single-process demo server provide a bounded recovery path
 After a compatible server schema transition, use [the open-editor transition procedure](./schema-transition) to rebuild a mounted editor without discarding its client or pending work.
 
 [Read the state and reconnect contract →](../reference/spec)
+
+## Rust experiment
+
+The native executable keeps named replicas in memory. Its `Server` is a JSONL experiment driver, not an HTTP synchronization server. The pending-replay harness provides a useful engine recovery check:
+
+```sh
+mkdir -p output/rust-sync-example
+RUST_MOVE_RECEIPT=output/rust-sync-example/receipt.json RUST_MOVE_TRACE=output/rust-sync-example/trace.json.gz RUST_MOVE_SUMMARY=output/rust-sync-example/summary.txt node experiments/rust-move-harness/harness.ts
+```
+
+Build the executable first with [the private experiment commands](./rust#run-the-private-experiment). Use new output paths on each run to retain earlier evidence. Check `status: "PASS"`, `restarts: 5` and the five `recoveryCases`: move, split, join, undo and redo. Each case saves an actual TypeScript `SyncClient.pending` batch and matching native checkpoint, starts a fresh native process, receives a foreign edit, applies the saved batch twice through `apply`, then checks four more History actions.
+
+This compares native state, foreign writers, History and duplicate replay with the TypeScript reference. It does not prove durable server recovery, receipt acknowledgment, recovery reservations, protected GC, HTTP/SSE transport or a production Rust server. No public native server or full WASM CRDT client exists. See [restart and pending replay](./rust#restart-and-pending-replay).

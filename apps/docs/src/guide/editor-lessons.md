@@ -134,3 +134,20 @@ Keep three checks separate: native state, the client document and the server doc
 The recorded integration includes 567 library tests, 31 compatibility unit tests and 340 Chrome checks. These are finite cases at their recorded source. Thirty browser operation traces within that count record operations and convergence; they are not OS IME acceptance. Simulated composition does not prove a real Korean keyboard session. Codec coverage also does not provide every keyboard gesture, native table command or custom plugin combination.
 
 The [merged-grid report](https://github.com/barocss/doc-sync/tree/main/docs/reports/merged-grid-2026-10-24), [collaboration rules](../reference/collaboration-intent) and [status page](../status) describe the current proof boundaries. Use the framework guides for API setup and this guide when designing the binding's failure and regression cases.
+
+## Rust experiment
+
+Position units must stay consistent across an engine adapter. The native fixture below stores `A😀B` as four UTF-16 units and resolves a backward range. An emoji occupies two units.
+
+Build the private executable with the commands in [the Rust guide](./rust#run-the-private-experiment). Run the following command from the repository root. Each input line produces one JSON response.
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"A","actor":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"A"},"origin":{"lamport":0,"actor":"~root"},"units":[65,55357,56832,66]}]}
+{"cmd":"selection_capture","replica":"A","range":{"anchor":[0,3],"focus":[0,1]}}
+{"cmd":"selection_resolve","replica":"A","range":{"anchor":"3@A","focus":"1@A"}}
+JSONL
+```
+
+Capture returns `anchor: "3@A"` and `focus: "1@A"`. Resolve returns `{anchor: [0,3], focus: [0,1]}`. The direction and UTF-16 offsets remain intact. This checks the private engine contract, not DOM ranges, native editor keys, composition or focus. The production bindings remain TypeScript; see [cursor limits](./rust#cursors-and-selections).

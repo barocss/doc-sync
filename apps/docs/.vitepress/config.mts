@@ -42,6 +42,8 @@ export default defineConfig({
                 {text: "Document rules and annotations", link: "/guide/document-rules"},
                 {text: "Synchronization", link: "/guide/sync"},
                 {text: "AI and headless clients", link: "/guide/ai"},
+                {text: "Run a document bot", link: "/guide/bots"},
+                {text: "Bot identity and activity", link: "/guide/bot-design"},
                 {text: "Codex collaboration walkthrough", link: "/guide/ai-walkthrough"},
                 {text: "Cursors and selections", link: "/guide/presence"},
                 {text: "ProseMirror", link: "/guide/prosemirror"},
@@ -55,6 +57,7 @@ export default defineConfig({
                 {text: "Collaboration intent", link: "/reference/collaboration-intent"},
             ]},
             {text: "Engineering", items: [
+                {text: "Rust engine", link: "/guide/rust"},
                 {text: "Roadmap", link: "/roadmap"},
                 {text: "Status and limits", link: "/status"},
                 {text: "Troubleshooting", link: "/guide/troubleshooting"},

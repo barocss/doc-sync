@@ -52,3 +52,22 @@ Build a new ProseMirror schema, view state and application plugins after the ser
 Automated Chrome tests include remote edits during simulated composition and cursor mapping. They are not a substitute for real OS keyboard and IME acceptance tests. The basic `/pm` demo and the Slate/Lexical compatibility demo have separate input implementations.
 
 See [status and limits](../status) before using the binding in a production editor.
+
+## Rust experiment
+
+The production `PmBinding` still maps ProseMirror positions to TypeScript model paths. This native check starts at the model-path boundary. `Hi` occupies two UTF-16 units in paragraph 0.
+
+Build the driver with [Run the private experiment](./rust#run-the-private-experiment), then run this from the repository root:
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"editor","actor":"editor","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"editor","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"human"},"origin":{"lamport":0,"actor":"~root"},"units":[72,105]}]}
+{"cmd":"selection_capture","replica":"editor","range":{"anchor":[0,1],"focus":[0,2]}}
+{"cmd":"selection_resolve","replica":"editor","range":{"anchor":"1@human","focus":"2@human"}}
+JSONL
+```
+
+The resolved range is `[0, 1]` to `[0, 2]`. ProseMirror position conversion and DOM selection need binding tests. Inline nodes consume one model offset; link spans add no path level. Covered table cells retain core content but cannot produce a visible selection. The TypeScript binding supplies those mappings and the full reference model; this flat Rust example does not test them.
+
+This uses the fixed base text schema. Rust has no production editor, bot, or MCP adapter. See the [Rust engine guide](./rust) for the separate v1 through v6 capabilities and limits.

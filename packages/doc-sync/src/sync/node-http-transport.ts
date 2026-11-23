@@ -126,7 +126,7 @@ export class NodeHttpTransport implements Transport {
 
     /** Inspect the server's current schema independently of the SSE subscription. */
     async getSchema(): Promise<{schemaVersion: string | null; schema: Schema | null}> {
-        const response = await fetch(`${this.base}/schema`);
+        const response = await fetch(`${this.base}/schema`, {signal: AbortSignal.timeout(10_000)});
         if (!response.ok) throw new Error(`Could not read server schema: HTTP ${response.status}`);
         const value = await response.json() as {schemaVersion?: unknown; schema?: unknown};
         if (value.schemaVersion === null && value.schema === null) return {schemaVersion: null, schema: null};

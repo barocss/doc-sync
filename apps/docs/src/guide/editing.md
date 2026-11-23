@@ -154,3 +154,22 @@ Storage positions and `Pos.o` use UTF-16 token units. Model conversion uses code
 Concurrent Enter operations created from the same observed boundary produce one visible split. An Enter created after observing the earlier split has a different boundary and creates another block. This rule is preserved when document caches are rebuilt.
 
 [Read the exact collaboration rules →](../reference/collaboration-intent)
+
+## Rust experiment
+
+Rust currently applies wire operations. It does not compile `doc.edit()` commands. This small native History example records one local insertion, undoes it, and redoes it.
+
+Build the private executable with the commands in [the Rust guide](./rust#run-the-private-experiment). Run the following command from the repository root. Each input line produces one JSON response.
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"A","actor":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"history_record","replica":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"A"},"origin":{"lamport":0,"actor":"~root"},"units":[72,105]}],"now":1000,"options":{"caretBefore":"start","caretAfter":"end"}}
+{"cmd":"history_undo","replica":"A"}
+{"cmd":"history_redo","replica":"A"}
+JSONL
+```
+
+The record response contains `Hi`, undo contains no visible text, and redo contains `Hi` again. Native History generates the deletion and cancellation operations. Plain `apply` does not create a local History entry. Use it for duplicate remote delivery or saved pending batches; `history_record` is not retry-safe.
+
+This uses the base paragraph fixture. The separate pinned v6 fixture supports block movement and logical split/join; see [the native block example](./blocks#rust-experiment). Neither fixture supplies a Rust authoring compiler, production transport, arbitrary runtime schema or live schema transition. See [operation application](./rust#operation-application).

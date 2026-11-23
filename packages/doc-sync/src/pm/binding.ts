@@ -3,6 +3,7 @@ import {EditorState, Plugin, TextSelection} from "prosemirror-state";
 import {AddMarkStep, RemoveMarkStep, ReplaceStep} from "prosemirror-transform";
 import {Decoration, DecorationSet} from "prosemirror-view";
 import * as cmd from "../crdt/commands.ts";
+import {botFace, createBotAvatar} from "../sync/character.ts";
 import {anchorAt, pathAt, posOfPath} from "../crdt/edit.ts";
 import {canonical, diffModels} from "../crdt/model.ts";
 import {fromPmJSON, pathToPmPos, pmPosToPath, toPmJSON} from "./convert.ts";
@@ -34,7 +35,7 @@ import type {PmSchemaInfo} from "./schema.ts";
  */
 
 /** 남의 변경을 ProseMirror 에 넣는 transaction 표시 — 이 transaction 은 다시 CRDT 로 보내지 않는다 */
-const REMOTE_META = "doc-sync";
+export const REMOTE_META = "doc-sync";
 
 export type BindingStats = {steps: Record<string, number>; reconciled: number; pushedBack: number; remote: number; wholeReplace: number};
 
@@ -51,12 +52,29 @@ export class PmBinding {
     /** Binding-only snapshots. Conversion and position helpers read these values without mutating them. */
     private cached: {doc: Doc; version: number; model: NodeJSON; pm: PmNode | null} | null = null;
 
-    constructor(client: SyncClient, info: PmSchemaInfo, plugins: Plugin[] = []) {
+    constructor(client: SyncClient, info: PmSchemaInfo, plugins: Plugin[] = [], external?: {state: EditorState; dispatch: (tr: Transaction) => void}) {
         this.client = client;
         this.info = info;
-        this.state = EditorState.create({doc: this.crdtDoc(), plugins: [...plugins, this.cursorPlugin()]});
+        this.state = external?.state ?? EditorState.create({doc: this.crdtDoc(), plugins: [...plugins, this.cursorPlugin()]});
+        this.externalDispatch = external?.dispatch ?? null;
         // 남의 변경·되돌리기·스냅숏 → ProseMirror 로
-        client.onModelEvents = () => this.pull();
+        if (!external) client.onModelEvents = () => this.pull();
+    }
+
+    private externalDispatch: ((tr: Transaction) => void) | null;
+
+    /** Translate transactions already accepted by an owner such as Tiptap. */
+    accept(transactions: readonly Transaction[], state: EditorState): void {
+        const caretBefore = this.anchorOfPm(this.state.doc, this.state.selection.head);
+        const ops: Op[] = [];
+        for (const tr of transactions) {
+            if (tr.getMeta(REMOTE_META) === "remote") continue;
+            tr.steps.forEach((step, i) => ops.push(...this.translate(step, tr.docs[i], tr.docs[i + 1] ?? tr.doc)));
+        }
+        this.state = state;
+        ops.push(...this.reconcile());
+        if (ops.length) this.client.commit(ops, {caretBefore: caretBefore ?? "", caretAfter: this.anchorOfPm(state.doc, state.selection.head) ?? "", typing: transactions.length === 1 && transactions[0].steps.length === 1 && transactions[0].steps[0] instanceof ReplaceStep && (transactions[0].steps[0] as ReplaceStep).slice.size === 1});
+        this.afterChange();
     }
 
     private get schema() {
@@ -313,7 +331,8 @@ export class PmBinding {
 
         tr.setMeta(REMOTE_META, "remote");
         tr.setMeta("addToHistory", false);
-        this.state = this.state.apply(tr);
+        if (this.externalDispatch) this.externalDispatch(tr);
+        else this.state = this.state.apply(tr);
         this.stats.remote += 1;
         this.afterChange();
     }
@@ -383,7 +402,9 @@ export class PmBinding {
         const pos = pathToPmPos(this.schema, this.state.doc, path, this.model());
 
         try {
-            this.state = this.state.apply(this.state.tr.setSelection(TextSelection.create(this.state.doc, pos)));
+            const tr = this.state.tr.setSelection(TextSelection.create(this.state.doc, pos));
+            if (this.externalDispatch) this.externalDispatch(tr);
+            else this.state = this.state.apply(tr);
         } catch {
             // 글 자리가 아니면 두지 않는다
         }
@@ -414,7 +435,7 @@ export class PmBinding {
     }
 
     /** 남의 선택 — anchor 는 활성 끝, focus 는 반대 끝이다. 매번 토큰을 현재 문서 위치로 푼다. */
-    private cursorPlugin(): Plugin {
+    cursorPlugin(): Plugin {
         return new Plugin({
             props: {
                 decorations: state => {
@@ -454,6 +475,7 @@ export class PmBinding {
                                 style: `--who:${p.color};background-color:color-mix(in srgb, var(--who) 20%, transparent)`,
                                 "data-actor": p.actor,
                                 "data-name": p.name,
+                                "data-activity": p.activity ?? "",
                             }, {actor: p.actor, kind: "selection"}));
                         }
 
@@ -464,10 +486,16 @@ export class PmBinding {
                             dom.style.setProperty("--who", p.color);
                             dom.dataset.actor = p.actor;
                             dom.dataset.name = p.name;
-                            dom.title = `${p.name} · ${focus !== null && focus !== pos ? "선택 중" : "커서"}`;
+                            dom.dataset.activity = p.activity ?? "";
+                            const face = botFace(p.character, p.expression);
+                            if (face) {
+                                dom.dataset.face = face; dom.dataset.character = p.character!; dom.dataset.expression = p.expression!;
+                                dom.append(createBotAvatar(p.character!, p.expression!));
+                            }
+                            dom.title = `${p.name} · ${focus !== null && focus !== pos ? "selection" : "caret"}`;
 
                             return dom;
-                        }, {key: `${p.actor}:${p.name}:${p.color}:${focus !== null && focus !== pos}`, side: 1, actor: p.actor, kind: "caret"}));
+                        }, {key: `${p.actor}:${p.name}:${p.color}:${p.character ?? ""}:${p.expression ?? ""}:${p.activity ?? ""}:${focus !== null && focus !== pos}`, side: 1, actor: p.actor, kind: "caret"}));
                     }
 
                     return DecorationSet.create(state.doc, decorations);

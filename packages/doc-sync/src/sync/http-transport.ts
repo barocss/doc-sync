@@ -1,5 +1,6 @@
 import {PROTOCOL_VERSION} from "./protocol.ts";
-import type {Outbound, Presence, ServerEvent, Transport} from "./protocol.ts";
+import {NodeHttpTransport} from "./node-http-transport.ts";
+import type {Change, Outbound, Presence, ServerEvent, Transport} from "./protocol.ts";
 
 /**
  * 브라우저용 전송. 서버 → 나 는 EventSource(SSE), 나 → 서버 는 fetch POST.
@@ -11,11 +12,31 @@ export class HttpTransport implements Transport {
     private epoch: string | undefined;
     private schemaVersion: string | undefined;
     private subscription = 0;
+    private readonly recovery: NodeHttpTransport;
 
     constructor(doc: string, actor: string, origin = "") {
         this.base = `${origin}/api/docs/${encodeURIComponent(doc)}`;
         this.actor = actor;
+        this.recovery = new NodeHttpTransport(doc, actor, origin);
     }
+
+    /** Read durable server-generation metadata. This does not enable automatic recovery. */
+    getRecoveryState() { return this.recovery.getRecoveryState(); }
+
+    /** Reserve a GC-safe recovery floor for this actor. */
+    reserveRecovery(generation: string, reservationId: string, pin: number | null, requireExisting = false) {
+        return this.recovery.reserveRecovery(generation, reservationId, pin, requireExisting);
+    }
+
+    /** Check an exact accepted change; an unknown receipt does not imply rejection. */
+    getChangeReceipt(generation: string, change: Change) { return this.recovery.getChangeReceipt(generation, change); }
+
+    /** Recover an exact pending change only under an existing protected reservation. */
+    recoverChange(generation: string, reservationId: string, version: string, change: Change) {
+        return this.recovery.recoverChange(generation, reservationId, version, change);
+    }
+
+    releaseRecovery(generation: string, reservationId: string) { return this.recovery.releaseRecovery(generation, reservationId); }
 
     subscribe(since: number, onEvent: (event: ServerEvent) => void, epoch?: string, schemaVersion?: string): () => void {
         const subscription = ++this.subscription;

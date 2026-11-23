@@ -8,19 +8,23 @@ The local working tree contains a schema-defined document CRDT, identity-preserv
 
 The local working tree also contains a Node transport and an MCP server. Protocol 3 checks a schema fingerprint. Compatible schema additions can transition without resetting the document. MCP edits check the document epoch, sequence, and schema version atomically on the demo server. Existing changes and undo history are retained under the documented rules. See [AI and headless clients](./guide/ai) and [changing a schema](./guide/schema#changing-a-schema) for the scope and limits.
 
-The latest local validation passed 688 library, 57 demo, 28 documentation, and 59 MCP tests, with one platform-specific MCP test skipped, plus 32 comparison-editor tests. Recovery tests cover process termination, restarted MCP and demo server processes, pending undo and redo, history discard, reservation compaction, GC, and another participant's edits. Cold-log tests cover concurrent access, durable-write ordering, source changes, and process termination after file sync. A real two-agent MCP test checks stale revisions and separate undo histories. The lease-expiry test uses a controlled clock. Chrome passed 90 native editing checks and 28 open-editor schema transition checks. A bounded real Codex collaboration and reconnect scenario was tested before the open-editor schema changes and was not rerun afterwards. The earlier 39 structure checks were not repeated. These results do not establish actual OS IME or release acceptance. Earlier performance results remain tied to their measured sources and conditions in [status and limits](./status).
+The durable browser recovery checkpoint in HANDOFF section 5.75 passed 719 library and 64 demo tests before its final actor-lock change. After that change, 28 focused recovery tests passed. Chrome checked pending-edit reload, server restart, undo and redo, a lost retirement response, and rejection of a duplicate recovery tab. Those are source-bound checkpoint results, not final validation of the current working tree. Earlier browser and performance results retain their original scope in [status and limits](./status).
+
+The opt-in product recovery mode saves origin-local checkpoints and exact recovery evidence, restores the same actor after reload, and supports explicit retirement. It requires the same document identity and saved browser storage. It does not recover legacy unprotected sessions. Schema upgrades remain disabled in this mode. See [AI and headless clients](./guide/ai) for recovery limits.
+
+The local document bot has a separate ordered [bot roadmap](https://github.com/barocss/doc-sync/blob/main/docs/bot-roadmap.md). Its next step is a structured brief with deterministic completion checks. The Rust storage experiment is a separate investigation, described below.
 
 ## Ordered work
 
 ### 1. Validate the current integration
 
-**Status: bounded checks passed.** Current Chrome checks cover browser editing and synchronization with all three editor bindings, including input, selection, undo, redo, and representative concurrent edits. Before the open-editor schema changes, an actual Codex MCP participant edited the same Word-style document as all three editors, and a simulated network interruption tested an offline Slate edit alongside a Codex edit. That Codex scenario was not repeated after the latest changes. Open-editor schema checks are recorded in item 4. These checks do not establish real OS IME, production operation, or performance acceptance.
+**Status: bounded checkpoint checks passed; current integration needs a final receipt.** The recovery checkpoint above adds Chrome proof for all three editor models with pending local input and a separate remote edit. Existing editing and compatible schema-transition checks remain source-bound evidence. Run checks for the final integrated source and record which earlier scenarios were reused. Actual OS IME, production operation, and performance acceptance remain separate work.
 
 **Done when:** the final source, test results, and browser evidence are recorded together; regressions are fixed; and the limits of the browser checks are stated. Real OS IME and performance measurements are separate work.
 
 ### 2. Recover pending changes and history
 
-**Status: in progress.** On macOS, the MCP app stores conditional intents and protected checkpoints with undo and redo history. The single-process demo persists a recovery reservation across server restart and ordinary peer lease expiry. It can atomically recover an exact pending ordinary change and restore an accepted conditional edit when the required generation, schema and GC protection are proven. Unknown conditional outcomes and unsafe or incompatible recovery remain blocked for inspection. `discard_history` permanently clears the calling participant's undo and redo history and releases its old reservation after checking pending work. An interrupted release resumes on startup. Other reservations or ordinary peer leases can still hold back garbage collection. The demo compacts released-reservation metadata by sealing reservation eras and retaining active pins. The document log and active reservations are not bounded by that compaction.
+**Status: MCP and opt-in browser recovery implemented within a bounded demo scope.** On macOS, the MCP app stores conditional intents and protected checkpoints with undo and redo history. The single-process demo persists a recovery reservation across server restart and ordinary peer lease expiry. It can atomically recover an exact pending ordinary change and restore an accepted conditional edit when the required generation, schema and GC protection are proven. Unknown conditional outcomes and unsafe or incompatible recovery remain blocked for inspection. `discard_history` permanently clears the calling participant's undo and redo history and releases its old reservation after checking pending work. An interrupted release resumes on startup. Other reservations or ordinary peer leases can still hold back garbage collection. The demo compacts released-reservation metadata by sealing reservation eras and retaining active pins. The document log and active reservations are not bounded by that compaction. The product demo also stores browser checkpoints before submission, uses Web Locks to protect each recovery actor, and restores pending edits and history after reload when server proof is valid. A failed storage write stops the session. Explicit retirement clears that actor's history and releases its reservation; an interrupted retirement retries the same release. Saved origin-local storage and the same document identity are required. Legacy unprotected sessions remain blocked. Schema upgrades are disabled in recovery mode.
 
 **Done when:** process and network failure tests cover accepted and unaccepted writes, repeated recovery, concurrent remote edits, schema changes, undo/redo, and GC without duplicate or lost edits. Record any outcome that still requires manual reconciliation.
 
@@ -67,6 +71,44 @@ The [recovery plan](./reference/recovery-plan) describes the implemented recover
 **Status: not released.** Keep one public library package and private apps and benchmarks. Produce runnable JavaScript and type declarations, verify consumer installation and subpath imports, and define API, protocol, version, migration, security, and release policies. Plan the Protocol 2 to 3 upgrade for existing deployments.
 
 **Done when:** a clean consumer can install and use the package, the selected release checks pass, compatibility and migration instructions are available, and the release gates are approved. The current package remains private and exports TypeScript source.
+
+## Bot delivery sequence
+
+Bot work has its own acceptance gates and does not renumber engine items 1–9. See the [bot roadmap](https://github.com/barocss/doc-sync/blob/main/docs/bot-roadmap.md) for the detailed scope.
+
+1. **B1: Recovery foundation — delivered within the opt-in demo scope.** Preserve receipt, generation, schema, and GC safeguards. Keep unsupported sessions blocked.
+2. **B2: Structured brief and completion checks — initial CLI checks implemented; stage in progress.** Preserve the original request and check explicit requirements against a fresh document read and authoritative revision. Record passed, failed, and unchecked results at the checked revision.
+3. **B3: Plan, proposal, and server authorization — planned.** Enforce role and scope on the server. Store proposals and revalidate them at acceptance.
+4. **B4: Templates and schema-specific authoring — planned.** Verify structure, placement, missing inputs, and preservation for each supported document schema.
+5. **B5: Coordination and persistent watcher — planned.** Add explicit assignments, restart-safe triggers, cancellation, deduplication, and separate actor history.
+6. **B6: Operations, sources, and memory — planned.** Define access, retention, deletion, budgets, and recovery before adding hosted operation or external retrieval.
+
+## Separate Rust experiment
+
+See the [Rust engine overview](./guide/rust) for the current contract, evidence, and remaining gates.
+
+The [Rust engine roadmap](https://github.com/barocss/doc-sync/blob/main/docs/rust-roadmap.md) defines a separate R1–R6 sequence. R1 has bounded UTF-16 contract and baseline evidence. R2 passed its declared [storage comparison gate](https://github.com/barocss/doc-sync/blob/main/experiments/rust-core/STORAGE-RESULTS.md) with independent JavaScript, native Rust, and WASM checks; the alternating-end regression remains recorded. R3 passed its declared boundary and lifetime gate in Node 24 and Chrome. These results do not approve a production migration.
+
+R4 is in progress. The private native interpreter now compares text, History,
+selection, recursive blocks and tables, groups, inline nodes, spans, and block
+movement with logical split/join against TypeScript. The cursor correction
+passes 75 native tests and 726 library tests. The movement receipt compares all
+5,666 raw endpoints, including four formerly omitted hidden-root-gap cases.
+Strict hidden editor ranges remain null. These remain bounded semantic checks,
+not production Rust integration evidence.
+
+Runtime schema loading and live schema replacement are separate next steps.
+Rust can support them, but its current experimental schemas are compiled in.
+The planned per-document compiled schema must replace fixed type rules before
+arbitrary schemas are supported. Compatible live transitions must then retain
+pending operations, History, selection anchors, and recovery protection.
+
+R5 covers native server and WASM client shadow adapters. R6 requires end-to-end
+gates and an explicit go/no-go decision. Production server and client code
+remain TypeScript. Current native semantic results establish no new Chrome or
+performance result.
+
+The isolated [experiment](https://github.com/barocss/doc-sync/tree/main/experiments/rust-core) passed 265 Node 24 differential cases and a Chrome 156 batch check with checksum `719347296`. JavaScript/WASM medians were 1.759/8.050 ms in Node 24 and 1.700/7.300 ms in Chrome. WASM was slower in both measured batches. These timings include allocation, initialization, edits, and hashing. They exclude per-edit boundary calls and text transfer. See the [results](https://github.com/barocss/doc-sync/blob/main/experiments/rust-core/RESULTS.md) for raw samples and conditions. Full CRDT equivalence, production Rust integration, and editor performance acceptance remain **NOT_RUN**.
 
 ## Decisions kept separate
 

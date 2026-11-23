@@ -63,11 +63,12 @@ The host can pass these environment variables:
 | `DOC_SYNC_URL` | HTTP server origin. Default: `http://127.0.0.1:5410`. |
 | `DOC_SYNC_DOCUMENT` | Document ID. Default: `default`. |
 | `DOC_SYNC_ACTOR` | Unique actor ID. If omitted, the app generates one, or restores the actor from its saved journal or checkpoint. |
-| `DOC_SYNC_SCHEMA` | Path to a module that exports `schema` or a default schema. If omitted, the app uses the demo schema. |
+| `DOC_SYNC_SCHEMA` | Path to a module that exports `schema` or a default schema. If omitted, the app uses the demo schema unless discovery is enabled. |
+| `DOC_SYNC_DISCOVER_SCHEMA` | Set to `on` to fetch and validate the server schema as data when no schema module is supplied. A schema-free server cannot be discovered. |
 | `DOC_SYNC_JOURNAL_DIR` | Stable directory for conditional-edit journals and history checkpoints. Default: `~/.local/state/doc-sync/recovery`. Use the same directory and document ID when restarting the process. |
 | `DOC_SYNC_JOURNAL` | Set to `off` only to disable the journal and use an ephemeral session. |
 
-The server exposes `get_schema`, `get_server_schema`, `read_document`, `edit_document`, `retry_edit`, `recovery_status`, `undo`, `redo`, `discard_history`, `upgrade_schema`, and `transition_schema`. `read_document` returns the full local model, its revision, the pending count, and session status. It does not support reading only part of a document. Read the document before editing and pass its returned `revision` as the edit base. For example, an MCP host can call `edit_document` with the following arguments after a read:
+The server exposes `get_schema`, `get_server_schema`, `read_document`, `set_presence`, `edit_document`, `retry_edit`, `recovery_status`, `undo`, `redo`, `discard_history`, `upgrade_schema`, and `transition_schema`. `read_document` returns the full local model, its revision, the pending count, and session status. It does not support reading only part of a document. Read the document before editing and pass its returned `revision` as the edit base. For example, an MCP host can call `edit_document` with the following arguments after a read:
 
 ```json
 {
@@ -79,6 +80,26 @@ The server exposes `get_schema`, `get_server_schema`, `read_document`, `edit_doc
 Replace the entire `base` with the revision returned by `read_document`, and choose a path valid in that model. The revision includes the schema version as well as the epoch and sequence. A changed local view causes a stale-base error. The server also checks all three values atomically before accepting the edit. A schema-free server returns `null` for the schema version and cannot verify it. If a remote change reaches the server first, the server rejects the stale edit. Read the document again and decide on a new edit. The check protects the edit's base; it does not decide whether the AI selected the intended content.
 
 A confirmed edit has received its own server echo and left the pending queue. A timeout is **unconfirmed**, not proof of failure. Call `read_document` to inspect the session. If `conditionalPending` is true, call `retry_edit` while the session remains alive. It retries the identical request; it does not create a replacement edit. The server can recognize the same request within the same document epoch, even if the document or schema changed after acceptance. Do not issue a new edit, undo, redo, or schema upgrade while the conditional request is unresolved. If `pending` is nonzero, wait for synchronization and reconcile the result before issuing another edit. The pending count alone does not prove server acceptance; `retry_edit` is not available for an ordinary undo or redo.
+
+### Show an agent's position
+
+Call `read_document` and use its revision with `set_presence` to publish the position the agent is actually working on:
+
+```json
+{
+  "base": {"epoch": "copy-from-read", "serverSeq": 12, "schemaVersion": "copy-from-read"},
+  "name": "Research agent",
+  "color": "#7c3aed",
+  "anchor": [0, 5],
+  "focus": [0, 2]
+}
+```
+
+Use paths valid in the returned document. `anchor` is the active end; `focus` is the other end. Use `focus: null` for a caret, or set both endpoints to `null` to hide it. Colors must be six-digit hex values. The tool validates the session's local revision and visible text positions, then publishes token-based transient presence. Selection endpoints must be in the same visible document line or slot. Another edit can move those tokens without changing their identity. Presence does not edit the document or enter undo history.
+
+A `sent` result is not a server delivery receipt. Presence is best effort, is not journaled, and is removed on leave. The tool does not infer the agent's intent or move its cursor automatically. After an edit, read the current document and publish the position the agent actually intends to show. A client can reconnect or the document can change while presence is in transit; applications must handle unavailable or unresolved positions without inventing one.
+
+The product demo shows the presence in its three editor panels. Its Slate and Lexical overlays cover resolvable native text positions; unsupported positions are hidden. See [cursors and selections](./presence).
 
 ### Recover a session after restart
 
@@ -125,3 +146,22 @@ This transition updates the headless client. An open editor also needs a new nat
 Treat the AI as a separate participant. It uses the same wire operations and per-participant history as a human editor. For example, the AI can format text while a human deletes it; the existing collaboration rules determine the result and undo behavior. They do not guarantee that an AI chose the intended text.
 
 Document paths can change after a read. The atomic server check rejects an edit if another accepted change has advanced the base. Read the document again and make a new decision. See [collaboration intent](../reference/collaboration-intent) for the edit and undo rules, and [synchronization](./sync) for reconnect limits.
+
+## Rust experiment
+
+The MCP client still uses TypeScript. To inspect the engine layer, give the native replica a bot actor and deliver a human operation through plain `apply`. Record only the bot formatting change in its local History.
+
+Build the driver with [Run the private experiment](./rust#run-the-private-experiment), then run this from the repository root:
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"bot","actor":"bot","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"bot","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"human"},"origin":{"lamport":0,"actor":"~root"},"units":[72,105]}]}
+{"cmd":"history_record","replica":"bot","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"set","at":{"lamport":3,"actor":"bot"},"ids":[{"lamport":1,"actor":"human"}],"key":"bold","value":true}],"options":{"caretBefore":"0@~root","caretAfter":"1@human"},"now":10}
+{"cmd":"history_undo","replica":"bot"}
+JSONL
+```
+
+Undo removes the bot formatting and retains the human text `Hi`. This tests local ownership of an inverse. It does not run MCP, a model, revision checks, or server recovery.
+
+This uses the fixed base text schema. Rust has no production editor, bot, or MCP adapter. See the [Rust engine guide](./rust) for the separate v1 through v6 capabilities and limits.

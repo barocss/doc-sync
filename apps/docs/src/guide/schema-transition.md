@@ -4,6 +4,11 @@ When the server accepts a compatible schema, a client with the old schema stops 
 
 This guide describes the host contract used by the product demo for **ProseMirror, Slate and Lexical**. The library coordinates the transition; your application owns the editor, plugins and rendering.
 
+The APIs below use the production TypeScript engine. The private Rust engine
+does not yet load arbitrary runtime schemas or transition an open document.
+Its planned schema compiler and compatible transition have separate gates;
+see [Rust schema delivery](./rust#can-a-document-use-a-dynamic-schema).
+
 ## What changes
 
 <div class="operation-figure" tabindex="0" role="region" aria-label="Open editor schema transition diagram">

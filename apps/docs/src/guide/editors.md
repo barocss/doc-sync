@@ -50,3 +50,19 @@ The comparison app's browser scripts check native/client/server equality and inp
 CDP composition is simulated browser input. Actual OS IME acceptance, product performance targets, production authorization, and separate document capability work require their own evidence. See [status and limits](../status).
 
 [Start with one editing API →](./editing)
+
+## Rust experiment
+
+The three editor bindings above still use TypeScript. To inspect the engine boundary before adding an adapter, send a text operation directly to the native process. This example uses its base paragraph fixture; it does not start an editor.
+
+Build the private executable with the commands in [the Rust guide](./rust#run-the-private-experiment). Run the following command from the repository root. Each input line produces one JSON response.
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"A","actor":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"A","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"A"},"origin":{"lamport":0,"actor":"~root"},"units":[72,105]}]}
+{"cmd":"state","replica":"A"}
+JSONL
+```
+
+The last response contains UTF-16 units `[72,105]` (`Hi`). This checks native application and state inspection. A Rust binding must separately connect native input, remote projection, composition, selection and disposal. No public Rust editor binding or full WASM CRDT client exists. See [the adapter boundary](./rust#what-runs-where).

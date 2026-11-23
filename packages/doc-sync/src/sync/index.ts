@@ -9,3 +9,10 @@ export type {OpenEditorSchemaHost} from "../editor/schema-transition.ts";
 export type {ModelRange} from "../editor/index.ts";
 
 export {DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "./protocol.ts";
+
+export {botFace, createBotAvatar} from "./character.ts";
+export type {BotCharacter, BotExpression, BotActivity} from "./character.ts";
+export {LiveRecovery} from './live-recovery.ts';
+export type {LiveRecoveryTransport, LiveRecoveryProof, LiveRecoveryRelease, LiveRecoveryOptions} from './live-recovery.ts';
+export {BrowserRecovery} from './browser-recovery.ts';
+export type {BrowserRecoveryIdentity, BrowserRecoveryRecord, BrowserRecoveryLocks} from './browser-recovery.ts';

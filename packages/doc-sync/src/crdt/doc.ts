@@ -2185,7 +2185,10 @@ export class Doc {
     }
 
     private escape(line: Line): Pos {
-        const owner = line.owner!;
+        const owner = line.owner;
+        // Root-owned private storage has no enclosing node. A hidden gap there
+        // falls back to the visible root start, rather than following a null owner.
+        if (!owner) return posIn(MAIN, 0, 0);
         const cell = /^cell:([^,]+),(.+)$/.exec(line.slot);
 
         if (cell && this.visible(this.logicalLineOf(owner))) {

@@ -1,6 +1,26 @@
 # Handoff — @barocss/doc-sync
 
-The hydration-race fix and publication checks are in **§5.49–§5.50**. The follow-up examples, selection fix, and validation are in **§5.48**. The documentation-site refresh and publication checks are in **§5.46–§5.47**. The open-editor schema transition and its verification are in **§5.44**; its main integration verification is in **§5.45**. The earlier Codex and editor collaboration checks are in **§5.42**; their main integration validation is in **§5.43**. The recovery storage and large-log work is in **§5.36–§5.40**.
+The pinned Rust movement/logical split/join slice, independent History,
+selection limits, pending replay, and dynamic-schema delivery plan are in
+**§5.90**. Runtime arbitrary schemas and live Rust schema transitions are not
+implemented.
+
+The Rust group/inline/string-span projection, independent History, selection,
+and pending recovery comparison are in **§5.89**.
+
+The pinned Rust recursive flow/table storage, nested History and selection,
+covered-cell retention, and recovery comparison are in **§5.88**.
+
+The pinned Rust text/atom block and JSON attribute slice, independent History,
+typed admission, and pending replay comparison are in **§5.87**.
+
+The independent Rust History, UTF-16 selection, and pending undo/redo checkpoint
+comparison are in **§5.85**. The subsequent opt-in paragraph split/merge, aliases,
+node History, and multi-paragraph selection comparison are in **§5.86**.
+The Rust roadmap separates these bounded R4 results
+from the remaining structural, schema, GC, adapter, and production gates.
+
+The one-shot bot runtime and character design are in **§5.54–§5.55**. The headless-agent presence implementation and verification are in **§5.53**. The 15-agent and three-editor experiment is in **§5.52**. The expanded AI collaboration scenarios are in **§5.51**. The hydration-race fix and publication checks are in **§5.49–§5.50**. The follow-up examples, selection fix, and validation are in **§5.48**. The documentation-site refresh and publication checks are in **§5.46–§5.47**. The open-editor schema transition and its verification are in **§5.44**; its main integration verification is in **§5.45**. The earlier Codex and editor collaboration checks are in **§5.42**; their main integration validation is in **§5.43**. The recovery storage and large-log work is in **§5.36–§5.40**.
 
 Created 2026-10-22. The review-only durable conditional journal, server generation and process-failure evidence are in **§5.35**. The numbered roadmap, earlier Chrome integration and recovery work are in **§5.34**. Server-atomic edits, schema versioning, compatible transitions and fresh Codex validation are in **§5.33**. Headless Node synchronization, an MCP server, Codex validation and schema-change analysis are in **§5.32**. Verified main integration is recorded in **§5.31**. Receive model materialization and preserved metadata-memory evidence are in **§5.30**. Runtime ID metadata compression is in **§5.29**. Remote native projection and repeated Chrome comparison are in **§5.28**. Native product-schema editing and large-document measurements are in **§5.27**. Representative Word-style, Notion-style and presentation profiles are in **§5.26**. Verified integration and editor design lessons are in **§5.25**. Merged-grid native models and hidden-cell preservation are fixed in **§5.24**. Guarded structural event comparison is in **§5.23**. Final main integration is in **§5.22**. Automatic paragraph and post-move split fixes are in **§5.21**. The moved/required text receive optimization is in **§5.20**. Public editor bindings and extended document contracts are in **§5.19**. English documentation and the GitHub Pages app are in **§5.18**. Final integration checks for the 2026-10-23 structural cache change are in **§5.17**; implementation and measurements are in **§5.16**. Final checks and main integration for multi-text-block remote comparison are in **§5.15**; implementation and measurements are in **§5.14**. Main before that integration was `6f15291`. The previous full integration is in **§5.13**, consecutive formatting undo/redo in **§5.12**, intent preservation in **§5.11**, and screen latency in **§5.9–§5.10**. Remaining priorities are in **§6**.
 See [`README.md`](README.md) for the concepts, [`docs/edit-api.md`](docs/edit-api.md) for editing API design, and the roadmap for the plan.
@@ -1129,6 +1149,52 @@ Fresh `npm test` passed **688** library, **57** demo, **28** documentation, and 
 
 Documentation source commit `31f5a3e1fd66533df11403b6eeee54f24d03e056` was pushed to `main`. GitHub Pages [run 40658973927](https://github.com/barocss/doc-sync/actions/runs/40658973927) completed successfully. The deployed `pre-hydration.js` SHA-256 matched the committed file. Chrome ran the controlled delayed-module regression against the public site: all three editor links passed, no browser errors were observed, and client navigation after hydration remained active. Chrome also opened the runnable examples, AI walkthrough, troubleshooting, operations, and schema transition pages and loaded the diagram without errors. This is bounded browser evidence, not proof of all network or browser conditions. Raw local logs and screenshots are in `output/playwright/hydration-fix-20261028/`.
 
+## 5.51 Expanded AI collaboration scenarios (2026-10-28)
+
+Added `apps/mcp/test/ai-scenarios.test.ts`. Seven isolated scenarios use real stdio MCP server processes, a separate scripted `SyncClient` user, and a local demo server. They check the server model and all participant replicas after each relevant step: three agents racing with the same revision and retrying after a reread; offline same-position user/AI insertion and independent undo/redo; user deletion concurrent with AI bold and both histories; offline user paragraph split concurrent with AI insertion; a user deletion of AI-inserted text across AI undo/redo; a stale edit and invalid atomic batch followed by a valid edit; and macOS durable agent restart with history while a later user edit survives undo/redo. The restart case is skipped on non-macOS platforms. These are scripted MCP clients rather than seven autonomous model runs.
+
+The focused test passed **7 scenarios** (8 Node test entries including the parent). A separate actual Codex CLI `gpt-6-sol` session and an external scripted user client used a fresh local document. Codex confirmed insertion `A`, read and saved revision 1, the user inserted `H`, and the saved revision's attempted `X` was rejected by the local session as stale. After rereading `AH`, Codex confirmed `B`, undo, and redo; successive model reads were empty, `A`, `AH`, `AHB`, `AH`, `AHB`. A separate HTTP read captured server state. This particular stale rejection was local; the three-agent test checks simultaneous conditional edits but does not identify where each stale rejection occurred. The first Codex attempt stopped after its shell selected Node 18; the second attempt's sandboxed shell could not connect to localhost (`EPERM`), so its stale precondition was not met. Both failures are preserved separately. The successful attempt used a separate external user process and did not change persistent Codex settings.
+
+Fresh `npm test` passed **688 library, 57 demo, 28 documentation, and 67 MCP test entries**, with one platform-specific MCP test skipped. Typecheck, docs build, **30** pages and **1,703** internal links, and `git diff --check` passed. See the updated AI walkthrough for the scenarios and command. Local logs and Codex JSONL are in `output/validation/ai-scenarios-20261028/` (ignored by Git). These results do not establish browser interaction by a real human, real OS IME, physical power loss, or production authorization. No commit or push was requested.
+
+## 5.52 Fifteen scripted AI participants and three browser editors (2026-10-28)
+
+Added the repeatable local harness `benchmarks/ai-editor-concurrency.mjs` and [measurement report](benchmarks/results/ai-15-editors-2026-10-28/report.md) with sanitized raw result JSON and source hashes. One Chrome 156.0.8078.48 page mounted Slate, Lexical and ProseMirror as separate peers of one Word-profile sample. Fifteen real stdio MCP server processes used separate actor IDs, grouped five per editor by the test harness. These are scripted MCP clients, not autonomous language models; the product does not enforce those group associations. Journals were disabled for this test.
+
+The 15 agents sent conditional insertions from the same revision. During that request wave, the harness dispatched a change through each editor's demo test API; wall-clock intervals overlapped. A later automated native keystroke was sent through each editor. One initial agent request was confirmed, 14 were rejected as stale, and no request was unconfirmed. All 14 reread and successfully retried. All 21 unique agent, scripted editor and native input markers were present exactly once, and all native editor, browser client, 15 MCP client and server models agreed. The browser context then went offline, Slate queued a user edit, and one agent added another edit. After the context reconnected, both edits survived. That agent's undo and redo preserved the user's edit, with all replicas equal. The agents stayed online: this does not test agent/server restart or real OS IME. In a preceding differently scoped run, a Slate native keystroke overlapped the agent request wave, while the other two keystrokes occurred afterward.
+
+In the final single run on an Apple M3 Max, Darwin arm64 and Node 24.22.1, 15-process startup took **611.8 ms**, the initial wave took **64.8 ms**, and the 15 initial responses had median / nearest-rank p95 **43.6 / 64.7 ms**. The 14 sequential retry calls had **36.1 / 60.3 ms** median / p95. A single `ps` sample totaled **2,561,552 KiB RSS** across the 15 processes; RSS can count shared pages more than once and excludes browser/server memory. These are small-sample MCP response timings, not model inference, end-to-end UI latency, peak memory, or production targets. See the report for workload, limits, raw data and source identity.
+
+Fresh `npm test` passed **688 library, 57 demo, 28 documentation, and 67 MCP test entries**, with one platform-specific MCP test skipped. Typecheck, docs build, **30** pages / **1,703** internal links, and `git diff --check` passed. The first sandboxed local server start failed with `listen EPERM`; an allowed isolated run was used. The first allowed test run failed because the CLI page-code environment did not expose `performance`; the harness was corrected and the first failure retained locally. Two later runs passed before the final three-editor overlap run. Browser and raw local logs are in `output/validation/ai-15-editors-20261028*`. No commit or push was requested.
+
+## 5.53 Headless agent presence in editors (2026-10-28)
+
+The MCP server exposes `set_presence` for an explicitly supplied name, six-digit hex color, current revision, active caret path, and optional opposite selection endpoint. It validates the synchronized local session, matching local revision, visible text paths, and a shared visible document line/slot before converting paths to stable token anchors. Both null endpoints hide the presence. The result is `sent` with delivery `unconfirmed`: the underlying transport is best effort, not a server receipt. Presence is transient, does not change the document or undo history, and is not journaled. The agent must report its actual location and update it explicitly after editing; the server does not infer intent. A concurrent server change can still be in flight when the local revision is checked. Connection leave removes the participant's presence.
+
+The product demo now displays labeled caret and range overlays for resolvable Slate and Lexical native text points without modifying the native document or selection. ProseMirror uses its existing presence decorations and refreshes them when presence changes. Unresolvable or hidden positions are not invented; the Slate/Lexical overlay does not cover every non-text native position. Lexical exports `$lexicalPoint` for read-only model-to-native point mapping. Documentation explains the tool, limitations, and agent workflow.
+
+A real Codex CLI process called `set_presence` on a Word-profile sample; Chrome 156.0.8078.48 showed the `Codex` caret and selection in all three editor panels and removed them after the process left. A separate reproducible MCP/Chrome harness `apps/demo/products/check-agent-presence.mjs` checked two simultaneous agents and leave, forward/backward ranges, collapsed and paragraph-start carets, hiding, the existing Slate user selection, and position movement after another user inserted text. The first browser harness run failed because it used `window` outside page context; it was corrected and retained. MCP integration and session tests checked transient revisions, token-following, invalid/stale paths, and cross-cell range rejection. Final Chrome native checks passed **90/90** and schema-transition checks **37/37**. Actual Codex's selection test preceded the final synchronized-session and cross-slot guards; the final guard behavior was checked by the later MCP/Chrome and session tests, not by another Codex run.
+
+One local Word-sample MCP-to-DOM timing sample recorded DOM / second animation-frame delays: Slate **34 / 66 ms**, Lexical **17 / 49 ms**, ProseMirror **19 / 49 ms**. The second frame is only a rendering-opportunity proxy; one sample under shared load does not establish physical paint, smoothness, large-document performance, remote network latency, or a percentile. See `benchmarks/results/agent-presence-2026-10-28/report.md` and raw JSON. Full `npm test` passed **688 library, 57 demo, 28 docs and 68 MCP test entries**, with one platform-specific MCP test skipped; comparison-editor tests **32** passed. Typecheck, docs build, **30** pages / **1,708** internal links, and `git diff --check` passed. Screenshots and raw Chrome/Codex logs are in the ignored `output/validation/agent-presence-20261028/`. Real OS IME, production authorization and sustained large-document presence load remain untested. No commit or push was requested.
+
+## 5.54 One-shot document bot runtime (2026-10-28)
+
+Added the private `apps/bot` workspace. A user runs one bounded mission with a stable actor ID. The runner starts a real MCP stdio process, discovers the server schema as data through the opt-in `DOC_SYNC_DISCOVER_SCHEMA=on` setting, verifies its fingerprint and the connected schema, and reads the document. A Codex planner produces a validated single-step JSON plan; the runner, not the planner, executes text insert/delete via the existing MCP conditional revision checks and publishes best-effort presence. A definite stale rejection causes a reread and replan within the step limit. Unknown outcomes, model failures and incompatible or unavailable schema stop for attention. A local last read before `finish` also catches already-observed document changes; it is not an atomic server-side completion guarantee.
+
+Mission files are written with atomic replacement, file and directory sync and private file permissions. They retain status, confirmed and stale plans, base/reply revisions, and any pending intent written before submission. The MCP journal is separate, keyed by server/document/actor. If a process stops, a record may remain `running` with a pending intent: do not blindly rerun it. Automatic mission resume/reconciliation is not implemented. Durable MCP journal support is currently macOS-only; explicitly disabling it is ephemeral. One bounded task per invocation is implemented, not a background scheduler, task UI, authorization service, or general tool platform.
+
+Actual authenticated Codex CLI `gpt-6-sol` missions completed against isolated local demo documents. In an earlier Word-profile Chrome run, a user's native Slate insertion made the bot's initial plan stale; the bot reread and replanned, and the user and bot text converged across all three editors. A controlled real-process test withheld the conditional reply after server acceptance, killed the bot, verified the pending mission and `may_have_been_sent` MCP journal remained, restarted the server, and found one copy of the edit. This is process/server restart evidence, not power-loss proof or automatic recovery. Incorrect schema fingerprints stop before the planner runs. Usage and limitations are in `apps/bot/README.md` and the documentation guide.
+
+## 5.55 Bot character design and behavior (2026-10-28)
+
+Each bot has a configurable cat/fox/owl/robot character, a curious/careful/creative/concise planner style, a name, color and actor identity. Defaults are deterministic from actor ID and may collide. Personality guides model style; it does not grant permissions or guarantee model behavior. Optional presence metadata reports thinking, editing, happy or concerned work state; it is transient and does not change the CRDT. A thinking bot with no known position appears in the roster without a guessed cursor. A final expression is stored in the mission record; transient presence is removed on leave.
+
+The product editor now shows compact expressive characters beside the editor title and small matching markers at known work locations. Names are hidden by default and appear on hover or keyboard focus; the roster exposes an accessible name and state. Reduced-motion settings disable the decorative animation. The design and candidate roles/capabilities are in `docs/bot-product-design.md` and `apps/docs/src/guide/bot-design.md`. Roles, scoped authorization, suggestions, task UI, durable automatic recovery, scheduled triggers, cost controls, external research and long-term memory remain proposals, not implemented capabilities.
+
+Two actual concurrent Codex `gpt-6-sol` bots, a curious fox and careful owl, edited the same Word-profile sample. One stale conditional edit was rejected and replanned. Both completed; the final server and three editor/native models agreed on `Opening text [FOX] [OWL]`. The browser observed thinking, editing and happy states for both bots in all three panels. A controlled Chrome test checked hover and keyboard name disclosure, two bot selections and leave, and unchanged local selection. A separate five-agent fixture checked 1280 px and 390 px layouts, no horizontal page overflow, and reduced motion. Final Chrome regression passed **90 native editing** and **37 schema-transition** cases. The actual duo task times were 15.098 and 24.388 seconds in one shared-host run; the second included a stale replan. These are not general model or production performance claims. The [report](benchmarks/results/bot-runtime-2026-10-28/report.md) records source identity, raw synthetic data and limitations.
+
+Fresh `npm test` passed **689 library, 5 bot, 57 demo, 28 docs and 68 MCP test entries**, with one platform-specific MCP test skipped. Comparison-editor tests **32** passed. Typecheck, documentation build and link check (**32 pages, 1,871 internal links**) and `git diff --check` passed. Evidence is under the ignored `output/validation/bot-runtime-20261028/`. An initial five-bot browser test used the port of a stopped test server and failed with connection refused; the corrected isolated retry passed. Real OS IME, physical power loss, autonomous background scheduling and production security remain unverified. No commit or push was requested.
+
 ## 6. Next work (in order)
 
 The current numbered execution order and acceptance criteria are in [`apps/docs/src/roadmap.md`](apps/docs/src/roadmap.md). The stage notes below retain historical context and measurement boundaries; they do not supersede that list.
@@ -1233,3 +1299,1556 @@ See the roadmap for details.
 ## 12. Example first message for a new session
 
 > Read `/Users/user/github/doc-sync/HANDOFF.md` and continue from §6.1. Reply in Korean.
+
+
+## 5.56 Bot mascot, activity, and explicit range review
+
+**Scope.** The demo now uses one code-generated vector character system for the roster and all three editor carets. Fox, owl, cat, and robot share a silhouette language and seven work-state expressions. Names remain visible only on hover or keyboard focus. The roster marks document context, a caret, or a selection and exposes the reported activity and mode to assistive technology. A selected reading range has restrained animation; reduced-motion settings disable it. The [expression sheet](apps/docs/src/public/mascots/expression-sheet.svg) is generated from the same runtime SVGs by the documentation build.
+
+**Presence and safety.** MCP presence accepts optional activity and expanded expression values. A bot can ask the planner to inspect an explicit, non-collapsed range. Both endpoints must resolve within the same visible text line against a settled revision. The next planning step receives that range and the full document. The runner discards the numeric range if a later read observes a different revision. Whole-document context does not create a guessed caret or simulated movement. Presence is best effort and does not modify document content. Existing atomic edit and concurrency rules are unchanged. Characters and personality are presentation and planner-style preferences, not permissions or reliable emotions. Continuous autonomous movement, broad scanning telemetry, scheduling and production authorization remain unimplemented.
+
+**Evidence.** On the current workspace, `npm test` passed before the final small runner validation refinement; the bot workspace suite passed again after it, including a second actor editing between range review and completion. The MCP stdio integration test passed after adding activity round-trip and invalid activity rejection. Typecheck, documentation build/link checks, and `git diff --check` passed. Chrome 156.0.8078.48 passed 90 native editing checks and 37 schema-transition checks. A separate real MCP/Chrome test passed forward and backward range, caret, local selection preservation, two agents, movement after a user insertion, and leave in Slate, Lexical and ProseMirror. A five-bot Chrome fixture passed desktop, 390px mobile, hover/keyboard names and reduced-motion checks. The initial run caught an outdated accessible-label assertion and mobile tooltip overflow; both were corrected and rerun. Evidence is in `output/validation/bot-activity-20261028/`.
+
+A real Codex `gpt-6-sol` bot connected to the Word-profile sample via MCP, selected a nonempty range for review, inserted `[reviewed]`, and reported completion with a confirmed edit; its sample mission record is `output/validation/bot-activity-20261028/codex-mission.json`. The Chrome position tests used controlled MCP participants; they did not capture the actual Codex run in Chrome. Browser input is automated, not real OS IME. This work did not measure end-to-end responsiveness or production load. The server and browser sessions used isolated test data.
+
+
+## 5.57 Round bot mascot
+
+The demo now uses one circular mascot with four palettes and seven expressions. The existing `fox`, `owl`, `cat`, and `robot` presence and CLI identifiers remain compatible; they now select orange, violet, rose, and mint faces rather than animal silhouettes. Names remain on hover or keyboard focus. A subtle eye movement signals reported reading activity and is disabled by reduced-motion settings. It does not describe a position or scan path. The roster, cursor, and selection behavior from §5.56 remains unchanged. The [expression sheet](apps/docs/src/public/mascots/expression-sheet.svg) is generated from the runtime vectors.
+
+**Verification.** Typecheck, `git diff --check`, documentation build and link check, two mascot tests, and 42 targeted ProseMirror presence, Slate and Lexical binding tests passed. Chrome 156.0.8078.48 used isolated test documents: five bots passed desktop and 390px mobile layout, hover/focus and reduced motion; the MCP presence harness passed two participants, forward/backward ranges, caret and selection updates, an intervening user edit, and leave across all three editors. Screenshots and logs are under `output/validation/round-mascots-20261028/`. This was an automated browser test with controlled MCP participants, not a human usability, OS IME, or performance test. No full-suite run or real Codex run was repeated for this presentation change.
+
+
+## 5.58 Schema-aware bot editing and interactive demo
+
+The bot planner now receives the verified schema and current document and can propose a bounded JSON batch of the existing six `EditOp` forms, including node insertion, table edits, attributes, split, merge and move. The runner checks the batch envelope before recording a pending intent; the MCP client compiles against a draft and validates operations, and the server performs the existing atomic revision check. A stale rejection causes a reread and replan. Unknown outcomes still require inspection and are not blindly replayed. Structural paths do not generate invented text carets. The planner has a 512 KiB input limit; a structural plan has a 64 KiB JSON limit and at most 20 edits. Schema validity does not establish that generated content is factually correct or that the model will always choose the right location.
+
+The product demo can opt into a local, one-shot Codex task UI with `PRODUCT_ENABLE_BOTS=1 PRODUCT_BOT_MODEL=gpt-6-sol npm run dev:products` and `?profile=word&doc=bot-demo&bot=1`. The local server enforces a loopback Host and same-origin POST for this endpoint, limits each document to one running bot, and uses an ephemeral MCP session. It has no production authentication or durable recovery. The existing demo server and earlier presence showcase were preserved. At the time of this session a separate instance was available at `http://127.0.0.1:53505/?profile=word&doc=try-real-bot&bot=1`; it contains a real bot-created heading and table and lets the user start another task.
+
+**Evidence.** Actual Codex `gpt-6-sol` runs created schema-valid heading/table content in Word-style and Notion-style documents and a table in a presentation slide. A separate Word-style run changed only the requested heading and table cell in the inspected sample. In Chrome 156.0.8078.48, a real Codex bot launched from the demo UI created a heading and table while automated native Slate input inserted `[human]`; the server and all three editor views contained both results and converged. This is automated input, not a human usability or OS IME test. The first browser harness used an incorrect `waitForFunction` argument and timed out after 30 seconds; a second inspection found the correct final DOM, and a fresh corrected run passed. Another real Codex race recorded a stale rejection and a successful replan after user input. Raw evidence and screenshots are under `output/validation/schema-bot-live/`.
+
+The bot regression test covers a stale structural batch, replan, heading and table insertion, table-cell text update, another actor's edit, and rejection of a malformed planned operation before a pending record. The full workspace suite passed: 690 core, 5 bot, 57 demo, 28 documentation, and 68 MCP tests, with one platform-specific MCP test skipped. Typecheck, documentation build and link checks passed; a cross-origin demo bot launch returned 403. The final UI changes preserve the opt-in `bot=1` query when switching profile or document size and disable task submission until all editors synchronize; the readiness behavior passed a separate Chrome smoke check. No performance or production security claim follows from these checks.
+
+
+## 5.59 Concurrent bot personas and local task UI
+
+The local bot runner now accepts `writer`, `reviewer`, and `organizer` roles as well as the existing personality and appearance settings. Personality supplies bounded style guidance to Codex. The reviewer runner rejects insert, delete, and structural edit plans before recording a pending edit; it may inspect and report. Writer and organizer remain planning preferences. This guard belongs to this runner, not the server authorization boundary. Different planner functions can be supplied to `runMission`, but the shipped CLI and demo use Codex only.
+
+The opt-in product demo has four configurable presets: Mori (curious writer), Nuri (careful reviewer), Bori (creative writer), and Tobi (concise organizer). Different presets can run concurrently on one document with independent generated actors; each preset can have one task in flight per document. The task selector reports results and shows compact status faces without permanently listing names on the document. Presence retains the observed-position rules in §5.56. The UI is a local prototype: profile presets are not durable personal identities, tasks are one-shot and ephemeral, and it has no production authorization, scheduler, task cancellation, or automatic recovery. See `apps/docs/src/guide/bot-design.md` and `docs/bot-product-design.md`.
+
+**Evidence.** In Chrome 156.0.8078.48, two actual Codex `gpt-6-sol` participants ran simultaneously: Mori inserted a schema-valid heading and 2×2 table; Nuri reviewed without editing. Automated Slate input occurred while both ran, and the server and all three native editor views converged with the user's input and the new structure. The final icon-based UI was tested in a fresh run; evidence and screenshots are in `output/validation/bot-team-20261028/`. This is automated user input, not a human usability or OS IME test. Bot tests also exercised simultaneous structure edits from the same base, stale rejection/replanning, and a reviewer edit being rejected before any pending intent. Typecheck, documentation build and checks, and `git diff --check` passed. The workspace suite passed 690 core, 5 bot, 57 demo, 28 docs and 68 MCP tests, with one platform-specific MCP test skipped; that suite ran before the final icon presentation and Codex prompt wording, which were covered by the subsequent Chrome run. No production load or security assessment was performed.
+
+A separate local instance remains running at `http://127.0.0.1:59824/?profile=word&doc=team-studio&bot=1` for user inspection. Mori and Nuri have completed sample tasks there. Existing user tabs and previous demo servers remain untouched.
+
+
+## 5.60 Local bot profiles and duplicate-plan guard
+
+The private bot workspace now supports `profile-create`, `profile-list`, `profile-show`, and `run --profile`. A profile stores a generated identity and an explicit name, character, personality, role, and color in a private local file. Creation fsyncs a temporary file and uses an exclusive link, so an existing ID is not overwritten. The stable actor derives from the generated identity, canonical server URL, and document ID. Profile runs reject identity overrides and ephemeral mode; they use the existing per-actor durable MCP journal and checkpoint. `localhost` and `127.0.0.1` remain separate endpoint identities. Preserving the state directory and endpoint is required. The CLI profile implementation does not add persistent identities to the browser demo, automatic task resumption, profile editing, or cross-device identity sync.
+
+A real Codex trial found that a second task repeatedly inserted the same `!`: the isolated sample became `Hello!!!!` and stopped at its step limit. This failure is retained in `output/validation/bot-profiles-20261029/mission-two.json`. The runner now supplies the last confirmed edit to the planner and stops before submitting an identical consecutive edit at the same observed revision. The comparison normalizes object-key order and catches both direct and structured forms. This conservative guard may also stop a task that intentionally repeats the same edit; it does not provide general semantic deduplication or validate the model's answer.
+
+**Evidence.** A macOS integration test held one profile's journal while a second same-document task attempted to start; the second did not reach its planner. A bot task inserted `A`, the server was stopped and restarted on the same port with its data directory, a later task inserted `B`, and an MCP session restored the actor's history. After a separate user inserted `H`, bot undo removed `B` and preserved `AH`. These tests use a deterministic planner and graceful server restart, not power-loss evidence. Real Codex `gpt-6-sol` then ran two tasks on the same profile and document with equivalent trailing-slash URLs; both completed with the same actor and the sample ended `Hello!`. This actual run preceded the final object-key-normalization refinement, which was verified by the targeted bot test. Full logs and actual mission records are under `output/validation/bot-profiles-20261029/`. The original CLI test failed when run from the workspace because it resolved a path against the wrong current directory; it was fixed to use a module-relative path and rerun. Profile configuration and mission records may contain personal data and require protection.
+
+Final verification for §5.60: the workspace suite passed 690 core, 8 bot, 57 demo, 28 docs, and 68 MCP tests; one platform-specific MCP test was skipped. Typecheck, docs build/link checks, and `git diff --check` passed. No new browser validation was performed because the profile commands and runner guard do not change the demo UI.
+
+
+## 5.61 Profile-backed browser demo and restart evidence
+
+The product demo can now connect to existing CLI bot profiles when `PRODUCT_ENABLE_BOTS=1`, `PRODUCT_BOT_STATE_DIR`, `PRODUCT_DATA_DIR`, and a fixed nonzero `PRODUCT_PORT` are set on macOS. The browser lists saved profiles and starts tasks with the profile's stable document-scoped actor and durable MCP journal. Each product schema writes to its own persistent data directory. The same port, canonical URL, document ID and state directories must be used after restart. Existing temporary demo behavior remains available when the bot-state directory is not set. The server is loopback-only and is not a production authentication boundary; two instances must not use the same data directory.
+
+The controller restores each profile’s latest mission status from disk; earlier mission records remain available through the CLI. A previously running, queued, or pending mission blocks another task for that profile/document and appears as interrupted; the browser and server do not replay it. The demo does not yet provide an interactive resolution flow for interrupted tasks. A confirmed completed mission restores its normal MCP history, but an uncertain edit still requires journal/receipt inspection. The current conservative block can also stop a mission interrupted before submission. Profiles, documents, journals and task results may contain private data. See `apps/docs/src/guide/bots.md`.
+
+**Verification.** With two actual Codex `gpt-6-sol` profiles and Chrome 156.0.8078.48, Mori inserted a heading/table while Nuri reviewed and automated Slate input added `[human]`. Server state and Slate, Lexical and ProseMirror agreed. After restarting the product server and its three backends with the same directories and port, the profiles, actor IDs, mission IDs and completed results remained, and the browser restored the document. A separate MCP session restored Mori's history: undo removed the bot's heading while preserving `[human]`; after a second server restart, redo restored it and still preserved `[human]`. Nuri then completed a new review with the same actor and a new mission ID. A custom CLI-created Alex profile appeared in the browser selector. Evidence and screenshots are in `output/validation/browser-profiles-20261029/`.
+
+A separate actual bot task was interrupted while its mission record was running with no pending edit. After a graceful server stop/restart, the document model and server sequence were unchanged; the UI showed recovery inspection required and a second launch returned HTTP 409. This is not evidence for a crash after submission or automatic resolution of an uncertain receipt. Unit tests cover a retained pending mission and fail-closed behavior. The lower-level MCP crash/recovery coverage from earlier sections remains separate. Browser input was automated, not human or OS IME evidence.
+
+A user-facing profile demo was started separately at `http://127.0.0.1:53492/?profile=word&doc=profile-demo&bot=1`. Its bot state is `.doc-sync-bots/browser-demo-isx4Pj` and document data is `data/browser-demo-2YBowH`; both are ignored by Git and must be preserved. Existing user tabs and servers were not stopped.
+
+Final verification for §5.61: the workspace suite passed 690 core, 8 bot, 58 demo, 28 docs and 68 MCP tests; one platform-specific MCP test was skipped. Typecheck, documentation build/link checks and `git diff --check` passed. The final documentation clarification was made after the workspace suite and checked by a fresh docs build. To reopen the user-facing instance, use the same port and both paths from §5.61 with `PRODUCT_ENABLE_BOTS=1`; do not discard or overwrite the existing directories. The instance is running separately, and stopping it was not part of this task.
+
+## 5.62 Browser task history and interrupted-task visibility
+
+The profile-backed demo shows the selected bot's 20 most recent saved tasks for the current document and server. It displays the last saved status, steps, result, error, mission ID and whether an edit is pending. Content is rendered as text. All mission records remain on disk and accessible with the CLI. This view does not resolve receipts, resume work, or clear a recovery block. In particular, a running record without a pending marker is not proof that its process is no longer active. Keep blocking uncertain tasks until a safe reconciliation protocol is implemented. Task records may contain private information.
+
+**Evidence.** The demo workspace suite and TypeScript check passed. In Chrome, a separate server and synthetic interrupted mission were used to check history after a server restart: the pending marker appeared, task submission remained disabled, and text containing `<script>` was displayed as text without creating a script element. This test did not perform an actual interrupted submission or test resolution. Prior actual-Codex concurrency and recovery evidence remains in §5.61. Existing demo instances and data were preserved.
+
+## 5.63 Interrupted bot recovery: proof gap remains open
+
+Automatic bot-task recovery and unblock are **not implemented**. The current mission record and the MCP journal are separate durable records. After MCP restores an accepted edit, it clears the journal; the mission can still say the edit is pending. A clear journal alone does not identify what happened to that mission's pending plan, and a mission's `running` status alone does not prove its process has exited. Clearing the block on either observation can duplicate an edit or race a live process.
+
+The next implementation needs an exclusive, process-lifetime claim shared by task execution and recovery, plus durable evidence binding each mission step to the exact submitted change and authoritative receipt. Recovery must remain idempotent across a second crash while reconciling, preserve the bot's undo history, fail closed for unknown receipts and legacy records without sufficient evidence, and avoid overwriting concurrent user edits. Define and test how ownership is established before a mission can be created, how evidence survives journal cleanup, and how both records are committed before releasing the claim. Do not manually clear pending records as a workaround.
+
+**Regression evidence.** `apps/bot/test/runner.test.ts` now withholds an accepted conditional response, sends SIGKILL to the bot, restarts the server from the same data directory, and makes a separate user edit. Reconnecting the original MCP actor restores the accepted bot edit and user edit. Undo removes the bot edit and preserves the user's change. The test also verifies that MCP removed its intent while the mission still retained its pending plan; no automatic mission resolution is claimed. This is a process/server restart test, not a power-loss test. The original mission and journal are test fixtures in an isolated temporary directory.
+
+The bot workspace suite passed 8 tests and the repository TypeScript check passed. The full workspace suite and a Chrome recovery test were not run for this regression-only change.
+
+## 5.64 Profile task claims and real bot document samples
+
+Profile-backed runs now acquire a macOS kernel file claim for the stable document-scoped actor before creating a mission. The claim lasts through MCP shutdown and is released on process exit, including SIGKILL. Under the claim, the runner refuses a new task when a matching profile/server/document has an unresolved running, queued, or pending mission; this also protects direct CLI runs, not only browser-controller launches. This requires the same state directory for that profile and is not a server authorization mechanism. Legacy running tasks created before this claim implementation cannot be assumed to hold a claim.
+
+**Recovery status: incomplete.** This claim is a prerequisite, not an implementation of automatic recovery or unblock. The mission-to-receipt evidence gap and other conditions in §5.63 remain. The changes do not clear or replay pending tasks. In particular, do not use a free claim alone as proof that a legacy task is safe to resolve.
+
+**Examples.** Three actual Codex `gpt-6-sol` missions ran against isolated, pre-seeded rich sample documents through ephemeral MCP sessions. Word inserted a heading and 2×2 table, Notion inserted a heading and task, and presentation changed a slide title and added a text box. The requested nodes and text, required section header/footer and slide notes are present in the saved server models. Full models and the task descriptions are in `apps/bot/examples/`; raw mission and server outputs are in `output/validation/bot-samples-20261029/`. These are edits to existing sample models, not proof of full document creation, visual quality, every schema shape, or factual correctness. The isolated product instance was started on port 55381 with data in `/tmp/doc-sync-samples-20261029`; it is separate from the user's existing demo.
+
+**Verification.** The bot suite passed 9 tests after the claim change, including the earlier accepted-edit crash/restart regression. A subsequent focused run passed 5 profile and example tests, including process SIGKILL and reacquisition of the claim, an active-claim conflict, unresolved direct-run blocking, and requested sample structure. The demo suite passed 58 tests; typecheck and `git diff --check` passed. The full workspace suite, browser tests and end-to-end automatic recovery/unblock tests were not run.
+
+## 5.65 Profile mission step reconciliation
+
+New profile missions use recovery protocol 1. Before sending a conditional edit, the MCP session durably writes a private step record containing the exact journal request, keyed by a random mission step ID that the bot has already saved in its pending mission. A failure to persist the record prevents submission. The profile claim covers the mission lifetime; recovery acquires the same claim and the actor's journal lock. After a crash, recovery matches mission, profile, document, base and edits against the step evidence, checks the authoritative receipt, restores the protected MCP checkpoint and verifies its intent digest. It then durably records the confirmed step and clears the pending marker without resubmitting. Repeating reconciliation is idempotent. If no evidence or journal exists for a new-protocol step, the request was not sent; if evidence exists but the receipt is unknown, recovery leaves the mission blocked. Evidence from before this protocol is not inferred and legacy interrupted tasks stay blocked.
+
+The persistent product demo starts a recovery scan on server startup and retries periodically. The browser displays the restored task status. CLI users can run `recover --id MISSION_ID --state-dir DIRECTORY`. Reconciliation marks the interrupted task `needs_attention`, allowing a new task after recovery finishes; it does not resume the planner or assert that the user's mission is complete. The demo remains local, macOS-only and unauthenticated. Keep the same state directory and endpoint. Step evidence is retained on disk after reconciliation, contains document data, and has no compaction or deletion policy yet. Do not run the same actor from unrelated state directories.
+
+**Evidence.** Automated restart tests withheld an accepted response, SIGKILLed the profile bot, restarted the document server, and added a separate user's `H`. Both a retained journal and a journal already reconciled by an earlier MCP restart were restored and unblocked without a second `X`; repeating recovery did not duplicate history. The recovered bot's undo removed `X` and preserved `H`. A separate case withheld the request from the server; the unknown receipt stayed blocked and preserved `H`. Tests also cover an interrupted pre-submission step, a live claim, a failed evidence write that sends no request, and automatic product-server startup recovery. These tests use deterministic planners and isolated local processes; they do not simulate power loss or prove automatic continuation of the AI task. Initial full-suite execution exposed a test/UI race between mission persistence and claim release; the controller now keeps the task blocked until its recovery process releases the claim.
+
+Final verification: the full workspace suite passed 690 core, 13 bot, 59 demo, 28 docs and 69 MCP tests; one platform-specific MCP test was skipped. Typecheck, documentation build and internal-link checks, and `git diff --check` passed. Chrome was not rerun for this recovery change.
+
+## 5.66 Continue an interrupted profile mission
+
+New profile missions persist their original maximum planner steps and the number already used. After exact recovery (§5.65), a mission with remaining budget is durably queued under the same mission ID. The product demo starts a bounded `resume` process; the CLI also supports `resume --id MISSION_ID --state-dir DIRECTORY`. The resume process claims the same profile, rereads the current schema and document, restores the previous confirmed edit as planner context, and spends only the remaining budget. A crash after recovery but before continuation leaves a queued mission that can be resumed again. Unknown receipts and insufficient recovery evidence remain blocked. An exhausted budget or a planner failure stops for attention. Older missions without continuation metadata retain their earlier recovery-only behavior.
+
+The first edit planned after continuation is rejected if it exactly matches the last confirmed edit, even when another participant has changed the revision. This conservative guard may reject an intentional repeat; it does not detect all semantic duplicates or guarantee model quality. The underlying exact-request receipt prevents resubmission of the recovered step. Profile claims and journal locks still require the same local state directory and are not server authorization.
+
+**Evidence.** Isolated tests killed a profile bot after server acceptance, restarted the document server, applied another user's edit, and resumed the same mission with a deterministic planner. The bot added the remaining change, retained its original ID and step limit, and the original accepted edit appeared once. Bot undo removed both bot edits while retaining the user's edit. Cases covered both retained and previously cleared journals, an unknown receipt that remains blocked, a repeated first plan that stops, and repeated reconciliation of a queued mission. Chrome 156 headless opened a separate restarted product demo with a synthetic interrupted mission and a controlled planner process. The same mission completed and the marker appeared once in Slate, Lexical and ProseMirror; the completion screenshot is `output/validation/resume-chrome-20261029/completed.png`. That browser run was not an actual Codex planner run or human-input test. The process-kill and concurrent-user proof is from the separate deterministic restart tests, not the Chrome fixture.
+
+The workspace suite passed 690 core, 14 bot, 59 demo, 28 documentation and 69 MCP tests, with one platform-specific MCP test skipped. The bot and demo suites passed again after the final affected-file refinements. Typecheck, documentation build and link checks, and `git diff --check` passed.
+
+## 5.67 Three-bot proposal and restart scenario
+
+`apps/bot/test/team-proposal-restart.test.ts` exercises three durable profile-backed bot runners and a separate user participant on a Word-style proposal. The writer adds a goals heading and paragraph; its accepted server response is held. While the writer is waiting, an organizer plans a milestone table, a reviewer plans a read-only review, and the user adds `[USER]` to the proposal. The organizer and reviewer re-read/replan when needed. The writer process and document server are then SIGKILLed, the server restarts from its saved data, and a new writer process resumes the same mission and adds milestones.
+
+The test verifies one copy of each writer addition and the user marker, one table, two headings, the section's required header/footer, and equality of the server model and the reconnected user's model. The reviewer has no edit history and its undo returns `no_change`. Undoing the writer's two changes retains both the user's marker and the organizer's table; undoing the organizer's table also retains the user marker. Final user and server models agree. In the observed run, the organizer made three planner calls and the reviewer made two.
+
+This scenario uses the real profile runner, MCP sessions, durable journals, document server, HTTP transport and OS processes with deterministic test planners and an automated `SyncClient` user. It is not an actual Codex model evaluation, browser test, human usability test, or power-loss test. The deterministic proxy gates an accepted writer response to locate the interruption; it does not measure latency. The test uses a private temporary directory and cleans up its own processes and data.
+
+Verification: the bot workspace suite passed 15 tests, followed by a fresh pass of the final focused scenario after strengthening its intermediate undo and convergence assertions. Typecheck and `git diff --check` passed. The full workspace suite was not repeated for this test-only change.
+
+## 5.68 Actual Codex bots and Chrome proposal restart
+
+An isolated persistent product demo used three real `gpt-6.1-sol` Codex-backed profiles: Mori wrote a heading and paragraph, Tobi organized a 2×2 table, and Nuri reviewed without editing. Chrome 156.0.8078.48 automated native Slate input of `[human-proposal]` while all three tasks reported running. The last pre-shutdown observation showed the user's text and Mori's heading on the server, all three tasks running, and Mori's mission marked pending. The product server was then stopped with SIGINT; it sent SIGTERM to its child processes. It restarted with the same port and data directories, and the three original mission IDs subsequently completed. The final section contained one copy of the requested heading, paragraph, table cells and user marker, with required header/footer present. Server model, client models and native Slate, Lexical and ProseMirror models were equal.
+
+Nuri's MCP undo returned `no_change`. Mori's undo removed its heading and paragraph while preserving the user's text and Tobi's table. Tobi's undo removed that table while preserving the user's text. Chrome then showed all three native models equal to the server again. Screenshots, mission snapshots and undo results are under `output/validation/realteam-restart-20261029/` (`after-edit-before.json`, `after-edit-after.json`, `after-edit-verify.log`, `after-edit-undo.json`, and `after-edit-verify-undo.log`). User input was automated, not a human usability test.
+
+The pre-shutdown observation and the actual process termination were not atomic. The resumed Mori record does not establish that its accepted edit was still pending at the instant of termination; therefore this run does not prove the precise accepted-before-ack crash boundary with a real Codex planner. That boundary remains covered by the controlled process test in §5.67. An earlier `gpt-6-sol` trial restarted while all tasks were planning; Tobi and Nuri completed but Mori stopped with a model-capacity error and needed a separate new `gpt-6.1-sol` task. Another initial browser harness timed out because it read an async snapshot without awaiting it; the corrected harness awaited the snapshot and passed. These earlier outcomes are retained in the same evidence directory. No power-loss, sustained-load or semantic-quality claim follows from these runs.
+
+## 5.69 Actual Codex accepted-before-response gate
+
+An isolated macOS product demo and a test HTTP proxy exercised a real `gpt-6.1-sol` profile bot. The proxy read the server's accepted conditional response and withheld it from the bot. It saved the exact request and response, sent SIGKILL to the bot process, and sent SIGINT to the product server, which shut down its backend processes. Before restarting, the mission was still running with a pending step; its durable journal and step evidence had the same digest and exact change as the accepted request. After restarting the same server data, an exact receipt query returned `accepted` at the original server sequence. A new real Codex `resume` process restored the same mission, recorded `Recovered the confirmed edit without resubmission`, and completed it.
+
+Two user-input conditions produced different results:
+
+1. **Unconfirmed Chrome input: fail for automatic reconnection.** In `codex-gate`, the Slate user input `[gate-human]` was pending at shutdown. After restart it remained visible in Slate's local model and native view, but Slate stayed offline with one pending change; the server, Lexical and ProseMirror did not contain the text. Existing epoch-change handling intentionally retains unconfirmed changes locally and blocks reconnection. The bot's accepted edit was recovered, but this run does not establish durable preservation or delivery of the user's unconfirmed edit. The isolated Chrome session `codex-gate-validation`, product server on port 55428, and `/tmp/doc-sync-codex-gate-llxyQq` data were left running/preserved to retain that local pending state. Do not reload or close that tab if its local state is needed.
+2. **Server-confirmed Chrome input: pass for recovery and undo.** In `codex-confirmed-two`, a separate proxy gate held bot submissions until `[confirmed-human]` was server-confirmed and all three editor models matched at sequence 2. The bot's old base was rejected as stale, it replanned, and its accepted edit at sequence 3 was held before response and interrupted as described above. After restart the receipt was accepted, the confirmed user text and one bot heading remained, and the same mission resumed without resubmission. A bot MCP undo removed its heading and paragraph while preserving `[confirmed-human]`, the required header and footer. Chrome 156.0.8078.48 then showed the server, Slate, Lexical and ProseMirror in agreement at sequence 4. Chrome input was automated.
+
+**Content-quality failure.** The requested paragraph was `Confirmed exactly once.` but the real model inserted only `Confirmed` and reported completion. The exact-once recovery assertion concerns the accepted operation; it does not imply the generated content met the mission. A separate `codex-confirmed` setup attempt timed out while its test proxy held the request too long; it left an unconfirmed mission and was not counted as the successful run. A first receipt probe used the wrong test protocol number and got HTTP 426; the corrected protocol-3 probe returned the accepted receipt. Raw gate captures, mission/journal/bridge snapshots, receipts, browser logs, and undo evidence are in `output/validation/codex-accepted-gate-20261029/`. Tests used isolated data and do not simulate power loss or establish production reliability. No full workspace suite was rerun for this verification-only work.
+
+## 5.70 Browser recovery transport groundwork; automatic recovery remains open
+
+`HttpTransport` now exposes the existing server recovery-state, protected reservation, exact ordinary-change receipt, exact recovery submission and reservation-release operations. These delegate to the same HTTP validation as `NodeHttpTransport`. This is transport groundwork only: `SyncClient` and the product demo do not invoke the operations or automatically reconnect after an epoch change with pending edits. The existing fail-closed behavior and live pending state from §5.69 remain unchanged.
+
+Before implementing automatic recovery, preserve evidence tying the local replica to the original server generation and schema, protect the relevant history against GC, reconcile each exact pending change in order using server receipts and a protected reservation, and handle concurrent local editing, reset/schema transitions, lost replies, undo history and reservation release. Do not infer that an unknown receipt means the change was rejected or discard the old pending state merely because a server sequence advanced. Sessions created before a safe generation association was captured may need separate recovery inspection. The saved Slate session from §5.69 remains open; no reload, restart or mutation of that session was attempted in this work.
+
+**Verification so far.** A server integration test using the browser transport established a reservation, recovered a pending change alongside another actor's change, SIGKILLed and restarted the server, then checked an exact receipt and repeated the recovery submission. Both texts appeared once. A fresh isolated Chrome 156.0.8078.48 session successfully read recovery metadata, created/released a protected reservation, obtained an `unknown` receipt, and rejected recovery for a wrong generation; evidence is in `output/validation/browser-recovery-primitives-20261029/`. This is not a Chrome pending-edit or automatic-reconnection test. Automatic user-edit recovery remains unimplemented and §5.69's original scenario remains unresolved.
+
+The demo workspace suite passed 60 tests, four focused browser/Node transport tests passed, and typecheck and `git diff --check` passed. No full-workspace suite was run.
+
+## 5.71 Document authoring bot product design
+
+Added `docs/document-authoring-bot-design.md` to define the proposed authoring workflow, task brief, verification contract, roles, concurrent-edit and recovery boundaries, examples, and staged acceptance gates. This is a design document, not an implementation. The real partial-content completion failure in §5.69 motivates independent post-edit requirement checks. Browser recovery with unconfirmed edits remains open as described in §5.70 and is the first delivery gate. Existing local role restrictions are not server authorization; review/proposals, scoped authorization, source checking, and independent completion verification remain proposed.
+
+Verification: inspected the existing bot runner, planner and product design, and checked the design and handoff diff for whitespace errors. No implementation, browser run, model run, or test suite was performed for this design-only change.
+
+## 5.72 Experimental read-only review watcher
+
+Added `apps/bot/src/watch.ts` and a `watch` CLI command. A running local watcher records an in-memory server-state baseline, coalesces sequence advances into serial bounded reviewer missions, and stops on identity/schema/epoch change, failure, or the configured run limit. The first observation does not launch a review. The runner's existing local reviewer guard rejects edits; this is not server authorization. Ctrl-C stops new work but does not cancel a review already in progress. The watcher does not persist its cursor or recover missed events, and it provides no browser integration or proposal/apply workflow. Server sequence advances may include non-content events. See `apps/bot/README.md` for operation and limits.
+
+Browser recovery from §5.70 remains unimplemented; no automatic pending-input recovery or autonomous write capability is claimed. The watcher is an independent read-only experiment, not completion of the recovery-first plan.
+
+Verification: the bot workspace suite passed 18 tests, including three new watcher tests for baseline/coalescing, budget, overlapping polls, stop, changed identity and uncertain outcomes. Typecheck and `git diff --check` passed. A CLI option check confirmed invalid intervals are rejected. The watcher was not tested against a live server, real Codex, Chrome, server restart, or a human user. An initial CLI/typecheck attempt exposed an incorrect import and was fixed before the final checks; an earlier concurrently started bot suite included that pre-fix CLI failure and is not the final result.
+
+## 5.73 Preserve pending work on live reset
+
+A live `reset` event previously cleared the client document, pending changes, and undo history even when a local change had not been acknowledged. `SyncClient` now disconnects with an error and retains the previous epoch and local state if pending work exists. It checks both before reset callbacks and after them, because an editor callback may commit an in-progress draft. Clean resets still follow the existing reset path. This is a preservation guard, not automatic recovery; the user must retain the local session and the unresolved limitations in §5.70 remain.
+
+Verification: two added protocol regressions cover pending work before the reset and work committed by a reset callback, including history and epoch preservation. The protocol plus demo reset tests passed 24/24; the full core workspace passed 692/692; typecheck and `git diff --check` passed. An isolated headless Chrome 156 page using the real client and a synthetic transport showed the pending checkpoint and epoch unchanged, a reported error, and the disconnected state. The fixture is under `output/playwright/reset-preservation/`. This was not a native editor interaction, an actual server restart, a multi-user convergence test, or a test of automatic reconnection. The pre-existing pending Slate session was not touched.
+
+## 5.74 Opt-in live browser recovery and restart history
+
+The product demo now enables live recovery with `?recovery=1`. Before editing, `LiveRecovery` binds the local session to the server generation and schema and obtains a durable reservation that protects the required history against GC. After a server restart, it checks exact change receipts, recovers pending changes in order, and preserves undo and redo history. Recovery stops and retains local state if the generation or schema changes, required proof is missing, or local changes occur during recovery. This is an opt-in demo feature, not production acceptance.
+
+**Chrome evidence.** Headless Chrome 156 used a Word document with native Slate, Lexical and ProseMirror editors. Automated keyboard input added `[remote]` in Lexical. The browser then blocked Slate POST requests while native Slate input added `[local]`, leaving seven pending changes. The product server stopped gracefully with SIGINT and restarted with the same data and port. Automatic reconnection made the native editor models, client models and server model converge, with each marker present once. Seven Slate undo operations removed `[local]` and retained `[remote]`; seven redo operations restored `[local]`. A second graceful restart with no pending changes retained the history: seven undo operations again retained `[remote]`, and seven redo operations restored `[local]`. All models converged after redo.
+
+The Chrome run used automated native keyboard input. It was not a human-input, OS-IME, power-loss or production-reliability test. The exact accepted-but-unconfirmed boundary and another user's change after restart are covered by separate server integration tests, not by this Chrome run. The browser session keeps its recovery state in memory; page reload recovery is not implemented. Safe retirement of GC protection is not available, so durable GC pins remain retained. A schema upgrade stops this recovery protection and requires separate handling. This evidence does not resolve recovery for the older unprotected session preserved in §5.69.
+
+**Verification.** The core suite passed 699 tests and the demo suite passed 64 tests. Typecheck and `git diff --check` passed. These results cover the stated suites and live browser scenario; they are not a full-workspace or production acceptance result.
+
+## 5.75 Durable browser reload recovery and explicit retirement
+
+The opt-in product demo (`?recovery=1`) now saves each editor actor, recovery proof, client checkpoint and retirement intent in `localStorage`. Web Locks prevent a second tab from using the same recovery actor at the same time. Reload uses the saved actor for the same origin, server, document and editor slot. Checkpoint writes precede change submission. A failed storage write stops the session. Restoration checks the server proof before editing or subscribing. This extends §5.74: page reload recovery and explicit retirement are now implemented. Schema upgrades are disabled while this recovery mode is enabled.
+
+**Chrome evidence.** Chrome 156 opened a Word document with native Slate, Lexical and ProseMirror editors. Automated native Lexical input added `[remote]` and reached the server. Blocking Slate `/changes` requests then left seven pending changes from native Slate input of `[local]`. The saved browser records contained the actor IDs and seven pending Slate changes. `page.reload()` restored the same actors. All three editor models and the server model converged to `Project brief[remote][local]`, with each marker present once.
+
+The product server then stopped with SIGINT and restarted on the same port with the same data. After another page reload, seven Slate undo operations removed `[local]`, retained `[remote]`, and left all models equal. A further reload preserved the redo history: seven redo operations restored `[local]`, and all models were equal again.
+
+**Retirement evidence.** The browser forwarded Slate's reservation-release request to the actual server, then replaced the successful response with HTTP 503. The browser retained the saved release intent. On reload it retried the same reservation ID, recorded `retired: true`, and left Slate offline. The server log contained the exact Slate `recoveryPin` record with `pin: null`. The other editors kept their recovery protection, and document content stayed unchanged. This tests a simulated lost release response after server acceptance. It does not simulate power loss.
+
+Explicit retirement discards that editor's undo and redo history and stops its editing session. Further editing requires a new session. Reload alone does not retire other reservations: their protection is intentionally retained for later recovery. This feature still requires the saved origin-local storage and the same document identity. It does not recover the older unprotected session in §5.69, prove OS-IME behavior, or establish production reliability.
+
+**Verification.** The core suite passed 719/719 tests and the demo suite passed 64/64 tests. Typecheck, the product bundle build and `git diff --check` passed. After the final change to block local mutations when closing a recovery actor lock, a fresh focused run passed 11 browser-recovery and 17 live-recovery tests (28 total). The full suites preceded that last change. Chrome also confirmed that an actual duplicate tab was rejected by the Web Lock. The browser scenario used automated native keyboard input. Its evidence is under `output/playwright/durable-recovery-20261101/`; earlier raw browser logs are under `.playwright-cli/`.
+
+## 5.76 Isolated Rust and WebAssembly storage experiment
+
+`experiments/rust-core/` contains an isolated UTF-16 text-splice primitive. It is not part of the production engine or npm workspaces. It has no CRDT merge, operation identity, synchronization, persistence, undo history, presence or editor adapter. It preserves UTF-16 code units, including isolated surrogates, and rejects an invalid range before mutation. It does not establish compatibility with the production document engine.
+
+Four Rust unit tests, the format check, the native release build and the WebAssembly release build passed. JavaScript and WASM checksums matched for 0, 1, 31 and 1,000 edits; the native 1,000-edit checksum also matched. With 100,000 input code units, 1,000 edits per batch and seven measured samples, the observed medians were 1.523 ms for native Rust, 1.677 ms for JavaScript `Uint16Array`, and 7.273 ms for Rust WASM. WASM was slower than JavaScript in this run.
+
+These measurements used Apple Silicon, Rust 1.86 and Node 18.10.0. They are not results for the repository's required Node 24 runtime. Timing includes allocation, initialization, edits and checksum; it excludes WASM loading and compilation. One WASM call runs a whole batch, so the measurements do not include text transfer or per-edit boundary costs. The implementations use different allocation strategies. Engine integration, full CRDT equivalence, browser execution and editor input latency are **NOT_RUN**. No production-engine speedup follows from this experiment.
+
+
+## 5.77 Ordered bot delivery and initial brief verification
+
+**Scope.** The engine roadmap retains items 1–9. `docs/bot-roadmap.md` records a separate sequence: B1 recovery within the opt-in local demo scope; B2 structured briefs and completion checks; B3 plans, proposals and server authorization; B4 templates and schema-specific authoring; B5 coordination and a persistent watcher; B6 operations, sources and memory. The authoring design and bot README link this sequence. The initial B2 CLI checks are implemented, but the B2 stage remains in progress. The Rust experiment remains a separate lane, not an engine migration or a B2 acceptance result. Node 24 and browser experiment work is continuing separately.
+
+**Implementation.** `run --brief FILE` accepts a version-1 brief with an objective and explicit requirements. The original mission remains required. Initial requirement kinds are `exact_text`, `node_type`, and `manual`. Paths follow schema model `children` indexes, not editor positions or text offsets. Exact text compares the whole text node, including supported declared spans; it is not a substring or occurrence-count check. Brief validation rejects unsupported or oversized inputs. The saved brief is supplied to the planner and retained across supported profile recovery.
+
+Before accepting a planner's finish, the runner rereads the settled document, verifies the schema fingerprint, and compares the read revision with authoritative server metadata. A revision mismatch requires another planning iteration within the original budget. This barrier prevents a local read delayed behind the server event stream from passing an obsolete result. The report records requirement results and `checkedRevision`. All requirements must pass for `completed` with `completion: verified`. A failed requirement or an unchecked manual requirement yields `needs_attention` and the saved report. A mission without a brief can still report `completed`, but is labeled `completion: model_reported` and `verification.status: not_checked`. Verification states what was observed at the checked revision; it cannot guarantee later edits or general document quality.
+
+**Evidence.** The bot workspace passed **38/38 tests**, with zero failures and zero skips. The pure brief checks passed **10/10**. Workspace typecheck and `git diff --check` passed. These include rejection of the partial `Confirmed` result for the exact requirement `Confirmed exactly once.`, check failures, manual requirements, and the supported integration and recovery paths. Documentation tests passed **28/28**. Documentation build and static checks passed **32 pages and 1,880 internal link, fragment and asset targets**, with English prose and local-path exclusion checks.
+
+A real Codex run using `gpt-6.1-sol` passed after the authoritative revision barrier and schema fingerprint correction. Mission `87d48ffe-4d0f-459a-8d7a-7085ba920d0f`, document `verified-final`, inserted `Confirmed exactly once.` and finished with `completion: verified`. Both `node_type: paragraph` and `exact_text` at `[0]` passed at server sequence 1. An independent server state read matched the exact text and sequence. Receipts: `output/validation/bot-brief-20261101/final-receipt.json` and `codex-final.json` in the same directory. The earlier positive model run preceded the final guards and is not the final-source receipt.
+
+**Limits.** This is a CLI runner change, with no new Chrome check or browser brief-entry integration. Source verification, general preservation and placement requirements, template acceptance, proposal storage, and server-enforced bot scope remain later work. A local reviewer restriction is not server authorization. The 719 core and 64 demo counts in §5.75 remain historical checkpoint results with their stated final-change boundary; they are not new full-workspace evidence for this change. No commit, push, publication or production acceptance is established by this section.
+
+
+## 5.78 Rust storage experiment: Node 24 differential and Chrome evidence
+
+The production server and client remain TypeScript. The isolated package in `experiments/rust-core/` now has a native test-only line protocol and a deterministic differential check against a JavaScript UTF-16 string oracle. All 265 sequential operations passed: 142 valid edits and 123 invalid edits. The check compares the complete state after each operation and covers random edits, invalid ranges, atomic rejection, end insertion, empty text, and isolated surrogates. Four Rust unit tests, the format check, and native/WASM release builds passed. This is a narrow text-storage contract, not full CRDT equivalence.
+
+The follow-up used Node 24.22.1 and recorded seven samples after three warm-ups for a 1,000-edit batch over 100,000 initial UTF-16 code units. Median timings were 1.759 ms for JavaScript `Uint16Array` and 8.050 ms for Rust WASM. Both returned checksum `719347296`. This replaces the Node 18 runtime limitation for this follow-up only; the original receipt remains historical. Raw samples and differential counts are in `experiments/rust-core/receipt-node24.json`.
+
+Actual Headless Chrome 156 execution of the standalone `browser.html` harness passed with the same input size, edit count, sample count, warm-up count, and checksum. Median timings were 1.700 ms for JavaScript and 7.300 ms for Rust WASM. The exact browser result is preserved in `output/validation/rust-browser-20261101/chrome-result.json` and copied to `experiments/rust-core/receipt-chrome.json`. English methodology and result notes are in `experiments/rust-core/README.md` and `RESULTS.md`.
+
+WASM was slower than the JavaScript baseline in both follow-up runs. Timing includes allocation, initialization, edits, and checksum; it excludes WASM loading, compilation, text transfer, and per-edit boundary calls. Browser PASS applies only to this isolated batch harness. Production integration, full engine semantics, server/client Rust migration, editor input latency, and production acceptance remain NOT_RUN. No commit, push, or publication is established by this section.
+
+## 5.79 Rust roadmap and parallel storage/bridge slices
+
+**Scope.** `docs/rust-roadmap.md` defines R1 UTF-16 contract and baseline, R2 safe storage comparison, R3 per-edit UTF-16 bridge, R4 shadow CRDT semantics, R5 native server and WASM client shadow adapters, and R6 end-to-end gates with an explicit go/no-go decision. The engine and bot roadmaps and the experiment README link this sequence. R1 retains the bounded evidence in §5.78. R2 and R3 have initial slices; full stage acceptance remains pending. R4–R6 are planned. These experiments do not switch the production TypeScript server or client to Rust.
+
+**R2 native storage slice.** `experiments/rust-core/` adds a safe gap buffer and a native comparison against the existing vector. Four new tests and four existing tests passed. The new trace and growth/shrink tests compare complete Vec/Gap state after each of 59,000 operations. Separate cases cover invalid-range atomicity, empty boundaries, surrogate units, and gap growth. Format and Clippy checks passed. The first plain release-test attempt failed because the existing release profile uses `panic = "abort"`; `CARGO_PROFILE_RELEASE_PANIC=unwind cargo test --offline --release` passed all eight tests. The profile itself was not changed for that test.
+
+The native benchmark used Homebrew Rust 1.87 on aarch64, release LTO, 100,000 initial UTF-16 units, 10,000 edits, seed `305419896`, one warm-up per implementation, and seven samples with alternating implementation order. Vec/Gap median edit-batch times were 10.203625/0.144333 ms for local edits, 13.737791/7.875500 ms for random far jumps, and 17.584583/27.428667 ms for alternating ends. The gap buffer regressed on alternating-end edits. Construction and full-result materialization have separate raw arrays. Construction includes the input copy; trace generation, checks, and destruction are excluded. The 100,064 initialized gap-storage units are not capacity, peak allocation, or RSS. Complete final vectors matched in every timed sample. Results and limits are in `experiments/rust-core/STORAGE-RESULTS.md` and `storage-comparison-native.jsonl`. The reference is the existing Rust vector, not an independent JavaScript oracle. Independent JavaScript storage parity and the WASM storage comparison remain pending for full R2 acceptance.
+
+**R3 bridge slice.** The separate `experiments/rust-bridge/` crate exercises real per-edit UTF-16 input and full-output transfers, handles, disposal, stale-handle rejection, bounds, capacity limits, and WASM memory growth. Two native tests and the WASM build passed. An initial doctest attempt failed because rustup rustc 1.86 was mixed with Homebrew rustdoc 1.87; selecting both rustup tools fixed that invocation. Independent review reproduced two wrapper bounds defects: mutable scratch capacity and an overridden `Uint16Array.length`. Both were fixed and given regressions. Independent final hostile-input review found no remaining blocker. Earlier pre-fix receipts are superseded for acceptance.
+
+Final Node 24.22.1 and actual Headless Chrome 156 runs each passed 4,000 random edits and 4,018 exact-read/hash checks. The final Chrome receipt is `output/validation/rust-bridge-20261101/chrome-final.json`, copied to `experiments/rust-bridge/receipt-chrome.json`. Node evidence is `experiments/rust-bridge/receipt-node24.json`. Final source hashes identify the reviewed wrapper and suite; the WASM SHA-256 is `76aa6dc0e07df754c8c190da5fe6dcb8da94b5d8152eb1df2116a1394512b68f`. The earlier `chrome-result.json` is pre-fix evidence and is not the final acceptance receipt.
+
+For 100,000 initial units, 2,000 edits, one warm-up, and five samples, Node medians were 49.965 ms for JavaScript string edits, 14.582 ms for WASM per-edit input, 83.122 ms for per-edit input plus full output, and 14.293 ms for the whole WASM batch. Final Chrome medians were 12.30, 14.70, 63.60, and 14.40 ms for those named paths. The timing boundaries differ: JavaScript measures string edits; the per-edit input path includes checks, input copy, and splice; the full-output path also copies the document each edit; the whole batch includes initialization, PRNG, and hashing without text transfer. These numbers do not isolate ABI overhead or pure allocation/edit cost and do not establish a production speedup. Startup and encode/create+copy/read+copy/decode/close phases are recorded separately; short Chrome phases are timer-resolution limited. This is a bounded initial R3 slice, not full R3 acceptance or CRDT/editor integration.
+
+**Limits and verification.** The roadmap documents use English prose and preserve local-edit versus far-jump workloads, separate timing phases, full-state correctness gates, and explicit no-go outcomes. Documentation tests passed 28/28 before the later result-only prose updates; scoped whitespace checks passed. Final integration review and any later documentation build are recorded separately. Full CRDT equivalence, production Rust adapters, actual editor latency, and production acceptance remain NOT_RUN. No commit, push, publication, or engine migration is established by this section.
+
+
+## 5.80 R2 bounded storage comparison: independent JavaScript and WASM
+
+**Scope and decision.** The declared bounded R2 storage comparison gate passed.
+The isolated `experiments/rust-core/` package now compares the existing Rust
+Vec and safe Gap implementations against an independent JavaScript UTF-16
+string oracle in Node 24.22.1 and actual Headless Chrome 156. Each runtime
+passed 30,538 validation operations with complete state comparison after each
+operation for both WASM backends; the receipts report 29 invalid cases. All
+three final trace hashes also match the native benchmark. This is storage
+acceptance within the declared workloads, not full Rust CRDT equivalence.
+The production TypeScript server and client remain unchanged by this work.
+
+**Correctness and review.** Eleven native tests passed, including three added
+adapter tests for slot lifecycle, UTF-16 preservation, invalid-input atomicity,
+and exact capacity. The offline WASM build passed. Review exposed a JavaScript
+wrapper bounds defect when a shared typed-array getter changed after import.
+The fix captures intrinsic accessors and primitive lengths. Final regressions
+cover changed prototype and own getters, oversized input with a false length,
+detached input, rejected coercion, growth/shrink, invalid ranges, and
+clear/reinitialize behavior. Explicit WASM memory growth detached the old
+buffer; later operations still matched. Earlier receipts from before these
+fixes are superseded. The final source manifest stayed unchanged across the
+Chrome run. The existing TypeScript core regression suite passed 720 tests.
+
+**Timings and regression.** Workloads use 100,000 initial UTF-16 units, 10,000
+edits per trace, seed `305419896`, one warm-up, and seven samples. Implementation
+order cycles through all six permutations, then repeats the first. Node
+JavaScript string/Vec/Gap edit-batch medians were 267.339/59.062/1.235 ms for
+local edits, 272.150/71.707/48.223 ms for far jumps, and
+259.388/73.219/145.448 ms for alternating ends. Chrome medians were
+58.9/58.4/1.1, 61.6/70.9/47.4, and 62.9/71.6/143.4 ms respectively.
+Gap regressed against Vec for alternating ends in native and both WASM runs.
+Chrome Vec also regressed against JavaScript strings for far jumps and
+alternating ends. The original native benchmark and R1 baseline remain
+separate historical measurements.
+
+Construction, edit batches, and full-result materialization retain separate
+raw arrays. Construction includes input conversion/copy. WASM edits include
+JavaScript checks, per-edit input copying, and ABI calls. Full WASM reads copy
+through output scratch into a fresh JavaScript array. Trace generation,
+correctness checks, hashing, and disposal are outside the timers. Loading and
+compilation are excluded. These intervals do not isolate pure storage or ABI
+cost. Chrome sub-0.1 ms phases are timer-resolution limited; recorded zero
+values do not mean zero cost. Logical text and each scratch buffer are bounded
+to 1,048,576 units; two scratch buffers reserve 2 MiB each. This does not
+measure allocator capacity, peak memory, retained memory, or process RSS.
+
+**Evidence and limits.** Final raw receipts are
+`experiments/rust-core/receipt-storage-node24-r2.json` and
+`experiments/rust-core/receipt-storage-chrome-r2.json`; source and artifact
+hashes are in `experiments/rust-core/receipt-storage-source-r2.json`.
+The original final Chrome capture is
+`output/validation/r2-storage-20261101/chrome-final.json`. English conditions,
+phase tables, commands, and limits are in `experiments/rust-core/README.md`
+and `STORAGE-RESULTS.md`; `docs/rust-roadmap.md` records the bounded R2 status.
+R3 full acceptance remains pending. Full CRDT equivalence, production Rust
+adapters, actual editor latency, and production acceptance remain NOT_RUN.
+No commit, push, publication, or production speedup is established here.
+
+Documentation verification passed 28/28 tests. The final docs build passed;
+the build check inspected 32 pages and 1,880 internal links, with English and
+local-path exclusion checks passing. All 24 relative Markdown link targets in
+the four updated roadmap/experiment documents exist. Scoped `git diff --check`
+passed. These checks validate the documents; they do not add product evidence.
+
+
+## 5.81 R3 bounded boundary costs and lifetime completion
+
+**Decision.** R3 passed its declared bounded boundary and lifetime gate. The
+production server and client remain TypeScript. Full CRDT semantics, Rust
+production adapters, actual editor latency, and production acceptance remain
+NOT_RUN. This section adds evidence to the historical initial slice in §5.79;
+it does not rewrite its original receipts or source hashes.
+
+**Correctness and lifetime.** Six native Rust tests and the offline release
+WASM build passed. Node v24.22.1 on macOS arm64 and actual Headless Chrome
+156.0.0.0 each passed 4,000 differential edits, 4,018 complete UTF-16 read/hash
+checks, 2,000 lifetime cycles, and 5,997 stale-handle rejections. Final live
+handles and logical units were zero. Disposal is terminal and idempotent;
+injected close failure preserves the failed handle for retry and does not skip
+other handles. Ownership, hostile metadata, forged brands, detached inputs,
+and view refresh after growth passed. A separate independent audit passed 13
+assertions, including a genuine cross-realm Uint16Array. No blocker remained
+in this declared contract.
+
+Linear memory was 7,667,712 bytes before/after the repeated cycles, then
+7,733,248 after explicit growth by one 64 KiB page in both runtimes. These
+counters and observations establish logical release and view validity. They
+do not prove allocator, process RSS, or JavaScript GC leak freedom. Raw exports
+remain trusted instance-level access. Trap recovery and allocation failure
+are outside the gate.
+
+**Costs and regressions.** Both runtimes completed 42 calibrated boundary
+cases with seven measured batches each. Controls cover scalar/probe calls,
+reused input/output copies, fresh output allocation plus copy, and a Rust
+scratch transfer that includes its WASM call. At 100,000 UTF-16 units,
+Node/Chrome median WASM-memory input-copy costs were 2.690/2.856 us; reused
+output 2.581/2.661 us; fresh output 20.333/7.617 us; Rust scratch transfer
+13.911/14.063 us. Rust scratch transfer was slower than the JS control in both
+runs. Loop/JIT effects remain; no subtraction isolates pure ABI or allocator
+cost. Seven batches of 1,000 complete create/read/close cycles had median
+46.721/41.200 ms. The aggregate includes copies, allocation/drop, views, and
+assertions. First startup observations have unknown engine cache state;
+repeated retained-module instantiation and wrapper-init batches are separate.
+
+For the original 2,000-edit workload, Node/Chrome medians were
+50.384/11.700 ms for JS string edits, 14.874/14.500 ms for per-edit input,
+79.018/64.000 ms for input plus full output, and 14.213/14.300 ms for one whole
+WASM batch. Chrome per-edit input regressed against its JS string path. Full
+output was slower in both runtimes. Boundaries differ, so these are standalone
+observations and do not establish a production speedup.
+
+**Evidence.** Final receipts are
+`experiments/rust-bridge/receipt-boundary-node24.json` and
+`experiments/rust-bridge/receipt-boundary-chrome.json`. Chrome's raw capture is
+`output/validation/r3-boundary-20261101/chrome-final.json`. Both receipts match
+the final measured sources and WASM SHA-256
+`047cbee64965a7e4826210486350e29041d2b2eb06a509a77b8525501dc97306`.
+They retain every sample, call count, checksum, workload, runtime, and source
+hash. English methodology and tables are in the bridge README and RESULTS;
+roadmaps record bounded R3 acceptance. Production TypeScript tests were not
+rerun because this completion changes only the isolated experiment and docs.
+No commit, push, publication, or production migration is established here.
+
+
+Documentation verification after the R3 prose updates: **28/28 passed**.
+The docs build passed. The build check inspected 32 pages and 1,880 internal
+links; English and local-path exclusion checks passed. All 12 relative Markdown
+link targets in the four scoped roadmap/bridge documents exist. Scoped
+`git diff --check` passed. These checks validate documentation and do not add
+production or editor evidence.
+
+
+## 5.82 Same-algorithm JavaScript Gap and Rust WASM Gap
+
+**Scope and decision.** This follow-up compares JavaScript Gap with the existing
+Rust WASM Gap backend under the same gap algorithm, prepared UTF-16 inputs,
+traces, and fresh contiguous output contract. The current practical WASM path
+has no measured gain. Current measurements do not provide a performance
+justification for production migration; the formal R6 decision is pending.
+Production TypeScript remains authoritative. This is storage evidence, not
+full CRDT or editor evidence.
+
+**Matched conditions.** Both start with 64 initialized gap units, move the gap
+with overlapping copy, delete before growth, and grow by
+`max(required - gap, floor(logicalLength / 2), 64)`. Each runtime uses 100,000
+initial units, 10,000 edits, seeds 305419896 and 192837465, local/far-jump/
+alternating-end traces, one warm-up per implementation, and seven samples
+with alternating order. Construction includes input copy; edits, fresh output,
+and the per-sample sum have separate arrays. Preparation, checks, hashing,
+disposal, and module instantiation are excluded. WASM includes wrapper checks,
+input/output scratch work, per-edit calls, and the Rust mutex. JavaScript growth
+always allocates a new typed array; Rust Vec can reuse capacity. This does not
+isolate a Rust language, ABI, or allocation effect.
+
+**Correctness.** The JavaScript suite passed 4,062 assertions, including 4,000
+oracle operations. Node v24.22.1 on macOS arm64 and actual Headless Chrome
+156.0.0.0 each passed 60,033 operations with complete-state comparison after
+every operation, including 19 invalid cases and six seed/trace pairs. Checks
+include growth, isolated surrogates, fresh-output mutation isolation, and view
+refresh after memory growth. An independent algorithm audit passed. Source
+and WASM hashes match across Node, Chrome, and the before/after browser checks.
+These finite checks do not prove all storage histories or CRDT semantics.
+
+**Costs and regressions.** For seeds 305419896/192837465, Node JS/WASM edit
+medians in ms per 10,000 edits were local 1.071/1.218 and 0.943/1.116;
+far-jump 9.967/48.328 and 9.427/48.262; alternating ends 29.568/142.938 and
+29.646/145.744. Chrome JS/WASM edit medians were local 0.900/1.100 for both
+seeds; far-jump 9.100/47.500 and 8.700/46.800; alternating ends 28.300/142.800
+and 28.700/143.700. WASM edit and pipeline medians were higher in all six
+seed/trace pairs in both runtimes. Chrome's first local pair had one of seven
+WASM pipeline samples below its paired JS sample; the other five had none.
+Small rounded phase medians are not zero-cost evidence.
+
+The earlier string-versus-Gap gain does not establish an intrinsic Rust benefit:
+JavaScript can use the same algorithm. This practical comparison does not rank
+native Rust, server execution, or pure language cost. Timed steady traces do
+not measure growth performance. Initialized storage lengths and scratch bounds
+do not measure allocator capacity, peak allocation, retained memory, JavaScript
+heap, or RSS. Production integration, full CRDT parity, real editor input
+latency, and production acceptance remain NOT_RUN. The earlier 720 TypeScript
+tests were not rerun because this follow-up changes only the experiment and
+docs.
+
+**Evidence.** Receipts are `experiments/rust-core/receipt-gap-node24-r3.json`
+and `experiments/rust-core/receipt-gap-chrome-r3.json`. Raw Chrome capture:
+`output/validation/same-gap-20261101/chrome-final.json`. The experiment README
+has reproduction steps; STORAGE-RESULTS has separate phase/total tables and
+limits. The Rust and bot roadmaps retain R4–R6 as planned. Historical receipts
+remain unchanged. No commit, push, publication, or production replacement is
+established by this section.
+
+
+Documentation verification after these updates: **28/28 PASS**. The docs build
+passed. The build check inspected 32 pages and 1,880 internal links; English
+and local-path exclusion checks passed. Scoped `git diff --check` passed.
+These checks validate documentation and add no production or editor evidence.
+
+## 5.83 No-WASM native Rust Gap versus Node.js Gap
+
+**Scope and result.** The isolated storage experiment now compares native
+Rust Gap with the same-algorithm Node.js Gap, without WASM. Native edit and
+pipeline medians were lower in all six measured seed/trace conditions. Native
+whole-process RSS was lower at all six sampled stages. This supports further
+native experiments. It does not measure the current production server, isolate
+an intrinsic Rust language benefit, or approve a production migration. The
+previous WASM regressions remain historical evidence for their own paths.
+
+**Matched conditions.** The final receipt uses Node v24.22.1 on macOS arm64,
+Apple M3 Max, 14 logical CPUs. The native release build used rustup Rust 1.86.0,
+LTO, one codegen unit, and panic abort. Ambient Homebrew Rust 1.87.0 is separate.
+An earlier run had incomplete compiler attribution; a corrected full rerun
+provides the final values. Both runtimes read identical binary trace bytes
+outside the timers. Each condition uses 100,000 initial UTF-16 units and
+10,000 edits; two seeds cover cursor-local, far-jump, and alternating ends.
+Seven paired samples alternate order. Each runtime/sample starts a fresh
+process with five complete untimed warm-ups. Construction, edits, and fresh
+output have separate timers. Pipeline is their sum per sample. Startup, parsing,
+JSON, IPC, oracle checks, hashing, and release are excluded. External host load
+is uncontrolled. These are storage timings, not process or IPC timings.
+
+**Correctness and regression.** An independent JavaScript string oracle passed
+24,009 operations against both runtimes with full state checked after every
+operation. Six 4,000-edit traces start with 128 units; nine additional cases
+cover errors and growth, including four atomic rejections. Initialized storage
+growth parity passed. All 84 measured outputs and twelve memory-run outputs
+passed complete final-state checks. Final source/binary hashes match before
+and after measurement; an independent receipt integrity audit passed. Native
+regression tests passed 13/13 (seven library, two native runner, four storage).
+The JavaScript suite passed 4,062 assertions, including 4,000 oracle operations.
+Production TypeScript source was not changed, and its earlier 720-test result
+was not rerun or promoted to current evidence.
+
+**Timing and regressions.** For seeds 305419896/192837465, Node/native pipeline
+medians in milliseconds were cursor-local 0.928375/0.138876 and
+1.027583/0.133792; far-jump 9.236333/8.216250 and 9.315251/8.178208;
+alternating ends 30.001999/27.107958 and 29.341499/27.239125. Native pipeline
+won 41/42 paired samples. One first-seed far-jump sample was slower than its
+Node pair. Native first-seed alternating-end fresh-output median also regressed:
+0.026375 ms versus Node 0.021666 ms. Large gap movement still dominates far-jump
+and alternating-end costs. Phase and pipeline tables preserve these limits.
+
+**Memory.** Twelve separate fresh processes pause before trace load and after
+load, construction, edits, materialization, and release. The parent samples
+external Darwin `ps` RSS in KiB for both runtimes. Native baseline was 1,248 KiB;
+Node baseline was 47,088–47,680 KiB. Materialized native RSS was 2,928–3,056 KiB;
+Node was 63,616–65,104 KiB. Parsed trace data remains retained through release
+in both runtimes; no forced GC is used. Full-output JSON serialization occurs
+after the materialized snapshot and before release. Values include runtime,
+trace, allocator, and output effects. They do not measure per-document heap,
+peak RSS, leak freedom, multiple-document scaling, or amortization of runtime
+baseline in an existing server. Post-release RSS is not a leak verdict.
+
+**Decision and evidence.** `experiments/rust-core/receipt-native-gap-node24-r1.json`
+retains raw samples, paired order, six-stage memory observations, fixture hashes,
+compiler attribution, and source/binary freeze. The experiment README has
+reproduction steps. STORAGE-RESULTS adds full phase and RSS tables. The Rust
+and bot roadmaps separate the native gain from the earlier WASM regression.
+JIT, GC, checks, allocators, and runtime baselines differ. Production server
+throughput, concurrency, CRDT semantics, adapters, recovery, editor latency,
+and production acceptance remain NOT_RUN. R4–R6 remain planned. No commit,
+push, publication, deployment, or production replacement is established here.
+
+Documentation verification after these updates: **28/28 PASS**. The docs build
+passed. The build check inspected 32 pages and 1,880 internal links; English
+and local-path exclusion checks passed. Scoped `git diff --check` passed.
+These checks validate documentation, not production or editor behavior.
+
+## 5.84 First bounded R4 native CRDT shadow slice
+
+**Scope and result.** R4 is in progress. The independent native crate at
+`experiments/rust-shadow` applies actual wire operations from TypeScript. It
+does not receive expected TypeScript state as input. The pinned manifest has
+a flow root, one implicit paragraph, and boolean `bold` and `italic` marks.
+The supported operations are UTF-16 `text`, `del`, `undel`, and boolean-or-null
+`set`. Production server and client code remain TypeScript.
+
+**Semantic evidence.** The final harness receipt passed 614 full-state
+comparisons over 588 input batches and 1,214 records, with four saved random
+seeds. Comparisons include ordered token IDs and origins, UTF-16 units,
+tombstones, deletion cancellations, attribute values and last-writer-wins
+tickets, clock, counts, and the projected model. The harness uses the real
+TypeScript `Doc`, `History`, `SyncClient`, and `DocHub` through an in-memory
+network. Deterministic cases cover concurrent changes, foreign edits followed
+by undo, repeated undo/redo, and duplicate replay. The random traces use
+sequential causal delivery. TypeScript `History` generates inverse operations;
+Rust only applies them. There is no independent Rust history implementation.
+
+**Recovery evidence.** Two cases stop the native process and start a new one.
+One snapshot includes saved `SyncClient.pending` operations; the other excludes
+them. Both replay the original pending operations after foreign changes.
+The Rust-owned snapshot format stores the explicit schema manifest and the
+complete supported state. It is not compatible with TypeScript snapshots.
+Missing required fields and invalid restore are rejected atomically. This
+checks bounded native document recovery and duplicate replay, not full server
+recovery or protected GC.
+
+**Exclusions.** Nodes, moves, GC, other marks, general schemas, and schema
+transitions must fail closed. Births with clock zero, reserved `~root` actor,
+or null birth marks are rejected. Isolated-surrogate actor names are
+unsupported; all UTF-16 text units remain supported. Unicode actor comparator
+fixtures use raw `Doc.apply` outside the production server actor gate. Raw
+TypeScript can accept some inputs outside this scope. General rejection parity
+is not claimed.
+
+**Integrity and decision.** Native tests passed 9/9. The final independent
+audit confirmed all 53 recorded source hashes against the current files and
+the before/after receipt. The native binary SHA-256 is
+`ca454ee71f4ee4e59efa5bb91a52e3e761b331c38cacd50afb50e75d2e571c98`.
+Eight independent TypeScript/Rust edge checkpoints and a fresh-process restore
+also passed. Evidence is `experiments/rust-shadow-harness/receipt.json`; both
+experiment READMEs provide reproduction steps. The crate and harness are
+isolated experiments. No production TypeScript mutation or fresh core-suite
+result is established by this work. R4 is not complete. Full CRDT equivalence,
+full server recovery, protected GC, protocol compatibility, R5 adapters, WASM,
+Chrome, performance, and production acceptance remain NOT_RUN. No commit,
+push, publication, deployment, or production replacement is established here.
+
+Documentation verification after these updates: **28/28 PASS**. The docs build
+passed. The build check inspected 32 pages and 1,880 internal links; English
+and local-path exclusion checks passed. Scoped `git diff --check` passed.
+These checks validate documentation, not production or editor behavior.
+
+
+## 5.85 Independent Rust History, selection, and pending inverse replay
+
+**Delivery.** Rust now generates its own undo and redo operations for the pinned
+single-paragraph schema. TypeScript remains the production engine and the
+reference. The isolated native implementation captures prior registers for local
+operations, preserves shared formatting ownership identities, groups contiguous
+input within the existing 1,500 ms window, retains 100 history groups, returns
+caret keys, invalidates redo branches, clears history, and exports deletion pins.
+It does not receive expected TypeScript states or inverse operations.
+
+Undo cancels only the participant's deletion. A foreign deletion keeps its
+characters hidden. A format inverse checks the current write ticket; a later
+foreign write, including a same-value write, remains authoritative. Same-actor
+unrecorded writes also block an old history claim. Shared ownership states keep
+sequential formatting undo/redo connected without transferring a foreign write
+into an earlier local claim.
+
+**Completed checkpoint evidence.** The final History-only checkpoint uses Node
+24.22.1 and native binary SHA-256
+`e7e3187f40a60ffbd524c27abf0d2a0a915475cd7c5c50c1cdeb573bf7241170`.
+Its receipts are separate from the original apply-only receipt in section 5.84:
+
+| Receipt | Result at this checkpoint |
+| --- | --- |
+| `experiments/rust-history-harness/receipt.json` | 1,039 full document states and exact History graphs; 291 generated inverse and caret comparisons; 2,078 undo/redo flags; 1,046 pin comparisons; four atomic rejections; nine processes and eight restarts; four saved random seeds. |
+| `experiments/rust-selection-harness/receipt.json` | 281 document states and History graphs; 27 generated inverses; 150 captures; 7,604 endpoint resolutions; 3,803 range comparisons; two processes and one restart; two saved seeds. |
+| `experiments/rust-shadow-harness/receipt-current-history.json` | Existing apply-only regression: 614 full states, 588 input batches, and 1,214 records. TypeScript still generates this harness's inverses. |
+
+Native tests passed **23/23**: eleven History tests, three selection tests, and
+nine existing interpreter tests. Focused TypeScript regressions passed
+**72/72** across `history-format`, `history-unicode`, `intent-preservation`, and
+`client-checkpoint`. This is not a fresh full production-core suite result.
+
+An independent Sol High review passed 23 additional exact History graph and 15
+inverse/caret comparisons, 74 anchor assertions, and nine atomic rejection
+probes. Before/after/current SHA-256 checks passed for 60 History-receipt files,
+59 selection-receipt files, and 60 compatibility-receipt files. The original
+section 5.84 receipt was preserved byte-for-byte with SHA-256
+`44d88d0d969cf56ccf5f527bfc51e2d59cc67713beb343229589b504c1897039`.
+Later native changes need separate current receipts; these hashes identify this
+completed checkpoint and must not be treated as evidence for a different binary.
+
+**Recovery.** Native checkpoints bind actor, schema manifest, document state,
+and the shared History graph. Restore validates the detached candidate before
+replacing either live component. Validation rejects cross-slot state references,
+missing targets, future history tickets, invalid ownership counts, and actor
+mismatches. Plain document-only restore clears old history.
+
+The tests use actual `SyncClient.pending` from `MemoryNet`. An insertion fixture
+restores checkpoints before and after pending input. The subsequent matrix saves
+checkpoints after pending deletion, formatting, undo, and redo generation. Each
+case starts a fresh native process, receives another participant's overlapping
+deletion or same-key write, and replays the exact saved operations twice through
+plain apply. Replay leaves the saved History graph unchanged. Four subsequent
+undo/redo actions match TypeScript and preserve the foreign write or effective
+deletion. Pin tickets and minimum known deletion sequence also match.
+
+This proves the recorded native checkpoint and replay result. Child processes
+are closed and restarted from exported checkpoints; this does not prove crash
+journal durability, full server generation recovery, protected GC, or browser
+recovery. A checkpoint saved before an inverse does not contain its History
+transition. Reconstructing that transition from wire operations alone remains
+unsupported. Never regenerate an inverse with a new ticket and call it an exact
+retry.
+
+**Selection and delivery.** Native token anchors preserve collapsed, forward,
+and reversed ranges, including the boundary between UTF-16 surrogate units.
+Deleted endpoints resolve through physical predecessors. Strict product-style
+selection returns null for unknown keys; raw lookup retains TypeScript's start
+fallback. Native capture accepts valid offsets only and does not mirror raw
+invalid-offset clamping. Three actors generate each round before any other
+actor receives that round. Different causal delivery orders and reverse duplicate
+replay cover 96 delayed and 96 duplicate batches. State converges after each
+round. This does not assume buffering for arbitrary missing birth dependencies.
+
+**API boundary.** `history_record` applies and records fresh, distinct local
+builder operations for its own actor and existing targets. It rejects repeated
+local tickets and overlapping text birth spans within a batch. This command is
+not a retry-deduplicated submission API. Already-present pending changes use plain
+`apply`, without recording history again. Raw TypeScript WeakMap object-reference
+aliasing is outside this JSON interface. Native invalid records/restores and
+clock exhaustion preserve both document and history atomically. Raw TypeScript
+History can have different failure behavior and accepts some malformed graphs
+that native restore rejects. General rejection parity is not claimed.
+
+The bounded History graph is compared with the TypeScript HistorySnapshot graph,
+and valid exported native graphs are restored by TypeScript in the harness.
+The joint native checkpoint and native document snapshot remain their own
+formats; this is not general TypeScript snapshot compatibility.
+
+**Reproduce.** Use the same installed Rust toolchain for cargo, rustc, and rustdoc:
+
+```sh
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" test --offline --manifest-path experiments/rust-shadow/Cargo.toml
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" build --offline --manifest-path experiments/rust-shadow/Cargo.toml
+node experiments/rust-history-harness/harness.ts
+node experiments/rust-selection-harness/harness.ts
+RUST_SHADOW_RECEIPT=experiments/rust-shadow-harness/receipt-current-history.json node experiments/rust-shadow-harness/harness.ts
+node --test packages/doc-sync/test/history-format.test.ts packages/doc-sync/test/history-unicode.test.ts packages/doc-sync/test/intent-preservation.test.ts packages/doc-sync/test/client-checkpoint.test.ts
+```
+
+Each receipt applies to its recorded source and binary hashes. R4 remains in
+progress. Next work covers paragraph node identity, legacy split/merge aliases,
+node History, and multi-paragraph selection. General shapes and attributes,
+movement/logical joins, schema changes, GC, R5 adapters, native/WASM product
+integration, Chrome, and performance acceptance remain outside this checkpoint.
+No production engine mutation, commit, push, publication, deployment, or migration
+is established here.
+
+
+## 5.86 R4 legacy paragraph node identity, split/merge, and structural recovery
+
+**Continuation.** After completing section 5.85, multi-agent implementation
+continued through UTF-16 selection, pending inverse replay, and this structural
+slice. The same pinned schema now has an explicit opt-in native capability,
+`paragraph-markers-v1`. It supports authored paragraph node births using the
+actual production no-move split builder's `leftKey|rightKey` boundary. Base mode
+continues to reject nodes. No production TypeScript source was changed.
+
+Rust stores immutable marker identity, origin, born type and boundary, and the
+initial `$type` value and write ticket. Projection selects the first live marker
+for a boundary in physical token order. Other live markers become aliases.
+Three concurrent Enter operations at one boundary create exactly one additional
+paragraph. Removing the primary elects a remaining live alias. An alias that is
+physically separated from its primary must not reset the current block. The
+regression for that case preserves the three paragraphs `['ab', '', 'cd']`.
+
+The native History records an ordinary paragraph birth as an existence step.
+Merge deletes the primary and live alias markers. Undo cancels only that
+participant's deletion, retains foreign deletions, and restores the same marker
+identities. Foreign text inserted across a concurrent merge remains present.
+Native selection resolves primary markers and visible characters directly;
+absorbed aliases and tombstones use the actual TypeScript physical-predecessor
+walk. Both anchor and focus retain their orientation across paragraphs.
+
+**Final evidence.** The canonical structural receipt is
+`experiments/rust-structure-harness/structure.json`. The final binary SHA-256 is
+`8e200ff7c589f368a1ad472365439f349cd1e7dae72c00c5f103c048345d42c0`.
+All four final receipts use this binary and unchanged recorded source bytes:
+
+| Receipt | Result |
+| --- | --- |
+| `experiments/rust-structure-harness/structure.json` | 507 full document states and exact History graphs; 75 native inverse/caret comparisons; 507 pin comparisons; 642 captures; 9,284 ranges; 18,568 endpoints; five atomic rejections; two fresh process restarts. |
+| `experiments/rust-history-harness/receipt-current-structure.json` | 1,039 full states and History graphs; 291 inverse/caret comparisons; 1,046 pin comparisons; pending delete/format/undo/redo matrix and eight fresh process restarts remain passing. |
+| `experiments/rust-selection-harness/receipt-current-structure.json` | 281 full states and History graphs; 27 native inverses; 150 captures; 7,604 endpoints; 3,803 ranges; 96 delayed and 96 duplicate batches remain passing. |
+| `experiments/rust-shadow-harness/receipt-current-structure.json` | 614 full apply-only states, 588 input batches, 1,214 records remain passing. |
+
+The structural receipt adds two saved seeds, 42 and 20261101, with ten rounds
+per seed and three actors. Each actor creates its local operation before any
+actor receives that round. Observed operations include insertion, formatting,
+undo/redo, split, and merge. Different causal delivery permutations and reverse
+duplicate replay cover 120 delayed and 120 duplicate batches. Every round
+converges. This is not arbitrary missing-dependency buffering.
+
+Actual production builders cover split inside a surrogate pair, start/end
+splits, empty paragraphs, Backspace and forward Delete merges, model merge,
+three-actor aliases in both delivery orders, primary re-election, reverse actor
+undo/redo, merge of all aliases, and physically separated aliases. Comparisons
+include complete ordered tokens, immutable born/boundary fields, type register
+values and tickets, deletion/cancellation state, full projected blocks, primary
+and alias IDs, character membership, UTF-16 model runs, clock, counts, and the
+exact shared History graph. Rust receives operations, positions, keys, and its
+own checkpoints; expected TypeScript states and inverse outputs remain in the
+Node parent process.
+
+Native tests passed **31/31**: nine original interpreter tests, eleven History
+tests, three selection tests, and eight paragraph-marker tests. The offline
+build passed. The separate focused TypeScript structural-cache,
+intent-preservation, and editor-session run passed **65/65**. This overlaps the
+72-test section 5.85 reference run; do not add the counts as distinct tests.
+There was no fresh full production-core suite or editor/browser run in this work.
+
+**Recovery and format.** Actual `SyncClient.pending` split and merge operations
+are saved after generation with matching native document and History state.
+A fresh native process restores each checkpoint, applies a foreign insertion,
+and replays the exact saved structural batch twice through plain apply. The
+History graph remains unchanged. Subsequent independently generated undo/redo
+matches TypeScript and preserves foreign text.
+
+Opted replicas use `doc-sync-rust-shadow-v2` with exactly the explicit paragraph
+capability. Base v1 retains its original JSON state and document snapshot format.
+Restore checks required marker metadata, immutable type-register identity,
+boundary endpoints, and capability/version agreement. Missing metadata, unknown
+or duplicate capabilities, and a v2-to-v1 downgrade reject atomically. Existing
+v1 checkpoints restore separately; this is not a TypeScript document snapshot
+format or an automatic production schema migration.
+
+An independent review found that a forged History SetStep could target a
+paragraph marker even though authored node attributes are unsupported. The
+final implementation rejects it, preserves the exact active joint checkpoint,
+and still permits subsequent valid undo. This fix has a regression. Independent
+structure probes also passed 19 checkpoints and four corrupt-snapshot cases,
+including raw actor strings with delimiters and Unicode outside the production
+server actor gate. General acceptance/rejection parity is not claimed.
+
+Final before/after/live manifest checks passed for 67 structure files, 67 History
+files, 66 selection files, and 67 apply-compatibility files. These manifests also
+bind the Rust test sources. The prior four receipts, including the original
+section 5.84 result and the section 5.85 checkpoint, remain unchanged. Their
+old source hashes are historical: the earlier binaries/source trees were not
+archived before later implementation, so they are not current-binary evidence.
+
+**Reproduce from the repository root.** Use Node 24 and the matching installed
+Rust toolchain. Offline Cargo dependencies must already be cached.
+
+```sh
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" test --offline --manifest-path experiments/rust-shadow/Cargo.toml
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" build --offline --manifest-path experiments/rust-shadow/Cargo.toml
+node experiments/rust-structure-harness/harness.ts
+RUST_HISTORY_RECEIPT=experiments/rust-history-harness/receipt-current-structure.json node experiments/rust-history-harness/harness.ts
+RUST_SELECTION_RECEIPT=experiments/rust-selection-harness/receipt-current-structure.json node experiments/rust-selection-harness/harness.ts
+RUST_SHADOW_RECEIPT=experiments/rust-shadow-harness/receipt-current-structure.json node experiments/rust-shadow-harness/harness.ts
+node --test packages/doc-sync/test/structural-cache.test.ts packages/doc-sync/test/intent-preservation.test.ts packages/doc-sync/test/editor-session.test.ts
+```
+
+**Remaining R4.** General attributes and additional node shapes, placement and
+logical split/join, derived storage, schema validation/transitions, protected GC,
+and broader serialization/recovery remain open. These unsupported operations
+must stay blocked. This slice does not establish a native production server,
+WASM client, complete server recovery, crash-journal durability, Chrome behavior,
+performance, or production migration. R5 and R6 remain planned. No commit, push,
+publication, deployment, or production replacement is established here.
+
+
+Documentation verification after the final updates passed **28/28** tests, the
+site build, and the build/link check: 32 pages and 1,880 internal links, English
+prose true, and local-path exclusion true. Scoped tracked diff and whitespace
+checks passed; the explicit whitespace scan also covered 20 experiment and
+roadmap source/documentation files. A final post-build check again matched all
+four current receipts' before/after/live source and binary hashes. All 45
+production TypeScript source hashes also match the completed section 5.85
+checkpoint. Documentation build checks do not establish publication or browser
+behavior.
+
+
+## 5.87 R4 pinned text/atom blocks and JSON attributes
+
+**Delivery and boundary.** Multi-agent work added a separate opt-in block schema
+inside `experiments/rust-shadow`. The production TypeScript engine remains
+unchanged and authoritative. The schema ID is
+`general-flow-blocks:json-attrs:v1`; the exact native capability is
+`general-blocks-attrs-v1`. Its manifest is `schema-general.json`. The native
+snapshot format is `doc-sync-rust-shadow-v3`. Original base v1 and paragraph v2
+schemas and snapshots retain their contracts. This is a pinned flat schema,
+not arbitrary schema negotiation or a complete block engine.
+
+| Type | Shape and attributes |
+| --- | --- |
+| `paragraph` | Text; alignment left/center/right, default left; bounded JSON `meta`, default null. |
+| `heading` | Text; paragraph attributes and level 1–6, default 1. |
+| `divider` | Atom; style line/dots, default line; JSON `meta`. |
+| `image` | Atom; string `src`, finite nonnegative `width`, boolean `decorative`, and JSON `meta`. |
+
+Null is accepted for declared attributes and projects the schema default.
+Text markers, including the implicit root paragraph, can change between paragraph
+and heading. A null type write restores the immutable birth type or the root
+flow default. Stored attributes survive type changes. Admission follows the
+immutable shape, as TypeScript `Doc.check` does: a heading-only level can remain
+stored on a paragraph, and an image-only source can remain stored on a divider.
+Projection hides attributes that the current type does not declare.
+
+`meta` accepts bounded JSON strings, finite numbers, booleans, null, arrays, and
+objects. Each JSON attribute is one atomic LWW register. Concurrent objects with
+different nested keys do not merge their fields. This slice does not implement
+`fields-v1`. Native History checks current write tickets, so undo preserves
+later foreign writes, including same-value writes. Consecutive owned attribute
+states retain the existing shared-state identity rules.
+
+Atoms have virtual text positions after them. Empty virtual paragraphs appear
+in raw blocks but are omitted from the public model. Selection must distinguish
+physical block indexes from model paths. The implementation matches the existing
+InputSession capture/resolve behavior and atom-anchor fallback. UTF-16 text units,
+including isolated surrogates, remain intact.
+
+**JSON contract.** The pinned `serde_json` dependency now enables `preserve_order`;
+new locked registry dependencies were fetched once. Subsequent test/build runs
+passed offline. Native inverse grouping retains ordinary object key insertion
+order, sorts JavaScript array-index keys first, and normalizes numeric equality.
+This preserves the operation grouping produced by TypeScript `JSON.stringify`,
+without using expected grouping results as native inputs.
+
+Wire attribute names and string values require Unicode scalar strings. TypeScript
+can accept isolated-surrogate attribute strings that the native JSON parser
+rejects; rejection leaves state unchanged and the process continues. JSON wire
+transport normalizes signed zero. Arbitrary JSON depth, nonfinite values, and
+raw in-memory JavaScript value equivalence are not qualified. Parser and History
+snapshot limits remain explicit. Native rejection can be stricter than raw
+TypeScript apply/History; general acceptance/rejection parity is not claimed.
+
+**Final evidence.** All five current receipts use Node 24.22.1 and native binary
+SHA-256 `ecd8c35f761a80858e96cc54d4ac288926a13d613bb99cd3696df6379f4ad2b2`.
+The Rust toolchain is stable 1.86.0. Expected TypeScript models, complete states,
+and inverse operations stay in the Node parent; the native child receives actual
+wire operations, selection inputs, record metadata, and its own checkpoints.
+
+| Receipt | PASS result |
+| --- | --- |
+| `experiments/rust-blocks-harness/receipt.json` | 746 full document states and exact History graphs; 102 native inverse/caret comparisons; 746 pins; 750 captures; 12,714 ranges; 25,428 endpoints; 14 admission comparisons; six fresh-process restarts. |
+| `experiments/rust-shadow-harness/receipt-current-blocks.json` | 614 full apply-only states, 588 batches, 1,214 records. |
+| `experiments/rust-history-harness/receipt-current-blocks.json` | 1,039 states/History graphs; 291 native inverse/caret comparisons; 1,046 pin checks. |
+| `experiments/rust-selection-harness/receipt-current-blocks.json` | 281 states/History graphs; 27 native inverses; 150 captures; 3,803 ranges; 7,604 endpoints. |
+| `experiments/rust-structure-harness/receipt-current-blocks.json` | 507 states/History graphs; 75 native inverse/caret comparisons; legacy split/merge, aliases, and structural replay remain passing. |
+
+Three saved seeds, 42, 20261101, and 73511, cover 36 three-actor rounds. Every
+actor creates its local batch before receiving that round's other batches.
+Different causal delivery orders and reverse duplicate replay cover 216 delayed
+and 216 duplicate deliveries. State converges after every round. This does not
+assume buffering for arbitrary missing dependencies.
+
+Admission checks use actual production `Doc.check`, not permissive `Doc.apply`.
+Eight typed/unknown-attribute/type-on-atom/character-mark rejections and six
+accepted hidden-attribute or boolean-mark cases match. A separate
+isolated-surrogate string case records the known native wire limitation. That
+parser rejection is recorded separately from the fourteen admission matches.
+
+Native tests passed **40/40**: nine original interpreter tests, eleven History,
+three selection, eight paragraph-marker, and nine general-block tests. Offline
+build, formatting, and Clippy all-targets with warnings denied passed. Clippy used
+an isolated target and the matching stable compiler/tool PATH. Focused production
+TypeScript regressions passed **104/104** across `features`, `history-format`,
+`intent-preservation`, `editor-session`, `client-checkpoint`, and
+`structural-cache`. Some reference tests cover wider TypeScript capabilities;
+they do not establish native support for those capabilities. No fresh full
+production-core suite or browser run is claimed.
+
+**Recovery.** Six fixtures use actual `SyncClient.pending`: attribute update,
+text type change, atom insertion, atom deletion, undo, and redo. The matching
+native document/History checkpoint is saved after original operation generation.
+A fresh child restores it, receives foreign text and, in the attribute fixture,
+a later same-key foreign write. The original pending batch is applied twice
+without recording new History. The saved History graph stays unchanged.
+Subsequent native undo/redo matches TypeScript and preserves foreign changes.
+This proves recorded native checkpoint/replay results, not server generation,
+GC protection, crash-journal durability, or complete client/server recovery.
+
+**Independent review and fixes.** Thirty-three independent checks passed on the
+final binary. They compare actual TypeScript model/register/History/selection
+behavior and atom/root/default rules, plus malformed checkpoint rejection.
+Valid changed-attribute duplicate node births must not reset original birth
+metadata or foreign current writes. That rule now has a regression. Another
+review found that an extra attribute accepted with a same- or earlier-than-birth
+write ticket could produce a snapshot that native restore rejected. The extra
+restore restriction was removed while preserving original birth-register checks.
+Before/same-birth accepted writes now round-trip. Root existence mutations and
+immutable metadata corruption remain rejected atomically.
+
+All five final receipts contain the same 73-file source/test/schema/dependency/
+harness/binary manifest. Before/after/live hashes match, including after the
+independent probes. All 21 preexisting receipts remain byte-for-byte unchanged.
+Before edits, the native source and binary baseline was copied to
+`output/r4-general-baseline/`; all 15 archive entries match its manifest, including
+the section 5.86 binary. This archive is local evidence under ignored `output/`,
+not a published artifact. New receipts remain separate from historical receipts.
+
+**Reproduce from the repository root.** Cache locked dependencies first if
+needed, then use a matching installed Rust toolchain:
+
+```sh
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" test --offline --manifest-path experiments/rust-shadow/Cargo.toml
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" build --offline --manifest-path experiments/rust-shadow/Cargo.toml
+node experiments/rust-blocks-harness/harness.ts
+RUST_SHADOW_RECEIPT=experiments/rust-shadow-harness/receipt-current-blocks.json node experiments/rust-shadow-harness/harness.ts
+RUST_HISTORY_RECEIPT=experiments/rust-history-harness/receipt-current-blocks.json node experiments/rust-history-harness/harness.ts
+RUST_SELECTION_RECEIPT=experiments/rust-selection-harness/receipt-current-blocks.json node experiments/rust-selection-harness/harness.ts
+RUST_STRUCTURE_RECEIPT=experiments/rust-structure-harness/receipt-current-blocks.json node experiments/rust-structure-harness/harness.ts
+node --test packages/doc-sync/test/features.test.ts packages/doc-sync/test/history-format.test.ts packages/doc-sync/test/intent-preservation.test.ts packages/doc-sync/test/editor-session.test.ts packages/doc-sync/test/client-checkpoint.test.ts packages/doc-sync/test/structural-cache.test.ts
+```
+
+**Remaining R4.** Nested flow, grid/row/cell, group, inline/span, derived storage,
+movement and logical split/join, field-level merging, arbitrary schema validation
+and transitions, protected GC, and broader serialization/recovery remain open.
+Atom type changes, unsupported reserved metadata, and the `virtual:` materialized
+node birth route remain blocked. R5 adapters and R6 product gates remain planned.
+This result establishes no native production server, WASM client, Chrome proof,
+performance benefit, commit, push, publication, deployment, or engine migration.
+
+
+Final documentation checks passed **28/28** tests, the static site build, and
+the build/link checker: 32 pages, 1,880 internal links, English prose true, and
+local-path exclusion true. Scoped tracked diff and explicit whitespace checks
+passed; the scan covered 24 experiment and roadmap source/documentation files.
+A post-build verification again matched all five receipts' 73 before/after/live
+hashes. All 45 production TypeScript source hashes also match the earlier
+structural checkpoint. These checks do not establish publication or Chrome
+behavior.
+
+
+## 5.88 R4 pinned recursive flows, tables, and nested recovery
+
+**Delivery.** Multi-agent implementation added a separate recursive schema to
+`experiments/rust-shadow`. Schema identity is
+`nested-flows-tables:json-attrs:v1`, with exactly capability
+`nested-flows-tables-v1`, manifest `schema-nested.json`, and native document format
+`doc-sync-rust-shadow-v4`. Earlier v1/v2/v3 modes retain their contracts. The
+production TypeScript server and client remain unchanged and authoritative.
+
+The fixed schema adds `callout` flow blocks and
+`table > table-row > table-cell > table-cell-body`. Root, callout bodies, and
+cell bodies accept paragraph, heading, divider, image, callout, and table blocks.
+Callout has tone info/warning and atomic JSON metadata. Table has atomic JSON
+metadata. Cells have background and atomic JSON metadata; rowspan, colspan,
+and spanned are computed. This does not provide arbitrary runtime schema
+negotiation, group/inline/span shapes, or nested field merging.
+
+**Storage and projection.** Rust now retains a native arena of stable token IDs
+and distinct physical lines with owner, slot, deterministic head, and per-line
+RGA order. The recursive model is computed from these lines; it is not a stored
+copy of the TypeScript model. Body, axis, and cell heads have zero Lamport IDs,
+empty immutable birth type, and no synthetic type register. They do not consume
+clock ticks. Row and column births come from actual operations, not automatic
+axis creation. A grid needs a live row and a live column to project.
+
+Parent deletion hides the body, and axis deletion hides affected cells. Neither
+operation discards descendant contents. Full-grid models retain covered cell
+text and attributes during merge. Span extent counts live axes through stored
+physical endpoints. Concurrent insertion inside that extent expands the span;
+deleted endpoints shrink it. Deleting a span's top-left axis removes that
+coverage. Overlapping spans use descending writer tickets. Equal-ticket span
+keys retain attribute insertion order, which the v4 snapshot stores explicitly.
+
+**Canonical storage read.** TypeScript creates derived slot heads lazily. Raw
+birth-and-delete batches can leave a different number of empty heads from an
+eager native implementation. The comparison therefore uses an explicit zero-clock
+normalization: create valid body heads for every physical callout, and row/column
+heads plus every physical nonhead row-by-column intersection for every table,
+including deleted owners and axes. The reference invokes actual `Doc.get` and
+asserts that the clock does not change. Native v4 creates the same closure.
+
+Lines are compared in key order; each line's authored token order, IDs, values,
+register writers, and deletion/cancellation ledgers remain fully compared.
+This does not assert equality of lazy allocation timing, TS Map insertion order,
+or TypeScript snapshot bytes. Enumerating this closure is not a performance or
+memory acceptance result, particularly for many retained deleted axes.
+
+**History, selection, and restore.** Rust independently generates inverses for
+nested text and nodes, axis insertion/deletion, cell attributes, and spans. The
+existing ownership rule preserves later foreign writes, including same-value
+writes. Cancelling an owned deletion does not cancel a foreign deletion.
+Product-style selection returns null for covered cells, deleted axes, and
+deleted ancestors. Raw token lookup retains the reference adjacent-cell or
+owner-block escape. Both endpoints retain UTF-16 identity and orientation.
+
+Joint restore first rebuilds immutable births and complete physical membership,
+then validates dependent registers and History. This is required because a table
+register can reference rows and columns restored later. Edited body/cell heads
+must restore with their legitimate type/attribute state. When a History state
+and the current document register share a writer ticket, their values must agree.
+A later foreign writer can legitimately make an older History state stale.
+Invalid restore must preserve both current document and History.
+
+**Final tests and reference results.** The frozen native executable has SHA-256
+`0fc8790a2109ae169c06bb5e62d129d886fe2d932568478ccd78ff3e314c5431`.
+The toolchains are Node 24.22.1 and rustup stable Rust 1.86.0. Expected reference
+states, models, and inverse outputs are never sent to the native child.
+
+| Current receipt | PASS comparisons |
+| --- | --- |
+| `experiments/rust-nested-harness/receipt.json` | 582 full document states and exact History graphs; 85 independently generated inverse/caret comparisons; 582 pins; 1,373 captures; 31,927 ranges; 63,854 raw endpoints; eight fresh-process restores. |
+| `experiments/rust-shadow-harness/receipt-current-nested.json` | 614 apply-only full states. |
+| `experiments/rust-history-harness/receipt-current-nested.json` | 1,039 full states/History graphs; 291 native inverse/caret comparisons. |
+| `experiments/rust-selection-harness/receipt-current-nested.json` | 281 full states/History graphs; 27 native inverses. |
+| `experiments/rust-structure-harness/receipt-current-nested.json` | 507 full states/History graphs; 75 native inverses. |
+| `experiments/rust-blocks-harness/receipt-current-nested.json` | 746 full states/History graphs; 102 native inverses. |
+
+Three saved seeds, 42, 20261101, and 73511, cover 24 three-actor rounds with
+144 delayed and 144 duplicate deliveries. Every actor creates its local batch
+before receiving the other batches for that round. Every completed round
+converges. This does not assume buffering of arbitrary missing dependencies.
+
+Deterministic fixtures cover nested callouts, tables in callouts and cells,
+row/column edits, cell attributes, merge/split with retained hidden text,
+overlapping spans in both delivery orders, span growth and shrinkage,
+deleted span origins, parent deletion with foreign descendant edits, and
+same-value foreign cell-attribute ownership. Raw fixtures cover born-and-deleted
+owners, zero-axis tables, and deleted-axis intersections under canonical reads.
+Ten admission comparisons use actual `Doc.check`. Eight native rejection cases
+also cover unsupported move, GC, schema, and capability requests; these counters
+do not establish general rejection parity with raw TypeScript.
+
+Native tests passed **50/50**: the prior 40 and ten new nested/grid tests.
+Offline build, formatting, and isolated stable-toolchain Clippy all-targets with
+warnings denied passed. Focused TypeScript regressions passed **115/115** across
+`features`, `merged-grid`, `history-format`, `intent-preservation`,
+`editor-session`, `client-checkpoint`, and `structural-cache`. This includes
+headless Lexical/ProseMirror codec and binding tests. It is not Chrome evidence
+or a fresh full production-core suite. Wider TypeScript test coverage does not
+establish wider native capabilities.
+
+**Pending recovery.** Seven actual `SyncClient.pending` cases cover nested text,
+parent deletion, row insertion, column deletion, span change, undo, and redo.
+Each saves a matching document/History checkpoint after operation generation.
+The fresh native process receives foreign changes, then replays the exact
+original pending batch twice through plain apply. History stays unchanged during
+replay, and four subsequent independently generated undo/redo steps match TS.
+An eighth restart restores the inactive physical-storage fixture.
+
+The final combination checks put bold foreign text inside the deleted callout,
+inside the deleted column of the affected grid, and inside the affected covered
+cell. They retain each foreign token's exact ID, UTF-16 unit, attributes, writer,
+and ledgers after restore/delivery, both replays, and every undo/redo. Hidden
+selections stay unavailable; undo restores visible selections and projected
+foreign text, while redo hides the affected subtree again without losing stored
+content. Other recovery cases retain visible foreign input. These are native
+checkpoint and replay tests with actual in-memory SyncClient/DocHub operations,
+not complete server-generation recovery or crash-journal durability tests.
+
+Covered-cell text remains in the canonical full-grid model even while editing
+visibility and selection are hidden. Deleted parent/axis content instead remains
+in physical storage until restored to the public model. An independent trace
+review compared 147 exact foreign rawItem states across the 21 same-target
+recovery phases: six visible and fifteen hidden selection phases all matched.
+
+**Independent review.** On the final native binary, 22 independent TypeScript/
+Rust probes and 15 malformed joint checkpoint rejection cases passed. They found
+and verified fixes for hidden selection capture, default-valued cell attributes,
+editable derived-head restore, table-dependent register restore order, and
+same-writer document/History value disagreement. Malformed owner/axis/body/row
+membership, immutable type metadata, future tickets, and bad capabilities reject
+without mutation. Register insertion order and deleted span endpoints also have
+independent probes. No remaining blocking finding was reported.
+
+Before edits, native source and executable baseline were copied to
+`output/r4-nested-baseline/`. All 18 entries match its manifest, including the
+section 5.87 executable. This is local evidence under ignored `output/`. All 26
+preexisting receipt files retain their original SHA-256 values. New regression
+receipts use separate filenames. All six current receipts share the same
+78-file before/after/live source/test/schema/dependency/harness/binary manifest.
+The independent audit checks the trace hashes and requests separately.
+
+**Trace storage.** The new readable receipt contains counters, proof boundaries,
+recovery descriptors, source manifests, and a trace descriptor. Every original
+request, response, and comparison record is retained in
+`experiments/rust-nested-harness/trace.json.gz`; no checks are removed to compress
+it. The descriptor records count, raw/compressed lengths, and both SHA-256 values.
+This keeps the full evidence out of a single large uncompressed repository file.
+The final trace retains 98,871 records, including 98,205 native requests. Its
+compressed/raw lengths are 2,628,088/63,281,786 bytes. Compressed SHA-256 is
+`e14633af3b5869d3c8c59182aabfc77e1488257217b2242f4386b3f5aca76c0e`;
+raw SHA-256 is `a2449dc73c9366ef560de018eeb22c8862c2c5c4392fa139a27078eedeabcae0`.
+The independent audit verified decompression, both hashes, record counts, and
+the absence of expected model/state/inverse inputs to the native process.
+
+**Reproduce from the repository root.** Use cached locked dependencies and a
+matching installed Rust toolchain:
+
+```sh
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" test --offline --manifest-path experiments/rust-shadow/Cargo.toml
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" build --offline --manifest-path experiments/rust-shadow/Cargo.toml
+node experiments/rust-nested-harness/harness.ts
+RUST_SHADOW_RECEIPT=experiments/rust-shadow-harness/receipt-current-nested.json node experiments/rust-shadow-harness/harness.ts
+RUST_HISTORY_RECEIPT=experiments/rust-history-harness/receipt-current-nested.json node experiments/rust-history-harness/harness.ts
+RUST_SELECTION_RECEIPT=experiments/rust-selection-harness/receipt-current-nested.json node experiments/rust-selection-harness/harness.ts
+RUST_STRUCTURE_RECEIPT=experiments/rust-structure-harness/receipt-current-nested.json node experiments/rust-structure-harness/harness.ts
+RUST_BLOCKS_RECEIPT=experiments/rust-blocks-harness/receipt-current-nested.json node experiments/rust-blocks-harness/harness.ts
+node --test packages/doc-sync/test/features.test.ts packages/doc-sync/test/merged-grid.test.ts packages/doc-sync/test/history-format.test.ts packages/doc-sync/test/intent-preservation.test.ts packages/doc-sync/test/editor-session.test.ts packages/doc-sync/test/client-checkpoint.test.ts packages/doc-sync/test/structural-cache.test.ts
+```
+
+**Remaining R4.** Group/inline/span shapes, movement and logical split/join,
+private derived storage, field-level merging, arbitrary schemas and schema
+transitions, protected GC, and broader serialization/recovery remain open.
+Native v4 targets fresh valid builders and rejects physical line-head deletion,
+arbitrary axis attributes, and missing mutation targets. Raw TypeScript can
+accept some inputs outside this contract, including ordinary flow-head deletion.
+Unicode scalar JSON strings and parser/History limits remain as in section 5.87.
+R5 integration and R6 product gates remain planned. This establishes no native
+production server, WASM client, Chrome behavior, performance or memory benefit,
+commit, push, publication, deployment, or production migration.
+
+
+Final documentation validation passed **28/28** tests, the static site build,
+and the build/link check: 32 pages and 1,880 internal links, English prose true,
+and local-path exclusion true. Scoped tracked diff and whitespace checks passed;
+the explicit scan covered 28 experiment and roadmap source/documentation files.
+After the build, all six current receipts again matched their 78 before/after/live
+hashes, and all 26 historical receipts retained their initial hashes. All 45
+production TypeScript source hashes match the preceding block checkpoint.
+These checks do not establish publication, deployment, or Chrome behavior.
+
+
+## 5.89 R4 pinned groups, inline units, and string-valued spans
+
+**Delivery.** Multi-agent work added an explicit v5 schema variant to the private
+Rust shadow crate. Its identity is
+`groups-inline-spans:json-attrs:value-marks:v1`, with exactly capability
+`groups-inline-spans-v1`, manifest `schema-shapes.json`, and native document
+format `doc-sync-rust-shadow-v5`. Earlier v1–v4 modes retain their behavior and
+reject the new shapes without the new opt-in. The production TypeScript server
+and client remain unchanged and authoritative.
+
+This variant extends the recursive flow/grid schema with three model shapes:
+
+| Shape | Fixed-schema behavior |
+| --- | --- |
+| `group` | Physical `list-item` text markers form a contiguous `list` when level and listType match. Group attributes are placed on the model container, not repeated on item models. |
+| `inline` | `inline-image` has its own immutable token ID and occupies one text position. Its block-text placeholder is U+FFFC; raw stored unit is null. Attributes are source, nonnegative width, decorative flag, and atomic JSON metadata. |
+| `span` | A string-valued character `link` mark projects as an `inline-hyperlink` run with URL attribute. Null and empty values are omitted. Inline nodes stop spans; boolean mark changes create inner text runs. |
+
+List level has values 1–6, default 1. List type is bullet/ordered, default bullet.
+The group compares both level and listType. Different levels create adjacent
+flat lists; they do not create nested list containers. Paragraphs or other block
+shapes stop the contiguous group. Group and span containers create no physical
+tokens, heads, or clock ticks. Stable item IDs retain ownership when `$type`
+changes move text into or out of a group. The selected schema has no required
+child or private group-boundary constraints. Explicit adjacent lists with equal
+grouping values merge in this model.
+
+The value mark is a primitive string. This does not qualify JavaScript object-
+identity-valued span marks or URL-pattern validation. The TypeScript authoring
+compiler determines span-to-mark flattening and noninheritance (`inherit: false`)
+and emits explicit wire operations. Rust independently applies those operations,
+projects runs, generates History inverses, resolves positions, and restores
+checkpoints. A native high-level authoring compiler is not provided.
+
+**Storage, History, and selection.** The v4 physical line, owner/slot, axis, cell,
+coverage, and canonical zero-clock derived-head closure contracts continue in
+v5. Grouped model paths add the list entry and item indexes. Span runs do not
+add a model path level. UTF-16 positions include surrogate-half boundaries and
+count each inline node once. Covered cells and deleted ancestors reject product
+selection while preserving all stored shape content for later undo.
+
+Local History uses the existing independent shared-state ownership graph for
+list attributes, type writes, inline attributes, and link values. A later foreign
+write, including a same-value write, prevents an older owned inverse from
+replacing it. Cancelling an owned deletion leaves independent foreign deletion
+records active. Native checkpoint restore validates immutable births, full
+physical membership, current registers, shared History references, writer
+ownership, and schema/capability/version agreement before replacement. Invalid
+restore preserves both active document and History.
+
+**Reference and tests.** The final native binary SHA-256 is
+`32ecd9b575e7eaeb75ab05f1528b4bf8d3726a5fa0042f13b04880aaab3580df`.
+Node is 24.22.1 and Rust is rustup stable 1.86.0. Native tests passed **60/60**,
+including all prior 50 and ten v5 tests. Offline build, formatting, and isolated
+stable-toolchain all-targets Clippy with warnings denied passed. Focused
+TypeScript regressions passed **128/128** across `features`, `edit`, `merged-grid`,
+`history-format`, `intent-preservation`, `editor-session`, `client-checkpoint`,
+and `structural-cache`. Wider reference coverage, including headless editor
+codecs, does not establish corresponding native capabilities or Chrome proof.
+A fresh full production-core suite is not claimed.
+
+An independent final-binary probe passed 17 full model/state/History comparisons,
+1,306 all-offset selection comparisons, four exact inverse/caret comparisons,
+and five malformed/invalid atomic rejections. Its 2,642 native requests contain
+operation inputs, record metadata, selection inputs, and native-owned
+checkpoints. Expected TypeScript states, models, and inverse results stay in
+the parent process.
+
+Independent review found a raw JSON numeric-form edge: accepted level values
+`1` and `1.0` formed separate native groups even though JavaScript reads them as
+the same Number. Group comparison now uses the existing normalized JSON key.
+A native regression and independent raw JSON probe confirm one group with both
+items. Group model and path construction share the grouping rule. No raw
+in-memory signed-zero or object-identity equivalence is claimed.
+
+**Differential scenario coverage.** The new shape harness compares normalized
+physical lines, immutable token births and origins, ordered token membership,
+inline identity, current values and writer tickets, deletion/cancellation
+ledgers, every line's blocks, the recursive model, exact shared History graphs,
+inverse arrays, carets, and pins. Fixtures include group attribute edits and
+`$type` changes, three-actor concurrent split/merge with distinct grouping
+values, inline birth/deletion and foreign attributes, same-value foreign writers,
+link value changes/null reset, boolean formatting inside links, insertion inside
+same/different links, recursive callouts/cells, covered cells, and deleted
+ancestors.
+
+Selection capture checks every offset at capture checkpoints. It then retains
+24 evenly distributed stable ranges for checks after later operations. These
+are representative ongoing ranges, not a claim to check every possible range
+after every operation. Three saved seeds use three actors with causal delayed
+batches, reordered independent batches, duplicates, and separate History actions.
+
+**Pending recovery.** Nine real `SyncClient.pending` cases cover group attributes,
+group type, inline birth, inline deletion, inline attributes, span value, span
+null reset, undo, and redo. A matching native document/History checkpoint is
+saved after original operation generation. A fresh native process restores it,
+receives foreign input in the same affected list item/range, and applies the
+original saved batch twice through plain apply. Replay leaves History unchanged.
+Subsequent independently generated undo/redo matches the reference.
+
+The checks retain exact foreign token ID, UTF-16 units, attributes, writer
+metadata, and deletion/cancellation ledgers through restore, both replays, and
+four later History steps. They also retain the foreign same-value inline
+attribute writer and original-character link writer, including the null-reset
+case. Group visibility and model paths may change without losing those stored
+edits. These are native checkpoint/replay tests with actual in-memory
+SyncClient/DocHub operations, not complete server-generation recovery or
+crash-journal durability tests.
+
+**Final differential evidence.** All seven current receipts passed against the
+same frozen binary and unchanged 83-file before/after/live manifest:
+
+| Current receipt | PASS comparisons |
+| --- | --- |
+| `experiments/rust-shapes-harness/receipt.json` | 606 complete document states and exact History graphs; 71 native inverse/caret comparisons; 606 pin checks; 5,812 captures; 16,510 ranges; 33,020 endpoints; nine fresh-process restores. |
+| `experiments/rust-shadow-harness/receipt-current-shapes.json` | 614 complete apply-only states; this legacy harness still receives TypeScript-generated inverse operations. |
+| `experiments/rust-history-harness/receipt-current-shapes.json` | 1,039 states/History graphs; 291 native inverse/caret comparisons. |
+| `experiments/rust-selection-harness/receipt-current-shapes.json` | 281 states/History graphs; 27 native inverses. |
+| `experiments/rust-structure-harness/receipt-current-shapes.json` | 507 states/History graphs; 75 native inverses. |
+| `experiments/rust-blocks-harness/receipt-current-shapes.json` | 746 states/History graphs; 102 native inverses. |
+| `experiments/rust-nested-harness/receipt-current-shapes.json` | 582 states/History graphs; 85 native inverses; all earlier nested/grid recovery cases remain passing. |
+
+Three saved seeds cover 24 three-actor rounds, 144 delayed deliveries, and
+144 duplicates. Dedicated concurrent group split/merge cases are separate from
+that seeded round count. Four admission comparisons and ten invalid-request or
+malformed-checkpoint rejections have separate counters; they do not establish
+general raw TypeScript rejection parity.
+
+Independent recovery review matched every foreign raw token and register in
+63 native trace states (nine cases, seven preservation phases each). It then
+replayed the native checkpoints and recorded recovery operations in nine fresh
+processes. All 72 complete native responses matched the recorded state, History,
+inverse, and caret results exactly. This is independent replay of the same
+scenarios, not eighteen distinct recovery scenarios.
+
+**Evidence and preservation.** Current results use the new
+`experiments/rust-shapes-harness/receipt.json` and six distinct prior-harness
+`receipt-current-shapes.json` outputs. The shape trace is compressed in
+`experiments/rust-shapes-harness/fulltrace.json.gz`. The nested regression uses
+`RUST_NESTED_TRACE` to write `trace-current-shapes.json.gz`, preserving its
+historical canonical trace. Summary descriptors bind raw/compressed bytes,
+record counts, and both SHA-256 values. Source manifests include all seven
+harnesses and READMEs, native sources and tests, schema manifests, Cargo files,
+production source, the test helper, and the executable.
+
+Before native edits, 20 actual source files were archived at
+`output/r4-shapes-baseline/native-source-before.tar.gz`, SHA-256
+`75eeee61c5e0b0c9b814fc0fc04bcd21e64fe2d9b767cd5aa8d99443951bed51`.
+The separate copied executable retains the section 5.88 SHA-256. The native
+archive manifest distinguishes macOS metadata entries from the actual source
+files. These baseline copies are local evidence under ignored `output/`.
+All 32 preexisting receipts, including nonstandard `structure.json`, and the
+historical nested gzip trace remain byte-for-byte unchanged. The final independent
+audit verified both trace descriptors, counts, compressed/raw lengths and hashes,
+and the absence of expected model/state/inverse fields in native requests for
+the new shape interpreter.
+
+The shape trace retains 57,090 records, including 56,449 native requests. Raw and
+compressed lengths are 121,936,380 and 6,341,104 bytes. Compressed SHA-256 is
+`bf260bce00936cceb37604c2ab52a0cf2817d4b75b2df2508300679259a2d09d`;
+raw SHA-256 is `9d75e42da1f290b70fcee8528f1de5158f3ab97b1a293f1fa294d1bfaf70ef8e`.
+
+**Reproduce from the repository root.** Use cached locked dependencies and a
+matching installed Rust toolchain:
+
+```sh
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" test --offline --manifest-path experiments/rust-shadow/Cargo.toml
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" build --offline --manifest-path experiments/rust-shadow/Cargo.toml
+node experiments/rust-shapes-harness/harness.ts
+RUST_SHADOW_RECEIPT=experiments/rust-shadow-harness/receipt-current-shapes.json node experiments/rust-shadow-harness/harness.ts
+RUST_HISTORY_RECEIPT=experiments/rust-history-harness/receipt-current-shapes.json node experiments/rust-history-harness/harness.ts
+RUST_SELECTION_RECEIPT=experiments/rust-selection-harness/receipt-current-shapes.json node experiments/rust-selection-harness/harness.ts
+RUST_STRUCTURE_RECEIPT=experiments/rust-structure-harness/receipt-current-shapes.json node experiments/rust-structure-harness/harness.ts
+RUST_BLOCKS_RECEIPT=experiments/rust-blocks-harness/receipt-current-shapes.json node experiments/rust-blocks-harness/harness.ts
+RUST_NESTED_RECEIPT=experiments/rust-nested-harness/receipt-current-shapes.json RUST_NESTED_TRACE=experiments/rust-nested-harness/trace-current-shapes.json.gz node experiments/rust-nested-harness/harness.ts
+node --test packages/doc-sync/test/features.test.ts packages/doc-sync/test/edit.test.ts packages/doc-sync/test/merged-grid.test.ts packages/doc-sync/test/history-format.test.ts packages/doc-sync/test/intent-preservation.test.ts packages/doc-sync/test/editor-session.test.ts packages/doc-sync/test/client-checkpoint.test.ts packages/doc-sync/test/structural-cache.test.ts
+```
+
+**Remaining R4.** Movement, logical split/join, private derived text storage,
+required-child and group-boundary constraints, broader schema/value-mark rules,
+field-level attributes, schema transitions, protected GC, and wider serialization/
+recovery remain open. Runtime arbitrary-schema support and object-valued span
+semantics are not qualified. Existing Unicode scalar JSON string and parser/
+History limits remain. Native v5 still targets the declared valid builder/wire
+subset; general admission/rejection parity is not claimed. R5 adapters and R6
+product gates remain planned. This work establishes no native production server,
+WASM client, Chrome behavior, performance or memory benefit, commit, push,
+publication, deployment, or production migration.
+
+
+Final documentation validation passed **28/28** tests, the static site build,
+and the build/link checker: 32 pages, 1,880 internal links, English prose true,
+and local-path exclusion true. Scoped tracked diff and whitespace checks passed;
+the explicit scan covered 32 experiment and roadmap source/documentation files.
+A post-build verification again matched all seven receipts' 83 before/after/live
+hashes, all 32 historical receipt hashes, and the original compressed trace's
+hash and length. All 45 production TypeScript source hashes match the preceding
+nested checkpoint. These checks do not establish publication or browser behavior.
+
+### 5.90. Pinned Rust movement, logical text storage, and schema delivery boundary
+
+**Result and scope.** The private native v6 interpreter now implements retained
+block/subtree placement, logical split/join, private text storage, and independent
+movement History. The declared state, History, strict selection, and pending
+replay comparisons pass. Four raw endpoint comparisons are **NOT_RUN** because
+the production TypeScript reference throws for a hidden root gap. Full raw
+endpoint parity and the complete R4 gate are not passed. The production engine
+remains TypeScript; this work does not change production collaboration rules.
+
+Three agents owned native implementation, differential fixtures, and independent
+review. Native semantics/review used Sol High; ordinary harness work used Sol
+Medium. The parent ran the seven prior differential suites and documentation
+checks. Inherited uncommitted work outside this slice remains intact. There is
+no commit, push, publication, or deployment from this checkpoint.
+
+**Native contract.** Opt in with schema
+`movement-logical-storage:json-attrs:value-marks:v1`, exactly capability
+`movement-logical-storage-v1`, and native snapshot `doc-sync-rust-shadow-v6`.
+The schema manifest retains the v5 nine shapes. Earlier v1–v5 capabilities and
+snapshot contracts remain separate. The final executable SHA-256 is
+`a7f65e9b20da9071b3d43946ae68b91a00d9f22dc9ecc2cff6fa54f352a77a4f`.
+
+Movement records retain physical line membership, immutable origins, token IDs,
+UTF-16 units, and deletion ledgers. Ticket-ordered replay suppresses ancestor
+cycles. Text blocks, atoms, callouts, full tables, and individual list items can
+move. Row, column, inline-node, and span-container movement remains unsupported.
+Private `~text` and `~fragment` heads keep automatic paragraph storage. Logical
+split births retain physical partitions; `$join` registers and aliases project
+them without copying or deleting foreign input. `virtual:` births promote
+retained physical trailing text before movement. Canonical reads close private
+flow/cell heads without advancing the document clock.
+
+Native Move and Split History steps generate fresh inverse operations. Current
+placement and register writers fence ownership, including unrecorded movement
+by the same actor. An inverse of a move on a deleted target is still retained,
+so a later foreign undelete reveals the correct placement. Split does not
+reattach stationary siblings. Coupled checkpoints validate placement tuples,
+shared ownership, current-state references, immutable split values, physical
+membership, actor syntax, and clock bounds before replacing live state. Tests
+also cover discarded redo branches and deleting a moved marker without
+reattaching its text to the previous block. Native v6 snapshots are canonical
+across fresh restore; earlier snapshot formats retain their contracts.
+
+**New differential and recovery evidence.** The movement harness sends actual
+TypeScript wire operations from `Doc.edit`, commands, `History`, `InputSession`,
+and in-memory `SyncClient`/`DocHub`. Native state/model/inverse expectations remain
+in the parent process. Successful restore inputs exactly match earlier native
+exports; undo/redo requests contain no inverse operations.
+
+The new receipt passed 360 complete state/History/pin comparisons, 56 independent
+native inverse/caret comparisons, 802 selection captures, 2,833 range resolves,
+and 5,662 successful raw endpoint comparisons. Three saved seeds cover 12
+three-actor rounds, 72 delayed deliveries, and 72 duplicates. Automatic leading
+gap move/replacement/split/resplit uses actual editing commands. The separate
+model-hidden trailing-gap fixture labels its low-level physical seed/move/edit;
+later virtual promotion, movement, and split/resplit use actual editing commands.
+It does not claim an editor path to an empty model-hidden trailing gap.
+
+Five fresh native processes restore actual pending move, split, join, undo, and
+redo checkpoints. Each replays the exact saved batch twice and then runs four
+History actions. Checks retain foreign text IDs, UTF-16 units, attributes and
+writer metadata in the same original moved/split subtree. The foreign bold
+writer on an original character and align writer on the original affected
+marker also remain intact. This is native checkpoint/replay evidence, not
+durable server-generation recovery, crash-journal, lease, or protected-GC proof.
+
+**Known reference bug and selection limit.** At four recorded checkpoints,
+`Doc.posAfter("0@~text:0%40~root:")` passes a null physical owner into `posFrom`
+and throws `TypeError: Cannot read properties of null (reading 'key')`.
+`tokenLocation` identifies this root-leading gap as hidden. The harness omits
+only that exact key/error after checking the hidden location and null owner.
+Its receipt reports `rawEndpointStatus: PARTIAL_WITH_NOT_RUN`,
+`rawEndpointNotRun: 4`, and the exact stack for every omission. Successful
+endpoint counts exclude those four. `InputSession.resolve` comparisons still
+run in full and correctly return null for the hidden storage anchor.
+
+The first failing reference snapshot/schema/History and the source repro are
+saved at `/tmp/r4-hidden-root-gap-reference.json` and
+`/tmp/r4-hidden-root-gap-repro.ts`. Independent repro/probe files are under
+`/tmp/doc-sync-r4-audit/`. A source/synthetic ProseMirror undo caret probe also
+propagates the exception because binding selection calls `pathAt` before its
+catch. That probe is not an observed browser/user-History failure. A targeted
+reference fallback policy and regression tests remain required before claiming
+complete movement raw-selection parity. This slice leaves production source
+unchanged rather than inventing a new fallback rule inside the Rust oracle.
+
+**Final checks.** Native tests passed 74/74: 60 prior tests and 14 new movement
+tests. Offline build, formatting, and isolated stable-toolchain all-target
+Clippy with warnings denied passed. The native lane records these results in
+`output/r4-move-native-final/receipt.json` and associated logs. Focused
+TypeScript movement tests passed 47/47. Separate TypeScript schema-version,
+schema-transition, open-editor, and HTTP-schema reference tests passed 21/21.
+Those schema checks are not Rust dynamic-schema proof. No full production
+suite or new Chrome/WASM/performance check is claimed here.
+
+| Current receipt | PASS comparisons |
+| --- | --- |
+| `experiments/rust-move-harness/receipt.json` | 360 state/History graphs; 56 native inverse/caret comparisons; five fresh-process restores; four raw endpoint comparisons explicitly NOT_RUN. |
+| `experiments/rust-shadow-harness/receipt-current-move.json` | 614 apply-only states; this legacy suite still receives TypeScript-generated inverse operations. |
+| `experiments/rust-history-harness/receipt-current-move.json` | 1,039 state/History graphs; 291 native inverse/caret comparisons. |
+| `experiments/rust-selection-harness/receipt-current-move.json` | 281 state/History graphs; 27 native inverse comparisons. |
+| `experiments/rust-structure-harness/receipt-current-move.json` | 507 state/History graphs; 75 native inverse comparisons. |
+| `experiments/rust-blocks-harness/receipt-current-move.json` | 746 state/History graphs; 102 native inverse comparisons. |
+| `experiments/rust-nested-harness/receipt-current-move.json` | 582 state/History graphs; 85 native inverse comparisons. |
+| `experiments/rust-shapes-harness/receipt-current-move.json` | 606 state/History graphs; 71 native inverse comparisons. |
+
+Independent native review passed 15 exact model/History/inverse checkpoints,
+atomically rejected 14 malformed coupled checkpoints, and atomically rejected
+five invalid move batches. These are separate checks, not a general claim of
+raw TypeScript admission parity. Current receipts share an unchanged 88-file
+before/after/live manifest, including production source, every schema/harness
+source/README, native tests/Cargo files, and the executable.
+
+The new `experiments/rust-move-harness/fulltrace.json.gz` retains 10,294 records,
+including 9,912 native requests. Raw/gzip lengths are 24,452,506/1,227,836 bytes.
+Gzip SHA-256 is
+`f36ce7f0516486951d5b98a21b6b35603c99f49315401ae4cd0f6ef52ef480bf`;
+raw SHA-256 is
+`20c15c65a2c74def73adad644500206d113adf7cd864c51483628230dafa3f52`.
+The two previous trace-producing suites use distinct `trace-current-move.json.gz`
+and `fulltrace-current-move.json.gz` outputs. All 39 preexisting receipts,
+including nonstandard `structure.json`, and all ten historical compressed
+traces remain byte-for-byte unchanged.
+
+Before native edits, 22 actual source files were archived at
+`output/r4-move-baseline/native-source-before.tar.gz`, SHA-256
+`2ec3c412f52d42bc498d4196059a4793b73f1ba04fff38696dca84052b28fa1c`.
+The separately copied executable retains the section 5.89 SHA-256
+`32ecd9b575e7eaeb75ab05f1528b4bf8d3726a5fa0042f13b04880aaab3580df`.
+The manifest distinguishes source files from macOS archive metadata. These
+baseline copies and output logs are local evidence under ignored `output/`.
+
+**Dynamic schema answer and next steps.** Rust can accept schemas as data.
+The current implementation cannot yet load arbitrary schemas at runtime or
+replace an open document's schema. It has six compiled-in modes and fixed
+type/slot/attribute classifiers. Accepting JSON without replacing those rules
+would not satisfy dynamic-schema support.
+
+After resolving the reference endpoint bug, the next native milestone is an
+immutable per-document `CompiledSchema`. It must drive validation, projection,
+model paths, History, and checkpoint checks with shape/child/group/grid rules,
+defaults, attributes, marks/spans, inheritance, and grouping keys. Canonical
+schema identity must match TypeScript, including UI. At least two independently
+renamed schemas must run in one process and pass edit/History/selection/restore
+comparisons. Invalid rules, references, defaults, and wrong digests must reject
+atomically. Unsupported descriptors must fail closed.
+
+Initial runtime schema loading is separate from compatible live transition.
+The existing TypeScript path permits append-only boolean marks, new nodes, and
+allowed new text/flow child types under its exact compatibility rules. Existing
+node attributes/defaults/rules, value marks, root, and UI cannot change through
+that contract. Live Rust transition must check epoch/server sequence/schema
+version atomically, prepare and persist before switching, and retain identity,
+exact pending operations, History ownership, selection anchors, and recovery/GC
+evidence. Incompatible migration is separate. The 21 TypeScript tests confirm
+the compatible reference transition path only; this native transition remains
+unimplemented. TypeScript recovery proofs bind a schema version separately;
+automatic recovery-proof migration across a live schema transition is not
+established by this checkpoint.
+
+**Reproduce.** From the repository root, use matching cached Rust tools:
+
+```sh
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" test --offline --manifest-path experiments/rust-shadow/Cargo.toml
+RUSTC="$(rustup which --toolchain stable rustc)" RUSTDOC="$(rustup which --toolchain stable rustdoc)" "$(rustup which --toolchain stable cargo)" build --offline --manifest-path experiments/rust-shadow/Cargo.toml
+node experiments/rust-move-harness/harness.ts
+RUST_SHADOW_RECEIPT=experiments/rust-shadow-harness/receipt-current-move.json node experiments/rust-shadow-harness/harness.ts
+RUST_HISTORY_RECEIPT=experiments/rust-history-harness/receipt-current-move.json node experiments/rust-history-harness/harness.ts
+RUST_SELECTION_RECEIPT=experiments/rust-selection-harness/receipt-current-move.json node experiments/rust-selection-harness/harness.ts
+RUST_STRUCTURE_RECEIPT=experiments/rust-structure-harness/receipt-current-move.json node experiments/rust-structure-harness/harness.ts
+RUST_BLOCKS_RECEIPT=experiments/rust-blocks-harness/receipt-current-move.json node experiments/rust-blocks-harness/harness.ts
+RUST_NESTED_RECEIPT=experiments/rust-nested-harness/receipt-current-move.json RUST_NESTED_TRACE=experiments/rust-nested-harness/trace-current-move.json.gz node experiments/rust-nested-harness/harness.ts
+RUST_SHAPES_RECEIPT=experiments/rust-shapes-harness/receipt-current-move.json RUST_SHAPES_TRACE=experiments/rust-shapes-harness/fulltrace-current-move.json.gz node experiments/rust-shapes-harness/harness.ts
+node --test packages/doc-sync/test/move.test.ts packages/doc-sync/test/move-history-review.test.ts packages/doc-sync/test/move-structure-regressions.test.ts
+node --test packages/doc-sync/test/schema-version.test.ts packages/doc-sync/test/schema-transition.test.ts packages/doc-sync/test/open-editor-schema.test.ts packages/doc-sync/test/http-schema-transport.test.ts
+```
+
+**Remaining.** The reference endpoint fix, runtime schemas/live transitions,
+required-child/group boundary rules, field-level attributes, broader value-mark
+semantics, protected GC, and serialization/recovery limits remain open. R5
+adapters and R6 product gates remain planned. This checkpoint establishes no
+native production server, WASM client, Chrome result, performance/memory gain,
+or complete CRDT equivalence.
+
+Documentation validation passed 28/28 tests, the static build, and the build/link
+checker: 32 pages, 1,880 internal links, English prose true, and local-path
+exclusion true. Successful audit/repro and documentation logs are also copied
+to ignored `output/r4-move-final-audit/`. All 45 production TypeScript source
+hashes still match the preceding shape checkpoint. Local documentation checks
+do not establish site publication or browser behavior.
+
+The final post-build audit passed all eight receipts' 88-file
+before/after/live/cross-receipt hash checks, all three new compressed trace
+descriptors, and preservation of all 39 historical receipts and ten old traces.
+It checked 247,742 recorded native request boundaries for oracle leakage and
+39 successful History restores for exact earlier-native-export provenance.
+The legacy apply-only suite retains only ten explicit request records; this
+request count does not mean all of its 614 state inputs were serialized, or
+that it generates independent native History inverses. The final audit is
+`output/r4-move-final-audit/final-artifact-audit.json`, SHA-256
+`037b78062b4265caaa91e2b37bfc3b0c6ef2be6afb0406edc0040b1ee5d715d8`.
+Scoped diff/whitespace checks and a scan of 36 experiment/roadmap source and
+documentation files passed.

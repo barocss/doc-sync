@@ -28,6 +28,8 @@ export type ClientOptions = {
     schema: Schema;
     /** 받은 뒤 ack 를 보내기까지 기다리는 시간 (ms). 0 이면 바로 */
     ackDelay?: number;
+    /** Persist the current checkpoint before a change or acknowledgement can leave this client. */
+    beforeSend?: () => void;
 };
 
 /** 모델 이벤트가 생긴 까닭 */
@@ -76,6 +78,47 @@ export class SyncClient {
     /** True only after the current connection has processed a compatible hello. */
     get synchronized(): boolean { return this.online && this.ready && !this.connectionError; }
     private forceSnapshot = false;
+    private recoveryHistoryGuards = 0;
+    private localMutationPauses = 0;
+    private checkpointFailed = false;
+    /** Persist synchronous state changes, including disconnected edits. A failure stops the connection. */
+    onCheckpoint: (() => void) | null = null;
+
+    private assertLocalMutation(): void {
+        if (this.localMutationPauses) throw new Error("Local changes are paused until recovery completes");
+    }
+
+    /** Hold all local edit entry points while a disconnected recovery operation is unresolved. */
+    pauseLocalMutations(): () => void {
+        if (this.online || this.conditional) throw new Error("Pausing local changes requires a disconnected client without a conditional request");
+        this.localMutationPauses += 1;
+        let active = true;
+        return () => { if (active) { active = false; this.localMutationPauses -= 1; } };
+    }
+
+    private persistCheckpoint(invoke: (() => void) | null | undefined): void {
+        try { invoke?.(); }
+        catch (error) {
+            this.connectionError = error instanceof Error ? error : new Error(String(error));
+            if (!this.checkpointFailed) { this.checkpointFailed = true; this.localMutationPauses += 1; }
+            // Do not notify here: a notification would call the failed persistence hook again.
+            this.online = false; this.ready = false; this.schemaVerified = false;
+            this.connection += 1;
+            this.unsubscribe?.(); this.unsubscribe = null;
+            throw error;
+        }
+    }
+
+    /** Keep protected live undo history until its recovery controller is released. */
+    protectRecoveryHistory(): () => void {
+        this.recoveryHistoryGuards += 1;
+        let active = true;
+        return () => { if (active) { active = false; this.recoveryHistoryGuards -= 1; } };
+    }
+
+    private get hasProtectedLocalState(): boolean {
+        return this.pending.length > 0 || this.recoveryHistoryGuards > 0;
+    }
     private connection = 0;
     serverSeq = 0;
     /** 아직 서버에서 돌아오지 않은 내 변경 (다시 이어지면 다시 보낸다) */
@@ -117,6 +160,7 @@ export class SyncClient {
     private ackTimer: ReturnType<typeof setTimeout> | null = null;
     private readonly transport: Transport;
     private readonly ackDelay: number;
+    private readonly beforeSend: (() => void) | undefined;
     private currentSchema: Schema;
     get schema(): Schema { return this.currentSchema; }
     /** False for an explicitly schema-free server. */
@@ -129,6 +173,7 @@ export class SyncClient {
     onNotificationError: ((error: unknown, callback: string) => void) | null = null;
 
     private notify(callback: string, invoke: () => void): void {
+        if (callback === "onUpdate") this.persistCheckpoint(this.onCheckpoint);
         if (!this.finalizingConditional) { invoke(); return; }
         try { invoke(); }
         catch (error) {
@@ -156,11 +201,14 @@ export class SyncClient {
         this.transport = transport;
         this.currentSchema = ownedSchema(options.schema);
         this.ackDelay = options.ackDelay ?? 0;
+        this.beforeSend = options.beforeSend;
         this.doc = this.attach(new Doc(actor, this.schema));
     }
 
     /** 문서를 갈아 끼울 때마다 내 편집 알림을 잇는다 */
     private attach(doc: Doc): Doc {
+        const priorGuard = doc.editGuard;
+        doc.editGuard = () => { this.assertLocalMutation(); priorGuard?.(); };
         // 구독자가 없으면 normalize 를 위한 모델 계산도 필요 없다. 명시한 normalize 옵션은 Doc.edit 이 지킨다.
         doc.editListener = this.localEdits ? (edits, normalize) => {
             const installing = this.installingConditional;
@@ -251,6 +299,17 @@ export class SyncClient {
             gcFrontier: this.gcFrontier, delSeq: [...this.delSeq], pending: this.pending});
     }
 
+    /** Resume a live replica only after its caller proves the exact pending changes and GC protection. */
+    resumeProvenEpoch(expected: ClientCheckpoint, oldEpoch: string, newEpoch: string): void {
+        if (this.online || this.conditional || !oldEpoch || !newEpoch || this.epoch !== oldEpoch ||
+            JSON.stringify(this.checkpoint()) !== JSON.stringify(expected)) {
+            throw new Error("Local recovery state changed; retry recovery before reconnecting");
+        }
+        this.epoch = newEpoch;
+        this.forceSnapshot = true;
+        this.connectionError = null;
+    }
+
     /** Restore only after the caller proves matching generation, schema and GC protection. */
     restoreCheckpoint(value: ClientCheckpoint, epoch: string): void {
         if (this.online || this.conditional || this.pending.length) throw new Error("Restore requires a disconnected, settled client");
@@ -303,6 +362,7 @@ export class SyncClient {
     // ── 연결 ──────────────────────────────────────────────────────────────
 
     connect(): void {
+        this.assertLocalMutation();
         if (this.online) {
             return;
         }
@@ -358,6 +418,7 @@ export class SyncClient {
 
     /** Install a compatible local schema while retaining the document, pending changes and history. Reconnect explicitly afterwards. */
     upgradeSchema(nextSchema: Schema): void {
+        this.assertLocalMutation();
         if (this.conditional) throw new Error("Resolve the conditional edit before changing schema");
         assertCompatibleSchema(this.schema, nextSchema);
         const next = ownedSchema(nextSchema);
@@ -377,6 +438,7 @@ export class SyncClient {
      * @param record 되돌리기 기록에 남길 때 그 정보. 되돌리기가 만든 연산은 null
      */
     commit(ops: Op[], record: RecordOptions | null = {caretBefore: "", caretAfter: ""}): void {
+        this.assertLocalMutation();
         if (this.conditional) throw new Error("A conditional edit is unresolved; retry it before another edit");
         if (!ops.length) {
             return;
@@ -395,6 +457,7 @@ export class SyncClient {
 
     /** @returns 되돌린 뒤 커서를 둘 토큰 키 */
     undo(): string | null {
+        this.assertLocalMutation();
         if (this.conditional) throw new Error("A conditional edit is unresolved; retry it before undo");
         const {ops, caret} = this.withEvents("undo", () => this.history.undo(this.doc));
 
@@ -404,6 +467,7 @@ export class SyncClient {
     }
 
     redo(): string | null {
+        this.assertLocalMutation();
         if (this.conditional) throw new Error("A conditional edit is unresolved; retry it before redo");
         const {ops, caret} = this.withEvents("redo", () => this.history.redo(this.doc));
 
@@ -414,8 +478,10 @@ export class SyncClient {
 
     /** 되돌리기 기록을 비운다 — 핀이 풀렸다고 서버에 바로 알린다 */
     clearHistory(): void {
+        this.assertLocalMutation();
         if (this.conditional) throw new Error("A conditional edit is unresolved; retry it before clearing history");
         this.history.clear();
+        this.persistCheckpoint(this.onCheckpoint);
         this.scheduleAck();
     }
 
@@ -453,6 +519,8 @@ export class SyncClient {
         const attempt = this.conditional;
         if (!attempt) throw new Error("No conditional edit is awaiting resolution");
         if (attempt.attempting) throw new Error("The conditional edit is already being submitted");
+        this.persistCheckpoint(this.beforeSend);
+        this.persistCheckpoint(this.onCheckpoint);
         attempt.attempting = true;
         let reply: ConditionalReply;
         try { reply = await send(attempt.base, attempt.change); }
@@ -513,6 +581,8 @@ export class SyncClient {
             while (this.online && this.ready && this.outbox.length) {
                 const message = this.outbox[0];
 
+                this.persistCheckpoint(this.beforeSend);
+                this.persistCheckpoint(this.onCheckpoint);
                 await this.transport.send(message);
                 // 보내는 사이 줄이 바뀌었을 수 있다(새 ack 로 갈아 끼움) — 보낸 것만 뺀다
                 this.outbox = this.outbox.filter(m => m !== message);
@@ -558,6 +628,13 @@ export class SyncClient {
 
     private receive(event: ServerEvent, connection: number): void {
         let helloDoc: Doc | null = null;
+        // A reset replaces the document generation. Never discard unconfirmed
+        // local work merely because a live reset arrived before a new hello.
+        if (event.type === "reset" && this.hasProtectedLocalState) {
+            this.connectionError = new Error("Document reset with unconfirmed edits or protected history; local document and pending edits are preserved");
+            this.disconnect();
+            return;
+        }
         if (event.type === "schema" && event.schemaVersion !== schemaVersion(this.schema)) {
             this.connectionError = new Error("Server schema changed; local document, history and pending edits are preserved. Upgrade the schema before reconnecting.");
             this.schemaVerified = false;
@@ -585,8 +662,8 @@ export class SyncClient {
                 this.disconnect();
                 return;
             }
-            if (this.epoch !== undefined && event.epoch !== this.epoch && this.pending.length) {
-                this.connectionError = new Error("Document epoch changed with unconfirmed edits; local document and pending edits are preserved");
+            if (this.epoch !== undefined && event.epoch !== this.epoch && this.hasProtectedLocalState) {
+                this.connectionError = new Error("Document epoch changed with unconfirmed edits or protected history; local document and pending edits are preserved");
                 this.disconnect();
                 return;
             }
@@ -624,8 +701,14 @@ export class SyncClient {
         }
         this.notify("onEvent", () => this.onEvent?.(event));
         if (!this.online || this.connection !== connection) return;
-        if (event.type === "hello" && this.epoch !== undefined && event.epoch !== this.epoch && this.pending.length) {
-            this.connectionError = new Error("Document epoch changed with unconfirmed edits; local document and pending edits are preserved");
+        // A reset listener can commit an editor's in-progress composition.
+        if (event.type === "reset" && this.hasProtectedLocalState) {
+            this.connectionError = new Error("Document reset with unconfirmed edits or protected history; local document and pending edits are preserved");
+            this.disconnect();
+            return;
+        }
+        if (event.type === "hello" && this.epoch !== undefined && event.epoch !== this.epoch && this.hasProtectedLocalState) {
+            this.connectionError = new Error("Document epoch changed with unconfirmed edits or protected history; local document and pending edits are preserved");
             this.disconnect();
             return;
         }
