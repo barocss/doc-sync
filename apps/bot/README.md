@@ -413,3 +413,30 @@ This guard prevents automatic repeated planner invocation for one protected miss
 It is not a global spending cap across missions, provider idempotency or full call
 accounting. API/CLI authorization and the existing live-model qualification gates
 remain separate; no CLI mode or live call is enabled by this option.
+
+### Inspect a saved proposal mission without connecting
+
+```sh
+node apps/bot/src/main.ts proposal-mission-inspect --mission-file ./private-missions/mission.json
+```
+
+This local read-only command requires only the private mission file, not an endpoint,
+bearer token, model or provider credential. It validates the existing private-file
+contract and reports a minimal snapshot without document text, brief, replacement,
+explanation or questions. It does not remove a lock, reset the mission, call a model,
+connect to a server or create/approve a proposal.
+
+- `planning_unresolved`: a durable planning attempt exists without a saved decision.
+  The planner may still be running; this is not proof of failure or billing outcome.
+- `proposal_unconfirmed`: an exact request is saved without a recorded acknowledgement.
+  It may be in flight or already stored remotely. Do not generate a new request ID.
+- `proposal_recorded`: a historical storage acknowledgement is saved, not proof of
+  current pending/applied status or completion. Use the separate authorized owner
+  inspection workflow when current server state is needed.
+- `abstained`: a saved no-proposal decision, with reason and question count only.
+
+Every result includes `activity: "not_checked"` and `liveStatus: "not_checked"`.
+Exit code zero means the snapshot was read successfully, not that the mission
+finished or it is safe to retry. The summary can become stale immediately. Keep
+checkpoint/lock recovery and new-call authorization separate; inspection never
+changes or bypasses either gate.

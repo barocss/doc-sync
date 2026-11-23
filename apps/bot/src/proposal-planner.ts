@@ -78,6 +78,27 @@ async function write(file:string,value:Mission){
  try{await f.writeFile(JSON.stringify(bounded(value)));await f.sync();}finally{await f.close();}
  try{await rename(temp,file);const d=await open(dirname(file),constants.O_RDONLY);try{await d.sync();}finally{await d.close();}}finally{await unlink(temp).catch(()=>{});}
 }
+export type ProposalMissionInspection = {
+ activity:'not_checked';liveStatus:'not_checked';
+} & (
+ | {status:'planning_unresolved';attemptId:string}
+ | {status:'proposal_unconfirmed';requestId:string}
+ | {status:'proposal_recorded';requestId:string;proposalId:string}
+ | {status:'abstained';reason:ProposalAbstention['reason'];questionCount:number}
+);
+/** Read-only private snapshot. No locks, credentials, model or network; never implies a live outcome. */
+export async function inspectProposalMission(missionPath:string):Promise<ProposalMissionInspection>{
+ if(typeof missionPath!=='string'||!missionPath.trim()||!process.getuid)throw Error('Invalid proposal mission path');
+ const file=resolve(missionPath),dir=await lstat(dirname(file));
+ if(!dir.isDirectory()||dir.isSymbolicLink()||dir.uid!==process.getuid()||(dir.mode&0o777)!==0o700)throw Error('Mission directory must be private and owned (0700)');
+ const mission=await read(file);if(!mission)throw Error('No saved proposal mission');
+ const common={activity:'not_checked',liveStatus:'not_checked'} as const;
+ if(mission.format===3)return {...common,status:'planning_unresolved',attemptId:mission.attemptId};
+ if(mission.format===2)return {...common,status:'abstained',reason:mission.abstention.reason,questionCount:mission.abstention.questions.length};
+ return mission.created?{...common,status:'proposal_recorded',requestId:mission.request.requestId,proposalId:mission.created.id}
+  :{...common,status:'proposal_unconfirmed',requestId:mission.request.requestId};
+}
+
 /** Opt-in creator path. The injected planner receives data only, never credentials/client methods. */
 export async function runProposalMission(options:ProposalMissionOptions,planner:ProposalPlanner,client:CreatorOnlyClient):Promise<{status:'created';id:string;requestId:string}|{status:'unknown';requestId:string}|{status:'abstained';reason:ProposalAbstention['reason'];explanation:string;questions:string[]}|{status:'planning_unknown';attemptId:string}>{
  str(options.brief,8000,1);path(options.path);str(client.binding,1024,1);
