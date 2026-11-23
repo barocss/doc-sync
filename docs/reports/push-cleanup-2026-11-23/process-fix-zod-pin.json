@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "-e",
+    "const fs=require(\"fs\"),assert=require(\"node:assert/strict\");const installed=require(\"zod/package.json\").version;const lock=JSON.parse(fs.readFileSync(\"package-lock.json\")).packages[\"node_modules/zod\"].version;const declared=JSON.parse(fs.readFileSync(\"apps/mcp/package.json\")).dependencies.zod;assert.equal(installed,\"4.6.7\");assert.equal(installed,lock);assert.equal(installed,declared);console.log(JSON.stringify({installed,lock,declared,node:process.version}));"
+  ],
+  "startedUtc": "2026-11-23T07:15:36.537629+00:00",
+  "pid": 9512,
+  "exit": 0,
+  "seconds": 0.074,
+  "watchdogSeconds": 900,
+  "timedOut": false,
+  "status": "PASS"
+}

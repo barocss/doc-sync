@@ -1,5 +1,36 @@
 # Handoff — @barocss/doc-sync
 
+## Publication and disk cleanup — 2026-11-23
+
+The current source has been integrated with the52 commits already on origin/main.
+The native D2/D3 foundation, row/cell targeting, explicit column command and local
+ID catalog prototype are preserved in Git. The catalog remains a local prototype;
+this publication does not close full Q1.3.4, D3/D4 or production WASM delivery.
+Fresh native core 194 / SDK 196, the runnable catalog example and extracted
+guide consumer PASS. Final merged workspace: 2503 PASS / two expected
+platform SKIPs / zero failures. Typecheck and docs build/checks PASS: 58 pages
+and 2,909 internal links. These are fresh checks after installing lock-pinned
+Zod 4.6.7; stale installed Zod 3 caused the initial MCP startup failures. No
+source or lock change was needed for that correction.
+
+All23 secondary worktrees are preserved on remote branches under
+`codex/archive/20261123/`. The recovery index records original HEADs, exact
+snapshot SHAs and ignored source/evidence inputs. All31 sealed evidence archives
+(1,046,335,543 bytes) are additionally backed by the verified
+`codex/archive/20261123/verification-evidence` branch. No private runtime journals,
+client configuration or session prompts were published. A600-permission private
+archive at `/Users/user/github/doc-sync-private-backup-20261123.tar.gz` retains
+322 files in841,422 bytes; its readback hashes are verified.
+
+The user authorized deleting the project and related working directories and
+sessions after remote verification to recover disk. Cleanup requires verified
+main/backup refs, source-preservation checks and the private archive before any
+worktree removal. The primary checkout is removed last. GitHub is the recovery
+source; raw ignored build directories and unselected temporary output are not
+part of the retained verification contract. See
+`docs/reports/push-cleanup-2026-11-23/README.md` and
+`secondary-recovery-index.md` in that report for restoration instructions.
+
 ## Q1.3.4 local catalog prototype — 2026-11-16
 
 Added read_model_with_catalog for discoverable stored blocks, owned grid axes and

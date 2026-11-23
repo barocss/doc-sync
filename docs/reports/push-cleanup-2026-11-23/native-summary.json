@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "checks": {
+    "native-core": {
+      "passed": 194,
+      "receipt": "native-core.json",
+      "logSha256": "e4d7747da427cb6154c9811ef394fb33a50b9290cfc9a31656a36b5facf7fa5d"
+    },
+    "native-sdk": {
+      "passed": 196,
+      "receipt": "native-sdk.json",
+      "logSha256": "c8a621307344a794790d5f2dcb3a4cb3851202ea2810ef448b923a2ec29106c6"
+    },
+    "catalogExample": "PASS"
+  },
+  "sourceMap": "native-tested-source-map.json",
+  "scope": "Fresh native unit/regression execution and local catalog example; no new cross-runtime catalog equivalence, WASM or browser qualification"
+}

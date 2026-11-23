@@ -1,0 +1,369 @@
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling generic-array v0.14.7
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.191
+   Compiling syn v2.0.119
+   Compiling serde v1.0.219
+   Compiling serde_derive v1.0.219
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling serde_json v1.0.140
+   Compiling indexmap v2.14.2
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.15
+   Compiling ryu v1.0.20
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling doc-sync-rust-shadow v0.0.0 (/Users/user/github/doc-sync/experiments/rust-shadow)
+    Finished `test` profile [unoptimized] target(s) in 42.88s
+     Running unittests src/lib.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/doc_sync_rust_shadow-cbce81426a425afd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/doc_sync_rust_shadow-121bbc363871bca7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/general.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/general-bf48719f25c67738)
+
+running 9 tests
+test pinned_general_mode_is_explicit_and_cannot_downgrade ... ok
+test atom_virtual_blocks_model_paths_and_raw_positions_are_distinct ... ok
+test text_types_keep_birth_attrs_and_null_resets_born_and_defaults ... ok
+test exact_birth_replay_keeps_live_attrs_and_conflicting_birth_is_atomic ... ok
+test json_history_groups_preserve_object_order_but_normalize_number_forms ... ok
+test accepted_absent_attr_registers_roundtrip_even_with_older_wire_tickets ... ok
+test invalid_typed_batches_and_unsupported_metadata_preserve_joint_checkpoint ... ok
+test root_attr_history_restores_and_foreign_same_value_fences_undo ... ok
+test corrupted_native_birth_and_history_metadata_reject_atomically ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/history.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/history-b858d557ef0b9ee7)
+
+running 11 tests
+test repeated_local_op_tickets_and_overlapping_births_reject_atomically_but_remote_replay_works ... ok
+test generated_utf16_existence_inverses_preserve_foreign_deletion_and_pins ... ok
+test plain_document_restore_clears_old_history ... ok
+test local_batch_captures_each_prior_and_undo_reverses_step_order ... ok
+test typing_boundaries_empty_and_undel_records_keep_redo ... ok
+test prior_value_groups_follow_first_target_order_and_exact_clocks ... ok
+test invalid_record_restore_and_clock_exhaustion_leave_doc_and_history_unchanged ... ok
+test checkpoint_rejects_cross_slot_alias_future_ticket_and_foreign_owner ... ok
+test shared_states_generate_exact_sequential_formatting_inverses ... ok
+test foreign_same_value_and_same_actor_unrecorded_write_fence_ownership ... ok
+test depth_eviction_and_redo_branch_release_shared_state_counts ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running tests/history_reserved_clock.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/history_reserved_clock-6c03e9ce1fbff823)
+
+running 5 tests
+test invalid_reserved_clocks_and_post_operation_regression_preserve_checkpoint ... ok
+test reserved_clock_survives_empty_record_restore_and_does_not_clear_redo ... ok
+test own_record_and_history_travel_clear_consumed_runtime_reservations ... ok
+test runtime_reservation_tracks_actual_remote_tickets_and_text_range_ends ... ok
+test runtime_reserved_clock_restore_keeps_journal_validation_and_is_atomic ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/movement.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/movement-eb9a13ea9340d5ea)
+
+running 15 tests
+test deleting_moved_marker_does_not_reattach_its_text_to_previous_block ... ok
+test current_move_cannot_alias_unrecorded_birth_ownership ... ok
+test explicit_v6_uses_unchanged_manifest_and_mandatory_move_log ... ok
+test movement_actor_validation_rejects_invalid_batches_atomically ... ok
+test same_actor_unrecorded_move_fences_owned_inverse ... ok
+test conflicting_move_stamp_and_invalid_destination_are_atomic ... ok
+test concurrent_cycles_replay_in_total_ticket_order ... ok
+test native_move_inverse_restores_shared_ownership_through_checkpoint ... ok
+test move_keeps_authored_physical_tokens_and_replays_idempotently ... ok
+test foreign_tail_move_fences_logical_split_undo ... ok
+test checkpoint_rejects_placement_alias_and_split_state_corruption ... ok
+test private_text_storage_preserves_utf16_and_snapshot_membership ... ok
+test split_ownership_survives_discarded_redo_branch ... ok
+test hidden_ownerless_private_gap_resolves_to_root_start_without_mutation ... ok
+test logical_split_undo_uses_join_and_retains_foreign_text ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/native.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/native-5a37cf9afdd45d25)
+
+running 9 tests
+test missing_mutation_targets_are_ignored_not_buffered ... ok
+test lww_inverse_wire_and_foreign_mark_survives_delivery_order ... ok
+test deletion_ownership_and_undel_before_del ... ok
+test duplicates_do_not_reset_changed_marks_and_conflicting_birth_rejects ... ok
+test concurrent_insertions_and_exact_linear_scan ... ok
+test utf16_units_and_js_actor_order_are_preserved ... ok
+test unsupported_and_malformed_batches_fail_atomically ... ok
+test native_snapshot_validates_and_restore_is_atomic ... ok
+test snapshot_restart_uses_fresh_native_process_and_continues_applying ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.46s
+
+     Running tests/nested.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/nested-f8f772c9f9498bfb)
+
+running 10 tests
+test nested_mode_and_v4_are_explicit_and_bound_to_exact_manifest ... ok
+test deleted_ancestor_keeps_foreign_child_edit_and_own_history_restores_it ... ok
+test cross_grid_axes_unsupported_shapes_and_head_deletions_reject_whole_batch ... ok
+test physical_recursive_slots_have_deterministic_heads_and_no_genesis_clock_cost ... ok
+test edited_derived_head_and_birth_marks_roundtrip ... ok
+test equal_ticket_overlapping_span_priority_retains_attribute_insertion_order ... ok
+test canonical_slot_closure_retains_deleted_axis_intersections_without_clock_ticks ... ok
+test span_hides_selection_but_preserves_full_grid_cell_text_and_attrs ... ok
+test corrupt_line_membership_birth_metadata_and_joint_writer_fail_atomically ... ok
+test cell_same_value_foreign_write_blocks_local_undo_after_joint_restore ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/paragraph.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/paragraph-91b9a3a3c033169f)
+
+running 8 tests
+test marker_capability_preserves_base_contract_and_fails_closed ... ok
+test boundary_actor_delimiters_and_js_ticket_order_are_preserved ... ok
+test separated_alias_does_not_change_current_block_or_gain_direct_anchor_position ... ok
+test empty_paragraphs_and_surrogate_boundaries_preserve_model_and_paths ... ok
+test concurrent_boundary_aliases_re_elect_primary_and_restore_all_markers ... ok
+test split_merge_history_uses_node_identity_and_own_deletion_ticket ... ok
+test unsupported_markers_and_mutations_reject_whole_batch_with_history_unchanged ... ok
+test snapshot_v2_is_explicit_restores_v1_separately_and_rejects_corruption_atomically ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/runtime_alias.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_alias-83d7d31b09c88b25)
+
+running 9 tests
+test alias_identity_normalizes_domain_edge_order_but_retains_exact_graph ... ok
+test alias_dto_admits_shared_default_but_bare_equal_copy_rejects ... ok
+test linked_enum_factory_uses_shared_default_order_at_every_nested_object ... ok
+test linked_enum_history_redo_preserves_shared_payload_serialized_order_and_selected_index ... ok
+test reordered_same_identity_schema_binds_payload_without_reordering_raw_json ... ok
+test alias_reference_constraints_and_exact_writer_provenance_reject_atomically ... ok
+test alias_history_replays_selected_index_and_foreign_writer_survives_undo ... ok
+test shared_refs_cross_json_peers_and_checkpoint_replay_with_plain_register_values ... ok
+test malformed_alias_schemas_cannot_replace_existing_replica ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/runtime_composite.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_composite-4f68ddf4c4d7419a)
+
+running 18 tests
+test atomic_defaults_follow_javascript_object_type_and_field_enums_stay_deep ... ok
+test composite_enum_default_alias_is_not_inferred_from_equal_json ... ok
+test graphic_atomic_enum_also_requires_explicit_identity_and_keeps_raw_payload ... ok
+test equal_composite_default_marks_remain_visible_after_per_token_clone ... ok
+test default_reference_wire_admission_clones_and_journal_tampering_is_rejected ... ok
+test enum_attr_material_falls_back_without_discarding_raw_register_or_writer ... ok
+test reordered_same_identity_attribute_default_reference_keeps_source_payload_order ... ok
+test history_checkpoint_cannot_replace_proven_value_at_its_writer ... ok
+test explicit_enum_refs_admit_but_raw_copies_reject_and_payloads_stay_plain ... ok
+test reordered_same_identity_attribute_enum_reference_keeps_source_payload_order ... ok
+test history_redo_keeps_symbolic_admission_and_restore_rebuilds_provenance ... ok
+test reordered_same_identity_mark_enum_reference_keeps_source_payload_order ... ok
+test same_json_foreign_schema_reference_does_not_grant_identity ... ok
+test concurrent_reference_writes_converge_and_selective_history_keeps_foreign_writer ... ok
+test reordered_same_identity_mark_default_reference_keeps_source_payload_order ... ok
+test reference_handles_reject_foreign_scope_payload_source_and_unused_wrappers_atomically ... ok
+test reordered_same_identity_history_undo_redo_and_restore_preserve_source_json_order ... ok
+test reference_split_birth_keeps_exact_raw_history_undo_and_redo ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/runtime_field_refs.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_field_refs-67d7916a7a8fe9de)
+
+running 5 tests
+test nested_sources_require_v3_and_do_not_relax_leaf_constraints ... ok
+test unrelated_enum_entries_cannot_bypass_source_leaf_type ... ok
+test branches_and_malformed_field_paths_remain_rejected ... ok
+test field_leaf_raw_validation_stays_deep_and_type_specific ... ok
+test leaf_sources_keep_descriptor_and_payload_paths_separate ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/runtime_grid.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_grid-01dc84e433f9f2c2)
+
+running 7 tests
+test grid_descriptors_reject_invalid_chains_and_unknown_computed_rules ... ok
+test multiple_grid_chains_use_their_own_wrappers_and_defaults ... ok
+test grid_cell_selection_and_checkpoint_corruption_are_atomic ... ok
+test invalid_grid_batches_leave_document_and_history_unchanged ... ok
+test arbitrary_grid_chain_and_nested_defaults_project_without_preset_names ... ok
+test cell_writes_and_merge_keep_hidden_text_and_restore_history ... ok
+test concurrent_axis_and_cell_writes_converge_and_axis_undo_recovers_foreign_text ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/runtime_nested.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_nested-263b656317cecf30)
+
+running 11 tests
+test recursive_document_descriptor_compiles_without_preset_names ... ok
+test unsupported_nested_rules_fail_closed_with_paths ... ok
+test virtual_text_after_atom_uses_containing_flow_default ... ok
+test recursive_bodies_keep_distinct_defaults_and_empty_text_projection ... ok
+test parent_children_and_type_writes_reject_whole_batches_atomically ... ok
+test deleted_flow_and_selective_attribute_undo_keep_foreign_nested_edits ... ok
+test checkpoints_and_nested_selection_restore_without_reconstructing_visible_model ... ok
+test runtime_placements_expose_accepted_writer_and_skip_cycle_rejected_latest_log ... ok
+test concurrent_nested_placement_cycles_converge_and_restore ... ok
+test logical_nested_split_undo_keeps_foreign_text_and_exact_history_after_restore ... ok
+test move_destination_checks_birth_type_and_preserves_foreign_writer_through_undo_restore ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/runtime_patterns.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_patterns-93c247c9aca74789)
+
+running 6 tests
+test lone_surrogates_are_outside_native_json_string_boundary ... ok
+test arbitrary_pattern_variants_stay_fail_closed_and_defaults_are_checked ... ok
+test existing_pattern_grammar_keeps_its_validation_behavior ... ok
+test exact_product_patterns_validate_mark_attribute_and_field_leaves ... ok
+test link_whitespace_matches_ecmascript_in_every_suffix_position ... ok
+test rejected_pattern_operations_preserve_full_snapshot_and_null_resets ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/runtime_payload.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_payload-bc0d21b7c4b16a6f)
+
+running 10 tests
+test implicit_overlap_between_explicit_child_groups_is_rejected ... ok
+test shared_parents_imply_shared_descendants_but_children_never_merge_parents ... ok
+test shared_array_descendants_accept_numeric_indices_and_reject_string_indices ... ok
+test unicode_value_paths_sort_by_utf16_and_empty_root_paths_are_omitted ... ok
+test nested_handles_keep_source_path_and_target_root_identity ... ok
+test parent_and_nested_representatives_are_order_independent ... ok
+test same_descriptor_nested_source_does_not_bypass_constrained_root_enum ... ok
+test malformed_payload_paths_and_legacy_nested_paths_fail_closed ... ok
+test nested_groups_resolve_unshared_parent_factories_and_effective_fallback ... ok
+test nested_source_history_json_recovery_foreign_fences_and_exact_retry_are_atomic ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/runtime_rules.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_rules-ae48a6fbfeccb517)
+
+running 13 tests
+test field_validation_and_required_cycles_fail_closed ... ok
+test nullable_composite_mark_values_keep_span_identity_and_plain_json_order ... ok
+test flat_fields_alone_activate_projection_history_and_own_restore ... ok
+test required_genesis_has_exact_addresses_shapes_and_nested_closure ... ok
+test moving_authored_rule_child_reveals_required_slot_and_preserves_private_edits ... ok
+test authored_move_after_required_anchor_keeps_exact_placement_and_parent_order ... ok
+test required_gap_reads_keep_nonempty_text_attrs_and_redo_after_joint_restore ... ok
+test structured_cell_registers_materialize_and_reset_independent_defaults ... ok
+test required_model_selection_uses_parent_paths_and_hides_superseded_slot ... ok
+test constrained_boundaries_keep_concurrent_children_distinct_and_promote_overflow ... ok
+test group_rules_count_contiguous_units_and_keep_required_slots_separate ... ok
+test required_typing_is_concurrent_and_physical_maximum_hides_fallback_until_delete ... ok
+test nested_leaf_registers_converge_reset_and_restore_without_losing_writer ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/runtime_schema.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_schema-48241ba3afacd440)
+
+running 3 tests
+test canonical_schema_json_matches_javascript_number_thresholds_and_utf16_key_order ... ok
+test integer_alias_cannot_create_equal_schema_hash_with_different_native_defaults ... ok
+test server_compiles_before_create_and_rejects_identity_swap_atomically ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/runtime_shapes.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_shapes-42ec2862255d3b15)
+
+running 11 tests
+test value_marks_without_span_project_scalar_values_and_reject_types_and_ranges ... ok
+test scalar_numeric_marks_merge_runs_using_javascript_number_equality ... ok
+test flat_group_default_and_inline_only_schemas_activate_native_projection ... ok
+test flat_root_value_marks_use_schema_span_order_scalar_equality_and_resets ... ok
+test arbitrary_shapes_compile_and_groups_follow_each_flow_context ... ok
+test moved_text_keeps_arbitrary_inline_positions_and_span_projection ... ok
+test groups_inline_and_spans_project_in_grid_cell_body ... ok
+test inline_atoms_split_spans_and_keep_utf16_selection_positions ... ok
+test group_and_inline_own_history_does_not_overwrite_foreign_writers ... ok
+test invalid_derived_births_and_structured_marks_fail_atomically ... ok
+test scalar_value_marks_history_keeps_foreign_writers_and_restores ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/runtime_shared.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_shared-31259b5efd2b14ac)
+
+running 9 tests
+test shared_graph_identity_and_representative_order_are_explicit_and_canonical ... ok
+test target_aware_admission_uses_declared_identity_without_deep_equal_promotion ... ok
+test nested_array_shared_slots_bind_across_descriptors_with_exact_representative_order ... ok
+test text_candidate_admission_survives_type_changes_without_retargeting_source_provenance ... ok
+test effective_fallback_and_factory_order_follow_representative_but_raw_payload_keeps_its_order ... ok
+test unlisted_wrong_target_and_conflicting_source_reject_atomically_but_exact_retry_is_noop ... ok
+test history_rebuilds_cross_key_source_provenance_and_foreign_writer_fences ... ok
+test cross_key_node_mark_and_attribute_births_roundtrip_json_and_keep_source_metadata ... ok
+test malformed_or_overlapping_groups_fail_closed_without_replacing_existing_state ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/runtime_textfalse.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_textfalse-17af13b0db35daec)
+
+running 6 tests
+test boolean_flags_are_admitted_and_other_flag_types_fail_closed ... ok
+test flat_flow_admission_uses_any_stored_text_spec_and_preserves_false_default ... ok
+test graphic_text_flag_uses_immutable_birth_spec ... ok
+test group_members_determine_admission_for_each_flow ... ok
+test nested_flow_cells_and_inline_nodes_use_flow_rules_without_marker_filter ... ok
+test false_type_change_retains_foreign_text_through_history_and_recovery ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/runtime_unused.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/runtime_unused-fd468fa1a55b6b88)
+
+running 6 tests
+test flat_registry_does_not_grant_unused_leaf_placement ... ok
+test invalid_unused_declarations_still_fail_closed ... ok
+test unused_declarations_keep_identity_dto_snapshot_and_history_checkpoint ... ok
+test disconnected_grid_group_and_inline_graphs_compile_without_placement_access ... ok
+test unused_graphs_preserve_active_flat_flow_material_and_history ... ok
+test declarations_do_not_grant_root_or_parent_placement ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/selection.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/selection-957b677e1bff5ec5)
+
+running 3 tests
+test concurrent_insertion_preserves_identity_and_reversed_range_orientation ... ok
+test strict_selection_missing_and_invalid_paths_return_null_raw_missing_returns_zero ... ok
+test captures_every_utf16_boundary_and_resolves_deleted_anchor_to_left ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/shapes.rs (output/push-cleanup-2026-11-23/native-target/debug/deps/shapes-28fa26c89a5ba409)
+
+running 10 tests
+test v5_identity_is_explicit_and_older_modes_reject_new_shapes ... ok
+test invalid_value_marks_and_snapshot_birth_registers_are_atomic ... ok
+test string_link_spans_split_at_inline_and_preserve_boolean_runs ... ok
+test inline_is_one_utf16_slot_with_immutable_birth_and_separate_attributes ... ok
+test native_link_inverse_uses_exact_prior_values_and_carets_after_restore ... ok
+test contiguous_lists_group_by_level_and_kind_and_keep_flat_item_identity ... ok
+test text_type_history_changes_group_paths_without_changing_token_identity ... ok
+test link_and_group_history_preserve_foreign_same_value_ownership ... ok
+test deletion_hides_nested_group_selections_and_keeps_foreign_span_inline_storage ... ok
+test covered_cell_group_retains_inline_and_link_but_hides_all_model_positions ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+   Doc-tests doc_sync_rust_shadow
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

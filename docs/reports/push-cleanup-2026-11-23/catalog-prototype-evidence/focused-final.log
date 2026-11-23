@@ -1,0 +1,61 @@
+   Compiling doc-sync-native-sdk v0.0.0 (/Users/user/github/doc-sync/experiments/rust-sdk)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.99s
+     Running tests/runtime_column_targeting.rs (output/rust-d3-id-catalog-2026-11-16/native-target/debug/deps/runtime_column_targeting-6a0283602fa701d7)
+
+running 9 tests
+test clock_exhaustion_after_column_birth_leaves_redo_checkpoint_and_base_intact ... ok
+test fresh_calls_create_distinct_columns_and_returned_key_supports_owned_cell_target ... ok
+test empty_seed_is_real_column_with_no_body_writes_and_projection_preparation_is_allowed ... ok
+test nested_payload_columns_do_not_count_as_target_columns_and_spanned_does_not_write_span ... ok
+test foreign_tokens_hidden_by_axis_undo_survive_both_actor_orders_checkpoint_and_retry ... ok
+test stale_peer_axes_and_hidden_or_deleted_owners_never_fall_back ... ok
+test existing_merge_growth_keeps_covered_payload_and_caller_order_controls_new_overlap ... ok
+test duplicates_wrong_owned_axes_and_later_bad_payload_preserve_redo_and_base ... ok
+test all_boundaries_create_one_axis_and_preserve_caller_order_partial_rows ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.97s
+
+     Running tests/runtime_grid_targeting.rs (output/rust-d3-id-catalog-2026-11-16/native-target/debug/deps/runtime_grid_targeting-ec70c719d00be985)
+
+running 9 tests
+test normalized_empty_cell_body_result_reserves_clock_and_restores_without_fake_key ... ok
+test empty_result_head_restore_retry_foreign_edit_and_rollback_guards ... ok
+test cardinality_hidden_grid_and_moved_grid_follow_current_ancestry_only ... ok
+test span_and_spanned_row_payload_keeps_existing_numeric_row_normalization ... ok
+test peer_axes_consume_base_even_below_max_and_fresh_tuples_keep_original_row ... ok
+test current_covered_cells_reject_but_anchor_and_row_span_growth_keep_payload ... ok
+test sequential_row_ids_and_cell_tuples_share_one_history_change ... ok
+test nested_covered_deleted_and_last_axis_hidden_grids_reject_live_descendants ... ok
+test ownership_kind_missing_and_later_failure_are_atomic_and_keep_base_usable ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.47s
+
+     Running tests/runtime_id_catalog.rs (output/rust-d3-id-catalog-2026-11-16/native-target/debug/deps/runtime_id_catalog-88c4b00c4c9f6568)
+
+running 5 tests
+test empty_and_stored_default_and_read_purity ... ok
+test merged_covered_descendants_and_deleted_grid_are_absent ... ok
+test lower_clock_remote_edit_and_restore_invalidate_base ... ok
+test group_members_and_moved_flow_paths ... ok
+test owned_grid_catalog_drives_column_and_cell_commands ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+
+     Running tests/runtime_targeting.rs (output/rust-d3-id-catalog-2026-11-16/native-target/debug/deps/runtime_targeting-135d757655898c29)
+
+running 12 tests
+test instance_schema_and_restore_aba_reject_tokens_without_changing_checkpoint ... ok
+test missing_deleted_heads_chars_axes_and_wrong_inside_shapes_reject_atomically ... ok
+test group_member_targets_use_current_wrapper_slot_and_inherit_attrs ... ok
+test reads_and_ack_preserve_base_failures_preserve_base_and_checkpoint ... ok
+test sequential_identity_inserts_are_one_history_change_and_resolve_again ... ok
+test joined_alias_and_cardinality_hidden_primary_reject_without_neighbor_fallback ... ok
+test old_base_rejects_lower_clock_remote_change_without_lamport_growth ... ok
+test successful_empty_duplicate_and_clock_only_publications_consume_base ... ok
+test explicit_root_and_stored_flow_start_end_keep_the_requested_edges ... ok
+test virtual_default_prefix_and_required_lines_keep_exact_model_slots ... ok
+test stored_flow_edges_and_fresh_target_follow_move_with_foreign_recovery ... ok
+test visible_cell_siblings_work_but_covered_cells_axes_and_hidden_ancestors_reject ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.08s
+

@@ -1,0 +1,14 @@
+MCP startup failure [stdio-connect]: z.guid is not a function
+McpError: MCP error -32000: Connection closed
+    at McpError.fromError (file:///Users/user/github/doc-sync/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js:2048:16)
+    at Client._onclose (file:///Users/user/github/doc-sync/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js:267:32)
+    at _transport.onclose (file:///Users/user/github/doc-sync/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js:227:18)
+    at ChildProcess.<anonymous> (file:///Users/user/github/doc-sync/node_modules/@modelcontextprotocol/sdk/dist/esm/client/stdio.js:85:31)
+    at ChildProcess.emit (node:events:514:28)
+    at maybeClose (node:internal/child_process:1172:16)
+    at Socket.<anonymous> (node:internal/child_process:527:11)
+    at Socket.emit (node:events:514:28)
+    at Pipe.<anonymous> (node:net:362:12) {
+  code: -32000,
+  data: undefined
+}

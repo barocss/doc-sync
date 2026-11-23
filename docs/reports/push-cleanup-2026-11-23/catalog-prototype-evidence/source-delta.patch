@@ -1,0 +1,112 @@
+--- experiments/rust-sdk/src/runtime_paragraph.rs (baseline)
++++ experiments/rust-sdk/src/runtime_paragraph.rs
+@@ -10,6 +10,9 @@
+ mod grid_targeting;
+ #[path = "runtime_column_targeting.rs"]
+ mod column_targeting;
++#[path = "runtime_id_catalog.rs"]
++mod id_catalog;
++pub use id_catalog::{ModelCatalogRead, ModelTargetCatalog, StoredModelTarget, GridTargetCatalog, CatalogCell};
+ pub use column_targeting::{ColumnBoundary, RowCellPayload, ColumnInsert};
+ pub use grid_targeting::{GridRowTarget, GridCellTarget, GridModelTarget, GridModelInsert};
+ pub use targeting::{ModelEditBase, ModelRead, FlowTarget, RelativeModelTarget, RelativeModelInsert};
+--- experiments/rust-sdk/src/runtime_targeting.rs (baseline)
++++ experiments/rust-sdk/src/runtime_targeting.rs
+@@ -40,12 +40,12 @@
+         let model = self.model()?;
+         Ok(ModelRead {
+             model,
+-            base: ModelEditBase {
+-                incarnation: self.incarnation,
+-                revision: self.revision,
+-                schema: self.schema.identity().into(),
+-            },
++            base: self.current_model_base(),
+         })
++    }
++    pub(super) fn current_model_base(&self) -> ModelEditBase {
++        ModelEditBase { incarnation: self.incarnation, revision: self.revision,
++            schema: self.schema.identity().into() }
+     }
+     pub(super) fn check_model_base(&self, base: &ModelEditBase) -> Result<()> {
+         if base.schema != self.schema.identity() {
+@@ -302,7 +302,7 @@
+             &[],
+             &state["model"],
+             view,
+-            key.as_str(),
++            Some(key.as_str()),
+             &mut BTreeSet::new(),
+             &mut found,
+         )?;
+@@ -312,6 +312,13 @@
+             ));
+         }
+         Ok(found.pop().unwrap())
++    }
++
++    pub(super) fn catalog_blocks_in(&mut self, state: &Value, view: &TargetView) -> Result<Vec<LocatedBlock>> {
++        let mut found = vec![];
++        self.walk_target_flow(Key::root().as_str(), &[], &state["model"], view, None,
++            &mut BTreeSet::new(), &mut found)?;
++        Ok(found)
+     }
+ 
+     fn empty_default_prefix(&self, flow: &str, node: &Value) -> bool {
+@@ -338,7 +345,7 @@
+         path: &[usize],
+         model: &Value,
+         view: &TargetView,
+-        target: &str,
++        target: Option<&str>,
+         stack: &mut BTreeSet<String>,
+         found: &mut Vec<LocatedBlock>,
+     ) -> Result<()> {
+@@ -393,11 +400,13 @@
+                     .as_str()
+                     .ok_or_else(|| Error("target marker missing".into()))?;
+                 let alive = view.alive.contains(marker);
+-                if marker == target && block["virtual"] != true && alive {
++                if target.is_none_or(|target| marker == target) && block["virtual"] != true && alive {
+                     found.push(LocatedBlock {
+                         path: block_path.clone(),
+-                        node: node.clone(),
+-                        projection: block.clone(),
++                        node: if target.is_none() { json!({"type": node["type"]}) } else { node.clone() },
++                        projection: if target.is_none() && block["kind"] != "grid" {
++                            json!({"marker": block["marker"], "type": block["type"], "kind": block["kind"]})
++                        } else { block.clone() },
+                     });
+                 }
+                 if !alive {
+@@ -423,7 +432,7 @@
+         path: &[usize],
+         model: &Value,
+         view: &TargetView,
+-        target: &str,
++        target: Option<&str>,
+         stack: &mut BTreeSet<String>,
+         found: &mut Vec<LocatedBlock>,
+     ) -> Result<()> {
+--- experiments/rust-sdk/src/lib.rs (baseline)
++++ experiments/rust-sdk/src/lib.rs
+@@ -6,7 +6,7 @@
+ pub mod graphic;
+ pub use graphic::{GraphicDocument, GraphicCheckpoint, GraphicKind, GraphicNode, GraphicPreset};
+ pub mod runtime_schema;
+-pub use runtime_schema::{RuntimeSchema, RuntimeDocument, RuntimeCheckpoint, ModelInsert, ModelInsertBatchResult, ModelEditBase, ModelRead, FlowTarget, RelativeModelTarget, RelativeModelInsert, GridRowTarget, GridCellTarget, GridModelTarget, GridModelInsert, ColumnBoundary, RowCellPayload, ColumnInsert, SchemaValue, SchemaAttributes, DefaultReference, ReferenceSlot, ReferenceGroup, ValuePathSegment};
++pub use runtime_schema::{RuntimeSchema, RuntimeDocument, RuntimeCheckpoint, ModelInsert, ModelInsertBatchResult, ModelEditBase, ModelRead, FlowTarget, RelativeModelTarget, RelativeModelInsert, GridRowTarget, GridCellTarget, GridModelTarget, GridModelInsert, ColumnBoundary, RowCellPayload, ColumnInsert, ModelCatalogRead, ModelTargetCatalog, StoredModelTarget, GridTargetCatalog, CatalogCell, SchemaValue, SchemaAttributes, DefaultReference, ReferenceSlot, ReferenceGroup, ValuePathSegment};
+ pub mod runtime_sheet;
+ pub use runtime_sheet::*;
+ pub use engine::Ticket;
+--- experiments/rust-sdk/src/runtime_schema.rs (baseline)
++++ experiments/rust-sdk/src/runtime_schema.rs
+@@ -20,7 +20,7 @@
+         .map_err(|_| Error("document incarnation exhausted".into()))
+ }
+ 
+-pub use paragraph::{ModelInsert, ModelInsertBatchResult, ModelEditBase, ModelRead, FlowTarget, RelativeModelTarget, RelativeModelInsert, GridRowTarget, GridCellTarget, GridModelTarget, GridModelInsert, ColumnBoundary, RowCellPayload, ColumnInsert};
++pub use paragraph::{ModelInsert, ModelInsertBatchResult, ModelEditBase, ModelRead, FlowTarget, RelativeModelTarget, RelativeModelInsert, GridRowTarget, GridCellTarget, GridModelTarget, GridModelInsert, ColumnBoundary, RowCellPayload, ColumnInsert, ModelCatalogRead, ModelTargetCatalog, StoredModelTarget, GridTargetCatalog, CatalogCell};
+ /// A JSON value, optionally bound to one value in the compiled schema.
+ /// References use schema identity and descriptor path. Clones preserve that identity.
+ #[derive(Debug, Clone, PartialEq)]
