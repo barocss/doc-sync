@@ -1,0 +1,185 @@
+{
+  "status": "BOUNDED_PASS_Q1_3_2_TYPED_GRID_TARGETING",
+  "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4",
+  "scope": "Native typed Document row/cell targets and surgical TS moved-grid compiler fix; no core/snapshot/History/Op changes or distributed host guarantee",
+  "main": {
+    "profiles": 14,
+    "schemas": 3,
+    "originalProductProfiles": 4,
+    "customProfiles": 10,
+    "semanticActions": 435,
+    "actorStates": 870,
+    "liveTypescriptLogicalAuthorings": 101,
+    "liveGridArrayCalls": 15,
+    "typedInsertCommands": 25,
+    "rawSetupAuthorings": 5,
+    "negativeCalls": 17,
+    "baseReads": 21,
+    "independentFullModelOracles": 82,
+    "hiddenCellForeignWriterProfiles": 2,
+    "plainAnchorGrowthAndCoveredWriterProfiles": 2,
+    "undoOrders": [
+      "A-first",
+      "B-first"
+    ],
+    "cellForeignWriterProfiles": 3,
+    "receipt": {
+      "path": "output/rust-d3-axis-targeting-2026-11-05/compare/run-2026-11-04T16-30-40.433Z-26735/receipt.json",
+      "sha256": "84098bbbd6ab561ba2c0a28aacd6b620a1ab27ccfccb758753a6a9bfd2501182"
+    },
+    "currentCandidateQualified": true,
+    "sourceBinaryFreeze": {
+      "entries": 181,
+      "map": "output/rust-d3-axis-targeting-2026-11-05/compare/run-2026-11-04T16-30-40.433Z-26735/run-source-hashes.json",
+      "mapSha256": "9b7d1bff6ae2b070b7a971675b1191e8aa05d89a64a2fd85d718aa83d3f48c8d",
+      "binary": "output/rust-d3-axis-targeting-2026-11-05/native-target/debug/examples/runtime_grid_targeting_trace",
+      "binarySha256": "21b14c87abb37f25e8d736e66aa1518d47f5a899042a54b4f29bec3c6c5de4c2",
+      "stages": [
+        {
+          "name": "typescript-schema-validation",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "typescript-independent-authoring",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "native-independent-authoring",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "cross-runtime-exact-comparison",
+          "status": "PASS",
+          "hashMapsEqual": true
+        }
+      ]
+    }
+  },
+  "native": {
+    "receipt": {
+      "path": "output/rust-d3-axis-targeting-2026-11-05/native-final-receipt.json",
+      "sha256": "2bed2f3fa463e210367a2246905aa579d8bfe68aea5782ffdc5b8d9b12a23e1a"
+    },
+    "corePass": 194,
+    "sdkPass": 182,
+    "independentConsumers": 2,
+    "fullExample": true,
+    "sourceFiles": 116,
+    "inheritedTestsExamplesUnchanged": 83
+  },
+  "emptyCellProbe": {
+    "receipt": {
+      "path": "output/rust-d3-axis-targeting-2026-11-05/compare-empty-cell/run-2026-11-04T16-50-11.998Z-49717/receipt.json",
+      "sha256": "f10853e37ff710b72879039c97441d0b88f6efdd5c9cc9fb9a87b36b235bd6d9"
+    },
+    "profiles": 1,
+    "actions": 12,
+    "separateFromMain": true
+  },
+  "comparisonSummary": {
+    "path": "output/rust-d3-axis-targeting-2026-11-05/compare-summary.json",
+    "sha256": "c934efeaf5e4db507dc525d677e1d90bb07bdfeebe2c62de809de87fe15b6536"
+  },
+  "inheritedSummary": {
+    "path": "output/rust-d3-axis-targeting-2026-11-05/compare-inherited-summary.json",
+    "sha256": "7e3e8a4f7ba4861a24aa5e97a3a34192fcfccb29afc74f5de31703390811c5d8"
+  },
+  "inheritedActions": 2924,
+  "sourceReview": {
+    "path": "output/rust-d3-axis-targeting-2026-11-05/design-review/implementation-source-seal.json",
+    "sha256": "4588aa24628af739fd2d2a28729aae9ed0061487dcab3da3acad44058006a996"
+  },
+  "workspace": {
+    "receipt": {
+      "path": "output/rust-d3-axis-targeting-2026-11-05/workspace-test.json",
+      "sha256": "7440ea752515a92d59b4a34cde222763ebbb55f42d369dd1e59140d688631001"
+    },
+    "tests": 2170,
+    "pass": 2168,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "mode": "FRESH_AFTER_TS_FIX"
+  },
+  "typecheck": {
+    "receipt": {
+      "path": "output/rust-d3-axis-targeting-2026-11-05/typecheck.json",
+      "sha256": "d18016fd393fb57dbb78a942d4f8bf9e41712889e43d5435fe88eced93226a56"
+    },
+    "mode": "FRESH_AFTER_TS_FIX"
+  },
+  "docs": {
+    "pages": 56,
+    "checkedInternalLinks": 2741,
+    "english": true,
+    "localPathsExcluded": true,
+    "build": {
+      "path": "output/rust-d3-axis-targeting-2026-11-05/docs-build.json",
+      "sha256": "63faf85a45d05d48d67b6057a165e8970ff7c40e9e7ecc406d8748b2a8e0b720"
+    },
+    "check": {
+      "path": "output/rust-d3-axis-targeting-2026-11-05/docs-check.json",
+      "sha256": "54e793ecf9e058f8834ff763a11dca9bd9e52801254146a7e1f2f451874fabed"
+    }
+  },
+  "preservation": {
+    "path": "output/rust-d3-axis-targeting-2026-11-05/preservation-final.json",
+    "sha256": "62912cec43c9449341cca6185653da20658694f14c06956169904d9b428ea26d"
+  },
+  "whitespace": {
+    "path": "output/rust-d3-axis-targeting-2026-11-05/whitespace-final.json",
+    "sha256": "29bb3cc4bfa75741259bd749a331ffdcd3f4139ef757215330d10173f26143d9"
+  },
+  "failures": {
+    "focused": "Initial span-growth test expectation corrected; source/dist red tests retained",
+    "productionBug": "TS moved-grid birth-line refresh fixed, fixture retained",
+    "independentOracle": "Overlapping incoming span writer priority corrected; old traces retained"
+  },
+  "tsProductionFix": {
+    "source": "packages/doc-sync/src/crdt/edit.ts",
+    "sourceSha256": "2585aaaea5ea559a296dc13e73d870e737c48a3f2731f3478df7dc58ecda4a76",
+    "dist": "packages/doc-sync/dist/crdt/edit.js",
+    "distSha256": "1d593ee7ae44444005c08eed0335ad3cf5c5b7247fee421da8236f5e199d2057",
+    "focusedSource8Dist8Receipt": "output/rust-d3-axis-targeting-2026-11-05/compare-focused-moved-grid/receipt.json",
+    "focusedReceiptSha256": "9e7c9ff62a310b649518c1cf61a985988e531644408fc3ec0043b982b32fa2d6",
+    "opening313Deltas": [
+      {
+        "path": "packages/doc-sync/src/crdt/edit.ts",
+        "openingSha256": "aef0db64e7e5112e59b80d2b38e5fb1e74a22ce42389a83297267cf464bcf299",
+        "currentSha256": "2585aaaea5ea559a296dc13e73d870e737c48a3f2731f3478df7dc58ecda4a76",
+        "openingCopy": "output/rust-d3-axis-targeting-2026-11-05/compare-focused-moved-grid/opening/packages/doc-sync/src/crdt/edit.ts",
+        "diff": "output/rust-d3-axis-targeting-2026-11-05/compare-focused-moved-grid/edit.ts.diff",
+        "diffSha256": "3c2fd905bd3e73e29306ac0fbcf23a8249e97121b8bf6e8f427e1e0537c3a7ca"
+      },
+      {
+        "path": "packages/doc-sync/dist/crdt/edit.js",
+        "openingSha256": "a7553e9a47562b77e379d3e9390f9cdc4856a90cb212d7da27303d6e5c75f234",
+        "currentSha256": "1d593ee7ae44444005c08eed0335ad3cf5c5b7247fee421da8236f5e199d2057",
+        "openingCopy": "output/rust-d3-axis-targeting-2026-11-05/compare-focused-moved-grid/opening/packages/doc-sync/dist/crdt/edit.js",
+        "diff": "output/rust-d3-axis-targeting-2026-11-05/compare-focused-moved-grid/edit.js.diff",
+        "diffSha256": "d7d11b1f13c3f8120ec01406f493cac34b53ca6a4fb36140f05507a95c37d526"
+      }
+    ],
+    "distBuildFiles": 138,
+    "onlyDistChanged": "packages/doc-sync/dist/crdt/edit.js",
+    "docTsUnchangedFromOpening": true,
+    "rootOwnsWholeWorkspaceAndTscReceipts": true
+  },
+  "notRun": [
+    "Chrome",
+    "mobile",
+    "performance measurement",
+    "WASM/production editor integration",
+    "native durable process/server recovery",
+    "mixed-runtime checkpoint exchange"
+  ],
+  "publication": {
+    "commit": false,
+    "push": false,
+    "deployment": false,
+    "registry": false
+  }
+}

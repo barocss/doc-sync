@@ -125,7 +125,7 @@ impl Replica {
         }
     }
     pub(super) fn manifest(&self) -> Value {
-        if let Some(schema) = &self.runtime { return schema.manifest().clone(); }
+        if let Some(schema) = &self.runtime { return schema.effective_manifest().clone(); }
         if self.graphic_builtins {
             serde_json::from_str(GRAPHIC_BUILTIN_MANIFEST).unwrap()
         } else if self.graphic {
@@ -234,7 +234,11 @@ impl Replica {
                         t.attrs
                             .get(k)
                             .map(|r| &r.value)
-                            .filter(|v| !v.is_null())
+                            .filter(|v| {
+                                !v.is_null()
+                                    && (self.runtime.is_none()
+                                        || runtime_schema::atomic_value_ok(s, v))
+                            })
                             .unwrap_or(&s["default"])
                             .clone()
                     },

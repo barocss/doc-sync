@@ -1,0 +1,57 @@
+{
+  "status": "PASS",
+  "workspaceCounts": {
+    "tests": 2110,
+    "pass": 2108,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0
+  },
+  "checks": {
+    "rust-d2-workspace-final": {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "pid": 70476,
+      "group": 70476,
+      "exit": 0,
+      "externalWatchdogSeconds": 240.0,
+      "watchdogTriggered": false,
+      "seconds": 124.905,
+      "status": "PASS"
+    },
+    "rust-d2-docs-build-final": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 68897,
+      "group": 68897,
+      "exit": 0,
+      "externalWatchdogSeconds": 240.0,
+      "watchdogTriggered": false,
+      "seconds": 12.372,
+      "status": "PASS"
+    },
+    "rust-d2-docs-check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 70159,
+      "group": 70159,
+      "exit": 0,
+      "externalWatchdogSeconds": 240.0,
+      "watchdogTriggered": false,
+      "seconds": 1.365,
+      "status": "PASS"
+    }
+  },
+  "browser": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "knownObservedCommandGap": "OBSERVED_COMMAND_MISMATCH / D3_NOT_IMPLEMENTED"
+}

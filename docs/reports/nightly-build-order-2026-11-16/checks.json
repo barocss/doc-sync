@@ -1,0 +1,50 @@
+[
+  {
+    "name": "node",
+    "command": [
+      "node",
+      "--version"
+    ],
+    "exit": 0,
+    "seconds": 0.35
+  },
+  {
+    "name": "core-build",
+    "command": [
+      "npm",
+      "run",
+      "build",
+      "--workspace",
+      "@barocss/doc-sync"
+    ],
+    "exit": 0,
+    "seconds": 3.11
+  },
+  {
+    "name": "properties",
+    "command": [
+      "node",
+      "--test",
+      "packages/doc-sync/test/properties.test.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.71
+  },
+  {
+    "name": "fuzz-smoke",
+    "command": [
+      "node",
+      "packages/doc-sync/test/long-fuzz.ts",
+      "--ops",
+      "1024",
+      "--peers",
+      "8",
+      "--seed",
+      "1",
+      "--out",
+      "output/nightly-build-order-2026-11-16/fuzz-smoke.json"
+    ],
+    "exit": 0,
+    "seconds": 1.31
+  }
+]

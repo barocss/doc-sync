@@ -1,0 +1,159 @@
+{
+  "status": "PASS_DECLARED_SHARED_SCOPE_AFTER_REPAIRS",
+  "core": "core/receipt-01.json",
+  "sdk": "sdk/receipt-01.json",
+  "cell": "core/cell-receipt-01.json",
+  "comparisonSummary": "final-comparison-summary.json",
+  "nativeCoreTests": 156,
+  "nativeSdkTests": 101,
+  "main": {
+    "schemas": 2,
+    "actions": 246,
+    "actorStates": 492,
+    "actualDocEdits": 138
+  },
+  "comparison": {
+    "status": "PASS_AFTER_ENVIRONMENT_RETRY",
+    "drivers": 16,
+    "firstAttempt": "14PASS/2ENOSPC",
+    "retries": "rules260 and alias182 fullPASS",
+    "frozenHashes": 194
+  },
+  "workspaceInitial": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 14328,
+    "group": 14328,
+    "exit": 1,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 119.66,
+    "status": "FAIL",
+    "tests": 2112,
+    "pass": 2108,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "summaryGroups": 13
+  },
+  "workspaceCorrected": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 29274,
+    "group": 29274,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 122.869,
+    "status": "PASS",
+    "tests": 2114,
+    "pass": 2112,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "summaryGroups": 13
+  },
+  "integrationFix": "sdk/mcp-diagnosis/integration-receipt-01.json",
+  "typecheck": {
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "pid": 34135,
+    "group": 34135,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 14.309,
+    "status": "PASS"
+  },
+  "documentation": {
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 36778,
+      "group": 36778,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 14.927,
+      "status": "PASS"
+    },
+    "check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 38302,
+      "group": 38302,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.412,
+      "status": "PASS"
+    },
+    "pages": 55,
+    "internalLinks": 2622,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "chrome": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "publication": "NOT_REQUESTED",
+  "sourceVerification": {
+    "status": "PASS",
+    "sourceMaps": [
+      {
+        "receipt": "core/source-current-01.json",
+        "files": 32,
+        "status": "PASS"
+      },
+      {
+        "receipt": "sdk/source-current-01.json",
+        "files": 8,
+        "status": "PASS"
+      },
+      {
+        "receipt": "sdk/mcp-diagnosis/integration-source-after-01.json",
+        "files": 14,
+        "status": "PASS"
+      },
+      {
+        "receipt": "regressions/run-2026-11-04T05-30-00.097Z-95158/continuation-2026-11-04T05-35-25.655Z-11498/receipt.json",
+        "files": 194,
+        "status": "PASS"
+      },
+      {
+        "receipt": "regressions/run-2026-11-04T05-30-00.097Z-95158/shared/run-2026-11-04T05-31-39.721Z-6866/receipt.json",
+        "files": 130,
+        "status": "PASS"
+      }
+    ],
+    "documentedProgram": {
+      "byteIdenticalToConsumer": true,
+      "sha256": "c779a89974e793c68b4f17bda531ac01c802cc2f8f08268a99bf7f0de9f97832"
+    },
+    "olderReportSeals": 6
+  },
+  "scope": {
+    "schemaConstants": "Shared graph identity; document registers remain independent",
+    "D2": "PARTIAL",
+    "D3": "OPEN",
+    "nestedFieldPayloadAliases": "UNSUPPORTED",
+    "ownEnumCompositeDefaultRequirement": "NATIVE_SUBSET_LIMIT",
+    "TSNativeWireBridge": "NOT_QUALIFIED",
+    "RustWasmClient": "OPEN"
+  }
+}

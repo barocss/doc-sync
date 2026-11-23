@@ -4,7 +4,9 @@
 //! Text crosses JSON as UTF-16 units, including unpaired surrogates. No TS state
 //! or TS document snapshot is accepted. GC is outside this slice.
 pub mod runtime_schema;
+mod composite;
 mod general;
+mod fields;
 mod history;
 mod nested;
 mod paragraph;
@@ -14,6 +16,11 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Map, Value};
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, BTreeSet};
+
+/// Pure model-group key with JavaScript own-key and number ordering.
+pub fn model_group_key(value: &Value) -> String {
+    general::json_group_key(value)
+}
 
 pub const SCHEMA: &str = "flow-root-paragraph:boolean-marks:bold,italic:v1";
 /// Pinned manifest identified by SCHEMA. This engine does not negotiate schemas.
@@ -159,6 +166,11 @@ pub struct Replica {
     graphic_ops: Vec<Value>,
     runtime: Option<runtime_schema::RuntimeSchema>,
     runtime_ops: Vec<Value>,
+    runtime_reserved_clock: Option<u64>,
+    // Symbolic admission is scoped to one operation; retained provenance binds
+    // a schema reference to its writer, never to JSON equality alone.
+    runtime_references: BTreeMap<String, Value>,
+    runtime_reference_writers: BTreeMap<(String, String), Value>,
     placement_cache: std::cell::RefCell<Option<nested::Projection>>,
     movement_cache: std::cell::RefCell<BTreeMap<String, Vec<nested::Block>>>,
     nested: Option<nested::Storage>,
@@ -181,6 +193,9 @@ impl Replica {
             graphic_ops: vec![],
             runtime: None,
             runtime_ops: vec![],
+            runtime_reserved_clock: None,
+            runtime_references: BTreeMap::new(),
+            runtime_reference_writers: BTreeMap::new(),
             placement_cache: std::cell::RefCell::new(None),
             movement_cache: std::cell::RefCell::new(BTreeMap::new()),
             nested: None,
@@ -196,10 +211,19 @@ impl Replica {
     }
     fn observe(&mut self, ticket: &Ticket) {
         self.clock = self.clock.max(ticket.lamport);
+        if self.runtime_reserved_clock.is_some_and(|clock| ticket.lamport >= clock) {
+            self.runtime_reserved_clock = None;
+        }
     }
     fn apply(&mut self, value: &Value) -> Result<()> {
-        self.apply_inner(value)?;
-        if self.runtime.is_some() && !self.runtime_ops.contains(value) { self.runtime_ops.push(value.clone()); }
+        if value["t"] == "reference" {
+            self.apply_reference(value)?;
+        } else {
+            self.apply_inner(value)?;
+        }
+        if self.runtime.is_some() && !self.runtime_ops.contains(value) {
+            self.runtime_ops.push(value.clone());
+        }
         Ok(())
     }
     fn apply_inner(&mut self, value: &Value) -> Result<()> {
@@ -212,6 +236,9 @@ impl Replica {
         match kind {
             "text" => {
                 fields(op, &["t", "id", "origin", "units", "marks"])?;
+                if !self.runtime_accepts_text(self.root_type()) {
+                    return Err("flow rejects text".into());
+                }
                 let id = ticket(op, "id")?;
                 id.birth_valid()?;
                 let origin = ticket(op, "origin")?;
@@ -825,9 +852,13 @@ impl Server {
                 "line",
                 "capabilities",
                 "runtimeSchema",
+                "reservedClock",
             ],
         )?;
         let cmd = string(request, "cmd")?;
+        if request.contains_key("reservedClock") && cmd != "history_record" {
+            return Err("reservedClock is supported only for history_record".into());
+        }
         let name = string(request, "replica")?.to_owned();
         if name.is_empty() {
             return Err("empty replica name".into());
@@ -954,6 +985,8 @@ impl Server {
             "state" => Ok(
                 json!({"ok":true,"state":self.replicas.get(&name).ok_or("unknown replica")?.state()}),
             ),
+            "source_projections" => self.replicas.get(&name)
+                .ok_or("unknown replica")?.source_projections(),
             "snapshot" => Ok(
                 json!({"ok":true,"snapshot":self.replicas.get(&name).ok_or("unknown replica")?.snapshot()}),
             ),
@@ -1026,6 +1059,17 @@ impl Server {
                         decode(required(request, "options")?)?,
                         now,
                     )?;
+                    if let Some(value) = request.get("reservedClock") {
+                        let clock = value.as_u64().filter(|clock| *clock <= MAX)
+                            .ok_or("reservedClock must be an exact clock integer")?;
+                        if clock < replica.clock {
+                            return Err("reservedClock cannot precede document clock".into());
+                        }
+                        if clock > replica.clock && replica.runtime.is_some() {
+                            replica.runtime_reserved_clock = Some(clock);
+                        }
+                        replica.clock = clock;
+                    }
                     (ops.clone(), None)
                 } else {
                     history.travel(&mut replica, cmd == "history_undo")?

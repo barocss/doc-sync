@@ -1,0 +1,129 @@
+{
+  "status": "PASS",
+  "nativeCoreTests": 166,
+  "nativeSdkTests": 105,
+  "main": {
+    "schemas": 2,
+    "commands": 296,
+    "actorStates": 592,
+    "actualDocEdits": 162
+  },
+  "factory": {
+    "schemas": 4,
+    "selections": 200,
+    "actualDocEdits": 200
+  },
+  "scopeCases": 56,
+  "hubCases": 32,
+  "cloneObservations": 2,
+  "comparisonStages": 20,
+  "frozenHashes": 208,
+  "comparisonSummary": "final-comparison-summary.json",
+  "workspace": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 37415,
+    "group": 37415,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 140.245,
+    "status": "PASS",
+    "tests": 2114,
+    "pass": 2112,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "typecheck": {
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "pid": 51489,
+    "group": 51489,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 15.124,
+    "status": "PASS"
+  },
+  "documentation": {
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 84709,
+      "group": 84709,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 14.693,
+      "status": "PASS"
+    },
+    "check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 85863,
+      "group": 85863,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.36,
+      "status": "PASS"
+    },
+    "pages": 55,
+    "internalLinks": 2625,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "heapIdentity": "NOT_REPRESENTED",
+  "liveObjectBridge": "NOT_QUALIFIED",
+  "chrome": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "publication": "NOT_REQUESTED",
+  "sourceVerification": {
+    "status": "PASS",
+    "sourceMaps": {
+      "core": 33,
+      "sdk": 77,
+      "wrapper": 208,
+      "main": 135
+    },
+    "documentationOnlySupplement": "documentation-whitespace-final.json",
+    "documentedCode": {
+      "status": "PASS",
+      "consumerSha256": "33fbf63881f950e59737b424609a8e00ef9f4cb175bef8de61116388bc60e878",
+      "exampleSha256": "14f03426ad0b3817f77b2eb5932aa7429d439bb49b8b51a735cde5aac6f2c093",
+      "onlyDifference": "Example starts with one module documentation comment; both fenced programs and both compiled consumers are byte-identical to the remaining source."
+    },
+    "gzipCompressedHashes": 29,
+    "gzipRoundtripAudit": "regressions/run-2026-11-04T06-22-06.677Z-24415/gzip-roundtrip-audit.json",
+    "previousReportSeals": 7,
+    "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4"
+  },
+  "build": {
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "pid": 18253,
+    "group": 18253,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 11.144,
+    "status": "PASS"
+  }
+}

@@ -32,7 +32,7 @@ function deadline<T>(promise: Promise<T>, label: string, ms = 10000): Promise<T>
 }
 
 async function startDemo(data: string) {
-    const env: NodeJS.ProcessEnv = {...process.env, PORT: "0", DATA_DIR: data};
+    const env: NodeJS.ProcessEnv = {...process.env, PORT: "0", DOC_SYNC_HOST: "127.0.0.1", DATA_DIR: data};
     delete env.NO_SCHEMA;
     delete env.DOC_PROFILE;
     const child = spawn(process.execPath, [demoFile], {env, stdio: ["ignore", "pipe", "pipe"]});

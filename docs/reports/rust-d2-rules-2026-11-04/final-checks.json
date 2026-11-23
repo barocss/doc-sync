@@ -1,0 +1,166 @@
+{
+  "status": "PASS_WITH_EXPLICIT_LIMITS",
+  "baseline": "main1cfb7a2 plus preserved72file inherited WIP",
+  "native": {
+    "core": 120,
+    "sdk": 78,
+    "newCore": 13,
+    "newSdk": 11
+  },
+  "comparison": {
+    "receipt": "compare/run-2026-11-04T02-45-48.408Z-34474/receipt.json",
+    "sourceManifest": "compare/run-2026-11-04T02-45-48.408Z-34474/run-source-hashes.json",
+    "schemas": 4,
+    "semanticActions": 260,
+    "actorStates": 520,
+    "schemaNegatives": 19,
+    "tsValidUnsupportedSchemaCases": 5,
+    "positiveCorpusSha256": "ef09b1523529f4d3d830068efc0c3af1c65dfedef2a685f05b633af1d5f89aae"
+  },
+  "workspace": {
+    "tests": 2112,
+    "pass": 2110,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0
+  },
+  "documentation": {
+    "pages": 55,
+    "checkedInternalLinks": 2615,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "checks": {
+    "workspace-final": {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "pid": 40025,
+      "group": 40025,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 116.265,
+      "status": "PASS"
+    },
+    "types-final": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "pid": 45063,
+      "group": 45063,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 14.35,
+      "status": "PASS"
+    },
+    "docs-build-final": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 50848,
+      "group": 50848,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 13.048,
+      "status": "PASS"
+    },
+    "docs-check-final": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 54496,
+      "group": 54496,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.397,
+      "status": "PASS"
+    },
+    "nested-regression": {
+      "command": [
+        "env",
+        "NESTED_OUT=output/rust-d2-rules-2026-11-04/nested-regression",
+        "NESTED_TARGET=output/rust-d2-rules-2026-11-04/nested-target",
+        "node",
+        "experiments/runtime-document-nested/compare.mjs"
+      ],
+      "pid": 36547,
+      "group": 36547,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 28.911,
+      "status": "PASS"
+    },
+    "grid-regression": {
+      "command": [
+        "env",
+        "GRID_OUT=output/rust-d2-rules-2026-11-04/grid-regression",
+        "GRID_TARGET=output/rust-d2-rules-2026-11-04/grid-target",
+        "node",
+        "experiments/runtime-document-grid/compare.mjs"
+      ],
+      "pid": 36550,
+      "group": 36550,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 88.752,
+      "status": "PASS"
+    },
+    "shapes-regression": {
+      "command": [
+        "env",
+        "SHAPES_OUT=output/rust-d2-rules-2026-11-04/shapes-regression",
+        "SHAPES_TARGET=output/rust-d2-rules-2026-11-04/shapes-target",
+        "node",
+        "experiments/runtime-document-shapes/compare.mjs"
+      ],
+      "pid": 36546,
+      "group": 36546,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 52.541,
+      "status": "PASS"
+    },
+    "legacy-regression": {
+      "command": [
+        "env",
+        "RUNTIME_SCHEMA_OUT=output/rust-d2-rules-2026-11-04/legacy-regression",
+        "RUNTIME_SCHEMA_TARGET=output/rust-d2-rules-2026-11-04/legacy-target",
+        "node",
+        "experiments/runtime-schema-native/compare.mjs"
+      ],
+      "pid": 36548,
+      "group": 36548,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 15.192,
+      "status": "PASS"
+    }
+  },
+  "tsBugRegression": {
+    "beforeFailed": 2,
+    "afterPassed": 2,
+    "nonemptyContentVisibleAfterRedo": true
+  },
+  "compilerClock": "OBSERVED_D3_COMPILER_CLOCK_GAP",
+  "mixedScalarFieldGroup": "NOT_QUALIFIED",
+  "browser": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "nativeProcessServerCrash": "NOT_RUN",
+  "publication": "NOT_REQUESTED"
+}

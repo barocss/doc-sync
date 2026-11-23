@@ -6,7 +6,7 @@ pub use sparse_sheet::*;
 pub mod graphic;
 pub use graphic::{GraphicDocument, GraphicCheckpoint, GraphicKind, GraphicNode, GraphicPreset};
 pub mod runtime_schema;
-pub use runtime_schema::{RuntimeSchema, RuntimeDocument, RuntimeCheckpoint};
+pub use runtime_schema::{RuntimeSchema, RuntimeDocument, RuntimeCheckpoint, ModelInsert, ModelInsertBatchResult, ModelEditBase, ModelRead, FlowTarget, RelativeModelTarget, RelativeModelInsert, GridRowTarget, GridCellTarget, GridModelTarget, GridModelInsert, ColumnBoundary, RowCellPayload, ColumnInsert, ModelCatalogRead, ModelTargetCatalog, StoredModelTarget, GridTargetCatalog, CatalogCell, SchemaValue, SchemaAttributes, DefaultReference, ReferenceSlot, ReferenceGroup, ValuePathSegment};
 pub mod runtime_sheet;
 pub use runtime_sheet::*;
 pub use engine::Ticket;
@@ -118,6 +118,13 @@ impl Key {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "t", deny_unknown_fields)]
 pub enum Op {
+    /// A native operation with schema-owned composite value references.
+    #[serde(rename = "reference")]
+    Reference {
+        format: String,
+        op: Box<Op>,
+        references: Vec<Value>,
+    },
     #[serde(rename = "text")]
     Text {
         id: Ticket,
@@ -157,6 +164,15 @@ pub enum Op {
         parent: Ticket,
         after: Option<Ticket>,
     },
+}
+impl Op {
+    /// The ordinary operation inside a reference envelope.
+    pub fn raw_operation(&self) -> &Op {
+        match self {
+            Self::Reference { op, .. } => op.raw_operation(),
+            _ => self,
+        }
+    }
 }
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -313,13 +329,14 @@ impl Document {
         // Local authoring never accepts a replay or a previously observed ticket.
         let mut previous = self.observed_clock()?;
         for op in &ops {
-            let (at, width) = match op {
+            let (at, width) = match op.raw_operation() {
                 Op::Text { id, units, .. } => (id, units.0.len().max(1) as u64),
                 Op::Node { id, .. } => (id, 1),
                 Op::Delete { at, .. }
                 | Op::Undelete { at, .. }
                 | Op::Set { at, .. }
                 | Op::Move { at, .. } => (at, 1),
+                Op::Reference { .. } => unreachable!("raw operation"),
             };
             if at.actor != self.actor || at.lamport <= previous {
                 return Err(Error(
@@ -518,12 +535,13 @@ impl Document {
         let before = doc.call("history_export", json!({}))?["checkpoint"].clone();
         for change in &checkpoint.pending {
             for op in &change.ops {
-                let own = match op {
+                let own = match op.raw_operation() {
                     Op::Text { id, .. } | Op::Node { id, .. } => id,
                     Op::Delete { at, .. }
                     | Op::Undelete { at, .. }
                     | Op::Set { at, .. }
                     | Op::Move { at, .. } => at,
+                    Op::Reference { .. } => unreachable!("raw operation"),
                 };
                 if own.actor != doc.actor {
                     return Err(Error("pending operation actor mismatch".into()));

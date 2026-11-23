@@ -36,7 +36,7 @@ function deadline<T>(promise: Promise<T>, description: string, ms = 10000): Prom
 }
 
 async function startDemo(data: string, clockModule: string) {
-    const env: NodeJS.ProcessEnv = {...process.env, PORT: "0", DATA_DIR: data};
+    const env: NodeJS.ProcessEnv = {...process.env, PORT: "0", DOC_SYNC_HOST: "127.0.0.1", DATA_DIR: data};
     delete env.NO_SCHEMA;
     delete env.DOC_PROFILE;
     const child = spawn(process.execPath, ["--import", pathToFileURL(clockModule).href, demoFile], {env, stdio: ["ignore", "pipe", "pipe"]});

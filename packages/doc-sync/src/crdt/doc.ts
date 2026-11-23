@@ -1379,6 +1379,12 @@ export class Doc {
         return (line && this.flowSpecOf(line)?.default) ?? "";
     }
 
+    /** Read the local ordered schema without constructing the document model. */
+    insertionFlowSpec(lineKey: string): Readonly<OrderedLineSpec> | undefined {
+        const line = this.get(lineKey)?.line;
+        return line && line.key === lineKey ? this.flowSpecOf(line) : undefined;
+    }
+
     /** 흐름 줄에 저장되는 블록 종류 — 목록(group)은 그 항목 종류로 */
     private storedIn(line: {slot: string; owner?: Item | null; ownerBorn?: string | null}): string[] {
         const flow = this.flowSpecOf(line);
@@ -1756,7 +1762,19 @@ export class Doc {
         for (const line of [...this.lineMap.values()]) {
             if (parseRequired(line.key) || parseTextStorage(line.key)) continue;
             const flow = this.flowSpecOf(line);
-            let after = base.filter(entry => entry.parent === line.key).at(-1)?.target ?? null;
+            if (!flow?.childRules || Object.keys(flow.childRules).length === 0) continue;
+            // A gap anchored after a required child cannot precede that same
+            // required chain. Unwritten root gaps also have no authored tail.
+            let after = base.filter(entry => {
+                if (entry.parent !== line.key) return false;
+                const storage = parseTextStorage(this.byKey.get(entry.target)?.line.key ?? "");
+                if (storage?.detached && !this.automaticGap(storage)) return false;
+                const address = parseTextStorage(entry.target);
+                if (!address) return true;
+                if (entry.after && parseRequired(entry.after)) return false;
+                const head = this.byKey.get(entry.target);
+                return address.after !== null || !head || head.line.items.length !== 1 || head.attrs.size > 0;
+            }).at(-1)?.target ?? null;
             for (const [type, rule] of Object.entries(flow?.childRules ?? {})) for (let ordinal = 0; ordinal < (rule.min ?? 0); ordinal++) {
                 const address = {parent: line.key, type, ordinal};
                 const id = requiredTicket(address, this.schema?.nodes[requiredType(this.schema!, type)]?.shape !== "text");

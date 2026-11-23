@@ -1,0 +1,169 @@
+{
+  "status": "PASS_DECLARED_NATIVE_SUBSET",
+  "comparisonSummary": "final-comparison-summary.json",
+  "core": {
+    "status": "PASS",
+    "passed": 138,
+    "failed": 0,
+    "newCompositeCases": 18,
+    "testLog": "seal-3-test.log",
+    "buildLog": "seal-3-build.log",
+    "sourceReceipt": "sealed-source-3.json",
+    "sourceReceiptSha256": "1d924b37b2d7fa5688a9085b38b0dd85105c1d78219ebe7424c665b84ba49f94",
+    "changedFromSeal2": [
+      "experiments/rust-shadow/src/composite.rs",
+      "experiments/rust-shadow/tests/runtime_composite.rs"
+    ],
+    "keyOrderBefore": "schema-keyorder-probe-before-1.json",
+    "keyOrderAfter": "schema-keyorder-probe-after-3.json",
+    "baselineBeforeAfter": "before-after-receipt-3.json",
+    "scope": "Only explicit symbolic reference binding/admission/History provenance compares canonical structural JSON. Ordinary raw enum acceptance, raw operation/register object key order, History grouping and runtime projection are unchanged. Prior sealed receipts retained."
+  },
+  "sdk": {
+    "status": "PASS",
+    "seal": 3,
+    "coreSourceReceipt": "../core/sealed-source-3.json",
+    "coreSourceReceiptSha256": "1d924b37b2d7fa5688a9085b38b0dd85105c1d78219ebe7424c665b84ba49f94",
+    "sdkTests": 86,
+    "newCompositeTests": 8,
+    "coreTestsSeparatelyReported": 138,
+    "nativeSourcesUnchanged": true,
+    "nativeSourceCount": 61,
+    "before": "seal3-native-before.json",
+    "after": "seal3-native-after.json",
+    "fullLog": "seal3-sdk-full.log",
+    "firstFullFailurePreserved": "full-first-failure.log",
+    "consumer": {
+      "status": "PASS",
+      "manifest": "doc-consumer/Cargo.toml",
+      "log": "seal3-doc-consumer.log",
+      "documentFencesIdentical": true,
+      "fenceSha256": "2159b09cfd5398c90a954527b9b44012e956f8d0fd7e8f05583a01591b3203d5",
+      "scope": "Independent Cargo consumer; native JSON Change delivery, foreign same-value writer fence, same-process JSON checkpoint restore, exact duplicate retry, undo/redo and ACK. Not TypeScript protocol or process-crash proof.",
+      "fenceUnchangedFromSeal1": true
+    },
+    "docs": {
+      "experiments/rust-sdk/README.md": "3db6f292aff9d3e4f63a1a0723b6aa76384897eeb3eb466f8be5445a53d586d7",
+      "apps/docs/src/guide/rust.md": "12e38ffe907efb58d1177c5520df92a157240ff3de67ad8f422b4b76bd7fa9dc"
+    },
+    "nativeUnsupportedBoundary": "TypeScript nontext any-candidate admission can accept another node type same-shaped enum reference; native exact target-kind descriptor validation rejects it.",
+    "projectionBoundary": "Composite enum attribute raw registers retain selected payload but projection falls back to declared default after cloning, matching TypeScript. Composite mark per-token clone/span behavior is separate.",
+    "newCompositeCoreTests": 18
+  },
+  "main": {
+    "semanticActions": 160,
+    "actorStates": 320,
+    "stagedDocEdits": 88,
+    "expectedRawJsonAuthorRejections": 26
+  },
+  "workspace": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 64918,
+    "group": 64918,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 125.234,
+    "status": "PASS",
+    "tests": 2112,
+    "suites": 0,
+    "pass": 2110,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "summaryGroups": 13
+  },
+  "typecheck": {
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "pid": 69132,
+    "group": 69132,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 15.292,
+    "status": "PASS"
+  },
+  "documentation": {
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 70234,
+      "group": 70234,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 13.991,
+      "status": "PASS"
+    },
+    "check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 71404,
+      "group": 71404,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 0.506,
+      "status": "PASS"
+    },
+    "pages": 55,
+    "internalLinks": 2619,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "chrome": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "publication": "NOT_REQUESTED",
+  "sourceVerification": {
+    "status": "PASS",
+    "sourceMaps": [
+      {
+        "receipt": "core/sealed-source-3.json",
+        "files": 15,
+        "status": "PASS"
+      },
+      {
+        "receipt": "sdk/seal3-native-after.json",
+        "files": 61,
+        "status": "PASS"
+      },
+      {
+        "receipt": "report-counter-correction-2026-11-04T04-14/receipt.json",
+        "files": 167,
+        "status": "PASS"
+      },
+      {
+        "receipt": "compare/run-2026-11-04T04-13-47.643Z-66104/receipt.json",
+        "files": 118,
+        "status": "PASS"
+      }
+    ],
+    "documentedCode": "byte-identical and compiled fence digest retained",
+    "earlierSealedReports": 4
+  },
+  "scope": {
+    "nativeReferenceAdmission": "implemented extension, no deep-equality change to raw TS enum admission",
+    "compositeDefaultEnumAlias": "UNSUPPORTED",
+    "nativeTypeScriptWire": "NOT_QUALIFIED",
+    "nativeForeignAtomDescriptor": "OBSERVED_TS_VALID_NATIVE_UNSUPPORTED",
+    "typescriptJsonEnumAdmission": "OBSERVED_REJECTION",
+    "D2": "PARTIAL",
+    "D3": "OPEN",
+    "productionWasm": "OPEN"
+  }
+}

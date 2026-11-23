@@ -202,10 +202,24 @@ fn main() -> Result<()> {
 
 This example uses one of six fixed `SchemaPreset` values. A separate [runtime schema API](./rust#runtime-custom-schemas) accepts limited Document/Graphic descriptors and custom sparse-sheet fields. Live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP and editor bindings are not included.
 
+### Native Rust model child paths
+
+With an existing `RuntimeDocument`, use `insert_paragraph_at(&[1, 0], model,
+options, now_ms)` to insert a paragraph at a nested child gap.
+`insert_model_at` also accepts a supported flow/text model tree. Each call
+compiles on detached state and records one History transaction. The returned
+operations have already been applied.
+
+The new helper resolves head/default/required positions. `insert_block_in` keeps
+its physical-token addressing contract. These bounded methods do not provide
+all EditOp commands or post-move model insertion. See the
+[compiled native example](./rust#insert-paragraphs-at-model-positions) for imports,
+initialization, schema, concurrent edits, undo/redo and checkpoint retry.
+
 <details>
 <summary>Raw protocol probe and reference checks</summary>
 
-Rust currently applies wire operations. It does not compile `doc.edit()` commands. This small native History example records one local insertion, undoes it, and redoes it.
+This raw executable probe applies wire operations. The bounded native SDK model compiler is described above. This small native History example records one local insertion, undoes it, and redoes it.
 
 Build the private executable with the commands in [the Rust guide](./rust#run-the-private-experiment). Run the following command from the repository root. Each input line produces one JSON response.
 
@@ -223,3 +237,53 @@ The record response contains `Hi`, undo contains no visible text, and redo conta
 This uses the base paragraph fixture. The separate pinned v6 fixture supports block movement and logical split/join; see [the native block example](./blocks#rust-experiment). Neither fixture supplies a Rust authoring compiler, production transport, arbitrary runtime schema or live schema transition. See [operation application](./rust#operation-application).
 
 </details>
+
+
+Native model paths can also be used after existing block movement. Resolve the
+child index from the current model, while retaining object IDs for identity.
+See [insertion after moves](../guide/rust#insert-at-current-model-positions-after-moves)
+for the complete two-peer Rust program and the remaining input boundaries.
+
+
+For the native SDK, `insert_model_at` also constructs groups and grids and resolves
+row/cell body paths. A list-member gap can accept a parent-admitted block and
+split the derived wrapper. See the [group/grid example](./rust#insert-groups-grids-and-cell-contents-by-model-path)
+and [schema correctness queue](../schemas/editing-contract).
+
+
+### Atomic native insert batches
+
+Use `RuntimeDocument::insert_models_batch` when several supported model-child
+insertions must commit together. It shares a column identity across row commands
+and returns optional requested IDs, one Change and the final reservation clock.
+A later error preserves the entire live checkpoint. Default History options
+undo the whole batch together; typing coalescence keeps its existing rule.
+
+See the [complete native batch program](./rust#insert-several-models-atomically).
+This API is insert-only and does not replace general TS `Doc.edit` commands.
+Retries reuse the captured pending Change rather than run the batch method again.
+
+
+For native ID-relative insertion, read an opaque local base with
+`read_model_for_edit`, then use
+[`insert_models_relative`](../guide/rust#insert-relative-to-stored-ids) for
+before/after stored primary blocks or explicit root/stored-flow edges. The guard
+rejects stale reads, and strict lookup rejects deleted/hidden/aliased/synthetic
+targets. Direct row/cell tuples remain a separate typed API. This is native SDK
+behavior, not distributed server acceptance or a production WASM binding.
+
+The native typed grid API uses `{grid, row}` for row adjacency and
+`{grid, row, column}` for cell-body edges. Read the same local base, then call
+[`insert_grid_models_relative`](../guide/rust#address-rows-and-cell-bodies-with-stable-ids).
+Axes must be live and belong to the current visible grid. Direct covered-cell
+body targets reject; inserting a row inside a merge can produce covered cells
+while retaining their payload and peer edits. Row payload width and overlapping
+span precedence follow the existing numeric compiler. This API does not create
+columns or provide a separate identity for a cell wrapper.
+
+For one new column, use the native
+[`insert_column_relative`](../guide/rust#insert-one-column-by-stable-ids) command.
+It resolves one stable boundary, fills unique row payloads in caller order and
+returns exactly one new column key. Empty payloads still create a column.
+Existing merges can cover the new cells while preserving their contents.
+A fresh local base is required for the next call.

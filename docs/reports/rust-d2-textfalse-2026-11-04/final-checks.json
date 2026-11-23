@@ -1,0 +1,213 @@
+{
+  "status": "PASS",
+  "nativeCore": {
+    "passed": 183,
+    "log": "core-tests-full.log"
+  },
+  "nativeSdk": {
+    "passed": 116,
+    "receipt": "sdk-after-format-restore/sdk-receipt.json"
+  },
+  "comparison": {
+    "new": {
+      "receipt": "/Users/user/github/doc-sync/output/rust-d2-textfalse-2026-11-04/compare/run-2026-11-04T08-18-01.662Z-57469/receipt.json",
+      "status": "PASS",
+      "receiptSha256": "3700c4cb9f7b680cdcbfc5a02cac4694a5d29802ca786f876e24da20a4ccc041",
+      "typescriptDocumentEdits": 38,
+      "typescriptRawWireAuthorings": 4
+    },
+    "oracle": {
+      "receipt": "/Users/user/github/doc-sync/output/rust-d2-textfalse-2026-11-04/compare-oracle/run-2026-11-04T08-14-14.768Z-48398/receipt.json",
+      "status": "PASS",
+      "receiptSha256": "d241b184f56ef72f61f0c828c77328007a114a5f6b9592580e63ad59db42810b"
+    },
+    "product": {
+      "receipt": "/Users/user/github/doc-sync/output/rust-d2-textfalse-2026-11-04/compare-product/run-2026-11-04T08-14-19.536Z-48620/receipt.json",
+      "status": "PASS",
+      "receiptSha256": "5ca969447ed343d046db2211047c4228a834426cb4e0af859747cdfcbb2da951"
+    },
+    "inherited": {
+      "receipt": "/Users/user/github/doc-sync/output/rust-d2-textfalse-2026-11-04/compare-inherited-patterns/run-2026-11-04T08-13-49.275Z-47226/receipt.json",
+      "status": "PASS",
+      "receiptSha256": "62a09b9f84de50fef8ad6da168bf811b5e4bb3cec378bc9fb4a2d276e8711c80"
+    },
+    "sourceBinaryHashes": {
+      "experiments/runtime-document-textfalse/README.md": "5cca28366df7f3c8608f3ec4397855e4f7e7384649351bfd440fac9d7b66e885",
+      "experiments/runtime-document-textfalse/compare.mjs": "f7f592672ee2903b5bd18b4cbcd0765960db063e25feb8c31990685a0c8fc3a9",
+      "experiments/runtime-document-textfalse/compress-traces.py": "cb554adbaa14056f18c546c41c8c75f1ff296bd797e3c07c616dcd2c3e3deaf8",
+      "experiments/runtime-document-textfalse/fixtures.mjs": "9bb0114ea7e9add437047e56e691844a860da5867c2472532fdfa86a8e99bd5d",
+      "experiments/runtime-document-textfalse/oracle.mjs": "ecf110312782351e31f078fc64eb7b8b00ecd3186f664353205c0d91049650ff",
+      "experiments/runtime-document-textfalse/product-boundary.mjs": "c2e41cd6092766e614c5df1177e291b202153d1991e98878717133348a97294f",
+      "output/rust-d2-textfalse-2026-11-04/native-target/debug/doc-sync-rust-shadow": "760870d05debe9c10fcaad4683a4b3fd01edbcd129095bb3bbf7fddcb364c0b0",
+      "output/rust-d2-textfalse-2026-11-04/native-target/debug/examples/runtime_composite_trace": "0a1f58a57dfd0829c99623ad3a6f601adb3df3dfb5cde7544ffac523448a316f",
+      "output/rust-d2-textfalse-2026-11-04/native-target/debug/examples/runtime_textfalse_trace": "9cafa74b06336e3a27cc308524b080e140a2194f933ddc413bc2729b1d48f221"
+    },
+    "boundaries": [
+      "Retained original same-current-type $type logical compiler mismatch; raw same-value writer protection passes",
+      "Graphic $type native unsupported; TS actual-origin birth guard separate from native test",
+      "Demo and Notion compile only; Word divider/Presentation heading1 unused declarations still fail",
+      "No Chrome/mobile/performance/commit/push"
+    ],
+    "reuseEvidence": {
+      "oracle": "Source guard includes oracle.mjs, TS dist doc/schema and core binary; none changed by metadata correction",
+      "product": "Source guard includes product-boundary.mjs, original fixture schemas, TS dist schema/schema-version and before/current binaries; none changed",
+      "inherited": "Source guard includes old runtime-document-patterns, SDK/core sources+examples and TS src/dist, not new runtime-document-textfalse/compare.mjs; none changed"
+    },
+    "graphic": {
+      "status": "SEPARATE_FOCUSED_EVIDENCE",
+      "typescriptProbe": "output/rust-d2-textfalse-2026-11-04/graphic-birth-probe.json",
+      "typescriptCases": 4,
+      "native": "Core focused guard only; no exact graphic state parity; native graphic $type unsupported"
+    },
+    "reusedGuardVerification": {
+      "oracle": {
+        "status": "PASS",
+        "fileCount": 4,
+        "mismatches": []
+      },
+      "product": {
+        "status": "PASS",
+        "fileCount": 7,
+        "mismatches": []
+      },
+      "inherited": {
+        "status": "PASS",
+        "fileCount": 143,
+        "mismatches": []
+      }
+    }
+  },
+  "main": {
+    "schemas": 2,
+    "actions": 90,
+    "actorStates": 180,
+    "actualDocEdits": 38,
+    "rawWireAuthorings": 4
+  },
+  "oracle": {
+    "rawAdmissionCases": 24,
+    "tsLogicalObservations": 5,
+    "malformedFlagBoundaries": 6
+  },
+  "graphic": {
+    "tsPolicyObservations": 4,
+    "native": "focused tests only",
+    "stateParity": "NOT_QUALIFIED"
+  },
+  "productCompileProbes": 16,
+  "workspace": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 22514,
+    "group": 22514,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 123.277,
+    "status": "PASS",
+    "tests": 2114,
+    "pass": 2112,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "typecheck": {
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.json"
+    ],
+    "pid": 61191,
+    "group": 61191,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 7.498,
+    "status": "PASS"
+  },
+  "documentation": {
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--workspace",
+        "@doc-sync/docs"
+      ],
+      "pid": 61190,
+      "group": 61190,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 7.13,
+      "status": "PASS"
+    },
+    "check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 64278,
+      "group": 64278,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.625,
+      "status": "PASS"
+    },
+    "pages": 55,
+    "internalLinks": 2640,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "sourceVerification": {
+    "status": "PASS",
+    "sourceMaps": {
+      "main": 143,
+      "oracle": 4,
+      "product": 7,
+      "inheritedPatterns": 143,
+      "summary": 9,
+      "sdkAfterRestore": 52,
+      "inheritedTsIntegration": 31
+    },
+    "baselineChangesWithinOwnedScope": [
+      "HANDOFF.md",
+      "README.md",
+      "apps/docs/src/guide/document-rules.md",
+      "apps/docs/src/guide/rust.md",
+      "apps/docs/src/roadmap.md",
+      "apps/docs/src/schemas/custom.md",
+      "apps/docs/src/schemas/document.md",
+      "docs/rust-roadmap.md",
+      "experiments/rust-sdk/README.md",
+      "experiments/rust-shadow/src/graphic.rs",
+      "experiments/rust-shadow/src/lib.rs",
+      "experiments/rust-shadow/src/nested.rs",
+      "experiments/rust-shadow/src/runtime_schema.rs"
+    ],
+    "oldReportSeals": 10,
+    "oldTargetBinariesUnchanged": 14,
+    "restoredSdkFiles": 6,
+    "documentedBodySha256": "0df464436cc5388abf80e4b101226da175f50a399e38093acc5fc819076b07a4",
+    "exampleDifference": "None; fenced code and both compiled consumers equal the entire runnable source",
+    "mainRows": 90,
+    "actorStates": 180,
+    "actualDocEdits": 38,
+    "rawWireAuthorings": 4,
+    "compressionRoundTrips": 20,
+    "originalCompressedBytes": 172473757,
+    "graphicProbeSha256": "3e8875a322dfe1a3a77681a0ea0feceb42dccb26d0f12f9c5155e160ee067f9c",
+    "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4"
+  },
+  "legacyFull23Drivers": "NOT_RERUN_THIS_TASK",
+  "chrome": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "publication": "NOT_REQUESTED"
+}

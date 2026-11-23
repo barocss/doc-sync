@@ -24,6 +24,7 @@ const schemaSidebar = [
     {text: "Schemas", items: [
         {text: "Overview", link: "/schemas/"},
         {text: "Custom schemas and editor mappings", link: "/schemas/custom"},
+        {text: "Editing contracts and test roadmap", link: "/schemas/editing-contract"},
     ]},
     {text: "Document", items: [
         {text: "Overview", link: "/schemas/document"},

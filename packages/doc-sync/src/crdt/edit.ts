@@ -72,11 +72,19 @@ export const entriesOf = (doc: Doc, line: string, vacant?: Set<string>): Array<{
 
 const gridAt = (doc: Doc, line: string, b: number): GridBlock => doc.blocks(line)[b] as GridBlock;
 
+/** 표의 현재 줄. 투영에서는 채택된 배치를 사용하고, 일반 저장 경로는 그대로 둔다. */
+const gridLine = (doc: Doc, grid: GridBlock): string => {
+    if (!doc.usesProjection) return grid.marker.line.key;
+    const placement = doc.placementOf(grid.marker.id);
+
+    return placement ? keyOf(placement.parent) : doc.logicalLineOf(grid.marker);
+};
+
 /** 같은 표를 다시 찾는다 (행·열을 바꾼 뒤 GridBlock 은 새로 계산된다) */
 const refreshGrid = (doc: Doc, grid: GridBlock): GridBlock => {
-    const line = grid.marker.line.key;
+    const line = gridLine(doc, grid);
 
-    return doc.blocks(line).find(x => x.marker === grid.marker) as GridBlock;
+    return doc.blocks(line).find(x => x.kind === "grid" && x.marker === grid.marker) as GridBlock;
 };
 
 /** 블록이 흐름 그릇(상자·이미지 그릇)이면 그 몸 줄, 표 칸이면 칸 줄 */
@@ -277,7 +285,7 @@ export const pathAt = (doc: Doc, key: string): ModelPath | null => {
 
 /** 표 블록의 모델 경로 */
 export const gridPath = (doc: Doc, grid: GridBlock): ModelPath => {
-    const line = grid.marker.line.key;
+    const line = gridLine(doc, grid);
 
     return blockPath(doc, line, doc.blocks(line).indexOf(refreshGrid(doc, grid)))!;
 };
@@ -298,6 +306,8 @@ class Compiler {
 
     private emit(ops: Op[]): Op[] {
         const expanded: Op[] = [];
+        // Attribute expansion follows preceding births and retypes in this batch.
+        const pendingTypes = new Map<string, string>();
         const writeFields = (ids: Ticket[], attr: string, value: unknown, spec: import("./schema.ts").AttrSpec, prefix = "") => {
             if (!fieldValueOk(spec, value)) throw new Error(`Invalid nested field patch: ${attr}`);
             for (const field of flattenFieldPatch(spec, value)) expanded.push({t: "set", at: this.next(), ids, key: prefix + encodeFieldKey(attr, field.path), value: field.value});
@@ -312,14 +322,18 @@ class Compiler {
                 }
                 if (!Object.keys(op.attrs!).length) delete op.attrs;
                 expanded.push(op);
+                pendingTypes.set(keyOf(op.id), op.type);
                 for (const [key, value, spec] of fields) writeFields([op.id], key, value, spec);
             } else if (original.t === "set" && !original.key.startsWith("$field:")) {
+                if (original.key === "$type" && typeof original.value === "string") {
+                    for (const id of original.ids) pendingTypes.set(keyOf(id), original.value);
+                }
                 const cell = /^(\$cell:[^|]+\|)(.+)$/.exec(original.key);
                 let handled = false;
                 const scalar: Ticket[] = [];
                 for (const id of original.ids) {
                     const item = this.doc.get(keyOf(id));
-                    const type = cell && item ? gridParts(this.schema, item.born)?.cell : item && this.doc.typeOf(item);
+                    const type = cell && item ? gridParts(this.schema, item.born)?.cell : pendingTypes.get(keyOf(id)) ?? (item && this.doc.typeOf(item));
                     const attr = cell?.[2] ?? original.key;
                     const spec = type ? this.doc.specOf(type)?.attrs?.[attr] : undefined;
                     if (spec && isFieldSpec(spec)) { writeFields([id], attr, original.value, spec, cell?.[1]); handled = true; }
@@ -349,9 +363,14 @@ class Compiler {
     compile(op: EditOp): void {
         if (!this.promoted && (this.doc.usesProjection || op.op === "move")) {
             this.promoted = true;
+            const candidates: Array<{line: string; block: TextBlock}> = [];
             for (const line of this.doc.lines()) for (const block of this.doc.sourceBlocks(line.key)) {
-                if (block.kind === "text" && block.virtual && block.chars.length) this.emit([{t: "node", id: this.next(), origin: block.marker.id, type: block.type, boundary: `virtual:${block.marker.key}|${block.chars[0].key}`}]);
+                if (block.kind === "text" && block.virtual && block.chars.length) candidates.push({line: line.key, block});
             }
+            // Lazy line reads must not change ticket allocation. Stable sorting
+            // keeps each source line's physical block order.
+            candidates.sort((a, b) => a.line < b.line ? -1 : a.line > b.line ? 1 : 0);
+            for (const {block} of candidates) this.emit([{t: "node", id: this.next(), origin: block.marker.id, type: block.type, boundary: `virtual:${block.marker.key}|${block.chars[0].key}`}]);
         }
         op.op !== "insert" && op.op !== "delete" && (this.batch.column = null);
 
@@ -447,7 +466,63 @@ class Compiler {
 
     // ── insert ──────────────────────────────────────────────────────────
 
+    /** Map local canonical entries to the current projected entries. */
+    private insertionEntries(line: string, pending: Map<string, string>, materializeAutomatic = false): Array<number | null> {
+        const logical = entriesOf(this.doc, line, this.batch.vacant);
+        const spec = this.doc.insertionFlowSpec(line);
+        if (spec?.shape !== "flow" || spec.childRules?.[spec.default]?.max === 0 || this.batch.vacant.has(line)) return logical.map((_, index) => index);
+        const defaultType = this.doc.groupOf(line, spec.default)?.type ?? spec.default;
+        if (spec.childRules?.[defaultType]?.max === 0) return logical.map((_, index) => index);
+        const blocks = this.doc.blocks(line), visible = visibleBlocks(this.doc, line, this.batch.vacant);
+        const first = blocks[visible[0]];
+        const address = first && parseTextStorage(first.marker.key);
+        const placement = first && this.doc.placementOf(first.marker.id);
+        const automatic = first?.kind === "text" && address && !address.detached && address.after === null &&
+            !first.chars.length && !first.marker.attrs.size && (!placement || keyOf(placement.at) === first.marker.key);
+        if (first?.kind === "text" && (!automatic || !materializeAutomatic)) return logical.map((_, index) => index);
+        pending.set(line, spec.default);
+        // Replacing the automatic item keeps its authored group siblings.
+        if (automatic && logical[0]?.group) return logical.map((_, index) => index);
+        const mapped: Array<number | null> = [null, ...logical.map((_, index) => index).slice(automatic ? 1 : 0)];
+        const counts = new Map<string, number>();
+        return mapped.filter(index => {
+            const type = index === null ? defaultType : logical[index].group ?? blocks[visible[logical[index].flats[0]]].type;
+            const count = counts.get(type) ?? 0;
+            if (count >= (spec.childRules?.[type]?.max ?? Infinity)) return false;
+            counts.set(type, count + 1);
+            return true;
+        });
+    }
+
+    /** Plan canonical leading defaults locally before writing any insertion operations. */
+    private prepareInsertion(at: ModelPath): void {
+        if (!this.doc.usesProjection) return;
+        const pending = new Map<string, string>();
+        const path = at.slice(0, -1), rawPath: number[] = [];
+        let parent = this.ref(rawPath);
+        for (let depth = 0; depth < path.length; depth++) {
+            const line = innerLine(parent, this.doc);
+            if (line) {
+                const child = this.insertionEntries(line, pending)[path[depth]];
+                if (child === undefined) throw new Error(`insert: invalid parent path ${JSON.stringify(at)}`);
+                if (child === null) {
+                    if (depth !== path.length - 1) throw new Error(`insert: invalid text path ${JSON.stringify(at)}`);
+                    for (const [flow, type] of pending) this.insertBlocksAt(flow, 0, [{type, runs: []}]);
+                    return;
+                }
+                rawPath.push(child);
+            } else rawPath.push(path[depth]);
+            parent = this.ref(rawPath);
+        }
+        const line = innerLine(parent, this.doc);
+        const count = line ? this.insertionEntries(line, pending, true).length : parent.kind === "group" ? parent.flats.length : null;
+        const index = at.at(-1) ?? 0;
+        if (count !== null && (!Number.isInteger(index) || index < 0 || index > count)) throw new Error(`insert: child index is out of range ${JSON.stringify(at)}`);
+        for (const [flow, type] of pending) this.insertBlocksAt(flow, 0, [{type, runs: []}]);
+    }
+
     private insert(at: ModelPath, content: string | Array<NodeJSON | Run>): void {
+        this.prepareInsertion(at);
         const parent = this.ref(at.slice(0, -1));
         const index = at.at(-1) ?? 0;
         const items = typeof content === "string" ? [content] : content;
@@ -687,6 +762,21 @@ class Compiler {
         }
 
         const {origin, right} = this.gapAt(line, flat);
+        const required = parseRequired(origin.line.key);
+        if (required?.parent === line) {
+            if (this.doc.specOf(nodes[0].type)?.shape !== "text") throw new Error("Insertion after a required sibling currently requires a text block");
+            // Required siblings have separate storage. Give the new block its
+            // own existence, then place it in the requested parent gap.
+            const owner = blocks.find(block => block.marker.line === origin.line)!;
+            const after = this.doc.placementOf(owner.marker.id)?.at ?? owner.marker.id;
+            const storage = this.doc.fragmentStorage(line, this.next());
+            const start = this.out.length;
+            const last = this.block(line, storage.id, right, nodes[0]);
+            const birth = this.out.slice(start).find((op): op is Extract<Op, {t: "node"}> => op.t === "node" && keyOf(op.origin) === storage.key)!;
+            this.emit([{t: "move", at: this.next(), target: birth.id, parent: this.doc.get(line)!.id, after}]);
+            this.chainBlocks(line, last, right, nodes.slice(1));
+            return;
+        }
 
         this.chainBlocks(line, origin.id, right, nodes);
     }
@@ -714,14 +804,37 @@ class Compiler {
         ops.length && this.emit(ops);
     }
 
-    /** 블록들을 origin 뒤에 차례로. @returns 마지막으로 넣은 토큰 (이 줄 안) */
+    /** Fence a reused source boundary when its old class occupies another logical gap. */
+    private insertionRight(line: string, origin: Ticket, right: string, after: Ticket | null): string {
+        if (!this.doc.usesProjection) return right;
+        const left = this.doc.get(keyOf(origin))!;
+        const source = this.doc.sourceBlocks(left.line.key);
+        const boundary = `${keyOf(origin)}|${right}`;
+        const collision = source.find(block => block.kind === "text" && !block.virtual && block.marker.boundary === boundary);
+        if (!collision) return right;
+        const placement = this.doc.placementOf(collision.marker.id);
+        if (placement && keyOf(placement.parent) === line &&
+            (placement.after ? keyOf(placement.after) : null) === (after ? keyOf(after) : null)) return right;
+        // Keep concurrent births at one observed physical gap in one class,
+        // without absorbing a class that now belongs to another logical gap.
+        const primaries = new Set(source.filter(block => block.kind === "text" && !block.virtual).map(block => block.marker));
+        const items = left.line.items;
+        for (let index = items.indexOf(left) + 1; index < items.length; index++) {
+            if (primaries.has(items[index])) return items[index].key;
+        }
+        return right;
+    }
+
+    /** 블록들을 origin 뒤에 차례로. @returns 마지막으로 넣은 토큰 */
     private chainBlocks(line: string, origin: Ticket, right: string, nodes: NodeJSON[]): Ticket {
         let last = origin;
         const owner = this.doc.blocks(line).find(block => block.marker.id === origin || block.marker.key === keyOf(origin) || block.kind === "text" && block.chars.some(char => char.key === keyOf(origin)));
         let after = owner ? this.doc.placementOf(this.doc.movementTarget(owner, line).id)?.at ?? this.doc.movementTarget(owner, line).id : null;
         for (const node of nodes) {
             const start = this.out.length, previous = last;
-            last = this.block(line, last, right, node);
+            const fence = this.doc.specOf(node.type)?.shape === "text" && !this.doc.constrainedChild(line, node.type)
+                ? this.insertionRight(line, last, right, after) : right;
+            last = this.block(line, last, fence, node);
             if (this.doc.usesProjection) {
                 const birth = this.out.slice(start).find((op): op is Extract<Op, {t: "node"}> => op.t === "node" && keyOf(op.origin) === keyOf(previous) && op.type === node.type);
                 if (birth) {

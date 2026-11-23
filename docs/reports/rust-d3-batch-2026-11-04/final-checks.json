@@ -1,0 +1,136 @@
+{
+  "status": "BOUNDED_PASS_Q1_2_INSERT_BATCH",
+  "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4",
+  "scope": "Native insert-only model batches and explicit reservation metadata; not general D3/WASM or durable server recovery",
+  "main": {
+    "profiles": 14,
+    "schemas": 3,
+    "originalProductProfiles": 11,
+    "customProfiles": 3,
+    "semanticActions": 351,
+    "actorStates": 702,
+    "liveTypescriptLogicalAuthorings": 93,
+    "liveTypescriptBatchArrayCalls": 27,
+    "batchInsertCommands": 43,
+    "rawWireAuthorings": 0,
+    "invalidLastCommandArrays": 11,
+    "independentFullModelInsertionOracles": 70,
+    "independentFullProductUndoOracles": 10,
+    "receipt": {
+      "path": "output/rust-d3-batch-2026-11-04/compare/run-2026-11-04T14-54-56.686Z-90511/receipt.json",
+      "sha256": "522a0d364622f44a8c785ada1dd25d43098f16a7aa554decbf01690864b2d875"
+    },
+    "currentCandidateQualified": true,
+    "sourceBinaryFreeze": {
+      "entries": 175,
+      "map": "output/rust-d3-batch-2026-11-04/compare/run-2026-11-04T14-54-56.686Z-90511/run-source-hashes.json",
+      "mapSha256": "501a51538ad2132dfd1822c8b1fcb2dbbee4155f459445131431d3ea94564528",
+      "binary": "output/rust-d3-batch-2026-11-04/native-target/debug/examples/runtime_batch_trace",
+      "binarySha256": "87f6394e966676e841a57bcc2c5b6293560188d8964cacb009fc82b8dab61fb0",
+      "stages": [
+        {
+          "name": "typescript-schema-validation",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "typescript-independent-authoring",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "native-independent-authoring",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "cross-runtime-exact-comparison",
+          "status": "PASS",
+          "hashMapsEqual": true
+        }
+      ]
+    }
+  },
+  "native": {
+    "receipt": {
+      "path": "output/rust-d3-batch-2026-11-04/native-final-v2-receipt.json",
+      "sha256": "7afc7c9b58d1124f12513f1a8ad8ffa76b52b4fd4ff5ed1c6bc0447a956c1401"
+    },
+    "corePass": 194,
+    "sdkPass": 159,
+    "independentConsumers": 2,
+    "fullExample": true,
+    "sourceFiles": 108,
+    "inheritedTestsExamplesUnchanged": 76
+  },
+  "comparisonSummary": {
+    "path": "output/rust-d3-batch-2026-11-04/compare-summary.json",
+    "sha256": "fc843c1861719dca0b146f6aa14c57cb26b273639cb9aaa3e5900f4aeb3f2635"
+  },
+  "inheritedSummary": {
+    "path": "output/rust-d3-batch-2026-11-04/compare-inherited-summary.json",
+    "sha256": "1e9a0abd07e6736a2b931b9b9fab71973614d93cf8fd9599f3baa8b795b55beb"
+  },
+  "inheritedActions": 2183,
+  "sourceReview": {
+    "path": "output/rust-d3-batch-2026-11-04/reservation-review/source-seal.json",
+    "sha256": "e029adaf971eb4a9da758b621c7a116f0c40013876dd75485941151f2a9b3471"
+  },
+  "workspace": {
+    "receipt": {
+      "path": "output/rust-d3-batch-2026-11-04/workspace-test.json",
+      "sha256": "7607583e92b25093e73bffeeeac0318a29dd72ab551188c653744580aa5943ad"
+    },
+    "tests": 2162,
+    "pass": 2160,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "packagePrebuild": "REUSED"
+  },
+  "typecheck": {
+    "path": "output/rust-d3-batch-2026-11-04/typecheck.json",
+    "sha256": "cad7784f1ad56f35501cfe6ec4bb93d76a008db2398a2658254e90126d963564"
+  },
+  "docs": {
+    "pages": 56,
+    "checkedInternalLinks": 2729,
+    "english": true,
+    "localPathsExcluded": true,
+    "build": {
+      "path": "output/rust-d3-batch-2026-11-04/docs-build.json",
+      "sha256": "faa01171ad6fe7a4604146a4e5e4a5f0ec174df381a155d251448f9091d95702"
+    },
+    "check": {
+      "path": "output/rust-d3-batch-2026-11-04/docs-check.json",
+      "sha256": "6c74ce4b1c452bbf9d013851af8d79a5ecdd51a8606ecfda705cb1adb394b19e"
+    }
+  },
+  "preservation": {
+    "path": "output/rust-d3-batch-2026-11-04/preservation-final.json",
+    "sha256": "72ec76b71b00ab39fa25fc9d0df04bc1c3f34b943a844dd2d535c3f2a647b4d4"
+  },
+  "whitespace": {
+    "path": "output/rust-d3-batch-2026-11-04/whitespace.json",
+    "sha256": "3f049dc9c2d2ffa21a143c8ab3f63d1bec81eac703b331614662aa77a0e8bbac"
+  },
+  "failures": {
+    "initialPrototypeStdout": "NOT_RETAINED; summaries retained in implementation-attempts.json",
+    "broadClockRegression": "FAIL_PRIOR_CANDIDATE; final explicit-marker source rerun PASS",
+    "comparisonCorrections": "Separate fixture/oracle/helper changes retained; final authoring is fresh"
+  },
+  "notRun": [
+    "Chrome",
+    "mobile",
+    "performance measurement",
+    "WASM/production editor integration",
+    "native durable process/server recovery",
+    "mixed-runtime checkpoint exchange"
+  ],
+  "publication": {
+    "commit": false,
+    "push": false,
+    "deployment": false,
+    "registry": false
+  }
+}

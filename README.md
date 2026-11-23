@@ -18,7 +18,7 @@ Representative [Word, Notion and presentation schemas](https://barocss.github.io
 
 **Tiptap**: The `@barocss/doc-sync-tiptap` package provides `DocSync` and `createTiptapExtensions`. It preserves Tiptap transaction/plugin ownership and uses the shared actor-owned History. Read the [Tiptap guide](apps/docs/src/guide/tiptap.md), then run `node apps/demo/tiptap/start.mjs` for two editors on a shared in-memory hub. Use the generated schema; arbitrary StarterKit schemas are not supported.
 
-**Native Rust SDK (partial, experimental)**: The private [SDK crate](experiments/rust-sdk/README.md) provides typed native document, operation, History, selection and checkpoint APIs over the experimental Rust core. Run its `two_actors` example for concurrency, retry and undo after restart. It supports six fixed presets and separate experimental runtime APIs for a flat document subset, graphic container/text/atom schemas and custom sparse-sheet fields. Full arbitrary document schemas, live transitions, browser/WASM bindings, Node adapters and Rust editor integration remain separate work. Start with the [Cargo path-dependency quickstart](apps/docs/src/guide/rust.md#use-the-native-rust-sdk), then the [selection, checkpoint, retry, acknowledgement and History recipe](apps/docs/src/guide/rust.md#checkpoint-retry-selection-and-history-recipe). The [Rust roadmap](docs/rust-roadmap.md) lists the remaining integration gates.
+**Native Rust SDK (partial, experimental)**: The private [SDK crate](experiments/rust-sdk/README.md) provides typed native document, operation, History, selection and checkpoint APIs over the experimental Rust core. Run its `two_actors` example for concurrency, retry and undo after restart. It supports six fixed presets and separate experimental runtime APIs for schema-driven recursive Document blocks, groups, inline nodes, scalar and JSON-mark spans with explicit native reference groups across atomic attributes and value marks, including nested object/array value paths and declared field-leaf sources, text-disabled blocks with inline children, valid unused node declarations, nested field attributes, required-child rules and nested grid/row/cell tables, graphic container/text/atom schemas and custom sparse-sheet fields. The runtime subset also supports the product schemas' optional HTTP(S) link and six-digit hex-color patterns. `RuntimeDocument::insert_paragraph_at` and `insert_model_at` add bounded model-child-path authoring, including nested paragraphs and required-slot boundaries. Full arbitrary document schemas, live transitions, browser/WASM bindings, Node adapters and Rust editor integration remain separate work. Start with the [Cargo path-dependency quickstart](apps/docs/src/guide/rust.md#use-the-native-rust-sdk), then the [selection, checkpoint, retry, acknowledgement and History recipe](apps/docs/src/guide/rust.md#checkpoint-retry-selection-and-history-recipe). The [Rust roadmap](docs/rust-roadmap.md) lists the remaining integration gates.
 
 **Document and graphic schemas**: Existing `Schema` objects keep their document behavior. `DocumentSchema` names that contract; `GraphicSchema` adds an explicit graphic domain and stored `container` nodes for empty canvases, frames, and object groups. Containers share the CRDT, edits, movement, History, and recovery engine and do not create placeholder paragraphs. Existing text-editor bindings reject graphic schemas; canvas rendering remains application work. See [Document and graphic schemas](apps/docs/src/guide/graphic-schema.md). Run `npm run dev:graphic` for the private PixiJS editor with two independent HTTP/SSE peers. It provides ID lookup, drag, stored frames/groups, per-actor History and a property inspector. See [the graphic editor guide](apps/docs/src/guide/graphic-editor.md); large-scene latency remains under investigation.
 
@@ -258,7 +258,7 @@ and a destination for text inserted concurrently just after it.
 
 An image-component is a flow container. Its sequence contains an image block followed by caption-paragraph blocks.
 
-- An image block rejects text (`text: false`) and contains one inline-image. inline-image is an inline node with `src`, `width`, and `height` attributes.
+- An image block uses `text: false` and contains one inline-image with `src`, `width`, and `height` attributes. Raw input follows the containing flow's admission rules; see [blocks without plain text](apps/docs/src/guide/document-rules.md#blocks-without-plain-text).
 - Captions use the list pattern. caption-paragraph is a flat text block. Consecutive blocks form one `caption` in the model
   (`group`, `by: []`). Enter at the caption's end adds a caption line.
 - Blocks do not merge into a block that rejects text. Backspace at the caption start, Delete at the image end, and deletion from image through caption all preserve a caption block.
@@ -333,7 +333,7 @@ docs/               Design, reports, and roadmap
 data/               Existing demo logs (same location)
 ```
 
-Use `DATA_DIR=/absolute/path PORT=5411 npm run dev` for a separate log folder and port. Default logs stay in root `data/`. Relative output paths in workspace commands are relative to that workspace. Examples: `npm run bench -- --out-dir results/new-name`, `npm run bench:client -- --out results/new-name.json`.
+Use `DATA_DIR=/absolute/path PORT=5411 npm run dev` for a separate log folder and port. Set `DOC_SYNC_HOST=127.0.0.1` to bind the demo server explicitly to IPv4 loopback, including when `PORT=0` selects a free port. Default logs stay in root `data/`. Relative output paths in workspace commands are relative to that workspace. Examples: `npm run bench -- --out-dir results/new-name`, `npm run bench:client -- --out results/new-name.json`.
 
 ## Files
 
@@ -411,10 +411,49 @@ Use `DATA_DIR=/absolute/path PORT=5411 npm run dev` for a separate log folder an
 |---|---|
 | Row and column attributes | Add row height and column width as row/column node attributes; not implemented yet. |
 | Collect text when merging cells | Covered-cell text is currently hidden. Collecting it in the top-left cell requires copying. Concurrent input into those cells can then diverge. |
-| Exactly one required child | The schema cannot express exactly one image and one caption (`min`/`max`). Editing functions enforce this by blocking Enter in image and preventing caption-to-image merges. Hand-built operations can create a second image or an image without a caption. |
+| Remaining native schema/compiler coverage | TypeScript `flow.childRules` expresses `min`/`max`, including exactly one child. The native runtime now supports required fallbacks and overflow projection within its declared subset; full model-position compilation and remaining schema rules are separate work. |
 | Validation precision | Validation is per sequence: acceptance by any text type in the sequence is enough. An image container with a caption accepts text, so the server cannot reject a hand-built operation that inserts text into an image block. Editing functions prevent it. Block-level checks need stable block membership across replicas, but membership is current state and can differ (§10). |
-| Schema-based document editor binding | The current editor is a demo. Model output already matches that editor's document JSON form. Add a converter between its model operations and these operations. |
+| Additional editor integrations | ProseMirror, Tiptap, Slate and Lexical bindings are available. Other editors and application-specific schema behavior need their own adapters and validation. |
 | Authentication, authorization, multiple servers | Demo-level implementation. Per-document server routing can support horizontal scaling. |
 | Performance | Position indexes, block caches, and SyncClient local verification costs were reduced. Remote model comparison and full PM conversion costs remain. Before/after raw data and monorepo comparisons are in `HANDOFF.md` §5.1–5.4. |
 | Long-disconnected participants | Ordinary peer leases expire after two minutes. A generic client still needs an application-defined recovery and GC protection contract. The macOS/Linux MCP app uses a durable reservation and checkpoint for bounded recovery with the single-process demo server; see the [recovery guide](apps/docs/src/guide/ai.md#recover-a-session-after-restart). |
 | Value formatting such as links and text color | Formatting is currently on/off only. The same per-character LWW mechanism can support values. |
+
+
+The experimental native Rust SDK supports bounded model-path paragraph and
+flow/text insertion after existing moves. It preserves foreign placement writers
+and supports selective History and own checkpoint recovery. See the
+[complete native example](experiments/rust-sdk/examples/runtime_moved.rs) and
+[SDK guide](https://barocss.github.io/doc-sync/guide/rust.html#insert-at-current-model-positions-after-moves).
+This does not select a production Rust/WASM backend in `Client`.
+
+
+Native model-path editing also supports bounded derived groups, dense grids,
+row/column insertion and cell bodies. See the [complete group/grid example](experiments/rust-sdk/examples/runtime_group_grid.rs).
+The [schema editing roadmap](docs/schema-editing-roadmap.md) separates delivered
+commands, generated-schema checks, recovery and production Rust/WASM delivery.
+
+
+The private native Rust SDK also provides an
+[atomic insert-only model batch](apps/docs/src/guide/rust.md#insert-several-models-atomically)
+with shared column identities, optional requested IDs and checkpointed clock
+reservations. This does not replace the TypeScript Client or provide a production
+WASM editor backend. See the [schema-editing roadmap](docs/schema-editing-roadmap.md)
+for the remaining native commands and integration gates.
+
+
+The private SDK adds
+[strict stored-ID insertion with a local read base](apps/docs/src/guide/rust.md#insert-relative-to-stored-ids).
+The base uses instance/revision/schema checks rather than a whole-journal token;
+missing, stale or hidden targets reject. Native ID lookup and model reading still
+have document-sized costs. Server conditional edits keep their existing separate
+acceptance contract.
+
+For Document tables, the private native SDK also supports
+[typed row and cell-body targets](apps/docs/src/guide/rust.md#address-rows-and-cell-bodies-with-stable-ids).
+These use existing grid/row/column IDs and the same local read base. Direct
+covered-cell targets reject; row insertion keeps hidden payloads and existing
+merge rules. The separate
+[one-column command](apps/docs/src/guide/rust.md#insert-one-column-by-stable-ids)
+resolves a stable boundary once and fills unique row payloads in caller order.
+The typed native ID read catalog remains a separate roadmap item.

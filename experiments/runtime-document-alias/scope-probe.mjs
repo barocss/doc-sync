@@ -1,0 +1,55 @@
+// Independent public TS check vs native explicit-reference admission probes.
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,mkdirSync,readdirSync} from 'node:fs';
+import {resolve,relative} from 'node:path';
+import {createHash} from 'node:crypto';
+import {spawn,spawnSync} from 'node:child_process';
+import {createInterface} from 'node:readline';
+import {Doc} from '../../packages/doc-sync/dist/crdt/doc.js';
+import {schemaVersion} from '../../packages/doc-sync/dist/crdt/schema-version.js';
+import {FORMAT,hydrate,identity as aliasIdentity} from './schema.mjs';
+const root=resolve(import.meta.dirname,'../..'),out=resolve(root,process.env.ALIAS_SCOPE_OUT??'output/rust-d2-alias-2026-11-04/scope',new Date().toISOString().replaceAll(':','-')+'-'+process.pid);mkdirSync(out,{recursive:true});process.on('uncaughtException',error=>{writeFileSync(resolve(out,'uncaught-failure.json'),JSON.stringify({status:'FAIL',failure:error.stack},null,2));console.error(error.message);process.exit(1);});
+const paths=['experiments/runtime-document-alias/schema.mjs','experiments/runtime-document-alias/scope-probe.mjs',...['experiments/rust-shadow/src','packages/doc-sync/src/crdt','packages/doc-sync/dist/crdt'].flatMap(dir=>readdirSync(resolve(root,dir),{recursive:true}).filter(p=>/\.(rs|ts|js)$/.test(p)).map(p=>dir+'/'+p))];const hash=p=>createHash('sha256').update(readFileSync(resolve(root,p))).digest('hex'),hashes=()=>Object.fromEntries(paths.map(p=>[p,hash(p)]));const initial=hashes();writeFileSync(resolve(out,'hashes-before-build.json'),JSON.stringify(initial,null,2));
+assert.equal(spawnSync('/usr/bin/tar',['-czf',resolve(out,'before-build-sources.tar.gz'),...paths],{cwd:root}).status,0);
+const target=resolve(root,'output/rust-d2-alias-2026-11-04/scope-target'),binary=process.env.ALIAS_CORE_BINARY??resolve(target,'debug/doc-sync-rust-shadow');
+if(!process.env.ALIAS_CORE_BINARY){const build=spawnSync('/opt/homebrew/bin/cargo',['build','--offline','--locked','--manifest-path','experiments/rust-shadow/Cargo.toml'],{cwd:root,env:{...process.env,CARGO_TARGET_DIR:target},encoding:'utf8'});writeFileSync(resolve(out,'build.stderr'),build.stderr);assert.equal(build.status,0,build.stderr);assert.deepEqual(hashes(),initial,'source changed during probe build');}
+paths.push(relative(root,binary));const frozen=hashes();writeFileSync(resolve(out,'hashes-before.json'),JSON.stringify(frozen,null,2));assert.equal(spawnSync('/usr/bin/tar',['-czf',resolve(out,'sources-and-binary.tar.gz'),...paths],{cwd:root}).status,0);
+const choice=x=>({default:{x},values:[{x},{x}]});const rawSchema={domain:'document',root:'doc',marks:[],nodes:{doc:{shape:'flow',children:['p','q','a','b','box'],default:'p'},box:{shape:'flow',children:['p'],default:'p'},p:{shape:'text',attrs:{choice:choice(1),other:{default:null,values:[['one']]}}},q:{shape:'text',attrs:{choice:choice(2)}},a:{shape:'atom',attrs:{choice:choice(3)}},b:{shape:'atom',attrs:{choice:choice(4)}}}},dto={format:FORMAT,manifest:rawSchema,defaultReferences:['p','q','a','b'].map(kind=>({at:['nodes',kind,'attrs','choice'],enumIndex:0}))},schema=hydrate(dto),identity=aliasIdentity(dto),ticket=(lamport,actor='A')=>({lamport,actor}),rootTicket=ticket(0,'~root');
+const child=spawn(binary,[],{cwd:root,stdio:['pipe','pipe','pipe']}),pending=[],wire=[];let stderr='';child.stderr.on('data',b=>stderr+=b);createInterface({input:child.stdout}).on('line',line=>{const next=pending.shift();if(next)next(JSON.parse(line));});const ask=async payload=>{const request={replica:'a',schema:identity,...payload};const response=await new Promise(done=>{pending.push(done);child.stdin.write(JSON.stringify(request)+'\n');});wire.push({request,response});writeFileSync(resolve(out,'wire.json'),JSON.stringify(wire,null,2));return response;};
+const ts=new Doc('A',schema),value=(kind,index=0)=>schema.nodes[kind].attrs.choice.values[index],set=(n,id,v)=>({t:'set',at:ticket(n),ids:[ticket(id)],key:'choice',value:v}),wrap=(op,kind,index=0)=>({t:'reference',format:'doc-sync-runtime-reference-op-v1',op,references:[{schema:identity,at:['nodes',kind,'attrs','choice'],source:'enum',index,path:['value']}]}),cases=[];let failure;
+const state=async()=>({state:(await ask({cmd:'state'})).state,checkpoint:(await ask({cmd:'history_export'})).checkpoint});
+const admission=async(name,op,kind,expectedTS,expectedNative)=>{const check=ts.check([op]);assert.equal(check===null,expectedTS,name+' TS check');const before=await state(),envelope=wrap(JSON.parse(JSON.stringify(op)),kind),response=await ask({cmd:'apply',ops:[envelope]});assert.equal(response.ok,expectedNative,name+' native apply');if(response.ok)ts.apply(op);else assert.deepEqual(await state(),before,name+' atomic rejection');cases.push({name,typeScriptCheck:check,nativeResponse:response,scope:expectedTS===expectedNative?'MATCH':'OBSERVED_STRICTER_NATIVE_BOUNDARY'});};
+try{
+ assert.equal((await ask({cmd:'new',actor:'A',runtimeSchema:dto})).ok,true);
+ const births=[{t:'node',id:ticket(1),origin:rootTicket,type:'p',boundary:'0@~root|end'},{t:'node',id:ticket(2),origin:ticket(1),type:'a',boundary:''},{t:'node',id:ticket(3),origin:ticket(2),type:'b',boundary:''}];assert.equal(ts.check(births),null);for(const op of births)ts.apply(op);assert.equal((await ask({cmd:'apply',ops:births})).ok,true);
+ const type={t:'set',at:ticket(4),ids:[ticket(1)],key:'$type',value:'q'};assert.equal(ts.check([type]),null);ts.apply(type);assert.equal((await ask({cmd:'apply',ops:[type]})).ok,true);
+ await admission('born p current q accepts exact q descriptor',set(5,1,value('q')),'q',true,true);
+ await admission('born p current q retains p descriptor wire admission',set(6,1,value('p')),'p',true,true);
+ await admission('wrong-shape atom descriptor cannot admit text enum',set(7,1,value('a')),'a',false,false);
+ await admission('foreign same-shape atom descriptor is stricter natively',set(7,2,value('b')),'b',true,false);
+ const before=await state(),valid=wrap(set(8,1,{x:2}),'q'),invalid=wrap(set(9,1,{x:99}),'q');assert.equal((await ask({cmd:'apply',ops:[valid,invalid]})).ok,false);assert.deepEqual(await state(),before,'valid then invalid multi-op rolls back state and provenance');cases.push({name:'multi-op reference failure rolls back state and provenance',status:'PASS'});
+ const multi={t:'reference',format:'doc-sync-runtime-reference-op-v1',op:{t:'node',id:ticket(8),origin:rootTicket,type:'p',boundary:'0@~root|end',attrs:{choice:{x:1},other:['one']}},references:[{schema:identity,at:['nodes','p','attrs','choice'],source:'enum',index:0,path:['attrs','choice']},{schema:identity,at:['nodes','p','attrs','other'],source:'enum',index:999,path:['attrs','other']}]};assert.equal((await ask({cmd:'apply',ops:[multi]})).ok,false);assert.deepEqual(await state(),before,'multi-binding failure rolls back');cases.push({name:'valid first binding invalid second binding atomic',status:'PASS'});
+ const snap=(await ask({cmd:'snapshot'})).snapshot;
+ assert.equal(aliasIdentity(snap.manifest),identity,'runtime snapshot preserves exact alias descriptor graph');
+ for(const mutation of ['drop-graph','different-equal-edge','duplicate-edge','wrong-edge-payload','wrong-identity']){
+  const forged=JSON.parse(JSON.stringify(snap));
+  if(mutation==='drop-graph')forged.manifest=forged.manifest.manifest;
+  if(mutation==='different-equal-edge')forged.manifest.defaultReferences[0].enumIndex=1;
+  if(mutation==='duplicate-edge')forged.manifest.defaultReferences.push(forged.manifest.defaultReferences[0]);
+  if(mutation==='wrong-edge-payload')forged.manifest.manifest.nodes.p.attrs.choice.values[0]={x:999};
+  if(mutation==='wrong-identity')forged.schema='sha256:'+('0'.repeat(64));
+  assert.equal((await ask({cmd:'restore',snapshot:forged})).ok,false,mutation+' rejected');assert.deepEqual(await state(),before,mutation+' atomic restore');cases.push({name:'alias checkpoint '+mutation,status:'PASS'});
+ }
+ for(const mutation of ['duplicate','wrong-path','out-of-range','nonmatching-payload','unaliased-equal-default']){
+  const forged=JSON.parse(JSON.stringify(dto));
+  if(mutation==='duplicate')forged.defaultReferences.push(forged.defaultReferences[0]);
+  if(mutation==='wrong-path')forged.defaultReferences[0].at=['nodes','doc','attrs','choice'];
+  if(mutation==='out-of-range')forged.defaultReferences[0].enumIndex=99;
+  if(mutation==='nonmatching-payload')forged.manifest.nodes.p.attrs.choice.values[0]={x:999};
+  if(mutation==='unaliased-equal-default')forged.defaultReferences.shift();
+  const response=await ask({cmd:'new',replica:'bad',schema:identity,runtimeSchema:forged,actor:'X'});assert.equal(response.ok,false,mutation+' compile rejected');assert.deepEqual(await state(),before,mutation+' leaves original atomic');cases.push({name:'invalid alias graph '+mutation,status:'PASS',response});
+ }
+for(const mutation of ['index','drop-envelope','payload']){const forged=JSON.parse(JSON.stringify(snap)),i=forged.ops.findIndex(o=>o.t==='reference');assert(i>=0);if(mutation==='index')forged.ops[i].references[0].index=999;if(mutation==='drop-envelope')forged.ops[i]=forged.ops[i].op;if(mutation==='payload')forged.ops[i].op.value={x:999};assert.equal((await ask({cmd:'restore',snapshot:forged})).ok,false,mutation);assert.deepEqual(await state(),before,mutation+' atomic restore');cases.push({name:'forged checkpoint '+mutation,status:'PASS'});}
+ const recorded=wrap(set(10,1,{x:2}),'q');assert.equal((await ask({cmd:'history_record',ops:[recorded],now:1,options:{caretBefore:'1@A',caretAfter:'1@A',typing:false}})).ok,true);const current=await state(),forged=JSON.parse(JSON.stringify(current.checkpoint));const candidate=forged.history.sets.find(s=>s.value?.x===2);assert(candidate);candidate.value={x:999};assert.equal((await ask({cmd:'history_restore',checkpoint:forged})).ok,false);assert.deepEqual(await state(),current,'forged History provenance rollback');cases.push({name:'forged History value at proven writer rejects atomically',status:'PASS'});
+ assert.deepEqual(hashes(),frozen,'sources or binary changed during probe');
+}catch(e){failure=e.stack;process.exitCode=1;}finally{child.stdin.end();writeFileSync(resolve(out,'native.stderr'),stderr);writeFileSync(resolve(out,'hashes-after.json'),JSON.stringify(hashes(),null,2));writeFileSync(resolve(out,'receipt.json'),JSON.stringify({status:failure?'FAIL':'PASS',scope:'Actual TS Doc.check and versioned alias native core wire; graph compile, graph checkpoint identity, exact edge selection, same-shape descriptor selection, $type birth/current, multi-op/binding atomicity, checkpoint and History provenance forgery',dto,identity,typeScriptManifestIdentity:schemaVersion(schema),cases,failure},null,2));console.log(JSON.stringify({status:failure?'FAIL':'PASS',out,cases:cases.length,failure}));}

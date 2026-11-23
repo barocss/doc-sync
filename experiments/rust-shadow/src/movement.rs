@@ -141,6 +141,7 @@ impl Replica {
         if parent.key != a.parent
             || matches!(parent.slot.as_str(), "rows" | "cols")
             || text_address(&parent.key).is_some()
+            || required_address(&parent.key).is_some()
         {
             return Err("invalid text parent flow".into());
         }
@@ -195,7 +196,9 @@ impl Replica {
         Some(a)
     }
     fn validate_move(&self, m: &Move) -> Result<()> {
-        if self.graphic { return self.validate_graphic_move(m); }
+        if self.graphic {
+            return self.validate_graphic_move(m);
+        }
         if !self.movement || m.t != "move" {
             return Err("movement capability required".into());
         }
@@ -222,6 +225,9 @@ impl Replica {
         let l = self
             .line_of(&m.target.key())
             .ok_or("move target line missing")?;
+        if required_address(&l.key).is_some() {
+            return Err("required slots have fixed ownership".into());
+        }
         if matches!(l.slot.as_str(), "rows" | "cols")
             || target.unit.is_some()
             || !self.head(target)
@@ -240,8 +246,19 @@ impl Replica {
             .iter()
             .find(|l| l.key == m.parent.key())
             .ok_or("move parent must be a flow head")?;
-        if matches!(parent.slot.as_str(), "rows" | "cols") || text_address(&parent.key).is_some() {
+        if matches!(parent.slot.as_str(), "rows" | "cols")
+            || text_address(&parent.key).is_some()
+            || required_address(&parent.key).is_some()
+        {
             return Err("move parent shape rejected".into());
+        }
+        let birth_type = target
+            .node
+            .as_ref()
+            .map(|n| n.born.clone())
+            .unwrap_or_else(|| self.line_default_type(&l.key));
+        if !self.runtime_child_allowed(&parent.key, &birth_type) {
+            return Err("move destination does not accept target birth type".into());
         }
         if let Some(after) = &m.after {
             after.valid()?;
@@ -254,8 +271,9 @@ impl Replica {
                 let l = self
                     .line_of(&after.key())
                     .ok_or("move anchor line missing")?;
-                let parent = text_address(&l.key)
-                    .map(|a| a.parent)
+                let parent = required_address(&l.key)
+                    .map(|a| a.0)
+                    .or_else(|| text_address(&l.key).map(|a| a.parent))
                     .unwrap_or_else(|| l.key.clone());
                 if self.items[j].unit.is_some() || parent != m.parent.key() {
                     return Err("move anchor belongs to another flow".into());
@@ -335,14 +353,16 @@ impl Replica {
         )
     }
     fn placement_projection(&self) -> Projection {
-        if self.graphic { return self.graphic_projection(); }
+        if self.graphic {
+            return self.graphic_projection();
+        }
         if let Some(p) = self.placement_cache.borrow().as_ref() {
             return p.clone();
         }
         let mut base = vec![];
         let mut gaps: BTreeMap<String, Ticket> = BTreeMap::new();
         for l in &self.nested.as_ref().unwrap().lines {
-            if matches!(l.slot.as_str(), "rows" | "cols") {
+            if matches!(l.slot.as_str(), "rows" | "cols") || required_address(&l.key).is_some() {
                 continue;
             }
             let address = text_address(&l.key);
@@ -376,7 +396,7 @@ impl Replica {
             for i in self.line_ids(&l.key) {
                 let t = &self.items[i];
                 if t.unit.is_some()
-                    || self.ntype(t) == "inline-image"
+                    || self.nested_shape(&self.ntype(t)) == "inline"
                     || address.as_ref().is_some_and(|a| a.detached) && gap.is_none() && self.head(t)
                 {
                     continue;
@@ -426,6 +446,77 @@ impl Replica {
                         }
                     }
                     after = Some(key);
+                }
+            }
+        }
+        if self.runtime.is_some() {
+            for line in &self.nested.as_ref().unwrap().lines {
+                if required_address(&line.key).is_some() || text_address(&line.key).is_some() {
+                    continue;
+                }
+                let Some(flow) = self.runtime_flow_type(&line.key) else {
+                    continue;
+                };
+                let Some(rules) = self.runtime.as_ref().unwrap().manifest()["nodes"][flow]
+                    ["childRules"]
+                    .as_object()
+                    .filter(|rules| !rules.is_empty())
+                else {
+                    continue;
+                };
+                let mut after = base
+                    .iter()
+                    .filter(|entry| {
+                        if entry.parent != line.key {
+                            return false;
+                        }
+                        // Detached authored blocks get their logical position
+                        // from placement. Their physical stub must not anchor
+                        // the required tail and create a cycle with that move.
+                        if self.line_of(&entry.target)
+                            .and_then(|source| text_address(&source.key))
+                            .is_some_and(|address| address.detached && self.automatic_gap(address).is_none())
+                        {
+                            return false;
+                        }
+                        let Some(address) = text_address(&entry.target) else {
+                            return true;
+                        };
+                        if entry
+                            .after
+                            .as_ref()
+                            .is_some_and(|key| required_address(key).is_some())
+                        {
+                            return false;
+                        }
+                        let head = self.index_key(&entry.target).map(|i| &self.items[i]);
+                        address.after.is_some()
+                            || self
+                                .line_of(&entry.target)
+                                .is_none_or(|line| line.ids.len() != 1)
+                            || head.is_some_and(|head| !head.attrs.is_empty())
+                    })
+                    .last()
+                    .map(|entry| entry.target.clone());
+                for (kind, rule) in rules {
+                    for ordinal in 0..rule["min"].as_u64().unwrap_or(0) as usize {
+                        let actor = required_actor(&line.key, kind, ordinal);
+                        let id = Ticket {
+                            actor,
+                            lamport: if self.nested_shape(&self.required_concrete(kind)) == "text" {
+                                0
+                            } else {
+                                1
+                            },
+                        };
+                        base.push(Entry {
+                            id: id.clone(),
+                            target: id.key(),
+                            parent: line.key.clone(),
+                            after: after.clone(),
+                        });
+                        after = Some(id.key());
+                    }
                 }
             }
         }
@@ -524,6 +615,9 @@ impl Replica {
             })
     }
     fn logical_line(&self, key: &str) -> Option<String> {
+        if let Some((parent, _, _)) = self.line_of(key).and_then(|l| required_address(&l.key)) {
+            return Some(parent);
+        }
         if self.has_moves() {
             if let Some(e) = self.placement_projection().current.get(key) {
                 return Some(e.parent.clone());
@@ -550,6 +644,7 @@ impl Replica {
         }
         for source in &self.nested.as_ref().unwrap().lines {
             if text_address(&source.key).is_some()
+                || required_address(&source.key).is_some()
                 || matches!(source.slot.as_str(), "rows" | "cols")
             {
                 continue;
@@ -603,6 +698,15 @@ impl Replica {
                 b.chars.extend(&original.chars);
             }
             available.insert(source.key.clone(), b);
+        }
+        for source in &self.nested.as_ref().unwrap().lines {
+            if let Some((_, kind, _)) = required_address(&source.key) {
+                if let Some(block) =
+                    self.required_block(&parse_key(&source.key).unwrap().actor, &kind)
+                {
+                    available.insert(self.items[block.marker].id.key(), block);
+                }
+            }
         }
         let p = self.placement_projection();
         let mut joins: BTreeMap<String, (String, String, Ticket)> = BTreeMap::new();
@@ -805,7 +909,10 @@ impl Replica {
     fn refresh_movement(&mut self) -> Result<()> {
         let lines = self.nested.as_ref().unwrap().lines.clone();
         for l in lines {
-            if text_address(&l.key).is_some() || matches!(l.slot.as_str(), "rows" | "cols") {
+            if text_address(&l.key).is_some()
+                || required_address(&l.key).is_some()
+                || matches!(l.slot.as_str(), "rows" | "cols")
+            {
                 continue;
             }
             self.ensure(&text_key(&Address {
@@ -844,7 +951,7 @@ impl Replica {
                 .unwrap()
                 .lines
                 .iter()
-                .filter(|l| text_address(&l.key).is_none())
+                .filter(|l| text_address(&l.key).is_none() && required_address(&l.key).is_none())
                 .map(|l| l.key.clone())
                 .collect();
             let needed: BTreeSet<_> = keys
@@ -879,7 +986,10 @@ impl Replica {
         }
         let mut locations = BTreeMap::new();
         for line in &self.nested.as_ref().unwrap().lines {
-            if text_address(&line.key).is_some() || matches!(line.slot.as_str(), "rows" | "cols") {
+            if text_address(&line.key).is_some()
+                || required_address(&line.key).is_some()
+                || matches!(line.slot.as_str(), "rows" | "cols")
+            {
                 continue;
             }
             let location = (line.key.clone(), self.line_visible(&line.key));
@@ -898,7 +1008,7 @@ impl Replica {
         let mut containing = (self.logical_line(&physical.key)?, false);
         for i in self.line_ids(&physical.key) {
             let t = &self.items[i];
-            if t.alive() && t.unit.is_none() && self.ntype(t) != "inline-image" {
+            if t.alive() && t.unit.is_none() && self.nested_shape(&self.ntype(t)) != "inline" {
                 containing = locations
                     .get(&i)
                     .cloned()
@@ -939,7 +1049,9 @@ impl Replica {
 }
 impl Replica {
     pub(super) fn validate_history_placement(&self, target: &Ticket, p: &Placement) -> Result<()> {
-        if self.graphic { return self.validate_graphic_history_placement(target, p); }
+        if self.graphic {
+            return self.validate_graphic_history_placement(target, p);
+        }
         let i = self
             .index(target)
             .ok_or("history movement target missing")?;

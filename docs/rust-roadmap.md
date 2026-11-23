@@ -6,8 +6,10 @@ client has a shared engine boundary with a TypeScript implementation. A storage 
 migration. Each stage needs its own evidence and decision.
 
 The runtime custom-schema subset is now implemented as a **partial D2** slice.
-It covers Graphic container/text/atom, flat Document flow/text/atom, and
-arbitrary sparse scalar fields. Full nested document schemas, live transitions
+It covers Graphic container/text/atom, recursive Document flow/text/atom with
+groups, inline tokens, scalar/nullable-JSON spans, nested field attributes,
+required-child rules and grid/row/cell tables, plus arbitrary sparse scalar fields. Full document
+schema/compiler coverage, live transitions
 and a production WASM Client backend remain open. See D2 below and
 [custom schema recipes](../apps/docs/src/schemas/custom.md).
 
@@ -22,8 +24,9 @@ is not required for the first release.
 
 The historical R1–R6 research gates below stay in place. D1–D8 are the ordered
 implementation queue that makes the remaining R4–R6 work actionable. D9 is a
-separate native-server option. D1 is implemented with the qualified evidence below. D2–D9
-remain planned; they are not implemented configuration or new verification results.
+separate native-server option. D1 is implemented with the qualified evidence below. D2 has the partial runtime
+slices described below. Full D2 and the D3–D9 delivery gates remain open; they
+are not implemented configuration or new verification results.
 
 ### Current source boundary
 
@@ -32,7 +35,7 @@ remain planned; they are not implemented configuration or new verification resul
 | Native Document SDK | Private typed API, History, anchors, pending prefix and checkpoints; six fixed document presets. See [SchemaPreset](../experiments/rust-sdk/src/lib.rs). |
 | Native Graphic SDK | `GraphicDocument` implements fixed Canvas and 17-node Builtins manifests with stored objects, fields, moves, History and checkpoints. Runtime container/text/atom schemas use a separate API; complete rules and graphic selection remain open. |
 | Native Spreadsheet SDK | Private `SparseSheet` fixed-axis S1 primitive: sparse field registers, undo/redo, exact pending operations and checkpoints. Stable structural axes and public Client integration remain open. |
-| Runtime schemas | Partial D2: owned Graphic container/text/atom and flat Document flow/text/atom descriptors; custom scalar sheets. Full nested schemas and live transitions remain open. |
+| Runtime schemas | Partial D2: owned Graphic container/text/atom and recursive Document shapes with recursive field attributes, scalar/nullable-JSON value marks and required-child rules; custom scalar sheets. The full compiler and remaining advanced rules/transitions stay open. |
 | Engine port | Production client ports cover editing, History, anchors, sessions, events, GC, schema changes and lifecycle. The immutable draft is separate. See [client contract](../packages/doc-sync/src/engine/client-contract.ts). |
 | Client selection | SyncClient and portable editor hosts call the selected engine. TypeScript is the default and the only production implementation. See [client](../packages/doc-sync/src/sync/client.ts) and [host adapter](../packages/doc-sync/src/editor/sync-client-host.ts). |
 | Wire compatibility | Native Text uses UTF-16 units; TypeScript uses a string. Current comparison normalizes their values. A real wire codec and complete server snapshot import still need qualification. See [SDK comparison](../experiments/rust-sdk/scripts/compare-typescript.mjs#L38-L44). |
@@ -52,8 +55,9 @@ The graphic Canvas receipt records seven focused tests and a 20-action,
 40-state normalized model/History comparison. Builtins adds seven focused tests
 and 35 independently authored actions with 70 normalized actor model/History
 states. That domain checkpoint had 42 SDK tests and 75 shadow-core tests.
-The runtime-schema additions bring the current totals to 48 SDK tests and 78
-shadow-core tests; both suites pass in the main publication check. These checks
+The earlier flat runtime-schema checkpoint passed 48 SDK tests and 78
+shadow-core tests in the main publication check. The recursive slice below
+raises those totals to 55 and 89. These checks
 do not qualify exact graphic wire encoding or mixed-runtime exchange.
 The sheet receipt records 14 focused tests and a 31-action, 62-state exact comparison of operations, models,
 full History, pending queues and checkpoints. These checks add no browser,
@@ -115,11 +119,190 @@ and operation/snapshot round trips without changing the existing wire contract.
 ### D2. Load a validated runtime schema in Rust
 
 **Partial implementation:** `RuntimeSchema`/`RuntimeDocument` compile owned
-Graphic container/text/atom and flat Document flow/text/atom descriptors.
-`SpreadsheetSchema`/`RuntimeSheet` compile arbitrary scalar field registries.
-Unsupported descriptors reject with paths; legacy preset behavior remains.
-Full nested document coverage and the D2 product-schema gate remain open.
+Graphic container/text/atom and recursive Document flow/text/atom/group/inline/
+span/grid/row/cell descriptors, recursive field attributes, scalar/nullable-JSON
+value marks and required-child rules. Document flows use their own defaults and allowed-child rules;
+each grid has its own row/cell/body chain. The native SDK adds parent-flow and
+cell insertion, stable selections, accepted-placement-aware block moves, row
+and column insertion, cell attributes and merge/split. `SpreadsheetSchema`/`RuntimeSheet` compile scalar field registries.
+Unsupported descriptors reject with paths; legacy presets and flat runtime
+behavior remain. Native schema-reference handles now support composite defaults
+and composite enum choices, including explicitly declared default/enum sharing.
+Explicit atomic cross-descriptor and enum-only reference groups are supported.
+Nested schema payload selectors are supported through v3 logical reference
+classes. Declared field leaves can also supply references; whole field-branch
+sources, mutable runtime graphs, markValues.fields,
+derived group/span and row/cell-body attributes, root fields, axis moves,
+positive-minimum required cycles, arbitrary computed rules and the product-schema gate
+remain open. This slice does not complete D2.
+
+The preceding recursive-flow slice passed 55 SDK and 89 shadow-core tests. Independent native
+and TypeScript authoring matches 162 actions and 324 actor states across two
+renamed schemas, with the declared operation/derived-metadata projection. Full
+History and pending/caret are compared. The historical wider post-move probe
+records a physical-helper/model-command mismatch. The bounded model-path API
+in D3 below now supports moved paragraphs; physical-anchor helpers retain their
+separate contract and do not replace the full TypeScript EditOp compiler.
+See the [source-bound report](reports/rust-d2-nested-2026-11-04/README.md).
 See [custom schema contracts](../apps/docs/src/schemas/custom.md).
+
+The nested-grid extension passes 60 SDK and 96 shadow-core tests. It adds
+independently named `grid → row → cell → flow` chains, nested tables, stable
+axes/cell addresses, merge/split with covered content retained and standard
+computed span metadata. Row/cell-body attributes and axis moves reject in this
+subset. Independent TS/native authoring passes 180 actions/360 actor states
+under declared format projections; the twelve schema checks now assert eight
+targeted rejections and four explicit admissions after the shapes extension.
+Historical post-move probes preserve the physical-source/grid-command gap;
+complete grid model-position compilation remains open. See the
+[source-bound grid report](reports/rust-d2-grid-2026-11-04/README.md).
+
+The group/inline/span extension passes 67 SDK and 107 shadow-core tests.
+Runtime groups follow flow-local membership and arbitrary `by` attributes;
+inline nodes have stable keys; scalar value marks derive schema-ordered spans.
+Independent TS/native authoring passes 188 actions/376 states and twelve
+schema checks with raw History/pending/caret comparisons. The current schema
+checks have ten rejections and two compile-only admissions after later extensions. The
+native helpers canonicalize birth defaults without dropping update writers and
+resolve effective text types after `$type` changes. Empty-head group insertion
+still exposes a D3 authoring gap. See the
+[source-bound shapes report](reports/rust-d2-shapes-2026-11-04/README.md).
+
+The fields/required-child extension passes 78 SDK and 120 shadow-core tests.
+It adds independent recursive attribute leaves, nullable field-safe JSON atomic
+mark values, deterministic required text/group/flow/grid/atom slots, min/max
+projection, authored replacement/promotion, selection, undo/redo and recovery.
+Four independently renamed descriptors compare 260 semantic actions/520 states
+and 19 schema checks. Empty branch updates retain an observed D3 compiler-only
+clock difference. That checkpoint rejected composite defaults/enums; the next
+extension adds the explicit native reference protocol described below. A reproduced
+TS required-anchor projection cycle that hid nonempty content after redo is
+fixed in both engines, with before-failure and focused regressions.
+See the [fields/rules report](reports/rust-d2-rules-2026-11-04/README.md).
+
+The composite-reference extension adds object/array defaults without an enum,
+and mixed composite enum choices with a null default. `SchemaValue` distinguishes
+a schema default/enum handle from equal plain JSON. Operations carry an explicit
+versioned reference envelope, validated against the schema and descriptor path.
+Undo/redo and native JSON checkpoint/replay preserve its provenance. This is a
+native protocol extension, not raw TS wire compatibility. TypeScript uses object
+identity: JSON copies fail composite enum admission, and even DocHub's retained
+copy rejects such edits. Native projection retains TS clone/fallback behavior.
+A different same-shape atom descriptor's enum reference can be TS-valid but
+native-unsupported because nontext admission requires the born descriptor.
+That checkpoint left composite default-to-enum aliases open; the next extension
+implements explicit same-descriptor sharing as described below.
+That composite checkpoint passed 138 core tests and 86 SDK tests. The key-order
+correction preserves raw payload order while validating against canonical schema
+identity. The reference-aware split History scanner is also corrected.
+See the [composite-reference report](reports/rust-d2-composite-2026-11-04/README.md).
+
+The shared-reference extension compiles
+`doc-sync-runtime-schema-alias-v1` descriptors. Each edge identifies an atomic
+attribute or value mark and an enum index that shares its composite default.
+Several slots may explicitly share that default; equal unlisted slots remain
+distinct. Invalid/duplicate edges and inferred sharing reject. The schema's
+semantic identity includes the graph; `base_identity()` retains the raw TS
+schema hash. Bare schema identity and serialization remain unchanged. Snapshots
+retain the versioned DTO and references retain their selected source/index.
+Compiled lookup tables avoid scanning the entire graph during an edit. Linked
+enum payloads use the default object's property order, retaining selected
+source/index; equal unlinked slots keep their own order. Current coverage is
+147 core/93 SDK tests, 182 independent semantic actions/364 actor states and
+four-schema32-factory exact JS/native order comparisons. Six inherited corpora
+and the final twelve-driver source/binary-frozen replay pass.
+
+TypeScript material/History comparison rehydrates actual shared object references.
+A default-alias birth can pass DocHub when canonicalization omits its value;
+retained composite payloads still fail its cloning/admission path. This does
+not close TS/native wire integration or arbitrary nested alias graphs,
+live schema transitions, D3 or the remaining D2 product/compiler gates. See the
+[shared-reference report](reports/rust-d2-alias-2026-11-04/README.md).
+
+The cross-property extension adds `doc-sync-runtime-schema-shared-v2` with
+explicit `{representative, slots}` groups of atomic default/enum references.
+Members may span node kinds, differently named attributes and value marks;
+enum-only groups use the same format. The representative is a member and its
+payload order is authoritative. Canonical group/member order does not erase
+that representative choice from semantic identity. Bare/v1 identity and wire
+stay unchanged. Raw manifest/DTO and diagnostic base identity remain separate
+from compile-once effective rules and graph-bound native identity.
+
+Target-aware admission and birth omission retain the selected source path/index
+and actual target key. Per-key caches avoid cloning/scanning every group target
+for each Set. Effective defaults, null resets and clone fallback match actual
+TS shared-object projection. The own-enum default requirement and stricter
+unshared native-handle boundary remain explicit native subset limits. Field aliases, mutable runtime graphs, live transitions, remaining D2 and D3
+compiler gates stay open. See the
+[cross-property report](reports/rust-d2-shared-2026-11-04/README.md).
+
+The payload extension adds `doc-sync-runtime-schema-payload-v3` and optional
+`valuePath` selectors inside atomic default/enum JSON. Typed string keys and
+integer array indices remain distinct. Parent identity propagates downward to
+composite descendants; equal/shared children never merge distinct parents.
+Nested representatives resolve through shared parents once, with ambiguous
+explicit-group overlaps, unsafe paths and cycles rejected. Logical class
+indices retain representative locators instead of a full payload copy per node.
+
+Bare/v1/v2 wire and identity remain intact. The selected source valuePath is
+separate from the target operation path and survives native History/checkpoints.
+Source schema identity and actual TS stored-clone observations are qualified
+separately: native public JSON values do not represent JS heap aliases. Mutable
+runtime links, structured-field aliases, a TS/native object codec and production
+Rust/WASM Client delivery remain separate gates. See the
+[nested payload report](reports/rust-d2-payload-2026-11-04/README.md).
+
+The field-source extension uses v3 descriptor paths with explicit `fields`
+edges to select declared writable leaf defaults and enum entries. Payload
+`valuePath` and operation binding paths keep their separate roles. Native field
+writes retain TypeScript's structural JSON validation and independent leaf
+registers; copying a schema value into a field does not create a symbolic
+identity link. Whole branches remain rejected. Existing atomic source formats
+and operations remain. See the
+[field-source report](reports/rust-d2-fieldrefs-2026-11-04/README.md).
+
+The product-pattern extension supports exactly `^(https?://\S+)?$` and
+`^(#[0-9a-fA-F]{6})?$` through existing attribute, field-leaf and value-mark
+validation. The link rule is case-sensitive, accepts the empty default, and
+requires a nonempty HTTP(S) suffix without ECMAScript whitespace. NEL is allowed;
+BOM is rejected. Rust Unicode whitespace classification is not substituted.
+The color rule accepts the empty default or exactly six ASCII hex digits after
+`#`. Null retains the existing reset behavior. All earlier pattern handlers
+remain. See the [pattern report](reports/rust-d2-patterns-2026-11-04/README.md).
+
+The text-disabled extension accepts boolean `text` flags on text-shaped nodes.
+It preserves text markers, inline children, stored characters and projection.
+Raw Document flow admission checks all stored text types, including group
+members: a false-only flow rejects characters, while a mixed flow can accept
+characters after a disabled marker. The native container text guard uses the
+immutable birth type. Existing SDK methods provide selection, History and own
+checkpoint recovery. Native graphic type-change state parity and the full D3
+editor compiler remain separate. See the
+[text-disabled block report](reports/rust-d2-textfalse-2026-11-04/README.md).
+
+The original Word and presentation registries now compile without pruning
+unused declarations. The extension validates every declaration, retains all
+descriptors in schema identity/DTO/checkpoints, and keeps parent placement rules
+unchanged. Unused grid/group declarations do not change the active flat-flow
+model or History. Global value-mark rules still select their required engine
+path. See the [unused-declaration report](reports/rust-d2-unused-2026-11-04/README.md).
+
+The D3 paragraph slice now compiles bounded nested model insertion, including
+head retyping, structured field resets and required-slot end placement. Existing
+physical-source helpers retain their separate contract. The complete command
+compiler remains open; see the D3 gate and
+[paragraph report](reports/rust-d3-paragraph-2026-11-04/README.md).
+
+The optional URL and six-digit hex-color product patterns are supported with
+exact JavaScript whitespace and matching semantics. Arbitrary patterns remain
+fail-closed. Original Demo, Word, Notion and presentation schemas compile.
+Bounded Word/presentation traces include section/slide metadata, their default
+internal text and concurrent History/checkpoint recovery. Full-profile editing,
+list/table authoring and complete D3 command equivalence remain unqualified.
+Removing declarations in diagnostic copies is not original-product evidence. `markValues.fields`
+is rejected by TypeScript too; it remains an invalid-schema boundary, not a
+missing native feature to implement. These ordered gates still need their own
+implementation and differential evidence.
 
 Replace preset/type-name branches with per-document compiled schema data.
 Support all nine shapes, allowed children, grouping, grid chains, defaults,
@@ -136,6 +319,108 @@ Word, Notion and presentation schema fixtures. Dependencies: D1 value/schema
 identity contract; implementation can run alongside the D1 client migration.
 
 ### D3. Implement the schema-based editing compiler
+
+**Partial implementation:** `RuntimeDocument::insert_paragraph_at` compiles one
+text-shaped model node at a child path. `insert_model_at` also accepts supported
+flow/text trees. `insert_model_at` also accepts supported group/grid models and
+row/cell axis inputs. Both compile on detached native state and record once. Original
+Word/presentation cases cover first, middle and required-slot end insertion,
+field/default writes, UTF-16 runs, independent concurrent writers, History and
+own checkpoint replay. The TypeScript compiler tracks pending type changes
+when expanding fields. Detached physical stubs no longer become required-tail
+base anchors; only newly inserted nodes receive placement writes.
+
+The single-model APIs reject offset paths, uncompiled row/body-wrapper attributes,
+mixed structured node attribute maps and trailing reserved-only transactions.
+Cell attribute patches support mixed structured/scalar input in exact TS order.
+Empty group/grid inputs reject atomically rather than return a fake stored ID. Bounded insertion after existing moves is supported; general model command
+compilation remains separate.
+Input normalization differs for malformed model attributes: TypeScript can
+sanitize them while the native API rejects before mutation. These cases are
+not claimed as rejection parity. Schema constraints can hide overflow in the
+canonical model while storage and foreign writer records remain retained.
+
+
+**Moved-document extension:** current model child paths now resolve through
+accepted placement winners, including undone movement and suppressed cycles.
+Only newly inserted identities receive compiler placement writes. A fresh empty
+default preserves canonical leading slots without overwriting an old head.
+Source virtual text promotion uses a deterministic candidate order; boundary
+anchors retain their meaning across concurrent predecessor relocation/deletion.
+Original Word/presentation comparisons check the full independent model-edit
+result, exact operations/History and own checkpoint recovery. See the
+[moved insertion report](reports/rust-d3-moved-2026-11-04/README.md).
+
+**Group/grid extension:** derived group `by` values flow to members and member
+overrides win. Model group gaps can split into parent-admitted blocks. Dense
+model grids preserve row/column IDs, hidden cell contents, span/custom attribute
+order, and cell body paths. Row model insertion returns a row axis; inserting a
+cell at a row gap creates a global column and returns its axis. One API call is
+one transaction.
+See the [schema editing queue](schema-editing-roadmap.md) and
+[group/grid report](reports/rust-d3-group-grid-2026-11-04/README.md).
+
+**Atomic insert-batch extension:** `insert_models_batch` accepts an ordered
+array of `ModelInsert {at, model}` and compiles against one evolving candidate.
+Different rows at one column boundary share one column identity; repeating a
+row creates another column. A later failure preserves the live document, clock,
+pending work and History. The result has optional identities, one Change and
+before/after clocks, including reservations. Empty operations preserve redo.
+Runtime checkpoints retain explicit, bounded reservation metadata above the
+replayed journal; ordinary snapshots still require exact clock equality.
+Canonical operation validation stays, and older readers are not qualified for
+reservation-bearing snapshots. The strict single-model
+input policy remains unchanged. Fourteen original-product/custom profiles
+compare 351 actions/702 actor states. General EditOp compilation, typed model
+value handles and offset paths remain separate work. See the
+[batch report](reports/rust-d3-batch-2026-11-04/README.md).
+
+**Strict ID targeting extension:** `read_model_for_edit` captures a model and
+opaque process-local base. `insert_models_relative` resolves before/after stored
+primary blocks or explicit root/stored-flow edges against one evolving candidate.
+Checked incarnation/revision/schema identity detects stale reads even when the
+Lamport maximum is unchanged. Successful publications consume the base; reads,
+ack and failed calls preserve it. Restore changes the instance. Missing/deleted/
+hidden/covered/alias/synthetic/axis targets reject without selection fallback.
+The base check avoids whole-journal snapshots; strict lookup uses a captured
+state and indexes per command. Core, wire, History and checkpoint formats stay
+unchanged. Fresh comparisons cover 14 profiles/390 actions/780 states. Typed
+axis/cell targets also pass their bounded slice below. The explicit one-column command now passes its bounded slice below; a native
+ID read catalog has a local prototype described below. See
+the [targeting report](reports/rust-d3-targeting-2026-11-05/README.md).
+
+**Typed grid targeting extension:** `insert_grid_models_relative` uses a grid/row
+pair for BeforeRow/AfterRow and a grid/row/column triple for InsideCellStart/End.
+It checks live ownership and current reachability against the same local base.
+Current covered-cell targets reject; row insertion retains existing span growth,
+hidden payload and newer-overlap rules. Fresh 14-profile/435-action comparison,
+core194/SDK182 and two documentation consumers pass. A moved-grid TS compiler
+bug is fixed using accepted placement; source/dist focused tests and the fresh
+whole workspace suite pass. See the
+[axis report](reports/rust-d3-axis-targeting-2026-11-05/README.md).
+
+**Explicit column targeting extension (Q1.3.3):** `insert_column_relative`
+creates exactly one column in the target Document grid, using stable boundary
+and unique row-ID payloads. Omitted rows get defaults; empty payload still
+creates one column. Current ownership/base checks, atomic rejection and existing
+span-writer rules remain intact. Historical independent comparison covers
+14 profiles/422 actions/844 actor states; its source/binary map remains unchanged.
+Fresh 2026-11-16 core194/SDK191, example, two documentation consumers and all
+14 inherited regression stages pass (3359 main actions plus a separate12-action
+empty-cell probe). This is not full D3 completion. General multi-column commands
+and axis moves remain separate.
+See the [column report](reports/rust-d3-column-targeting-2026-11-16/README.md).
+
+**Local catalog prototype (Q1.3.4):** `read_model_with_catalog` returns the model,
+opaque process-local base, stored primary block paths/types/flow capability,
+owned grid axes and uncovered cell tuples/body paths. It excludes synthetic
+defaults, group wrappers and covered descendants. Commands revalidate targets;
+paths are diagnostic at that base. The Nov 16 receipt records five focused tests,
+30 inherited targeting tests and the runnable example PASS. This is historical
+prototype evidence, not full Q1.3.4 closure. Broader required/nested fixtures,
+independent comparison, complete consumers and alias diagnostics remain open.
+It adds no server authorization, durable recovery or production WASM integration.
+See the [catalog example](../experiments/rust-sdk/examples/runtime_id_catalog.rs).
 
 Provide the public EditOp/command path in Rust, rather than requiring callers
 to hand-author low-level operations. Cover insert/delete/update/split/merge/move,

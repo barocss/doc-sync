@@ -235,13 +235,14 @@ impl GraphicDocument {
         }
         let mut previous = self.observed_clock()?;
         for op in &ops {
-            let (at, width) = match op {
+            let (at, width) = match op.raw_operation() {
                 Op::Node { id, .. } => (id, 1),
                 Op::Text { id, units, .. } => (id, units.0.len().max(1) as u64),
                 Op::Delete { at, .. }
                 | Op::Undelete { at, .. }
                 | Op::Set { at, .. }
                 | Op::Move { at, .. } => (at, 1),
+                Op::Reference { .. } => unreachable!("raw operation"),
             };
             if at.actor != self.actor || at.lamport <= previous {
                 return Err(Error(
@@ -518,12 +519,13 @@ impl GraphicDocument {
         let before = doc.call("history_export", json!({}))?["checkpoint"].clone();
         for change in &checkpoint.pending {
             for op in &change.ops {
-                let at = match op {
+                let at = match op.raw_operation() {
                     Op::Node { id, .. } | Op::Text { id, .. } => id,
                     Op::Delete { at, .. }
                     | Op::Undelete { at, .. }
                     | Op::Set { at, .. }
                     | Op::Move { at, .. } => at,
+                    Op::Reference { .. } => unreachable!("raw operation"),
                 };
                 if at.actor != doc.actor {
                     return Err(Error("graphic pending actor mismatch".into()));

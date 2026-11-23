@@ -85,6 +85,18 @@ fn shape(t: &str) -> &'static str {
 }
 impl Replica {
     fn nested_shape(&self, t: &str) -> &'static str {
+        if let Some(schema) = &self.runtime {
+            return match schema.manifest()["nodes"][t]["shape"].as_str() {
+                Some("text") => "text",
+                Some("atom") => "atom",
+                Some("flow") => "flow",
+                Some("grid") => "grid",
+                Some("row") => "row",
+                Some("cell") => "cell",
+                Some("inline") => "inline",
+                _ => "",
+            };
+        }
         if self.shapes && t == "list-item" {
             "text"
         } else if self.shapes && t == "inline-image" {
@@ -93,11 +105,142 @@ impl Replica {
             shape(t)
         }
     }
+    fn grid_parts(&self, grid: &str) -> Option<(&str, &str, &str)> {
+        if let Some(schema) = &self.runtime {
+            let nodes = &schema.manifest()["nodes"];
+            if nodes[grid]["shape"] != "grid" {
+                return None;
+            }
+            let row = nodes[grid]["children"][0].as_str()?;
+            let cell = nodes[row]["children"][0].as_str()?;
+            let body = nodes[cell]["children"][0].as_str()?;
+            return Some((row, cell, body));
+        }
+        (grid == "table").then_some(("table-row", "table-cell", "table-cell-body"))
+    }
     fn nested_attr(&self, t: &str, k: &str, v: &Value) -> bool {
+        if self.runtime.is_some() {
+            return self.validate_node_attr(t, k, v).is_ok();
+        }
         self.manifest()["nodes"][t]["attrs"]
             .get(k)
             .is_some_and(|s| s["computed"] != true && general::attr_ok(s, v))
     }
+    fn runtime_flow_type(&self, line: &str) -> Option<&str> {
+        let schema = self.runtime.as_ref().filter(|s| !s.is_graphic())?;
+        let required = required_address(line);
+        let line = required.as_ref().map(|a| a.0.as_str()).unwrap_or(line);
+        let key = text_address(line)
+            .map(|a| a.parent)
+            .unwrap_or_else(|| line.into());
+        if key == Ticket::root().key() {
+            return schema.manifest()["root"].as_str();
+        }
+        let l = self.line_of(&key)?;
+        let owner = self.index_key(l.owner.as_ref()?)?;
+        let born = self.items[owner].node.as_ref()?.born.as_str();
+        if l.slot.starts_with("cell:") {
+            self.grid_parts(born).map(|(_, _, body)| body)
+        } else if l.slot == "body" {
+            Some(born)
+        } else {
+            None
+        }
+    }
+    fn line_default_type(&self, line: &str) -> String {
+        if let Some((_,kind,_))=required_address(line) { let concrete=self.required_concrete(&kind); if self.nested_shape(&concrete)=="text" {return concrete;} }
+        self.runtime_flow_type(line)
+            .and_then(|flow| {
+                self.runtime.as_ref().unwrap().manifest()["nodes"][flow]["default"]
+                    .as_str()
+                    .map(str::to_owned)
+            })
+            .unwrap_or_else(|| "paragraph".into())
+    }
+    fn runtime_child_allowed(&self, line: &str, child: &str) -> bool {
+        if let Some(l) = self
+            .line_number(line)
+            .map(|n| &self.nested.as_ref().unwrap().lines[n])
+        {
+            if l.slot == "cols" {
+                return child == "col";
+            }
+            if l.slot == "rows" {
+                return l
+                    .owner
+                    .as_ref()
+                    .and_then(|k| self.index_key(k))
+                    .and_then(|i| self.items[i].node.as_ref())
+                    .and_then(|n| self.grid_parts(&n.born))
+                    .is_some_and(|(row, _, _)| child == row);
+            }
+        }
+        let Some(flow) = self.runtime_flow_type(line) else {
+            return self.runtime.is_none() || self.graphic;
+        };
+        let nodes = &self.runtime.as_ref().unwrap().manifest()["nodes"];
+        nodes[flow]["children"].as_array().is_some_and(|children| {
+            children.iter().any(|c| {
+                let kind = c.as_str().unwrap();
+                if nodes[kind]["shape"] == "group" {
+                    nodes[kind]["children"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .any(|member| {
+                            self.runtime_stored_or_inline(nodes, member.as_str().unwrap(), child)
+                        })
+                } else {
+                    self.runtime_stored_or_inline(nodes, kind, child)
+                }
+            })
+        })
+    }
+    fn runtime_stored_or_inline(&self, nodes: &Value, kind: &str, child: &str) -> bool {
+        kind == child
+            || nodes[kind]["shape"] == "text"
+                && nodes[child]["shape"] == "inline"
+                && nodes[kind]["children"]
+                    .as_array()
+                    .is_some_and(|cs| cs.iter().any(|c| c == child))
+    }
+    fn group_owner<'a>(&'a self, line: &str, kind: &str) -> Option<(&'a str, &'a Value)> {
+        let schema = self.runtime.as_ref()?;
+        let flow = self.runtime_flow_type(line)?;
+        let nodes = &schema.manifest()["nodes"];
+        nodes[flow]["children"].as_array()?.iter().find_map(|name| {
+            let name = name.as_str()?;
+            let spec = &nodes[name];
+            (spec["shape"] == "group" && spec["children"].as_array()?.iter().any(|c| c == kind))
+                .then_some((name, spec))
+        })
+    }
+    fn block_group(&self, b: &Block, line: &str) -> Option<(String, Vec<String>)> {
+        if b.kind != "text" {
+            return None;
+        }
+        let kind = if b.virtual_ {
+            self.line_default_type(line)
+        } else {
+            self.ntype(&self.items[b.marker])
+        };
+        if let Some((name, spec)) = self.group_owner(line, &kind) {
+            return Some((
+                name.into(),
+                spec["by"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|k| k.as_str().unwrap().into())
+                    .collect(),
+            ));
+        }
+        if self.shapes && kind == "list-item" {
+            return Some(("list".into(), vec!["level".into(), "listType".into()]));
+        }
+        None
+    }
+
     fn line_number(&self, key: &str) -> Option<usize> {
         self.nested
             .as_ref()?
@@ -117,7 +260,8 @@ impl Replica {
             .is_some_and(|l| l.key == t.id.key())
     }
     fn ntype(&self, t: &Token) -> String {
-        t.attrs
+        let stored = t
+            .attrs
             .get("$type")
             .and_then(|r| r.value.as_str())
             .unwrap_or_else(|| {
@@ -125,9 +269,16 @@ impl Replica {
                     .as_ref()
                     .map(|n| n.born.as_str())
                     .filter(|s| !s.is_empty())
-                    .unwrap_or("paragraph")
+                    .unwrap_or("")
             })
-            .into()
+            .to_owned();
+        if stored.is_empty() {
+            self.line_of(&t.id.key())
+                .map(|l| self.line_default_type(&l.key))
+                .unwrap_or_else(|| self.default_text_type().into())
+        } else {
+            stored
+        }
     }
     fn ensure(&mut self, key: &str) -> Result<usize> {
         if self.movement && text_address(key).is_some() {
@@ -136,6 +287,7 @@ impl Replica {
         if let Some(i) = self.index_key(key) {
             return Ok(i);
         }
+        if required_address(key).is_some() { return Err("invalid required storage address".into()); }
         let rest = key.strip_prefix("0@").ok_or("missing nested token")?;
         let (owner_key, name) = rest.split_once('/').ok_or("invalid slot identity")?;
         let owner = self.index_key(owner_key).ok_or("missing slot owner")?;
@@ -148,11 +300,11 @@ impl Replica {
         let good = match name {
             "children" if self.graphic => self.manifest()["nodes"][born]["shape"] == "container",
             "text" if self.graphic => self.manifest()["nodes"][born]["shape"] == "text",
-            "body" => born == "callout",
-            "rows" | "cols" => born == "table",
+            "body" => self.nested_shape(born) == "flow" && born != self.root_type(),
+            "rows" | "cols" => self.nested_shape(born) == "grid",
             _ => {
                 if let Some((r, c)) = name.strip_prefix("cell:").and_then(|s| s.split_once(',')) {
-                    born == "table"
+                    self.nested_shape(born) == "grid"
                         && self
                             .line_of(r)
                             .is_some_and(|l| l.key == slot(owner_key, "rows") && l.key != r)
@@ -223,18 +375,19 @@ impl Replica {
         if line.slot == "rows" || line.slot == "cols" {
             return Err("axis attributes unsupported".into());
         }
+        let fallback = self.line_default_type(&line.key);
         let born = t
             .node
             .as_ref()
             .map(|n| n.born.as_str())
-            .unwrap_or("paragraph");
+            .unwrap_or(&fallback);
         if let Some(suffix) = k.strip_prefix("$span:") {
             let (r, c) = suffix.split_once(',').ok_or("invalid span key")?;
             let belongs = |key: &str, name: &str| {
                 self.line_of(key)
                     .is_some_and(|l| l.key == slot(&t.id.key(), name))
             };
-            if born != "table" || !belongs(r, "rows") || !belongs(c, "cols") {
+            if self.nested_shape(born) != "grid" || !belongs(r, "rows") || !belongs(c, "cols") {
                 return Err("span axis belongs to other table".into());
             }
             if !v.is_null() {
@@ -249,14 +402,16 @@ impl Replica {
         if let Some(suffix) = k.strip_prefix("$cell:") {
             let (axes, name) = suffix.split_once('|').ok_or("invalid cell key")?;
             let (r, c) = axes.split_once(',').ok_or("invalid cell coordinates")?;
-            if born != "table"
+            if self.nested_shape(born) != "grid"
                 || self
                     .line_of(r)
                     .is_none_or(|l| l.key != slot(&t.id.key(), "rows"))
                 || self
                     .line_of(c)
                     .is_none_or(|l| l.key != slot(&t.id.key(), "cols"))
-                || !self.nested_attr("table-cell", name, v)
+                || !self
+                    .grid_parts(born)
+                    .is_some_and(|(_, cell, _)| self.nested_attr(cell, name, v))
             {
                 return Err("invalid cell attribute".into());
             }
@@ -266,12 +421,36 @@ impl Replica {
             return self.validate_join(t, v);
         }
         if k == "$type" {
+            if let Some((_,kind,_))=required_address(&line.key) {
+                return if v.is_null() || v.as_str()==Some(self.required_concrete(&kind).as_str()) {Ok(())}else{Err("required slot type is immutable".into())};
+            }
             return if (self.head(t) || self.nested_text_type(born))
-                && (v.is_null() || v.as_str().is_some_and(|v| self.nested_text_type(v)))
+                && (v.is_null()
+                    || v.as_str().is_some_and(|v| {
+                        self.nested_text_type(v) && self.runtime_child_allowed(&line.key, v)
+                    }))
             {
                 Ok(())
             } else {
                 Err("invalid text type write".into())
+            };
+        }
+        if let Some(schema) = &self.runtime {
+            let shape = self.nested_shape(born);
+            return if schema.manifest()["nodes"]
+                .as_object()
+                .unwrap()
+                .keys()
+                .any(|name| {
+                    (if shape == "text" {
+                        self.nested_shape(name) == "text"
+                    } else {
+                        name == born
+                    }) && self.nested_attr(name, k, v)
+                }) {
+                Ok(())
+            } else {
+                Err(format!("invalid runtime nested attribute {k}"))
             };
         }
         let candidates: Vec<&str> = match self.nested_shape(born) {
@@ -299,11 +478,15 @@ impl Replica {
                 fields(op, &["t", "id", "origin", "units", "marks"])?;
                 let id = ticket(op, "id")?;
                 id.birth_valid()?;
+                if self.runtime.as_ref().is_some_and(|s|s.manifest()["nodes"].as_object().unwrap().values().any(|n|n["childRules"].as_object().is_some_and(|r|!r.is_empty()))) && id.actor.starts_with("~required:") {return Err("reserved required birth actor".into());}
                 let origin = ticket(op, "origin")?;
                 self.ensure(&origin.key())?;
                 let line = self.line_of(&origin.key()).unwrap();
                 if line.slot == "rows" || line.slot == "cols" {
                     return Err("axis text rejected".into());
+                }
+                if self.runtime_flow_type(&line.key).is_some_and(|flow| !self.runtime_accepts_text(flow)) {
+                    return Err("flow rejects text".into());
                 }
                 let units: Vec<u16> = decode(required(op, "units")?)?;
                 if units.is_empty()
@@ -375,12 +558,21 @@ impl Replica {
                 fields(op, &["t", "id", "origin", "type", "boundary", "attrs"])?;
                 let id = ticket(op, "id")?;
                 id.birth_valid()?;
+                if self.runtime.as_ref().is_some_and(|s|s.manifest()["nodes"].as_object().unwrap().values().any(|n|n["childRules"].as_object().is_some_and(|r|!r.is_empty()))) && id.actor.starts_with("~required:") {return Err("reserved required birth actor".into());}
                 let origin = ticket(op, "origin")?;
                 self.ensure(&origin.key())?;
                 let born = string(op, "type")?.to_owned();
                 let line = self.line_of(&origin.key()).unwrap();
+                if !self.runtime_child_allowed(&line.key, &born) {
+                    return Err("node type is not allowed in parent flow".into());
+                }
                 let expected = if line.slot == "rows" {
-                    Some("table-row")
+                    line.owner
+                        .as_ref()
+                        .and_then(|k| self.index_key(k))
+                        .and_then(|i| self.items[i].node.as_ref())
+                        .and_then(|n| self.grid_parts(&n.born))
+                        .map(|(row, _, _)| row)
                 } else if line.slot == "cols" {
                     Some("col")
                 } else {
@@ -402,17 +594,26 @@ impl Replica {
                     .unwrap_or("")
                     .to_owned();
                 if self.nested_text_type(&born) {
+                    let ordinary = if let Some((ordinary,child))=boundary.rsplit_once("|child:") {
+                        let constrained=self.runtime_flow_type(&line.key).is_some_and(|flow|{
+                            let nodes=&self.runtime.as_ref().unwrap().manifest()["nodes"];
+                            let kind=self.group_owner(&line.key,&born).map(|g|g.0).unwrap_or(&born);
+                            required_address(&line.key).is_none() && nodes[flow]["childRules"].get(kind).is_some()
+                        });
+                        if child!=id.key() || !constrained {return Err("invalid constrained child boundary".into());}
+                        ordinary
+                    } else {boundary.as_str()};
                     let right = if self.movement {
-                        self.split_right(&boundary, &origin)?
+                        self.split_right(ordinary, &origin)?
                     } else {
-                        paragraph::boundary_right(&boundary, &origin)?
+                        paragraph::boundary_right(ordinary, &origin)?
                     };
                     if right.as_ref().is_some_and(|r| {
                         *r == id
                             || self.index(r).is_none_or(|i| {
-                                self.line_of(&self.items[i].id.key())
-                                    .map(|l| l.key.as_str())
-                                    != Some(line.key.as_str())
+                                !self.movement && self.line_of(&self.items[i].id.key()).is_none_or(|right_line| {
+                                    right_line.key!=line.key && !required_address(&right_line.key).is_some_and(|a|a.0==line.key)
+                                })
                             })
                     }) {
                         return Err("invalid cross-line boundary".into());
@@ -508,7 +709,7 @@ impl Replica {
                             string(op, "key")?,
                             required(op, "value")?,
                         )?;
-                    } else if self.head(&self.items[i]) {
+                    } else if self.head(&self.items[i]) || required_address(&id.key()).is_some() {
                         return Err("line head existence rejected".into());
                     }
                     if kind == "set" {
@@ -641,17 +842,17 @@ impl Replica {
         g
     }
     fn blocks_nested(&self, key: &str) -> Vec<Block> {
-        if self.has_moves() && text_address(key).is_none() {
+        if self.has_moves() && text_address(key).is_none() && required_address(key).is_none() {
             if let Some(blocks) = self.movement_cache.borrow().get(key) {
-                return blocks.clone();
+                return self.apply_child_rules(key,blocks.clone());
             }
             let blocks = self.movement_blocks(key).0;
             self.movement_cache
                 .borrow_mut()
                 .insert(key.into(), blocks.clone());
-            return blocks;
+            return self.apply_child_rules(key,blocks);
         }
-        self.source_blocks(key)
+        self.apply_child_rules(key,self.source_blocks(key))
     }
     fn source_blocks(&self, key: &str) -> Vec<Block> {
         let Some(n) = self.line_number(key) else {
@@ -704,7 +905,7 @@ impl Replica {
             if !t.alive() && !head && !retained.contains(&t.id.key()) {
                 continue;
             }
-            if t.unit.is_some() || self.shapes && self.ntype(t) == "inline-image" {
+            if t.unit.is_some() || self.nested_shape(&self.ntype(t)) == "inline" {
                 if let Some(b) = pending.take() {
                     out.push(b)
                 }
@@ -776,7 +977,9 @@ impl Replica {
         }
         out
     }
-    fn refresh_nested(&mut self) -> Result<()> {
+    pub(super) fn refresh_nested(&mut self) -> Result<()> {
+        let before=self.items.len();
+        self.refresh_required()?;
         // Canonical zero-clock genesis closure. Lazy Map materialization order is
         // not observable in the comparison; authored tokens and line RGA order are.
         let owners: Vec<_> = self
@@ -785,12 +988,12 @@ impl Replica {
             .filter_map(|t| {
                 t.node
                     .as_ref()
-                    .filter(|n| n.born == "callout" || n.born == "table")
+                    .filter(|n| matches!(self.nested_shape(&n.born), "flow" | "grid"))
                     .map(|n| (t.id.key(), n.born.clone()))
             })
             .collect();
         for (key, born) in owners {
-            if born == "callout" {
+            if self.nested_shape(&born) == "flow" {
                 self.ensure(&slot(&key, "body"))?;
                 continue;
             }
@@ -807,6 +1010,7 @@ impl Replica {
                 }
             }
         }
+        if self.items.len()!=before {return self.refresh_nested();}
         if self.has_moves() {
             self.refresh_movement()?;
         }
@@ -823,13 +1027,19 @@ impl Replica {
                 }
                 out.insert(
                     k.clone(),
-                    if virtual_ {
+                    if s.get("fields").is_some() {
+                        fields::materialize(s,k,|key| (!virtual_).then(|| t.attrs.get(key).map(|r| r.value.clone())).flatten())
+                    } else if virtual_ {
                         s["default"].clone()
                     } else {
                         t.attrs
                             .get(k)
                             .map(|r| &r.value)
-                            .filter(|v| !v.is_null())
+                            .filter(|v| {
+                                !v.is_null()
+                                    && (self.runtime.is_none()
+                                        || runtime_schema::atomic_value_ok(s, v))
+                            })
                             .unwrap_or(&s["default"])
                             .clone()
                     },
@@ -841,15 +1051,34 @@ impl Replica {
     fn cell_attrs(&self, t: &Token, r: &str, c: &str) -> Value {
         let m = self.manifest();
         let mut out = Map::new();
-        for (k, s) in m["nodes"]["table-cell"]["attrs"].as_object().unwrap() {
+        let cell_type = self
+            .grid_parts(t.node.as_ref().map(|n| n.born.as_str()).unwrap_or(""))
+            .map(|(_, cell, _)| cell)
+            .unwrap_or("");
+        for (k, s) in m["nodes"][cell_type]["attrs"]
+            .as_object()
+            .into_iter()
+            .flatten()
+        {
             if s["computed"] == true {
                 continue;
             }
-            if let Some(v) = t
+            if s.get("fields").is_some() {
+                let value = fields::materialize(s, k, |key| {
+                    t.attrs
+                        .get(&format!("$cell:{r},{c}|{key}"))
+                        .map(|r| r.value.clone())
+                });
+                out.insert(k.clone(), value);
+            } else if let Some(v) = t
                 .attrs
                 .get(&format!("$cell:{r},{c}|{k}"))
                 .map(|r| &r.value)
-                .filter(|v| !v.is_null() && **v != s["default"])
+                .filter(|v| {
+                    !v.is_null()
+                        && (v.is_object() || v.is_array() || **v != s["default"])
+                        && (self.runtime.is_none() || runtime_schema::atomic_value_ok(s, v))
+                })
             {
                 out.insert(k.clone(), v.clone());
             }
@@ -860,14 +1089,23 @@ impl Replica {
         json!(self
             .blocks_nested(line)
             .iter()
-            .map(|b| self.block_json(b))
+            .map(|b| self.block_json(b, line))
             .collect::<Vec<_>>())
     }
-    fn block_json(&self, b: &Block) -> Value {
+    /// Read physical source blocks in retained line insertion order. Compilation
+    /// uses this view before resolving logical placement paths.
+    pub(super) fn source_projections(&self) -> Result<Value> {
+        let storage = self.nested.as_ref().ok_or("source projections require nested storage")?;
+        Ok(json!({"ok":true,"projections":storage.lines.iter().map(|line| json!({
+            "line":line.key,
+            "blocks":self.source_blocks(&line.key).iter().map(|block| self.block_json(block,&line.key)).collect::<Vec<_>>()
+        })).collect::<Vec<_>>() }))
+    }
+    fn block_json(&self, b: &Block, line: &str) -> Value {
         let t = &self.items[b.marker];
         let key = t.id.key();
         let type_ = if b.virtual_ {
-            "paragraph".into()
+            self.line_default_type(line)
         } else {
             self.ntype(t)
         };
@@ -914,57 +1152,116 @@ impl Replica {
     }
     fn model_nested(&self, line: &str) -> Vec<Value> {
         let blocks = self.blocks_nested(line);
-        self.entries_nested(line).iter().map(|entry| {
-            let mut node = self.model_block(&blocks[entry[0]]);
-            if self.shapes && node["type"] == "list-item" {
-                let attrs = json!({"level": node["attrs"]["level"], "listType":node["attrs"]["listType"]});
-                let children = entry.iter().map(|i| {
-                    let mut child = self.model_block(&blocks[*i]);
-                    let a = child["attrs"].as_object_mut().unwrap();
-                    a.remove("level");
-                    a.remove("listType");
-                    child
-                }).collect::<Vec<_>>();
-                node = json!({"type":"list","attrs":attrs,"children":children});
+        let mut model: Vec<Value> = self.entries_nested(line)
+            .iter()
+            .map(|entry| {
+                let node = self.model_block(&blocks[entry[0]], line);
+                let Some((group, by)) = self.block_group(&blocks[entry[0]], line) else {
+                    return node;
+                };
+                let attrs: Map<String, Value> = by
+                    .iter()
+                    .map(|k| (k.clone(), node["attrs"][k].clone()))
+                    .collect();
+                let children: Vec<_> = entry
+                    .iter()
+                    .map(|i| {
+                        let mut child = self.model_block(&blocks[*i], line);
+                        if let Some(attrs) = child.get_mut("attrs").and_then(Value::as_object_mut) {
+                            for key in &by {
+                                attrs.shift_remove(key);
+                            }
+                            if attrs.is_empty() {
+                                child.as_object_mut().unwrap().shift_remove("attrs");
+                            }
+                        }
+                        child
+                    })
+                    .collect();
+                let mut result = json!({"type":group,"children":children});
+                if !attrs.is_empty() {
+                    result["attrs"] = json!(attrs);
+                }
+                result
+            })
+            .collect();
+        // Model canonicalization does not change block placement or storage.
+        // Required private lines do not inherit the parent flow's rules.
+        if required_address(line).is_some() {
+            return model;
+        }
+        let Some(flow) = self.runtime_flow_type(line) else {
+            return model;
+        };
+        let nodes = &self.runtime.as_ref().unwrap().manifest()["nodes"];
+        let spec = &nodes[flow];
+        if spec["shape"] != "flow" {
+            return model;
+        }
+        let first_text = model.first().is_some_and(|node| {
+            let kind = node["type"].as_str().unwrap_or("");
+            nodes[kind]["shape"] == "text" || nodes[kind]["shape"] == "group"
+        });
+        let default = self.line_default_type(line);
+        if !first_text && spec["childRules"][&default]["max"] != 0 {
+            let empty = Block {
+                kind: "text", marker: self.index_key(line).unwrap(), virtual_: true,
+                chars: vec![], aliases: vec![], positions: vec![],
+            };
+            let mut node = self.model_block(&empty, line);
+            if let Some((group, by)) = self.block_group(&empty, line) {
+                let attrs: Map<String, Value> = by.iter().map(|key| (key.clone(), node["attrs"][key].clone())).collect();
+                if let Some(child_attrs) = node.get_mut("attrs").and_then(Value::as_object_mut) {
+                    for key in by { child_attrs.shift_remove(&key); }
+                    if child_attrs.is_empty() { node.as_object_mut().unwrap().shift_remove("attrs"); }
+                }
+                node = json!({"type":group,"children":[node]});
+                if !attrs.is_empty() { node["attrs"] = json!(attrs); }
             }
-            node
-        }).collect()
+            model.insert(0, node);
+        }
+        if let Some(rules) = spec["childRules"].as_object() {
+            let mut counts = BTreeMap::<String, u64>::new();
+            model.retain(|node| {
+                let kind = node["type"].as_str().unwrap_or("");
+                let count = counts.entry(kind.into()).or_default();
+                if rules.get(kind).and_then(|rule| rule["max"].as_u64()).is_some_and(|max| *count >= max) {
+                    return false;
+                }
+                *count += 1;
+                true
+            });
+        }
+        model
     }
     /// Model entries retain flat block indexes so selection and grouping share
     /// one native projection, including skipped empty virtual paragraphs.
     fn entries_nested(&self, line: &str) -> Vec<Vec<usize>> {
         let blocks = self.blocks_nested(line);
         let mut out: Vec<Vec<usize>> = vec![];
+        let mut last_group: Option<(String, String)> = None;
         for (i, b) in blocks.iter().enumerate() {
             if b.virtual_ && b.chars.is_empty() {
                 continue;
             }
-            let current = self.block_json(b);
-            let same = self.shapes
-                && current["type"] == "list-item"
-                && out.last().is_some_and(|entry| {
-                    let previous = self.block_json(&blocks[entry[0]]);
-                    previous["type"] == "list-item"
-                        && general::json_group_key(&json!([
-                            previous["attrs"]["level"],
-                            previous["attrs"]["listType"]
-                        ])) == general::json_group_key(&json!([
-                            current["attrs"]["level"],
-                            current["attrs"]["listType"]
-                        ]))
-                });
-            if same {
+            let current = self.block_json(b, line);
+            let group = self.block_group(b, line).map(|(name, by)| {
+                let values: Vec<_> = by.iter().map(|k| current["attrs"][k].clone()).collect();
+                (name, format!("{}:{}",general::json_group_key(&json!(values)), self.line_of(&self.items[b.marker].id.key()).filter(|l|required_address(&l.key).is_some()).map(|l|l.key.as_str()).unwrap_or("")))
+            });
+            if group.is_some() && group == last_group {
                 out.last_mut().unwrap().push(i);
             } else {
                 out.push(vec![i]);
             }
+            last_group = group;
         }
         out
     }
-    fn model_block(&self, block: &Block) -> Value {
+    fn model_block(&self, block: &Block, line: &str) -> Value {
         let token = &self.items[block.marker];
         let type_ = if block.virtual_ {
-            "paragraph".into()
+            self.line_default_type(line)
         } else {
             self.ntype(token)
         };
@@ -975,7 +1272,9 @@ impl Replica {
         }
         match block.kind {
             "text" => {
-                node["runs"] = json!(if self.shapes {
+                node["runs"] = json!(if self.runtime.is_some() {
+                    self.runtime_runs(&block.chars)
+                } else if self.shapes {
                     self.shapes_runs(&block.chars)
                 } else {
                     self.runs(&block.chars)
@@ -989,6 +1288,9 @@ impl Replica {
     }
     fn model_rows(&self, token: &Token) -> Value {
         let grid = self.grid(token);
+        let (row_type, cell_type, body_type) = self
+            .grid_parts(token.node.as_ref().unwrap().born.as_str())
+            .unwrap();
         let mut rows = vec![];
         for (ri, r) in grid.rows.iter().enumerate() {
             let mut cells = vec![];
@@ -996,7 +1298,8 @@ impl Replica {
                 let row = self.items[*r].id.key();
                 let col = self.items[*c].id.key();
                 let children = self.model_nested(&slot(&token.id.key(), &cell(&row, &col)));
-                let mut node = json!({"type":"table-cell","children":[{"type":"table-cell-body","children":children}]});
+                let mut node =
+                    json!({"type":cell_type,"children":[{"type":body_type,"children":children}]});
                 let mut attrs = Map::new();
                 let coordinate = format!("{ri},{ci}");
                 if let Some((rs, cs)) = grid.spans.get(&coordinate) {
@@ -1016,14 +1319,14 @@ impl Replica {
                 }
                 cells.push(node);
             }
-            rows.push(json!({"type":"table-row","children":cells}));
+            rows.push(json!({"type":row_type,"children":cells}));
         }
         json!(rows)
     }
     fn raw_nested(&self, t: &Token) -> Value {
         let line = self.line_of(&t.id.key()).unwrap();
         let head = line.key == t.id.key();
-        json!({"id":t.id,"origin":t.origin,"kind":if head&&(line.slot=="rows"||line.slot=="cols"){"head"}else if t.unit.is_some(){"char"}else{"node"},"born":if text_address(&line.key).is_some() && head {"paragraph"} else {t.node.as_ref().map(|n|n.born.as_str()).unwrap_or("")},"boundary":if head{"root"}else{t.node.as_ref().map(|n|n.boundary.as_str()).unwrap_or("")},"unit":t.unit,"visible":t.alive(),"dels":js_sorted(&t.dels),"cancels":js_sorted(&t.cancels),"attrs":t.attrs})
+        json!({"id":t.id,"origin":t.origin,"kind":if head&&(line.slot=="rows"||line.slot=="cols"){"head"}else if t.unit.is_some(){"char"}else{"node"},"born":if self.runtime.is_some() && head {self.line_default_type(&line.key)} else if text_address(&line.key).is_some() && head {"paragraph".into()} else {t.node.as_ref().map(|n|n.born.clone()).unwrap_or_default()},"boundary":if head{"root"}else{t.node.as_ref().map(|n|n.boundary.as_str()).unwrap_or("")},"unit":t.unit,"visible":t.alive(),"dels":js_sorted(&t.dels),"cancels":js_sorted(&t.cancels),"attrs":t.attrs})
     }
     pub(super) fn nested_state(&self) -> Value {
         let mut lines = self.nested.as_ref().unwrap().lines.clone();
@@ -1034,9 +1337,23 @@ impl Replica {
             .filter(|i| !self.head(&self.items[**i]))
             .collect();
         let visible = tokens.iter().filter(|i| self.items[***i].alive()).count();
-        let mut state = json!({"clock":self.clock,"items":ordered.iter().map(|i|self.raw_nested(&self.items[*i])).collect::<Vec<_>>(),"lines":lines.iter().map(|l|json!({"key":l.key,"owner":l.owner,"slot":l.slot,"items":self.line_ids(&l.key).iter().map(|i|self.raw_nested(&self.items[*i])).collect::<Vec<_>>()})).collect::<Vec<_>>(),"model":{"type":"content","children":self.model_nested(&Ticket::root().key())},"blocks":self.projection(&Ticket::root().key()),"projections":lines.iter().map(|l|json!({"line":l.key,"blocks":self.projection(&l.key)})).collect::<Vec<_>>(),"counts":{"tokens":tokens.len(),"visible":visible,"tombstones":tokens.len()-visible}});
+        let mut state = json!({"clock":self.clock,"items":ordered.iter().map(|i|self.raw_nested(&self.items[*i])).collect::<Vec<_>>(),"lines":lines.iter().map(|l|json!({"key":l.key,"owner":l.owner,"slot":l.slot,"items":self.line_ids(&l.key).iter().map(|i|self.raw_nested(&self.items[*i])).collect::<Vec<_>>()})).collect::<Vec<_>>(),"model":{"type":self.root_type(),"children":self.model_nested(&Ticket::root().key())},"blocks":self.projection(&Ticket::root().key()),"projections":lines.iter().map(|l|json!({"line":l.key,"blocks":self.projection(&l.key)})).collect::<Vec<_>>(),"counts":{"tokens":tokens.len(),"visible":visible,"tombstones":tokens.len()-visible}});
         if self.movement {
             state["moves"] = json!(self.sorted_moves());
+        }
+        if self.runtime.is_some() {
+            let placements: BTreeMap<String, Value> = self
+                .placement_projection()
+                .current
+                .iter()
+                .map(|(key, entry)| {
+                    (
+                        key.clone(),
+                        json!({"at":entry.id,"parent":entry.parent,"after":entry.after}),
+                    )
+                })
+                .collect();
+            state["placements"] = json!(placements);
         }
         state
     }
@@ -1326,6 +1643,9 @@ impl Replica {
 }
 impl Replica {
     fn line_visible(&self, key: &str) -> bool {
+        if let Some((parent,_,_))=required_address(key) {
+            return self.line_visible(&parent) && self.blocks_nested(&parent).iter().any(|b|self.line_of(&self.items[b.marker].id.key()).is_some_and(|l|l.key==key));
+        }
         if let Some(a) = text_address(key) {
             return self.line_visible(&a.parent);
         }
@@ -1372,8 +1692,42 @@ impl Replica {
         }
         false
     }
+    // Runtime models retain covered cell bodies, although they are not visual lines.
+    fn runtime_covered_cell(&self, key: &str) -> bool {
+        if self.runtime.is_none() {
+            return false;
+        }
+        let Some(line) = self.line_number(key).map(|n| &self.nested.as_ref().unwrap().lines[n]) else {
+            return false;
+        };
+        let Some((row, col)) = line.slot.strip_prefix("cell:").and_then(|s| s.split_once(',')) else {
+            return false;
+        };
+        let Some(owner) = line.owner.as_ref().and_then(|k| self.index_key(k)) else {
+            return false;
+        };
+        let Some(parent) = self.logical_line(&self.items[owner].id.key()) else {
+            return false;
+        };
+        if !self.items[owner].alive() || !self.line_visible(&parent)
+            || !self.blocks_nested(&parent).iter().any(|b| b.marker == owner && b.kind == "grid")
+        {
+            return false;
+        }
+        let grid = self.grid(&self.items[owner]);
+        let Some(r) = grid.rows.iter().position(|i| self.items[*i].id.key() == row) else {
+            return false;
+        };
+        let Some(c) = grid.cols.iter().position(|i| self.items[*i].id.key() == col) else {
+            return false;
+        };
+        grid.covered.contains_key(&format!("{r},{c}"))
+    }
     fn raw_position(&self, key: &str) -> Option<(String, usize, usize)> {
         let i = self.index_key(key)?;
+        if let Some((parent,_,_))=self.line_of(key).and_then(|l|required_address(&l.key)) {
+            return self.position_in(&parent,i).or_else(||Some((parent,0,0)));
+        }
         if self.has_moves() {
             if let Some((line, true)) = self.movement_location(key) {
                 if let Some(p) = self.position_in(&line, i) {
@@ -1497,7 +1851,7 @@ impl Replica {
         let index = entries.iter().position(|entry| entry.contains(&p))?;
         let mut path = self.flow_model_path(line)?;
         path.push(index);
-        if self.shapes && !b.virtual_ && self.ntype(&self.items[b.marker]) == "list-item" {
+        if self.block_group(b, line).is_some() {
             path.push(entries[index].iter().position(|i| *i == p)?);
         }
         Some(path)
@@ -1515,12 +1869,14 @@ impl Replica {
             let entry = entries.get(nums[n])?;
             let mut b = blocks.get(entry[0])?;
             n += 1;
-            if self.shapes && !b.virtual_ && self.ntype(&self.items[b.marker]) == "list-item" {
+            if self.block_group(b, &line).is_some() {
                 b = blocks.get(*entry.get(*nums.get(n)?)?)?;
                 n += 1;
             }
             if b.kind == "text" {
-                if n + 1 != nums.len() || !self.line_visible(&line) {
+                if n + 1 != nums.len()
+                    || (!self.line_visible(&line) && !self.runtime_covered_cell(&line))
+                {
                     return None;
                 }
                 let o = nums[n];
@@ -1558,17 +1914,17 @@ impl Replica {
     }
     fn resolve_nested_path(&self, key: &str) -> Option<Vec<usize>> {
         let line = self.line_of(key)?;
-        if self.has_moves()
-            && !self
-                .movement_location(key)
-                .is_some_and(|(_, visible)| visible)
-        {
+        let (effective, visible) = if self.has_moves() {
+            self.movement_location(key)?
+        } else {
+            (line.key.clone(), self.line_visible(&line.key))
+        };
+        let covered = !visible && self.runtime_covered_cell(&effective);
+        if !visible && !covered {
             return None;
         }
-        if !self.has_moves() && !self.line_visible(&line.key) {
-            return None;
-        }
-        let (line, p, o) = self.raw_position(key)?;
+        let position_key = if covered { effective.as_str() } else { key };
+        let (line, p, o) = self.raw_position(position_key)?;
         if !self.line_visible(&line) {
             return None;
         }
@@ -1659,6 +2015,8 @@ impl Replica {
         }
     }
 }
+
+include!("required.rs");
 
 include!("movement.rs");
 

@@ -159,7 +159,7 @@ fn unsupported_rules_reject_with_paths_and_descriptor_identity_is_stable() {
     let mut bad = s.manifest().clone();
     bad["nodes"]["title"]["shape"] = json!("grid");
     let err = RuntimeSchema::compile(bad).unwrap_err().0;
-    assert!(err.contains("$.nodes.title.shape"), "{err}");
+    assert!(err.contains("$.nodes.title.children"), "{err}");
     let mut bad = graphic("surface", "folder", "caption", "mark")
         .manifest()
         .clone();

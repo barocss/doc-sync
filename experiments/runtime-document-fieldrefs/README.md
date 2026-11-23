@@ -1,0 +1,17 @@
+# Nested field leaf sources
+
+This lane extends the v3 schema payload graph. A source descriptor can name an atomic writable field leaf through `nodes.<kind>.attrs.<attribute>.fields.<name>...`. `valuePath` then selects a child inside that leaf's default or enum payload. These two paths have different roles. The operation binding `path` selects the payload in the target operation.
+
+TypeScript field leaf enums use structural object and array equality. They do not require JavaScript identity. Field operations clone their payloads. Atomic target enums still require schema member identity in the TypeScript authoring process. Thus a field leaf source reference is meaningful when it identifies an object shared with an atomic target enum. Native symbolic envelopes preserve declared source provenance, not JavaScript heap identity.
+
+The test adapter enumerates field leaf defaults and enums. It does not enumerate branch defaults. Branch source descriptors, branch-default payload descendants, legacy format field selectors, symbolic field target operations, unsafe paths, and forged handles remain outside admission.
+
+`fixtures.mjs` imports the unchanged payload corpus and adds 56 commands across two renamed schemas: field leaf default/enum sources, nested object/array payload descent, atomic attribute and mark targets, ordinary deep-value field writes, independent concurrent leaf updates, same-value foreign writer protection, nonempty undo/redo, pending replay, and JSON History checkpoint recovery. Leaf representative property order deliberately differs from the enclosing branch default clone. The TS schema accepts this because default consistency uses structural equality.
+
+`compare.mjs` independently authors 352 commands in TypeScript and native SDK. It checks exact operations, source descriptors, target binding paths, identity classes, property order, full History, pending operations, caret tickets, material registers, clocks, and selections. It asserts that independent peer changes survive undo and redo. Direct leaf targets use `Doc.edit` with the encoded field register name and a deep-cloned value. This matches the native direct leaf API. Ordinary branch patches retain the existing branch API and its extra reserved ticket. Exact tickets are not normalized.
+
+`identity-probe.mjs` tests actual `Doc.check` and `DocHub.submit` across 32 combinations. Field targets accept equal cloned JSON enum members. Retained atomic enum payloads require local identity and fail after the Hub JSON clone. `scope-probe.mjs` checks native admission, malformed/unsafe/deep paths, envelope and checkpoint boundaries, full state rollback, and source/target path separation.
+
+`regressions.mjs` builds with the exact native Rust 1.87 and legacy Rust 1.86 toolchains. It freezes sources and binaries, verifies inherited inputs against the task baseline, and runs the 20 inherited drivers plus the three new drivers. It runs at most two drivers at once. Completed traces are gzip files. SHA256 checks confirm lossless decompression before the raw files are removed. Each driver has before/after hashes.
+
+Run the regression wrapper only after the TypeScript build and joint source freeze. Diagnostic runs are separate from the final wrapper. This lane does not qualify JavaScript heap identity, a mutable object bridge, native-envelope interoperability with the TypeScript server, cross-runtime checkpoint exchange, browser behavior, mobile, performance, or production process crash recovery. No commit or push is part of this lane.

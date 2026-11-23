@@ -29,7 +29,7 @@ function deadline<T>(promise: Promise<T>, name: string, ms = 10000): Promise<T> 
 }
 
 async function startDemo(data: string, threshold = 8) {
-    const env: NodeJS.ProcessEnv = {...process.env, PORT: "0", DATA_DIR: data, RECOVERY_COMPACT_THRESHOLD: String(threshold)};
+    const env: NodeJS.ProcessEnv = {...process.env, PORT: "0", DOC_SYNC_HOST: "127.0.0.1", DATA_DIR: data, RECOVERY_COMPACT_THRESHOLD: String(threshold)};
     delete env.NO_SCHEMA; delete env.DOC_PROFILE;
     const child = spawn(process.execPath, [demoFile], {env, stdio: ["ignore", "pipe", "pipe"]});
     let stdout = "", stderr = "";

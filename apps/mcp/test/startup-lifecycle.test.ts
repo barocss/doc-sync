@@ -51,7 +51,7 @@ async function stop(child: ChildProcess) {
 async function environment() {
     const root = await mkdtemp(join(tmpdir(), 'doc-sync-startup-test-'));
     const id = ++serial;
-    const demo = spawn(process.execPath, [demoEntry], {env: {...process.env, PORT: '0', DATA_DIR: join(root, 'server'), NO_SCHEMA: '', DOC_PROFILE: ''}, stdio: ['ignore', 'pipe', 'pipe']});
+    const demo = spawn(process.execPath, [demoEntry], {env: {...process.env, PORT: '0', DOC_SYNC_HOST: '127.0.0.1', DATA_DIR: join(root, 'server'), NO_SCHEMA: '', DOC_PROFILE: ''}, stdio: ['ignore', 'pipe', 'pipe']});
     let stdout = '', stderr = '';
     demo.stdout!.on('data', chunk => { stdout += chunk; });
     demo.stderr!.on('data', chunk => { stderr += chunk; });

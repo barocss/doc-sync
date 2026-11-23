@@ -123,7 +123,16 @@ A document epoch also identifies the server generation. A clean reconnect to a d
 
 ## Rust experiment
 
-The SDK accepts six fixed presets. It cannot register this page's schema, required-child rules, or field merge rules. In `Blocks`, `meta` is one atomic register. This SDK example writes two objects and confirms that the second object removes the earlier `spacing` field. It also needs `serde_json = "=1.0.140"` in the example crate.
+The native `RuntimeDocument` API supports declared nested `fields`, required
+children and overflow rules within its supported schema subset. The
+[complete runtime example](./rust#structured-fields-and-required-children)
+shows independent leaf edits, two peers, selective History and checkpoint retry.
+Annotations, live transitions and production Rust/WASM adapters remain separate.
+
+The older `Document` API accepts six fixed presets. In `SchemaPreset::Blocks`,
+`meta` remains one atomic register. The example below deliberately makes two
+whole-object writes and confirms that the second removes the earlier `spacing`
+field. It needs `serde_json = "=1.0.140"` in the example crate.
 
 Use the [native SDK crate setup](./rust#use-the-native-rust-sdk) to run this complete Rust program.
 
@@ -161,7 +170,10 @@ This example uses one of six fixed `SchemaPreset` values. A separate [runtime sc
 <details>
 <summary>Raw protocol probe and reference checks</summary>
 
-Required-child projection, overflow rules, field-level attribute merging and persistent annotations remain TypeScript features. The private Rust manifests do not accept this page's arbitrary schema. Their `meta` attribute is one atomic JSON register. It does not implement `fields`.
+The raw probe below uses the fixed general-block manifest. Its `meta` attribute
+is one atomic register; it does not opt into `fields`. The separate runtime
+schema API supports declared field registers and required-child projection.
+This fixed probe does not qualify that runtime API or persistent annotations.
 
 The following native example makes two whole-object writes. The later writer replaces the entire `meta` value.
 
@@ -183,6 +195,209 @@ Run the TypeScript rule regressions separately:
 node --test packages/doc-sync/test/cardinality.test.ts packages/doc-sync/test/cardinality-review.test.ts packages/doc-sync/test/nested-fields.test.ts packages/doc-sync/test/fields-review.test.ts packages/doc-sync/test/annotations.test.ts
 ```
 
-Those tests check the production rules. The native example checks only the fixed general-block JSON subset. Their results do not establish Rust support for required slots, field paths, annotations, protocol negotiation or protected GC. See [remaining native limits](./rust#source-map-and-remaining-limits).
+Those tests check the production rules. The native example checks only the fixed general-block JSON subset. This fixed example does not test runtime required slots or field paths. Neither it nor the runtime example qualifies native annotations, protocol negotiation or protected GC. See [remaining native limits](./rust#source-map-and-remaining-limits).
 
 </details>
+
+## Native composite references
+
+The experimental runtime Rust API distinguishes a schema default or enum
+reference from a plain JSON value. Use `RuntimeSchema::default_value` or
+`enum_value` with the reference-aware edit helpers. A deeply equal JSON copy
+is a different value under the TypeScript reference rules. Native operations
+carry a validated reference envelope through peer JSON exchange and recovery.
+Object/array defaults and composite enum choices can share a reference through
+`RuntimeSchema::compile_with_default_references`. Each declared edge binds a
+default to an enum index at the same attribute or value-mark descriptor. Several
+listed slots may share the default; equal unlisted slots remain distinct.
+A versioned schema DTO retains these edges through JSON and checkpoint restore.
+Bare schemas keep their existing identity and wire format. The alias schema ID
+includes the graph, while `base_identity()` describes only the raw rules.
+
+Birth canonicalization omits a default or listed alias and can pass the existing
+TypeScript DocHub path because that operation carries no composite value. A
+retained enum birth writer or explicit default/enum update still loses identity
+in the server's retained payload copy and rejects atomically. This native
+extension does not supply a general TS/native transport adapter. See the
+[Rust guide](./rust#atomic-object-array-defaults-and-enums) for a compiled example.
+
+## Shared references across properties
+
+The experimental Rust SDK also provides `compile_with_reference_groups` with
+`ReferenceSlot` and `ReferenceGroup`. A group declares which composite defaults
+and enum entries are the same object across supported atomic attributes or
+value marks. It can contain enum entries without a default. A representative
+must be one of at least two unique members; its payload order applies to all
+members. Overlapping groups and undeclared equal JSON do not create sharing.
+
+Groups share schema-owned values. Each document property keeps its independent
+writer; editing one property does not update the other group members.
+
+A source handle can target another property only through declared identity.
+Birth helpers omit it only when it shares the target's default. Explicit writes
+retain the source path/index and the target operation key through History and
+native JSON recovery. Compiled effective rules also resolve default, null-reset
+and clone-fallback models to the representative; raw manifest/DTO data remain
+available. Bare and v1 schema identities and wire forms stay unchanged.
+
+The v2 format covers whole atomic values; v3 adds the nested schema paths below.
+Structured field branches keep their independent register contract. A composite enum default must still share at least
+one of its own enum slots in the native subset. General TypeScript/native wire
+exchange and live schema migration remain separate work. See the
+[Rust shared-reference example](./rust#shared-objects-across-attributes-and-marks).
+
+## Nested schema payloads
+
+Use `compile_with_payload_references` for the v3 descriptor. A `ReferenceSlot`
+can append `at_value_path` segments inside its atomic default or enum value.
+`ValuePathSegment::Key` selects an object key and `Index` selects an array index.
+The string key `"0"` and array index `0` are different selectors. Endpoints must
+be composite objects or arrays, with safe paths bounded to 64 segments.
+
+`SchemaValue::at_value_path` selects a schema-owned subtree for an existing
+reference-aware edit helper. The source `at/source/index/valuePath` stays in
+the operation metadata; its binding `path` still identifies the target. Edits
+continue to write whole atomic registers. This does not add per-subkey LWW
+merging or mutable links between document properties.
+
+A shared parent induces sharing of its composite descendants. Child sharing
+preserves the identity of distinct parents. Nested representatives propagate
+through shared parents; ambiguous implicit overlaps and cycles reject. Equal
+JSON values alone never imply a shared parent or child. Bare/v1/v2 root
+constructors, serialized data and identities retain their existing behavior.
+
+These are logical schema references. Actual TypeScript `Doc.apply` copies a
+payload with `structuredClone`, which keeps internal aliases but separates it
+from the schema and other payloads. JSON snapshots/History flatten those
+aliases. Rust public values remain JSON trees, so heap-identity parity is not
+represented by material JSON equality. See the
+[compiled Rust example](./rust#nested-schema-payload-references) for API use and
+its explicit storage/transport boundaries.
+
+## References from field leaves
+
+A v3 reference source can select the default or enum entry of a declared field
+leaf. The descriptor `at` path uses explicit `fields` edges, for example
+`["nodes", "paragraph", "attrs", "style", "fields", "fill"]`. An optional
+`valuePath` then selects inside that leaf value. These are separate paths.
+
+Use `field_default_value` or `field_enum_value` to obtain the native value.
+`set_runtime_field_path` checks its schema provenance before copying it into a
+field. Field admission compares JSON content and retains separate leaf writers.
+An equal JSON copy is valid when the destination field's rules allow it. Undo
+only reverses the local writer; other leaf and user changes remain.
+
+A field source can also supply an atomic attribute or value mark when its
+explicit reference group admits that target. That operation retains the source
+descriptor and the separate target binding path. Whole branches, computed
+fields and invalid paths reject. See the
+[Rust API example](./rust#field-leaf-reference-sources).
+
+## Product validation patterns
+
+The native runtime supports the product link pattern `^(https?://\S+)?$` and
+optional color pattern `^(#[0-9a-fA-F]{6})?$`. Use the same schema descriptors
+with existing attribute, field and value-mark APIs.
+
+The link rule accepts the empty string or a case-sensitive `http://` or
+`https://` prefix with at least one non-whitespace character after it. It uses
+JavaScript whitespace: BOM is rejected and NEL is allowed. The color rule
+accepts the empty string or `#` followed by six ASCII hex digits. Null retains
+the existing reset behavior. URL parsing and host checks remain application
+responsibilities. Other regular expressions still require explicit native
+support. See the [Rust example](./rust#product-validation-patterns).
+
+## Blocks without plain text
+
+Set `text: false` on a text-shaped block to describe an image-like block with
+inline children. It keeps text-block identity, selection offsets, defaults and
+stored content. The flag does not delete or hide characters.
+
+Raw character admission uses the containing flow's stored text types, including
+group members. A flow with only text-disabled types rejects characters. A mixed
+flow with any text-enabled type can accept characters after a disabled marker.
+Container input also uses the immutable birth type. These are the existing
+TypeScript rules. Editor command compilation has its own rules; the native SDK
+has physical source helpers and a bounded model-child-path paragraph compiler;
+complete model-position command coverage remains open.
+
+The native runtime accepts boolean flags. Other JSON flag types reject; the
+TypeScript schema checker can be more permissive for malformed untyped input.
+See the [Rust example](./rust#blocks-without-plain-text) for concurrent edits,
+selection, undo/redo and own checkpoint recovery.
+
+## Unused node declarations
+
+A native schema registry can include valid node declarations that are not
+reachable through root children. This lets Word and presentation profiles retain
+their complete registries. Each declaration still needs to satisfy the supported
+schema contract, including its attributes, references and required-child rules.
+Invalid unused declarations are rejected.
+
+The registry and parent placement rules have separate roles. Declaring a spare
+text, atom, grid or flow type does not let an edit insert it under a parent that
+does not allow it. Rejected batches preserve document state, clock, History and
+pending changes. Unused grid/group entries do not change the active flat-flow
+model or History. Schema identity, DTO and checkpoints retain those entries.
+
+The original Word and presentation fixtures compile without pruning. Current
+comparisons cover bounded concurrent edits, metadata, default nested text,
+undo/redo and own checkpoint retry. Bounded nested paragraph insertion also
+compiles first, middle and required-slot end positions. Complete post-move
+command coverage and full-profile editing remain separate gates.
+See the [Rust example](./rust#unused-node-declarations).
+
+## Nested paragraph insertion
+
+The native SDK provides `insert_paragraph_at` for a model child path and
+`insert_model_at` for a supported flow/text tree. The last path index selects a
+child gap; it is not a text offset. The compiler resolves physical storage,
+default heads and required siblings internally. Existing `insert_block_in`
+continues to use explicit source tokens.
+
+Structured field writes follow a preceding type change in the same operation
+batch. Valid existing default-reset writes and reserved ticket order are
+preserved. A paragraph after a required sibling receives its own stored marker
+and placement; existing sibling placement writers are not overwritten.
+Detached, unplaced fragments do not define the required tail's base order.
+
+Undo removes the inserted paragraph and retains other users' text and movement
+records. Canonical schema output can hide retained overflow under maximum-child
+rules; that does not delete the stored content. Native JSON checkpoint replay
+uses the same schema and actor. See the
+[complete Rust example](./rust#insert-paragraphs-at-model-positions) for the
+supported inputs and fail-before-mutation boundaries.
+
+
+Native model paths can also be used after existing block movement. Resolve the
+child index from the current model, while retaining object IDs for identity.
+See [insertion after moves](../guide/rust#insert-at-current-model-positions-after-moves)
+for the complete two-peer Rust program and the remaining input boundaries.
+
+
+An insertion after move undo/redo must preserve the moved paragraph as a separate
+identity. Appending into its former source gap must not absorb its text. The
+compiler uses an existing source marker to fence that gap; peers editing the
+same observed gap still choose the same fence and retain the existing concurrent
+Enter behavior. This changes no existing sibling's placement writer.
+
+
+## Group and table command semantics
+
+A list group's children are text members. A command at a member gap may insert
+another block admitted by the containing flow; normalization splits the wrapper
+around that block. This does not make a table a valid child of the group schema.
+Group `by` values are inherited, with explicit member values taking precedence.
+The derived wrapper has no separate stored object ID.
+
+Document tables use stable row and column IDs and a schema-defined cell body.
+Covered cells remain addressable and retain their text. Model construction fills
+cell content before span/custom attributes. Editing schema-valid structures still
+needs command and concurrency contracts; see the [Q1–Q8 roadmap](../schemas/editing-contract).
+
+
+Axis insertion inside an anchored merged range grows its projected extent. It
+does not write a new merge register on behalf of the inserting actor. The model
+adapter applies requested edits plus requested normalization; command tests also
+check the independent before/inside/after endpoint rule. See the
+[editing contract](../schemas/editing-contract#model-edits-and-normalization).

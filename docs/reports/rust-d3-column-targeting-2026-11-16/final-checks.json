@@ -1,0 +1,71 @@
+{
+  "status": "PASS",
+  "native": "PASS",
+  "historicalComparison": "PASS_SOURCE_BINDING_RECHECKED_NOT_RERUN",
+  "historicalSourcePathsVerified": 186,
+  "freshInheritedStages": 14,
+  "freshInheritedStatus": "PASS",
+  "inheritedPathsCurrentlyVerified": 319,
+  "workspace": [
+    {
+      "name": "workspace",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "exit": 0,
+      "status": "PASS",
+      "seconds": 133.28,
+      "log": "output/rust-d3-column-targeting-resume-2026-11-16/workspace.log"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "status": "PASS",
+      "seconds": 15.25,
+      "log": "output/rust-d3-column-targeting-resume-2026-11-16/typecheck.log"
+    },
+    {
+      "name": "docs-build",
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "exit": 0,
+      "status": "PASS",
+      "seconds": 14.64,
+      "log": "output/rust-d3-column-targeting-resume-2026-11-16/docs-build.log"
+    },
+    {
+      "name": "docs-check",
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "exit": 0,
+      "status": "PASS",
+      "seconds": 1.47,
+      "log": "output/rust-d3-column-targeting-resume-2026-11-16/docs-check.log"
+    }
+  ],
+  "publication": "NOT_PERFORMED",
+  "exclusions": [
+    {
+      "path": "experiments/runtime-document-unused/compiler-boundaries.mjs",
+      "status": "NOT_RUN_STALE_EXPECTATION",
+      "reason": "Asserts historical fresh-slide paragraph style=null wire failure already repaired by D3."
+    },
+    {
+      "path": "experiments/runtime-document-textfalse/product-boundary.mjs",
+      "status": "NOT_RUN_STALE_EXPECTATION",
+      "reason": "Asserts native rejection of unused original Word/Presentation declarations already supported by D2."
+    }
+  ]
+}

@@ -1,0 +1,298 @@
+{
+  "status": "PASS",
+  "nativeCore": {
+    "passed": 177,
+    "log": "core-full-02.log"
+  },
+  "nativeSdk": {
+    "passed": 113,
+    "receipt": "sdk/receipt-final.json"
+  },
+  "comparison": {
+    "status": "PASS",
+    "workId": "rust-d2-patterns-2026-11-04",
+    "receipts": {
+      "main": "output/rust-d2-patterns-2026-11-04/compare/run-2026-11-04T07-34-47.393Z-34919/receipt.json",
+      "oracle": "output/rust-d2-patterns-2026-11-04/compare-oracle/run-2026-11-04T07-34-06.452Z-33145/receipt.json",
+      "product": "output/rust-d2-patterns-2026-11-04/compare-product/run-2026-11-04T07-34-20.897Z-33866/receipt.json",
+      "legacy": "output/rust-d2-patterns-2026-11-04/compare-legacy/run-2026-11-04T07-34-19.734Z-33783/receipt.json"
+    },
+    "main": {
+      "status": "PASS",
+      "schemas": 2,
+      "semanticActions": 84,
+      "actorStateComparisons": 168,
+      "typedOperations": 44,
+      "positiveDocEdits": 36,
+      "rejectedTargetActions": 16,
+      "exact": [
+        "typed operations",
+        "full raw History",
+        "pending/carets",
+        "material token state/writer registers/deletion ledgers/moves",
+        "clock",
+        "model UTF16 units"
+      ],
+      "explicitSemanticGuards": [
+        "undo retains concurrent peer B\ud83d\ude00",
+        "undo respects same-value foreign writer",
+        "pending replay converges"
+      ],
+      "crossRuntimeCheckpointExchange": "NOT_RUN"
+    },
+    "oracle": {
+      "status": "PASS",
+      "cases": 1267,
+      "newPatternCases": 362,
+      "legacyPatternCases": 905,
+      "stringRegExpTests": 1232,
+      "nativeValidatorComparisons": 2534,
+      "publicWireTargetChecks": 1416,
+      "stagedDocEditRecords": 1416,
+      "schemaCompileCases": 33,
+      "ecmascriptWhitespaceCodepoints": 25,
+      "nonWhitespaceContrasts": 15,
+      "unpairedSurrogates": {
+        "count": 2,
+        "status": "BOUNDARY_OBSERVED",
+        "javascript": "RegExp/attrValueOk/Doc.check/staged Doc.edit accept",
+        "native": "serde_json rejects before validator; no replacement; not parity PASS"
+      }
+    },
+    "product": {
+      "status": "COMPILE_PROBE_PASS",
+      "originalNames": [
+        "demo",
+        "word",
+        "notion",
+        "presentation"
+      ],
+      "probes": 24,
+      "originalResults": [
+        {
+          "name": "demo",
+          "variant": "original",
+          "stage": "before",
+          "typescriptProblems": [],
+          "native": "UnsupportedSchema at $.markValues.link.pattern: pattern is outside the shared native grammar"
+        },
+        {
+          "name": "demo",
+          "variant": "original",
+          "stage": "current",
+          "typescriptProblems": [],
+          "native": "UnsupportedSchema at $.nodes.image.text: text=false is unavailable"
+        },
+        {
+          "name": "word",
+          "variant": "original",
+          "stage": "before",
+          "typescriptProblems": [],
+          "native": "UnsupportedSchema at $.markValues.link.pattern: pattern is outside the shared native grammar"
+        },
+        {
+          "name": "word",
+          "variant": "original",
+          "stage": "current",
+          "typescriptProblems": [],
+          "native": "UnsupportedSchema at $.nodes.image-block.text: text=false is unavailable"
+        },
+        {
+          "name": "notion",
+          "variant": "original",
+          "stage": "before",
+          "typescriptProblems": [],
+          "native": "UnsupportedSchema at $.markValues.link.pattern: pattern is outside the shared native grammar"
+        },
+        {
+          "name": "notion",
+          "variant": "original",
+          "stage": "current",
+          "typescriptProblems": [],
+          "native": "UnsupportedSchema at $.nodes.image-block.text: text=false is unavailable"
+        },
+        {
+          "name": "presentation",
+          "variant": "original",
+          "stage": "before",
+          "typescriptProblems": [],
+          "native": "UnsupportedSchema at $.markValues.link.pattern: pattern is outside the shared native grammar"
+        },
+        {
+          "name": "presentation",
+          "variant": "original",
+          "stage": "current",
+          "typescriptProblems": [],
+          "native": "UnsupportedSchema at $.nodes.image-block.text: text=false is unavailable"
+        }
+      ],
+      "originalProductAcceptance": "UNSUPPORTED: text:false remains",
+      "diagnosticVariants": "Removing text:false exposes Word divider and Presentation heading1 reachability; removing unused declarations compiles. Not original acceptance."
+    },
+    "legacy": {
+      "status": "FILTERED_DIAGNOSTIC_PASS",
+      "filter": "article-composite",
+      "schemas": 1,
+      "actions": 80,
+      "fullOld23Drivers": "NOT_RUN this task; prior seals historical only"
+    },
+    "guards": {
+      "main": {
+        "attemptCount": 5,
+        "sourceBinaryFiles": 139,
+        "beforeAfterMatch": true,
+        "stillMatchesFinalSource": true,
+        "guards": "output/rust-d2-patterns-2026-11-04/compare/run-2026-11-04T07-34-47.393Z-34919/attempts.json"
+      },
+      "oracle": {
+        "sourceBinaryFiles": 80,
+        "beforeAfterMatch": true,
+        "stillMatchesFinalSource": true,
+        "guards": "output/rust-d2-patterns-2026-11-04/compare-oracle/run-2026-11-04T07-34-06.452Z-33145/hashes-before.json"
+      },
+      "product": {
+        "sourceBinaryFiles": 8,
+        "beforeAfterMatch": true,
+        "stillMatchesFinalSource": true,
+        "guards": "output/rust-d2-patterns-2026-11-04/compare-product/run-2026-11-04T07-34-20.897Z-33866/receipt.json"
+      },
+      "legacy": {
+        "attemptCount": 5,
+        "sourceBinaryFiles": 140,
+        "beforeAfterMatch": true,
+        "stillMatchesFinalSource": true,
+        "guards": "output/rust-d2-patterns-2026-11-04/compare-legacy/run-2026-11-04T07-34-19.734Z-33783/attempts.json"
+      }
+    },
+    "driverSourceHashes": {
+      "experiments/runtime-document-patterns/compare.mjs": "38415cd5e41221664759d66e832a362921883bbb77979602744ed86e56231449",
+      "experiments/runtime-document-patterns/README.md": "1981a1ab65455416a19b487fbacbb409cf67dd4048d08e884ac1d04fa580d0c0",
+      "experiments/runtime-document-patterns/fixtures.mjs": "1c3f57fb1400ccbf9e0318e0c334e28b901f47405e3e49e04f763c30046e8f8f",
+      "experiments/runtime-document-patterns/oracle.mjs": "6f0cea7ba7e207af82b59b6184854fa54595eafdbb489c11a8e4d1ff3d4d40ab",
+      "experiments/runtime-document-patterns/product-boundary.mjs": "20c6974eb869f289ac12917da6dfa8ba98d255b22d9d4dbf790ce9d9a4ad0468"
+    },
+    "compressionReceipt": "output/rust-d2-patterns-2026-11-04/compare-compression-receipt.json",
+    "diagnostics": [
+      "First cross-runtime attempt exposed ignored TS top-level insertCellText marks in copied helper; new helper uses text-run marks. Native emitted correct marks. Failure receipt preserved in compare/run-2026-11-04T07-32-23.868Z-29052.",
+      "Earlier oracle diagnostics fixed fixture branch-default alignment and cloned schema stage snapshots; failed receipts retained."
+    ],
+    "notRun": [
+      "browser",
+      "mobile",
+      "renderer",
+      "WASM",
+      "network",
+      "performance",
+      "commit",
+      "push"
+    ]
+  },
+  "workspace": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 14231,
+    "group": 14231,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 133.424,
+    "status": "PASS",
+    "tests": 2114,
+    "pass": 2112,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "typecheck": {
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.json"
+    ],
+    "pid": 33336,
+    "group": 33336,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 7.558,
+    "status": "PASS"
+  },
+  "documentation": {
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--workspace",
+        "@doc-sync/docs"
+      ],
+      "pid": 38959,
+      "group": 38959,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 5.087,
+      "status": "PASS"
+    },
+    "check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 45178,
+      "group": 45178,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.464,
+      "status": "PASS"
+    },
+    "pages": 55,
+    "internalLinks": 2635,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "sourceVerification": {
+    "status": "PASS",
+    "sourceMaps": {
+      "core": 5,
+      "sdk": 23,
+      "main": 139,
+      "oracle": 80,
+      "product": 8,
+      "filteredLegacy": 140,
+      "drivers": 5,
+      "inheritedTsIntegration": 31
+    },
+    "baselineChangesWithinOwnedScope": [
+      "HANDOFF.md",
+      "README.md",
+      "apps/docs/src/guide/document-rules.md",
+      "apps/docs/src/guide/rust.md",
+      "apps/docs/src/roadmap.md",
+      "apps/docs/src/schemas/custom.md",
+      "apps/docs/src/schemas/document.md",
+      "docs/rust-roadmap.md",
+      "experiments/rust-sdk/README.md",
+      "experiments/rust-shadow/src/runtime_schema.rs"
+    ],
+    "oldReportSeals": 9,
+    "oldTargetBinariesUnchanged": 14,
+    "documentedBodySha256": "c04f8e2395e2461895c81e9d3bb6705068a460fa095a2061b16aa9952805d0b1",
+    "exampleDifference": "One module documentation comment only.",
+    "gzipRoundTrips": 17,
+    "gzipOriginalBytes": 223812772,
+    "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4"
+  },
+  "legacyFull23Drivers": "NOT_RERUN_THIS_TASK",
+  "chrome": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "productionRustWasmClient": "NOT_QUALIFIED",
+  "publication": "NOT_REQUESTED"
+}

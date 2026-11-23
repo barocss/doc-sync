@@ -1,0 +1,149 @@
+{
+  "status": "BOUNDED_PASS_Q1_3_1_LOCAL_ID_TARGETING",
+  "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4",
+  "scope": "Native strict block/flow targeting and O(1) local read bases; no core/snapshot/History/Op changes, no distributed host guarantee",
+  "main": {
+    "profiles": 14,
+    "schemas": 4,
+    "originalProductProfiles": 5,
+    "customProfiles": 9,
+    "semanticActions": 390,
+    "actorStates": 780,
+    "liveTypescriptLogicalAuthorings": 107,
+    "liveRelativeArrayCalls": 16,
+    "relativeInsertCommands": 26,
+    "ordinaryBatchCalls": 3,
+    "rawSetupAuthorings": 4,
+    "negativeCalls": 26,
+    "opaqueBaseReads": 27,
+    "independentFullModelInsertionOracles": 89,
+    "receipt": {
+      "path": "output/rust-d3-targeting-2026-11-05/compare/run-2026-11-04T15-42-10.910Z-62963/receipt.json",
+      "sha256": "c2c5dabc2002f055529e9e77ea4aef5a75d925f1ff37bb636ea03f96627612df"
+    },
+    "currentCandidateQualified": true,
+    "sourceBinaryFreeze": {
+      "entries": 176,
+      "map": "output/rust-d3-targeting-2026-11-05/compare/run-2026-11-04T15-42-10.910Z-62963/run-source-hashes.json",
+      "mapSha256": "725f699a48f1ce7ea3d93859bb0e949d8cb37640ee532834db7ed4ea3762510e",
+      "binary": "output/rust-d3-targeting-2026-11-05/native-target/debug/examples/runtime_targeting_trace",
+      "binarySha256": "fd2515c4d455ec68ac0a84054ec40b4611eef1b07bf7a4b32194474240ddbabb",
+      "stages": [
+        {
+          "name": "typescript-schema-validation",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "typescript-independent-authoring",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "native-independent-authoring",
+          "status": "PASS",
+          "hashMapsEqual": true
+        },
+        {
+          "name": "cross-runtime-exact-comparison",
+          "status": "PASS",
+          "hashMapsEqual": true
+        }
+      ]
+    }
+  },
+  "native": {
+    "receipt": {
+      "path": "output/rust-d3-targeting-2026-11-05/native-final-v2-receipt.json",
+      "sha256": "91e903c6c6180bb9fce41339472ff3cde5a21ccc0df207cabf19da077548ee34"
+    },
+    "corePass": 194,
+    "sdkPass": 173,
+    "independentConsumers": 2,
+    "fullExample": true,
+    "sourceFiles": 112,
+    "inheritedTestsExamplesUnchanged": 80
+  },
+  "comparisonSummary": {
+    "path": "output/rust-d3-targeting-2026-11-05/compare-summary.json",
+    "sha256": "f5055dd2669ead89a7294f37824917b6cd80281a21b5a63d00f82f84ec2b01cd"
+  },
+  "inheritedSummary": {
+    "path": "output/rust-d3-targeting-2026-11-05/compare-inherited-summary.json",
+    "sha256": "2ef152488dc1b66b776d2f0c0d121067aec2387ed97b7ef3bb4951d72d87ef8a"
+  },
+  "inheritedActions": 2534,
+  "sourceReview": {
+    "path": "output/rust-d3-targeting-2026-11-05/design-review/implementation-source-seal.json",
+    "sha256": "8b253b5b61a4f37bafc3c5cc180ee236e204a5a8d7c347d7039d393d1d2b2e34"
+  },
+  "workspace": {
+    "receipt": {
+      "path": "output/rust-d3-batch-2026-11-04/workspace-test.json",
+      "sha256": "7607583e92b25093e73bffeeeac0318a29dd72ab551188c653744580aa5943ad"
+    },
+    "tests": 2162,
+    "pass": 2160,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "mode": "REUSED_PRIOR_UNAFFECTED_CHECKS",
+    "notFreshHere": true
+  },
+  "typecheck": {
+    "receipt": {
+      "path": "output/rust-d3-batch-2026-11-04/typecheck.json",
+      "sha256": "cad7784f1ad56f35501cfe6ec4bb93d76a008db2398a2658254e90126d963564"
+    },
+    "mode": "REUSED_PRIOR_UNAFFECTED_CHECKS"
+  },
+  "docs": {
+    "pages": 56,
+    "checkedInternalLinks": 2735,
+    "english": true,
+    "localPathsExcluded": true,
+    "build": {
+      "path": "output/rust-d3-targeting-2026-11-05/docs-build.json",
+      "sha256": "bac12195e78c23459af493fcc038d2af5c7cf73c1c8c88c192de892575420c70"
+    },
+    "check": {
+      "path": "output/rust-d3-targeting-2026-11-05/docs-check.json",
+      "sha256": "f46ca81957f39487119115c41f6ba5726579465ab45fdd7af27cbfda74bd1682"
+    }
+  },
+  "preservation": {
+    "path": "output/rust-d3-targeting-2026-11-05/preservation-final.json",
+    "sha256": "2307cb60ffc99b24aa7bfa658f184f70bc7b50a06dc1a3f90889e667ae65fb2f"
+  },
+  "whitespace": {
+    "path": "output/rust-d3-targeting-2026-11-05/whitespace.json",
+    "sha256": "d80c7e9e5446cf842306352bfbb4031e0f0677562d583a6c050f023911041227"
+  },
+  "failures": {
+    "focusedAndHarnessAttempts": "Preserved unique logs/receipts; setup/oracle/helper corrections classified",
+    "artifactCollector": "First 108-path subset receipt preserved; exact-directory filter and fresh broad execution bind full112 map",
+    "reviewBoundary": "18 reviewed API/product/test/core inputs unchanged; later4 test harness/executor files have separate recovered diffs and fresh qualification"
+  },
+  "reviewProvenance": {
+    "path": "output/rust-d3-targeting-2026-11-05/compare-review-provenance/receipt.json",
+    "sha256": "44416cb3a31d46d72f030d67f911eef6872c1393141f279ac89de34921be9eee"
+  },
+  "reusedTsEvidence": {
+    "path": "output/rust-d3-targeting-2026-11-05/reused-ts-evidence.json",
+    "sha256": "5d607dd224f7e975e0142ff9bbb71a12a2622851eb10e51535330c956782eccb"
+  },
+  "notRun": [
+    "Chrome",
+    "mobile",
+    "performance measurement",
+    "WASM/production editor integration",
+    "native durable process/server recovery",
+    "mixed-runtime checkpoint exchange"
+  ],
+  "publication": {
+    "commit": false,
+    "push": false,
+    "deployment": false,
+    "registry": false
+  }
+}

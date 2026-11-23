@@ -30,7 +30,7 @@ test("two MCP agents use separate histories and reconcile a stale concurrent bas
     const root = await mkdtemp(join(tmpdir(), "doc-sync-two-agents-"));
     const serverFile = fileURLToPath(new URL("../../demo/server.ts", import.meta.url));
     const mcpFile = fileURLToPath(new URL("../src/main.ts", import.meta.url));
-    const server = spawn(process.execPath, [serverFile], {env: {...process.env, PORT: "0", DATA_DIR: join(root, "server"), NO_SCHEMA: ""}, stdio: ["ignore", "pipe", "pipe"]});
+    const server = spawn(process.execPath, [serverFile], {env: {...process.env, PORT: "0", DOC_SYNC_HOST: "127.0.0.1", DATA_DIR: join(root, "server"), NO_SCHEMA: ""}, stdio: ["ignore", "pipe", "pipe"]});
     let serverError = "";
     server.stderr.on("data", chunk => { serverError += String(chunk); });
     const agents: Array<{client: Client; transport: StdioClientTransport}> = [];

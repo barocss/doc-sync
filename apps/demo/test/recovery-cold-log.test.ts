@@ -47,7 +47,7 @@ function fixture(): Fixture {
 }
 
 async function start(data: string, gate = false, fsyncGate = false, fsyncStage: "before-sync" | "after-sync" = "before-sync", resetGate = false, compactionGate = false) {
-    const env: NodeJS.ProcessEnv = {...process.env, PORT: "0", DATA_DIR: data,
+    const env: NodeJS.ProcessEnv = {...process.env, PORT: "0", DOC_SYNC_HOST: "127.0.0.1", DATA_DIR: data,
         ...(gate ? {DOC_SYNC_TEST_COLD_GATE_DOC: docName} : {}),
         ...(fsyncGate ? {DOC_SYNC_TEST_FSYNC_GATE_DOC: docName, DOC_SYNC_TEST_FSYNC_GATE_STAGE: fsyncStage} : {}),
         ...(resetGate ? {DOC_SYNC_TEST_RESET_GATE_DOC: docName} : {}),

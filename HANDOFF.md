@@ -1,5 +1,195 @@
 # Handoff — @barocss/doc-sync
 
+## Q1.3.4 local catalog prototype — 2026-11-16
+
+Added read_model_with_catalog for discoverable stored blocks, owned grid axes and
+uncovered cell tuples. Five focused plus30 inherited targeting tests and a runnable
+example PASS; independent review's stored-covered-descendant test was incorporated.
+Remaining equivalence/consumer coverage and uncommitted D2/D3 foundation prevent
+standalone publication. This is not full Q1.3.4 qualification. See
+`output/rust-d3-id-catalog-2026-11-16/README.md`. Long load tests deferred.
+Separately, nightly issue #1 is closed after the isolated four-line workflow fix
+was pushed to main as6d10c27; all other WIP remains uncommitted.
+
+## Local nightly build-order repair — 2026-11-16
+
+After column verification, both jobs in `.github/workflows/long-fuzz.yml` gained
+an explicit core build between npm ci and direct Node tests. Local Node22.19.0
+core build, properties and an8-peer/seed1/1024-op smoke pass; column source maps
+remain unchanged. Remote CI and full nightly workloads were not rerun; no push.
+See `docs/reports/nightly-build-order-2026-11-16/README.md` for scope and evidence.
+
+## Continuation verification — 2026-11-16
+
+The existing Q1.3.3 column-targeting work was resumed locally. Fresh core194 /
+SDK191, the complete example/two locked doc consumers and all 14 inherited
+regression stages PASS. Production source and inherited WIP are unchanged.
+The historical column comparison source/binary hashes still match, but that
+422-action comparison was not rerun today. Fresh local workspace2170 total /
+2168 PASS / two platform SKIPs / zero failures, typecheck and docs build/check
+PASS. The selected source/evidence archive and both roadmaps are finalized in
+`docs/reports/rust-d3-column-targeting-2026-11-16/`. Q1.3.4 native ID read catalog
+remains next. No commit or push was performed.
+See `output/rust-d3-column-targeting-resume-2026-11-16/README.md` for exact receipts,
+coverage and exclusions. This note does not supersede the earlier evidence.
+
+Latest **§5.158** adds bounded native typed Document grid row/cell targeting.
+Fresh TS/native comparison passes14 profiles/435 actions/870 actor states;
+core194/SDK182 and two complete documentation consumers PASS. Existing anchored
+merge growth, hidden payload and foreign writers survive both undo orders.
+A moved-grid TS compiler birth-line lookup bug is fixed; focused source/dist
+checks and fresh workspace2168 PASS/two platform SKIPs/typecheck PASS. Explicit
+one-column creation and a native ID read catalog remain next. Browser, performance,
+production Rust/WASM and durable native server recovery are not qualified here.
+
+Latest **§5.157** adds bounded native strict stored-ID/flow-edge insertion.
+Fresh TS/native14 profiles/390 actions/780 states PASS; core194/SDK173 and
+complete example/two independent locked docs consumers PASS. Local opaque
+incarnation/revision/schema bases reject stale or foreign handles; strict lookup
+rejects deleted/hidden/covered/alias/synthetic/axis targets. Core/storage/wire/
+History/checkpoint source stays unchanged. Current inherited2534 actions PASS;
+docs56 pages/2735 links PASS. Next: typed grid/row/cell tuples, then explicit
+single-column creation. See `docs/reports/rust-d3-targeting-2026-11-05/`.
+No commit/push/publication included.
+
+Latest **§5.156** adds bounded native atomic model-insert batches.
+Fresh marker-qualified TS/native14 profiles/351 actions/702 states PASS;
+core194/SDK159, complete example and two independent locked docs consumers PASS.
+Shared columns, optional identities, one commit, late-error rollback and foreign
+changes are preserved. Explicit reservation metadata keeps old ordinary snapshot
+clock validation. General D3 commands and Rust/WASM production integration stay
+open. See `docs/reports/rust-d3-batch-2026-11-04/`.
+No commit/push/publication included.
+
+Latest **§5.155** extends bounded native D3 group/grid model insertion.
+Fresh TS/native22 profiles/481 actions/962 actor states PASS across original
+Word/Presentation, explicit nested-table compositions and six generated schemas.
+Core189/SDK152 and both independent complete docs consumers PASS; whole workspace
+2160 PASS/two expected SKIPs. Direct covered-cell selection capture/resolve is
+fixed with legacy boundaries retained. Q1–Q8 plus atomic batches, stable targeting,
+authority, annotations and typed model handles are documented. Full D3 and
+production Rust/WASM remain open. See
+`docs/reports/rust-d3-group-grid-2026-11-04/`. No commit/push/publication included.
+
+Latest **§5.154** supports bounded D3 model-path insertion after existing moves.
+Original Word/Presentation 27 profiles/1062 actions/2124 states PASS;
+core189/SDK142, source119 and whole npm2160 PASS/two expected SKIPs.
+Current placement winners, canonical defaults, deterministic promotions and
+physical source fences preserve foreign text/writers and same-gap coalescence.
+Docs55 pages/2,660 links PASS. Full D3 and production Rust/WASM remain open.
+See `docs/reports/rust-d3-moved-2026-11-04/`. No commit/push/publication included.
+
+Latest **§5.153** fixes bounded D3 nested paragraph command compilation in
+original Word/Presentation. TS pending-type field resets, required-end new-node
+placement and native canonical default/max projection now agree. Core189/SDK129,
+10 profiles/466 actions/932 actor states PASS; foreign head writers and stored
+text survive undo/redo/own checkpoint recovery. Whole workspace2,131 PASS/two
+expected SKIPs; docs55 pages/2,654 links PASS. Full D3 and production Rust/WASM
+Client delivery remain open. See `docs/reports/rust-d3-paragraph-2026-11-04/`.
+No commit/push/publication included.
+
+Latest **§5.152** accepts supported unused registry entries while preserving
+all-node validation and parent placement. Core189/SDK120 PASS; original Word/
+presentation bounded84 actions/168 states and inherited textfalse90 PASS.
+D3 nested-paragraph compiler differences remain observed. Final workspace
+2,112 PASS/two expected SKIPs/zero failures; docs55 pages/2,645 links PASS.
+Initial disk/MCP failures and successful retries are retained. Full product
+editing and production Rust/WASM delivery remain open. See
+`docs/reports/rust-d2-unused-2026-11-04/`. No commit/push/publication included.
+
+Latest **§5.151** supports boolean text-disabled block flags with existing
+flow/birth admission and retained projection. Core183/SDK116 PASS; two-schema
+TS/native90 actions/180 states, inherited patterns84 actions PASS. Whole npm
+2,112 PASS/two expected SKIPs/zero failures; docs55 pages/2,640 links PASS.
+Demo/Notion compile; Word/presentation unused declarations remain next. Full
+product editing and production Rust/WASM delivery remain open. See
+`docs/reports/rust-d2-textfalse-2026-11-04/`. No commit/push/publication included.
+
+Latest **§5.150** supports the two product link/color patterns through existing
+native APIs. Core177/SDK113 PASS; TS/native84 actions/168 states and the
+1,267-case validator oracle PASS. Whole npm2,112 PASS/two SKIPs/zero failures;
+docs55 pages/2,635 links PASS. Original product schemas now reach text:false;
+full D2 and production Rust/WASM Client remain open. See
+`docs/reports/rust-d2-patterns-2026-11-04/`. No commit/push/publication included.
+
+Latest **§5.149** adds v3 sources from declared field leaves. Field destinations
+retain structural JSON validation and independent writers; atomic targets keep
+reference-group admission. Core171/SDK109 PASS; TS/native352 commands/704 states,
+23 drivers and 219 fixed hashes PASS. Whole npm: 2,112 PASS, two expected SKIPs,
+zero failures. Full D2 and Rust/WASM Client delivery remain open. See
+`docs/reports/rust-d2-fieldrefs-2026-11-04/`. No commit/push/publication included.
+
+Latest **§5.148** adds v3 logical references inside atomic schema payloads with
+typed object/array paths, downward parent/child identity and source valuePath
+provenance. Core166/SDK105 PASS; fresh TS/native296commands/592states and20driver
+qualification PASS with208 immutable hashes. Native JSON trees do not represent
+physical JS heap aliases; clone/JSONHistory observations are separate. Seven
+prior report seals remain intact. Full D2/D3, mutable/field aliases and Rust/WASM
+Client integration stayopen. See docs/reports/rust-d2-payload-2026-11-04/.
+No commit/push/deployment/release included.
+
+Latest **§5.147** adds explicit cross-property schema reference groups, including
+node/mark and enum-only sharing, representative/effective rules and target-aware
+History. Core156/SDK101 PASS; TS/native246actions/492states and joint16driver
+qualification PASS with194 immutable source/binary hashes. ENOSPC retries and
+initialMCP404 failures are retained; an optional demo IPv4host fix adds two
+regressions. Final npm2,114cases:2,112PASS/2SKIP/0FAIL. Six older report seals
+remain unchanged. Full D2/D3, nested aliases and production Rust/WASM stay open.
+See docs/reports/rust-d2-shared-2026-11-04/. No commit/push/release included.
+
+Latest **§5.146** adds explicit shared default/enum references through a versioned
+native schema DTO. Core147/SDK93 PASS; independent TS/native182actions/364states
+and final12driver regression PASS. Bare schema identity/wire and unlisted enum
+identity remain intact. Linked factory payload order now matches actual JS
+sharing. DocHub accepts omitted default-alias births; retained composite payloads
+still reject. Full D2/D3, arbitrary reference graphs and production Rust/WASM
+integration remain open. See docs/reports/rust-d2-alias-2026-11-04/.
+No commit/push, deployment or registry publication is included.
+
+Latest **§5.145** adds explicit native schema-reference handles for object/array
+defaults and null-default composite enums. Core138/SDK86 PASS; independent
+TS/native160actions/320states and five earlier corpora PASS. Reference-aware
+split History and same-schema object-key-order delivery defects are fixed.
+Workspace2,112cases:2,110PASS/2expectedSKIP/0FAIL. Composite default-to-enum
+aliases, raw TS enum transport and full D2/D3/WASM integration remain open.
+See docs/reports/rust-d2-composite-2026-11-04/. No commit/push, deployment or
+registry publication is included.
+
+Latest **§5.144** adds nested Document field registers, nullable JSON mark
+values and deterministic required-child min/max rules. Core120/SDK78 PASS;
+independent four-schema260actions/520states and19schema checks PASS. A reproduced
+TS required-anchor cycle that hid nonempty content after undo/redo is fixed in
+TS and native, with beforeFAIL2/afterPASS2. Existing flow/grid/shapes/legacy
+corpora pass. Full D2/D3 remain incomplete, including an observed empty-patch
+compiler-only clock gap. See docs/reports/rust-d2-rules-2026-11-04/.
+No commit/push, deployment or registry release is included.
+
+Latest **§5.143** adds runtime Document group/inline/span and scalar value marks.
+Native SDK67/core107 PASS. Independent TS/native188actions/376actorstates and
+12 isolated schema rejections pass, including raw History, nonempty pending
+carets, stable UTF-16 selection and checkpoint restore. Existing flow/grid/legacy
+corpora pass. New semantic helpers omit default birth attrs and respect effective
+$type while retaining foreign writer fences. D3 empty-head/model-position
+insertion, advanced rules and production Rust/WASM integration remain open.
+See docs/reports/rust-d2-shapes-2026-11-04/. No commit/push or release is included.
+
+Latest **§5.142** adds runtime Document `grid → row → cell → flow` chains,
+including independently named tables nested in cell bodies. Native SDK60/core96
+PASS. Two renamed descriptors with two grid chains each compare 180 independent
+TS/native actions and 360 actor states under declared format projections.
+Merge/split retains hidden content and selective undo/redo preserves peer edits.
+Axis moves, model-only row/body attributes and the D3 model-position compiler
+remain open. See docs/reports/rust-d2-grid-2026-11-04/ for scope and evidence.
+No commit, push, registry release, browser or performance claim is included.
+
+Latest **§5.141** adds recursive runtime Document flow/text/atom schemas to the
+private native Rust core and SDK. Native SDK55/core89 PASS; independent TS/native
+162 actions/324 actor states match under the declared typed/storage projection.
+The observed post-move model-position insertion mismatch remains D3 work; full
+D2, production recovery/GC and Rust/WASM Client integration are still open.
+See docs/reports/rust-d2-nested-2026-11-04/ for source-bound evidence and limits.
+No commit, push or registry publication is included in this checkpoint.
+
 Latest **§5.133** qualifies the startup-lifetime checkpoint with a fresh full
 `npm test`:1650 cases/1648PASS/two expected platformSKIP/zeroFAIL/zeroCANCEL.
 Root typecheck and docs55pages/2601links PASS. All688 source hashes matched the
@@ -7339,3 +7529,1448 @@ coverage, production recovery/GC, a Rust/WASM Client factory and same-binding
 backend interchange are still open. Documentation/build checks describe that
 boundary. All packages remain private; main publication does not publish npm
 or crates. Final evidence: docs/reports/main-verification-2026-11-04/.
+
+### 5.141 D2 recursive runtime Document flow/text/atom slice
+
+Three agents split the native core, typed SDK and independent TypeScript/native
+comparison. The source base is main `1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4`.
+Runtime Document schemas now support arbitrarily named recursive flow/text/atom
+nodes, each flow's allowed children/default text type, scalar attributes and
+Boolean marks. Existing flat Document, Graphic, sparse-sheet and fixed preset
+paths retain passing regression coverage.
+
+The SDK adds parent-aware physical-source insertion/read helpers, nested
+selection capture/resolve and `reparent_block`. A reproduced moved-anchor bug
+used the birth token after that block moved to another flow. The repair uses
+the current accepted placement writer, excluding cycle-rejected candidates.
+Before/after logs and a focused regression are retained.
+
+Native verification passes SDK55 and core89 (zero failures; seven and eleven
+new focused tests respectively). Legacy runtime comparison passes six profiles,
+82 actions and 164 actor states. Independent renamed depth-three Document
+fixtures pass 162 semantic actions/324 actor-state comparisons, seven unsupported
+descriptor rejections, 14 coupled checkpoint restores and six empty root/nested
+selection captures. Concurrent insertion, attributes, formatting, deletion,
+movement/cycles, foreign-write-preserving undo/redo, duplicate pending replay,
+ACK and invalid-state atomicity are covered. Raw History references are exact;
+typed operation/pending projections retain writer IDs and carets.
+
+Native journal checkpoints and TS line snapshots are different wire formats.
+Restore equality is exact within each runtime, not cross-runtime snapshot
+compatibility. Storage projection omits only unwritten derived sole-head
+text/fragment lines without attributes, deletion/cancellation entries or
+History/pending/move references; root/flow heads and authored data remain.
+Raw traces and the 134-row/1,786-occurrence omission ledger are retained.
+
+An expanded earlier 150-action corpus failed after movement: physical insertion
+emits Node37, whereas TS model-position insertion emits Node37+Move38. This
+remains OBSERVED_COMMAND_MISMATCH / D3_NOT_IMPLEMENTED. Its failing fixtures,
+traces and receipt are preserved. The qualified162 corpus creates needed cycle
+siblings before movement; its PASS does not close the observed command gap.
+Full model-position compilation, runtime tables/grid/group/inline/span, value
+marks, structured attrs/cardinality/computed rules and complete product schemas
+remain open. Arbitrary virtual-tail selection/follow-up insertion is not
+qualified. No production server/GC, live transition, shared Map/List native API,
+CRDT WASM package, Client factory, browser, mobile or performance claim is added.
+
+The SDK README and Rust guide include an identical complete nested two-actor
+example. Extracted standalone consumer execution passes with Cargo/rustc1.87;
+checkpoint/pending replay twice, ACK, foreign text and undo/redo are asserted.
+All46 native source/manifest files remain unchanged during final SDK/example
+runs; the core and comparator hashes also match their final receipts.
+
+The first full workspace attempt failed when this session ran docs prebuild
+and tests concurrently, removing dist modules during child startup. This is
+an execution error, not a qualified regression result; the complete failed log
+is preserved. Final sequential regression results are recorded in the report.
+Final sequential workspace regression passes 2,110 cases: 2,108 PASS, zero FAIL,
+two expected platform SKIPs and zero cancelled (124.905 s). Documentation build
+passes (12.372 s); internal-link checks pass 55 pages and 2,610 links. README, custom schema guide,
+SDK guide and both roadmap views now describe recursive support and the open
+D3 command gap. No commit/push or npm/crates publication was requested here.
+
+[Source-bound verification report](docs/reports/rust-d2-nested-2026-11-04/README.md).
+
+### 5.142 D2 runtime nested Document grids and cells
+
+Three agents split native core, SDK/driver/docs and independent comparison.
+The source base is main `1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4` plus inherited
+uncommitted recursive-flow work. A 61-file source archive and hash map capture
+that actual pre-extension worktree. Prior sealed reports/evidence remain intact.
+
+Runtime schemas now compile arbitrary grid/row/cell/body names, multiple chains
+in one descriptor and grids nested inside flows and cells. Each body uses its
+own defaults and allowed children. Stable row/column token IDs define cell
+addresses. Cell text/blocks, scalar grid/cell attributes, Boolean marks,
+merge/split, covered content, block movement, selections and coupled native
+History/pending checkpoints reuse existing CRDT rules. Standard computed
+colspan/rowspan (default1, optional min1) and spanned (defaultfalse) are accepted
+as derived metadata. Row/cell-body attributes, axis moves and arbitrary computed
+rules reject; groups/inline/span/value marks, structured attrs/cardinality and
+full product descriptors remain open. Dense Document grids are not sparse
+Spreadsheet storage.
+
+The SDK adds insert_grid_at (grid+axes in one History action), stable axis/head
+helpers, row/column insertion, cell text/block/attribute editing, merge_cells,
+split_cell and reparent_block_to_cell. Deletion uses axis IDs through delete.
+Dimension sum/clock overflow rejects before allocating axes. Insertion retains
+a physical-source contract, not all TS EditOp model-position compilation.
+A valid default paragraph head was rejected by the inherited Graphic anchor
+lookup; a narrow SDK repair accepts an existing Document line head, with a
+regression. An initial driver char-ID/block-ID mapping error is recorded
+separately; arbitrary character anchors are not added to the public contract.
+
+Native suites pass core96/newgrid7 and SDK60/newgrid5, zero failures. Both suites
+initially caught old negative assertions that classified all grids unsupported;
+only the newly valid shape expectation changed, with malformed-chain/default
+rejection preserved. The pre-extension compiler's UnsupportedSchema failure and
+these intermediate failed runs remain in the new task evidence.
+
+Independent comparison passes 180 actions/360 actor states across two renamed
+descriptors, each with two distinct grid chains/defaults. It covers concurrent
+same/distinct cell edits, axes, cell attrs/format fences, hidden foreign content
+through merge/split, grid moves, selective undo/redo, eight coupled checkpoints,
+two UTF-16 selection captures, duplicate replay, ACK and rejected-state atomicity.
+Twelve independent negative descriptors assert intended rejection paths/reasons.
+The initial copied negative list omitted marks and could reject the wrong rule;
+its named-rule coverage is withdrawn. Final valid-base negatives, including
+separate span dependency/shape probes, replace it without changing the positive
+180-action corpus hash. Prior receipts and the coverage-gap note are retained.
+Typed ops IDs, raw full History and availability, pending/caret, model, clock,
+material tokens/register writers/deletion/cancel/moves match. Format projection
+retains all axis and cell metadata/content, mapping only axis-root born DTO
+fallback paragraph to TS empty; read-only core review proves it is not stored
+birth/default data or used by History/checkpoint. The existing narrow derived
+empty text/fragment-head projection remains explicit with raw traces retained.
+
+The earlier recursive-flow corpus reruns PASS162actions/324states. Six legacy
+runtime profiles rerun PASS82actions/164states. A separate new D3 probe still
+observes TS Node+Move insertion after a moved grid while native physical-source
+insertion rejects that anchor. This OBSERVED_D3_GAP is not NOT_RUN or part of
+the positive180 PASS. Complete model-position insertion, including all trailing
+empty-flow boundaries, remains D3. Cross-runtime checkpoint/wire exchange,
+production recovery/GC, live schema transition, shared native Map/List and a
+CRDT WASM Client factory are not qualified by these native results.
+
+The SDK README and Rust guide share a complete runnable two-chain/two-actor
+consumer example; extraction/compile/run PASS with all49 native hashes unchanged.
+It asserts peer-text undo/redo, raw covered content versus visibility, split,
+checkpoint parsing, retry and ACK. Initial mistaken visibility assertion and its
+correction remain recorded. Current schema pages/README/roadmaps now explain
+runtime tables and distinguish the native subset from fixed presets and WASM.
+
+Final sequential workspace npm test passes 2,110 cases: 2,108 PASS, zero FAIL,
+two expected platform SKIPs, zero cancelled, 124.462 s. The production TypeScript,
+server, MCP and binding sources are unchanged by this grid work. Documentation
+build passes in 14.262 s; links pass 55 pages/2,611 internal links with English
+content and local paths excluded. Corrected negative-case coverage and source
+hash verification are in the final report.
+No browser/mobile/performance, real transport restart, commit/push or registry
+publication is claimed in this task.
+
+[Source-bound grid verification report](docs/reports/rust-d2-grid-2026-11-04/README.md).
+
+### 5.143 D2 runtime Document group, inline and span schemas
+
+Three agents split core implementation, SDK/driver/docs and independent TS
+comparison/review. Base is main1cfb7a2 plus inherited uncommitted recursive-flow
+and grid work. The actual67file baseline is archived and verified unchanged.
+Three schema-only baseline probes reject group, inline and span/value marks at
+expected missing-support paths; final supported descriptors compile without
+rebuilding Rust. Older sealed reports are retained unchanged.
+
+Document runtime schemas add arbitrary supported group/type/by/mark/span-attr
+names and scalar markValues. Group ownership is flow-local first-match and may
+include a default text member. Consecutive members group by declared scalar
+values, transferred to the derived wrapper model. Inline tokens have stable
+IDs and one UTF-16 slot. Span projection selects the first active schema-ordered
+span and keeps other marks on child text. Default/null/zero/false/empty and
+inheritance behavior follows TS. Minimal flat descriptors, nested flows and
+grid cells are covered. Graphic value marks remain rejected.
+
+SDK helpers add group/inline/text insertion at physical heads, token enumeration,
+scalar/span formatting, inherited insertion and group attribute updates using
+existing selective History, checkpoint/pending/retry/ACK. Two real helper issues
+were fixed: default-valued birth attrs differed from TS writer metadata, and
+group membership used immutable birth type after a legal effective$type change.
+Only new semantic birth helpers omit validated default/null values; raw record,
+generic block helpers and same-value/default update writers remain. A shared
+pure validator avoids an additional full journal replay solely for validation.
+Effective membership resolves current valid text type with null/unset fallback.
+Invalid keys/values/types/member IDs reject without partial document/pending
+changes. Before-failure evidence and focused regressions are retained.
+
+Core107PASS/new11 and SDK67PASS/new7, zero failures. Independent fresh comparison
+passes188actions/376actorstates over two renamed descriptors, each with three
+groups, two inline and two span types. It includes flow-local first-match,
+concurrent inline insert/delete/attrs, scalar and group writer fences, inherited
+marks, overlapping spans, effective retyping, undo/redo, ten checkpoints,
+stable selection resolution and nonempty pending carets across restore.
+Typed op IDs, raw full History/availability, typed pending/caret, normalized
+models, material tokens/register writers/deletion/cancel/moves and clock match.
+Twelve valid-base negative descriptors assert exact paths/reasons; seven pass
+TS checkSchema but exceed the native subset, and five deliberately isolate
+invalid fields/references. Positive TS Doc.edit changes pass Doc.check against
+pre-edit state, avoiding a false oracle from permissive local authoring alone.
+
+Existing corpora rerun PASS: flow162actions/324states, grid180actions/360states
+with positivehash unchanged, six legacy profiles82actions/164states. Grid's
+newly supported group/inline/value-mark/span descriptors explicitly assert
+admission instead of being filtered out. The malformed span case still rejects
+its intended field. Old flow missing-marks negatives are only rejection smokes.
+
+A separate empty-cell group insertion observes D3 head rewrite/tail differences:
+TS edits head type+attrs and emits a default paragraph tail; native physical
+helper inserts a member marker. OBSERVED_D3_GAP remains open, outside positive188.
+The positive corpus seeds nonempty cell text before physical insertion. Existing
+post-move model-position compiler gaps stay open. Format projections do not
+remove default writers, group attrs or hidden content. They only handle recursive
+UTF-16 representation, optional fields and already-reviewed empty derived-head
+and axis-born DTO differences. Cross-runtime snapshot/wire exchange is not
+qualified: each runtime restores its own checkpoint format.
+
+Diagnostic failures distinguish invalid typed fixture values, comparison format
+bugs, physical anchor mapping and real SDK authoring differences. Some early
+runs overwrote receipt.json; raw failure traces/stacks/hash maps remain, while
+later runs retain numbered receipts. Final qualified shapes receipt is30.
+Complete immutable snapshots for every intermediate source/binary are not
+claimed. The original baseline and final source qualification are preserved.
+
+SDK README and Rust guide share a73line two-peer example, extracted into two
+independent offline Cargo consumers. Both PASS after final fixes; all59 native
+source/data/manifest hashes match before/after. README, schema guides and both
+roadmaps explain derived identities, physical source APIs and remaining rules.
+Nonempty derived attrs, duplicate groupby keys, text:false, structured fields/
+marks, cardinality, arbitrary computed, axis moves/live transitions and full
+product/compiler gates remain open. Native shared Map/List, production recovery/
+GC, CRDT WASM, Client factory/editor bindings are separate. No Chrome/mobile,
+performance, native process/server crash or cross-runtime network proof is added.
+
+Final sequential workspace: 2,110 cases, 2,108 PASS, zero FAIL, two expected
+platform SKIPs, zero cancelled (122.128 s). Documentation build passes in
+15.984 s; 55 pages and 2,612 internal links pass, with English content and local
+paths excluded. Source maps of 32 core, 59 native and 75 comparison files and
+the identical compiled example code are verified. Review corrected grid docs
+from twelve rejections to eight rejections plus four admissions. No commit, push,
+npm/crates publication or website deployment was
+requested in this task.
+
+[Source-bound shapes verification report](docs/reports/rust-d2-shapes-2026-11-04/README.md).
+
+### 5.144 D2 structured fields, JSON values and required children
+
+Three agents own core, SDK/docs and independent TS comparison/review. Baseline
+is main1cfb7a2 plus inherited uncommitted native flow/grid/shapes work, captured
+as72 actual files rather than GitHEAD alone. Archive hashes match. Before/after
+probes prove old fields/rules compile rejection and current acceptance; the
+old nullable mark schema already compiled, but actual object/array VALUE edits
+rejected before and now pass. Earlier sealed reports remain unchanged.
+
+Runtime Document attributes opt into recursive fields with independent leaf
+writers, declared defaults, sparse birth, partial patch and null reset. Stored
+text/flow/inline/grid/atom and cell paths share validators and field projection;
+root/model-only row/body/derived attrs retain their limits. Structured group-by
+projection and group field updates are included for uniform field definitions.
+Mixed scalar/field definitions in one group patch are not qualified. Atom field
+support uses the common implementation but is not directly covered by the
+independent positive corpus. Safe JSON/path depth is64; dollar/prototype keys
+and nonrepresentable values reject. Edit validation borrows declared rules;
+no extra full schema compile or journal replay was added just for preflight.
+
+Nullable no-enum markValues now accept field-safe JSON object/array VALUES,
+with one atomic writer per mark (no subkey merge). Object/array DEFAULT and
+composite ENUM remain rejected to retain JavaScript reference identity.
+markValues.fields is also unsupported by the TS contract. Source-bound identity
+probes distinguish same-default reference from a deeply equal distinct object.
+Composite marks follow per-UTF16-token cloning/span grouping; no deep-equality
+replacement. Three actual TS-valid dollar/prototype-key values are deliberately
+native-unsupported with rollback, not mislabeled TS-invalid inputs.
+
+Flow childRules support min/max0..1000 for text/group/flow/grid/atom. Missing
+slots have deterministic ~required URI-addressed actors and0/1/2/3 head/node/
+row/column tickets. Authored replacements hide fallback without deleting it;
+overflow remains stored and deletion promotes candidates. Positive-minimum
+cycles reject. Required slots are editable but fixed schema-owned markers
+cannot be forged/moved/retyped/removed. Constrained text births retain immutable
+|child:birthID boundaries and same-parent canonical required right endpoints.
+Selection, authored movement, selective undo/redo, checkpoint/replay/ACK are
+compared. delete_block covers required text/flow descendants; required atom/grid
+marker deletion is a no-op in the SDK helper and cell content uses cell APIs.
+
+SDK adds set_attributes, set_field_path, required_head, required_node and bounded
+delete_block. Existing structured node/cell/group setters generate leaf writes,
+including the TS reserved compiler ticket for nonempty branch expansion. Generic
+scalar/rawrecord/Graphic writer and block/head move-anchor contracts remain.
+Fixture character aliases map to containing blocks only in the trace adapter.
+A rejected generic char-anchor attempt and development source-race failures are
+preserved; neither is treated as a product regression PASS.
+
+Core120/120 PASS (new13); SDK78/78 PASS (new11). Final manifests are35 core files
+and84 SDK/native/data/fixture/doc files, stable within their qualified runs.
+The same78line required-title/two-leaf/foreign-writer/JSON-mark/checkpoint retry
+program in SDKREADME/Rustguide compiles/runs in an independent Cargo consumer
+against the final SDK snapshot. Later prose updates preserve that exact code.
+
+Independent fresh source-bound run passes four descriptors,260actions/520states
+and19 exact schema checks; five descriptors are TS-valid/native-unsupported.
+Typed op IDs, full raw History/availability, pending/caret, material storage,
+registerwriters/deletion/cancel/moves, clock, normalized models and selections
+match. It covers12 coupled checkpoints, concurrent fields and fallback typing,
+reset/foreign fences, required shapes and max0, promoted candidates, deletion,
+authored move after required anchors, undo/redo, replay/ACK and rejected-state
+atomicity. TS Doc.edit-authored changes also pass staged Doc.check; snapshots
+restore exactly within each runtime, not cross-runtime wire exchange. Per-run
+source archives/receipts, whole-run src+dist guard and binary hash are retained.
+
+Independent review found a real preexisting TS visibility bug: move nonempty
+content after a required atom, undo and redo. Lazy automatic-gap materialization
+could make the required chain depend on its own descendant, hiding content while
+raw text/attrs remained alive. The narrow TS doc.ts and native fix exclude
+required-anchored gaps and unwritten root gaps from that predecessor selection;
+a cheap no-rules guard avoids adding work to ordinary flows. RGA/order/History
+protocol rules are unchanged. New source-import tests FAIL2 before/PASS2 after
+cover text/attrs, repeated reads, two-peer foreign writer convergence and restore.
+The source-bound --expect-fixed probe passes after rebuilding dist. Old bad
+rendering is not mirrored and called successful editing.
+
+Existing regressions pass: flow162/324states; grid180/360; shapes188/376;
+six runtime profiles82/164. Old grid/shapes positive corpus hashes are unchanged.
+New cardinality admission is explicit, not filtered: grid7reject+5admit,
+shapes11reject+1admit. Old missing-marks negatives remain only rejection smokes.
+
+Observed D3 empty{} patch boundary remains: ops/model/pending/History are no-op,
+but TS consumes one discarded compiler ticket and native does not. Final source
+probe labels OBSERVED_D3_COMPILER_CLOCK_GAP. Earlier generic postmove and empty
+head compiler gaps also remain separate. General computed/callback rules,
+text:false, axis moves, model-only stored attrs, live transitions, full product
+fixtures/compiler, native Map/List, production recovery/GC, CRDTWASM, Client
+factory/editor adapters, real native process/server crash and cross-runtime
+network validation remain open. No Chrome/mobile/performance run is claimed.
+
+Final sequential workspace: 2,112 cases, 2,110 PASS, zero FAIL, two expected
+platform SKIPs and zero cancelled (116.265 s). Typecheck passes (14.350 s).
+Documentation build passes (13.048 s); 55 pages and 2,615 internal links pass,
+with English content/local paths excluded. Core35, mapped SDK84 and compiled
+example code are verified; later README prose is qualified by the docs build.
+Selected evidence and exclusions are in the source-bound report. No commit,
+push, website deployment or npm/crates release
+was requested in this task.
+
+[Source-bound rules verification report](docs/reports/rust-d2-rules-2026-11-04/README.md).
+
+### 5.145 D2 composite defaults and explicit enum references
+
+Three agents own native core, SDK/docs and independent TS/native comparison.
+Baseline is main1cfb7a2 plus captured102file inherited native fields/rules WIP.
+The four earlier sealed D2 reports remain byte-identical. This turn makes no
+additional production TypeScript semantic changes.
+
+Runtime atomic node attributes and value marks accept safe JSON object/array
+defaults without enums. Null-default composite enums include object, array,
+duplicate and mixed primitive choices. SchemaValue distinguishes plain JSON
+from an explicit schema default/enum reference. Factories bind schema identity,
+exact descriptor path, source and enum index. Reference-aware insert/set/format
+helpers retain the usual scalar APIs and atomic foreign-writer History rules.
+Field-leaf enums keep their prior structural equality.
+
+Native doc-sync-runtime-reference-op-v1 envelopes bind references to raw op
+payload paths. Admission validates schema, payload, descriptor and target;
+register values stay JSON, while writer provenance reconstructs undo/redo
+references and replay. Native peer Changes and checkpoints pass through real
+JSON encoding/decoding. No extra per-edit schema compile or full journal replay
+was added solely for validation. Fixed Graphic preset rejects this envelope.
+
+Independent TS identity/server probes distinguish source references, equal
+copies and JSON copies. Staged Doc.edit output with live schema-member refs
+passes authoring check; copied enum payloads fail Doc.check. Even using DocHub's
+own schema refs fails its retained-copy admission atomically with seq unchanged.
+History redo may supply a cloned enum payload that Doc.check rejects but direct
+Doc.apply applies. Native reference admission is an explicit extension, not a
+claim that raw TS/native wire interoperability or TS composite enum transport
+works. Cloned stored enum attributes still fall back to defaults in TS/native
+projection; per-token mark cloning/span behavior is retained.
+
+Review found and fixed a new reference-envelope split History defect: the
+split scanner saw only raw node operations and misclassified the companion
+move. It now reads the underlying operation. A raw-versus-envelope regression
+compares split/undo/redo; the failing-before receipt is preserved.
+Other descriptor/target, rollback and forged-checkpoint probes remain separately
+classified, without dropping metadata or changing TS identity to deep equality.
+
+Another real defect rejected reference delivery between same-identity schemas
+with different object key insertion order. Four before-fail probes identify the
+payload comparison mismatch. The narrow reference binding/admission/provenance
+checks now use canonical JSON equivalence; raw register order and JS span/group
+serialization remain unchanged. Plain equal JSON still has no enum identity.
+Peer receive, History and restore cover that correction.
+
+Ten scope probes check text-type changes, wrong shape, atomic batches and forged
+restore. Same-shape text candidates follow TS admission. A different atom
+descriptor's enum handle is TS-valid but native-unsupported because native
+nontext validation requires the born descriptor. No complete admission parity
+is claimed.
+
+Final native core138/138 PASS (new18), SDK86/86 PASS (new8). Eight fresh lanes
+pass under167 unchanged source/binary hashes: main2schemas160actions/320states,
+flow162, grid180, shapes188, rules260, legacy6schemas82actions/164states, scope10
+and TSidentity4graphs. Prior5positivecorpus hashes are unchanged. Schema checks
+explicitly admit new support: grid7reject/5admit, shapes10reject/2admit,
+rules16reject/3compile-onlyadmit. A later report-only counter correction proves
+actual Doc.edit88, not86 (two deletes were omitted by the old filter). Main160/
+320 reruns PASS; native/TS source and binaries are unchanged, and the other
+seven lanes remain qualified. JSON author check rejects26 are observed TS
+protocol limits, separate from successful material/History comparisons.
+The identical documented Cargo programs compile/run with the final native61file
+source guard; the example fence is unchanged through all three source seals.
+
+Composite default-to-enum aliases remain unsupported: JSON schema descriptors
+cannot express default===values[index]. A versioned schema-alias identity/DTO
+is a separate gate. markValues.fields, text:false, axis moves, positive-minimum
+cycles, callbacks/general computed rules, model-only stored attributes, live
+transitions and complete product/compiler coverage remain open. Observed D3
+empty-patch compiler-clock, postmove and empty-head authoring gaps remain open.
+Native Map/List, public Rust Client factory/editor integration, CRDTWASM,
+production GC/recovery and real native process/server restart and cross-runtime
+network qualification are not provided by these same-process checkpoint tests.
+No Chrome/mobile/performance run, commit/push, website deployment or registry
+publication is included.
+
+Final sequential workspace test: **2,112 cases / 2,110 PASS / zero FAIL / two
+expected platform SKIPs / zero cancelled**, 125.234 seconds. Typecheck passes
+in 15.292 seconds. Documentation build passes in 13.991 seconds; the final
+check passes 55 pages and 2,619 internal links with English content and local
+paths excluded. No Chrome/mobile or performance benchmark is added. Final core
+15-file, SDK61-file, corrected comparison167-file and main118-file hash maps
+match current sources/artifacts after the package rebuilds. The identical Cargo
+example remains compiled, and all four earlier report seals match.
+
+[Source-bound composite verification report](docs/reports/rust-d2-composite-2026-11-04/README.md).
+
+### 5.146 D2 shared default/enum references
+
+Three agents own core, SDK/docs and independent TS/native comparison. Baseline
+is main1cfb7a2 plus captured153file inherited D2 reference/composite WIP, rather
+than GitHEAD alone. All five earlier D2 report seals remain unchanged. Production
+TS CRDT source is unchanged in this task. No commit/push or release is included.
+
+RuntimeSchema accepts doc-sync-runtime-schema-alias-v1 descriptors with a full
+manifest and nonempty defaultReferences edges. Each {at,enumIndex} binds an
+atomic node attribute or value-mark composite default to an enum slot at that
+same descriptor. Multiple explicitly listed slots share the default; equal
+unlisted entries remain distinct. Duplicate/invalid edges, payload mismatch,
+unknown format, scalar/field/computed aliases and inferred bareJSON sharing
+reject atomically. Field-leaf structural equality remains separate.
+
+The raw manifest/base_identity describes TS schemaVersion data; the semantic
+identity includes the graph. DTO/checkpoints retain that graph. Native handles
+and checkpoints use semantic identity, not base_identity. Edge/property order
+and explicit/omitted document domain normalize as declared; selected enum index
+remains part of provenance. Bare schema serialization and identity stay intact.
+compile_with_default_references and with_default_references create schemas;
+they do not migrate an open document. Cached graph lookup avoids per-edit full
+edge scans, schema compilation or extra journal replay solely for preflight.
+
+Native reference-aware birth helpers omit actual default/linked enum handles.
+An equal unlinked slot retains its writer/index. Explicit updates retain writers
+and the existing operation envelope preserves selected source/index through
+native JSON peers, full History, pending replay, exact ACK and own checkpoints.
+Selective undo preserves foreign writers and concurrent text/delete/format.
+
+Final core147/147 PASS (new9), SDK93/93 PASS (new7), documented independent
+Cargo consumer PASS. Frozen final12-driver run passes180 source/binary hashes
+without drift or previous-PASS reuse. Alias2schemas182actions/364actorstates
+include110 actual staged Doc.edit checks. Earlier six corpus files are byte-
+identical: flow162/324states, grid180/360, shapes188/376, rules260/520,
+legacy6schemas82/164, composite160/320. No old negatives were removed or changed.
+Old/new native scope10/20, old/new JS identity and actualHub probes also pass.
+
+Actual TS DocHub48expected outcomes distinguish transport cases. structuredClone
+preserves sharing within the copied schema but separates source references.
+Default/linked-enum births omit the value and can pass Hub. A retained unlinked
+enum birth or explicit default/enum update fails the retained-payload clone
+check atomically. Only hub-owned retained refs pass the initial check. This is
+partial existing TS transport behavior, not a native-to-TS protocol adapter.
+Raw History redo admission is distinguished from Doc.apply material semantics;
+cloned enum attrs still use default fallback and marks retain token/span rules.
+
+Review reproduced an alias factory key-order mismatch: default a,b and linked
+enum slot b,a declared the same object but native emitted two payload orders.
+Linked enum resolution now uses the default object payload; unlinked slot order,
+selected source/index and incoming canonical binding stay intact. Core/SDK
+beforeFAIL logs and independent actualJS/native before/after proof are preserved.
+Final exact-order probe compares directsharedJS, hydratedDTO and nativeSDK across
+4schemas/32factories (objects/nested arrays, marks/attrs, single/multiple edges).
+Full History/redo/checkpoint order is also tested. Before/after protocol proof
+builds23 matched baseline source inputs independently and sends identical4
+requests to old and final147 CLIs: old4reject/current4admit with8reference edits.
+
+Arbitrary cross-descriptor/enum-only alias graphs, markValues.fields, callback/
+general computed rules, model-only attributes, text:false, axis moves, positive-
+minimum cycles, live schema transitions and full product/compiler coverage stay
+open. Observed D3 empty-patch clock, postmove and empty-head compiler gaps remain.
+Public Rust Client/editor integration, native Map/List, CRDTWASM, production GC/
+recovery and real native process/server-crash or mixed-wire qualification are
+separate gates. Same-process checkpoint proof is not production crash recovery.
+No Chrome/mobile/performance benchmark, deployment or npm/crates publication
+is included.
+
+Final sequential workspace test: **2,112 cases / 2,110 PASS / zero FAIL / two
+expected platform SKIPs / zero cancelled**, 135.660 seconds. Typecheck passes
+in 18.434 seconds. Corrected documentation build passes in 15.100 seconds;
+55 pages and 2,619 internal links pass with English content and local paths
+excluded. The first docs link check found one wrong Rust section anchor; it
+was corrected and rebuilt before the final PASS, with the failure retained.
+Final core3file, SDK7file, wrapper180input and main125file hash maps match the
+current sources/artifacts after all package rebuilds. The two documented Rust
+programs match the compiled Cargo consumer byte-for-byte. All five earlier
+report seals are unchanged. No Chrome/mobile or performance result is added.
+
+[Source-bound shared-reference report](docs/reports/rust-d2-alias-2026-11-04/README.md).
+
+### 5.147 D2 cross-property schema references
+
+Three agents own core, SDK/docs and independent TS/native comparison. Baseline
+is main1cfb7a2 plus166 captured inherited D2 source/fixture/doc files. All six
+older report capsules remain byte-identical. Production TS CRDT source stays
+unchanged; a separate demo/test binding repair is described below. No commit,
+push, deployment or registry publication is included.
+
+RuntimeSchema v2 uses doc-sync-runtime-schema-shared-v2 with nonempty groups
+of atomic default/enum slots. Each {representative,slots} group has at least two
+unique slots and includes its representative. Members can span differently
+named attrs, node kinds and value marks. Enum-only groups are supported.
+Overlapping groups, malformed paths/representatives, primitive/field/computed
+members and unequal/invalid payloads reject before replacement. Equal unlisted
+values remain different identities; no deep-equality reference inference.
+
+Groups share schema-owned constants, not mutable document registers. Each target
+keeps an independent writer. Graph/representative identity pins handles and
+checkpoints; member/group order normalization does not erase representative
+choice. Raw manifest/DTO and base_identity stay available. effective_manifest
+resolves shared slots once so defaults/null reset/enumclone fallback and factories
+use representative payload order. Bare/v1 wire and identity remain unchanged.
+The native nonnull composite enum default still requires an own enum member in
+its group; TS-valid unlisted configurations can remain native-unsupported.
+
+Target-aware admission and birth omission preserve selected SOURCE at/source/
+index and actual TARGET key/path independently. Per-key caches avoid whole-
+group scan/copy for each Set. History, exact conflicting-writer checks, native
+JSON pending retry/ACK and own checkpoint restore retain provenance. This does
+not perform live schema migration or provide a general TS/native wire bridge.
+
+Core156PASS (prior147+new9), SDK101PASS (prior93+new8). The identical documented
+program compiles/runs in an independent Cargo consumer. Baseline147PASS from40
+archived matched core source inputs. A fixed6request protocol sequence has0ok
+on old core (newformat unknown) and6ok on current core, including cross-key
+History restore. Readonly cell-special-key probe14/14PASS covers mark/node refs
+to a differently named cell attr, undo/redo and JSON document/History restore.
+
+New shared corpus246actions/492actorstates includes138 actual staged Doc.edit
+checks. It compares raw unwrappedops/IDs, full History, registerwriters/material,
+clocks, pending/carets, UTF16 stable selections and exact attrs/marks JSON order.
+Dedicated nonempty cross-group undo→JSONcheckpoint→redo→delivery proves recovered
+source/target bindings. Raw/JSON redo admission rejection is recorded separately
+from successful Doc.apply material semantics. New factory32/scope27/actualHub32
+PASS. Source and hub-owned refs distinguish omitted births that pass transport
+from retained payloads rejected by clone admission. Native-only extension remains.
+
+Seven inherited corpora pass: flow162,grid180,shapes188,rules260,legacy82,
+composite160,alias182 actions; all eight fixture/schema file hashes match baseline.
+Final joint16driver qualification holds194 source/binary hashes unchanged.
+Initial rules/alias trace writes failed ENOSPC while14drivers passed. Original
+FAILreceipt is preserved. Ten owned diagnostic files were losslessly gzipped
+with SHA verification; only current-task standalone Cargo caches were removed
+after inventory. Seven selected standalone binaries retained exact bytes/paths;
+regression targets and inherited tasks were untouched. After space recovery the
+two failed lanes reran completely and passed under the original frozen maps.
+The jointreceipt explicitly links14oldPASS+2retryPASS; no clean first-run claim.
+
+Initial npm full run had2MCP404 failures. Controlled owned listeners and actual
+demo reproduce this macOS IPv6wildcard/IPv4-specific same-numeric-port collision:
+IPv4request reaches a different server. Failed banner port was confirmed owned
+by an unrelated persistent IPv4listener, preserved unchanged. Automatic recovery
+has the same inferred mechanism, but no origin in its original failure log.
+Optional DOC_SYNC_HOST preserves normal default and lets tests bind127.0.0.1.
+Twelve forced-IPv4 spawn helpers set that option; no transport retry/error mask,
+protocol, actor ownership or CRDT rule changed. Fourteen integration files have
+before sources/patch and stable guarded hashes. Real-demo regression before
+1FAIL/1PASS →after2PASS; originalfailedfiles10PASS, demo147PASS, guarded12PASS.
+Initial FAIL logs and collision receipts remain separate evidence. Final whole
+workspace retry includes the two new demo cases; results are recorded below.
+
+Nested payload/field identity graphs, callbacks/general computed rules, model-
+only attributes, text:false, axis moves, positive-min cycles, full product/
+compiler and live transitions stay open. Inherited D3 empty-patch clock, post-
+move and empty-head compiler gaps stay open. Native Map/List, protected GC/
+production recovery, Rust Client/editor binding and CRDTWASM remain separate.
+Checkpoint proof here is not native production crash recovery. No Chrome/mobile
+or performance benchmark is claimed.
+
+Final corrected workspace test: **2,114 cases / 2,112 PASS / zero FAIL / two
+expected platform SKIPs / zero cancelled**, 122.869 seconds. The first full run
+had 2,112 cases, 2,108 PASS, two MCP failures and two SKIPs; its logs are retained.
+The two added IPv4 regressions explain the new total. Root typecheck passes in
+14.309 seconds. Documentation build passes in 14.927 seconds; 55 pages and 2,622
+internal links pass with English content and local paths excluded. Current core
+32-file, SDK8-file, integration14-file, joint194-input and main130-file hash maps
+match after package rebuilds. Documented Rust programs equal the compiled Cargo
+consumer byte-for-byte. All six prior report seals match. No Chrome/mobile or
+performance run is claimed.
+
+[Source-bound cross-property report](docs/reports/rust-d2-shared-2026-11-04/README.md).
+
+### 5.148 D2 nested schema payload references
+
+Three agents own core, typedSDK/docs and independent TS/native authoring/probes.
+Baseline is main1cfb7a2 plus193 captured inherited files, including shared-v2 and
+the previous optional IPv4 demo testbinding repair. All seven prior D2 report
+seals remain unchanged. Production TS CRDT/integration sources are unchanged in
+this task. No commit/push, deployment or registry publication is included.
+
+PAYLOAD_FORMAT doc-sync-runtime-schema-payload-v3 extends ReferenceSlot with
+optional valuePath, omitted when empty. Typed Key(String)/Index(usize) selectors
+traverse atomic schema-owned defaults/enums; objectkey"0" differs fromarrayindex0.
+Nested endpoints are composite only, paths/depth bounded64. NonemptyvaluePath
+requiresv3, and bare/v1/v2 root serialization/identity remain. Fieldbranches and
+mutable runtime links remain separate. Existing root constructors stay valid;
+direct Rust ReferenceSlot literals initialize value_path explicitly.
+
+Compiled object classes propagate parent sharing DOWNWARD only. Sharing/equal
+children never merge independent parents. Nested explicit representatives override
+inherited child order through all shared parents. Ambiguous implicit overlaps,
+cycles, unequal/unsafe nodes and invalid/missing/scalar/index-type paths reject.
+Unicode path/member normalization uses UTF16 ordering. Classes cache representative
+locators and target indices instead of full expanded value copies per node;
+effective roots build fresh containers and clone leaves, avoiding repeated raw
+subtree clones. Per-edit lookup does not recompile or scan the full graph.
+
+SchemaValue::at_value_path and RuntimeSchema::reference_value_at retain original
+at/source/index/valuePath. Operation binding.path remains the actual target;
+root enum/default admission uses whole-object class rather than child equality
+or the outer descriptor name. Raw manifest/DTO and diagnostic base identity
+remain separate from effective rules and native semantic graph identity.
+Targets keep independent writers; these are schema constants, not mutable
+links or per-nested-key CRDT registers.
+
+Core166PASS(prior156+new10), SDK105PASS(prior101+new4). All SDK examples build;
+runtime_payload runs; the same README/guide program compiles/runs in two independent
+Cargo consumers. Old pinned156 CLI digest and32source hashes reverified against
+193baseline, rather than reusing an unverified count. Same5request sequence:
+old0ok/current5ok with registers/source provenance/snapshot and clone-compatible
+enumfallback checked. Initial wrong model expectation is preserved as failed
+before-after01, corrected raw02 proof links exact sources/binaries.
+
+Fresh final20driver run PASS;208source/binary hashes fixed. New2schema corpus
+296commands/592actorstates has162 actual stagedDoc.edit checks. Nonempty nested
+format→undo→JSONHistorycheckpoint→redo→delivery preserves SOURCE at/source/
+index/valuePath and TARGET path exactly. Raw/JSON redo Doc.check rejection is
+separate from successful material Doc.apply. Factory4directJS DAGs/200selections/
+200actualDoc.edit, scope56, actualHub32+clone2 observations all PASS. All36
+inherited runtime fixtures/helpers/docs match baseline. Eight inherited corpora
+pass: flow162,grid180,shapes188,rules260,legacy82,composite160,alias182,shared246
+commands (twoactor states each). No fixture or negative was removed/rewritten.
+Trace-reuse diagnostics are not finalfresh qualification.
+
+ActualTS Doc.apply structuredClone perpayload preserves INNER aliases while
+separating schema/payloads; direct snapshots preserve that observation. JSON
+snapshots and History.snapshot flatteninneraliases. Native public Value/model
+is a JSONtree: physicalheapidentity NOT_REPRESENTED; liveobjectbridge
+NOT_QUALIFIED. Logical schema/handle identity, factory payload order and material
+History/recovery comparisons are qualified separately. Native own checkpoint
+proof is not production process/server crash or mixed-wire acceptance. Composite
+nonnull enum defaults still need ownroot-enum sharing in the native subset;
+TS-valid unlisteddefaults can remain unsupported.
+
+Preflight free space was363MiB. Completed owned prior traceoutputs101files were
+losslessly gzipped with original/restored SHA proof (4,308,968,663bytes reclaimed);
+sealed reports, source and binaries unchanged. Final drivers also compressed29
+large traces after comparison. Independent audit restores all1,214,631,816rawbytes
+with matching SHA+size and compressed hashes. No repeated ENOSPC occurred. Maps
+and failed diagnostic artifacts are retained; original raw files can be restored
+from gzip/earlier capsules. No unrelated workspace/source/process cleanup.
+
+Nestedfield aliases, mutable runtime object graphs, callback/generalcomputed,
+model-only attrs, text:false, axes, positive-min requiredcycles, fullproduct and
+live schema/compiler coverage stayopen. Inherited D3 empty-patchclock/postmove/
+emptyhead gaps stayopen. Rust/WASM Client/editor, nativeMap/List, protectedGC/
+productionrecovery and a TS/native liveobjectcodec remain separate gates.
+No Chrome/mobile, performance benchmark or productionnative crash test is claimed.
+
+Final integrated verification: **2,114 tests / 2,112 PASS / zero FAIL / two expected platform SKIPs / zero cancelled**. Package build and typecheck pass. Documentation build and checks pass: **55 pages / 2,625 internal links**, English content and local paths excluded. Final source checks match the core, SDK, comparison and main trace maps. Both fenced Rust programs and both compiled consumers are byte-identical; the runnable example adds only one module documentation comment. All seven earlier report seals remain unchanged.
+
+[Source-bound nested-payload report](docs/reports/rust-d2-payload-2026-11-04/README.md).
+
+### 5.149 D2 references from declared field leaves
+
+Three agents implemented the native core, SDK/docs and independent TS/native
+comparison. The baseline is main `1cfb7a2` plus 131 captured source files from
+inherited uncommitted work. All eight earlier report seals are preserved.
+Production TypeScript CRDT code and 14 inherited integration repairs are unchanged.
+
+The v3 schema descriptor can select composite defaults and enum entries from a
+writable field leaf. Its `at` path follows explicit `fields` edges; `valuePath`
+selects inside that leaf payload. The operation binding path remains separate.
+Whole branches, computed fields, unsafe or missing paths, invalid key/index types
+and excessive depth reject. Existing bare/v1/v2 selectors do not acquire this
+feature. A pinned before/after CLI witness verifies a previously supported v3
+schema's identity, DTO and own checkpoint replay remain identical.
+
+The SDK adds `field_default_value`, `field_enum_value` and
+`set_runtime_field_path`. The last method validates provenance against the active
+schema before copying plain JSON into an independent field register. Field enum
+admission retains TypeScript structural equality. An equal JSON copy can pass;
+it does not create a symbolic link. Atomic attribute/mark targets retain their
+existing reference-group admission and source metadata. Foreign handles and
+same-manifest changed-group handles reject before clock, History or pending
+changes mutate. Field paths have a 64-segment ceiling, subject also to the
+existing whole-schema JSON depth ceiling of 128.
+
+Native core: 171 PASS. SDK: 109 PASS in one final full run. Both documentation
+examples compile and run in independent Cargo consumers, with fenced programs
+byte-identical to the runnable example body. New TS/native authoring: two schemas,
+352 commands, 704 actor states and 184 actual staged Doc.edit checks. Exact
+operation tickets, source/target paths, material state, full History, pending,
+carets, undo/redo and own JSON checkpoint restore match. New scope checks cover
+28 cases; 32 actual TypeScript/DocHub rows distinguish structural field admission
+from atomic enum identity and clone rejection. Other leaf and same-value foreign
+writers survive local undo/redo.
+
+The initial comparison used a branch-patch API against a direct leaf API and
+observed different ticket allocation. The final harness uses matching direct
+leaf APIs without normalizing tickets; existing branch/compiler clock behavior
+is unchanged. Initial fixture/source-drift failures and the first mismatch remain
+diagnostics. A large trace took about four minutes with an RSS sample of about
+1.82GiB. Source inspection finds inherited schema compilation/journal replay in
+per-edit staging and full trace retention. This is not a controlled performance
+benchmark or production latency qualification.
+
+The next product-schema gates are the existing optional URL and cell hex-color
+patterns, then `image-block.text: false`, then valid unused declarations.
+A separate source-bound read-only probe confirms all three original product
+fixtures pass TS schema validation and fail native compilation first at the URL
+pattern. Transformed diagnostic variants are not full product editing evidence.
+TypeScript itself rejects markValues.fields, so that is an invalid-schema
+boundary rather than a native feature backlog item.
+
+Whole branch sources, mutable object links, full D2/D3 compiler coverage,
+production Rust/WASM Client and editor binding, native Map/List, protected GC,
+a TS/native object codec and native production crash recovery remain separate.
+Native own checkpoint replay is not server/process durability qualification.
+No Chrome, mobile or performance benchmark was run. No commit, push, deployment
+or registry publication is included.
+
+Final verification: **171 native core tests / 109 SDK tests PASS**. The fresh
+comparison wrapper passes **23/23** drivers with **219 fixed source/binary hashes**.
+The new two-schema corpus compares **352 commands / 704 actor states** and
+**184 actual staged TS Doc.edit checks**. New input checks pass 28 cases and
+actual TypeScript/DocHub checks pass 32 rows. All 44 inherited runtime source
+files are unchanged. All nine inherited corpora pass, including the previous
+296-command nested-payload corpus. Eight earlier report seals remain unchanged.
+
+Workspace tests: **2,114 total / 2,112 PASS / two expected platform SKIPs /
+zero FAIL / zero cancelled**. Typecheck and documentation build pass. Documentation
+checks pass **55 pages / 2,630 internal links**, with English content and local
+paths excluded. Final source bindings match core34, SDK6, wrapper219, main163,
+inherited TS/integration31 and next-product evidence32 maps. The compressed
+integrity audit checks 76 gzip artifacts; 32 trace artifacts also match their
+recorded original raw hashes. Compiled documentation bodies match both fences.
+
+[Source-bound field-reference report](docs/reports/rust-d2-fieldrefs-2026-11-04/README.md).
+
+### 5.150 D2 product validation patterns
+
+Three agents delivered the core implementation, SDK tests/docs and independent
+JavaScript comparison. Baseline: main `1cfb7a2` plus 144 captured inherited files.
+The only native production edit adds two exact recognized patterns and their
+validators in runtime_schema.rs; existing handlers remain unchanged. SDK
+production code, TS collaboration rules and inherited fixtures remain unchanged.
+
+Supported expressions are `^(https?://\S+)?$` and `^(#[0-9a-fA-F]{6})?$`.
+The link rule accepts the empty string or lowercase HTTP(S) prefix followed by a
+nonempty suffix with no ECMAScript whitespace. Explicit classification rejects
+BOM and accepts NEL/U+180E, matching actual JS RegExp. The color rule accepts
+empty or six ASCII hex digits after #. Null keeps existing reset behavior;
+model projection can omit default-valued attributes. Arbitrary regex variants
+still reject. These are declared pattern rules, not a full URL parser.
+
+Public validators, SDK attribute/mark/field/cell edits, batch atomic rejection,
+concurrent actors, own undo/redo, checkpoint/pending retry and foreign writer
+preservation are covered. No new public client API or regex dependency is added.
+A documented native program compiles and runs in independent README and guide
+Cargo consumers. A later Markdown-only wording correction leaves the exact
+program bodies unchanged; original receipts are retained.
+
+Final verification: native core **177 PASS**, SDK **113 PASS**. The two-schema
+trace passes **84 actions / 168 actor-state comparisons / 44 exact operations**,
+with 36 positive staged Doc.edit cases and 16 rejected target actions. The oracle
+passes **1,267 typed cases**: 362 new and 905 legacy-pattern cases. It executes
+1,232 string RegExp tests, 2,534 native value-validator checks, 1,416 actual JS
+target checks/staged edit records and 33 schema compile cases. Its whitespace
+matrix covers all 25 ECMAScript whitespace codepoints and 15 contrasting values.
+Two lone-surrogate inputs are BOUNDARY_OBSERVED, excluded from parity PASS.
+
+The 24 product compilation probes use demo, Word, Notion and presentation.
+Current originals reach a text:false rejection after passing pattern admission;
+they remain unsupported complete profiles. One selected inherited composite
+article trace retains status **FILTERED_DIAGNOSTIC_PASS**, 80 actions. It is not
+a fresh full-corpus or full 23-driver PASS. Final before/after/current guards match
+main139, oracle80, product8 and filtered legacy140 source/binary entries.
+
+Whole npm: **2,114 tests / 2,112 PASS / two expected platform SKIPs / zero FAIL /
+zero cancelled**, 133.424 seconds. Typecheck passes; docs build and checks pass
+**55 pages / 2,635 internal links**, with English content and local paths excluded.
+Nine earlier report seals and 14 previous target binaries remain unchanged.
+The 17 new compressed outputs restore all 223,812,772 original bytes with exact
+SHA256 checks. Compiled documentation program bodies match both current fences.
+
+The initial SDK test expected a reset color property to be emitted as an empty
+string. Existing projection omits it; only the test assertion changed. The new
+JS comparison adapter initially dropped insertCellText run marks. It now uses
+the matching text-run command; the first mismatch remains a diagnostic. A root
+verification initially used the wrong core log directory; the captured log path
+was corrected without changing code or test outcomes.
+
+Disk started near 3.25GiB free. The new target is an APFS copy-on-write clone of
+the completed prior target; old binaries and seals are verified unchanged. New
+large evidence files use SHA-verified gzip. No prior output or target cleanup.
+
+Next D2: `image-block.text: false`, then valid unused node declarations. Demo's
+image descriptor has the same text:false blocker. Removing these constraints in
+diagnostic copies does not qualify original profiles. Full D2/D3, native object
+wire compatibility, Rust/WASM Client/editor integration, native Map/List,
+protected GC and production native process/server recovery remain separate.
+Native own checkpoint replay is not mixed-runtime or durability qualification.
+No Chrome, mobile or performance benchmark was run. No commit, push, deployment
+or registry publication is included.
+
+[Source-bound pattern report](docs/reports/rust-d2-patterns-2026-11-04/README.md).
+
+### 5.151 D2 text-disabled blocks
+
+Three agents implemented the core, SDK tests/docs and independent comparison.
+Baseline: main `1cfb7a2` plus 153 captured inherited files. Native production
+changes are limited to runtime_schema.rs, lib.rs, nested.rs and graphic.rs.
+SDK production source, TypeScript rules and inherited fixtures are unchanged.
+
+The compiler accepts boolean text flags. Text-disabled nodes retain the text
+shape, defaults, inline children, selection offsets and stored projection.
+Raw flow admission scans all stored text types, including group members. A
+false-only flow rejects characters; a mixed flow may accept characters after
+a disabled marker. Characters remain stored and visible through type changes.
+Container birth policy uses immutable owner birth type. TS actual origins differ
+from native graphic dedicated text lines; only their admission policy is
+observed, not exact graphic state or graphic type-change parity. Malformed
+untyped flag values stay a stricter native validation boundary.
+
+Final verification: native core **183 PASS**, restored-source SDK **116 PASS**.
+The final Document comparison passes **two schemas / 90 actions / 180 actor
+states**, including **38 actual staged Doc.edit authorings** and **four raw
+Doc.emit authorings**. Raw routes are labeled separately. Exact operations,
+tickets, full History, material state, pending/carets, selection, own JSON
+checkpoint restore and retry match. The focused oracle covers 24 raw admission
+cases, five TS logical observations and six malformed-flag boundaries. Actual
+TS Graphic origin/birth observations cover four cases separately from native
+focused tests; graphic state/type-change parity is unqualified.
+
+The complete inherited patterns corpus is freshly rerun: **two schemas /
+84 actions PASS**. This does not rerun the historical 23-driver suite. Final
+source/binary maps match main143, oracle4, product7 and inherited143 entries;
+restored SDK source/docs52 and TS/integration31 maps also match. Ten prior report
+seals and 14 prior target binaries remain unchanged. All 20 compressed trace
+artifacts restore 172,473,757 original bytes with matching SHA256 checks.
+
+Whole npm: **2,114 tests / 2,112 PASS / two expected platform SKIPs / zero FAIL /
+zero cancelled**, 123.277 seconds. Typecheck and docs build pass. Documentation
+checks pass **55 pages / 2,640 internal links**, with English content and local
+paths excluded. Both fenced Rust programs and both compiled consumers are
+byte-identical to the entire runnable example source.
+
+The first main comparison exposed an inherited logical compiler difference:
+Doc.edit omits same-current-$type updates while the native explicit setter
+emits Set. The initial FAIL is retained. Separate explicit raw same-value A/B
+writers and selective undo pass. This does not close the D3 compiler difference.
+Earlier metadata counted raw emits as Doc.edit; final metadata counts38/4
+separately and narrows the main scope to Document. Earlier receipts remain.
+
+An unintended cargo fmt command changed six pre-existing SDK files. Archived
+formatted copies and canonical-rustfmt equality prove formatting only. Those
+six files were restored to the exact opening baseline, preserving inherited
+WIP. New textfalse tests/examples/docs were untouched. Full SDK116, example and
+both independent consumers were rerun after restoration. Failed fixtures and
+the initial formatting command/error are documented; no semantic SDK fix was
+introduced. A root verifier also corrected its optional-comment assumption;
+this example has no module header and matches fences as a complete source file.
+
+Original Demo and Notion schemas now compile. Word remains blocked at unused
+divider; presentation at unused heading1. The 16 product probes separate
+original admission from pruned diagnostic variants. Full-profile authoring is
+unqualified. The next D2 gate is valid unused node declarations.
+
+A fresh compact target uses dev/test debug info0 and incremental0 because free
+disk started at1.4GiB. Optimization and overflow settings retain dev defaults.
+Old targets/binaries are preserved; no performance result is inferred. Full
+D2/D3, native graphic type changes, production Rust/WASM Client/editor delivery,
+native Map/List, protected GC and production native process/server recovery
+remain separate. Own checkpoint replay is not cross-runtime wire/durability
+qualification. No Chrome, mobile or performance benchmark was run. No commit,
+push, deployment or registry publication is included.
+
+[Source-bound text-disabled block report](docs/reports/rust-d2-textfalse-2026-11-04/README.md).
+
+### 5.152 D2 unused node declarations
+
+Three agents implemented the compiler, SDK/docs and original-product comparison.
+Baseline is main `1cfb7a2` plus 164 inherited source files. Only runtime_schema.rs
+changes native production behavior. SDK production code, TypeScript rules and
+original public product fixtures remain unchanged.
+
+Valid supported unused declarations now compile, but all declarations still
+undergo shape/attribute/reference/default/required-cycle validation. Removing
+the root reachability rejection exposed two new-context bugs: unused grids/groups
+switched active flat documents into nested routing, and unused text/atom leaves
+could be accepted by flat root classification. Both are fixed. Node-driven
+routing follows the root child closure; the global value-mark criterion remains.
+Flat root leaves still need root child permission. Nested and graphic admission
+remain unchanged. Metamorphic raw native model/History matches exactly without
+normalizing away missing attrs. Snapshot/identity/DTO retain unused entries;
+adding one changes schema identity and does not migrate an open document.
+
+Final bounded verification: native core **189 PASS**, SDK **120 PASS**. Original
+Word (23 nodes) and presentation (27 nodes) retain their complete registries.
+The main passes **84 actions / 168 actor states**, with **24 actual staged
+Doc.edit authorings** and **four raw Doc.emit authorings**. The inherited complete
+text-disabled corpus passes **90 actions**. Oracle coverage: **14 schema cases /
+20 placement and atomicity cases / three exact native-model metamorphic variants**.
+Seven D3 compiler observations remain separate; the summary status is
+**BOUNDED_PASS_WITH_D3_OBSERVATIONS**, not full product-command parity.
+
+The final workspace command `npm run test --workspaces --if-present` passes
+**2,114 tests / 2,112 PASS / two expected platform SKIPs / zero FAIL / zero
+cancelled** in 121.594 seconds. It uses the initial completed package build;
+no production TypeScript source changed. Initial `npm test` had 2,110 PASS,
+two FAIL and two SKIPs. The two failed MCP tests both pass focused reruns, with
+no MCP source change. Typecheck and documentation build pass. Docs checks pass
+**55 pages / 2,645 internal links**, English content and local paths excluded.
+Both documentation programs match the entire runnable source and both compiled
+independent consumers byte-for-byte.
+
+Final source maps match main151, inherited146, oracle6, product4, compiler4,
+SDK10 and inherited TS/integration31 entries. Eleven older report seals and
+14 prior target binaries remain unchanged. Twelve new trace files restore
+150,008,067 raw bytes with SHA checks. Twenty-two completed historical trace
+files restore 1,155,686,277 raw bytes from 77,368,431 gzip bytes. Their mapping
+records local restoration; earlier sealed evidence remains intact.
+
+The qualifying trace includes actual Word section/page metadata/default paragraph
+text and presentation slide/layout/default title text. Explicit new nested
+paragraph insertion still produces TS/native field/reset/ticket/boundary
+differences; fresh-slide paragraph insertion can emit wire-invalid style:null
+in TS. Failed91 and required-title-alias85 traces are retained. The supported
+main does not qualify list/table construction or complete product editing.
+Separate raw same-value writer protection passes. No tickets or History are
+normalized to hide a compiler mismatch. D3 observations are recorded, not fixed.
+
+The first Cargo parallel link failed errno28. Serial core/SDK reruns passed.
+The first workspace run had one explicit ENOSPC failure and one null edit base;
+causality for the null base is unproved. Both pass focused reruns and the full
+workspace retry passes without source changes. Completed owned rules traces
+were losslessly compressed to recover space, with hashes checked before raw
+copies were removed. Sources, executables, Cargo caches and old sealed reports
+were preserved. The user confirmed additional disk recovery; free-space changes
+are not all attributed to trace compression. Initial failure logs remain.
+
+The next product-delivery priority is D3 command compilation for nested paragraph
+insertion and default/field resets. Full D2/D3, advanced schema rules, broader
+original-product authoring, production Rust/WASM Client/editor integration,
+native Map/List, protected GC and native production process/server recovery
+remain separate gates. Own checkpoint replay is not mixed-runtime wire or server
+durability qualification. No Chrome, mobile or performance benchmark was run.
+No commit, push, deployment or registry publication is included.
+
+[Source-bound unused-declaration report](docs/reports/rust-d2-unused-2026-11-04/README.md).
+
+
+### 5.153 D3 nested paragraph model-path compilation
+
+Multi-agent work adds bounded native `RuntimeDocument::insert_paragraph_at` and
+`insert_model_at`, with original Word23 and Presentation27 registries unchanged.
+The last path index selects a child gap; physical `insert_block_in` retains its
+separate source-token contract. Detached candidate compilation validates before
+recording once, so invalid native inputs retain the original state, clock,
+History and pending changes.
+
+TypeScript now resolves structured fields against pending births/type changes.
+Fresh slide paragraph edits no longer emit the invalid coarse style:null reset.
+Valid Word operation sequences, reserved ticket gaps, same-value writer ownership
+and wire validation remain unchanged. A paragraph after a required sibling now
+has a real stored birth and placement. Only newly born nodes receive compiler
+moves. Detached non-automatic stubs are excluded from required-tail base anchors
+in both engines. Multiple appended paragraphs keep independent placements.
+
+Rejected diagnostics preserve an automatic-head route that failed structural
+undo and a no-op existing-head move that could clobber B's lower-clock placement.
+Neither is in final source. A subsequent Presentation discrepancy was model-only:
+raw notes/title blocks matched, but native lacked TS default-title prepend and
+max-child filtering. Native now matches canonical output while retaining the
+original nonempty title, six HEAD😀 UTF-16 tokens and B's exact placement writer.
+Group defaults, omitted empty group attrs, max0, private required storage and
+non-flow guards received a separate high-effort source review and regression
+coverage. No raw content, move ledger or History is rewritten by serialization.
+
+Final comparison passes **10 profiles / two original schemas / 466 actions /
+932 actor states**, including **72 staged logical Doc.edit authorings** and
+**18 raw Doc.emit authorings**. It checks exact tickets/operations, full History,
+pending changes, clocks, token/register/deletion state, placement writers and
+selections, plus requested model content/attributes/child slots. Both head-writer
+races deliver a previously authored lower-clock B move after A compilation, then
+exercise A undo, own checkpoint restore, redo and retries. Documented UTF-16,
+empty-field and derived empty-line representation conversions do not normalize
+writers, ticket order or History. Fifty-six actual rejection commands are
+separate from schema admission. Invalid supplied attrs remain a recorded API
+boundary: TS can normalize where native rejects before mutation.
+
+Fresh full native core **189 PASS**, SDK **129 PASS** (nine new paragraph tests),
+example and two independent documentation consumers PASS. All97 mapped native/
+documentation source hashes remain stable across qualification. SDK README and
+public Rust code fences match the entire runnable example and consumer sources.
+Complete `npm test` passes **2,133 tests / 2,131 PASS / two expected platform SKIPs /
+zero FAIL / zero cancelled** in129.007 seconds. Final TS sources match that run;
+later native-only model changes do not alter this workspace result. Typecheck,
+docs build and docs checks PASS: **55 pages / 2,654 internal links**, English and
+local-path checks PASS. Historical failures remain separate from final receipts.
+
+The inherited unused84/textfalse90 traces and admission/product oracles use only
+new task output paths. Output-only adapters preserve old source bytes and test
+expectations. Stale historical probes that expect the fixed style:null failure
+or unused Word/PPT schema rejection are explicitly excluded. Earlier12 report
+seals and the preserved before executable remain unchanged. The report packet
+contains source snapshots, final qualified compressed traces and diagnostic
+receipts; restoration hashes and archive readback are verified.
+
+Native model input still rejects grid/group nodes or parents, offset paths,
+pre-existing movement records, mixed structured attribute maps, schema-reference
+handles and trailing reserved-only transactions. The new required-end route can
+create a first placement; it does not qualify general model compilation in an
+already moved document. Broad D3 insert/delete/update/split/merge/move equivalence,
+full product authoring, production Rust/WASM Client/editor integration, native
+Map/List, protected GC and production process/server recovery remain open.
+Checkpoint replay is same-runtime/schema/actor recovery, not cross-runtime wire
+or server durability proof. Negative TS edits compile on a clone before original
+wire validation; no new general direct Doc.edit transaction guarantee is made.
+No Chrome, mobile or performance benchmark was run. No commit, push, deployment
+or registry publication is included.
+
+[Source-bound nested paragraph report](docs/reports/rust-d3-paragraph-2026-11-04/README.md).
+
+
+### 5.154 D3 model positions after existing movement
+
+The native model-path compiler no longer rejects every retained Move ledger.
+`insert_paragraph_at` and recursive flow/text `insert_model_at` resolve accepted
+placement winners, including undone or cycle-suppressed movement. Physical birth
+origins remain physical; new identities receive their own logical placement.
+Existing sibling Move writers are not overwritten. The candidate compiles on a
+native checkpoint clone and records once, preserving the live document, clock,
+History and pending queue on rejection. Physical helper semantics stay separate.
+
+The full independent model oracle exposed TS bugs beyond operation parity.
+Fresh default identities preserve canonical leading title/paragraph slots and
+unwritten automatic gaps. Preparation reads only target/ancestor flows and
+respects grouped defaults, max0, authored siblings and existing head writers.
+Eligible populated source virtuals sort by UTF-16 line key before promotion;
+read-only native source introspection keeps original storage order and DTOs.
+
+Move undo/redo also exposed an ordinary boundary collision: appending at ONE's
+old gap absorbed moved TWO into NEW. A source-class collision in another accepted
+logical gap now uses the next retained physical primary as right fence. No new
+wire grammar, ticket or blanket unique suffix is added. Both peers at the same
+observed gap keep one coalesced new paragraph; selective undo retains peer text.
+Known opaque right anchors remain valid when a peer relocates/deletes the
+predecessor before receipt. Parser, origin, known/nonself and schema checks stay;
+legacy non-movement physical admission is unchanged.
+
+- Original Word/Presentation: **27 profiles / 1062 actions /
+  2124 actor states**, with the complete model-edit oracle.
+  **176 logical Doc.edit authorings /
+  93 raw Doc.emit authorings** are separate;
+  **130 complete independent insertion model oracles** pass.
+- Native core **189 PASS**, SDK **142 PASS**. The complete example and
+  both independent locked documentation consumers pass, with frozen source maps.
+- Current TypeScript source regressions: **119 PASS**; actual typecheck **PASS**.
+- Fresh complete `npm test`: **2162 tests / 2160 PASS / two expected
+  platform SKIPs / zero FAIL / zero cancelled**.
+- Documentation build and checks pass: **55 pages / 2,660 internal links**, English
+  and local-path checks pass. Both full program fences match their consumers.
+- Inherited paragraph466, unused84 and textfalse90 traces, schema export and
+  admission/product oracles have separate fresh receipts in the summary. Historical
+  probes that expect already-fixed failures are explicitly excluded.
+
+Initial old-binary rejection, TS position/text-merge failures, native prototype
+fresh-fragment metadata failure and input/preparation boundaries remain separate
+from final qualification. Promotion seeds use explicit raw nodes/text after an
+initial pre-Move staged snapshot capability failure; that is fixture preparation,
+not a production snapshot fix. Malformed model attrs can normalize in TS while
+native rejects atomically. Negative TS compilation is staged on a clone; no new
+general direct Doc.edit transaction guarantee is claimed. Initial test-only
+ES2023 methods failed typecheck; compatible copies and current type/source runs
+pass. Later product boundary changes received a fresh whole npm run.
+
+Final main status is TRACE_RECOMPARISON_PASS. The completed TS/native authoring
+traces retain their original successful source/binary guards. A verifier-only
+correction finds the exact retained B Move by stamp and independently checks
+its current winning placement; searching the first target record selected an
+older retained Move. Reviewed assertion/executor diffs and all trace/corpus
+hashes bind the recheck. No authoring replay or product change is claimed for
+that test fix. Original failures remain and compact error pointers avoid large
+trace duplication. Raw atom preparation uses an empty nontext boundary.
+
+Thirteen prior seals, the before executable, old adapters, original schema source
+and complete product snapshots remain unchanged. Opening195-file state preserves
+inherited WIP. Final source maps, compressed full traces, restoration hashes and
+selected archive readback are bound by the report seal. Checkpoint restoration
+is same-runtime/schema/actor pending/History recovery, not server durability.
+
+Remaining: general D3 command compilation, grid/group model construction and
+parents, flows with grouped child projections, text offsets, mixed structured attrs, JSON reference handles, trailing
+reserved-only cases, protected native GC and production Rust/WASM Client/editor
+integration. No Chrome, mobile, performance benchmark, mixed-runtime wire or
+production process/server crash qualification is included. No commit, push,
+deployment or registry publication is included.
+
+[Source-bound moved insertion report](docs/reports/rust-d3-moved-2026-11-04/README.md).
+
+
+### 5.155 D3 group/grid model insertion and schema-editing contracts
+
+`RuntimeDocument::insert_model_at` accepts supported nonempty groups/grids and
+logical group/grid/row/cell/body paths. A derived group returns the first stored
+member identity; explicit member attrs override group `by` fields. A parent-
+admitted paragraph or grid at a group gap splits the projection. Dense new grids
+allocate rows, columns and row-major content; ragged construction uses maximum
+input width. Row insertion preserves the existing width. Cell insertion creates
+one global column at the same index across all rows. Physical helpers and model
+commands remain separate.
+
+Detached compilation commits one History action. A private compiled recorder
+validates fresh, nonoverlapping stamp ranges while retaining TS emission order;
+the public monotonic record guard is unchanged. Cell fields preserve TS order,
+including mixed structured/scalar properties and semantic integer spans. Empty
+group/grid input rejects atomically in native because `(Key, Change)` cannot
+return an identity for a normalized no-op. TS can normalize/drop these inputs;
+this is an explicit input/API boundary, not an equivalence claim.
+
+The exact comparison exposed a real native selection defect. Direct covered
+Document cell text now captures raw IDs and resolves through its current logical
+cell to the merged top-left projection. Split restores offsets. Focused cases
+cover backward UTF-16 ranges, moved-in/out text, checkpoint restore and hidden
+owner/deleted-axis rejection. Legacy hidden selection and superseded required
+child rules remain. Hidden descendant flows are not added to this subset.
+
+Fresh independent TS/native authoring passes **22 profiles / 10 schemas /
+481 actions / 962 actor states**: 14 original Word/Presentation profiles, two
+explicit compositions that allow tables inside cell bodies, and six generated
+custom schemas. Original products remain unpruned and do not acquire that nested
+table placement. All four source/binary-guarded stages pass. The corpus includes
+113 actual `Doc.edit` authorings and five raw `Doc.emit` authorings, full expected
+models, exact operations/tickets, History, pending work, retained token/field/
+delete/move state, foreign changes, selection, undo/redo, own checkpoints and
+retry. Raw authoring is not logical compiler evidence.
+
+Initial full-model failures included oracle errors, preserved separately from
+product fixes. Documented normalization grows anchored merge extents across
+inserted axes, inserts global columns into every row and keeps row-only insert
+width fixed. Expected models now derive those rules independently from the
+pre-command model. Requested `{normalize: true}` output must separately close
+the proposed model to the actual result. Production TS source/dist is unchanged
+in this slice; no collaboration rule was changed to satisfy an oracle.
+
+Current-native inherited regressions pass: moved1062, paragraph466, unused84
+and textfalse90 actions, plus schema export/admission/product oracles. Their new
+namespace adapters use the current binary; original harnesses and old targets
+remain unchanged. Historical probes that expect fixed failures are explicitly
+excluded. All93 complete independent insertion-model oracles pass in the main
+corpus. Four empty-group/grid cases separately confirm the documented native
+rejection/TS normalization policy on the final binary.
+
+Native **core189 / SDK152 PASS**, complete example and two independent locked
+full-program docs consumers PASS, with identical104-file before/after maps and
+72 inherited tests/examples retained. Whole workspace retry **2162 cases /
+2160 PASS / two expected platform SKIPs / zero FAIL or cancelled**; actual
+TypeScript typecheck PASS. Initial workspace failure was the new navigation
+link missing from an existing golden assertion. Adding that expected link kept
+all ordering checks; focused and complete workspace retries pass using existing
+package builds. Final documentation build/check PASS: **56 pages / 2,722 internal links**,
+English and local-path checks PASS. Both complete Rust program fences match
+their independent consumers exactly. Final receipts are in the report.
+
+The new numbered `docs/schema-editing-roadmap.md` and public schema-contract page
+separate existing TS functions, missing native APIs and missing qualification.
+Q2.1 implements six reproducible custom-schema seeds, descriptor renaming,
+isolation and pure-model closure with **19 source checks PASS**, plus native
+fixed two-actor comparisons. Generated causal schedules and validity-preserving
+reduction are Q2.2, not completed. Research adds atomic batch/no-op/clock results
+(Q1.2), identity/stale-base targets (Q1.3), host authority after preparation
+(Q1.4), annotation endpoint/GC rules (Q3.1), typed schema-value model inputs
+(Q4.1), and observer-error/reentrant completion (Q6.1). Existing TS auth,
+annotations and completion tests are explicitly recognized.
+
+Remaining: general D3 edit compilation and atomic batch column memo, offset
+paths, uncompiled row/body attrs, general mixed structured node attrs, schema-
+value handles in model commands and trailing reserved-only transactions. D4
+native sessions/recovery/GC, D6 full CRDT WASM and D7 production WASM bindings stay
+open. Own checkpoint restore is not native durable process/server recovery.
+No Chrome, mobile, performance benchmark, mixed-runtime wire, protected native
+GC, commit, push, deployment or registry publication is included.
+
+[Source-bound group/grid report](docs/reports/rust-d3-group-grid-2026-11-04/README.md).
+
+
+### 5.156 Q1.2 atomic native model-insert batches
+
+`RuntimeDocument::insert_models_batch` accepts an ordered slice of `ModelInsert
+{at, model}` for supported document model-child insertions. One evolving detached
+compiler shares the column memo across rows, promotes source virtuals once when
+projection first becomes active, and commits one aggregate Change. A repeated
+row creates another column. Later commands see earlier model changes; an invalid
+later command leaves the complete serialized live checkpoint, clock, History and
+pending changes untouched. Existing single insertion remains strict.
+
+The result has one optional requested key per command plus before/after clocks.
+Empty groups normalize without a fake wrapper ID. A requested empty grid can
+produce an unrelated paragraph tail in an unprojected start path, or reserve a
+fragment ticket without operations when projection is active. Clock-only/empty
+operations preserve existing pending work and redo. Default History options
+undo the batch once; ordinary typing coalescence is unchanged. Delivery retries
+reuse captured pending operations; invoking the method again is a new edit.
+
+Broad core regression caught the initial overly broad restore policy accepting
+an inconsistent old snapshot clock. The final implementation uses explicit
+optional runtime `reservedClock` metadata: absent means savedclock==replayclock;
+present means replayclock<reservedClock==savedclock<=MAX. Canonical journal
+validation remains exact. Actual observed tickets at/above the reservation clear
+the marker; lower tickets retain it. The old runtime_nested forged-clock test
+remains byte-identical and passes. Reservation-bearing snapshots require the
+updated native reader; old-reader acceptance is NOT_QUALIFIED. This is counter
+consistency metadata, not server acceptance or authentication. Op grammar and
+History steps do not change.
+
+Final marker-qualified fresh independent authoring passes **14 profiles /
+three schemas / 351 actions / 702 actor states**: 11 original unpruned
+Word/Presentation profiles and three small custom-schema profiles. It includes
+**93 live logical TS authorings**, **27 array calls / 43 insertion commands**,
+zero raw-wire authorings and 11 invalid-last arrays. All **70 complete independent
+insertion-model oracles** and **10 full product undo oracles** pass. The model
+oracle has an independent shared-column memo and documented fixed-width row,
+span and cell placeholder rules; returned normalization closure is separate.
+Exact operations/tickets/clocks, optional IDs, History, pending changes, retained
+foreign text/field writers, backward UTF-16 selection, own checkpoints, retries
+and acknowledgement agree. All four guarded stages preserve175 source/binary
+hashes on batch trace87f6394e966676e841a57bcc2c5b6293560188d8964cacb009fc82b8dab61fb0.
+
+Final native **core194 / SDK159 PASS**, complete example and two independent
+locked full-program documentation consumers PASS. Source108 before/after maps
+match; 76 inherited tests/examples remain unchanged. Whole-workspace retry
+**2162 cases / 2160 PASS / two expected platform SKIPs / zero FAIL or cancelled**
+and actual TypeScript typecheck PASS. Package builds were reused for the workspace
+run; no fresh package prebuild is claimed. TS CRDT source/dist is unchanged.
+
+The first oracle placeholder error, native empty-group admission defect,
+explicit span-end preparation error and copied single-insert comparison-helper
+error remain distinct. The broad ordinary-clock failure invalidated the prior
+candidate's fresh14 PASS. New marker sources received new independent authoring
+and broad tests. Early SDK/core prototype failure summaries are preserved in
+implementation-attempts.json, but their original full stdout was overwritten by
+the implementation worker. Later focused logs, complete differential failures
+and the broad regression log remain intact; no missing stdout is claimed saved.
+
+Current marker-qualified inherited regression passes all10 stages: group/grid481,
+moved1062, paragraph466, unused84 and textfalse90 (**2183 actions**), plus schema
+export,19 schema/model tests and three CLI admission/product oracles. Their267
+guarded paths are unchanged, including all175 main qualification paths,15 prior
+report seals and two pinned old binaries. Full traces have lossless gzip and
+SHA round-trip checks; raw stdout duplication and old targets are not evidence
+substitutes.
+
+The SDK README and Rust guide contain the complete batch program, result fields,
+no-op/clock behavior, retry semantics and reader compatibility limit. Editing,
+blocks, custom/document schemas and the Q1.2 roadmap link the same API. Current
+source review approves the bounded reservation design; review is separate from
+execution evidence. Final documentation build/checks PASS: **56 pages / 2,729
+internal links**, English and local-path checks PASS. Selected evidence volumes
+have per-member readback hashes and a report seal; opening286 files,15 prior
+report seals and two old binaries are preserved. Final receipts are in the report.
+
+Remaining: Q1.3 ID/stale-base targeting and Q1.4 host permissions, general D3
+model delete/update/split/merge/move and offsets, typed model schema-value handles,
+Q2 generated causal schedules/reduction, native sessions/recovery/GC, full CRDT
+WASM and production editor bindings. Native no-op path bounds and unsupported
+empty-grid placement remain stricter than TS normalization. Checkpoint restore
+is same-runtime recovery, not process/server durability or mixed-runtime wire.
+No Chrome/mobile/performance benchmark, commit/push/deployment/registry action
+is included.
+
+[Source-bound batch report](docs/reports/rust-d3-batch-2026-11-04/README.md).
+
+
+### 5.157 Q1.3.1 strict stored-ID targeting and local stale bases
+
+`read_model_for_edit` captures a model and opaque local `ModelEditBase`.
+`insert_models_relative` accepts Before/After one current stored primary block,
+or InsideStart/End of Root/a stored flow body. It resolves each target on one
+evolving detached candidate and commits through Q1.2's existing insert-batch
+path. Repeated After(K) inserts appear closer to K; Root/flow InsideEnd appends
+in command order. Derived groups have no wrapper ID; members use current group
+slots and inherited attributes. Visible-cell stored blocks can be sibling targets.
+
+The base has private process-local incarnation, checked publication revision
+and existing schema identity; no Serde/checkpoint representation or whole-journal
+copy. apply_remote/stage_change publish revision only after success; failed
+calls, reads and ack preserve it. Duplicate/empty apply, empty publication and
+clock-only results consume it conservatively. Restore gets a fresh incarnation,
+including identical-checkpoint ABA. Checked counter exhaustion rejects before
+publication, with bounded thread-race uniqueness tests. These are local guards,
+not server epoch/sequence checks, authorization or distributed acceptance.
+
+Strict lookup uses one captured state per command with projection/alive/birth/
+required-boundary and cell-pair indexes. It follows current root-reachable
+ancestry, checks exact primary identity, current groups and live uncovered cells,
+and validates an explicit canonical leading default. It never uses selection's
+nearest-live fallback. Deleted/missing, hidden by ancestor/max, covered, aliased,
+character/inline, synthetic/default-head and axis targets reject atomically.
+Some existing insertion result keys name intrinsic zero-clock heads; non-None
+alone does not make them eligible relative anchors. Root/stored-flow edges
+remain available. Generic inside(text/grid/atom) is unsupported.
+
+High review found and the implementation removed two avoidable quadratic paths:
+per-flow whole-state exports/alive scans and per-cell linear pair searches.
+The guard itself is O(1); model reads, strict lookup and detached compilation
+still have document-sized costs. No performance benchmark result is claimed.
+Core source, Op grammar, History/checkpoint formats and Q1.2 reservation behavior
+are byte-preserved in this SDK-only extension.
+
+Final fresh independent authoring passes **14 profiles / four schemas /
+390 actions / 780 actor states**: five original Word23/Presentation27 profiles
+and nine explicitly custom profiles. There are **107 live logical TS authorings**,
+**16 relative arrays / 26 inserts**, three ordinary no-op batch calls, four raw
+setup authorings,26 negative calls,27 base reads and **89 complete independent
+insertion-model oracles**. TS plans against a detached complete prefix, then
+runs one live Doc.edit array; it does not use native-returned paths. Exact ops,
+identities, clocks, full History/pending/material storage/foreign writers,
+backward UTF-16 selection, own checkpoint and retry agree. All four guarded
+stages preserve176 paths on trace fd2515c4d455ec68ac0a84054ec40b4611eef1b07bf7a4b32194474240ddbabb.
+
+Fresh broad native **core194 / SDK173 PASS**, complete example and two independent
+locked full-program doc consumers PASS. Complete112-file before/after maps match;
+80 inherited tests/examples are byte-preserved. The initial successful broad
+run had a collector substring bug excluding four runtime_targeting*.rs names;
+its108-file subset receipt remains. Exact build-directory filtering and a fresh
+broad run bind the complete112-file map. Main176 comparison always included the
+files; no comparison replay or product fix was required for this artifact issue.
+
+Current inherited regression passes all11 stages/**2534 actions** across batch351,
+group/grid481,moved1062,paragraph466,unused84,textfalse90, plus exact export,
+19 schema/model tests and three CLI admission/product oracles. All285 guarded
+paths, main176,16 old sealed reports and three pinned old binaries are preserved.
+Prior Q1.2 workspace2160 PASS/two expected platform SKIPs and typecheck evidence
+are reused for unaffected TS code; no new whole npm/typecheck run is claimed.
+TS production/dist remains unchanged. Current docs build/checks PASS:
+**56 pages / 2735 internal links**, English/local-path checks PASS.
+
+All failed focused/setup/oracle/helper attempts remain separate from final PASS.
+The raw preparation first used legacy delete_block, which cascades descendants;
+owner-only rawDelete now matches the intended alive-but-hidden descendant test.
+Native eager deterministic flow-body heads and TS lazy heads are prepared by
+explicit read-only materialization with unchanged clock/model/authored state;
+ordinary stored heads are never filtered from comparison. Synthetic-head test
+preparation, group-by wrapper metadata, raw text boundary and planner/helper
+corrections are classified. They are not public SDK/compiler rule changes.
+The old High review applies to18 unchanged API/product/test/core inputs. Three
+later MJS corrections and the trace utility have hash-bound recovered review
+copies/diffs and fresh execution proof; no retroactive reviewer approval is
+claimed for those four inputs. Qualified full traces are lossless gzip with
+SHA round-trip checks.
+
+The SDK README/Rust guide contain the complete tested program, target matrix,
+local-base lifecycle, result-head boundary and server/WASM limits. Public
+editing/blocks/document/custom schemas and roadmap link the same API. Q1.3.2
+next uses typed grid+row(+column) tuples without invented cell wrapper IDs.
+Rows retain existing span-growth/hidden-payload semantics; InsideCell rejects
+currently covered tuples. Q1.3.3 will create one explicit column per call rather
+than overload direction-sensitive numeric memo behavior. Q1.3.4 plans a bounded
+native ID catalog/alias diagnostics. These next features are design-only here.
+
+No Chrome/mobile/performance, native durable server/process recovery, mixed-
+runtime checkpoint/wire, hosted native permissions, production Rust/WASM,
+commit/push/deployment/registry action is included. The full D3/D4/D6/D7 gates
+remain open.
+
+[Source-bound targeting report](docs/reports/rust-d3-targeting-2026-11-05/README.md).
+
+
+### 5.158 Q1.3.2 typed grid row/cell targets and moved-grid compiler repair
+
+**Scope.** Additive private native `insert_grid_models_relative` accepts
+`GridRowTarget {grid,row}` for BeforeRow/AfterRow and
+`GridCellTarget {grid,row,column}` for InsideCellStart/End. It uses the existing
+opaque process-local base, one indexed current TargetView per command, one
+compiler and one atomic commit. Existing generic block targeting still rejects
+axes. The tuple checks current live ownership and root-reachable primary grids;
+wrong-grid/deleted/hidden targets reject without nearby fallback. Cells and
+cell-body wrappers do not receive invented stored identities.
+
+Rows retain the numeric compiler's fixed-width payload and anchored span growth.
+A new row inserted inside a merge can become covered while retaining its own
+payload. Direct currently covered-cell body targets reject; the merge anchor is
+valid. Newer overlapping span writers can suppress an older rectangle as a whole;
+computed `spanned` input does not create a writer. No collaboration rule changes
+or new column creation/move API are introduced.
+
+**Production bug found and fixed.** The moved-grid row fixture failed in TS
+`Compiler.insertRows`: refreshGrid/gridPath used the grid's birth line after its
+accepted move. A shared private gridLine helper now uses the accepted current
+placement in projected documents and preserves the unchanged nonprojected fast
+path. No Doc/Core change was needed. Wrong-kind checks and last-axis deletion
+behavior remain intact. Eight regressions plus50 existing affected tests PASS;
+the rebuilt dist independently passes the same eight. Only dist/crdt/edit.js
+changes among138 captured dist files. The original failing trace and red tests
+remain separate; the moved-grid fixture was retained in final comparison.
+
+**Verification.** Fresh independent TS/native comparison PASS:14 profiles,
+three schemas,435 actions,870 actor states;101 logical authorings,15 typed arrays
+with25 insert commands, five raw setup authorings,17 negative calls and82
+independent complete-model oracles. Original Word/Presentation profiles and
+custom compositions cover moved grids, row adjacency, cell-body edges,
+nonempty-redo late rejection/base reuse, axis ownership, restore, exact retry,
+selection and both undo orders. Two plain merge profiles prove new covered-cell
+payload and exact foreign writers survive. A separate overlap profile tests
+newer-span precedence and is not counted as a hidden-cell writer proof.
+Native trace SHA256:21b14c87abb37f25e8d736e66aa1518d47f5a899042a54b4f29bec3c6c5de4c2.
+Main181 source/binary guards match through every stage. Full traces use lossless
+gzip with SHA round-trip checks.
+
+Fresh broad native core194/SDK182 PASS; complete80-line example and two independent
+locked documentation consumers PASS. The complete116-file before/after native
+map matches, and83 inherited tests/examples are byte-preserved. Core, wire,
+History and checkpoint code remain unchanged in this slice. High source review
+binds25 inputs, including the TS helper, new tests and rebuilt dist.
+Fresh workspace2170 total:2168 PASS/two expected platform SKIPs/zero failures;
+direct root TypeScript check PASS. This is fresh execution after the TS repair,
+not reused evidence from the earlier native-only phase.
+
+The SDK README/Rust guide contain the complete tested program and tuple/merge
+policy. Public editing/block/schema guides and both roadmaps link it. The separate empty/default-only cell probe passes12 actions using the frozen
+binary, including both cell edges, stale-base rejection, restore, undo/redo and
+retry; these are not added to the435-action main count. Current inherited
+regression passes12 stages/2924 main actions, plus schema/model tests and CLI
+oracles. Documentation build/checks pass56 pages/2741 internal links with English
+and local-path checks. Opening313 files,17 earlier sealed reports and four pinned
+binaries are preserved, except the declared additive SDK/docs and TS helper/dist
+changes. The source-bound report records the exact preservation maps. Q1.3.3 next creates exactly one explicit column per call with stable
+boundary and unique row payloads; Q1.3.4 plans a bounded native ID read catalog.
+
+No Chrome/mobile/performance measurement, WASM/production editor backend,
+native durable process/server recovery, mixed-runtime checkpoint exchange,
+commit/push/deployment or registry action is included. Full D3/D4/D6/D7 remain
+open. A local read token is not server conditional acceptance or authorization.
+
+[Source-bound axis-targeting report](docs/reports/rust-d3-axis-targeting-2026-11-05/README.md).

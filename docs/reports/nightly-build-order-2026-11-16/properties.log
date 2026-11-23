@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: 성질: 독립 동시 편집은 전달 순서를 바꿔도 같은 모델과 토큰 순서로 모인다
+ok 1 - 성질: 독립 동시 편집은 전달 순서를 바꿔도 같은 모델과 토큰 순서로 모인다
+  ---
+  duration_ms: 22.080458
+  type: 'test'
+  ...
+# Subtest: 성질: 다섯 wire 연산의 중복 전달은 모델과 저장 상태를 바꾸지 않는다
+ok 2 - 성질: 다섯 wire 연산의 중복 전달은 모델과 저장 상태를 바꾸지 않는다
+  ---
+  duration_ms: 1.122417
+  type: 'test'
+  ...
+# Subtest: 성질: 인과 의존 연산의 지연은 허용하지만 선행 토큰 없이 적용하지 않는다
+ok 3 - 성질: 인과 의존 연산의 지연은 허용하지만 선행 토큰 없이 적용하지 않는다
+  ---
+  duration_ms: 1.764292
+  type: 'test'
+  ...
+# Subtest: 성질: 안정된 묘비 GC는 모델을 보존하고 옛 이름표와 스냅숏 왕복을 유지한다
+ok 4 - 성질: 안정된 묘비 GC는 모델을 보존하고 옛 이름표와 스냅숏 왕복을 유지한다
+  ---
+  duration_ms: 2.601917
+  type: 'test'
+  ...
+# Subtest: 성질: 모델은 지운 토큰과 내부 묘비 장부를 노출하지 않는다
+ok 5 - 성질: 모델은 지운 토큰과 내부 묘비 장부를 노출하지 않는다
+  ---
+  duration_ms: 0.212083
+  type: 'test'
+  ...
+# Subtest: 문자 단위 경계: 저장 ID는 UTF-16, 모델 Unit은 code point이다
+ok 6 - 문자 단위 경계: 저장 ID는 UTF-16, 모델 Unit은 code point이다
+  ---
+  duration_ms: 0.178583
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 389.551875

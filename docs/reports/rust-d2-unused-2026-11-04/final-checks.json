@@ -1,0 +1,195 @@
+{
+  "status": "BOUNDED_PASS_WITH_D3_OBSERVATIONS",
+  "nativeCore": {
+    "passed": 189,
+    "log": "core-cargo-test-final.log"
+  },
+  "nativeSdk": {
+    "passed": 120,
+    "receipt": "sdk-unused-summary.json"
+  },
+  "comparison": {
+    "status": "BOUNDED_PASS_WITH_D3_OBSERVATIONS",
+    "mainActions": 84,
+    "typescriptDocumentEdits": 24,
+    "typescriptRawWireAuthorings": 4,
+    "inheritedActions": 90,
+    "schemaCases": 14,
+    "placementCases": 20,
+    "metamorphicVariants": 3,
+    "compilerObservations": 7,
+    "receipts": {
+      "main": "compare/run-2026-11-04T08-41-51.389Z-32357/receipt.json",
+      "inheritedTextfalse": "compare-inherited-textfalse/run-2026-11-04T08-42-08.488Z-33438/receipt.json",
+      "oracle": "compare-oracle/run-2026-11-04T08-40-47.048Z-29554/receipt.json",
+      "product": "compare-product/run-2026-11-04T08-40-47.048Z-29553/receipt.json",
+      "compiler": "compare-compiler-boundaries/run-2026-11-04T08-40-47.016Z-29552/receipt.json"
+    },
+    "failuresPreserved": [
+      "compare/run-2026-11-04T08-40-39.494Z-29252/receipt.json (91 actions, first exact mismatch Word explicit nested paragraph compiler emits extra field reset/default writes and different tickets/boundary)",
+      "compare/run-2026-11-04T08-41-32.059Z-31519/receipt.json (85 actions, required title storage alias not visible because default title fulfills minimum)"
+    ],
+    "proofBoundary": "Original unpruned Word and Presentation descriptors; actual nested section/slide and metadata, existing default paragraph/title text. No list/table authoring or broad product authoring coverage. D3 compiler findings remain separate. No mobile, browser, performance, commit, push.",
+    "compressionReceipt": "output/rust-d2-unused-2026-11-04/compare-compression.json"
+  },
+  "main": {
+    "originalSchemas": 2,
+    "actions": 84,
+    "actorStates": 168,
+    "actualDocEdits": 24,
+    "rawWireAuthorings": 4
+  },
+  "workspace": {
+    "command": [
+      "npm",
+      "run",
+      "test",
+      "--workspaces",
+      "--if-present"
+    ],
+    "pid": 42025,
+    "group": 42025,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 121.594,
+    "status": "PASS",
+    "tests": 2114,
+    "pass": 2112,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "initialWorkspace": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 95186,
+    "group": 95186,
+    "exit": 1,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 174.716,
+    "status": "FAIL",
+    "tests": 2114,
+    "pass": 2110,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "focusedMcpRetry": {
+    "command": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "--test-name-pattern=rejection checkpoint-directory-sync-fail|durable before-accept intent",
+      "apps/mcp/test/proposal-rejection-process.test.ts",
+      "apps/mcp/test/startup-lifecycle.test.ts"
+    ],
+    "pid": 38039,
+    "group": 38039,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 4.702,
+    "status": "PASS"
+  },
+  "typecheck": {
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.json"
+    ],
+    "pid": 50858,
+    "group": 50858,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 8.791,
+    "status": "PASS"
+  },
+  "documentation": {
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--workspace",
+        "@doc-sync/docs"
+      ],
+      "pid": 50857,
+      "group": 50857,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 8.623,
+      "status": "PASS"
+    },
+    "check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 83941,
+      "group": 83941,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.505,
+      "status": "PASS"
+    },
+    "pages": 55,
+    "internalLinks": 2645,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "sourceVerification": {
+    "status": "PASS",
+    "scope": "Source/integrity verification; product comparison remains bounded with D3 observations",
+    "sourceMaps": {
+      "main": 151,
+      "inheritedTextfalse": 146,
+      "oracle": 6,
+      "product": 4,
+      "compilerObservations": 4,
+      "sdk": 10,
+      "inheritedTsIntegration": 31
+    },
+    "baselineChangesWithinOwnedScope": [
+      "HANDOFF.md",
+      "README.md",
+      "apps/docs/src/guide/document-rules.md",
+      "apps/docs/src/guide/rust.md",
+      "apps/docs/src/roadmap.md",
+      "apps/docs/src/schemas/custom.md",
+      "apps/docs/src/schemas/document.md",
+      "docs/rust-roadmap.md",
+      "experiments/rust-sdk/README.md",
+      "experiments/rust-shadow/src/runtime_schema.rs"
+    ],
+    "oldReportSeals": 11,
+    "oldTargetBinariesUnchanged": 14,
+    "documentedBodySha256": "d36daa5bdc4bc210440882ddea0248efacfe4bcaa482e4272d184488b9ff776b",
+    "mainRows": 84,
+    "actorStates": 168,
+    "actualDocEdits": 24,
+    "rawWireAuthorings": 4,
+    "traceRoundTrips": 12,
+    "traceRawBytes": 150008067,
+    "historicalTraceGzipFiles": 22,
+    "historicalRawBytes": 1155686277,
+    "historicalCompressedBytes": 77368431,
+    "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4"
+  },
+  "legacyFull23Drivers": "NOT_RERUN_THIS_TASK",
+  "chrome": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "fullProductCommandParity": "NOT_QUALIFIED",
+  "publication": "NOT_REQUESTED"
+}

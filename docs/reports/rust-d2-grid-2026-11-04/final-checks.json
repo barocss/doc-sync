@@ -1,0 +1,111 @@
+{
+  "status": "PASS",
+  "sourceBase": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4 plus captured recursive-flow WIP",
+  "native": {
+    "core": 96,
+    "sdk": 60,
+    "newCore": 7,
+    "newSdk": 5
+  },
+  "gridComparison": {
+    "actions": 180,
+    "actorStates": 360,
+    "schemas": 2,
+    "chainsPerSchema": 2,
+    "negativeDescriptors": 12,
+    "snapshotsInteroperable": "NOT_QUALIFIED"
+  },
+  "workspace": {
+    "tests": 2110,
+    "pass": 2108,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0
+  },
+  "docs": {
+    "pages": 55,
+    "checkedInternalLinks": 2611,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "checks": {
+    "workspace-final": {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "pid": 427,
+      "group": 427,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 124.462,
+      "status": "PASS"
+    },
+    "docs-build": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 10070,
+      "group": 10070,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 14.262,
+      "status": "PASS"
+    },
+    "docs-check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 11647,
+      "group": 11647,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 0.557,
+      "status": "PASS"
+    },
+    "nested-regression": {
+      "command": [
+        "env",
+        "NESTED_OUT=output/rust-d2-grid-2026-11-04/nested-regression",
+        "NESTED_TARGET=output/rust-d2-grid-2026-11-04/nested-target",
+        "node",
+        "experiments/runtime-document-nested/compare.mjs"
+      ],
+      "pid": 95879,
+      "group": 95879,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 25.929,
+      "status": "PASS"
+    },
+    "legacy-regression": {
+      "command": [
+        "env",
+        "RUNTIME_SCHEMA_OUT=output/rust-d2-grid-2026-11-04/legacy-regression",
+        "RUNTIME_SCHEMA_TARGET=output/rust-d2-grid-2026-11-04/legacy-target",
+        "node",
+        "experiments/runtime-schema-native/compare.mjs"
+      ],
+      "pid": 96011,
+      "group": 96011,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 12.034,
+      "status": "PASS"
+    }
+  },
+  "d3Postmove": "OBSERVED_D3_GAP",
+  "browser": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "publication": "NOT_REQUESTED"
+}

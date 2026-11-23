@@ -1060,7 +1060,7 @@ const server = createServer(async (req, res) => {
 });
 
 mkdirSync(DATA, {recursive: true});
-server.listen(PORT, () => {
+server.listen(PORT, process.env.DOC_SYNC_HOST, () => {
     const address = server.address();
 
     console.log(`doc-sync 서버 http://localhost:${typeof address === "object" && address ? address.port : PORT}`);

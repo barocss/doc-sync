@@ -34,7 +34,7 @@ test("invalid brief is rejected before state or network work, including the CLI"
 
 test("authoritative finish checks reject partial text and wrong structure, and accept the complete result", {timeout:60000}, async t => {
     const dir=await mkdtemp(join(tmpdir(),"bot-brief-server-"));
-    const server=spawn(process.execPath,[fileURLToPath(new URL("../../demo/server.ts",import.meta.url))],{env:{...process.env,PORT:"0",DATA_DIR:join(dir,"server"),NO_SCHEMA:""},stdio:["ignore","pipe","pipe"]});
+    const server=spawn(process.execPath,[fileURLToPath(new URL("../../demo/server.ts",import.meta.url))],{env:{...process.env,PORT:"0", DOC_SYNC_HOST: "127.0.0.1",DATA_DIR:join(dir,"server"),NO_SCHEMA:""},stdio:["ignore","pipe","pipe"]});
     let errors="";server.stderr.on("data",b=>errors+=String(b));
     try {
         const origin=await new Promise<string>((resolve,reject)=>{let out="";const timer=setTimeout(()=>reject(Error(errors||"server timeout")),10000);server.once("exit",()=>{clearTimeout(timer);reject(Error(errors));});server.stdout.on("data",b=>{out+=String(b);const match=out.match(/http:\/\/localhost:(\d+)(?=\r?\n)/);if(match){clearTimeout(timer);resolve(`http://127.0.0.1:${match[1]}`);}});});

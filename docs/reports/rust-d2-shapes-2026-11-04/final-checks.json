@@ -1,0 +1,129 @@
+{
+  "status": "PASS",
+  "scope": "Native runtime Document group/inline/span scalar subset; full D2/D3 open",
+  "sourceBase": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4 plus captured inherited flow/grid WIP",
+  "native": {
+    "core": 107,
+    "sdk": 67,
+    "newCore": 11,
+    "newSdk": 7
+  },
+  "independentComparison": {
+    "actions": 188,
+    "actorStates": 376,
+    "descriptors": 2,
+    "negativePaths": 12,
+    "qualifiedReceipt": "receipt-30.json",
+    "positiveCorpusSha256": "cb8898bc2373c7407225b044541842a879b88589e28308e60ab729206938cf95"
+  },
+  "workspace": {
+    "tests": 2110,
+    "pass": 2108,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0
+  },
+  "docs": {
+    "pages": 55,
+    "checkedInternalLinks": 2612,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "checks": {
+    "workspace-final": {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "pid": 55837,
+      "group": 55837,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 122.128,
+      "status": "PASS"
+    },
+    "docs-build-final": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 69958,
+      "group": 69958,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 15.984,
+      "status": "PASS"
+    },
+    "docs-check-final": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 72395,
+      "group": 72395,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.31,
+      "status": "PASS"
+    },
+    "nested-regression": {
+      "command": [
+        "env",
+        "NESTED_OUT=output/rust-d2-shapes-2026-11-04/nested-regression",
+        "NESTED_TARGET=output/rust-d2-shapes-2026-11-04/nested-target",
+        "node",
+        "experiments/runtime-document-nested/compare.mjs"
+      ],
+      "pid": 53079,
+      "group": 53079,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 31.56,
+      "status": "PASS"
+    },
+    "grid-regression": {
+      "command": [
+        "env",
+        "GRID_OUT=output/rust-d2-shapes-2026-11-04/grid-regression",
+        "GRID_TARGET=output/rust-d2-shapes-2026-11-04/grid-target",
+        "node",
+        "experiments/runtime-document-grid/compare.mjs"
+      ],
+      "pid": 53081,
+      "group": 53081,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 89.547,
+      "status": "PASS"
+    },
+    "legacy-regression": {
+      "command": [
+        "env",
+        "RUNTIME_SCHEMA_OUT=output/rust-d2-shapes-2026-11-04/legacy-regression",
+        "RUNTIME_SCHEMA_TARGET=output/rust-d2-shapes-2026-11-04/legacy-target",
+        "node",
+        "experiments/runtime-schema-native/compare.mjs"
+      ],
+      "pid": 53080,
+      "group": 53080,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 17.902,
+      "status": "PASS"
+    }
+  },
+  "knownGap": "OBSERVED_D3_GAP: empty-cell model-position head rewrite/tail authoring",
+  "browser": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "nativeProcessServerCrash": "NOT_RUN",
+  "publication": "NOT_REQUESTED"
+}

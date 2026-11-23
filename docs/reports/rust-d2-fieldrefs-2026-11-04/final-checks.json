@@ -1,0 +1,115 @@
+{
+  "status": "PASS",
+  "nativeCoreTests": 171,
+  "nativeSdkTests": 109,
+  "main": {
+    "schemas": 2,
+    "commands": 352,
+    "actorStates": 704,
+    "actualDocEditChecks": 184
+  },
+  "scopeCases": 28,
+  "actualTsHubCases": 32,
+  "comparisonStages": 23,
+  "frozenHashes": 219,
+  "inheritedRuntimeSourcesUnchanged": 44,
+  "workspace": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 19777,
+    "group": 19777,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 141.41,
+    "status": "PASS",
+    "tests": 2114,
+    "pass": 2112,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "typecheck": {
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.json"
+    ],
+    "pid": 65657,
+    "group": 65657,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 7.399,
+    "status": "PASS"
+  },
+  "documentation": {
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--workspace",
+        "@doc-sync/docs"
+      ],
+      "pid": 74970,
+      "group": 74970,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 6.653,
+      "status": "PASS"
+    },
+    "check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 77223,
+      "group": 77223,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 0.609,
+      "status": "PASS"
+    },
+    "pages": 55,
+    "internalLinks": 2630,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "sourceVerification": {
+    "status": "PASS",
+    "sourceMaps": {
+      "core": 34,
+      "sdk": 6,
+      "wrapper": 219,
+      "main": 163,
+      "inheritedRuntime": 44,
+      "inheritedTsIntegration": 31,
+      "nextD2Evidence": 32
+    },
+    "documentationProgramSha256": "1ff202faa83d8edc3db98154ff140c3592b4f837b9c6f103baae34ce321874dc",
+    "exampleDifference": "One module documentation comment precedes the exact fenced/compiled body.",
+    "priorReportSeals": 8,
+    "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4",
+    "publication": "NOT_REQUESTED"
+  },
+  "compressedEvidence": {
+    "gzipIntegrityChecks": 76,
+    "traceRawHashChecks": 32,
+    "audit": "compare-regressions/run-2026-11-04T07-07-06.074Z-60037/gzip-roundtrip-audit.json"
+  },
+  "comparisonSummary": "final-comparison-summary.json",
+  "heapIdentity": "NOT_REPRESENTED",
+  "liveObjectBridge": "NOT_QUALIFIED",
+  "chrome": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "publication": "NOT_REQUESTED"
+}

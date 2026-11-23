@@ -38,7 +38,7 @@ test("AI and user collaboration scenarios", {timeout: 120000}, async t => {
     const root = await mkdtemp(join(tmpdir(), "doc-sync-ai-scenarios-"));
     const demo = fileURLToPath(new URL("../../demo/server.ts", import.meta.url));
     const mcp = fileURLToPath(new URL("../src/main.ts", import.meta.url));
-    const server = spawn(process.execPath, [demo], {env: {...process.env, PORT: "0", DATA_DIR: join(root, "server"), NO_SCHEMA: ""}, stdio: ["ignore", "pipe", "pipe"]});
+    const server = spawn(process.execPath, [demo], {env: {...process.env, PORT: "0", DOC_SYNC_HOST: "127.0.0.1", DATA_DIR: join(root, "server"), NO_SCHEMA: ""}, stdio: ["ignore", "pipe", "pipe"]});
     let stderr = "";
     server.stderr.on("data", chunk => { stderr += String(chunk); });
     const agents: Agent[] = [], humans: Array<{client: SyncClient; transport: NodeHttpTransport}> = [];

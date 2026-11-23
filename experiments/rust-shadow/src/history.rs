@@ -157,7 +157,7 @@ impl History {
         let mut steps = vec![];
         let mut written = BTreeSet::new();
         for op in ops {
-            let o = object(op)?;
+            let o = object(composite::operation_body(op))?;
             let kind = string(o, "t")?;
             // Validate and apply on the candidate document first. For set, capture
             // each actual register before applying, as Doc.run does for local ops.
@@ -282,7 +282,7 @@ impl History {
                 }
                 "move" => {
                     let id = ticket(o, "target")?;
-                    let split = ops.iter().any(|op| {
+                    let split = ops.iter().map(composite::operation_body).any(|op| {
                         op["t"] == "node"
                             && op["id"] == json!(id)
                             && op["boundary"]
@@ -519,7 +519,16 @@ impl History {
                 for (value, indices) in groups {
                     let at = Self::next(doc)?;
                     let ids: Vec<&Ticket> = indices.iter().map(|i| &targets[*i].id).collect();
-                    let op = json!({"t":"set","at":at,"ids":ids,"key":key,"value":value});
+                    let source = if undo {
+                        targets[indices[0]].before
+                    } else {
+                        targets[indices[0]].after
+                    };
+                    let op = doc.history_reference_op(
+                        json!({"t":"set","at":at,"ids":ids,"key":key,"value":value}),
+                        self.sets[source].at.as_ref(),
+                        key,
+                    )?;
                     doc.apply(&op)?;
                     for i in indices {
                         let t = &mut targets[i];
@@ -702,7 +711,7 @@ impl History {
                         }
                     }
                     Step::Set { key, targets } => {
-                        if !(runtime && runtime_schema::safe_name(key)) && !nested::graphic_history_key(key)
+                        if !(runtime && (runtime_schema::safe_name(key) || fields::decode(key).is_some())) && !nested::graphic_history_key(key)
                             && !general::history_key(key)
                             && !nested::history_key(key)
                             && key != "link"
@@ -913,7 +922,12 @@ impl History {
                                     }
                                 }
                                 if doc.general {
-                                    doc.validate_set(token, key, &self.sets[state].value)?;
+                                    doc.validate_history_set(
+                                        token,
+                                        key,
+                                        &self.sets[state].value,
+                                        self.sets[state].at.as_ref(),
+                                    )?;
                                 } else {
                                     validate_mark(key)?;
                                     if !self.sets[state].value.is_null()

@@ -1,0 +1,182 @@
+{
+  "status": "BOUNDED_PASS_D3_GROUP_GRID_AND_Q2_1",
+  "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4",
+  "scope": "Bounded native model group/grid/row/cell construction, direct covered-cell selections and six generated schema fixed-sequence comparisons; not complete D3 or production Rust/WASM",
+  "main": {
+    "status": "PASS",
+    "profileCount": 22,
+    "schemaCount": 10,
+    "semanticActions": 481,
+    "originalProductProfiles": 14,
+    "originalProductSchemaCount": 2,
+    "compositionProfiles": 2,
+    "generatedProfiles": 6,
+    "generatedSchemaCount": 6,
+    "generatedSeeds": [
+      1701,
+      1702,
+      1703,
+      1704,
+      1705,
+      1706
+    ],
+    "preexistingMoveProfiles": 1,
+    "typescriptDocumentEdits": 113,
+    "typescriptRawWireAuthorings": 5,
+    "positiveCorpusSha256": "69b313ff15f76e50650d3548073bd2713bc1dcf365c0de669faa4869e829763f",
+    "stateComparisons": 962,
+    "receipt": {
+      "path": "output/rust-d3-group-grid-2026-11-04/compare/run-2026-11-04T14-05-05.467Z-20711/receipt.json",
+      "sha256": "e155a376e43375e7ce79af4dbf6edb0d638df128dab96d7857befcc615c50d64"
+    },
+    "fourGuardedStages": [
+      {
+        "name": "typescript-negative-schema-validation",
+        "status": "PASS"
+      },
+      {
+        "name": "typescript-independent-authoring",
+        "status": "PASS"
+      },
+      {
+        "name": "native-independent-authoring",
+        "status": "PASS"
+      },
+      {
+        "name": "cross-runtime-exact-comparison",
+        "status": "PASS"
+      }
+    ],
+    "sourceAndBinaryMapCurrent": 168
+  },
+  "native": {
+    "receipt": {
+      "path": "output/rust-d3-group-grid-2026-11-04/structural-final-receipt.json",
+      "sha256": "cf3c6e08b29c4c39abf283fe05439a4cb02048b2d04fdbdbbda82f321d79ae9a"
+    },
+    "corePass": 189,
+    "sdkPass": 152,
+    "fullExample": true,
+    "independentLockedConsumers": 2,
+    "sourceMapCurrent": 104,
+    "inheritedExamplesTestsUnchanged": 72,
+    "trace": {
+      "path": "output/rust-d3-group-grid-2026-11-04/native-target/debug/examples/runtime_group_grid_trace",
+      "sha256": "8b794e0604e8ab199b38635a7bd83eab684dd0839c8ac9e113dacc7700c82a48"
+    },
+    "cli": {
+      "path": "output/rust-d3-group-grid-2026-11-04/native-target/debug/doc-sync-rust-shadow",
+      "sha256": "2feb985bfa389abdde9fe2da82a66257e7bf7dcea16eb6c9f92e1bece0a35336"
+    }
+  },
+  "comparisonSummary": {
+    "path": "output/rust-d3-group-grid-2026-11-04/compare-summary.json",
+    "sha256": "aca27bfff5a892efc8628f0ea6ae40c376d8e8b5e41e53d3ff4e1775d4f9bdbd"
+  },
+  "independentInsertionModelOracles": 93,
+  "inheritedRegressions": [
+    {
+      "name": "moved",
+      "receipt": "output/rust-d3-group-grid-2026-11-04/compare-regression-moved-main/run-2026-11-04T14-11-40.360Z-38318/receipt.json",
+      "status": "PASS",
+      "semanticActions": 1062,
+      "stateComparisons": 2124
+    },
+    {
+      "name": "paragraph",
+      "receipt": "output/rust-d3-group-grid-2026-11-04/compare-regression-paragraph-main/run-2026-11-04T14-15-33.834Z-43666/receipt.json",
+      "status": "PASS",
+      "semanticActions": 466,
+      "stateComparisons": 932
+    },
+    {
+      "name": "unused",
+      "receipt": "output/rust-d3-group-grid-2026-11-04/compare-regression-unused-main/run-2026-11-04T14-16-25.720Z-44469/receipt.json",
+      "status": "PASS",
+      "semanticActions": 84,
+      "stateComparisons": 168
+    },
+    {
+      "name": "textfalse",
+      "receipt": "output/rust-d3-group-grid-2026-11-04/compare-regression-textfalse-main/run-2026-11-04T14-16-36.072Z-44731/receipt.json",
+      "status": "PASS",
+      "semanticActions": 90,
+      "stateComparisons": 180
+    }
+  ],
+  "q2SourceFixture": {
+    "receipt": {
+      "path": "output/rust-d3-group-grid-2026-11-04/research/q2-receipt-v2.json",
+      "sha256": "a8742cd833127e9e6d0561f929c9a388310d2f570d48cffce78d0afd382cd287"
+    },
+    "pass": 19,
+    "seeds": [
+      1701,
+      1702,
+      1703,
+      1704,
+      1705,
+      1706
+    ],
+    "nativeFixedSequenceActions": 120,
+    "nativeFixedSequenceProfiles": 6,
+    "generatedCausalSchedules": "NOT_RUN",
+    "validityPreservingReducer": "NOT_RUN"
+  },
+  "workspace": {
+    "receipt": {
+      "path": "output/rust-d3-group-grid-2026-11-04/workspace-test-final-v2.json",
+      "sha256": "eb7bcd925b0e1483340651d344255042b947511ad38f2b7b26950c50dbf14c9c"
+    },
+    "tests": 2162,
+    "pass": 2160,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "command": "npm run test --workspaces --if-present",
+    "boundary": "Final whole-workspace retry used existing completed package builds; initial navigation golden failure retained separately"
+  },
+  "typecheck": {
+    "path": "output/rust-d3-group-grid-2026-11-04/typecheck-final.json",
+    "sha256": "aa8a39bf8a8bd656db806793e4121a9a811f2be1b97334960ab5eb8d9d0296a4"
+  },
+  "whitespace": {
+    "path": "output/rust-d3-group-grid-2026-11-04/whitespace-final-v2.json",
+    "sha256": "2429e72c8f0d5488c9041666e53f2a18434a2421f7029671148441b361c7cba7"
+  },
+  "docs": {
+    "pages": 56,
+    "checkedInternalLinks": 2722,
+    "english": true,
+    "localPathsExcluded": true,
+    "buildReceipt": {
+      "path": "output/rust-d3-group-grid-2026-11-04/docs-build-final.json",
+      "sha256": "857a5c266f6321503ca8aa978e0ad0bd36d1359d8ed9a10aa129f2ca834499dd"
+    },
+    "checkReceipt": {
+      "path": "output/rust-d3-group-grid-2026-11-04/docs-check-final.json",
+      "sha256": "2d36ceec0f8078d9af06ac2a0e37e308cfd6c89d0f53aca11b07c9dca6ee6982"
+    },
+    "fullRustExampleFencesMatchConsumers": true
+  },
+  "preservation": {
+    "path": "output/rust-d3-group-grid-2026-11-04/preservation-final-v2.json",
+    "sha256": "7bf4355562c2a777d1f01b3b5f88b676cac8f4ccc234fc05c6d5ae4e871de500"
+  },
+  "notRun": [
+    "Chrome",
+    "mobile",
+    "performance benchmark",
+    "production WASM/editor integration",
+    "mixed-runtime checkpoint/wire exchange",
+    "native durable process/server restart",
+    "protected native GC",
+    "general generated causal schedules and shrinking"
+  ],
+  "publication": {
+    "commit": false,
+    "push": false,
+    "deployment": false,
+    "registry": false
+  }
+}

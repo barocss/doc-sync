@@ -1,0 +1,915 @@
+{
+  "status": "BOUNDED_PASS_D3_MOVED",
+  "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4",
+  "scope": "Original Word23 and Presentation27 text/flow model insertion after existing movement; full model oracle plus exact operations/history/state; not all D3 or production Rust/WASM",
+  "comparison": {
+    "status": "PASS",
+    "main": {
+      "status": "TRACE_RECOMPARISON_PASS",
+      "qualification": "Comparison of two complete guarded authoring traces; authoring was not replayed after an assertion-only correction.",
+      "receipt": "output/rust-d3-moved-2026-11-04/compare-recomparison/run-2026-11-04T12-29-35.144Z-88786/receipt.json",
+      "profiles": 27,
+      "schemas": 2,
+      "semanticActions": 1062,
+      "stateComparisons": 2124,
+      "negativeCommands": 63,
+      "actualTypescriptDocEditAuthorings": 176,
+      "rawTypescriptDocEmitAuthorings": 93,
+      "fullIndependentInsertionModelOracles": 130,
+      "requestedModelInsertsAfterMovement": 27,
+      "stalePredecessorArrivalProfiles": 4,
+      "multichildMovedFlowProfiles": 2,
+      "pairedPromotionProfiles": 4,
+      "sourceFreezePaths": 165,
+      "allFourGuardedStages": true,
+      "guardedStages": [
+        {
+          "name": "typescript-negative-schema-validation",
+          "status": "PASS"
+        },
+        {
+          "name": "typescript-preserved-authoring-integrity",
+          "status": "PASS"
+        },
+        {
+          "name": "native-preserved-authoring-integrity",
+          "status": "PASS"
+        },
+        {
+          "name": "cross-runtime-exact-comparison",
+          "status": "PASS"
+        }
+      ],
+      "originalGuardedAuthoringStages": [
+        {
+          "name": "typescript-independent-authoring",
+          "status": "PASS",
+          "hashesBeforeEqualAfter": true
+        },
+        {
+          "name": "native-independent-authoring",
+          "status": "PASS",
+          "hashesBeforeEqualAfter": true
+        }
+      ],
+      "originalAuthoringReplayed": false,
+      "stillMatchesCurrentSourceFreeze": true,
+      "sourceHashes": {
+        "packages/doc-sync/src/crdt/doc.ts": "81d74a8686409e8aedff72792d0778c0c7975b8345360c37448bac4aee33dc34",
+        "packages/doc-sync/src/crdt/edit.ts": "aef0db64e7e5112e59b80d2b38e5fb1e74a22ce42389a83297267cf464bcf299",
+        "packages/doc-sync/dist/crdt/doc.js": "f1086696702366437fcd4565131573d961b16b57b52664e5aaecfd3ef0ebee37",
+        "packages/doc-sync/dist/crdt/edit.js": "a7553e9a47562b77e379d3e9390f9cdc4856a90cb212d7da27303d6e5c75f234",
+        "experiments/rust-shadow/src/nested.rs": "b18a5301451468e5a5218d56ff8a5645d8473bf5eb6b2cdef57ae6cd4c627e08",
+        "experiments/rust-sdk/src/runtime_paragraph.rs": "dd92ecbcb6277e1a8a9a617cd336d4aa991cce13f47b299d832c23de7bce2f6b",
+        "experiments/rust-sdk/examples/runtime_paragraph_trace.rs": "9b71fd7fe42a4ef29f4c2365041bf8985adc676f53a133c8f881ff7b2ee9fda0",
+        "experiments/rust-sdk/examples/runtime_moved_trace.rs": "2093e083fda18332608f6640cfed023d9afaa933e5cf0d57496d01ca83ad90d2",
+        "output/rust-d3-moved-2026-11-04/native-target/debug/examples/runtime_moved_trace": "52780c6319e6947d2a983e780b6c993ce702f86c182d1de229aa8d0759355c85"
+      }
+    },
+    "recomparison": {
+      "provenance": "output/rust-d3-moved-2026-11-04/compare-recomparison-provenance.json",
+      "originalRun": "output/rust-d3-moved-2026-11-04/compare/run-2026-11-04T12-18-09.809Z-76331",
+      "originalInputSha256": "de2fdeff845409dfebb78307a2e54ea05f6446df0ee1d47764c098eb201eb7b1",
+      "originalSourceFreezeSha256": "6f600a2c6beeb76b57a8f5299aa656062549c2731dd89da3ba2df3120c3a0077",
+      "originalSourceArchive": {
+        "path": "/Users/user/github/doc-sync/output/rust-d3-moved-2026-11-04/compare/run-2026-11-04T12-18-09.809Z-76331/native-independent-authoring-sources.tar.gz",
+        "sha256": "efe328ba454ad0c626767214e67c78ebd999e4064e5032249b84d0bf2939b8d0"
+      },
+      "originalComparisonFailure": "AssertionError [ERR_ASSERTION]: word-stale-pending-anchor-relocated/arrival converged before own recovery/native/A retains B stale-predecessor placement writer\n+ actual - expected\n\n  {\n+   after: {\n+     actor: '8@A/body',\n+     lamport: 0\n+   },\n-   after: null,\n    at: {\n+     actor: 'A',\n+     lamport: 18\n-     actor: 'B',\n-     lamport: 19\n    },\n    parent: {\n+     actor: '8@A/body',\n-     actor: '7@A/body',\n      lamport: 0\n    },\n    t: 'move',\n    target: {\n      actor: 'A',\n\n    at file:///Users/user/github/doc-sync/experiments/runtime-document-moved/compare.mjs:170:11\n    at attempt (file:///Users/user/github/doc-sync/experiments/runtime-document-moved/compare.mjs:23:526)\n    at file:///Users/user/github/doc-sync/experiments/runtime-document-moved/compare.mjs:160:2\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)",
+      "correctedOracle": "Look up full B movement record by unique stamp, then independently check authoritative native state placement and TS own-checkpoint placementOf. Original target-only lookup selected historical A record from the complete ledger.",
+      "assertionDiff": "output/rust-d3-moved-2026-11-04/compare-recomparison-assertion.diff",
+      "readOnlyExecutorDiff": "output/rust-d3-moved-2026-11-04/compare-recomparison-executor.diff",
+      "productionInputAndBinaryUnchanged": true,
+      "originalFailureRecovery": "output/rust-d3-moved-2026-11-04/compare-original-failure-recovery.json"
+    },
+    "inherited": {
+      "receipt": "output/rust-d3-moved-2026-11-04/compare-regressions/run-2026-11-04T12-22-47.231Z-80655/receipt.json",
+      "stages": [
+        {
+          "name": "schema-export",
+          "status": "PASS",
+          "receipt": null
+        },
+        {
+          "name": "paragraph-main-466",
+          "status": "PASS",
+          "receipt": "output/rust-d3-moved-2026-11-04/compare-regression-paragraph-main/run-2026-11-04T12-22-47.868Z-80711/receipt.json",
+          "semanticActions": 466
+        },
+        {
+          "name": "unused-main-84",
+          "status": "PASS",
+          "receipt": "output/rust-d3-moved-2026-11-04/compare-regression-unused-main/run-2026-11-04T12-23-39.653Z-82193/receipt.json",
+          "semanticActions": 84
+        },
+        {
+          "name": "textfalse-main-90",
+          "status": "PASS",
+          "receipt": "output/rust-d3-moved-2026-11-04/compare-regression-textfalse-main/run-2026-11-04T12-23-48.768Z-82373/receipt.json",
+          "semanticActions": 90
+        },
+        {
+          "name": "unused-oracle",
+          "status": "PASS",
+          "receipt": "output/rust-d3-moved-2026-11-04/compare-regression-unused-oracle/run-2026-11-04T12-23-55.026Z-82522/receipt.json",
+          "schemaCases": 14,
+          "placementCases": 20,
+          "metamorphicVariants": 3
+        },
+        {
+          "name": "textfalse-oracle",
+          "status": "PASS",
+          "receipt": "output/rust-d3-moved-2026-11-04/compare-regression-textfalse-oracle/run-2026-11-04T12-23-55.882Z-82594/receipt.json",
+          "wireCases": 24,
+          "logicalCases": 5
+        },
+        {
+          "name": "unused-product",
+          "status": "PASS",
+          "receipt": "output/rust-d3-moved-2026-11-04/compare-regression-unused-product/run-2026-11-04T12-23-56.304Z-82630/receipt.json"
+        }
+      ],
+      "sourceMap": "output/rust-d3-moved-2026-11-04/compare-inherited-source-map.json",
+      "protectedOldBeforeBinarySha256": "357ffbcfd7e31a92716bb9481fe5f489b090f2ff148f36a2ba2a6d6a16a9b12a",
+      "protectedReportSeals": 13,
+      "protectedEvidenceBeforeAfterEqual": true,
+      "exclusions": [
+        {
+          "path": "experiments/runtime-document-unused/compiler-boundaries.mjs",
+          "status": "NOT_RUN_STALE_EXPECTATION",
+          "reason": "Asserts the historical fresh-slide paragraph style=null wire failure that D3 repairs."
+        },
+        {
+          "path": "experiments/runtime-document-textfalse/product-boundary.mjs",
+          "status": "NOT_RUN_STALE_EXPECTATION",
+          "reason": "Asserts that native compilation rejects unused original Word/Presentation declarations; D2 unused already supports them."
+        }
+      ]
+    },
+    "rawPreparationBoundary": {
+      "policy": "Nontext raw Node births use empty boundary. Previous nonempty raw atom boundary was accepted by TS check but rejected by native; it is not a logical model compiler equivalence claim and no product/schema rule was widened.",
+      "rejectedSeedReceipt": "output/rust-d3-moved-2026-11-04/compare/run-2026-11-04T12-10-11.618Z-68584/receipt.json",
+      "beforeMovementVirtualSnapshotBoundary": "Historical preparation snapshot with implicit virtual-text cache before a Move is retained, not claimed fixed. Raw Node/Text seed operations avoid staged Doc.edit/restore at that stage; after Move the equivalent own snapshots restore AB/BA line-map orders."
+    },
+    "invalidSuppliedAttributeBoundary": {
+      "receipt": "output/rust-d3-moved-2026-11-04/compare-input-boundaries/run-2026-11-04T12-12-22.630Z-70690/receipt.json",
+      "status": "OBSERVED_INPUT_BOUNDARY",
+      "scope": "Existing TS Doc.edit normalizes invalid supplied attrs while native SDK rejects them before mutation. Different accepted input surfaces; no logical invalid-input equivalence claim. Raw invalid field wire rejection is tested in the main comparison."
+    },
+    "compression": {
+      "manifest": "output/rust-d3-moved-2026-11-04/compare-compression.json",
+      "records": 26,
+      "totalSavedBytes": 1791247210,
+      "qualifiedFullTraces": [
+        {
+          "original": "output/rust-d3-moved-2026-11-04/compare/run-2026-11-04T12-18-09.809Z-76331/typescript-trace.json",
+          "compressed": "output/rust-d3-moved-2026-11-04/compare/run-2026-11-04T12-18-09.809Z-76331/typescript-trace.json.gz",
+          "sha256": "cbd5ef1663845c0b69106d6afc8a09b98224fbcb51d334b94f63867091277e88",
+          "roundtrip": "PASS",
+          "bytes": 136565860,
+          "compressedBytes": 5538330
+        },
+        {
+          "original": "output/rust-d3-moved-2026-11-04/compare/run-2026-11-04T12-18-09.809Z-76331/native-trace.json",
+          "compressed": "output/rust-d3-moved-2026-11-04/compare/run-2026-11-04T12-18-09.809Z-76331/native-trace.json.gz",
+          "sha256": "bde6311ca1f46c98f555382ec55103d57725f08f17531256c58fd1dba33733f2",
+          "roundtrip": "PASS",
+          "bytes": 337482744,
+          "compressedBytes": 15099999
+        },
+        {
+          "original": "output/rust-d3-moved-2026-11-04/compare-regression-paragraph-main/run-2026-11-04T12-22-47.868Z-80711/typescript-trace.json",
+          "compressed": "output/rust-d3-moved-2026-11-04/compare-regression-paragraph-main/run-2026-11-04T12-22-47.868Z-80711/typescript-trace.json.gz",
+          "sha256": "91c089b520b3f54b0cf692b4e3ec80e4195cd3acca42bb9919ffba870d29a4c5",
+          "roundtrip": "PASS",
+          "bytes": 49488639,
+          "compressedBytes": 2131911
+        },
+        {
+          "original": "output/rust-d3-moved-2026-11-04/compare-regression-paragraph-main/run-2026-11-04T12-22-47.868Z-80711/native-trace.json",
+          "compressed": "output/rust-d3-moved-2026-11-04/compare-regression-paragraph-main/run-2026-11-04T12-22-47.868Z-80711/native-trace.json.gz",
+          "sha256": "64437e53f09c703541bb16716e63d207be03012421770a66520d85428f32f7c6",
+          "roundtrip": "PASS",
+          "bytes": 118766501,
+          "compressedBytes": 6057154
+        },
+        {
+          "original": "output/rust-d3-moved-2026-11-04/compare-regression-unused-main/run-2026-11-04T12-23-39.653Z-82193/typescript-trace.json",
+          "compressed": "output/rust-d3-moved-2026-11-04/compare-regression-unused-main/run-2026-11-04T12-23-39.653Z-82193/typescript-trace.json.gz",
+          "sha256": "ddf94b2337ef1a64896ae00a811e4d08b496577c05127dba1df73c5e1c6e5a92",
+          "roundtrip": "PASS",
+          "bytes": 7443079,
+          "compressedBytes": 343804
+        },
+        {
+          "original": "output/rust-d3-moved-2026-11-04/compare-regression-unused-main/run-2026-11-04T12-23-39.653Z-82193/native-trace.json",
+          "compressed": "output/rust-d3-moved-2026-11-04/compare-regression-unused-main/run-2026-11-04T12-23-39.653Z-82193/native-trace.json.gz",
+          "sha256": "30d380580182cd9b0d8bb9fd3f68c86ddbbbbfc21b58835cd6cc75b4104a431a",
+          "roundtrip": "PASS",
+          "bytes": 17827073,
+          "compressedBytes": 989280
+        },
+        {
+          "original": "output/rust-d3-moved-2026-11-04/compare-regression-textfalse-main/run-2026-11-04T12-23-48.768Z-82373/typescript-trace.json",
+          "compressed": "output/rust-d3-moved-2026-11-04/compare-regression-textfalse-main/run-2026-11-04T12-23-48.768Z-82373/typescript-trace.json.gz",
+          "sha256": "2319bfa7a9c2da82a62b5dd04860f546a7105c05f1e6f69daaf2116a8434fcee",
+          "roundtrip": "PASS",
+          "bytes": 7756371,
+          "compressedBytes": 313579
+        },
+        {
+          "original": "output/rust-d3-moved-2026-11-04/compare-regression-textfalse-main/run-2026-11-04T12-23-48.768Z-82373/native-trace.json",
+          "compressed": "output/rust-d3-moved-2026-11-04/compare-regression-textfalse-main/run-2026-11-04T12-23-48.768Z-82373/native-trace.json.gz",
+          "sha256": "a680083584b2ec5e464a2dbe9d6eb68f2bdc06d312058316438cc91e4f5b94b0",
+          "roundtrip": "PASS",
+          "bytes": 13316520,
+          "compressedBytes": 602145
+        }
+      ]
+    },
+    "normalizations": [
+      "Model text strings become UTF16 units recursively",
+      "Absent model attrs/children/runs become empty",
+      "Typed Text.text becomes UTF16 units; absent marks/attrs become {}; Node boundary becomes empty",
+      "Unwritten head-only derived text/fragment lines omitted only when not referenced",
+      "Ordinary flow head born resolves to per-flow default; required source head born remains raw; axis head born empty; line and deletion ledger sets sorted. Token order, attrs and writer tickets exact"
+    ],
+    "notRun": [
+      "Full product authoring parity",
+      "Arbitrary regular expressions",
+      "Cross-runtime checkpoint wire exchange",
+      "Renderer",
+      "WASM",
+      "network",
+      "mobile",
+      "performance"
+    ]
+  },
+  "native": {
+    "status": "PASS",
+    "checks": {
+      "core": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "experiments/rust-shadow/Cargo.toml",
+          "-j1"
+        ],
+        "pid": 65763,
+        "group": 65763,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 5.854,
+        "status": "PASS"
+      },
+      "sdk": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "experiments/rust-sdk/Cargo.toml",
+          "-j1"
+        ],
+        "pid": 67921,
+        "group": 67921,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 37.833,
+        "status": "PASS"
+      },
+      "example": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "run",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "experiments/rust-sdk/Cargo.toml",
+          "--example",
+          "runtime_moved",
+          "-j1"
+        ],
+        "pid": 69407,
+        "group": 69407,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 1.133,
+        "status": "PASS"
+      },
+      "trace-build": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "experiments/rust-sdk/Cargo.toml",
+          "--example",
+          "runtime_moved_trace",
+          "-j1"
+        ],
+        "pid": 62819,
+        "group": 62819,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 1.709,
+        "status": "PASS"
+      },
+      "readme-consumer": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "run",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "output/rust-d3-moved-2026-11-04/consumer-readme/Cargo.toml",
+          "-j1"
+        ],
+        "pid": 69739,
+        "group": 69739,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 4.208,
+        "status": "PASS"
+      },
+      "guide-consumer": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "run",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "output/rust-d3-moved-2026-11-04/consumer-guide/Cargo.toml",
+          "-j1"
+        ],
+        "pid": 72352,
+        "group": 72352,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 2.438,
+        "status": "PASS"
+      },
+      "cli-build": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "experiments/rust-shadow/Cargo.toml",
+          "--bin",
+          "doc-sync-rust-shadow",
+          "-j1"
+        ],
+        "pid": 74304,
+        "group": 74304,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 0.365,
+        "status": "PASS"
+      }
+    },
+    "testCounts": {
+      "core": 189,
+      "sdk": 142
+    },
+    "newMovedTests": 13,
+    "sourceFiles": 100,
+    "sourceUnchanged": true,
+    "sourceHashesBefore": "moved-final-v2-source-hashes-before.json",
+    "sourceHashesAfter": "moved-final-v2-source-hashes-after.json",
+    "binaries": {
+      "trace": {
+        "path": "output/rust-d3-moved-2026-11-04/native-target/debug/examples/runtime_moved_trace",
+        "sha256": "52780c6319e6947d2a983e780b6c993ce702f86c182d1de229aa8d0759355c85"
+      },
+      "cli": {
+        "path": "output/rust-d3-moved-2026-11-04/native-target/debug/doc-sync-rust-shadow",
+        "sha256": "cb0da569fd86388df710c3191bc254a837746e97e7fb59b93cb1f5c6bbb539a5"
+      }
+    },
+    "documentationConsumers": {
+      "readme": {
+        "output/rust-d3-moved-2026-11-04/consumer-readme/Cargo.toml": "655e392c14ea41bfc76b2dc6f92ee1af12aaf5cc8769b10082c8f7818514e9dd",
+        "output/rust-d3-moved-2026-11-04/consumer-readme/Cargo.lock": "bd6e8594d8bfbf457a738ca522aba733daa0ee03900ede9e54ed8c01d2ef5899",
+        "output/rust-d3-moved-2026-11-04/consumer-readme/src/main.rs": "80e9b24398ea626196ec20f66e5461d114952dd0291013c5962ab683d3eb4b3a"
+      },
+      "guide": {
+        "output/rust-d3-moved-2026-11-04/consumer-guide/Cargo.toml": "fb96bd45dfea58b331cc44a4fd252a8f0b7813aa05e21cf86f20aedd67955ac1",
+        "output/rust-d3-moved-2026-11-04/consumer-guide/Cargo.lock": "7009f3626f39538bce05c10a3fa839153986e832d812b9c8af4c37357165b1de",
+        "output/rust-d3-moved-2026-11-04/consumer-guide/src/main.rs": "80e9b24398ea626196ec20f66e5461d114952dd0291013c5962ab683d3eb4b3a"
+      }
+    },
+    "consumerLocksGeneratedOffline": {
+      "readme": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "generate-lockfile",
+          "--offline",
+          "--manifest-path",
+          "output/rust-d3-moved-2026-11-04/consumer-readme/Cargo.toml"
+        ],
+        "pid": 97328,
+        "group": 97328,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 0.352,
+        "status": "PASS"
+      },
+      "guide": {
+        "command": [
+          "/opt/homebrew/bin/cargo",
+          "generate-lockfile",
+          "--offline",
+          "--manifest-path",
+          "output/rust-d3-moved-2026-11-04/consumer-guide/Cargo.toml"
+        ],
+        "pid": 97388,
+        "group": 97388,
+        "exit": 0,
+        "externalWatchdogSeconds": 240,
+        "watchdogTriggered": false,
+        "seconds": 0.077,
+        "status": "PASS"
+      }
+    },
+    "exactDocumentationProgramMatch": true,
+    "oldBaselinePreserved": {
+      "experiments/rust-sdk/examples/runtime_paragraph_trace.rs": "9b71fd7fe42a4ef29f4c2365041bf8985adc676f53a133c8f881ff7b2ee9fda0",
+      "experiments/rust-sdk/examples/runtime_textfalse_trace.rs": "4cc8b8eff86ab65213d639e4eae6f3996d9a36419782823642d10d0680b251a9",
+      "experiments/rust-sdk/examples/runtime_paragraph.rs": "155613719330a3651daa9f19a41f7ae3e6e860b6c62eba5a937b9c01f5181994"
+    },
+    "originalUnprunedFixtureBaselinePreserved": {
+      "fixtures/product-schemas.ts": "b0074d691c3ffd4d61bac8c68470fd84e14ff57df641eb6141b7de733a1be08a",
+      "experiments/runtime-document-unused/product-schemas.json": "0e316f0713aa5cccd3955f06ab1834172e1039808d0c0094aa366705e942fb91",
+      "experiments/runtime-document-unused/product-schemas.manifest.json": "818bf2026cd9912ee07ba00a042b857df9cc77062b976a0ab95d7fc19885e0d4"
+    },
+    "collisionBeforeBinaries": {
+      "runtime_moved_trace": {
+        "path": "output/rust-d3-moved-2026-11-04/collision-before-binaries/runtime_moved_trace",
+        "sha256": "a44164fcd34c86150bb232656389432a43fe0d0c742321162e6a291bf8638b46"
+      },
+      "doc-sync-rust-shadow": {
+        "path": "output/rust-d3-moved-2026-11-04/collision-before-binaries/doc-sync-rust-shadow",
+        "sha256": "cb0da569fd86388df710c3191bc254a837746e97e7fb59b93cb1f5c6bbb539a5"
+      }
+    },
+    "tools": {
+      "cargo": "cargo 1.87.0 (Homebrew)",
+      "rustc": "rustc 1.87.0 (17067e9ac 2025-05-09) (Homebrew)"
+    },
+    "node": "v24.22.1",
+    "environment": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_TARGET_DIR": "/Users/user/github/doc-sync/output/rust-d3-moved-2026-11-04/native-target"
+    },
+    "scope": "Bounded text/flow model insertion after retained moves; authoritative placement anchors, fresh canonical placeholders, deterministic eligible virtual promotions; a moved-away source boundary collision uses an existing physical primary right marker without changing origins, ticket allocation or new-node Move placement. Concurrent same observed gap births still share one class. Stale remote arrival after predecessor relocation/deletion remains accepted with retained known right anchors.",
+    "notRun": [
+      "mobile",
+      "renderer",
+      "WASM",
+      "network",
+      "performance",
+      "cross-runtime checkpoint exchange"
+    ]
+  },
+  "typescriptSource": {
+    "status": "SOURCE_FROZEN_V5_HIGH_APPROVED",
+    "timestamp": "2026-11-04T12:00:25.596627+00:00",
+    "files": {
+      "packages/doc-sync/src/crdt/edit.ts": "aef0db64e7e5112e59b80d2b38e5fb1e74a22ce42389a83297267cf464bcf299",
+      "packages/doc-sync/src/crdt/doc.ts": "81d74a8686409e8aedff72792d0778c0c7975b8345360c37448bac4aee33dc34",
+      "packages/doc-sync/test/moved-model-insertion.test.ts": "3b56b6444d131b5bac3ede0f95b6dbf8a091a6ccbbd061dfd4ded5d032a6ef9b"
+    },
+    "high_review": "design-review/moved-boundary-fence-source-review.json",
+    "change": "For an ordinary unconstrained text birth only: when the exact proposed physical boundary matches a retained source primary class that occupies another authoritative logical parent/after gap, choose the first retained nonvirtual primary text marker physically after origin as the right fence. No new tickets, changed origins, or existing-node Move writes. Keep requested right if existing class occupies the same gap.",
+    "source_test": {
+      "command": [
+        "/Users/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--experimental-strip-types",
+        "--import",
+        "./output/rust-d3-moved-2026-11-04/ts-fix/source-loader.mjs",
+        "--test",
+        "packages/doc-sync/test/moved-model-insertion.test.ts",
+        "packages/doc-sync/test/nested-paragraph-compiler.test.ts",
+        "packages/doc-sync/test/automatic-gap-paths.test.ts",
+        "packages/doc-sync/test/move.test.ts",
+        "packages/doc-sync/test/move-cursor-regressions.test.ts",
+        "packages/doc-sync/test/move-history-review.test.ts",
+        "packages/doc-sync/test/move-structure-regressions.test.ts"
+      ],
+      "pid": 54153,
+      "group": 54153,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 0.429,
+      "status": "PASS"
+    },
+    "source_test_count": {
+      "pass": 119,
+      "fail": 0
+    },
+    "typecheck": {
+      "command": [
+        "/Users/user/.nvm/versions/node/v24.22.1/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.json"
+      ],
+      "pid": 54152,
+      "group": 54152,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 5.863,
+      "status": "PASS"
+    },
+    "new_boundary_coverage": [
+      "Word and Presentation root append after same-flow move undo/redo",
+      "Word and Presentation root append after cross-flow move undo/redo",
+      "shared boundary concurrent appends coalesce into one new paragraph, retaining the separately moved paragraph and foreign placement in both receipt orders",
+      "three repeated move-away/recreate generations advance the physical fence, exact oracle/history and existing B placements retained",
+      "Word and Presentation incoming moved predecessor with stationary source successor: canonical insertion, replay and exact history, no stationary writer takeover"
+    ],
+    "build": "NOT_RUN; root owns fresh build and npm qualification",
+    "prior_freezes": "Unchanged"
+  },
+  "workspace": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 55086,
+    "group": 55086,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 113.909,
+    "status": "PASS",
+    "totals": {
+      "tests": 2162,
+      "pass": 2160,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    }
+  },
+  "docs": {
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--workspace",
+        "@doc-sync/docs"
+      ],
+      "pid": 78079,
+      "group": 78079,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 6.068,
+      "status": "PASS"
+    },
+    "check": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 78990,
+      "group": 78990,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.423,
+      "status": "PASS"
+    },
+    "pages": 55,
+    "internalLinks": 2660,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "sourceVerification": {
+    "status": "PASS",
+    "head": "1cfb7a23611f0a98994a6716cfc2bddfc5ba89f4",
+    "baselineFiles": 195,
+    "unchangedBaselineFiles": 175,
+    "changedAllowed": [
+      {
+        "path": "HANDOFF.md",
+        "before": "d52ba3eb02366ae3f9b1f72d3bbe946d4724104a01a5310c7f36e949a09ccddd",
+        "after": "8c0a8927d94abdd3a4aaacdadf2bf808d0e2c04529c1314a928f77d5ec903a66"
+      },
+      {
+        "path": "README.md",
+        "before": "3161c028c8b66e47514b095456914d81e25e455faa3a35c34f50486390e931c8",
+        "after": "134ff80032fe47f894b5cc6b29e77a152b7a38683a6628f4deaf847149b236a7"
+      },
+      {
+        "path": "apps/docs/src/guide/blocks.md",
+        "before": "f7e207deb47e2316d161025d8fb4c3fb21ef5aa77c108bbed13695ab6dda2bf3",
+        "after": "19e78f6f42b921c2c1786896c111772a9043a5f54a214d8e35e5480195c412b5"
+      },
+      {
+        "path": "apps/docs/src/guide/document-rules.md",
+        "before": "3a418daccf77e7cc537f548e0441a06488ec303df60d538d09d2b3884bec6cc4",
+        "after": "05c3f096b1145e32de7356290bf890355011b25411498bd6546b6bec92c6f253"
+      },
+      {
+        "path": "apps/docs/src/guide/editing.md",
+        "before": "c7336f7a091520d3b46bf7adb6d2a0b1e4a9313a0a1818dfa2b1baf6c5d59cf7",
+        "after": "5606e2d74205e5739ddb2c7dfa08517aa2df9011ea39627a0d651fd6bb4f654d"
+      },
+      {
+        "path": "apps/docs/src/guide/rust.md",
+        "before": "e097ba09357b720deb024bc33db71f79ef137a69bef86f6f43d4c7733b765221",
+        "after": "50901df760d6a6d505cf98f352ea168646add833210febe146d25987ef8567f9"
+      },
+      {
+        "path": "apps/docs/src/roadmap.md",
+        "before": "5f5f68a83be4b9f843c25c647109edb7ca39f6faf0b6bf4d82a3c637182a87ab",
+        "after": "052d75cbaf6d90a8751f5a528047dde4ea46af628376062127206610f9efe5c8"
+      },
+      {
+        "path": "apps/docs/src/schemas/custom.md",
+        "before": "78667cf65207e0daf3bc16f208b235245bdd0617cea1f221e2114c3c29cd129e",
+        "after": "a1709dfe4f1fb748f0392ceacaf641b70d61600e80d335ae193eb32f172ff060"
+      },
+      {
+        "path": "apps/docs/src/schemas/document.md",
+        "before": "f6ecf10bb5f274a188f9cce0fd55a466b92ef83a3fdd82f489e77242800f9c59",
+        "after": "e795c7c3bd987ceec3ff1716f5caa5111d16b94b805a220fe7443589b4e56abf"
+      },
+      {
+        "path": "docs/rust-roadmap.md",
+        "before": "d4e8666ed2940d33385a5da1dfd12ad36ef05b738e1f814dd93194b2d4d91d3f",
+        "after": "9a8668b0a53d87794cf19151eb9ed9abb01125ba809eafd2e166e5262ebc3e9e"
+      },
+      {
+        "path": "experiments/rust-sdk/README.md",
+        "before": "8812a662a05e5fcf0565c4bf63e5b9d675140ed05f4819f9db5e823726f6f016",
+        "after": "639de8541b16bc703243bf2e607e08f4061214c899e1ed300c5d6ba031a26341"
+      },
+      {
+        "path": "experiments/rust-sdk/src/runtime_paragraph.rs",
+        "before": "05309b14438655895dfab523d852d271b0501e7f321ace9387f8618142dd6fb2",
+        "after": "dd92ecbcb6277e1a8a9a617cd336d4aa991cce13f47b299d832c23de7bce2f6b"
+      },
+      {
+        "path": "experiments/rust-sdk/tests/runtime_paragraph.rs",
+        "before": "37712735e5f1f0fb7cf357086a63251b78963c6e75606713f079b60d1d995878",
+        "after": "4e39eea5557fb2c1f4ff49bd457b4381540c8df4fddd19074fc41d76024b699c"
+      },
+      {
+        "path": "experiments/rust-shadow/src/lib.rs",
+        "before": "f97c3cabb1c6a6cee7cb550128a8afa9806ab5a385a715a65d8aed79f4ffe9db",
+        "after": "c4136a84f2e6cd4d81d209be901b64210ba3115603b4a103fe52b2f99fd47ece"
+      },
+      {
+        "path": "experiments/rust-shadow/src/nested.rs",
+        "before": "1a75ad7d3557fccc039fd98c7ca83a32b36d9a92ee2ca85bb4519d0323295a69",
+        "after": "b18a5301451468e5a5218d56ff8a5645d8473bf5eb6b2cdef57ae6cd4c627e08"
+      },
+      {
+        "path": "packages/doc-sync/dist/crdt/doc.d.ts",
+        "before": "84dfa27ce8305beef0f17279845edd5890225c2c066c568361febf8152d1a673",
+        "after": "320fe21c402f3a28672d43b0aeca27a737e10a3556a6a7359014e1cb9934bd36"
+      },
+      {
+        "path": "packages/doc-sync/dist/crdt/doc.js",
+        "before": "f3c397014102d4afd4c3e442c6a9be7c6db102f2fae9b2ed0d14695503ebc40e",
+        "after": "f1086696702366437fcd4565131573d961b16b57b52664e5aaecfd3ef0ebee37"
+      },
+      {
+        "path": "packages/doc-sync/dist/crdt/edit.js",
+        "before": "80ea6c04c7ca463028c62636b5659c89077188109be4ec5895cb60ed6a1c1be5",
+        "after": "a7553e9a47562b77e379d3e9390f9cdc4856a90cb212d7da27303d6e5c75f234"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/doc.ts",
+        "before": "631dfd0aacbaa719c593c9daa2b1798919267707d65ec58e579a2b07d7f50be5",
+        "after": "81d74a8686409e8aedff72792d0778c0c7975b8345360c37448bac4aee33dc34"
+      },
+      {
+        "path": "packages/doc-sync/src/crdt/edit.ts",
+        "before": "53aef99961c48be1d6848a6185b4c1461d062477ade353b1b33074ef0b01e31b",
+        "after": "aef0db64e7e5112e59b80d2b38e5fb1e74a22ce42389a83297267cf464bcf299"
+      }
+    ],
+    "priorSealedReportsUnchanged": 13,
+    "beforeNativeBinaryUnchanged": true,
+    "reviewedTsSourcesCurrent": true,
+    "exactFullMovedExampleFencesAndConsumers": true,
+    "unchangedPaths": [
+      "experiments/runtime-document-paragraph/README.md",
+      "experiments/runtime-document-paragraph/before.mjs",
+      "experiments/runtime-document-paragraph/compare.mjs",
+      "experiments/runtime-document-paragraph/compress-traces.py",
+      "experiments/runtime-document-paragraph/fixtures.mjs",
+      "experiments/runtime-document-paragraph/inherited-textfalse-oracle.mjs",
+      "experiments/runtime-document-paragraph/inherited-unused-oracle.mjs",
+      "experiments/runtime-document-paragraph/inherited-unused-product.mjs",
+      "experiments/runtime-document-paragraph/input-boundaries.mjs",
+      "experiments/runtime-document-paragraph/regressions.mjs",
+      "experiments/runtime-document-textfalse/README.md",
+      "experiments/runtime-document-textfalse/compare.mjs",
+      "experiments/runtime-document-textfalse/compress-traces.py",
+      "experiments/runtime-document-textfalse/fixtures.mjs",
+      "experiments/runtime-document-textfalse/oracle.mjs",
+      "experiments/runtime-document-textfalse/product-boundary.mjs",
+      "experiments/runtime-document-unused/README.md",
+      "experiments/runtime-document-unused/compare.mjs",
+      "experiments/runtime-document-unused/compiler-boundaries.mjs",
+      "experiments/runtime-document-unused/compress-traces.py",
+      "experiments/runtime-document-unused/export-schemas.mjs",
+      "experiments/runtime-document-unused/fixtures.mjs",
+      "experiments/runtime-document-unused/oracle.mjs",
+      "experiments/runtime-document-unused/product-boundary.mjs",
+      "experiments/runtime-document-unused/product-schemas.json",
+      "experiments/runtime-document-unused/product-schemas.manifest.json",
+      "experiments/rust-sdk/Cargo.lock",
+      "experiments/rust-sdk/Cargo.toml",
+      "experiments/rust-sdk/examples/authoring_trace.rs",
+      "experiments/rust-sdk/examples/graphic.rs",
+      "experiments/rust-sdk/examples/graphic_builtin_trace.rs",
+      "experiments/rust-sdk/examples/graphic_trace.rs",
+      "experiments/rust-sdk/examples/runtime_alias_factory_trace.rs",
+      "experiments/rust-sdk/examples/runtime_alias_trace.rs",
+      "experiments/rust-sdk/examples/runtime_composite_trace.rs",
+      "experiments/rust-sdk/examples/runtime_field_refs.rs",
+      "experiments/rust-sdk/examples/runtime_field_refs_trace.rs",
+      "experiments/rust-sdk/examples/runtime_grid_trace.rs",
+      "experiments/rust-sdk/examples/runtime_nested_trace.rs",
+      "experiments/rust-sdk/examples/runtime_paragraph.rs",
+      "experiments/rust-sdk/examples/runtime_paragraph_trace.rs",
+      "experiments/rust-sdk/examples/runtime_patterns.rs",
+      "experiments/rust-sdk/examples/runtime_payload.rs",
+      "experiments/rust-sdk/examples/runtime_payload_factory_trace.rs",
+      "experiments/rust-sdk/examples/runtime_payload_trace.rs",
+      "experiments/rust-sdk/examples/runtime_quickstart.rs",
+      "experiments/rust-sdk/examples/runtime_rules_trace.rs",
+      "experiments/rust-sdk/examples/runtime_schema_trace.rs",
+      "experiments/rust-sdk/examples/runtime_shapes_trace.rs",
+      "experiments/rust-sdk/examples/runtime_shared.rs",
+      "experiments/rust-sdk/examples/runtime_shared_factory_trace.rs",
+      "experiments/rust-sdk/examples/runtime_shared_trace.rs",
+      "experiments/rust-sdk/examples/runtime_textfalse.rs",
+      "experiments/rust-sdk/examples/runtime_textfalse_trace.rs",
+      "experiments/rust-sdk/examples/runtime_unused.rs",
+      "experiments/rust-sdk/examples/sparse_sheet_trace.rs",
+      "experiments/rust-sdk/examples/two_actors.rs",
+      "experiments/rust-sdk/scripts/compare-graphic-builtins-typescript.mjs",
+      "experiments/rust-sdk/scripts/compare-graphic-typescript.mjs",
+      "experiments/rust-sdk/scripts/compare-typescript.mjs",
+      "experiments/rust-sdk/src/graphic.rs",
+      "experiments/rust-sdk/src/lib.rs",
+      "experiments/rust-sdk/src/runtime_schema.rs",
+      "experiments/rust-sdk/src/runtime_sheet.rs",
+      "experiments/rust-sdk/src/sparse_sheet.rs",
+      "experiments/rust-sdk/tests/graphic.rs",
+      "experiments/rust-sdk/tests/graphic_builtins.rs",
+      "experiments/rust-sdk/tests/runtime_alias.rs",
+      "experiments/rust-sdk/tests/runtime_composite.rs",
+      "experiments/rust-sdk/tests/runtime_field_refs.rs",
+      "experiments/rust-sdk/tests/runtime_grid.rs",
+      "experiments/rust-sdk/tests/runtime_nested.rs",
+      "experiments/rust-sdk/tests/runtime_patterns.rs",
+      "experiments/rust-sdk/tests/runtime_payload.rs",
+      "experiments/rust-sdk/tests/runtime_rules.rs",
+      "experiments/rust-sdk/tests/runtime_schema.rs",
+      "experiments/rust-sdk/tests/runtime_shapes.rs",
+      "experiments/rust-sdk/tests/runtime_shared.rs",
+      "experiments/rust-sdk/tests/runtime_sheet.rs",
+      "experiments/rust-sdk/tests/runtime_textfalse.rs",
+      "experiments/rust-sdk/tests/runtime_unused.rs",
+      "experiments/rust-sdk/tests/sdk.rs",
+      "experiments/rust-sdk/tests/sparse_sheet.rs",
+      "experiments/rust-shadow/Cargo.lock",
+      "experiments/rust-shadow/Cargo.toml",
+      "experiments/rust-shadow/README.md",
+      "experiments/rust-shadow/examples/runtime_patterns_oracle.rs",
+      "experiments/rust-shadow/schema-general.json",
+      "experiments/rust-shadow/schema-graphic-builtins.json",
+      "experiments/rust-shadow/schema-graphic.json",
+      "experiments/rust-shadow/schema-move.json",
+      "experiments/rust-shadow/schema-nested.json",
+      "experiments/rust-shadow/schema-shapes.json",
+      "experiments/rust-shadow/schema.json",
+      "experiments/rust-shadow/src/composite.rs",
+      "experiments/rust-shadow/src/fields.rs",
+      "experiments/rust-shadow/src/general.rs",
+      "experiments/rust-shadow/src/graphic.rs",
+      "experiments/rust-shadow/src/history.rs",
+      "experiments/rust-shadow/src/main.rs",
+      "experiments/rust-shadow/src/movement.rs",
+      "experiments/rust-shadow/src/paragraph.rs",
+      "experiments/rust-shadow/src/required.rs",
+      "experiments/rust-shadow/src/runtime_schema.rs",
+      "experiments/rust-shadow/src/selection.rs",
+      "experiments/rust-shadow/src/shapes.rs",
+      "experiments/rust-shadow/tests/general.rs",
+      "experiments/rust-shadow/tests/history.rs",
+      "experiments/rust-shadow/tests/movement.rs",
+      "experiments/rust-shadow/tests/native.rs",
+      "experiments/rust-shadow/tests/nested.rs",
+      "experiments/rust-shadow/tests/paragraph.rs",
+      "experiments/rust-shadow/tests/runtime_alias.rs",
+      "experiments/rust-shadow/tests/runtime_composite.rs",
+      "experiments/rust-shadow/tests/runtime_field_refs.rs",
+      "experiments/rust-shadow/tests/runtime_grid.rs",
+      "experiments/rust-shadow/tests/runtime_nested.rs",
+      "experiments/rust-shadow/tests/runtime_patterns.rs",
+      "experiments/rust-shadow/tests/runtime_payload.rs",
+      "experiments/rust-shadow/tests/runtime_rules.rs",
+      "experiments/rust-shadow/tests/runtime_schema.rs",
+      "experiments/rust-shadow/tests/runtime_shapes.rs",
+      "experiments/rust-shadow/tests/runtime_shared.rs",
+      "experiments/rust-shadow/tests/runtime_textfalse.rs",
+      "experiments/rust-shadow/tests/runtime_unused.rs",
+      "experiments/rust-shadow/tests/selection.rs",
+      "experiments/rust-shadow/tests/shapes.rs",
+      "fixtures/product-schemas.ts",
+      "packages/doc-sync/dist/crdt/annotations.d.ts",
+      "packages/doc-sync/dist/crdt/annotations.js",
+      "packages/doc-sync/dist/crdt/cardinality.d.ts",
+      "packages/doc-sync/dist/crdt/cardinality.js",
+      "packages/doc-sync/dist/crdt/commands.d.ts",
+      "packages/doc-sync/dist/crdt/commands.js",
+      "packages/doc-sync/dist/crdt/edit.d.ts",
+      "packages/doc-sync/dist/crdt/fields.d.ts",
+      "packages/doc-sync/dist/crdt/fields.js",
+      "packages/doc-sync/dist/crdt/history.d.ts",
+      "packages/doc-sync/dist/crdt/history.js",
+      "packages/doc-sync/dist/crdt/key-index.d.ts",
+      "packages/doc-sync/dist/crdt/key-index.js",
+      "packages/doc-sync/dist/crdt/model.d.ts",
+      "packages/doc-sync/dist/crdt/model.js",
+      "packages/doc-sync/dist/crdt/placement.d.ts",
+      "packages/doc-sync/dist/crdt/placement.js",
+      "packages/doc-sync/dist/crdt/read-budget.d.ts",
+      "packages/doc-sync/dist/crdt/read-budget.js",
+      "packages/doc-sync/dist/crdt/read-preflight.d.ts",
+      "packages/doc-sync/dist/crdt/read-preflight.js",
+      "packages/doc-sync/dist/crdt/read.d.ts",
+      "packages/doc-sync/dist/crdt/read.js",
+      "packages/doc-sync/dist/crdt/schema-version.d.ts",
+      "packages/doc-sync/dist/crdt/schema-version.js",
+      "packages/doc-sync/dist/crdt/schema.d.ts",
+      "packages/doc-sync/dist/crdt/schema.js",
+      "packages/doc-sync/dist/crdt/text-storage.d.ts",
+      "packages/doc-sync/dist/crdt/text-storage.js",
+      "packages/doc-sync/dist/crdt/ticket.d.ts",
+      "packages/doc-sync/dist/crdt/ticket.js",
+      "packages/doc-sync/src/crdt/annotations.ts",
+      "packages/doc-sync/src/crdt/cardinality.ts",
+      "packages/doc-sync/src/crdt/commands.ts",
+      "packages/doc-sync/src/crdt/fields.ts",
+      "packages/doc-sync/src/crdt/history.ts",
+      "packages/doc-sync/src/crdt/key-index.ts",
+      "packages/doc-sync/src/crdt/model.ts",
+      "packages/doc-sync/src/crdt/placement.ts",
+      "packages/doc-sync/src/crdt/read-budget.ts",
+      "packages/doc-sync/src/crdt/read-preflight.ts",
+      "packages/doc-sync/src/crdt/read.ts",
+      "packages/doc-sync/src/crdt/schema-version.ts",
+      "packages/doc-sync/src/crdt/schema.ts",
+      "packages/doc-sync/src/crdt/text-storage.ts",
+      "packages/doc-sync/src/crdt/ticket.ts",
+      "packages/doc-sync/test/nested-paragraph-compiler.test.ts"
+    ]
+  },
+  "notRun": [
+    "Chrome",
+    "mobile",
+    "performance benchmark",
+    "WASM integration",
+    "network/mixed-runtime checkpoint interoperability",
+    "protected native GC",
+    "production native process/server crash recovery"
+  ],
+  "publication": {
+    "commit": false,
+    "push": false,
+    "deployment": false,
+    "registry": false
+  }
+}

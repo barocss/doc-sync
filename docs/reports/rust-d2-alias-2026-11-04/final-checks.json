@@ -1,0 +1,165 @@
+{
+  "status": "PASS_DECLARED_NATIVE_ALIAS_SCOPE",
+  "core": "core/receipt-final-02.json",
+  "sdk": "sdk/receipt.json",
+  "comparisonSummary": "final-comparison-summary.json",
+  "nativeCoreTests": 147,
+  "nativeSdkTests": 93,
+  "main": {
+    "schemas": 2,
+    "semanticActions": 182,
+    "actorStates": 364,
+    "actualStagedDocEdits": 110
+  },
+  "factoryOrder": {
+    "schemas": 4,
+    "factories": 32
+  },
+  "freshComparisonStages": 12,
+  "frozenHashes": 180,
+  "workspace": {
+    "command": [
+      "npm",
+      "test"
+    ],
+    "pid": 33084,
+    "group": 33084,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 135.66,
+    "status": "PASS",
+    "tests": 2112,
+    "suites": 0,
+    "pass": 2110,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "summaryGroups": 13
+  },
+  "typecheck": {
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "pid": 38943,
+    "group": 38943,
+    "exit": 0,
+    "externalWatchdogSeconds": 240,
+    "watchdogTriggered": false,
+    "seconds": 18.434,
+    "status": "PASS"
+  },
+  "documentation": {
+    "initialBuild": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 41580,
+      "group": 41580,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 15.071,
+      "status": "PASS"
+    },
+    "initialCheck": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 44333,
+      "group": 44333,
+      "exit": 1,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.098,
+      "status": "FAIL"
+    },
+    "correctedBuild": {
+      "command": [
+        "npm",
+        "run",
+        "docs:build"
+      ],
+      "pid": 45391,
+      "group": 45391,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 15.1,
+      "status": "PASS"
+    },
+    "correctedCheck": {
+      "command": [
+        "npm",
+        "run",
+        "docs:check"
+      ],
+      "pid": 47957,
+      "group": 47957,
+      "exit": 0,
+      "externalWatchdogSeconds": 240,
+      "watchdogTriggered": false,
+      "seconds": 1.584,
+      "status": "PASS"
+    },
+    "correction": "Document rules link used objectarray instead of the actual object-array anchor; corrected and rebuilt before final PASS",
+    "pages": 55,
+    "internalLinks": 2619,
+    "english": true,
+    "localPathsExcluded": true
+  },
+  "chrome": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "performance": "NOT_RUN",
+  "commitPush": "NOT_REQUESTED",
+  "sourceVerification": {
+    "status": "PASS",
+    "sourceMaps": [
+      {
+        "receipt": "core/receipt-final-02.json",
+        "files": 3,
+        "status": "PASS"
+      },
+      {
+        "receipt": "sdk/receipt.json",
+        "files": 7,
+        "status": "PASS"
+      },
+      {
+        "receipt": "regressions/run-2026-11-04T04-52-38.150Z-28826/receipt.json",
+        "files": 180,
+        "status": "PASS"
+      },
+      {
+        "receipt": "regressions/run-2026-11-04T04-52-38.150Z-28826/alias/run-2026-11-04T04-53-40.297Z-31085/receipt.json",
+        "files": 125,
+        "status": "PASS"
+      }
+    ],
+    "documentedCode": {
+      "byteIdenticalToConsumer": true,
+      "sha256": "b884a3a524a4b9c67442e400fac558905d573c2564adca4aa7e1bf6773dc2a2d"
+    },
+    "earlierReportSealsVerified": 5
+  },
+  "scope": {
+    "D2": "PARTIAL",
+    "D3": "OPEN",
+    "crossDescriptorEnumOnlyAliases": "UNSUPPORTED",
+    "TSHub": "Omitted alias birth passes; retained payload cloning rejects",
+    "productionRustWasmClient": "OPEN",
+    "tsNativeWireAdapter": "NOT_QUALIFIED"
+  },
+  "buildArtifacts": {
+    "ignored": "experiments/rust-sdk/target/",
+    "rule": "experiments/rust-sdk/.gitignore",
+    "removed": false
+  }
+}

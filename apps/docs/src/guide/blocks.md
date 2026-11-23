@@ -555,3 +555,58 @@ JSONL
 The final model contains a callout with `Hi` in its body. The text keeps IDs `1@A` and `2@A`; state retains one move record. This checks native placement in the fixed fixture. TypeScript still compiles the public editing commands. Required-child rules, field-level attributes, arbitrary schemas and live transitions remain outside native support. See [current native coverage](./rust#current-coverage).
 
 </details>
+
+## Native model-path paragraph insertion
+
+The native runtime SDK can compile paragraph insertion from a model child path
+with `insert_paragraph_at`. Use `insert_model_at` for a supported flow/text tree.
+Head retyping, structured defaults and required-sibling boundaries are handled
+inside the bounded compiler; the returned change is one History transaction.
+Existing physical-source block helpers retain explicit token addressing.
+See the [complete Rust program](./rust#insert-paragraphs-at-model-positions) for
+supported inputs, concurrent editing and recovery. Tables/groups and general
+post-move model command compilation remain separate work.
+
+
+Native model paths can also be used after existing block movement. Resolve the
+child index from the current model, while retaining object IDs for identity.
+See [insertion after moves](../guide/rust#insert-at-current-model-positions-after-moves)
+for the complete two-peer Rust program and the remaining input boundaries.
+
+
+Native Rust model construction now accepts supported list groups and dense table
+models through `insert_model_at`, including group gaps, axes and cell bodies.
+See the [complete group/grid program](./rust#insert-groups-grids-and-cell-contents-by-model-path).
+Existing physical table helper addresses keep their separate contract.
+
+
+For several native model insertions, use
+[`insert_models_batch`](./rust#insert-several-models-atomically). Creating a table,
+adding cells in different rows at one column boundary, and adding a paragraph to
+those cells can share one atomic commit and one default undo group. General
+native delete/update/split/merge/move compilation remains separate D3 work.
+
+
+For native ID-relative insertion, read an opaque local base with
+`read_model_for_edit`, then use
+[`insert_models_relative`](../guide/rust#insert-relative-to-stored-ids) for
+before/after stored primary blocks or explicit root/stored-flow edges. The guard
+rejects stale reads, and strict lookup rejects deleted/hidden/aliased/synthetic
+targets. Direct row/cell tuples remain a separate typed API. This is native SDK
+behavior, not distributed server acceptance or a production WASM binding.
+
+The native typed grid API uses `{grid, row}` for row adjacency and
+`{grid, row, column}` for cell-body edges. Read the same local base, then call
+[`insert_grid_models_relative`](../guide/rust#address-rows-and-cell-bodies-with-stable-ids).
+Axes must be live and belong to the current visible grid. Direct covered-cell
+body targets reject; inserting a row inside a merge can produce covered cells
+while retaining their payload and peer edits. Row payload width and overlapping
+span precedence follow the existing numeric compiler. This API does not create
+columns or provide a separate identity for a cell wrapper.
+
+For one new column, use the native
+[`insert_column_relative`](../guide/rust#insert-one-column-by-stable-ids) command.
+It resolves one stable boundary, fills unique row payloads in caller order and
+returns exactly one new column key. Empty payloads still create a column.
+Existing merges can cover the new cells while preserving their contents.
+A fresh local base is required for the next call.

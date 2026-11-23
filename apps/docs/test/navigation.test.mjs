@@ -90,7 +90,7 @@ test('Schemas presents Document, Graphic and Spreadsheet in order', () => {
     const groups = sidebar['/schemas/'];
     assert.deepEqual(groups.map(group => group.text), ['Schemas', 'Document', 'Graphic', 'Spreadsheet']);
     assert.deepEqual(groups.map(group => group.items.map(item => item.link)), [
-        ['/schemas/', '/schemas/custom'],
+        ['/schemas/', '/schemas/custom', '/schemas/editing-contract'],
         ['/schemas/document', '/guide/schema', '/guide/full-schema', '/guide/product-schemas', '/guide/schema-transition'],
         ['/guide/graphic-schema'],
         ['/schemas/spreadsheets', '/schemas/spreadsheet-structure'],

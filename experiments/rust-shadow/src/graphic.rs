@@ -137,6 +137,9 @@ impl Replica {
         if self.head(token) {
             return Err("graphic storage heads have no attributes".into());
         }
+        if self.runtime.is_some() {
+            return self.validate_node_attr(self.graphic_kind(token), key, value);
+        }
         let manifest = self.manifest();
         let attrs = &manifest["nodes"][self.graphic_kind(token)]["attrs"];
         let spec = if let Some((attr, field)) = graphic_field(key) {
@@ -284,6 +287,13 @@ impl Replica {
                 self.ensure(&origin.key())?;
                 if self.line_of(&origin.key()).is_none_or(|l| l.slot != "text") {
                     return Err("graphic text requires label text storage".into());
+                }
+                if let Some(schema) = &self.runtime {
+                    let owner = self.line_of(&origin.key()).and_then(|l| l.owner.as_ref())
+                        .and_then(|key| self.index_key(key)).and_then(|i| self.items[i].node.as_ref());
+                    if owner.is_none_or(|node| schema.manifest()["nodes"][&node.born]["text"] == false) {
+                        return Err("graphic text birth rejects text".into());
+                    }
                 }
                 let marks: BTreeMap<String, Value> = decode(required(op, "marks")?)?;
                 for (key, value) in &marks {
@@ -532,28 +542,19 @@ impl Replica {
         let mut attrs = Map::new();
         if let Some(specs) = manifest["nodes"][self.graphic_kind(token)]["attrs"].as_object() {
             for (key, spec) in specs {
-                if let Some(fields) = spec["fields"].as_object() {
-                    let mut values = Map::new();
-                    for (field, spec) in fields {
-                        let k = format!("$field:{}", json!([key, field]));
-                        values.insert(
-                            field.clone(),
-                            token
-                                .attrs
-                                .get(&k)
-                                .filter(|r| !r.value.is_null())
-                                .map(|r| r.value.clone())
-                                .unwrap_or_else(|| spec["default"].clone()),
-                        );
-                    }
-                    attrs.insert(key.clone(), Value::Object(values));
+                if spec.get("fields").is_some() {
+                    attrs.insert(key.clone(),fields::materialize(spec,key,|k| token.attrs.get(k).map(|r| r.value.clone())));
                 } else {
                     attrs.insert(
                         key.clone(),
                         token
                             .attrs
                             .get(key)
-                            .filter(|r| !r.value.is_null())
+                            .filter(|r| {
+                                !r.value.is_null()
+                                    && (self.runtime.is_none()
+                                        || runtime_schema::atomic_value_ok(spec, &r.value))
+                            })
                             .map(|r| r.value.clone())
                             .unwrap_or_else(|| spec["default"].clone()),
                     );

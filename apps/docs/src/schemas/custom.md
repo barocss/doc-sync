@@ -222,7 +222,7 @@ engine. Each document owns its compiled schema. Distinct schemas can coexist.
 | API | Supported custom data | Remaining boundary |
 | --- | --- | --- |
 | `RuntimeSchema` + `RuntimeDocument` | Graphic container/text/atom types, names, attributes, field registers and boolean marks | No renderer, graphic selection or Client adapter |
-| Same runtime API, document domain | Flat root flow with custom text/atom names, scalar attributes and boolean marks | Nested flows, tables, groups, inline/span, value marks and advanced rules reject during compilation |
+| Same runtime API, document domain | Recursive Document shapes, nested independent field registers, scalar and JSON marks with native reference handles, default/enum and cross-descriptor groups, nested object/array schema value paths and declared field-leaf reference sources, the two product link/color patterns, text-disabled blocks and inline children, valid unused node registries, bounded model-path text/flow/group/grid and axis insertion before and after movement, deterministic required children, nested grid/row/cell chains and stable token selections | Whole field-branch reference sources and mutable runtime object graphs, markValues.fields, unsafe JSON keys, derived group/span and row/cell-body attributes, arbitrary computed rules, axis moves and positive-minimum cycles are unsupported; general model-position commands and text-offset compilation remain D3 work |
 | `SpreadsheetSchema` + `RuntimeSheet` | Arbitrary scalar field registry, defaults, constraints, schema-bound operations, History and checkpoint replay | Fixed numeric axes; no Client, formulas or GC |
 
 Unsupported descriptors return an error with a schema path. The six older
@@ -242,3 +242,34 @@ Schema. Use Client with createDataSchema and client.data. This access layer stil
 local value validator does not replace authoritative remote admission or make
 existing domain schemas interchangeable. Collaborative text keeps using
 existing text nodes; Map string values are atomic.
+
+
+For document descriptors, the native
+[atomic insert batch](../guide/rust#insert-several-models-atomically) supports
+ordered model-child inserts with shared columns and explicit reservation clocks.
+It uses plain JSON models. Typed schema-value handles remain available through
+the physical attribute APIs; the batch does not add a typed model-handle input.
+
+
+Custom document descriptors also use the native
+[strict stored-ID targeting API](../guide/rust#insert-relative-to-stored-ids).
+It shares the descriptor's existing schema fingerprint and supports stored
+block siblings and root/stored-flow edges. Local read tokens are private,
+process-bound and excluded from checkpoints. General aliases, direct axis/cell
+wrappers and a typed native ID catalog remain separately gated.
+
+The native typed grid API uses `{grid, row}` for row adjacency and
+`{grid, row, column}` for cell-body edges. Read the same local base, then call
+[`insert_grid_models_relative`](../guide/rust#address-rows-and-cell-bodies-with-stable-ids).
+Axes must be live and belong to the current visible grid. Direct covered-cell
+body targets reject; inserting a row inside a merge can produce covered cells
+while retaining their payload and peer edits. Row payload width and overlapping
+span precedence follow the existing numeric compiler. This API does not create
+columns or provide a separate identity for a cell wrapper.
+
+For one new column, use the native
+[`insert_column_relative`](../guide/rust#insert-one-column-by-stable-ids) command.
+It resolves one stable boundary, fills unique row payloads in caller order and
+returns exactly one new column key. Empty payloads still create a column.
+Existing merges can cover the new cells while preserving their contents.
+A fresh local base is required for the next call.
