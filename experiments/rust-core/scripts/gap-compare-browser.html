@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Same-algorithm Gap comparison</title>
+<style>body{max-width:960px;margin:40px auto;padding:0 20px;font:16px/1.5 system-ui}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eee;padding:16px}</style>
+<h1>Same-algorithm Gap comparison</h1>
+<p>JavaScript Gap and Rust WASM Gap backend 1. Independent UTF-16 string oracle checks each complete state after each validation edit.</p>
+<p>Two seeds. Three R2 traces. Each trace starts with 100,000 UTF-16 units and applies 10,000 edits. Seven paired timing samples alternate runtime order.</p>
+<p>Construction, edits, fresh output, and their sum are recorded. Results include the JavaScript to WASM API path and allocator differences. They do not isolate language costs.</p>
+<pre id="output">RUNNING: validation and benchmark start automatically.</pre>
+<script type="module">
+import { runGapSuite, SOURCE_FILES, WASM_FILE } from './gap-compare-suite.mjs';
+window.gapStatus = 'RUNNING';
+try {
+  const base = new URL('../', import.meta.url);
+  const hashes = {};
+  let wasm;
+  for (const path of [...SOURCE_FILES, WASM_FILE]) {
+    const response = await fetch(new URL(path, base), { cache: 'no-store' });
+    if (!response.ok) throw Error(`${path}: HTTP ${response.status}`);
+    const bytes = await response.arrayBuffer();
+    hashes[path] = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), b => b.toString(16).padStart(2, '0')).join('');
+    if (path === WASM_FILE) wasm = bytes;
+  }
+  const { instance } = await WebAssembly.instantiate(wasm, {});
+  window.gapReceipt = { ...runGapSuite(instance.exports), userAgent: navigator.userAgent, sourceAndWasmSha256: hashes };
+} catch (error) { window.gapReceipt = { status: 'FAIL', error: String(error), stack: error.stack }; }
+window.gapStatus = window.gapReceipt.status;
+document.querySelector('#output').textContent = JSON.stringify(window.gapReceipt, null, 2);
+</script></html>

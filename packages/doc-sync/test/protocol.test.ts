@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import {DocHub} from "../src/server/hub.ts";
-import {SyncClient} from "../src/sync/client.ts";
-import {DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../src/sync/protocol.ts";
-import type {Outbound, ServerEvent, Transport} from "../src/sync/protocol.ts";
+import {DocHub} from "../../doc-sync-core/dist/server/hub.js";
+import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import {DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../../doc-sync-core/dist/sync/protocol.js";
+import type {Outbound, ServerEvent, Transport} from "../../doc-sync-core/dist/sync/protocol.js";
 import {MemoryNet} from "./harness.ts";
-import {InputSession, subscribeClient} from "../src/editor/index.ts";
-import {HttpTransport} from "../src/sync/http-transport.ts";
+import {InputSession, subscribeClient} from "../../doc-sync-core/dist/editor/index.js";
+import {HttpTransport} from "../../doc-sync-core/dist/sync/http-transport.js";
 import {spawn} from "node:child_process";
 import {mkdtempSync, rmSync} from "node:fs";
 import {tmpdir} from "node:os";
@@ -30,6 +30,40 @@ function setup(synchronous?: ServerEvent) {
 }
 
 const hello = () => new DocHub({schema: DEMO_SCHEMA}).hello(0);
+
+test("a live reset preserves unconfirmed edits and history", () => {
+    const c = setup(), event = hello();
+    c.client.connect(); c.receive(event);
+    const before = c.client.checkpoint(), epoch = c.client.epoch;
+    let resets = 0;
+    c.client.onEvent = e => { if (e.type === "reset") resets++; };
+    c.receive({type: "reset", epoch: "replacement"});
+    assert.equal(c.client.online, false);
+    assert.match(c.client.connectionError!.message, /unconfirmed edits/);
+    assert.equal(c.client.epoch, epoch);
+    assert.deepEqual(c.client.checkpoint(), before);
+    assert.equal(resets, 0);
+});
+
+test("a live reset preserves edits committed by a reset callback", () => {
+    let receive!: (event: ServerEvent) => void;
+    const client = new SyncClient("callback", {
+        subscribe: (_since, handler) => { receive = handler; return () => {}; },
+        send: async () => {}, sendPresence: () => {},
+    }, {schema: DEMO_SCHEMA});
+    client.connect(); receive(hello());
+    const epoch = client.epoch;
+    client.onEvent = event => {
+        if (event.type === "reset") client.commit(client.doc.edit([{op: "insert", at: [0, 0], content: "draft"}]).ops);
+    };
+    receive({type: "reset", epoch: "replacement"});
+    assert.equal(client.online, false);
+    assert.match(client.connectionError!.message, /unconfirmed edits/);
+    assert.equal(client.epoch, epoch);
+    assert.equal(client.pending.length, 1);
+    assert.match(JSON.stringify(client.doc.toJSON()), /draft/);
+    assert.equal(client.history.canUndo, true);
+});
 
 test("protocol handshake holds offline edits until all required capabilities are accepted", async () => {
     const c = setup();

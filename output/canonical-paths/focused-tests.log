@@ -1,0 +1,19 @@
+✔ canonical group paths address the second item after a type changes its attribute domain (6.311667ms)
+✔ inserting into a canonical group inherits its visible attributes instead of retained invalid ones (1.643209ms)
+✔ mixed adjacent group types and values share canonical paths without merging different visible values (8.018459ms)
+✔ maximum child constraints retain the same visible model and hidden candidates (1.147542ms)
+✔ required storage remains editable and model-only group minima continue to fail closed (2.2855ms)
+✔ concurrent type and attribute writes converge before canonical path edits in both delivery orders (2.225958ms)
+✔ own canonical-path text undo and redo preserve foreign text and attribute ownership (1.489709ms)
+✔ type undo and redo retain foreign attribute registers and foreign type writes fence undo (0.892125ms)
+✔ nested flow paths use canonical group boundaries and ordinary typing does not read a full model or snapshot (1.312083ms)
+✔ deterministic mixed-group edit fuzz matches the public model oracle and token anchors (908.321375ms)
+✔ concurrent group edit fuzz converges across six packet orders and duplicate delivery (39.065416ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1071.262792

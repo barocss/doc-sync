@@ -11,7 +11,7 @@ This document records the current contract and known limits. It does not establi
 - `Envelope`: an entry in the server log. `serverSeq` increases from 1 for each document. It contains an edit or a GC frontier.
 - Model: `NodeJSON` that interprets stored state through a schema. It is distinct from the stored token list.
 
-Implementation references are `packages/doc-sync/src/crdt/{doc,ticket,history,model}.ts`, `src/sync/{protocol,client}.ts`, and `src/server/hub.ts`. Consumers supply the schema. The core does not embed the demo's specific paragraph or table types.
+Implementation references are `packages/doc-sync-core/src/crdt/{doc,ticket,history,model}.ts`, `packages/doc-sync-core/src/sync/{protocol,client}.ts`, and `packages/doc-sync-core/src/server/hub.ts`. Consumers supply the schema. The core does not embed the demo's specific paragraph or table types.
 
 ## 2. State and Order
 

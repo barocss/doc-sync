@@ -1,0 +1,91 @@
+{
+  "status": "CONFIRMED_BASELINE_DEFECT",
+  "runtime": "v24.22.1",
+  "source": "/Users/user/github/doc-sync",
+  "edit": {
+    "op": "insert",
+    "at": [
+      0,
+      1,
+      0
+    ],
+    "content": "X"
+  },
+  "error": "경로 [0,1]: 항목 1 이 없다",
+  "before": {
+    "type": "doc",
+    "children": [
+      {
+        "type": "list",
+        "attrs": {
+          "color": "red"
+        },
+        "children": [
+          {
+            "type": "b",
+            "runs": [
+              {
+                "text": "A",
+                "marks": {}
+              }
+            ]
+          },
+          {
+            "type": "b",
+            "runs": [
+              {
+                "text": "B",
+                "marks": {}
+              }
+            ]
+          },
+          {
+            "type": "a",
+            "runs": []
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "type": "doc",
+    "children": [
+      {
+        "type": "list",
+        "attrs": {
+          "color": "red"
+        },
+        "children": [
+          {
+            "type": "b",
+            "runs": [
+              {
+                "text": "A",
+                "marks": {}
+              }
+            ]
+          },
+          {
+            "type": "b",
+            "runs": [
+              {
+                "text": "XB",
+                "marks": {}
+              }
+            ]
+          },
+          {
+            "type": "a",
+            "runs": []
+          }
+        ]
+      }
+    ]
+  },
+  "modelPreserved": true,
+  "sourceHashes": {
+    "doc.ts": "154ccc060b8fcb842a208910f81dbb7f13010ff74e176946601822efbf7cbbdb",
+    "edit.ts": "331623689cc93b5f78764638e8b684ee2961ce964f588fdca9f7eb339eaf1e5f",
+    "model.ts": "caf25d46ecf9b4806f4a588c3dc2ceb76cc1b857d3609dbd89d508d62c541d79"
+  }
+}

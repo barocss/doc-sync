@@ -1,0 +1,96 @@
+{
+  "status": "READY_FOR_INDEPENDENT_REVIEW",
+  "worktree": "/Users/user/github/doc-sync-canonical-paths",
+  "branch": "codex/canonical-paths",
+  "runtime": "Node v24.22.1",
+  "scope": "Canonical ModelPath grouping and group attribute inheritance for already-visible stored blocks.",
+  "transfer": [
+    {
+      "path": "packages/doc-sync-core/src/crdt/model.ts",
+      "baselineSha256": "d131e8601bd4cc8de01a758e225a30d53fa04655f3fcedc00ad3e8d8e1572ed5",
+      "sha256": "f2d599ed9657ea1cc92b49ea021dcf246df3e75e6df0bf91c7e383d0e1c6a978"
+    },
+    {
+      "path": "packages/doc-sync-core/src/crdt/edit.ts",
+      "baselineSha256": "04436a185d6cc2753a0f7150db5f7e063ab4a3cfb90c4bff4de830c5aaf6a896",
+      "sha256": "d0c923ce7d79fe95496dde4b41c5f1388671c86f68f7215092a83149d00b29d2"
+    },
+    {
+      "path": "packages/doc-sync-core/test/canonical-paths.test.ts",
+      "baselineSha256": null,
+      "sha256": "63cb1b2af4f75f3358bc6458d9deeca09462338f0fb31cc29bc7ff1f87240740"
+    }
+  ],
+  "patch": {
+    "path": "/Users/user/github/doc-sync-canonical-paths/output/canonical-paths/mapping-only.patch",
+    "sha256": "10458373f45606cc7309b1e222e75ff72b675937561f36ae5f4c4898195c6ff8"
+  },
+  "unchanged": {
+    "packages/doc-sync-core/src/crdt/doc.ts": "3afb3ddd704c09cd999b77c9d4a27f3510e97efa809ee2b82995e706a3e6f8b5",
+    "packages/doc-sync-core/src/crdt/read.ts": "81e78c37c2c6f213ff170d6640bd24d75ce7dee6249425733e712d8308e15735",
+    "packages/doc-sync-core/src/crdt/read-budget.ts": "4e2870a6e11f2f35cc23713d759b164155a54f5e36daad84fdada1a357d768a0",
+    "packages/doc-sync-core/src/crdt/read-preflight.ts": "e68bf8900ea54f20112d5ff1183f7fe6f661bee71434968075f6a3dcd9a56de6"
+  },
+  "verification": {
+    "focused": {
+      "status": "PASS",
+      "tests": 11,
+      "log": "focused-tests.log"
+    },
+    "core": {
+      "status": "PASS",
+      "tests": 53,
+      "log": "core-tests.log"
+    },
+    "library": {
+      "status": "PASS",
+      "tests": 94,
+      "log": "library-tests.log"
+    },
+    "workspaceBuild": {
+      "status": "PASS",
+      "log": "build.log"
+    },
+    "coreTypecheck": {
+      "status": "PASS",
+      "log": "typecheck.log"
+    },
+    "mixedGroupFuzz": {
+      "status": "PASS",
+      "states": 32,
+      "stepsPerState": 40,
+      "totalEdits": 1280,
+      "oracle": "public applyEdits plus existing normalize for retained-attribute type changes; BMP text offsets",
+      "anchors": "every text offset per step"
+    },
+    "concurrentFuzz": {
+      "status": "PASS",
+      "variants": 24,
+      "ordersPerVariant": 6,
+      "totalStates": 144,
+      "delivery": "type/attrs/text packets in all six orders plus reversed duplicate replay, subsequent public edit, duplicate edit delivery, snapshot reconstruction"
+    },
+    "browser": "NOT_RUN",
+    "hostedServer": "NOT_RUN",
+    "fullLibrarySuite": "NOT_RUN",
+    "remotePush": "NOT_RUN",
+    "release": "NOT_RUN"
+  },
+  "limits": [
+    "Model-only minimum fallback remains unsupported. Ordinary authoring throws before mutation; bounded reads keep existing guards.",
+    "Maximum child selection, stored invalid attributes, immutable IDs, history, wire operations and bounded-read guards are unchanged.",
+    "Existing sibling scans remain; no general O(page) guarantee.",
+    "No full snapshot or model read was added to ordinary normalize:false typing.",
+    "Dependency access uses an owned read-only node_modules symlink to main dependencies; do not transfer that symlink."
+  ],
+  "rejectedExperiment": {
+    "status": "REJECTED_AND_REVERTED",
+    "reason": "Canonical grouping in applyChildRules changes existing visible max/min output.",
+    "evidence": "semantic-boundary.json",
+    "patchForInspectionOnly": "rejected-child-rule-change.patch"
+  },
+  "initialVerificationFailures": [
+    "Missing worktree dependencies selected global old TypeScript. Resolved with read-only dependency symlink.",
+    "One library file initially could not import absent prosemirror dist. Workspace build resolved it; final relevant library tests PASS94/94."
+  ]
+}

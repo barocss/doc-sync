@@ -1,0 +1,273 @@
+--- a/packages/doc-sync-core/src/crdt/model.ts
++++ b/packages/doc-sync-core/src/crdt/model.ts
+@@ -1,7 +1,7 @@
+ import {requiredType} from "./cardinality.ts";
+ import {diffFields, isFieldSpec, patchFields} from "./fields.ts";
+ import {attrValueOk, groupOf, gridParts, checkSchema} from "./schema.ts";
+-import type {FlowSpec, GroupSpec, Schema, SpanSpec} from "./schema.ts";
++import type {AttrSpec, FlowSpec, GroupSpec, Schema, SpanSpec} from "./schema.ts";
+ 
+ const groupBoundary = Symbol("doc-sync.group-boundary");
+ export const withGroupBoundary = (node: NodeJSON, boundary: string): NodeJSON => {
+@@ -88,6 +88,11 @@
+     return out;
+ };
+ 
++/** Model value only; a type change must not overwrite the retained attribute register. */
++export const canonicalAttrValue = (spec: AttrSpec | undefined, value: unknown): unknown =>
++    !spec || spec.computed ? undefined : isFieldSpec(spec) ? patchFields(spec, spec.default, value ?? null)
++        : value === undefined || value === null || !attrValueOk(spec, value) ? spec.default : value;
++
+ /** 종류의 속성: 명세 순서대로, 없는 것은 기본값. 계산되는 속성(computed)은 넣지 않는다 */
+ const fullAttrs = (schema: Schema, type: string, attrs: Record<string, unknown> = {}): Record<string, unknown> | undefined => {
+     const spec = schema.nodes[type]?.attrs;
+@@ -103,9 +108,7 @@
+             return;
+         }
+ 
+-        const v = attrs[k];
+-
+-        out[k] = isFieldSpec(s) ? patchFields(s, s.default, v ?? null) : v === undefined || v === null || !attrValueOk(s, v) ? s.default : v;
++        out[k] = canonicalAttrValue(s, attrs[k]);
+     });
+ 
+     return Object.keys(out).length ? out : undefined;
+@@ -310,7 +313,7 @@
+             ? items.map(item => withGroupBoundary(item, `explicit:${index}`)) : items;
+     });
+     const items = separated
+-        .map(child => canonBlock(schema, child, cache))
++        .map(child => canonicalBlock(schema, child, cache))
+         .filter((child): child is NodeJSON => child !== null);
+ 
+     if ((!items.length || !isTextNode(schema, items[0])) && flow.childRules?.[flow.default]?.max !== 0) items.unshift(defaultBlock(schema, flow));
+@@ -332,13 +335,13 @@
+             const parts = gridParts(schema, concrete)!;
+             node.children = [{type: parts.row, children: [{type: parts.cell, children: [{type: parts.body, children: []}]}]}];
+         }
+-        const normalized = canonBlock(schema, node, cache)!;
++        const normalized = canonicalBlock(schema, node, cache)!;
+         visible.push(schema.nodes[type]?.shape === "group" ? {type, children: [normalized]} : normalized);
+     }
+     return visible;
+ };
+ 
+-const canonBlock = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, NodeJSON>): NodeJSON | null => {
++export const canonicalBlock = (schema: Schema, node: NodeJSON, cache?: WeakMap<NodeJSON, NodeJSON>): NodeJSON | null => {
+     const shape = shapeOf(schema, node.type);
+ 
+     if (shape === "text") {
+--- a/packages/doc-sync-core/src/crdt/edit.ts
++++ b/packages/doc-sync-core/src/crdt/edit.ts
+@@ -1,6 +1,6 @@
+ import {decodeFieldKey, encodeFieldKey, fieldSpecAt, fieldValueOk, flattenFieldPatch, isFieldSpec, materializeFields} from "./fields.ts";
+ import {MAIN, cellSlot, slotKey, slotTicket} from "./doc.ts";
+-import {canonMarks, inheritedMarks, runsToUnits} from "./model.ts";
++import {canonicalAttrValue, canonMarks, inheritedMarks, runsToUnits} from "./model.ts";
+ import {attrValueOk, gridParts} from "./schema.ts";
+ import {keyOf} from "./ticket.ts";
+ import {parseRequired} from "./cardinality.ts";
+@@ -50,7 +50,7 @@
+         .map(([, b]) => b);
+ 
+ /** 흐름의 모델 자식 — 블록 하나, 또는 이어진 묶음 항목들 (model.ts 의 regroup 과 같은 규칙) */
+-const entriesOf = (doc: Doc, line: string, vacant?: Set<string>): Array<{group: string | null; flats: number[]}> => {
++export const entriesOf = (doc: Doc, line: string, vacant?: Set<string>): Array<{group: string | null; flats: number[]}> => {
+     const blocks = doc.blocks(line);
+     const visible = visibleBlocks(doc, line, vacant);
+     const entries: Array<{group: string | null; key: string; flats: number[]}> = [];
+@@ -58,12 +58,15 @@
+     visible.forEach((b, flat) => {
+         const block = blocks[b];
+         const owner = block.kind === "text" ? doc.groupOf(line, block.type) : null;
+-        const key = owner ? `${owner.type}|${JSON.stringify(owner.spec.by.map(k => block.attrs[k]))}|${doc.groupBoundary(block)}` : "";
++        const groupValues = owner?.spec.by.map(k => canonicalAttrValue(doc.specOf(block.type)?.attrs?.[k], block.attrs[k]));
++        owner && doc.checkReadValue(groupValues);
++        const key = owner ? `${owner.type}|${JSON.stringify(groupValues)}|${doc.groupBoundary(block)}` : "";
+         const last = entries.at(-1);
+ 
+         owner && last?.group === owner.type && last.key === key ? last.flats.push(flat) : entries.push({group: owner?.type ?? null, key, flats: [flat]});
+     });
+ 
++    doc.checkReadEntries(line, blocks, visible, entries);
+     return entries;
+ };
+ 
+@@ -456,7 +459,7 @@
+             const first = this.doc.blocks(line)[visibleBlocks(this.doc, line, this.batch.vacant)[parent.flats[0]]] as TextBlock;
+             const owner = this.doc.groupOf(line, first.type)!;
+ 
+-            extra = Object.fromEntries(owner.spec.by.map(k => [k, first.attrs[k]]));
++            extra = Object.fromEntries(owner.spec.by.map(k => [k, canonicalAttrValue(this.doc.specOf(first.type)?.attrs?.[k], first.attrs[k])]));
+         } else {
+             const entries = entriesOf(this.doc, line, this.batch.vacant);
+ 
+--- a/packages/doc-sync-core/src/crdt/doc.ts
++++ b/packages/doc-sync-core/src/crdt/doc.ts
+@@ -8,11 +8,11 @@
+ import {KeyIndex} from "./key-index.ts";
+ import type {MoveOp, Placement, PlacementProjection} from "./placement.ts";
+ import {compileEdits, resolvePath} from "./edit.ts";
+-import {applyEdits, canonMarks, canonical, canonicalWithTextCache, diffModels, unitsToRuns, withGroupBoundary} from "./model.ts";
++import {applyEdits, canonicalAttrValue, canonMarks, canonical, canonicalWithTextCache, canonicalBlock, diffModels, unitsToRuns, withGroupBoundary} from "./model.ts";
+ import {acceptsText, attrValueOk, checkSchema, gridParts, groupOf, inlineTypes, storedTypes} from "./schema.ts";
+ import {Clock, ROOT, compareTicket, keyOf, ticketOf} from "./ticket.ts";
+ import type {EditOp, Marks, NodeJSON, Run, Unit} from "./model.ts";
+-import type {FlowSpec, NodeSpec, Schema, Shape, TextSpec} from "./schema.ts";
++import type {AttrSpec, FlowSpec, NodeSpec, Schema, Shape, TextSpec} from "./schema.ts";
+ import type {Ticket} from "./ticket.ts";
+ 
+ export type {EditOp, Marks, ModelPath, NodeJSON, Run} from "./model.ts";
+@@ -1208,6 +1208,63 @@
+         return item.kind === "node" && (item.boundary === "root" || this.specOf(this.typeOf(item))?.shape === "text");
+     }
+ 
++    private borrowReadValues = false;
++    private readValueGuard?: (value: unknown) => void;
++
++    /** Bound values used by structural grouping before its JSON keys are allocated. */
++    checkReadValue(value: unknown): void { this.readValueGuard?.(value); }
++
++    private readRawGroupValue(block: Block, name: string): unknown {
++        const spec = this.specOf(block.type)?.attrs?.[name];
++        if (!spec) return undefined;
++        if (isFieldSpec(spec)) return this.borrowedFields(spec, path => block.marker.attrs.get(encodeFieldKey(name, path)));
++        const stored = block.kind === "text" && block.virtual ? undefined : block.marker.attrs.get(name)?.value;
++        return stored === undefined || stored === null ? spec.default : stored;
++    }
++
++    /** Keep bounded canonical paths aligned with the existing live edit resolver. */
++    checkReadEntries(line: string, blocks: Block[], visible: number[], entries: Array<{group: string | null; flats: number[]}>): void {
++        if (!this.borrowReadValues) return;
++        const raw: Array<{group: string | null; key: string; flats: number[]}> = [];
++        visible.forEach((b, flat) => {
++            const block = blocks[b], group = block.kind === "text" ? this.groupOf(line, block.type) : null;
++            const values = group?.spec.by.map(name => this.readRawGroupValue(block, name));
++            group && this.checkReadValue(values);
++            const key = group ? `${group.type}|${JSON.stringify(values)}|${this.groupBoundary(block)}` : "";
++            const last = raw.at(-1);
++            if (group && last?.group === group.type && last.key === key) last.flats.push(flat);
++            else raw.push({group: group?.type ?? null, key, flats: [flat]});
++        });
++        if (raw.length !== entries.length || raw.some((entry, i) => entry.group !== entries[i].group ||
++            entry.flats.length !== entries[i].flats.length || entry.flats.some((flat, j) => flat !== entries[i].flats[j]))) {
++            throw new Error("Unsupported slice: canonical group boundaries differ from live edit paths; use full read");
++        }
++        const head = this.get(line), flow = head && this.flowSpecOf(head.line);
++        const counts = new Map<string, number>();
++        for (const entry of entries) {
++            const type = entry.group ?? blocks[visible[entry.flats[0]]].type;
++            counts.set(type, (counts.get(type) ?? 0) + 1);
++        }
++        for (const [type, rule] of Object.entries(flow?.childRules ?? {})) {
++            if ((counts.get(type) ?? 0) < (rule.min ?? 0)) {
++                throw new Error("Unsupported slice: canonical child minimum needs a model-only fallback; use full read");
++            }
++        }
++    }
++
++    private borrowedFields(spec: AttrSpec, read: (path: readonly string[]) => {value: unknown} | undefined): Record<string, unknown> {
++        this.checkReadValue(spec.default);
++        const visit = (rule: AttrSpec, path: string[]): unknown => {
++            if (isFieldSpec(rule)) return Object.fromEntries(Object.entries(rule.fields!).map(([key, child]) => [key, visit(child, [...path, key])]));
++            const stored = read(path)?.value;
++            this.checkReadValue(stored);
++            return stored !== undefined && stored !== null && fieldValueOk(rule, stored) ? stored : rule.default;
++        };
++        const value = visit(spec, []) as Record<string, unknown>;
++        this.checkReadValue(value);
++        return value;
++    }
++
+     /** 종류의 속성 명세 순서대로, 지금 값 (안 쓴 것·null 은 기본값) */
+     attrsOf(item: Item, type: string): Record<string, unknown> {
+         const attrs: Record<string, unknown> = {};
+@@ -1215,14 +1272,24 @@
+         Object.entries(this.specOf(type)?.attrs ?? {}).forEach(([k, spec]) => {
+             const value = item.attrs.get(k)?.value;
+ 
+-            attrs[k] = isFieldSpec(spec) ? materializeFields(spec, path => item.attrs.get(encodeFieldKey(k, path))) : structuredClone(value === undefined || value === null ? spec.default : value);
++            if (this.borrowReadValues && isFieldSpec(spec)) {
++                Object.defineProperty(attrs, k, {enumerable: true, get: () => this.borrowedFields(spec, path => item.attrs.get(encodeFieldKey(k, path)))});
++            } else if (this.borrowReadValues) Object.defineProperty(attrs, k, {enumerable: true, get: () => {
++                if (spec.computed) return undefined;
++                this.checkReadValue(value);
++                const normalized = value === undefined || value === null || !attrValueOk(spec, value) ? spec.default : value;
++                this.checkReadValue(normalized);
++                return normalized;
++            }});
++            else attrs[k] = isFieldSpec(spec) ? materializeFields(spec, path => item.attrs.get(encodeFieldKey(k, path)))
++                : structuredClone(value === undefined || value === null ? spec.default : value);
+         });
+ 
+         return attrs;
+     }
+ 
+     private defaultsOf(type: string): Record<string, unknown> {
+-        return Object.fromEntries(Object.entries(this.specOf(type)?.attrs ?? {}).map(([k, spec]) => [k, structuredClone(spec.default)]));
++        return Object.fromEntries(Object.entries(this.specOf(type)?.attrs ?? {}).map(([k, spec]) => [k, this.borrowReadValues ? spec.default : structuredClone(spec.default)]));
+     }
+ 
+     /** 이 줄에 올 수 있는 블록 종류 (스키마의 children) */
+@@ -1468,7 +1535,10 @@
+             if (block.kind === "text" && block.virtual && !block.chars.length) continue;
+             const required = parseRequired(block.marker.line.key);
+             const group = block.kind === "text" ? groupOf(this.schema, flow, block.type) : null;
+-            const key = group ? JSON.stringify([group.spec.by.map(name => block.attrs[name]), this.groupBoundary(block)]) : "";
++            const groupValues = group?.spec.by.map(name => this.borrowReadValues ? this.readRawGroupValue(block, name)
++                : canonicalAttrValue(this.specOf(block.type)?.attrs?.[name], block.attrs[name]));
++            group && this.checkReadValue(groupValues);
++            const key = group ? JSON.stringify([groupValues, this.groupBoundary(block)]) : "";
+             const previous = units.at(-1);
+             if (group && previous?.type === group.type && previous.groupKey === key) previous.blocks.push(block);
+             else units.push({type: required?.type ?? group?.type ?? block.type, blocks: [block], groupKey: key, required});
+@@ -1868,7 +1938,9 @@
+ 
+         Object.entries((parts && this.specOf(parts.cell)?.attrs) ?? {}).forEach(([name, spec]) => {
+             if (isFieldSpec(spec)) {
+-                out[name] = materializeFields(spec, path => grid.marker.attrs.get(cellAttrKey(row, col, encodeFieldKey(name, path))));
++                if (this.borrowReadValues) Object.defineProperty(out, name, {enumerable: true,
++                    get: () => this.borrowedFields(spec, path => grid.marker.attrs.get(cellAttrKey(row, col, encodeFieldKey(name, path))))});
++                else out[name] = materializeFields(spec, path => grid.marker.attrs.get(cellAttrKey(row, col, encodeFieldKey(name, path))));
+                 return;
+             }
+             const value = spec.computed ? undefined : grid.marker.attrs.get(cellAttrKey(row, col, name))?.value;
+@@ -1933,6 +2005,38 @@
+ 
+         // 변하지 않은 문서는 토큰·서식을 다시 읽지 않는다. 호출자는 예전처럼 모델을 자유롭게 고칠 수 있다.
+         return copyModel(this.modelCache);
++    }
++
++    private readProjectionCache: {version: number; doc: Doc} | null = null;
++
++    /**
++     * Isolate lazy required children and slot heads from live CRDT storage.
++     * Stored tokens and placements are read through; derived storage and model caches are private.
++     * The synchronous callback must only read. All edit entry points on the projection are blocked.
++     */
++    withReadProjection<T>(read: (projection: Doc) => T, guard?: (value: unknown) => void): T {
++        if (this.readProjectionCache?.version !== this.version) {
++            const projection = new Doc(this.actor, this.schema);
++            const baseIndex = this.byKey;
++            class ReadIndex extends KeyIndex<Item> {
++                override get(key: string): Item | undefined { return super.get(key) ?? baseIndex.get(key); }
++            }
++            Object.assign(projection, {lineMap: new Map(this.lineMap), byKey: new ReadIndex(),
++                placements: this.placements, revision: this.revision, borrowReadValues: true,
++                editGuard: () => { throw new Error("Read projection cannot edit the document"); }});
++            this.readProjectionCache = {version: this.version, doc: projection};
++        }
++        const projection = this.readProjectionCache.doc;
++        projection.readValueGuard = guard;
++        try { return read(projection); }
++        finally { projection.readValueGuard = undefined; }
++    }
++
++    /** Project one already visible block. The returned model does not share mutable values. */
++    projectVisibleBlock(block: Block): NodeJSON {
++        const value = canonicalBlock(this.need(), this.rawBlock(block));
++        if (!value) throw new Error("Block has no canonical model");
++        return copyModel(value);
+     }
+ 
+     private rawFlow(lineKey: string): NodeJSON[] {

@@ -1,0 +1,581 @@
+{
+  "status": "SEMANTIC_DECISION_REQUIRED",
+  "createdAt": "2026-11-01T18:18:54.951Z",
+  "runtime": "v24.22.1",
+  "baseline": "/Users/user/github/doc-sync",
+  "candidate": "/Users/user/github/doc-sync-canonical-paths",
+  "probes": [
+    {
+      "rule": null,
+      "equalVisibleModel": true,
+      "states": [
+        {
+          "label": "integration-baseline",
+          "model": {
+            "type": "doc",
+            "children": [
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "A",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "B",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              }
+            ]
+          },
+          "secondItemEdit": {
+            "ok": false,
+            "error": "경로 [0,1]: 항목 1 이 없다",
+            "snapshotPreserved": true
+          }
+        },
+        {
+          "label": "canonical-group-candidate",
+          "model": {
+            "type": "doc",
+            "children": [
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "A",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "B",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              }
+            ]
+          },
+          "secondItemEdit": {
+            "ok": true,
+            "model": {
+              "type": "doc",
+              "children": [
+                {
+                  "type": "list",
+                  "attrs": {
+                    "color": "red"
+                  },
+                  "children": [
+                    {
+                      "type": "b",
+                      "runs": [
+                        {
+                          "text": "A",
+                          "marks": {}
+                        }
+                      ]
+                    },
+                    {
+                      "type": "b",
+                      "runs": [
+                        {
+                          "text": "XB",
+                          "marks": {}
+                        }
+                      ]
+                    },
+                    {
+                      "type": "a",
+                      "runs": []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "rule": {
+        "min": 2
+      },
+      "equalVisibleModel": false,
+      "states": [
+        {
+          "label": "integration-baseline",
+          "model": {
+            "type": "doc",
+            "children": [
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "A",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "B",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "children": [
+                  {
+                    "type": "a",
+                    "attrs": {
+                      "color": "red"
+                    },
+                    "runs": []
+                  }
+                ]
+              }
+            ]
+          },
+          "secondItemEdit": {
+            "ok": false,
+            "error": "경로 [0,1]: 항목 1 이 없다",
+            "snapshotPreserved": true
+          }
+        },
+        {
+          "label": "canonical-group-candidate",
+          "model": {
+            "type": "doc",
+            "children": [
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "A",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "B",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              }
+            ]
+          },
+          "secondItemEdit": {
+            "ok": true,
+            "model": {
+              "type": "doc",
+              "children": [
+                {
+                  "type": "list",
+                  "attrs": {
+                    "color": "red"
+                  },
+                  "children": [
+                    {
+                      "type": "b",
+                      "runs": [
+                        {
+                          "text": "A",
+                          "marks": {}
+                        }
+                      ]
+                    },
+                    {
+                      "type": "b",
+                      "runs": [
+                        {
+                          "text": "XB",
+                          "marks": {}
+                        }
+                      ]
+                    },
+                    {
+                      "type": "a",
+                      "runs": []
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "attrs": {
+                    "color": "red"
+                  },
+                  "children": [
+                    {
+                      "type": "a",
+                      "runs": []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "rule": {
+        "max": 1
+      },
+      "equalVisibleModel": false,
+      "states": [
+        {
+          "label": "integration-baseline",
+          "model": {
+            "type": "doc",
+            "children": [
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "A",
+                        "marks": {}
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "secondItemEdit": {
+            "ok": false,
+            "error": "경로 [0,1]: 항목 1 이 없다",
+            "snapshotPreserved": true
+          }
+        },
+        {
+          "label": "canonical-group-candidate",
+          "model": {
+            "type": "doc",
+            "children": [
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "A",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "B",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              }
+            ]
+          },
+          "secondItemEdit": {
+            "ok": true,
+            "model": {
+              "type": "doc",
+              "children": [
+                {
+                  "type": "list",
+                  "attrs": {
+                    "color": "red"
+                  },
+                  "children": [
+                    {
+                      "type": "b",
+                      "runs": [
+                        {
+                          "text": "A",
+                          "marks": {}
+                        }
+                      ]
+                    },
+                    {
+                      "type": "b",
+                      "runs": [
+                        {
+                          "text": "XB",
+                          "marks": {}
+                        }
+                      ]
+                    },
+                    {
+                      "type": "a",
+                      "runs": []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "rule": {
+        "min": 2,
+        "max": 2
+      },
+      "equalVisibleModel": false,
+      "states": [
+        {
+          "label": "integration-baseline",
+          "model": {
+            "type": "doc",
+            "children": [
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "A",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "B",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "children": [
+                  {
+                    "type": "a",
+                    "attrs": {
+                      "color": "red"
+                    },
+                    "runs": []
+                  }
+                ]
+              }
+            ]
+          },
+          "secondItemEdit": {
+            "ok": false,
+            "error": "경로 [0,1]: 항목 1 이 없다",
+            "snapshotPreserved": true
+          }
+        },
+        {
+          "label": "canonical-group-candidate",
+          "model": {
+            "type": "doc",
+            "children": [
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "A",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "b",
+                    "runs": [
+                      {
+                        "text": "B",
+                        "marks": {}
+                      }
+                    ]
+                  },
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              },
+              {
+                "type": "list",
+                "attrs": {
+                  "color": "red"
+                },
+                "children": [
+                  {
+                    "type": "a",
+                    "runs": []
+                  }
+                ]
+              }
+            ]
+          },
+          "secondItemEdit": {
+            "ok": true,
+            "model": {
+              "type": "doc",
+              "children": [
+                {
+                  "type": "list",
+                  "attrs": {
+                    "color": "red"
+                  },
+                  "children": [
+                    {
+                      "type": "b",
+                      "runs": [
+                        {
+                          "text": "A",
+                          "marks": {}
+                        }
+                      ]
+                    },
+                    {
+                      "type": "b",
+                      "runs": [
+                        {
+                          "text": "XB",
+                          "marks": {}
+                        }
+                      ]
+                    },
+                    {
+                      "type": "a",
+                      "runs": []
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "attrs": {
+                    "color": "red"
+                  },
+                  "children": [
+                    {
+                      "type": "a",
+                      "runs": []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sha256": {
+    "packages/doc-sync-core/src/crdt/model.ts": "f2d599ed9657ea1cc92b49ea021dcf246df3e75e6df0bf91c7e383d0e1c6a978",
+    "packages/doc-sync-core/src/crdt/edit.ts": "d0c923ce7d79fe95496dde4b41c5f1388671c86f68f7215092a83149d00b29d2",
+    "packages/doc-sync-core/src/crdt/doc.ts": "5d5b13fdc8c7315f6846f87f8586c92d037bb5f8b388cdb93f8bb3b4be7706a9",
+    "packages/doc-sync-core/test/canonical-paths.test.ts": "1c9bdecdda8123035d81993860dd697e67e10f95563e807c49ef0e732b162cef"
+  }
+}

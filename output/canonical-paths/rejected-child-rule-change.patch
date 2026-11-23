@@ -1,0 +1,12 @@
+--- a/packages/doc-sync-core/src/crdt/doc.ts
++++ b/packages/doc-sync-core/src/crdt/doc.ts
+@@ -1535,7 +1535,8 @@
+             if (block.kind === "text" && block.virtual && !block.chars.length) continue;
+             const required = parseRequired(block.marker.line.key);
+             const group = block.kind === "text" ? groupOf(this.schema, flow, block.type) : null;
+-            const groupValues = group?.spec.by.map(name => this.borrowReadValues ? this.readRawGroupValue(block, name) : block.attrs[name]);
++            const groupValues = group?.spec.by.map(name => this.borrowReadValues ? this.readRawGroupValue(block, name)
++                : canonicalAttrValue(this.specOf(block.type)?.attrs?.[name], block.attrs[name]));
+             group && this.checkReadValue(groupValues);
+             const key = group ? JSON.stringify([groupValues, this.groupBoundary(block)]) : "";
+             const previous = units.at(-1);
