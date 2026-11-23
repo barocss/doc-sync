@@ -67,3 +67,19 @@ inputs before calling git worktree remove. The primary checkout is removed only
 after the final main SHA is verified remotely. Other projects and their browsers
 are outside this deletion scope. Codex chat deletion uses the app's delete tool;
 any required composer approval is separate from filesystem cleanup.
+
+## Verified cleanup checkpoint
+
+All 23 secondary worktrees were removed after final source, private-archive and
+remote-SHA gates passed. An additional 493 ignored source/evidence paths were
+found and preserved through 11 descendant archive commits before deletion;
+1,022 canonical restore mappings are recorded. The old project browser tree
+(12 processes) is inactive. All 145 inventoried temporary targets and the empty
+thread visualization directory were removed.
+
+The external process-tracking hook lost its referenced script during cleanup.
+No hook configuration was changed. Final record publication uses the GitHub
+connector; remaining filesystem cleanup uses the filesystem API without
+launching another process. The primary checkout is removed only after that
+final commit and its tree are verified remotely. A compact final receipt is
+kept beside the private archive outside the removed checkout.

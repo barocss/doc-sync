@@ -240,12 +240,18 @@ def main():
         record('remote_and_private_verified', main_sha=recorded, backup_refs=23, private_archive_sha256=private['archive_sha256'])
         trees = {s['snapshot_sha']: tree_entries(s['snapshot_sha']) for s in snapshots.values()}
         root_tree = tree_entries(recorded)
-        preserved_blobs = {blob for tree in [root_tree, *trees.values()] for mode, blob in tree.values()}
+        preserved_lookup = {}
+        for commit, tree in [(recorded, root_tree), *trees.items()]:
+            for path, (mode, blob) in tree.items():
+                preserved_lookup.setdefault(blob, {'commit_sha': commit, 'path': path, 'git_blob_sha': blob})
+        preserved_blobs = set(preserved_lookup)
+        private_lookup = {entry['sha256']: {'private_archive': str(PRIVATE), 'archive_path': entry['archive_path'], 'sha256': entry['sha256']} for entry in private['entries'] if entry['type'] == 'file'}
         registered = worktree_blocks()
         validated = []
         private_by_path = {x['archive_path']: x for x in private['entries']}
         def validate_source_bytes(wp, snapshot, plan):
             fingerprint = hashlib.sha256()
+            canonical_mapping = []
             def add_fingerprint(rel, blob, sha):
                 fingerprint.update(rel.encode() + b'\0' + blob.encode() + b'\0' + sha.encode() + b'\0')
             tree = trees[snapshot['snapshot_sha']]
@@ -273,7 +279,8 @@ def main():
                 blob, sha = file_identity(source)
                 add_fingerprint(rel, blob, sha)
                 require(blob in preserved_blobs or sha in private_hashes, 'Ignored file lacks durable verified backup: ' + str(source))
-            return fingerprint.hexdigest()
+                canonical_mapping.append({'original_path': rel, 'git_blob_sha': blob, 'sha256': sha, 'restore_from': preserved_lookup.get(blob) or private_lookup[sha]})
+            return fingerprint.hexdigest(), canonical_mapping
 
         for value in approved:
             wp = Path(value)
@@ -288,10 +295,10 @@ def main():
             require(git(wp, 'diff', '--cached', '--quiet', s['original_head'], '--', check=False).returncode == 0, 'Normal index differs from original HEAD: ' + value)
             rawstatus = git(wp, 'status', '--porcelain=v1', '--untracked-files=all').stdout.decode().rstrip('\n')
             require(rawstatus == inv['status_porcelain'], 'Worktree status changed: ' + value)
-            source_fingerprint = validate_source_bytes(wp, s, plan)
+            source_fingerprint, canonical_mapping = validate_source_bytes(wp, s, plan)
             kib = int(subprocess.check_output(['du', '-sk', str(wp)], timeout=120).split()[0])
             validated.append({'worktree': value, 'before_bytes': kib * 1024, 'snapshot_sha': s['snapshot_sha'], 'original_head': s['original_head'], 'status_sha256': hashlib.sha256(rawstatus.encode()).hexdigest(), 'source_fingerprint': source_fingerprint})
-            record('worktree_validated', **validated[-1])
+            record('worktree_validated', **validated[-1], canonical_restore_mapping=canonical_mapping)
             print('Validated ' + wp.name, flush=True)
         record('all_worktrees_validated', count=len(validated))
         if args.execute:
@@ -303,7 +310,7 @@ def main():
                 status = git(wp, 'status', '--porcelain=v1', '--untracked-files=all').stdout.decode().rstrip('\n')
                 require(hashlib.sha256(status.encode()).hexdigest() == item['status_sha256'], 'Secondary status changed during cleanup')
                 require(git(wp, 'diff', '--cached', '--quiet', item['original_head'], '--', check=False).returncode == 0, 'Normal index changed during cleanup')
-                final_fingerprint = validate_source_bytes(wp, snapshots[str(wp)], planmap[str(wp)])
+                final_fingerprint, final_mapping = validate_source_bytes(wp, snapshots[str(wp)], planmap[str(wp)])
                 require(final_fingerprint == item['source_fingerprint'], 'Source inputs changed after validation')
                 record('removal_started', worktree=str(wp), before_bytes=item['before_bytes'])
                 git(ROOT, 'worktree', 'remove', '--force', str(wp), timeout=300)

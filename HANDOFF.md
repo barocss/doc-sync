@@ -25,7 +25,10 @@ archive at `/Users/user/github/doc-sync-private-backup-20261123.tar.gz` retains
 The user authorized deleting the project and related working directories and
 sessions after remote verification to recover disk. Cleanup requires verified
 main/backup refs, source-preservation checks and the private archive before any
-worktree removal. The primary checkout is removed last. GitHub is the recovery
+worktree removal. All 23 secondary worktrees have now been removed after hash and remote checks.
+The old project browser process tree is inactive, 145 temporary targets are
+removed, and the empty thread visualization directory is removed. The primary
+checkout is removed last after the final cleanup-record commit is verified. GitHub is the recovery
 source; raw ignored build directories and unselected temporary output are not
 part of the retained verification contract. See
 `docs/reports/push-cleanup-2026-11-23/README.md` and
