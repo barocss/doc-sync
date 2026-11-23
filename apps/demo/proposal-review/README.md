@@ -105,3 +105,30 @@ streams for each review tab. The tested flow keeps a separate peer editor page a
 an additional review-only tab open while verifying final convergence. Arbitrarily
 many independently launched editor pages can still exhaust a browser's HTTP/1
 per-origin connection budget; this workspace is not a general connection pool.
+
+## Guided recovery additions (#12)
+
+The recovery panel distinguishes a confirmed applied receipt, proven non-application,
+stale version, explicit rejection and unresolved evidence. It exposes proposal,
+original decision, attempt and evidence identifiers for inspection without copying
+credentials. `Applied` is historical receipt evidence, not a guarantee that the live
+text still matches: peer edits or actor Undo may have happened afterward.
+
+For a still-pending server record with a locally saved acceptance, an explicit
+**Retry same saved approval** confirmation may resend that exact original ID and
+digest against the original stored base. It does not silently retry, mint another
+ID, refresh the base or manually replay replacement text. Other uncertain server
+states offer original-attempt reconciliation only. Cancelling confirmation or
+closing the preview sends nothing. Insufficient proof remains blocked.
+
+A separately created successor can link its predecessor for inspection, but must
+be selected and reviewed anew. The owner bridge has no proposal-creation or base-
+refresh endpoint. Server creation now permits new `supersedes` links only to a
+resolved `stale`, `not_applied` or `rejected` proposal within the same store; pending,
+uncertain or applied predecessors cannot be used to escape the original decision.
+Exact duplicate creation keeps its existing result for idempotency. Previously
+stored records are retained, not rewritten by this validation change.
+
+This is not universal automatic recovery. Keep original evidence and use the
+owner recovery workflow when the panel cannot prove an outcome. Actual-model
+planning remains the separate unfinished #10 slice.

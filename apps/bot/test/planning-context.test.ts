@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {parsePlanningPath,readPlanningContext,assertPlanningEdits,assertPlanningSelection,assertPersistedPlanningState} from "../src/planning-context.ts";
+import {assertPlanningTarget,parsePlanningPath,readPlanningContext,assertPlanningEdits,assertPlanningSelection,assertPersistedPlanningState} from "../src/planning-context.ts";
 const revision={epoch:"e",serverSeq:4,schemaVersion:"s"};
 const slice=()=>({revision,sessionOnline:true,pending:0,conditionalPending:false,recoveryRequired:false,children:[{path:[1],blockId:"4@A",node:{type:"paragraph",runs:[{text:"small"}]}}],nextCursor:"unused-sibling-cursor"});
 test("one bounded subtree is explicit partial context and independent of unseen siblings",async()=>{
@@ -30,4 +30,13 @@ test("persisted path/binding pairs cannot silently widen after restart",()=>{
  const binding={path:[1],blockId:"4@A",epoch:"e",schemaVersion:"s"};
  assert.doesNotThrow(()=>assertPersistedPlanningState({}));assert.doesNotThrow(()=>assertPersistedPlanningState({planningPath:[1],planningBinding:binding}));
  for(const value of [{planningPath:[1]},{planningBinding:binding},{planningPath:[2],planningBinding:binding}])assert.throws(()=>assertPersistedPlanningState(value),/review/);
+});
+
+
+test("bounded targets allow marked text but refuse inline and span structures",()=>{
+ const schema:any={nodes:{p:{shape:"text"}}};
+ for(const runs of [[],[{text:"plain",marks:{bold:true,tone:"red"}}]])assert.doesNotThrow(()=>assertPlanningTarget({type:"p",runs},schema));
+ for(const runs of [undefined,[{type:"image",attrs:{src:"example"}}],[{type:"link",runs:[{text:"label"}]}],[{text:"fake",type:"image"}],[{text:"fake",children:[]}]] )assert.throws(()=>assertPlanningTarget({type:"p",runs},schema),/plain text runs/);
+ for(const length of [undefined,-1,1.5,Infinity])assert.throws(()=>assertPlanningEdits([{op:"update",at:[1,0],attrs:{src:"changed"},...(length===undefined?{}:{length})}],[1]),/explicit nonnegative text length/);
+ assert.doesNotThrow(()=>assertPlanningEdits([{op:"update",at:[1,0],attrs:{bold:true},length:0}],[1]));
 });

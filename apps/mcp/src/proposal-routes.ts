@@ -1,3 +1,4 @@
+import {enforcePolicy, policyFingerprint} from "./proposal-policy.ts";
 import type {IncomingMessage, ServerResponse} from "node:http";
 import type {HostedConfig, HostedGrant, HostedRoute} from "./hosted-config.ts";
 import {routePath} from "./hosted-config.ts";
@@ -8,9 +9,9 @@ import {previewReplacement} from "./proposal-preview.ts";
 const UNSETTLED_PROPOSAL_STATUSES = Object.freeze(["applying", "unconfirmed", "needs_attention"]);
 
 export class ProposalHttpError extends Error { readonly status: number; constructor(status: number) { super("Proposal request rejected"); this.status = status; } }
-export type ProposalCapture = (route: HostedRoute, grant: HostedGrant, request?: CreateProposal) => Promise<{base: CreateProposal["base"]; source?: string}>;
+export type ProposalCapture = (route: HostedRoute, grant: HostedGrant, request?: CreateProposal, targetPath?: [number]) => Promise<{base: CreateProposal["base"]; source?: string; blockId?: string}>;
 export function proposalCapability(method: string | undefined, suffix: string): "proposal_create" | "proposal_read" | "proposal_decide" | "proposal_accept" {
-    if (suffix === "/base" && method === "GET" || suffix === "" && method === "POST") return "proposal_create";
+    if ((suffix === "/base" && method === "GET" || suffix === "/target" && method === "POST") || suffix === "" && method === "POST") return "proposal_create";
     if (/^\/[a-f0-9]{64}\/(accept|reconcile)$/.test(suffix) && method === "POST") return "proposal_accept";
     if (/^\/[a-f0-9]{64}\/reject$/.test(suffix) && method === "POST") return "proposal_decide";
     if ((suffix === "" || /^\/[a-f0-9]{64}$/.test(suffix)) && method === "GET") return "proposal_read";
@@ -28,6 +29,13 @@ export async function handleProposal(options: {req: IncomingMessage; res: Server
         try { if (!options.accept) throw new ProposalHttpError(405); respond(await options.accept(suffix.split("/")[1]!, parsed, suffix.endsWith("/reconcile"))); return; }
         catch (error) { if (error instanceof ProposalConflict) throw new ProposalHttpError(409); if (error instanceof ProposalHttpError) throw error; throw new ProposalHttpError(503); }
     }
+    if (suffix === "/target") {
+        const value = parsed as {path?: unknown};
+        if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).length !== 1 || !Array.isArray(value.path) || value.path.length !== 1 || !Number.isSafeInteger(value.path[0]) || value.path[0] < 0) throw new ProposalHttpError(400);
+        const path: [number] = [value.path[0]], captured = await capture(route, grant, undefined, path);
+        if (captured.source === undefined || !captured.blockId) throw new ProposalHttpError(503);
+        respond({base: captured.base, target: {path, blockId: captured.blockId, text: captured.source}}); return;
+    }
     if (suffix === "/base") { respond((await capture(route, grant)).base); return; }
     let request: CreateProposal | undefined;
     try { if (capability === "proposal_create") request = createProposalSchema.parse(parsed); else if (capability === "proposal_decide") rejectProposalSchema.parse(parsed); }
@@ -36,12 +44,13 @@ export async function handleProposal(options: {req: IncomingMessage; res: Server
     try { store = await ProposalStore.open(config.dataDir, owner); } catch { throw new ProposalHttpError(503); }
     try {
         if (request) {
+            try { enforcePolicy(route.proposalPolicy, request.base, request.change); } catch { throw new ProposalHttpError(403); }
             const existing = await store.get(proposalId(owner, request.requestId));
-            if (existing) { if (digest(existing.payload.request) !== digest(request)) throw new ProposalConflict(); const record = await store.create(existing.payload); respond({id: record.payload.id, status: record.status, proposalDigest: record.proposalDigest}); return; }
+            if (existing) { if (existing.payload.policyFingerprint !== policyFingerprint(route.proposalPolicy, POLICY_FINGERPRINT)) throw new ProposalHttpError(403); if (digest(existing.payload.request) !== digest(request)) throw new ProposalConflict(); const record = await store.create(existing.payload); respond({id: record.payload.id, status: record.status, proposalDigest: record.proposalDigest}); return; }
             if ((await store.list()).some(r => UNSETTLED_PROPOSAL_STATUSES.includes(r.status))) throw new ProposalHttpError(409);
             const captured = await capture(route, grant, request);
             if (captured.source === undefined) throw new Error("Missing source");
-            const payload = {format: 1 as const, id: proposalId(owner, request.requestId), owner, request, ...previewReplacement(captured.source, request.change), policyFingerprint: POLICY_FINGERPRINT};
+            const payload = {format: 1 as const, id: proposalId(owner, request.requestId), owner, request, ...previewReplacement(captured.source, request.change), policyFingerprint: policyFingerprint(route.proposalPolicy, POLICY_FINGERPRINT), ...(route.proposalPolicy ? {routePolicy: structuredClone(route.proposalPolicy)} : {})};
             const record = await store.create(payload);
             respond({id: record.payload.id, status: record.status, proposalDigest: record.proposalDigest});
         } else if (capability === "proposal_decide") {

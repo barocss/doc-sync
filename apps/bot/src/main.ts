@@ -1,21 +1,28 @@
+import {projectProposalTemplate} from "./project-template.ts";
+import {meetingNotesTemplate} from "./meeting-template.ts";
+import {creatorClient} from "./proposal-client.ts";
+import {runProposalMission, inspectProposalMission} from "./proposal-planner.ts";
+import {readProposalPlan} from "./proposal-plan-input.ts";
 import {proposalCommand} from "./proposals.ts";
 import {readFile} from "node:fs/promises";
 import {parseBrief} from "./brief.ts";
 import {randomUUID} from "node:crypto";
 import {setTimeout as delay} from "node:timers/promises";
 import {NodeHttpTransport} from "@barocss/doc-sync/node";
-import {ReviewWatch} from "./watch.ts";
+import {inspectWatchCheckpoint} from "./persistent-watch.ts";
+import {openCommandWatch} from "./watch-command.ts";
 import {resolve} from "node:path";
 import {codexPlanner} from "./codex.ts";
 import {listMissions, loadMission, runMission, recoverMission, resumeMission} from "./runner.ts";
 import {createProfile, listProfiles, loadProfile, profileActor, profileUrl} from "./profiles.ts";
 import type {ProfileInput} from "./profiles.ts";
 
+const PROPOSAL_PLAN_OPTIONS = Object.freeze(["--plan-file", "--mission-file", "--brief", "--path"]);
 const PROPOSAL_CREATE_OPTIONS = Object.freeze(["--input"]);
 const PROPOSAL_DECIDE_OPTIONS = Object.freeze(["--id", "--input"]);
 const PROPOSAL_INSPECT_OPTIONS = Object.freeze(["--id"]);
-const WATCH_OPTIONS = Object.freeze(["--url", "--doc", "--mission", "--state-dir", "--model", "--interval", "--max-runs"]);
-const RUN_OPTIONS = Object.freeze(["--url", "--doc", "--actor", "--name", "--color", "--mission", "--state-dir", "--max-steps", "--ephemeral", "--model", "--character", "--personality", "--role", "--profile", "--brief", "--planning-path", "--protect-attributes"]);
+const WATCH_OPTIONS = Object.freeze(["--url", "--doc", "--mission", "--state-dir", "--model", "--interval", "--max-runs", "--checkpoint"]);
+const RUN_OPTIONS = Object.freeze(["--url", "--doc", "--actor", "--name", "--color", "--mission", "--state-dir", "--max-steps", "--ephemeral", "--model", "--character", "--personality", "--role", "--profile", "--brief", "--planning-path", "--protect-attributes", "--protect-text"]);
 const PROFILE_CREATE_OPTIONS = Object.freeze(["--id", "--name", "--character", "--personality", "--role", "--color", "--state-dir"]);
 const RESUME_OPTIONS = Object.freeze(["--id","--state-dir","--model"]);
 const ID_STATE_OPTIONS = Object.freeze(["--id", "--state-dir"]);
@@ -35,8 +42,38 @@ async function main() {
         if (!key?.startsWith("--") || value === undefined || options.has(key)) throw new Error("Use unique --option value pairs");
         options.set(key, value);
     }
-    const permitted = command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
+    const permitted = (command === "template-meeting" || command === "template-project") ? new Set(["--input"]) : command === "proposal-mission-inspect" ? new Set(["--mission-file"]) : command?.startsWith("proposal-") ? new Set(["--endpoint", "--token-env", ...(command === "proposal-plan" ? PROPOSAL_PLAN_OPTIONS : command === "proposal-create" ? PROPOSAL_CREATE_OPTIONS : PROPOSAL_DECISION_COMMANDS.includes(command) ? PROPOSAL_DECIDE_OPTIONS : command === "proposal-inspect" ? PROPOSAL_INSPECT_OPTIONS : [])]) : command === "watch-inspect" ? new Set(["--checkpoint"]) : command === "watch" ? new Set(WATCH_OPTIONS) : command === "run" ? new Set(RUN_OPTIONS) : command === "profile-create" ? new Set(PROFILE_CREATE_OPTIONS) : command === "resume" ? new Set(RESUME_OPTIONS) : command === "profile-show" || command === "inspect" || command === "recover" ? new Set(ID_STATE_OPTIONS) : command === "profile-list" || command === "list" ? new Set(STATE_OPTIONS) : new Set<string>();
     for (const key of options.keys()) if (!permitted.has(key)) throw new Error(`Unknown option: ${key}`);
+    if (command === "template-meeting" || command === "template-project") {
+        const file = options.get("--input");
+        if (!file) throw Error(`${command} requires --input JSON-file`);
+        const template = command === "template-meeting" ? meetingNotesTemplate : projectProposalTemplate;
+        const result = template(JSON.parse(await readFile(file, "utf8")));
+        console.log(JSON.stringify(result, null, 2));
+        if (result.status !== "ready") process.exitCode = 1;
+        return;
+    }
+    if (command === "watch-inspect") {
+        const file = options.get("--checkpoint");
+        if (!file) throw Error("watch-inspect requires --checkpoint");
+        console.log(JSON.stringify(await inspectWatchCheckpoint(file), null, 2));
+        return;
+    }
+    if (command === "proposal-mission-inspect") {
+        const file = options.get("--mission-file");
+        if (!file) throw Error("proposal-mission-inspect requires --mission-file");
+        console.log(JSON.stringify(await inspectProposalMission(file), null, 2));
+        return;
+    }
+    if (command === "proposal-plan") {
+        const missionPath = options.get("--mission-file"), brief = options.get("--brief"), input = options.get("--plan-file");
+        const path = JSON.parse(options.get("--path") ?? "null");
+        const tokenName = options.get("--token-env") ?? "DOC_SYNC_PROPOSAL_TOKEN";
+        if (!missionPath || !brief || !input || !/^[A-Za-z_][A-Za-z0-9_]{0,79}$/.test(tokenName)) throw new Error("proposal-plan requires --mission-file, --brief, --path and --plan-file");
+        const client = creatorClient(options.get("--endpoint") ?? "", process.env[tokenName] ?? "");
+        const result = await runProposalMission({missionPath, brief, path}, async () => readProposalPlan(input), client);
+        console.log(JSON.stringify(result, null, 2)); if (result.status !== "created") process.exitCode = 1; return;
+    }
     if (command?.startsWith("proposal-")) { console.log(JSON.stringify(await proposalCommand(command, options), null, 2)); return; }
     if (options.has("--ephemeral") && !BOOLEAN_OPTION_VALUES.includes(options.get("--ephemeral")!)) throw new Error("--ephemeral must be true or false");
     const stateDir = resolve(process.env.INIT_CWD ?? process.cwd(), options.get("--state-dir") ?? ".doc-sync-bots");
@@ -59,23 +96,30 @@ async function main() {
         const interval = Number(options.get("--interval") ?? "10"), maxRuns = Number(options.get("--max-runs") ?? "5");
         if (!Number.isSafeInteger(interval) || interval < 5 || interval > 3600) throw new Error("Interval must be 5–3600 seconds");
         const actor = `bot-${randomUUID()}`, transport = new NodeHttpTransport(document, actor, url);
-        const watcher = new ReviewWatch(() => transport.getRecoveryState(), async ({from, to}) => {
-            const result = await runMission({url, document, mission, actor, stateDir, ephemeral: true, role: "reviewer", maxSteps: 4}, codexPlanner({model:options.get("--model")}));
+        const watcher = await openCommandWatch({url,document,mission,model:options.get("--model"),maxRuns,checkpoint:options.get("--checkpoint")}, () => transport.getRecoveryState(), async ({from, to}, signal) => {
+            const result = await runMission({url, document, mission, actor, stateDir, ephemeral: true, role: "reviewer", maxSteps: 4}, codexPlanner({model:options.get("--model"),signal}));
+            if (signal.aborted) {
+                console.log(JSON.stringify({event:"review", from, to, missionId:result.id, status:"cancelled", missionStatus:result.status}));
+                return {status:"cancelled"};
+            }
             console.log(JSON.stringify({event:"review", from, to, missionId:result.id, status:result.status, result:result.result, error:result.error}));
             return result;
-        }, maxRuns);
+        });
         const abort = new AbortController();
-        const stop = () => { watcher.stop(); abort.abort(); };
+        let stopping = false, polling = false;
+        let stopWork: Promise<void> | undefined;
+        const poll = async () => { polling = true; try { await watcher.poll(); } finally { polling = false; } };
+        const stop = () => { stopping = true; abort.abort(); if (polling) { stopWork ??= watcher.stop(); void stopWork.catch(() => {}); } };
         process.once("SIGINT", stop); process.once("SIGTERM", stop);
         try {
-            await watcher.poll();
+            await poll();
             console.log(JSON.stringify({event:"watching", document, interval, maxRuns}));
-            while (!watcher.done) {
+            while (!stopping && !watcher.done) {
                 try { await delay(interval * 1000, undefined, {signal: abort.signal}); }
                 catch (error) { if (!abort.signal.aborted) throw error; }
-                if (!watcher.done) await watcher.poll();
+                if (!stopping && !watcher.done) await poll();
             }
-        } finally { process.removeListener("SIGINT", stop); process.removeListener("SIGTERM", stop); }
+        } finally { process.removeListener("SIGINT", stop); process.removeListener("SIGTERM", stop); try { await stopWork; } finally { await watcher.close(); } }
         return;
     }
     if (command !== "run") throw new Error("Use run, list or inspect. See apps/bot/README.md.");
@@ -92,7 +136,7 @@ async function main() {
         configured=await loadProfile(stateDir,profileId);actualUrl=profileUrl(url);
     }
     const actor = configured ? profileActor(configured,actualUrl,document) : options.get("--actor") ?? `bot-${randomUUID()}`;
-    const result = await runMission({url:actualUrl, document, mission, brief, protectedAttributes:options.has("--protect-attributes")?JSON.parse(options.get("--protect-attributes")!):undefined, planningPath:options.has("--planning-path")?JSON.parse(options.get("--planning-path")!):undefined, actor, stateDir, profileId:configured?.id,
+    const result = await runMission({url:actualUrl, document, mission, brief, protectedText:options.has("--protect-text")?JSON.parse(options.get("--protect-text")!):undefined, protectedAttributes:options.has("--protect-attributes")?JSON.parse(options.get("--protect-attributes")!):undefined, planningPath:options.has("--planning-path")?JSON.parse(options.get("--planning-path")!):undefined, actor, stateDir, profileId:configured?.id,
         ephemeral: options.get("--ephemeral") === "true", maxSteps: Number(options.get("--max-steps") ?? "4"),
         name: configured?.name ?? options.get("--name"), color: configured?.color ?? options.get("--color"), character: (configured?.character ?? options.get("--character")) as "cat" | "fox" | "owl" | "robot" | undefined,
         personality: (configured?.personality ?? options.get("--personality")) as "curious" | "careful" | "creative" | "concise" | undefined,

@@ -25,7 +25,7 @@ test('real SDK tools/list preserves required fields, strict objects, nullable po
  let accesses=0;const session=new Proxy({}, {get(){accesses++;throw Error('session accessed');}}) as DocumentSession;
  const server=createServer(session);const client=new Client({name:'zod-compat',version:'1'});const [l,r]=InMemoryTransport.createLinkedPair();await server.connect(r);await client.connect(l);
  try{
-  const tools=(await client.listTools()).tools;assert.equal(tools.length,13);
+  const tools=(await client.listTools()).tools;assert.equal(tools.length,14);
   const schemas=Object.fromEntries(tools.map(t=>[t.name,t.inputSchema])) as Record<string,any>;
   for(const schema of Object.values(schemas))assert.equal(schema.additionalProperties,false);
   assert.deepEqual(schemas.transition_schema.required,['base','schema']);assert.deepEqual(schemas.transition_schema.properties.schema.additionalProperties,{});

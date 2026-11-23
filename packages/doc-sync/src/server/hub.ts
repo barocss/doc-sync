@@ -2,7 +2,7 @@ import {keyOf} from "../crdt/ticket.ts";
 import {Doc} from "../crdt/doc.ts";
 import {assertCompatibleSchema, schemaVersion, sha256} from "../crdt/schema-version.ts";
 import type {Schema} from "../crdt/schema.ts";
-import {CONTAINER_CAPABILITY, DOCUMENT_CAPABILITIES, PROTOCOL_VERSION} from "../sync/protocol.ts";
+import {requiredDocumentCapabilities, PROTOCOL_VERSION} from "../sync/protocol.ts";
 import type {Ack, Change, Envelope, Presence, ServerEvent} from "../sync/protocol.ts";
 
 const GC_STATE_FIELDS = Object.freeze(["active", "era"]);
@@ -515,7 +515,7 @@ export class DocHub {
         return {
             type: "hello",
             protocol: PROTOCOL_VERSION,
-            capabilities: this.schema?.domain === "graphic" ? [...DOCUMENT_CAPABILITIES, CONTAINER_CAPABILITY] : [...DOCUMENT_CAPABILITIES],
+            capabilities: requiredDocumentCapabilities(this.schema),
             epoch: this.epoch,
             schemaVersion: this.schemaVersion,
             serverSeq: this.serverSeq,

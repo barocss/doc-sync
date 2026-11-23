@@ -1,3 +1,4 @@
+import {proposalPolicySchema, policyFingerprint, enforcePolicy} from "./proposal-policy.ts";
 import {createHash} from "node:crypto";
 import {z} from "zod";
 import {previewReplacement} from "./proposal-preview.ts";
@@ -24,7 +25,7 @@ export const digest = (value: unknown): string => createHash("sha256").update(JS
 export const proposalId = (owner: ProposalOwner, requestId: string) => digest(["doc-sync/proposal/v1", owner.routeKey, owner.principal, owner.actor, requestId]);
 const immutableSchema = z.object({format: z.literal(1), id: hash, owner: z.object({principal: identity, routeKey: hash, actor: identity}).strict(),
     request: createProposalSchema, before: z.string().max(4096), after: z.string().max(4096),
-    preview: z.object({prefix: z.string().max(16384), removed: z.string().max(4096), inserted: z.string().max(4096), suffix: z.string().max(16384)}).strict(), policyFingerprint: hash}).strict();
+    preview: z.object({prefix: z.string().max(16384), removed: z.string().max(4096), inserted: z.string().max(4096), suffix: z.string().max(16384)}).strict(), policyFingerprint: hash, routePolicy: proposalPolicySchema.optional()}).strict();
 export type ProposalImmutable = z.infer<typeof immutableSchema>;
 const decisionSchema = z.object({kind: z.enum(["accept", "reject"]), requestId: z.guid(), principal: identity, grantId: identity, proposalDigest: hash, approvalPolicyFingerprint: hash.optional()}).strict();
 export const ACCEPTANCE_POLICY_FINGERPRINT = digest(["B3b", 1, "root-stored-visible-unstyled-text", "exact-revision", "prepared-wire-guard"]);
@@ -56,7 +57,8 @@ export function parseProposalRecord(value: unknown, owner: ProposalOwner): Propo
         !validState(record, owner)) throw new Error("Invalid proposal evidence; original preserved");
     const payload = record.payload, source = payload.preview.prefix + payload.preview.removed + payload.preview.suffix;
     const preview = previewReplacement(source, payload.request.change);
-    if (JSON.stringify(preview.preview) !== JSON.stringify(payload.preview) || preview.before !== payload.before || preview.after !== payload.after || payload.policyFingerprint !== POLICY_FINGERPRINT) throw new Error("Inconsistent proposal preview; original preserved");
+    if (JSON.stringify(preview.preview) !== JSON.stringify(payload.preview) || preview.before !== payload.before || preview.after !== payload.after || payload.policyFingerprint !== policyFingerprint(payload.routePolicy, POLICY_FINGERPRINT)) throw new Error("Inconsistent proposal preview; original preserved");
+    enforcePolicy(payload.routePolicy, payload.request.base, payload.request.change);
     return record;
 }
 export const POLICY_FINGERPRINT = digest(["B3a", 1, "root-stored-visible-unstyled-text", "utf16-scalar", "no-apply"]);

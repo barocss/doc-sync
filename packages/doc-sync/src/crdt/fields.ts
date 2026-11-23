@@ -56,9 +56,22 @@ const equal = (a: unknown, b: unknown): boolean => {
     const keys = Object.keys(a);
     return keys.length === Object.keys(b).length && keys.every(key => Object.hasOwn(b, key) && equal(a[key], b[key]));
 };
+const leafConstraintProblems = (spec: AttrSpec): string[] => {
+    const problems: string[] = [];
+    if (spec.values !== undefined && !Array.isArray(spec.values)) problems.push("values must be an array");
+    if (spec.pattern !== undefined && typeof spec.pattern !== "string") problems.push("pattern must be a string");
+    if (typeof spec.default === "number") {
+        for (const bound of ["min", "max"] as const) {
+            if (spec[bound] !== undefined && (typeof spec[bound] !== "number" || !Number.isFinite(spec[bound]))) problems.push(`${bound} must be a finite number`);
+        }
+        if (typeof spec.min === "number" && typeof spec.max === "number" && spec.min > spec.max) problems.push("minimum must not exceed maximum");
+    }
+    return problems;
+};
 const leafOk = (spec: AttrSpec, value: unknown): boolean => {
     if (!fieldJsonOk(value)) return false;
     if (value === null) return true;
+    if (leafConstraintProblems(spec).length) return false;
     if (spec.computed || spec.values && !spec.values.some(candidate => equal(candidate, value))) return false;
     if (spec.pattern) {
         try { if (typeof value !== "string" || !new RegExp(spec.pattern).test(value)) return false; }
@@ -97,7 +110,8 @@ export const fieldsSchemaProblems = (attrs: Record<string, AttrSpec> | undefined
         if (spec.computed) problems.push(`${label}: collaborative fields cannot be computed`);
         if (!fieldJsonOk(spec.default)) problems.push(`${label}: default must be safe JSON data`);
         if (spec.values && (!Array.isArray(spec.values) || !spec.values.every(fieldJsonOk))) problems.push(`${label}: values must be safe JSON data`);
-        if (spec.pattern) {
+        if (!isFieldSpec(spec)) problems.push(...leafConstraintProblems(spec).map(problem => `${label}: ${problem}`));
+        if (typeof spec.pattern === "string" && spec.pattern) {
             try { new RegExp(spec.pattern); } catch { problems.push(`${label}: invalid pattern`); }
         }
         if (isFieldSpec(spec)) {

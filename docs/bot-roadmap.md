@@ -20,23 +20,25 @@ The checks support exact text, node type, exact non-overlapping UTF-16 occurrenc
 
 ## B3. Plan, proposal, and server authorization
 
-**Status: bounded owner approval and recovery implemented; B3 remains in progress.** The private hosted HTTP/CLI path stores immutable plain-text proposals separately from History. A creator has read + proposal_create; a separate owner can inspect/reject and use read + proposal_accept to approve or reconcile. Both `proposals.enabled` and `proposals.acceptanceEnabled` default to false. Inspect before explicit owner approval. Keep owner secrets outside the planner. No acceptance MCP tool, planner adapter, or editor approval UI is included.
+**Status: bounded owner approval and recovery implemented; B3 remains in progress.** The private hosted HTTP/CLI path stores immutable plain-text proposals separately from History. A creator has read + proposal_create; a separate owner can inspect/reject and use read + proposal_accept to approve or reconcile. Both `proposals.enabled` and `proposals.acceptanceEnabled` default to false. Inspect before explicit owner approval. Keep owner secrets outside the planner. No acceptance MCP tool is included. A trusted injected/prepared-data creator planner is available. An opt-in OpenAI Responses request/response adapter is now mock-qualified, with no default fetch or CLI activation; authorized live provider integration remains unqualified. A data-only synthetic transport boundary minimizes model input and bounds calls, response bytes/chunks and cooperative deadlines. An optional host AbortSignal now cancels model-boundary opening/reading and rejects late decisions in synthetic tests; it does not prove remote termination or cancel an already returned decision. An opt-in durable planning-attempt guard now prevents automatic repeated planner calls after an uncertain result for one mission; it is not a sandbox, global spending budget or provider idempotency. The opt-in local owner review workspace now embeds the ProseMirror demo, with explicit confirmation, stale refusal, original-decision recovery and cross-tab coordination (#4); it is not a production-wide editor integration. Its bounded stored queue now separates pending, unresolved and closed versions; filters clear confirmation rather than transferring approval, and do not imply live task state.
 
 Acceptance checks the exact base and prepared CRDT operations before journal preparation/submission. It permits only one visible plain unstyled text block physically stored in root MAIN, with source at most 16,384 UTF-16 units and selection/replacement at most 4,096 each. Structure, moves, marks, cells, and promotion remain outside scope. Preview and immutable proposal policy remain unchanged; approval has a separate policy fingerprint. Each applied proposal has a separate fixed-actor undo group; undo/redo does not rewrite historical applied status.
 
 An accepted exact request can recover after restart without resend when receipt, private evidence, protected History, and checkpoint agree, including after later foreign edits. Missing/corrupt proof or unknown receipts remain blocked. Unsettled attempts block ordinary MCP startup, new base/capture work, and other approvals. Initial stale checks produce terminal stale without a proposal edit. For a foreign edit after the checks, reconciliation can produce terminal not_applied only after an exact durable server seal and checkpoint retirement. The seal prevents delayed application across restart; local cleanup preserves confirmed History and does not resend. Unknown outcomes and incomplete proof remain blocked. This does not establish universal automatic unblocking.
 
-**Remaining acceptance gates:** qualify remaining failure windows, supported-editor review controls, planner integration, and general document operation/scope authorization, including structural operations that cross a scope boundary. Create and review a new proposal after a stale base; never refresh under an old approval. Preserve concurrent edits and separate actor undo groups. Rejection must leave the document unchanged. The [proposal guide](../apps/docs/src/ai/proposals.md) gives command/API instructions. Browser and actual-model proposal acceptance remain unqualified.
+**Read-only planning aid (#35):** MCP `preview_edits` simulates bounded schema edits on a detached TypeScript candidate at an exact settled local revision. It does not write, grant approval or establish server-policy acceptance; the existing bounded proposal format remains unchanged.
+
+**Remaining acceptance gates:** qualify remaining failure windows, broader supported-editor embedding, creator-only planner integration, and general document operation/scope authorization, including structural operations that cross a scope boundary. Create and review a new proposal after a stale base; never refresh under an old approval. Preserve concurrent edits and separate actor undo groups. Rejection must leave the document unchanged. The [proposal guide](../apps/docs/src/ai/proposals.md) gives command/API instructions. Bounded synthetic-service Chrome review flows are covered by the [review report](reports/proposal-review-ui-2026-11-16/README.md). Actual-model end-to-end proposal acceptance and production qualification remain unverified.
 
 ## B4. Templates and schema-specific authoring
 
-**Status: planned after B3.** Add project proposal, meeting notes, and presentation templates using the actual server schema. Define required sections, node relationships, exact content, placement, preservation, and missing-information handling for each template. Extend B2 checks where the template needs stronger guarantees.
+**Status: offline meeting-notes (#33) and project-proposal draft/brief helpers implemented; broader authoring remains planned.** The opt-in `template-meeting` command takes an explicit schema, four role-to-text-type mappings and supplied facts. It produces a draft and deterministic brief only, with no document write or model call. Direct root flow/text schemas without childRules are supported; unsupported mappings and missing facts are reported. The `template-project` command adds five explicit roles (title, problem, objectives, approach, successCriteria) using the same schema and completion checks. It preserves supplied facts without inferring commitments. Both briefs are relative to the new document root, not preservation policies for an existing document. Presentation templates remain planned. Define required sections, node relationships, exact content, placement, preservation, and missing-information handling for each template. Extend B2 checks where the template needs stronger guarantees.
 
 **Acceptance gate:** run shared deterministic fixtures with valid and invalid outputs for each schema. Test concurrent edits and unsupported schema transitions. Measure actual model task success separately from fixture success. Do not infer full Word, Notion, or presentation compatibility from these templates.
 
 ## B5. Coordination and persistent watcher
 
-**Status: planned.** Add explicit assignments, distinct actors, a shared task view, cancellation, and restart-safe trigger state. The existing experimental watcher is a bounded local reviewer with an in-memory baseline. It does not persist its cursor or restore missed changes after restart.
+**Status: planned.** Add explicit assignments, distinct actors, a shared task view, cancellation, and restart-safe trigger state. The existing experimental watcher is a bounded local reviewer with an in-memory baseline. Its #15 completion-boundary checks snapshot identity, revalidate after review and leave intervening peer sequences for the next poll; this does not complete B5. The CLI now optionally persists its cursor/budget with `--checkpoint` (#34); without the option it remains in-memory. A separate opt-in API checkpoint (#18) preserves a clean cursor and budget under a local writer lock; interrupted callbacks stay blocked rather than automatically rerunning. The CLI opt-in uses that API with explicit endpoint/document/mission/model binding and graceful close. The host APIs now pass an AbortSignal to read/review callbacks on explicit stop, retaining the prior cursor and consumed attempt when canceled before the final verified cursor save. A stop during that final save drains the committed review; non-cooperative callbacks still drain under the writer lock. During an active CLI poll, SIGINT/SIGTERM now forwards cancellation to the local planner, drains direct-child termination and preserves the stopped attempt. Idle CLI close remains clean/resumable. The offline `watch-inspect` CLI shows saved phase, consumed budget and pending review range without touching the writer lock or claiming liveness/restart eligibility. Only fake local subprocesses are qualified; remote cancellation and billing are not established. Scheduler, automatic repair and actual-model qualification remain open.
 
 **Acceptance gate:** test adjacent and overlapping bot work, reviewer isolation, independent undo, user edits, restart, cancellation, deduplication, and self-trigger suppression. Define what missed changes mean and how a resumed watcher processes them. Keep uncertain recovery blocked. Record incorrect completion claims, latency, and cost as separate measures.
 
@@ -44,6 +46,10 @@ An accepted exact request can recover after restart without resend when receipt,
 
 An opt-in stored text-block path now uses the existing bounded MCP slice read,
 persists its ID/path/epoch/schema binding and restricts edits to text positions.
+Bounded targets now require plain text runs (ordinary marks allowed); inline
+objects and structural span runs require review before planning/replanning/resume.
+Text updates require an explicit nonnegative length (#30). This narrows runner
+behavior, not server permissions.
 Oversized or changed targets fail closed. Full authoritative reads and completion
 verification remain separate. Arbitrary structural subtrees, automatic identity
 relocation and general context retrieval remain open; no model-quality or
@@ -54,6 +60,47 @@ long-duration load claim is made.
 **Status: private hosted MCP foundation implemented; broader operations remain planned.** The single-host service uses static bearer grants, configured routes and upstream credentials, bounded sessions and requests, private durable journals, and restart recovery. macOS and Linux use kernel locks; Linux requires `/usr/bin/flock` from util-linux. This does not establish OAuth, TLS termination, distributed storage, production tenant isolation, or the full stage gate. Define audit retention, failure recovery, and deployment limits. Start source checking with explicitly supplied material. Add external retrieval and cross-document memory only with access rules, provenance, retention, user-visible deletion, and budgets. Treat source text as data, not as permission to act.
 
 **Acceptance gate:** test unauthorized access, unavailable sources, fabricated-reference rejection, deletion, quota enforcement, storage failure, and restart. Report inaccessible or judgment-based requirements as unchecked. A hosted-service claim needs evidence from the selected deployment boundary.
+
+## Ordered slices (public implementation boundary)
+
+Proceed one issue at a time in this order; passing a slice does not complete its
+entire B-stage. The public implementation and tests above are distinct from local
+uncommitted schema/native experiments and their private roadmaps.
+
+Status at 2026-11-16: #10 is partial (trusted injected/prepared planner seam only);
+#11 and #12 are delivered bounded slices; #13 qualifies conservative interruption
+without implicit migration. #14 has synthetic qualification and durable abstention; actual-model evaluation remains unrun pending isolation and an authorized connection.
+
+1. **B3 proposal flow — [#10](https://github.com/barocss/doc-sync/issues/10).**
+   Connect bounded planning to creator-only proposal creation, persisted exact
+   mission/base/request identity and the existing explicit owner review. No owner
+   credential in the planner, direct-write fallback or automatic approval.
+2. **B3 server scope — [#11](https://github.com/barocss/doc-sync/issues/11).**
+   Enforce owner-configured stored-text target/range policy before capture,
+   creation and acceptance. Client planning/preservation checks are not this
+   authorization boundary. Prove rejection without journal/document mutation.
+3. **B3 conflict recovery — [#12](https://github.com/barocss/doc-sync/issues/12).**
+   Guide stale, proven not_applied, applied and unresolved outcomes. Fresh plans
+   need fresh review; missing proof stays blocked and never gets a new decision
+   ID merely to bypass uncertainty.
+4. **B1/B4 schema and recovery — [#13](https://github.com/barocss/doc-sync/issues/13).**
+   Stop safely when schema/target identity changes, retain original intent and
+   proof, and qualify compatible fresh planning versus unresolved old application.
+   This does not enable native schema transitions or migrate protected History.
+5. **B2/B4 short actual-model evaluation — [#14](https://github.com/barocss/doc-sync/issues/14).**
+   After preceding gates, predeclare a few schema/brief tasks and bounded
+   step/time budgets using an already-authorized connection. Separate deterministic
+   checks from judgment, record failures/interference/usage, and keep owner approval
+   explicit. No new paid service or long-duration load is implied.
+
+B5 persistent coordination and B6 deployment/source/memory gates remain separate,
+not silently delivered by these slices. The [bounded two-actor corpus](../experiments/schema-two-actor-schedules/README.md)
+now covers generated attribute/mark edits, both undo orders, peer structural
+staleness and late batch rejection with explicit replay/checkpoints and same-class
+whole-round reduction (#6). It is not arbitrary schema shrinking, production
+reliability, native equivalence or a long-load result. Dependency remediation (#8)
+passed its scoped compatibility checks and current audit; that is not a universal
+resource-exhaustion safety claim.
 
 ## Separate experiment lane
 
@@ -104,7 +151,7 @@ The [recorded experiment results](../experiments/rust-core/RESULTS.md) include 2
 
 Implemented the first conservative preservation contract: selected scalar schema
 attributes on separate stored text blocks, paired with text-only bounded planning.
-Original captures survive resume; identity/placement/schema/value conflicts stop
+The opt-in `--protect-text` extension also captures up to 16 separate plain-text blocks with original text and identity, excluding spans/inline objects and allowing mark-only changes. Original captures survive resume; identity/placement/schema/value conflicts stop
 for review without restoring human data. General structural edits, relocation,
 nested fields and history-wide invariant monitoring remain outside this scope.
 See [verification report](reports/protected-attributes-2026-11-16/README.md).

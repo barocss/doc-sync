@@ -7,6 +7,7 @@ const guideSidebar = [
         {text: "Packages and engines", link: "/guide/packages"},
         {text: "Shared maps and lists", link: "/guide/shared-data"},
         {text: "Release preparation", link: "/guide/releasing"},
+        {text: "Documentation maintenance", link: "/guide/documentation"},
     ]},
     {text: "Build an editor", items: [
         {text: "Client: local or synchronized", link: "/guide/client"},
@@ -15,6 +16,7 @@ const guideSidebar = [
         {text: "Save and open locally", link: "/guide/local-storage"},
         {text: "Schema-driven block operations", link: "/guide/blocks"},
         {text: "Document rules and annotations", link: "/guide/document-rules"},
+        {text: "How the engine works", link: "/guide/engine-visual-guide"},
         {text: "Synchronization", link: "/guide/sync"},
         {text: "Cursors and selections", link: "/guide/presence"},
         {text: "Presence components", link: "/guide/presence-components"},

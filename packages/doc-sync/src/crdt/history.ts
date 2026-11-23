@@ -403,6 +403,64 @@ function restoreHistory(input: unknown): History {
     return result;
 }
 
+/** Read-only format inspection. This is not a checkpoint installation capability. */
+export type HistorySnapshotInspection = {
+    version: 1 | 2;
+    scope: "format-only";
+    legacyPolicy: "compatibility" | "strict";
+    legacyExistenceSteps: number;
+    originExistenceSteps: number;
+    /** Policy recommendation only; this inspector does not enforce live actions. */
+    legacyActionsBlocked: boolean;
+};
+
+/**
+ * Inspect v1 or the proposed v2 origin format without installing or migrating it.
+ * Actor/document/GC coupling and durable migration are deliberately not provided.
+ * Existing History.fromSnapshot and writers remain v1-only.
+ */
+export function inspectHistorySnapshot(input: unknown, options: {legacyPolicy: "compatibility" | "strict"}): HistorySnapshotInspection {
+    if (!options || (options.legacyPolicy !== "compatibility" && options.legacyPolicy !== "strict")) {
+        throw new Error("Explicit history legacy policy required");
+    }
+    const x = historyObject(jsonCopy(input));
+    if (x.version !== 1 && x.version !== 2) invalidHistorySnapshot();
+    const version = x.version;
+    // Reuse the established shared-table/group shape checks on a detached copy.
+    // This temporary projection is never returned, installed or written to storage.
+    restoreHistory({...x, version: 1});
+    let legacyExistenceSteps = 0, originExistenceSteps = 0;
+    for (const stack of ["undo", "redo"] as const) for (const value of historyArray(x[stack])) {
+        for (const entry of historyArray(historyObject(value).steps)) {
+            const step = historyObject(entry);
+            if (step.type !== "existence") continue;
+            // Extra v1 fields cannot establish provenance, even when they look like v2.
+            if (version === 1) { legacyExistenceSteps++; continue; }
+            const origin = historyObject(step.origin);
+            if (origin.kind === "legacy-unverified") {
+                if (Object.keys(origin).length !== 1) invalidHistorySnapshot();
+                legacyExistenceSteps++; continue;
+            }
+            if ((origin.kind !== "insert" && origin.kind !== "delete") ||
+                Object.keys(origin).some(key => key !== "kind" && key !== "ticket")) invalidHistorySnapshot();
+            const at = historyTicket(origin.ticket), ids = historyArray(step.ids).map(historyTicket);
+            const delAt = historyMaybeTicket(step.delAt);
+            const deleted = origin.kind === "insert" ? stack === "redo" : stack === "undo";
+            if ((delAt !== null) !== deleted || (delAt && delAt.actor !== at.actor)) invalidHistorySnapshot();
+            if (origin.kind === "insert") {
+                if (!ids.length || ids.some((id, i) => id.actor !== at.actor ||
+                    !Number.isSafeInteger(at.lamport + i) || id.lamport !== at.lamport + i)) invalidHistorySnapshot();
+            }
+            if (origin.kind === "delete" && ids.some(id => id.lamport >= at.lamport)) invalidHistorySnapshot();
+            if (delAt && (delAt.lamport < at.lamport || ids.some(id => id.lamport >= delAt.lamport))) invalidHistorySnapshot();
+            originExistenceSteps++;
+        }
+    }
+    return {version, scope: "format-only", legacyPolicy: options.legacyPolicy,
+        legacyExistenceSteps, originExistenceSteps,
+        legacyActionsBlocked: options.legacyPolicy === "strict" && legacyExistenceSteps > 0};
+}
+
 export class History {
     private readonly undoStack: Group[] = [];
     private readonly redoStack: Group[] = [];

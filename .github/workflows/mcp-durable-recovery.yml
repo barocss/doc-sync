@@ -28,4 +28,5 @@ jobs:
       - run: npm test --workspace @doc-sync/mcp
       - run: npm test --workspace @doc-sync/bot
       - run: node --test apps/demo/test/bot-recovery-start.test.ts
+      - run: node --test apps/demo/test/proposal-review-list.test.ts apps/demo/proposal-review/bridge.test.mjs
       - run: npm test --workspace @barocss/doc-sync

@@ -155,9 +155,87 @@ export const gridParts = (schema: Schema, grid: string): {row: string; cell: str
     return row && cell && body && schema.nodes[body]?.shape === "flow" ? {row, cell, body} : null;
 };
 
+/** Initial typed-descriptor diagnostics; not a general unknown-JSON schema parser. */
+export type AtomicAttributePatternDiagnostic = {
+    code: "pattern_type" | "invalid_pattern";
+    path: string[];
+    message: string;
+};
+
+/** Read-only syntax checks for atomic node attributes and value marks.
+ * Nested collaborative fields retain their existing fieldsSchemaProblems contract.
+ * Successful compilation says nothing about regex execution complexity.
+ */
+export const diagnoseAtomicAttributePatterns = (schema: Schema): AtomicAttributePatternDiagnostic[] => {
+    const diagnostics: AtomicAttributePatternDiagnostic[] = [];
+    const inspect = (spec: AttrSpec, path: string[]): void => {
+        if (isFieldSpec(spec) || spec.pattern === undefined) return;
+        if (typeof spec.pattern !== "string") {
+            diagnostics.push({code: "pattern_type", path: [...path, "pattern"], message: "Attribute pattern must be a string"});
+            return;
+        }
+        try { new RegExp(spec.pattern); }
+        catch { diagnostics.push({code: "invalid_pattern", path: [...path, "pattern"], message: "Invalid regular expression pattern"}); }
+    };
+    for (const [type, node] of Object.entries(schema.nodes)) {
+        for (const [name, spec] of Object.entries(node.attrs ?? {})) inspect(spec, ["nodes", type, "attrs", name]);
+    }
+    for (const [name, spec] of Object.entries(schema.markValues ?? {})) inspect(spec, ["markValues", name]);
+    return diagnostics;
+};
+
+/** Atomic numeric descriptor checks; unrelated metadata and nested fields are unchanged. */
+export type AtomicAttributeBoundsDiagnostic = {
+    code: "bound_type" | "bound_order"; path: string[]; message: string;
+};
+function atomicBoundsProblems(spec: AttrSpec, path: string[]): AtomicAttributeBoundsDiagnostic[] {
+    if (isFieldSpec(spec) || typeof spec.default !== "number") return [];
+    const problems: AtomicAttributeBoundsDiagnostic[] = [];
+    for (const key of ["min", "max"] as const) {
+        if (spec[key] !== undefined && (typeof spec[key] !== "number" || !Number.isFinite(spec[key]))) {
+            problems.push({code: "bound_type", path: [...path, key], message: "Numeric bound must be a finite number"});
+        }
+    }
+    if (!problems.length && spec.min !== undefined && spec.max !== undefined && spec.min > spec.max) {
+        problems.push({code: "bound_order", path, message: "Minimum must not exceed maximum"});
+    }
+    return problems;
+}
+export const diagnoseAtomicAttributeBounds = (schema: Schema): AtomicAttributeBoundsDiagnostic[] => {
+    const problems: AtomicAttributeBoundsDiagnostic[] = [];
+    for (const [type, node] of Object.entries(schema.nodes)) {
+        for (const [name, spec] of Object.entries(node.attrs ?? {})) problems.push(...atomicBoundsProblems(spec, ["nodes", type, "attrs", name]));
+    }
+    for (const [name, spec] of Object.entries(schema.markValues ?? {})) problems.push(...atomicBoundsProblems(spec, ["markValues", name]));
+    return problems;
+};
+
+export type AtomicAttributeEnumDiagnostic = {code: "enum_type"; path: string[]; message: string};
+/** Checks only the atomic enum container, not member normalization/equality. */
+export const diagnoseAtomicAttributeEnums = (schema: Schema): AtomicAttributeEnumDiagnostic[] => {
+    const problems: AtomicAttributeEnumDiagnostic[] = [];
+    const inspect = (spec: AttrSpec, path: string[]): void => {
+        if (!isFieldSpec(spec) && spec.values !== undefined && !Array.isArray(spec.values)) {
+            problems.push({code: "enum_type", path: [...path, "values"], message: "Atomic enum values must be an array"});
+        }
+    };
+    for (const [type, node] of Object.entries(schema.nodes)) {
+        for (const [name, spec] of Object.entries(node.attrs ?? {})) inspect(spec, ["nodes", type, "attrs", name]);
+    }
+    for (const [name, spec] of Object.entries(schema.markValues ?? {})) inspect(spec, ["markValues", name]);
+    return problems;
+};
+
+export type MarkNameConflictDiagnostic = {code: "mark_kind_conflict"; path: string[]; message: string};
+/** A mark name cannot identify both boolean and value-mark semantics. */
+export const diagnoseMarkNameConflicts = (schema: Schema): MarkNameConflictDiagnostic[] =>
+    schema.marks.flatMap((name, index) => Object.hasOwn(schema.markValues ?? {}, name)
+        ? [{code: "mark_kind_conflict" as const, path: ["marks", String(index)], message: "Mark name is declared as both boolean and value mark"}]
+        : []);
+
 /** 스키마 자체가 앞뒤가 맞는지 본다. 틀리면 설명 목록 */
 export const checkSchema = (schema: Schema): string[] => {
-    const problems: string[] = [];
+    const problems = [...diagnoseAtomicAttributePatterns(schema), ...diagnoseAtomicAttributeBounds(schema), ...diagnoseAtomicAttributeEnums(schema), ...diagnoseMarkNameConflicts(schema)].map(diagnostic => `${JSON.stringify(diagnostic.path)}: ${diagnostic.message}`);
     const shapeOf = (type: string) => schema.nodes[type]?.shape;
     const missing = (owner: string, list: readonly string[]) =>
         list.filter(c => !schema.nodes[c]).forEach(c => problems.push(`${owner}.children 의 "${c}" 가 없다`));
@@ -292,6 +370,7 @@ export const attrValueOk = (spec: AttrSpec, value: unknown): boolean => {
         return true;
     }
 
+    if (spec.values !== undefined && !Array.isArray(spec.values)) return false;
     if (spec.values && !spec.values.includes(value)) {
         return false;
     }
@@ -300,12 +379,16 @@ export const attrValueOk = (spec: AttrSpec, value: unknown): boolean => {
         return false;
     }
 
-    if (spec.pattern && (typeof value !== "string" || !new RegExp(spec.pattern).test(value))) {
-        return false;
+    if (spec.pattern !== undefined && typeof spec.pattern !== "string") return false;
+    if (spec.pattern) {
+        try { if (typeof value !== "string" || !new RegExp(spec.pattern).test(value)) return false; }
+        catch { return false; }
     }
 
     if (typeof spec.default === "number") {
-        return typeof value === "number" && Number.isFinite(value) && value >= (spec.min ?? -Infinity) && value <= (spec.max ?? Infinity);
+        return (spec.min === undefined || typeof spec.min === "number" && Number.isFinite(spec.min)) &&
+            (spec.max === undefined || typeof spec.max === "number" && Number.isFinite(spec.max)) &&
+            typeof value === "number" && Number.isFinite(value) && value >= (spec.min ?? -Infinity) && value <= (spec.max ?? Infinity);
     }
 
     return spec.default === undefined || spec.default === null || typeof value === typeof spec.default;

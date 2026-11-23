@@ -4,7 +4,7 @@ Use the built repository workspaces or local tarballs. These package names are n
 
 Use `SlateBinding` from **`@barocss/doc-sync-slate`**. It connects a Slate editor to a [Client](./client). Omit the transport for local editing, or add an actor and transport for synchronization. The binding handles local edits, remote updates, selection restoration, composition drafts, and collaboration history.
 
-This is a separate binding package. The old `@barocss/doc-sync-slate` subpath remains a compatibility export. The examples use built repository workspaces.
+This is a separate binding package. Import `@barocss/doc-sync-slate` directly; there is no core `/slate` compatibility subpath. The examples use built repository workspaces.
 
 ## Dependencies
 

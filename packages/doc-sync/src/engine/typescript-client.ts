@@ -13,6 +13,7 @@ import {assertCompatibleSchema, schemaVersion} from "../crdt/schema-version.ts";
 import {keyOf} from "../crdt/ticket.ts";
 import type {Ticket} from "../crdt/ticket.ts";
 import {modelEventWindow, textEventScopes} from "../sync/model-events.ts";
+import {validateCheckpointDocument} from "./checkpoint-validation.ts";
 import {commitModelEdits} from "./editing.ts";
 import {ENGINE_CONTRACT_VERSION} from "./contract.ts";
 import type {EngineCapability, EngineCheckpoint, EngineSelection, EngineAnchoredSelection} from "./contract.ts";
@@ -139,6 +140,10 @@ class TypeScriptClientEngine implements ClientEngine, TypeScriptClientCompatibil
         if (block.virtual || !doc.hasStoredToken(block.marker.key) || block.marker.kind === "char") return false;
         let allocation = 0;
         if (edit.op === "insert") {
+            // Text admission can depend on flow and birth identity, not only the
+            // projected block type. Keep schemas with no-text rules on full proof.
+            const schema = doc.schema ?? this.definition;
+            if (Object.values(schema.nodes).some(spec => spec.shape === "text" && spec.text === false)) return false;
             if (typeof edit.content === "string") allocation = edit.content.length;
             else {
                 if (!Array.isArray(edit.content) || edit.content.some(run => !("text" in run) || typeof run.text !== "string" || !run.marks || typeof run.marks !== "object")) return false;
@@ -222,7 +227,13 @@ class TypeScriptClientEngine implements ClientEngine, TypeScriptClientCompatibil
             if (edit.op === "delete" && (!Number.isSafeInteger(edit.count) || edit.count < 0)) throw new Error("Invalid delete count");
         }
         return withPathMemo(doc, () => doc.edit(input, {...options, preflight: () => {
-            if (!this.fastText(doc, input) && !this.fastStructure(doc, input)) this.clone(doc).edit(input, {normalize: true});
+            if (!this.fastText(doc, input) && !this.fastStructure(doc, input)) {
+                const candidate = this.clone(doc).edit(input, {normalize: true});
+                // Compilation alone can retain invalid atomic values that projection hides.
+                // Prove the generated wire batch against the untouched live base first.
+                const problem = doc.check(candidate.ops);
+                if (problem) throw new Error(`Invalid compiled edit batch: ${problem}`);
+            }
         }}));
     }
     apply(edits: EditOp[], options?: {normalize?: boolean; accepted?: boolean}): Op[] {
@@ -332,6 +343,7 @@ class TypeScriptClientEngine implements ClientEngine, TypeScriptClientCompatibil
         if (!Array.isArray(value.identity.capabilities) || value.identity.capabilities.length !== CAPABILITIES.length || CAPABILITIES.some(capability => !value.identity.capabilities.includes(capability))) invalid("capabilities mismatch");
         if (!Number.isSafeInteger(value.revision) || value.revision < 0) invalid("revision");
         const doc = Doc.fromSnapshot(this.actor, value.document as Snapshot, this.definition), history = History.fromSnapshot(value.history);
+        validateCheckpointDocument(doc, history.snapshot(), value.document as Snapshot, this.actor, invalid);
         const handle = {} as EnginePreparedState; this.states.set(handle, {doc, history, schema: this.definition}); return handle;
     }
     installCheckpoint(value: EnginePreparedState): void { this.alive(); const state = this.states.get(value); if (!state) throw new Error("Foreign or consumed prepared state"); this.replaceTypeScriptDocument(state.doc); this.history = state.history; this.states.delete(value); }

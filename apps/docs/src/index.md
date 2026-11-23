@@ -30,11 +30,24 @@ console.log(client.model());
 
 [Use the same Client with or without a transport →](./guide/client)
 
+## Choose an editor binding
+
+- [ProseMirror](./guide/prosemirror): generated schema and `PmBinding`.
+- [Tiptap](./guide/tiptap): `@barocss/doc-sync-tiptap` provides the `DocSync`
+  extension and `createTiptapExtensions`, using Tiptap 3.32.2.
+- [Slate](./guide/slate): native operation binding and schema codec.
+- [Lexical](./guide/lexical): registered schema nodes and binding.
+
+Tiptap is implemented in the public repository, not just planned. Its package,
+like the other library packages, remains unpublished. Start with its
+[editor example](./guide/tiptap#create-an-editor) or
+[two-editor demo](./guide/tiptap#run-the-two-editor-demo).
+
 ## Learn the contracts
 
 - [Schema shapes](./guide/schema) define text, inline nodes, flows, groups, and grids.
 - [Model operations](./guide/editing) connect an editor to stable CRDT operations, including block movement.
-- [Editor integration paths](./guide/editors) include ProseMirror, Slate, Lexical, and the custom demo editor.
+- [Editor integration paths](./guide/editors) include ProseMirror, Tiptap, Slate, Lexical, and the custom demo editor.
 - [Change an open editor's schema](./guide/schema-transition) explains selection restoration and pending changes.
 - [AI and bots](./ai/) has a separate path for [document server connection](./ai/server), MCP editing, bot missions, and recovery.
 - [Client demo](./guide/client#run-the-four-editor-demo) runs all four editors; the [Codex walkthrough](./guide/ai-walkthrough) covers headless collaboration.

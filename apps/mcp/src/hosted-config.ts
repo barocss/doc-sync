@@ -1,3 +1,4 @@
+import {proposalPolicySchema} from "./proposal-policy.ts";
 import {z} from "zod";
 import {resolve} from "node:path";
 
@@ -8,7 +9,7 @@ const HOSTED_PERMISSION_NAMES = Object.freeze(["write", "schema", "proposal_read
 
 const id = z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/);
 const route = z.object({tenant: id, document: id, slot: id, actor: id, upstreamDocument: z.string().regex(/^[a-z0-9-]{1,40}$/),
-    upstream: z.string().url(), headers: z.record(z.string(), z.string()).default({})}).strict();
+    proposalPolicy: proposalPolicySchema.optional(), upstream: z.string().url(), headers: z.record(z.string(), z.string()).default({})}).strict();
 const grant = z.object({id, principal: id, token: z.string().regex(/^[A-Za-z0-9_-]{43,256}$/),
     routes: z.array(z.string()).min(1), permissions: z.array(z.enum(["read", "write", "schema", "proposal_create", "proposal_read", "proposal_decide", "proposal_accept"])).min(1)}).strict();
 const positive = (value: number, maximum = 1048576) => z.number().int().positive().max(maximum).default(value);

@@ -1,6 +1,6 @@
 # Document proposals and owner approval
 
-The private hosted service stores a proposed text change for review. A separate owner credential can inspect, reject, or explicitly approve its exact stored change. Creation and preview do not edit the document. Approval and recovery use HTTP or CLI commands. There is no proposal MCP tool or planner integration. An opt-in local owner review workspace embeds the supported ProseMirror demo beside the existing bounded proposal controls.
+The private hosted service stores a proposed text change for review. A separate owner credential can inspect, reject, or explicitly approve its exact stored change. Creation and preview do not edit the document. Approval and recovery use HTTP or CLI commands. There is no proposal MCP tool. An opt-in creator-only prepared-plan CLI and injected planner API can create proposals, but never approve or apply them; actual-model end-to-end qualification remains open. An opt-in local owner review workspace embeds the supported ProseMirror demo beside the existing bounded proposal controls.
 
 ## Enable and separate credentials
 
@@ -164,7 +164,7 @@ The private store uses a separate namespace derived from the physical target and
 
 Capture uses an anonymous upstream wire stream. It sends no ACK, change, presence, recovery lease, or fixed-actor disconnect. Existing pending intents, checkpoint changes, and release work block capture. Initial synchronization still hydrates the upstream snapshot: bounded previews do not bound total-document transport or startup memory.
 
-These checks do not establish physical power-loss durability, distributed operation, public production security, or full B3 completion. Broader editor product integration, planner integration, general structural authorization, and remaining failure qualification remain on the [roadmap](../roadmap). B3 remains in progress. The local workspace has deterministic Chrome coverage, not an actual-model evaluation.
+These checks do not establish physical power-loss durability, distributed operation, public production security, or full B3 completion. Broader editor product integration, actual-model creator planning qualification, general structural authorization, and remaining failure qualification remain on the [roadmap](../roadmap). B3 remains in progress. The local workspace has deterministic Chrome coverage, not an actual-model evaluation.
 
 
 ## Local owner review workspace
@@ -187,3 +187,53 @@ Reconcile uses the original decision and cannot initiate an unreceived approval.
 Stale versions need a new proposal and fresh review. Human-editor Undo remains
 separate from the configured proposal actor's History. This does not expand the
 plain-text proposal schema or constitute production security qualification.
+
+## Creator planning is separate from owner approval
+
+`proposal-plan` reads a prepared private plan file and the authorized target. It does
+not invoke Codex or another model. The injected planner API can instead produce a
+bounded decision, using only creator authority; neither path receives an owner
+credential or applies the proposal. The saved mission retains the original request
+identity so uncertain creation does not silently become a different request.
+
+The optional Responses adapter is mock-qualified only and has no CLI activation.
+A live provider call, its data sharing and cost require separate authorization.
+Synthetic checks are not evidence of actual-model quality or production readiness.
+See the [creator-only setup and limits](https://github.com/barocss/doc-sync/blob/main/apps/bot/README.md#creator-only-prepared-proposal-slice-issue-10-partial).
+
+## Inspect local creator progress offline
+
+For a saved creator mission, use the local read-only command:
+
+```sh
+node apps/bot/src/main.ts proposal-mission-inspect --mission-file ./private-missions/mission.json
+```
+
+It requires the private mission file only, with no server endpoint, token or model
+call. The summary excludes the document text, brief and proposed replacement.
+`planning_unresolved` means no durable decision is saved; the planner may still be
+running. `proposal_unconfirmed` means a request is saved without acknowledgement;
+it may already exist remotely. `proposal_recorded` means a historical storage
+acknowledgement, not current application. `abstained` means a saved no-proposal
+decision. All results mark current activity and live server status as `not_checked`.
+
+A successful command exit means inspection succeeded, not that the mission completed
+or retry is safe. It never clears locks, resets uncertainty, creates proposals or
+authorizes owner actions. Preserve the original request/checkpoint and use the
+separate authorized server inspection workflow for current proposal status.
+
+
+### Triage the local owner review queue
+
+The opt-in owner review workspace groups its bounded stored proposal list into
+pending review, unresolved decisions and closed versions, with counts and an
+all-proposals view. A pending server record with any retained local decision is
+shown as unresolved, including local evidence that cannot be read. Applied,
+rejected, stale and proven not-applied versions remain closed, not eligible for
+another approval. These labels describe stored evidence, not the live document.
+
+Changing a filter closes the selected preview and its confirmation. It does not
+send an approval, rejection, reconciliation or model request. Select and inspect
+the exact proposal again before deciding. Refresh remains explicit; this is not a
+live activity feed, pagination or a complete audit history beyond the service's
+bounded list. Existing original-decision recovery and cross-tab locks still apply.

@@ -195,7 +195,7 @@ for (const bytes of [8, 262144]) {
                 assert.ok(diagnostic.indexOf(pause[0]) < diagnostic.indexOf('lifecycle:schema-export'), 'backpressure precedes schema completion');
                 assert.ok(diagnostic.indexOf(pause[0]) < diagnostic.indexOf('lifecycle:stdio-start'), 'backpressure precedes SDK consumer');
             }
-            assert.equal((await deadline(child.client.listTools(), 'backpressure tools readiness')).tools.length, 13);
+            assert.equal((await deadline(child.client.listTools(), 'backpressure tools readiness')).tools.length, 14);
             const read = await deadline(value(child.client, 'read_document'), 'backpressure read readiness');
             assert.ok(read.revision.epoch);
             const after = await state(env.origin);
@@ -234,7 +234,7 @@ test('buffered large initialize plus bootstrap EOF releases lease and local owne
         const resumed = env.launch();
         await deadline(resumed.connected, 'buffered EOF restart');
         assert.equal((await value(resumed.client, 'recovery_status')).status, 'clear');
-        assert.equal((await resumed.client.listTools()).tools.length, 13);
+        assert.equal((await resumed.client.listTools()).tools.length, 14);
         assert.deepEqual((await state(env.origin)).model, before.model);
         resumed.eof();
         assert.deepEqual(await deadline(resumed.exited(), 'buffered EOF restart natural exit'), {code: 0, signal: null});

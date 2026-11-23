@@ -44,3 +44,59 @@ An accepted exact request can recover across restart without resubmission when p
 Each applied proposal adds one undo group to the fixed configured actor. Use a separate actor write grant for MCP undo/redo. A human editor's undo stack is separate, and actor undo/redo does not rewrite historical `applied` status.
 
 All proposal methods share global/principal admission, private records are kernel-locked and atomically replaced, and shutdown drains admitted work. Quotas are 128 unresolved and 256 total records per physical target/principal namespace; records are not automatically deleted. Initial anonymous capture still hydrates the upstream snapshot. Preview/response limits do not bound full-document startup memory or transport. B3 remains in progress; full UI, planner integration, general structural authorization, and remaining failure qualification are open. No browser or actual-model proposal-acceptance result is claimed.
+
+### Opt-in single-revision proposal target policy (#11)
+
+A hosted route can set `proposalPolicy` in its owner-managed configuration:
+
+```json
+{
+  "generation":"captured-generation", "epoch":"captured-epoch", "serverSeq":42,
+  "schemaVersion":"captured-schema-version", "blockId":"captured-block-id",
+  "path":[0], "start":0, "end":20, "operations":["replace_text"]
+}
+```
+
+Obtain exact values from an authorized capture and inspect the intended text
+before installing configuration. Values above are placeholders. This is a
+**single-revision capability**, not a persistent semantic range: ANY document
+revision change invalidates capture/new creation/fresh acceptance, including peer
+insertion before the range, movement, split, replacement or schema change. The
+owner must review and explicitly renew the policy for a new revision. There is
+no automatic base refresh, policy widening, or hot-reload contract.
+
+Allowed replacement selection must be contained in `[start,end]`; zero-length
+insertions at either boundary are permitted. Target is one root stored unstyled
+text block, never structural edits. This limits mutation, not read visibility:
+existing read grants still permit document reads and the bounded capture returns
+the entire target text. It is not a global document ACL: another explicitly
+authorized route/actor or upstream client retains its own permissions.
+
+Capture, creation and acceptance enforce policy on the server. Immutable proposal
+records store the exact policy snapshot and derived fingerprint; a later changed
+or removed policy cannot accept or reconcile that proposal. Legacy unconfigured
+routes retain existing behavior and stored format compatibility, but a newly
+configured policy cannot accept a legacy proposal as a bypass. Exact terminal
+receipt reconciliation remains possible with the unchanged original policy after
+an approved write advanced the document revision; it is not a new write authority.
+Keep the original policy/evidence available for unresolved recovery, not a broad
+replacement policy.
+
+Policy routes deny every direct non-read MCP tool even when a bearer also has
+write/schema grants. Existing actor checkpoint/journal recovery is rejected before
+MCP session start; use the separately authorized proposal recovery path. This is
+intentionally conservative, including refusal of MCP session start when any old
+checkpoint exists. Unconfigured routes preserve their previous grants. Creator
+grants still cannot combine with write/schema/owner proposal permissions. No
+credentials are stored in policy, proposal bodies, model input or diagnostics.
+
+### Read-only edit preview
+
+`preview_edits({base, edits})` uses the existing model-edit shape on a detached
+TypeScript candidate and returns a bounded local model preview. Requires a settled,
+schema-verified online session and matching local revision. It does not mutate
+live History/document/pending/journal or send edits. Hosted `read` permission
+allows preview but does not authorize application. It is not owner approval,
+server policy acceptance, a frozen server revision or an installable plan.
+Limits: 100 edits, 32768 input-JSON bytes, 60000 local output bytes, 131072 successful
+MCP result bytes. Full clone cost is not bounded by those output limits.

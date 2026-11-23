@@ -9,6 +9,7 @@ const MAX = 262144;
 export async function proposalCommand(command: string, options: Map<string, string>, env: NodeJS.ProcessEnv = process.env) {
     const endpoint = new URL(options.get("--endpoint") ?? "");
     if (!SERVER_URL_PROTOCOLS.includes(endpoint.protocol) || endpoint.username || endpoint.password || endpoint.search || endpoint.hash || !/^\/mcp\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/.test(endpoint.pathname)) throw new Error("Use an exact hosted route endpoint");
+    if (endpoint.protocol === "http:" && !["127.0.0.1", "[::1]"].includes(endpoint.hostname)) throw new Error("Proposal credentials require HTTPS outside numeric loopback");
     const tokenName = options.get("--token-env") ?? "DOC_SYNC_PROPOSAL_TOKEN", token = env[tokenName];
     if (!/^[A-Za-z_][A-Za-z0-9_]{0,79}$/.test(tokenName) || !token || !/^[A-Za-z0-9_-]{43,256}$/.test(token)) throw new Error("Set the bearer token environment variable");
     let suffix = "", method = "GET", body: string | undefined;
@@ -20,7 +21,7 @@ export async function proposalCommand(command: string, options: Map<string, stri
     if (command === "proposal-create" || PROPOSAL_DECISION_COMMANDS.includes(command)) {
         const path = options.get("--input"); if (!path) throw new Error("Use --input with a private bounded JSON file");
         const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
-        try { const s = await file.stat(); if (!s.isFile() || s.nlink !== 1 || s.mode & 0o077 || s.size > MAX || process.getuid && s.uid !== process.getuid()) throw new Error("Input must be a private bounded owned regular file"); const buffer = Buffer.alloc(MAX + 1); let length = 0; while (length < buffer.length) { const read = await file.read(buffer, length, buffer.length - length, null); if (!read.bytesRead) break; length += read.bytesRead; } if (length > MAX) throw new Error("Input exceeds limit"); body = buffer.subarray(0, length).toString("utf8"); JSON.parse(body); }
+        try { const s = await file.stat(); if (!s.isFile() || s.nlink !== 1 || s.mode & 0o077 || s.size > MAX || process.getuid && s.uid !== process.getuid()) throw new Error("Input must be a private bounded owned regular file"); const buffer = Buffer.alloc(MAX + 1); let length = 0; while (length < buffer.length) { const read = await file.read(buffer, length, buffer.length - length, null); if (!read.bytesRead) break; length += read.bytesRead; } if (length > MAX) throw new Error("Input exceeds limit"); try { body = new TextDecoder("utf-8", {fatal: true, ignoreBOM: true}).decode(buffer.subarray(0, length)); JSON.parse(body); } catch { throw new Error("Invalid proposal input JSON"); } }
         finally { await file.close(); }
         method = "POST";
     }
@@ -30,5 +31,9 @@ export async function proposalCommand(command: string, options: Map<string, stri
     const chunks: Uint8Array[] = []; let bytes = 0;
     try { while (true) { const result = await reader.read(); if (result.done) break; bytes += result.value.length; if (bytes > MAX) throw new Error("Response exceeds limit"); chunks.push(result.value); } }
     finally { await reader.cancel(); }
-    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    try {
+        const raw = new TextDecoder("utf-8", {fatal: true, ignoreBOM: true}).decode(Buffer.concat(chunks)), parsed = JSON.parse(raw);
+        if (raw.includes(token) || JSON.stringify(parsed).includes(token)) throw new Error("Credential reflection");
+        return parsed;
+    } catch { throw new Error("Invalid proposal response"); }
 }

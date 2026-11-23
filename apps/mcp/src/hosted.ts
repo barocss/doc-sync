@@ -1,3 +1,4 @@
+import {enforcePolicy} from "./proposal-policy.ts";
 import {createServer as createHttpServer, type IncomingMessage, type ServerResponse} from "node:http";
 import {createHash, randomUUID} from "node:crypto";
 import {join} from "node:path";
@@ -68,13 +69,14 @@ export function createHostedService(rawConfig: unknown) {
         if ((await ProposalStore.inspectOutstanding(config.dataDir, proposalOwner(route, grant))).length) throw new Error("Approved proposal requires owner reconciliation");
         e.journal = await IntentJournal.open(join(directoryPath, `${file}.json`), {document: route.upstreamDocument, actor: route.actor});
         const recovered = await e.journal.read(), checkpoint = await e.journal.readCheckpoint();
+        if (route.proposalPolicy && (recovered || checkpoint)) throw new Error("Policy route requires a clean read session; owner recovery is separate");
         if (!grant.permissions.includes("write") && (recovered || checkpoint?.client.pending.length || checkpoint?.releasePending)) throw new Error("A write credential is required to resolve durable recovery");
         e.upstream = new NodeHttpTransport(route.upstreamDocument, route.actor, route.upstream, {headers: route.headers});
         const schema = recovered?.schema ?? checkpoint?.schema ?? (await e.upstream.getSchema()).schema;
         if (!schema) throw new Error("Verified upstream schema required");
         e.document = new DocumentSession(route.actor, e.upstream, schema, 10000, e.journal);
         await e.document.start();
-        e.mcp = createServer(e.document, {authorizeTool: name => authorizeTool(grant, name), runTool: async (_name, call) => {
+        e.mcp = createServer(e.document, {authorizeTool: name => authorizeTool(grant, name, route), runTool: async (_name, call) => {
             if (e.state !== "active" || stopping) throw new Error("Session is closing");
             if (e.calls.size >= config.limits.calls) throw new Error("Tool capacity reached");
             e.lastUsed = Date.now();
@@ -96,7 +98,8 @@ export function createHostedService(rawConfig: unknown) {
         try { return await acceptProposal(config, route, grant, id, input, reconcileOnly); }
         finally { registry.release(e.identity, e); complete(); }
     };
-    const captureProposal: ProposalCapture = async (route, grant, request) => {
+    const captureProposal: ProposalCapture = async (route, grant, request, targetPath) => {
+        if (route.proposalPolicy && !request && !targetPath) targetPath = [...route.proposalPolicy.path];
         const e: Entry = {identity: JSON.stringify([route.upstream, route.upstreamDocument, route.actor]), binding: "proposal-capture", principal: grant.principal, state: "starting", lastUsed: Date.now(), calls: new Set()};
         try { registry.reserve(e.identity, grant.principal, e); } catch { throw new ProposalHttpError(409); }
         let complete!: () => void; e.ready = new Promise<void>(resolve => { complete = resolve; });
@@ -124,21 +127,24 @@ export function createHostedService(rawConfig: unknown) {
             const base = {generation: before.generation!, epoch: before.epoch, serverSeq: before.serverSeq, schemaVersion: before.schemaVersion!};
             const settled = () => !!base.generation && !!base.schemaVersion && client!.synchronized && !client!.pending.length && client!.epoch === base.epoch && client!.serverSeq === base.serverSeq && schemaVersion(client!.schema) === base.schemaVersion;
             if (!settled() || request && JSON.stringify(base) !== JSON.stringify(request.base)) throw new ProposalHttpError(409);
-            let source: string | undefined;
-            if (request) {
-                const child = readDocumentSlice(client.doc, {path: [], start: request.change.path[0], limit: 1, maxNodes: 1024, maxTextUnits: 16384, maxBytes: 131072}).children[0];
-                const blocks = client.doc.blocks(), block = blocks.find(b => b.marker.key === request.change.blockId);
-                if (!child || child.blockId !== request.change.blockId || !block || block.kind !== "text" || block.virtual || block.parts || block.aliases.length || block.marker.line.key !== MAIN ||
+            try { enforcePolicy(route.proposalPolicy, base); } catch { throw new ProposalHttpError(403); }
+            let source: string | undefined, blockId: string | undefined;
+            if (request || targetPath) {
+                const child = readDocumentSlice(client.doc, {path: [], start: request ? request.change.path[0] : targetPath![0], limit: 1, maxNodes: 1024, maxTextUnits: 16384, maxBytes: 131072}).children[0];
+                blockId = child?.blockId ?? undefined;
+                const blocks = client.doc.blocks(), block = blocks.find(b => b.marker.key === blockId);
+                if (!child || request && child.blockId !== request.change.blockId || !block || block.kind !== "text" || block.virtual || block.parts || block.aliases.length || block.marker.line.key !== MAIN ||
                     block.chars.some(char => char.kind !== "char" || Object.keys(client!.doc.marksOf(char)).length) ||
                     blocks.filter(b => b.marker.key === child.blockId).length !== 1 || client.schema.nodes[child.node.type]?.shape !== "text" || child.node.children ||
                     child.node.runs?.some(run => !("text" in run) || Object.keys(run.marks).length)) throw new ProposalHttpError(422);
+                try { enforcePolicy(route.proposalPolicy, base, {path: child.path, blockId: child.blockId!, ...(request ? {start: request.change.start, end: request.change.end, kind: request.change.kind} : {})}); } catch { throw new ProposalHttpError(403); }
                 source = (child.node.runs ?? []).map(run => "text" in run ? run.text : "").join("");
                 if (source !== block.text || source.length > 16384) throw new ProposalHttpError(422);
-                try { previewReplacement(source, request.change); } catch { throw new ProposalHttpError(422); }
+                try { if (request) previewReplacement(source, request.change); } catch { throw new ProposalHttpError(422); }
             }
             const after = await transport.getRecoveryState();
             if (JSON.stringify(before) !== JSON.stringify(after) || version !== client.doc.version || !settled()) throw new ProposalHttpError(409);
-            return {base, ...(source !== undefined ? {source} : {})};
+            return {base, ...(source !== undefined ? {source, blockId} : {})};
         } finally { try { client?.disconnect(); await journal?.close(); } finally { registry.release(e.identity, e); complete(); } }
     };
     const server = createHttpServer({maxHeaderSize: 65536, headersTimeout: config.limits.requestMs, requestTimeout: config.limits.requestMs}, (req, res) => {
@@ -170,7 +176,8 @@ export function createHostedService(rawConfig: unknown) {
                 try {
                     const parsed = req.method === "POST" ? await body(req, Math.min(config.limits.bodyBytes, 262144)) : undefined;
                     if (stopping) throw new HttpError(503);
-                    await handleProposal({req, res, config, route, grant, suffix, parsed, capture: captureProposal, accept: (id, input, reconcileOnly) => applyProposal(route, grant, id, input, reconcileOnly)});
+                    const proposalRouteSnapshot = structuredClone(route); // one atomic policy snapshot per request; no hot reload contract
+                    await handleProposal({req, res, config, route: proposalRouteSnapshot, grant, suffix, parsed, capture: captureProposal, accept: (id, input, reconcileOnly) => applyProposal(proposalRouteSnapshot, grant, id, input, reconcileOnly)});
                     if (!res.writableFinished && !res.destroyed) await new Promise<void>(resolve => {
                         const finished = () => { res.off("finish", finished); res.off("close", finished); resolve(); };
                         res.once("finish", finished); res.once("close", finished);

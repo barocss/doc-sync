@@ -30,3 +30,20 @@ test("configuration is bounded, disjoint and copied",()=>{
  for(const targets of [[],Array(17).fill({path:[2],attribute:"x"}),[{path:[1],attribute:"x"}],[{path:[2],attribute:"x"},{path:[2],attribute:"x"}],[{path:[2],attribute:"x",extra:true}]])assert.throws(()=>parseProtection(targets,[1]));
  assert.throws(()=>parseProtection(targets));const parsed=parseProtection(targets,[1]);parsed[0].path[0]=9;assert.equal(targets[0].path[0],2);
 });
+
+
+test("read-only protection permits rich text while retaining original scalar and identity fences",async()=>{
+ const rich=(value:unknown,id="4@A",rev=revision)=>{
+  const result=response(value,id,rev);
+  return {...result,children:[{...result.children[0],node:{...result.children[0].node,runs:[{text:"A",marks:{bold:true}},{type:"inline-image",attrs:{src:"https://example.com/a"}},{type:"link",runs:[{text:"B",marks:{}}]}]}}]};
+ };
+ const initial=await checkPreservation(async()=>rich(false),targets,revision,schema);
+ const persisted=JSON.parse(JSON.stringify(initial));
+ assertPreservationState({planningPath:[1],protectedAttributes:targets,preservation:persisted});
+ const next={...revision,serverSeq:2},incoming=rich(false,"4@A",next),before=JSON.stringify(incoming);
+ assert.deepEqual(await checkPreservation(async()=>incoming,targets,next,schema,persisted),initial);
+ assert.equal(JSON.stringify(incoming),before);
+ await assert.rejects(checkPreservation(async()=>rich(true,"4@A",next),targets,next,schema,persisted),/conflict/);
+ await assert.rejects(checkPreservation(async()=>rich(false,"5@peer",next),targets,next,schema,persisted),/identity/);
+ assert.deepEqual(persisted,initial);
+});

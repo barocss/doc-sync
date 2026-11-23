@@ -124,7 +124,7 @@ npm run start --workspace @doc-sync/bot -- watch \
 
 The first observation establishes a baseline and does not run a review. Later changes between polls are coalesced into one review of the current document; the sequence range is a trigger, not a claim that the bot inspected only that range. Server sequence changes can include non-content events. The process prints the mission ID and result as JSON. Ctrl-C stops future polls; a review already in progress finishes before exit. The interval is 5–3600 seconds and the run limit is 1–100. Each review can call Codex and use account resources. Mission records may contain document content.
 
-This watcher uses an ephemeral, local reviewer actor. The runner rejects reviewer edits, but the demo server does not enforce read-only access. It does not persist its cursor, restore missed changes after a watcher restart, create proposals or comments, operate in the browser, or automatically edit documents. A server restart, schema or generation change, unavailable state, or uncertain review stops it; start it again only after inspection. Browser pending-edit recovery is a separate opt-in product feature with saved origin-local checkpoints and exact proof. The watcher does not provide that recovery.
+This watcher uses an ephemeral, local reviewer actor. The runner rejects reviewer edits, but the demo server does not enforce read-only access. Without `--checkpoint`, it does not persist its cursor or restore missed changes after restart. Neither mode creates proposals/comments, operates in the browser, or automatically edits documents. A server restart, schema or generation change, unavailable state, or uncertain review stops it; start it again only after inspection. Browser pending-edit recovery is a separate opt-in product feature with saved origin-local checkpoints and exact proof. The watcher does not provide that recovery.
 
 ## Hosted proposals and approval
 
@@ -150,3 +150,334 @@ An accepted exact request can recover after restart without resubmission when it
 Initial base mismatches become terminal `stale`; create and review a new proposal. For concurrent edits after the last base check, reconciliation can finish as `not_applied` only after the server durably seals the exact request and private checkpoint cleanup completes. No edit is resent. Unknown outcomes or incomplete proof remain blocked. Create and review a new proposal for changed content.
 
 The initial scope is one visible plain unstyled root `MAIN` text block, with at most 16,384 source UTF-16 units and 4,096 selected/replacement units. Structure, move, mark, cell, and promotion operations are refused before journal preparation or submission. Each applied proposal has a separate undo group for the fixed configured actor. Actor MCP undo/redo requires a separate write grant, preserves other actors' edits within this scope, and does not rewrite the proposal's historical `applied` status. A human editor's undo stack is separate. B3 remains in progress; full UI, planner integration, general structural authorization, and remaining failure qualification are open. This path has no browser or actual-model proposal-acceptance claim.
+
+### Creator-only prepared proposal slice (issue #10, partial)
+
+`proposal-plan` is opt-in and does **not** run Codex or another model. It reads one
+private structured-plan JSON file, captures one authorized root stored unstyled
+text target, and stores a proposal for the separate owner review workspace. This
+is not the direct-writing `run` mode, and never falls back to it.
+
+```sh
+mkdir -m 700 ./proposal-missions
+# Prepare ./plan.json privately (chmod 600); do not put tokens in this file.
+node apps/bot/src/main.ts proposal-plan \
+  --endpoint https://example.test/mcp/tenant/document/slot \
+  --token-env DOC_SYNC_PROPOSAL_TOKEN \
+  --mission-file ./proposal-missions/draft.json \
+  --brief 'Draft a short introduction for owner review' --path '[0]' \
+  --plan-file ./plan.json
+```
+
+The environment credential must be a configured `read` + `proposal_create`
+grant. Hosted configuration forbids combining this with write/schema/owner
+permissions. Use a separately configured owner credential in the review workspace;
+never pass it to this command or a planner. Outside numeric loopback, the new
+creator client requires HTTPS and refuses redirects. The input schema is exactly:
+
+```json
+{"start":0,"end":0,"replacement":"Draft introduction.","explanation":"Prepared draft for review","assumptions":[],"questions":[],"checks":[{"reference":"Owner checks accuracy","status":"unchecked"}]}
+```
+
+`start/end` are UTF-16 offsets in the captured text (no split surrogate pairs).
+One replacement is bounded to 4096 units; a target is at most 16384. Structural,
+marked, virtual, missing or unsettled targets are rejected. The server rechecks
+the exact base and identity during creation and later owner acceptance. Capture
+is available as authenticated `POST .../proposals/target` with `{"path":[0]}`.
+This provides no new owner-defined target policy; that is issue #11.
+
+Mission intent is saved before sending. Retry the **same** mission path, brief,
+path and credential after an unknown result: it resends the exact request, never
+replans or refreshes the base. `created` means proposal storage acknowledged,
+**not** approved, applied, or requirements verified. A changed peer base fails
+closed; unknown remains unknown even for a rejected request. Owner rejection does
+not cause another proposal. Owner cancel before send means do not invoke this
+command. After send, use the separate owner rejection flow. A crash can leave a
+`.lock`; do not delete it until the previous process and persisted attempt have
+been inspected. There is no automatic force-unlock or uncertainty bypass.
+
+The library `runProposalMission(options, planner, creatorClient)` supplies a
+cloned `{brief,target}` data object to a trusted injected planner, never the client
+or bearer. This is a **data boundary, not a process sandbox**: do not inject
+untrusted executable code. Brief is a bounded objective string, not the full
+structured brief verifier. Actual-model invocation with credential/process
+isolation, conversational review integration and model quality evaluation are
+not delivered by this slice. Issue #10 stays open; evaluation is tracked in #14.
+
+### Schema interruption contract (#13)
+
+Bounded missions never silently adopt a different schema or stored target after
+planning. Treat the schema fingerprint, epoch and block identity as part of the
+intent, not merely display metadata. The supported conservative workflow is:
+
+| Observation | Action |
+| --- | --- |
+| New mission, schema changed before initial authorized capture | Read the currently verified target/schema. A new plan uses that actual context. Unsupported shapes/marks remain rejected. |
+| Schema/target changes while an existing planner is working | Stop. Direct bounded runner retains its binding; creator stores the original request and may return unknown. Do not rebind or call it successful. |
+| Create outcome unknown, including HTTP conflict | Retry/reconcile only the original request. A conflict alone does not prove an earlier application absent. No new base or request ID to escape uncertainty. |
+| Stored proposal is stale, rejected or proven not_applied | Owner may review the current schema/target and explicitly renew any route policy. Creator can prepare a new linked successor with a new request and new owner review. Prior approval never transfers. |
+| A prior application is unresolved | Retain exact mission, proposal and journal evidence. No fresh replan, forced unlock, history discard or schema upgrade to bypass recovery. |
+| Receipt confirmed, schema later changes | Receipt remains historical evidence; it is not verification of current content. Preserve old checkpoint/history and stop any unsupported resume. |
+
+There is no automatic compatibility migration in the AI workflow. Core/editor
+explicit schema-transition APIs are a separate capability: in particular an
+explicit core upgrade can send pending operations, so it is **not** a generic safe
+recovery button. This workflow does not enable native-engine transitions or move
+unpublished local experiments into the public contract. Fresh compatibility and
+owner review must be established separately; do not infer them from an additive
+schema name or a model's claim.
+
+Keep original objective, target binding, checks, decision IDs and evidence. Do not
+clear pending/history to make a new schema appear clean. A new proposal is not
+permission to undo somebody else's edits. `created` and `applied` remain storage
+and receipt outcomes respectively, not an actual-model quality assertion.
+
+### Creator abstention (no proposal)
+
+A trusted planner or private prepared plan may return exactly
+`{kind:"abstain",reason:"missing_information"|"unsupported"|"uncertain",explanation:string,questions:string[]}`.
+The explanation is nonblank (maximum 4,000 characters); questions are at most 16
+strings of 1,000 characters each. This is not an edit or successful completion.
+The runtime saves a private terminal format2 mission without a proposal/request;
+resume returns `status:"abstained"` without reading the target or calling the
+planner/creator again. `proposal-plan` exits 1. A changed objective requires a new
+mission, not overwriting the old record. Legacy format1 edit recovery remains
+supported. Actual-model invocation and quality evaluation remain unimplemented;
+see `docs/reports/synthetic-proposal-evaluation-2026-11-16/README.md` for synthetic
+fixtures and explicit unmeasured outcomes.
+
+### Direct planner output limits
+
+Before recording a direct-runner plan in pending/history, runtime validation
+accepts only `action`, `at`, `text`, `count`, `message`, optional `focus`, and
+optional `editsJson`. Even unused `editsJson` is limited to 64 KiB UTF-8 and
+`focus` to 64 canonical indexes. The complete JSON representation must fit
+96 KiB, including escaping overhead; unusually escape-heavy inputs may therefore
+hit the aggregate limit before the raw string limit. Existing text, message,
+position and action-specific limits still apply. This is not a sandbox for a
+trusted JavaScript planner or a substitute for provider transport limits.
+
+### Opt-in persistent reviewer checkpoint
+
+`PersistentReviewWatch` in `src/persistent-watch.ts` offers
+`open({file,binding,maxRuns}, read, review)`, `poll()`, `stop()` and `close()` for
+trusted integrations. Supply an existing owned directory with mode0700 and a
+64-lowercase-hex digest of the explicit nonsecret endpoint/document/task/reviewer
+configuration. This digest is a caller contract, not server authorization or
+proof of a model identity. No credentials should be hashed into it.
+
+A clean checkpoint preserves the reviewed sequence and consumed budget. Before
+review, an in-flight marker is synced; unfinished/blocked/stopped checkpoints
+refuse automatic restart and require inspection. `stop()` is durable when
+awaited. `close()` drains active work and releases the writer claim, but is not
+cancellation; it leaves clean checkpoints resumable. Do not await either from
+inside that watch's own read/review callback. No reset/repair API is supplied.
+The supported local kernel lock is held until active work has drained, including
+when it is slow or stuck. This is not distributed coordination or exactly-once
+model execution. The CLI uses this API only when `--checkpoint` is supplied.
+
+
+To opt the CLI in, prepare a private directory and use the same configuration on restart:
+
+```sh
+mkdir -m 700 .review-cursor
+npm run start -w @doc-sync/bot -- watch \
+  --url http://127.0.0.1:5410 --doc bot-example \
+  --mission 'Review missing project goals.' --model YOUR_AUTHORIZED_MODEL \
+  --max-runs 5 --checkpoint .review-cursor/watch.json
+```
+
+No watcher is started by installation. Running this command can call the existing
+Codex planner and consume account resources; use it only for documents/connections
+you authorize. A clean restart retains the cursor and total consumed run budget,
+not a fresh budget. Endpoint/document/mission/model or max-runs changes refuse
+reuse. Changing interval is allowed. Binding hashes are configuration identity,
+not model-version proof or authorization. Default-model settings may resolve to
+a different model later; pin a model when reproducibility matters. Checkpoint
+mode rejects endpoint credentials, query and fragment; never put secrets in URLs.
+
+Ctrl-C/SIGTERM prevents future polls and drains an active review before releasing
+the local lock; a clean checkpoint remains resumable. Forced interruption leaves
+an in-flight marker that cannot automatically rerun. Blocked/stopped checkpoints
+require inspection; there is no reset/repair command. Do not delete a checkpoint
+to bypass an unknown review outcome. Missed sequences trigger one review of the
+current document, not historical versions. Checkpoint binding excludes the random
+review actor because each read-only invocation uses a fresh ephemeral actor.
+Supported local locking remains macOS/Linux only. Synthetic integration tests do
+not establish real model quality, exactly-once execution or production durability.
+
+## Offline schema-aware templates
+
+`template-meeting --input meeting.json` emits four fact-preserving sections.
+`template-project --input project.json` emits five: title, problem, objectives,
+approach and successCriteria. Each input supplies an explicit document schema,
+role-to-text-type mapping and all facts. Missing or unsupported input returns
+`needs_input` (CLI exit 1), never inferred content. A ready result contains a
+schema fingerprint, a detached draft and a deterministic completion brief.
+
+See the [template examples](../docs/src/guide/bots.md#prepare-a-project-proposal-without-a-model-call).
+Both commands are offline: no model, server write, proposal or owner approval.
+Completion checks are relative to the new document root and do not establish
+semantic quality or preservation of unrelated content. Multi-block drafts remain
+outside the bounded single-block proposal approval path.
+
+### Data-only model boundary (synthetic transport)
+
+`dataOnlyProposalPlanner` in `src/proposal-model-boundary.ts` can be injected into
+`runProposalMission`. It is an API-level, tested preparation for a provider adapter,
+not a new CLI mode or a live model integration. No provider, account, authentication,
+HTTP request or tool execution is supplied by this module.
+
+The trusted transport receives a frozen packet containing only fixed instructions,
+the original brief and bounded target text. Target path, block identity, revision,
+route, mission filename and client methods are excluded. This is field minimization,
+not secret detection: user-supplied brief/text still needs transmission authorization.
+The response is UTF-8 JSON checked by the same local replacement/abstention rules as
+the creator workflow. Extra authority fields, unsupported edits and malformed data
+fail before proposal creation; a valid result still requires separate owner review.
+
+Limits: 131,072 encoded request bytes; 65,536 response bytes; 1,024 chunks; one call
+per planner instance by default (explicit maximum 8); 10-second deadline by default
+(explicit maximum 30 seconds). Attempts consume the instance budget on timeout or
+failure and are never automatically retried. Existing durable mission recovery
+reuses a saved proposal request or abstention without another transport invocation.
+These are not restart-persistent usage or billing budgets. Interruptions before
+saving a decision still require a separately authorized retry policy.
+
+Hosts may pass an explicit `signal: AbortSignal` in the planner limits (also accepted
+by `openAIProposalPlanner`). A pre-aborted signal prevents transport invocation;
+abort during opening or response reading rejects the decision, aborts the injected
+transport signal and keeps the consumed call budget. Abort reasons are not exposed.
+A signal belongs to that planner instance: after cancellation, create no automatic
+replacement instance or retry. Use `recordPlanningAttempt: true` for durable mission
+protection; cancellation then leaves an unresolved attempt and no proposal creation,
+even when the transport eventually returns a valid decision. Cancellation after the
+planner has already returned does not cancel or roll back proposal creation. This is
+cooperative local cancellation, not proof of remote termination or avoided charges.
+
+The injected transport is trusted in-process code, not an isolation sandbox.
+AbortSignal and iterator cleanup are cooperative: a hostile callback cannot be
+force-stopped. A live adapter must independently fix an approved destination and
+model, reject redirects, keep its credential in transport authentication, constrain
+provider output tokens and enforce authorized data/cost limits. No live-call,
+semantic-quality or production-security claim follows from synthetic tests.
+
+### Opt-in Responses adapter (mock-qualified, no CLI activation)
+
+`openAIProposalPlanner` implements a provider-specific request/response contract
+around the data-only boundary. A trusted host must explicitly supply an authorized
+API key, model and fetch implementation. The module reads no environment variables
+or credential files, has no default fetch and is not selected by the existing CLI.
+All qualification uses in-memory fake fetches and synthetic credentials.
+
+The destination is fixed to `https://api.openai.com/v1/responses`; redirects are
+rejected. Requests disable tools, background execution, streaming and response
+storage, use a strict `decision` JSON wrapper and set `max_output_tokens` (default
+1,024, maximum 4,096). A storage request flag is not a zero-retention guarantee.
+This contract follows the [Responses reference](https://developers.openai.com/api/reference/resources/responses/methods/create)
+and [Structured Outputs guide](https://developers.openai.com/api/docs/guides/structured-outputs),
+checked on 2026-11-16. Live model/account compatibility has not been established.
+
+Response parsing accepts only a completed response with one completed assistant
+message containing one unannotated text decision or refusal. Extra output items,
+including reasoning items, are conservatively rejected in this initial slice.
+Refusals become a fixed abstention without retaining raw provider refusal text.
+Truncated/error/tool outputs cannot become proposals. HTTP bodies are bounded to
+262,144 bytes and 1,024 chunks, with the existing deadline and call budget applying
+to fetch and body reading. Timeout does not prove provider work or charges were
+canceled. Errors do not expose raw provider diagnostics. Known
+provider-key reflections are rejected in outgoing body and decoded responses;
+this is not detection of arbitrary secrets in user-supplied material.
+
+Before real use, the owner must approve provider/account/model, API credential use,
+exact data disclosure and a cost/call/token budget. The caller must also establish
+account retention settings and live compatibility. Passing a real fetch is capable
+of external transmission; this implementation is not permission to do so. Usage
+budgets are not persistent across process restart. Creator/owner credentials remain
+separate; creating a proposal never approves or applies it. Issue #10 and actual-model
+qualification remain open.
+
+### Durable planning-attempt guard (opt-in API)
+
+Pass `recordPlanningAttempt: true` to `runProposalMission` when an injected planner
+may make a paid or otherwise consequential model request. After capturing the
+authorized target, the runner durably writes a private, identity-bound attempt
+before invoking the planner. If the planner fails or produces no valid decision,
+`planning_unknown` and its attempt ID are returned. Resume never calls the planner,
+reads a fresh target or creates a proposal for that saved attempt, even if the flag
+is later omitted. A fresh provider-planner instance cannot reset this mission gate.
+
+A valid decision replaces the attempt with the existing durable proposal request
+or abstention. Unknown proposal creation still retries only the exact saved request,
+not the model. The existing default prepared-data behavior is unchanged. This is a
+private mission checkpoint, not a History format or a change to issue #32.
+
+`planning_unknown` means no trustworthy durable decision is available; it does not
+prove whether a provider received, completed or charged for the call. It can also
+conservatively block an attempt that failed before transmission. There is no automatic
+reset, retry or rebase. Keep the original mission and inspect the provider/account
+and intended action before authorizing any new attempt. Do not delete its checkpoint
+or use a new mission filename just to bypass uncertainty. A process crash retains
+the existing lock; dead-owner inspection and manual lock recovery are still required.
+
+This guard prevents automatic repeated planner invocation for one protected mission.
+It is not a global spending cap across missions, provider idempotency or full call
+accounting. API/CLI authorization and the existing live-model qualification gates
+remain separate; no CLI mode or live call is enabled by this option.
+
+### Inspect a saved proposal mission without connecting
+
+```sh
+node apps/bot/src/main.ts proposal-mission-inspect --mission-file ./private-missions/mission.json
+```
+
+This local read-only command requires only the private mission file, not an endpoint,
+bearer token, model or provider credential. It validates the existing private-file
+contract and reports a minimal snapshot without document text, brief, replacement,
+explanation or questions. It does not remove a lock, reset the mission, call a model,
+connect to a server or create/approve a proposal.
+
+- `planning_unresolved`: a durable planning attempt exists without a saved decision.
+  The planner may still be running; this is not proof of failure or billing outcome.
+- `proposal_unconfirmed`: an exact request is saved without a recorded acknowledgement.
+  It may be in flight or already stored remotely. Do not generate a new request ID.
+- `proposal_recorded`: a historical storage acknowledgement is saved, not proof of
+  current pending/applied status or completion. Use the separate authorized owner
+  inspection workflow when current server state is needed.
+- `abstained`: a saved no-proposal decision, with reason and question count only.
+
+Every result includes `activity: "not_checked"` and `liveStatus: "not_checked"`.
+Exit code zero means the snapshot was read successfully, not that the mission
+finished or it is safe to retry. The summary can become stale immediately. Keep
+checkpoint/lock recovery and new-call authorization separate; inspection never
+changes or bypasses either gate.
+
+
+### Preserve other text blocks while editing one target
+
+`run --planning-path '[1]' --protect-text '[[2],[3,0]]'` adds opt-in, identity-bound
+text preservation to the existing bounded writer. Provide the usual explicit URL,
+document and mission options. API callers use `protectedText: [[2], [3, 0]]`.
+The 1–16 protected canonical model paths must differ from the editing target. Each
+must resolve to a stored plain-text block of at most 8192 UTF-16 units. Empty text
+is valid. Inline objects and structured spans are not silently flattened.
+
+The first settled capture saves original text, block identity, node type, placement,
+epoch and schema binding in the private mission. Later checks and profile resume
+compare against that original, never adopt a changed peer value or restore the old
+text. Missing evidence, peer text edits, replacement, movement or schema changes
+stop for inspection. The planner still receives only the bounded editing target,
+not these additional captured texts. Private mission retention includes the original
+protected text; treat the mission file accordingly.
+
+This protects exact text only: mark changes and equivalent plain-run segmentation
+are permitted, and unrelated attributes are not checked. Use `--protect-attributes`
+separately for supported scalar attributes. Both options can coexist. Checks occur
+before planning and at authoritative completion; normal conditional edit fences
+still apply. This is not continuous monitoring, a server permission boundary,
+general structural preservation or a guarantee that people cannot edit the text.
+Never overwrite a person's changed content to make a preservation check pass.
+
+Recovery alone validates saved capture structure; comparison with the current
+document occurs before resumed planning and at completion, not merely by inspecting
+or reconciling a mission.

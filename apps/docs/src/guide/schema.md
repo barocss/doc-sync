@@ -1,5 +1,7 @@
 # Define a schema
 
+[See the schema-driven engine in diagrams →](./engine-visual-guide)
+
 See [Custom schemas and editor mappings](../schemas/custom) for per-editor
 capability checks and the separate sparse field contract.
 
@@ -153,3 +155,113 @@ tracking, ranges, and sparse history/GC need their own contracts.
 These are requirements for future spreadsheet support. Adding a
 `SpreadsheetSchema` name or cell attributes to today's grid does not implement
 them. Existing document table behavior remains unchanged.
+
+## Atomic pattern descriptor diagnostics
+
+`diagnoseAtomicAttributePatterns(schema)` returns read-only diagnostics for
+atomic node attributes and value marks. Each result has `code` (`pattern_type`
+or `invalid_pattern`), `path` as exact string segments, and `message`. For example,
+`["nodes", "paragraph", "attrs", "label", "pattern"]` identifies one descriptor
+without treating dots inside names as path separators. Invalid atomic patterns
+also appear in `checkSchema`'s existing string problems and are rejected by
+normal document construction and `schemaVersion` preflight.
+
+This initial API takes a typed `Schema`; it is not a general untrusted-JSON parser
+or complete descriptor diagnostics. Nested collaborative field diagnostics
+remain with their existing checker and are not duplicated here. Regex syntax
+success is not proof of safe execution cost or protection against pathological
+regular expressions. Valid pattern behavior and empty pattern behavior remain
+unchanged. Direct `attrValueOk` rejects a bad pattern rather than throwing a
+compile exception; null-reset semantics remain unchanged.
+
+Atomic `values` retains its existing reference-equality behavior for objects,
+while nested field leaf enums use JSON deep equality. This diagnostic slice does
+not normalize those contracts, reinterpret defaults or migrate existing data.
+
+## Read-only transition preview
+
+`preflightSchemaTransition(before, after)` returns `invalid` (with `side` and
+`reason`), or `compatible`/`incompatible` with both schema versions and descriptor
+`changes`. Incompatible results include the existing assertion's rejection
+reason. It validates before then after using `schemaVersion`, and delegates the
+actual verdict to `assertCompatibleSchema`; it does not invent a second policy.
+
+Changes have `kind: "add" | "remove" | "replace"` and exact string-segment `path`.
+Object keys are sorted, arrays are replaced as a whole, and explicit document
+domain is normalized just as in schema identity. Changes omit descriptor values;
+error reasons can contain schema names/references and are not redacted messages.
+Different fingerprints or a nonempty diff do not by themselves mean incompatible.
+
+This typed-schema API neither mutates nor installs anything. It does not inspect
+stored documents, estimate affected nodes, check editor renderers or server/bot
+permissions, execute migrations, or guarantee compatibility with future edits.
+The report is a preview of supplied descriptors, not an approval token: the
+actual transition must still enforce its own current-state checks. General
+untrusted Proxy isolation and input size limits are not added by this wrapper.
+
+For valid descriptors, `requiredCapabilities` reports `protocol`, `before`, and
+`after` using the same helper as the sync client's hello check and the server's
+hello advertisement. These are protocol-level requirements: all document schemas
+require the baseline document capabilities even when a particular document uses
+none of those features; graphic schemas additionally require `containers-v1`.
+They are not snapshot feature detection, installed-renderer checks, or evidence
+that any peer supports the proposal. Invalid inputs have no capability report.
+
+## Atomic numeric bound diagnostics
+
+`diagnoseAtomicAttributeBounds(schema)` checks atomic attributes and value marks
+whose default is numeric. It reports `bound_type` for present non-finite or
+non-number bounds, and `bound_order` when minimum exceeds maximum, with exact
+path segments and messages. The same errors participate in `checkSchema`, schema
+versioning and document creation. Omit a bound for an unlimited side; explicit
+infinity is not a finite JSON schema value.
+
+Valid equal bounds remain supported. This slice does not enforce that defaults
+satisfy their constraints, reinterpret bounds on nonnumeric defaults, change
+null resets or enum policy, or replace nested-field diagnostics. Direct numeric
+validation does not coerce malformed bounds to numbers.
+
+## Atomic enum container diagnostics
+
+`diagnoseAtomicAttributeEnums(schema)` reports `enum_type` with an exact path
+when atomic `values` is present but not an array. These errors are included in
+schema validation/versioning and document creation. Direct value validation
+fails closed rather than invoking a non-array `includes` method.
+
+An empty array remains valid and admits no non-null values. Atomic object enum
+members retain reference equality, while nested leaves retain their existing
+JSON deep equality. Defaults are not rewritten and null-reset semantics do not
+change. This check does not validate arbitrary untrusted executable objects or
+add full member/default diagnostics.
+
+## Mark name conflicts
+
+`diagnoseMarkNameConflicts(schema)` reports `mark_kind_conflict` when one name is
+both a boolean `marks` entry and an own `markValues` key. Its path identifies the
+boolean declaration by array index, such as `["marks", "1"]`. Schema validation,
+versioning and creation reject the ambiguity rather than choosing a declaration.
+Disjoint boolean/value mark ordering and semantics are unchanged. This is not
+full mark-name validation or automatic renaming of existing schemas.
+
+Nested field leaves also reject malformed constraint types through their
+existing `fieldsSchemaProblems`/`checkSchema`/`schemaVersion` path: enum values
+must be arrays, patterns strings, and numeric-default bounds finite numbers in
+order. Direct leaf validation returns false rather than coercing these malformed
+rules. Null resets and valid deep enum comparisons remain unchanged. The legacy
+raw Doc constructor's broader nested validation gate is not expanded by this
+change; validate schema identity before installing untrusted descriptors.
+
+### Client edit batch validation
+
+The TypeScript client engine's detached edit preflight validates generated CRDT
+operations against the unchanged document before live compilation. Invalid
+atomic enum, numeric range, pattern or mark updates are rejected early, including
+when they follow a valid insertion in the same batch. This changes previously
+accepted local edits whose invalid values were hidden by projection and later
+rejected by the server. Valid pending edits and peer changes are not discarded.
+
+This is not a new guarantee for raw `Doc.edit`: its lower-level projection and
+compilation semantics are unchanged. Schemas containing `text: false` rules route insertions through detached wire
+validation because admission depends on flow/birth identity. Other bounded fast
+text/structural paths remain separate, and this does not replace server authorization or claim every
+possible command/server policy is equivalent.

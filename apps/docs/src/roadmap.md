@@ -137,9 +137,9 @@ Bot work has its own acceptance gates and does not renumber engine items 1–9. 
 
 1. **B1: Recovery foundation — delivered within the opt-in demo scope.** Preserve receipt, generation, schema, and GC safeguards. Keep unsupported sessions blocked.
 2. **B2: Structured brief and completion checks — exact occurrence and child-type checks added; stage in progress.** Preserve the original request and check explicit requirements against a fresh document read and authoritative revision. Record passed, failed, and unchecked results at the checked revision.
-3. **B3: Plan, proposal, and server authorization — bounded owner approval and recovery added; stage in progress.** The opt-in HTTP/CLI path supports immutable preview/storage, inspection, rejection, and explicit approval of one visible plain unstyled root `MAIN` text change. Both proposal and acceptance flags default to false. Separate owner `read` + `proposal_accept` authority approves only the stored digest and decision UUID; keep it outside the planner. Exact-base and prepared-operation checks precede journal preparation/submission. Accepted exact requests can recover without resend when receipt, private evidence, protected History, and checkpoint agree. Unknown receipts and missing/corrupt proof remain blocked. Unsettled attempts block ordinary MCP startup, new base/capture work, and other approvals. Initial base mismatches are terminal `stale`; a later concurrent-edit race can reconcile to `not_applied` only after an exact durable server seal and private checkpoint retirement, without resending. Unknown outcomes and incomplete proof remain blocked; universal unblocking is not promised. Separate fixed-actor undo groups do not rewrite historical `applied` status. See the [proposal guide](./ai/proposals) for commands, API, and limits. Full UI, planner integration, general structural authorization, and remaining failure qualification stay open; browser and actual-model proposal acceptance are not established.
+3. **B3: Plan, proposal, and server authorization — bounded owner approval and recovery added; stage in progress.** The opt-in HTTP/CLI path supports immutable preview/storage, inspection, rejection, and explicit approval of one visible plain unstyled root `MAIN` text change. Both proposal and acceptance flags default to false. Separate owner `read` + `proposal_accept` authority approves only the stored digest and decision UUID; keep it outside the planner. Exact-base and prepared-operation checks precede journal preparation/submission. Accepted exact requests can recover without resend when receipt, private evidence, protected History, and checkpoint agree. Unknown receipts and missing/corrupt proof remain blocked. Unsettled attempts block ordinary MCP startup, new base/capture work, and other approvals. Initial base mismatches are terminal `stale`; a later concurrent-edit race can reconcile to `not_applied` only after an exact durable server seal and private checkpoint retirement, without resending. Unknown outcomes and incomplete proof remain blocked; universal unblocking is not promised. Separate fixed-actor undo groups do not rewrite historical `applied` status. See the [proposal guide](./ai/proposals) for commands, API, and limits. The opt-in local owner workspace now embeds ProseMirror with explicit confirmation, stale refusal and original-decision reconciliation; bounded synthetic-service Chrome flows are verified. Broader production embedding, creator-only planner integration, server target policy, general structural authorization and remaining failure qualification stay open. Actual-model end-to-end proposal acceptance is not established.
 4. **B4: Templates and schema-specific authoring — planned.** Verify structure, placement, missing inputs, and preservation for each supported document schema.
-5. **B5: Coordination and persistent watcher — planned.** Add explicit assignments, restart-safe triggers, cancellation, deduplication, and separate actor history.
+5. **B5: Coordination and persistent watcher — in progress.** A separate opt-in local reviewer checkpoint API preserves clean cursor/budget and blocks interrupted callbacks (#18). The CLI now opts into cursor/budget persistence with `--checkpoint` (#34); default remains in-memory. Explicit assignments, scheduler integration, recovery UI and broader coordination remain planned.
 6. **B6: Operations, sources, and memory — private hosted foundation implemented; broader stage planned.** Static grants, upstream credentials, capacity limits, and journals do not complete production access, retention, deletion, budgets, recovery, or external retrieval gates.
 
 ## Graphic and spreadsheet delivery
@@ -333,3 +333,26 @@ open; this is not full Q1.3.4 qualification. See
 saved seed reproducers and fixed native comparisons; generated causal schedules
 and failure reduction remain open. General native commands, existing TS capabilities
 and their delivery gates are recorded separately.
+
+## AI delivery slices
+
+The public [bot roadmap](https://github.com/barocss/doc-sync/blob/main/docs/bot-roadmap.md)
+keeps B1–B6 as the stage authority. Status at 2026-11-16: #10 is partial
+(injected/prepared planner, not isolated actual-model invocation); #11 and #12 are
+delivered; #13 qualifies conservative schema interruption without implicit
+migration. #14 remains unrun. The ordered bounded slices are:
+
+1. [Creator-only planner → proposal → explicit owner review (#10)](https://github.com/barocss/doc-sync/issues/10).
+2. [Hosted server target/range enforcement (#11)](https://github.com/barocss/doc-sync/issues/11).
+3. [Actionable conflict and uncertain-outcome recovery (#12)](https://github.com/barocss/doc-sync/issues/12).
+4. [Schema-change interruption and safe mission recovery (#13)](https://github.com/barocss/doc-sync/issues/13).
+5. [Short, budgeted actual-model evaluation (#14)](https://github.com/barocss/doc-sync/issues/14).
+
+Existing brief attribute/mark checks, bounded planning/preservation and local owner
+review are delivered slices, not general structural authority. The independent
+[two-actor schema corpus](https://github.com/barocss/doc-sync/tree/main/experiments/schema-two-actor-schedules)
+adds short deterministic replay and whole-round reduction, including peer changes
+and both undo orders. It does not qualify arbitrary schemas, native/browser
+equivalence or long-duration load. The native schema/targeting work above has
+its own bounded evidence. Integrating its sources does not qualify broader
+native behavior or close the AI delivery gates.

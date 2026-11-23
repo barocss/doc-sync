@@ -28,12 +28,22 @@ export async function readPlanningContext(call:(name:string,args:Record<string,u
     if(previous&&(JSON.stringify(previous.path)!==JSON.stringify(path)||previous.blockId!==blockId||previous.epoch!==revision.epoch||previous.schemaVersion!==revision.schemaVersion))throw Error("Planning target identity, placement or schema changed; review required");
     return {document:{view:"bounded_subtree",partial:true,path:[...path],blockId,node:children[0].node},binding};
 }
-export function assertPlanningTarget(node:unknown,schema:Schema):void {
+export function assertStoredTextTarget(node:unknown,schema:Schema):asserts node is {type:string;runs?:unknown} {
     if(!node||typeof node!=="object"||Array.isArray(node)||!("type" in node)||typeof node.type!=="string"||!Object.hasOwn(schema.nodes,node.type)||schema.nodes[node.type].shape!=="text")throw Error("Bounded planning currently requires a stored text block; structural subtrees need review");
+}
+export function assertPlanningTarget(node:unknown,schema:Schema):void {
+    assertStoredTextTarget(node,schema);
+    if (!("runs" in node) || !Array.isArray(node.runs) || !node.runs.every(run =>
+        run && typeof run === "object" && !Array.isArray(run) &&
+        Object.hasOwn(run,"text") && typeof run.text === "string" &&
+        !Object.hasOwn(run,"type") && !Object.hasOwn(run,"children") && !Object.hasOwn(run,"runs"))) {
+        throw Error("Bounded planning requires plain text runs; inline objects and span structures need review");
+    }
 }
 /** Restrict all edit paths, not only the planner's advertised selection. */
 export function assertPlanningEdits(edits:EditOp[],scope:number[]):void {
     for(const edit of edits){
+        if(edit.op==="update"&&(!Number.isSafeInteger(edit.length)||edit.length!<0))throw Error("Bounded planning updates require an explicit nonnegative text length; inline attributes need review");
         if((edit.op==="insert"&&typeof edit.content!=="string")||(edit.op==="update"&&Object.hasOwn(edit.attrs,"type")))throw Error("Bounded planning forbids structural inserts and type-changing updates");
         if(!["insert","delete","update"].includes(edit.op)||!("at" in edit)||!prefix(edit.at,scope)||edit.at.length!==scope.length+1)throw Error("Bounded planning allows only text-position insert/delete/update inside the stored text target; move/split/merge or out-of-scope edits need review");
     }

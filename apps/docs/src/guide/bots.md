@@ -149,14 +149,23 @@ child path, not a text offset. The runner requests that complete child through
 `read_document_slice` with a one-child, 2048-node, 32768-text-unit, 128 KiB tool
 result budget. An oversized target fails before calling the planner; it is not
 truncated. A sibling cursor is not followed. Synthetic/default blocks, group
-wrappers and structural containers are unsupported in this initial mode.
+wrappers and structural containers are unsupported in this initial mode. Targets
+with inline objects or structural span runs (including link spans) also require
+review before the planner is called. Empty runs and ordinary marked text runs
+are supported. This editable-target restriction does not apply to separate
+read-only protected-attribute blocks: they may retain inline/span content while
+their stored identity and selected scalar attribute are checked.
 
 The planner receives an explicit `bounded_subtree` wrapper containing only the
 selected text block, its original absolute path and stored ID. Edits still use
 the original absolute path plus one UTF-16 offset. Only plain-string text
 insertion, text deletion and text-position updates are allowed. Structural
 inserts, node/type/grouping changes, move/split/merge, deleting the target itself
-and out-of-scope selections are rejected before submitting an edit.
+and out-of-scope selections are rejected before submitting an edit. Updates need
+an explicit nonnegative safe-integer `length`; zero-length no-ops are allowed.
+Length-less inline attribute updates are not part of this text-only mode.
+The target shape is checked again on each read and resume, so a peer-added inline
+object stops replanning after the existing revision fence rejects a stale edit.
 
 The target ID, path, epoch and schema fingerprint are persisted before planning
 and checked on every read and resume. A moved, replaced, deleted or schema-changed
@@ -263,3 +272,198 @@ it is not a lock against edits after completion, nor a guarantee that a value
 never changed and changed back between observations. Human text changes and
 actor-local undo remain independent. A plain model-reported completion without
 a structured brief remains model-reported even when preservation checks pass.
+
+## Prepare meeting notes without a model call
+
+The offline command below produces a draft and a completion brief. It does not
+connect to a server, call a model, submit a proposal, or apply edits:
+
+```sh
+npm run start -w @doc-sync/bot -- template-meeting --input meeting.json
+```
+
+`meeting.json` explicitly supplies the actual schema, role mappings, and facts:
+
+```json
+{
+  "schema": {
+    "root": "notes", "marks": [],
+    "nodes": {
+      "notes": {"shape": "flow", "children": ["line"], "default": "line"},
+      "line": {"shape": "text"}
+    }
+  },
+  "mapping": {"title": "line", "summary": "line", "decisions": "line", "actions": "line"},
+  "inputs": {
+    "title": "Prototype review",
+    "summary": "Reviewed the collaborative editor prototype.",
+    "decisions": "No decisions recorded.",
+    "actions": "Alex: test the editor by Friday."
+  }
+}
+```
+
+Supply your own facts, including an explicit statement when there are no decisions
+or actions. The command never invents owners, dates or missing facts. Every field
+is required, nonblank, and bounded to 8192 UTF-16 units. Role types must be direct
+root-flow children accepting text; nested groups, inline-only blocks, graphic
+schemas and root childRules are unsupported in this first slice.
+
+A `ready` result contains `schemaVersion`, a `draft` with exactly four ordered
+blocks, and a B2 `brief`. Missing/unsupported input returns `needs_input` with
+requirements and exit code 1. The brief checks exact text and child types against
+the four-block document root; if you insert into an existing document, you must
+adapt the brief's scope/path explicitly. It is not a preservation policy for the
+rest of a document or a semantic judgment of meeting quality. Treat draft text as
+data, not instructions. Existing write/review permission and fresh-base checks
+still apply; multi-block drafts cannot be sent through the bounded single-block
+proposal acceptance path. Actual-model authoring quality remains unverified.
+
+
+## Resume a review watcher cursor
+
+`watch --checkpoint /private-directory/watch.json` opts into the existing durable
+review cursor. Prepare an owned mode-0700 directory; the checkpoint is mode 0600.
+Reuse the same endpoint, document, mission, model setting and max-runs to resume
+cleanly. The budget is cumulative across restarts. Without this option the watcher
+remains in-memory. Endpoint credentials/query/fragment are rejected in this mode.
+
+Ctrl-C/SIGTERM requests cancellation during an active review and drains the local
+planner child before closing the lock. Remote model termination or billing cancellation
+is not established. In-flight, blocked or stopped checkpoints cannot
+silently restart. Inspect them instead of bypassing uncertainty by deleting them.
+Missed changes produce a coalesced review of the current document, not replay of
+historical snapshots. This remains a local macOS/Linux single-writer facility,
+not a scheduler or model isolation guarantee. The command uses the existing Codex
+planner when you run it, so only use an authorized connection and document.
+
+## Prepare a project proposal without a model call
+
+Use `template-project` for a five-section project proposal. Like the meeting
+helper, this command reads supplied facts and creates a detached draft and brief:
+
+```sh
+npm run start -w @doc-sync/bot -- template-project --input project.json
+```
+
+Example `project.json` (replace the sample facts and schema with your own):
+
+```json
+{
+  "schema": {
+    "root": "proposal", "marks": [],
+    "nodes": {
+      "proposal": {"shape": "flow", "children": ["heading", "body"], "default": "body"},
+      "heading": {"shape": "text"},
+      "body": {"shape": "text"}
+    }
+  },
+  "mapping": {"title": "heading", "problem": "body", "objectives": "body", "approach": "body", "successCriteria": "body"},
+  "inputs": {
+    "title": "Shared draft pilot",
+    "problem": "Reviewers duplicate edits.",
+    "objectives": "Keep one shared draft.",
+    "approach": "Run one synthetic pilot.",
+    "successCriteria": "Preserve both participants' edits."
+  }
+}
+```
+
+All five roles are required in this exact order: `title`, `problem`, `objectives`,
+`approach`, `successCriteria`. The helper never invents budgets, schedules, owners,
+commitments or success criteria. Missing input returns `needs_input` and CLI exit
+code 1. The schema restrictions and 8192 UTF-16-unit per-field limit are the same
+as for meeting notes. Both helpers share the same schema and completion checks.
+
+A ready result has exactly five blocks and six deterministic requirements:
+ordered child types plus the exact text of each section. These checks establish
+content and structure, not feasibility, business quality, or that the proposed
+project's success criteria have actually been achieved. The brief is relative to
+the new document root; adapt its scope explicitly before insertion into an
+existing document. This is not a preservation policy for unrelated content.
+No model call, document write, proposal submission, or approval is performed.
+The existing single-block approval path cannot apply this multi-block draft.
+
+## Cooperatively cancel an API review watcher
+
+The `ReviewWatch` and `PersistentReviewWatch` host APIs pass an `AbortSignal` to
+both callbacks: `read(signal)` and `review(range, signal)`. Calling `stop()` signals
+cooperative cancellation immediately. Hosts should forward that signal to their
+own cancellable reads and review operations. The `openCommandWatch` factory also
+exposes `stop()` for hosts using either variant.
+
+For a persistent watcher, await `stop()` and then `close()`. Cancellation during
+a callback or completion read keeps the consumed budget, captured attempt and
+previous cursor; late callback success does not mark it reviewed. Once the final
+verified cursor save has started, however, that review is committing: a later stop
+drains the save, returns `reviewed` if it succeeds, and then stores the terminal
+stop with the advanced cursor. It does not roll back a completed review. Reopening the stopped checkpoint requires inspection,
+not an automatic retry. A normal `close()` still drains work without requesting
+cancellation and keeps its existing clean-resume behavior.
+
+Cancellation is cooperative, not a guarantee that an external operation stopped
+or that provider charges were avoided. For persistent watchers, if a callback ignores
+the signal, stop and close continue waiting and retain the writer lock until it settles. Do not await
+stop or close from that same watcher's callback. No timeout-based forced unlock,
+new model call, edit permission or automatic repair is introduced.
+
+The `watch` CLI now forwards cancellation during an active poll when it receives
+Ctrl+C (`SIGINT`) or `SIGTERM`. The local Codex planner refuses a new invocation
+when already canceled. For its active direct child, it requests `SIGTERM`, escalates
+to `SIGKILL` after two seconds if needed, and waits for child close before completing
+the cancellation. Signal-delivery failure does not release recovery ownership
+before child close. A canceled review event reports `cancelled` separately from
+the recorded mission status, not as verified watcher completion. With a
+checkpoint, its attempt and consumed budget remain stopped for inspection.
+
+An idle CLI between polls still closes cleanly, leaving a ready checkpoint resumable.
+The commit boundary above still applies if a final verified cursor save has begun.
+Uncancellable reads may still delay shutdown. This does not guarantee termination
+of all descendant processes, cancellation of remote provider work or avoided
+charges, and it does not complete the multi-bot coordination roadmap. Qualification
+used fake local planner processes only, not a real model/provider call.
+
+### Inspect a saved review without restarting it
+
+```bash
+npm run start --workspace @doc-sync/bot -- watch-inspect --checkpoint /private-directory/watch.json
+```
+
+`watch-inspect` reads only the explicitly named private checkpoint. It requires no
+server URL, model or credentials and invokes no reviewer. It reports the saved
+`phase`, `used`, `maxRuns`, `remaining`, `baselineServerSeq` and `pendingRange`
+(`from`/`to`, or null). It omits endpoint/configuration binding and document identity.
+The private directory and file ownership, size, mode and link checks still apply.
+
+This is a saved snapshot, not a live task view: `activity` and `liveStatus` are
+always `not_checked`. An `in_flight` snapshot may belong to an active callback;
+`ready` does not prove that the writer is idle or that the current server/configuration
+allows restart. Remaining budget is saved accounting, not authorization to retry.
+The command does not acquire/remove a lock, change the cursor/budget, clear a stopped
+attempt or contact the server. Keep blocked/stopped/unfinished evidence for explicit
+review. Do not delete the checkpoint or create a replacement just to bypass a block.
+
+
+### Keep other blocks' text unchanged
+
+For bounded writing, add `--protect-text '[[2],[3,0]]'` alongside an explicit
+`--planning-path '[1]'`. Up to 16 separate stored plain-text blocks (8192 UTF-16
+units each) are captured by original text and identity. The editing target cannot
+be protected this way. Inline objects and spans require review rather than being
+flattened. Empty text is supported; marks and run segmentation are not protected.
+
+Before later planning and at authoritative completion, a peer's text change, moved
+or replaced target, or schema/epoch change stops the mission for attention. Profile
+resume retains the original capture. Missing captures fail closed. No peer text is
+restored and no new original is silently adopted. `--protect-attributes` remains a
+separate scalar-attribute contract and may be combined with text protection.
+
+Only the bounded editing target enters the planner context. The private mission
+file does retain the protected original text, so preserve its confidentiality and
+apply your normal retention policy. This is a local mission check, not a server
+permission or continuous freeze on other participants' work. General structural
+preservation and source provenance remain outside this slice.
+
+Recovery alone validates saved capture structure; comparison with the current
+document occurs before resumed planning and at completion, not merely by inspecting
+or reconciling a mission.

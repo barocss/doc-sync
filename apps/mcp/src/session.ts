@@ -1,3 +1,4 @@
+import {typescriptClientEngineFactory} from "@barocss/doc-sync/engine";
 import {SyncClient} from "@barocss/doc-sync/sync";
 import {Doc, MAIN, anchorAt, posOfPath, readDocumentSlice, validateSliceQuery} from "@barocss/doc-sync";
 import {assertCompatibleSchema, schemaVersion} from "@barocss/doc-sync";
@@ -408,6 +409,25 @@ export class DocumentSession {
             }
             this.client.setPresence({name, color, anchor: active, focus: active === other ? null : other, ...(character ? {character} : {}), ...(expression ? {expression} : {}), ...(activity ? {activity} : {})});
             return {status: "sent", delivery: "unconfirmed"};
+        });
+    }
+
+    /** Local simulation only: no live mutation, journal preparation or transport calls. */
+    async previewEdits(base: Revision, edits: EditOp[]) {
+        return this.serial(() => {
+            if (this.recoveryRequired || this.client.pending.length || this.client.conditionalPending || !this.client.schemaVerified) throw Error("Preview requires a settled, schema-verified session");
+            const current = this.revision();
+            if (base.epoch !== current.epoch || base.serverSeq !== current.serverSeq || base.schemaVersion !== current.schemaVersion) throw Error("Preview base changed; read again");
+            if (!Array.isArray(edits) || edits.length < 1 || edits.length > 100 || Buffer.byteLength(JSON.stringify(edits), "utf8") > 32768) throw Error("Preview edits exceed input limits");
+            const candidate = typescriptClientEngineFactory.create(this.client.actor, this.client.schema);
+            try {
+                candidate.installPrepared(candidate.prepareSnapshot(this.client.engine.snapshot()));
+                candidate.apply(edits);
+                const output = {status: "preview" as const, base: current, document: candidate.model(),
+                    scope: "local simulation only; not server acceptance, authorization, or an installable plan"};
+                if (Buffer.byteLength(JSON.stringify(output), "utf8") > 60000) throw Error("Preview result exceeds output limit; use a smaller document");
+                return output;
+            } finally { candidate.dispose(); }
         });
     }
 

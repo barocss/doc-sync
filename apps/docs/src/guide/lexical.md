@@ -4,7 +4,7 @@ Use the built repository workspaces or local tarballs. These package names are n
 
 Use `LexicalBinding` from **`@barocss/doc-sync-lexical`**. It connects a Lexical editor to a [Client](./client). Omit the transport for local editing, or add an actor and transport for synchronization. Build the schema information first, register its node classes, and then construct the binding.
 
-This is a separate binding package. The old `@barocss/doc-sync-lexical` subpath remains a compatibility export. The examples use built repository workspaces.
+This is a separate binding package. Import `@barocss/doc-sync-lexical` directly; there is no core `/lexical` compatibility subpath. The examples use built repository workspaces.
 
 ## Dependencies
 

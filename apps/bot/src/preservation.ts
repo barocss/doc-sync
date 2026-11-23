@@ -1,6 +1,6 @@
 import type {Schema} from "@barocss/doc-sync";
 import type {JSONLeaf,CheckedRevision} from "./brief.ts";
-import {parsePlanningPath,readPlanningContext,assertPlanningTarget,assertPersistedPlanningState} from "./planning-context.ts";
+import {parsePlanningPath,readPlanningContext,assertStoredTextTarget,assertPersistedPlanningState} from "./planning-context.ts";
 import type {PlanningBinding} from "./planning-context.ts";
 export type ProtectedAttribute={path:number[];attribute:string};
 export type PreservationCapture={target:ProtectedAttribute;binding:PlanningBinding;nodeType:string;present:boolean;value?:JSONLeaf};
@@ -33,7 +33,7 @@ export async function checkPreservation(call:(name:string,args:Record<string,unk
  const captures:PreservationCapture[]=[];
  for(let i=0;i<targets.length;i++){
   const target=targets[i],context=await readPlanningContext(call,target.path,revision,previous?.[i]?.binding);
-  assertPlanningTarget(context.document.node,schema);
+  assertStoredTextTarget(context.document.node,schema);
   const node=context.document.node as {type:string;attrs?:Record<string,unknown>};
   if(!Object.hasOwn(schema.nodes[node.type].attrs??{},target.attribute))throw Error("Protected attribute must be declared in the text node schema");
   const present=!!node.attrs&&Object.hasOwn(node.attrs,target.attribute),value=node.attrs?.[target.attribute];

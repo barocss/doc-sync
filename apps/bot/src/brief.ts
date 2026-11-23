@@ -103,14 +103,14 @@ function readBoundedJSON(item: unknown, depth: number, budget: JSONBudget): void
     if (budget.length > budget.maxLength) throw Error("Verification input exceeds the text budget");
 }
 
-type ExactTextContext = {visited: number; length: number; allowed: readonly string[]; schema: Schema};
+type ExactTextContext = {visited: number; length: number; acceptsText: boolean; allowed: readonly string[]; schema: Schema};
 function readExactRuns(runs: unknown[], depth: number, context: ExactTextContext): string {
     if (depth > 64) throw Error("Text span nesting exceeds the verification limit");
     const chunks: string[] = [];
     for (const run of runs) {
         if (++context.visited > 16384 || !object(run)) throw Error("Invalid or oversized text runs");
         if (Object.hasOwn(run, "text")) {
-            if (typeof run.text !== "string" || !fields(run, TEXT_RUN_FIELDS) || (run.marks !== undefined && !object(run.marks))) throw Error("Invalid text run");
+            if (typeof run.text !== "string" || (!context.acceptsText && run.text.length > 0) || !fields(run, TEXT_RUN_FIELDS) || (run.marks !== undefined && !object(run.marks))) throw Error("Invalid text run");
             context.length += run.text.length;
             if (context.length > 1024 * 1024) throw Error("Text exceeds the verification limit");
             chunks.push(run.text);
@@ -173,7 +173,7 @@ function nodeAt(document: unknown, schema: Schema, indices: number[]): ObjectVal
 function exactNodeText(node: ObjectValue, schema: Schema): string {
     const spec = schema.nodes[node.type as string];
     if (spec.shape !== "text" || !Array.isArray(node.runs) || node.children !== undefined) throw Error("Exact text requires a text node with runs");
-    const context: ExactTextContext = {visited: 0, length: 0, allowed: spec.children ?? [], schema};
+    const context: ExactTextContext = {visited: 0, length: 0, acceptsText: spec.text !== false, allowed: spec.children ?? [], schema};
 
     return readExactRuns(node.runs, 0, context);
 }
