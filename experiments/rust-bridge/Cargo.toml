@@ -1,0 +1,16 @@
+[package]
+name = "doc-sync-rust-bridge"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+doc-sync-rust-experiment = { path = "../rust-core" }
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"

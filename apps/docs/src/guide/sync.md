@@ -50,3 +50,58 @@ The macOS MCP app and single-process demo server provide a bounded recovery path
 After a compatible server schema transition, use [the open-editor transition procedure](./schema-transition) to rebuild a mounted editor without discarding its client or pending work.
 
 [Read the state and reconnect contract →](../reference/spec)
+
+## Rust experiment
+
+Persist the checkpoint with its actor history and pending queue. Retry the saved `Change.ops` through `apply_remote`. Acknowledge only the exact sent prefix after the host transport confirms receipt. The SDK supplies no HTTP client or server.
+
+Use the [native SDK crate setup](./rust#use-the-native-rust-sdk) to run this complete Rust program.
+
+```rust
+use doc_sync_native_sdk::{Attributes, Document, EditOptions, Key, Result, SchemaPreset};
+
+fn main() -> Result<()> {
+    let mut doc = Document::new("sync-author", SchemaPreset::Text)?;
+    let mut peer = Document::new("sync-peer", SchemaPreset::Text)?;
+    doc.insert_text(
+        &Key::root(),
+        "Hi",
+        Attributes::new(),
+        EditOptions::default(),
+        0.0,
+    )?;
+    let json = doc.checkpoint()?.to_json()?;
+    let saved = doc_sync_native_sdk::Checkpoint::from_json(&json)?;
+    let mut restarted = Document::restore(&saved)?;
+    let sent = restarted.pending_changes().to_vec();
+    assert_eq!(sent.len(), 1);
+    for _ in 0..2 {
+        for change in &sent {
+            peer.apply_remote(&change.ops)?;
+        }
+    }
+    assert_eq!(restarted.model()?, peer.model()?);
+    restarted.acknowledge(&sent)?;
+    assert!(restarted.pending_changes().is_empty());
+    assert!(peer.pending_changes().is_empty());
+    Ok(())
+}
+```
+
+The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+
+<details>
+<summary>Raw protocol probe and reference checks</summary>
+
+The native executable keeps named replicas in memory. Its `Server` is a JSONL experiment driver, not an HTTP synchronization server. The pending-replay harness provides a useful engine recovery check:
+
+```sh
+mkdir -p output/rust-sync-example
+RUST_MOVE_RECEIPT=output/rust-sync-example/receipt.json RUST_MOVE_TRACE=output/rust-sync-example/trace.json.gz RUST_MOVE_SUMMARY=output/rust-sync-example/summary.txt node experiments/rust-move-harness/harness.ts
+```
+
+Build the executable first with [the private experiment commands](./rust#run-the-private-experiment). Use new output paths on each run to retain earlier evidence. Check `status: "PASS"`, `restarts: 5` and the five `recoveryCases`: move, split, join, undo and redo. Each case saves an actual TypeScript `SyncClient.pending` batch and matching native checkpoint, starts a fresh native process, receives a foreign edit, applies the saved batch twice through `apply`, then checks four more History actions.
+
+This compares native state, foreign writers, History and duplicate replay with the TypeScript reference. It does not prove durable server recovery, receipt acknowledgment, recovery reservations, protected GC, HTTP/SSE transport or a production Rust server. No public native server or full WASM CRDT client exists. See [restart and pending replay](./rust#restart-and-pending-replay).
+
+</details>

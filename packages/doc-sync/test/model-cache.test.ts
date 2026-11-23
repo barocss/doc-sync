@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../src/crdt/doc.ts";
-import * as cmd from "../src/crdt/commands.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {EditOp, NodeJSON} from "../src/crdt/model.ts";
+import type {EditOp, NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
 
 const fresh = (doc: Doc): NodeJSON => Doc.fromSnapshot("fresh", doc.snapshot(), DEMO_SCHEMA).toJSON();
 

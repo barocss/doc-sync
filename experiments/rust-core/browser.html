@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Isolated Rust WASM storage benchmark</title>
+<style>body{max-width:850px;margin:40px auto;padding:0 20px;font:16px/1.6 system-ui}button,input{font:inherit}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eee;padding:16px}</style>
+<h1>Rust WASM storage benchmark</h1>
+<p>This isolated test edits 100,000 UTF-16 code units. It does not use the production engine.</p>
+<p>Timing includes allocation, initialization, edits, and hashing. WASM loading and compilation are excluded. One WASM call runs each whole batch. Text transfer and per-edit boundary costs are not measured.</p>
+<label>Edits <input id="rounds" type="number" min="0" max="100000" value="1000"></label>
+<label>Samples <input id="samples" type="number" min="1" max="100" value="7"></label>
+<button id="run">Run benchmark</button>
+<pre id="output">Ready. Click Run benchmark.</pre>
+<script type="module">
+import { javascript } from './scripts/workload.mjs';
+const output = document.querySelector('#output');
+const button = document.querySelector('#run');
+button.addEventListener('click', async () => {
+  button.disabled = true;
+  output.textContent = 'Running…';
+  try {
+    const rounds = Number(document.querySelector('#rounds').value);
+    const samples = Number(document.querySelector('#samples').value);
+    if (!Number.isInteger(rounds) || rounds < 0 || rounds > 100000 ||
+        !Number.isInteger(samples) || samples < 1 || samples > 100) throw new Error('Invalid input');
+    const response = await fetch('./target/wasm32-unknown-unknown/release/doc_sync_rust_experiment.wasm');
+    if (!response.ok) throw new Error(`WASM fetch: ${response.status}`);
+    const { instance } = await WebAssembly.instantiate(await response.arrayBuffer(), {});
+    const wasm = () => instance.exports.benchmark_checksum(rounds) >>> 0;
+    const expected = javascript(rounds);
+    if (wasm() !== expected) throw new Error('Checksum mismatch');
+    if ((instance.exports.benchmark_checksum(100001) >>> 0) !== 0) throw new Error('Bounds check failed');
+    const results = [];
+    for (const [runtime, run] of [['javascript-typed-array', () => javascript(rounds)], ['rust-wasm', wasm]]) {
+      for (let i = 0; i < 3; i++) run();
+      const milliseconds = [];
+      for (let i = 0; i < samples; i++) {
+        const start = performance.now();
+        const checksum = run();
+        milliseconds.push(performance.now() - start);
+        if (checksum !== expected) throw new Error(`${runtime}: checksum mismatch`);
+      }
+      results.push({ runtime, milliseconds });
+    }
+    const receipt = { status: 'PASS', userAgent: navigator.userAgent, rounds, samples,
+      initialUtf16Units: 100000, warmups: 3, checksum: expected, results,
+      scope: 'isolated storage batch; no production CRDT or editor integration' };
+    window.benchmarkResult = receipt;
+    output.textContent = JSON.stringify(receipt, null, 2);
+  } catch (error) {
+    window.benchmarkResult = { status: 'FAIL', error: String(error) };
+    output.textContent = JSON.stringify(window.benchmarkResult, null, 2);
+  } finally { button.disabled = false; }
+});
+</script>
+</html>
