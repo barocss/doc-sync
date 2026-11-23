@@ -1,0 +1,21 @@
+✔ owner CLI accepts and reconciles only an explicit ID through hosted route with private input (35.453792ms)
+✔ owner accept applies one immutable edit; same attempt is idempotent; restored actor undo preserves foreign edits (768.877959ms)
+✔ accept is separate opt-in; wrong digest, creator, unanswered questions and overrides deny without upstream (218.961458ms)
+✔ changed authoritative base marks stale and sends no conditional change (294.747667ms)
+✔ prepared guard refuses wire scope escapes and runs before journal.prepare or transport (4.117042ms)
+✔ two scalar-range replacements form separate actor history groups (781.891625ms)
+✔ a concurrent change before submission blocks the approved attempt and preserves its evidence (451.280042ms)
+✔ proposal creation and rejection leave actual upstream snapshot/sequence unchanged; owner boundary (291.164042ms)
+✔ unauthorized/unsupported proposals deny before any upstream access and default is disabled (92.079084ms)
+✔ busy actor and unresolved journal refuse capture before upstream; owner list stays available (259.150333ms)
+✔ exact generation, schema and revision are mandatory; retargeted store is isolated (195.701792ms)
+✔ proposal HTTP host/origin/session/body bounds and slow readers retain existing admission (158.159917ms)
+✔ owner GET holds bounded admission through store cleanup and shutdown drains it (134.885209ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2835.386833

@@ -1,0 +1,16 @@
+✔ owner accept applies one immutable edit; same attempt is idempotent; restored actor undo preserves foreign edits (935.547208ms)
+✔ accept is separate opt-in; wrong digest, creator, unanswered questions and overrides deny without upstream (223.592ms)
+✔ changed authoritative base marks stale and sends no conditional change (278.859459ms)
+✔ prepared guard refuses wire scope escapes and runs before journal.prepare or transport (4.25725ms)
+✔ two scalar-range replacements form separate actor history groups (830.722166ms)
+✔ a concurrent change before submission blocks the approved attempt and preserves its evidence (372.815791ms)
+✔ a prepared authorizer requires durability before any transport contact (0.62625ms)
+✔ cached terminal approval confirms file and directory durability before acknowledgment (413.9ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3588.097125
