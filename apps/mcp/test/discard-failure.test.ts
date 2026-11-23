@@ -93,7 +93,7 @@ async function reopen(path: string, transport: DurableHubTransport) {
 }
 
 for (const mode of ["before", "after"] as const) {
-    test(`checkpoint failure ${mode} durable discard does not send release`, {skip: process.platform !== "darwin"}, async () => {
+    test(`checkpoint failure ${mode} durable discard does not send release`, {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
         const f = await fixture();
         let resumed: Awaited<ReturnType<typeof reopen>> | null = null;
         try {
@@ -123,7 +123,7 @@ for (const mode of ["before", "after"] as const) {
     });
 }
 
-test("lost release response retains marker and is safely retried after restart", {skip: process.platform !== "darwin"}, async () => {
+test("lost release response retains marker and is safely retried after restart", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const f = await fixture();
     let resumed: Awaited<ReturnType<typeof reopen>> | null = null;
     try {
@@ -142,7 +142,7 @@ test("lost release response retains marker and is safely retried after restart",
 });
 
 for (const mode of ["before", "after"] as const) {
-    test(`new reservation failure ${mode} acceptance retains recoverable checkpoint`, {skip: process.platform !== "darwin"}, async () => {
+    test(`new reservation failure ${mode} acceptance retains recoverable checkpoint`, {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
         const f = await fixture();
         let resumed: Awaited<ReturnType<typeof reopen>> | null = null;
         try {
@@ -163,7 +163,7 @@ for (const mode of ["before", "after"] as const) {
     });
 }
 
-test("late echo with an unknown stored receipt blocks discard without release", {skip: process.platform !== "darwin"}, async () => {
+test("late echo with an unknown stored receipt blocks discard without release", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const f = await fixture();
     let resumed: Awaited<ReturnType<typeof reopen>> | null = null;
     try {

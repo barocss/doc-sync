@@ -1,0 +1,4299 @@
+{
+  "format": "bounded-ai-read-workload-v1",
+  "timestamp": "2026-11-01T18:53:31.273Z",
+  "node": "v24.22.1",
+  "execArgv": [
+    "--expose-gc"
+  ],
+  "host": {
+    "platform": "darwin",
+    "release": "24.6.0",
+    "arch": "arm64",
+    "cpu": "Apple M3 Max",
+    "logicalCPUs": 14
+  },
+  "sourceRoot": "/Users/user/github/doc-sync-roadmap-integration",
+  "benchmarkSha256": "17c0884f6add49ca744ca523828cd3832d6f42ec4cfa6c63ea882f856760eff7",
+  "hashesBefore": {
+    "source": "4484232e778f6eb0d3ddaa6820bf8d6fd81cb6fdea747c66413a160fbfd01038",
+    "dist": "48e43a8a7f8c2cb506d1212188af2c0ae865e057fdff4902df949419bc10fe92"
+  },
+  "hashesAfter": {
+    "source": "4484232e778f6eb0d3ddaa6820bf8d6fd81cb6fdea747c66413a160fbfd01038",
+    "dist": "48e43a8a7f8c2cb506d1212188af2c0ae865e057fdff4902df949419bc10fe92"
+  },
+  "sourceFreeze": "PASS",
+  "warmSamples": 21,
+  "oversizedCheck": {
+    "status": "PASS",
+    "textUnits": 65537,
+    "limit": 65536,
+    "toJSONCalls": 0,
+    "projectionMethodCalls": 0
+  },
+  "method": {
+    "payloadBytes": "Core JSON only; signed MCP responses and transport envelopes are excluded.",
+    "comparison": "Full canonical root model versus selected-child slice on matching restored snapshots. Intentionally different output scope.",
+    "timings": "Synchronous Core model read and JSON.stringify measured separately; no construction, restore, GC, oracle, network, SDK, model inference, editor, or server time.",
+    "first": "One first read per mode on a separate restored replica; process/JIT and OS are not cold. Order alternates by fixture.",
+    "warm": "Same unchanged replica and same query after first read; mode order alternates each repetition. No untimed extra warmup.",
+    "heap": "heapUsed changes from explicit pre-read GC to pre-final-GC and post-final-GC with result and JSON string live; not total allocation, peak RSS, or an allocation profiler.",
+    "counters": "Instrumented public Doc.toJSON and projectVisibleBlock calls. Slice counts are API-reported; projectionMethodCalls may include nested work.",
+    "limits": "Single-process local observations. Twenty-one warm samples by default; nearest-rank p95 is sample 20 after sorting. The first read is one observation per mode, subject to JIT and execution-order bias. Nested fixture has 1000 root siblings, not 100000. No global constant-time claim; first indexing can scan siblings. Stale paging correctness remains in Core tests."
+  },
+  "results": [
+    {
+      "fixture": "flat-1000",
+      "query": {
+        "start": 480,
+        "limit": 20
+      },
+      "snapshotBytes": 74426,
+      "snapshotSha256": "e03b1173dd158ea53fa2eefb29b1237d5f8acf7a28d725bf66388af23222e5c8",
+      "selectedChildOracle": "PASS",
+      "snapshotPreservation": "PASS",
+      "executionOrder": [
+        {
+          "phase": "first-on-restored-replica",
+          "mode": "full",
+          "ordinal": 0
+        },
+        {
+          "phase": "first-on-restored-replica",
+          "mode": "bounded",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 1
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 1
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 2
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 2
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 3
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 3
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 4
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 4
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 5
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 5
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 6
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 6
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 7
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 7
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 8
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 8
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 9
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 9
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 10
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 10
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 11
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 11
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 12
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 12
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 13
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 13
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 14
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 14
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 15
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 15
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 16
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 16
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 17
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 17
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 18
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 18
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 19
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 19
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 20
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 20
+        }
+      ],
+      "samples": [
+        {
+          "mode": "full",
+          "phase": "first-on-restored-replica",
+          "ordinal": 0,
+          "materializationMs": 6.783625000000001,
+          "serializationMs": 0.10737500000000466,
+          "modelAndSerializationMs": 6.891000000000005,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 6761184,
+          "retainedHeapUsedDeltaAfterGC": 1721864
+        },
+        {
+          "mode": "bounded",
+          "phase": "first-on-restored-replica",
+          "ordinal": 0,
+          "materializationMs": 4.218541999999999,
+          "serializationMs": 0.004624999999990109,
+          "modelAndSerializationMs": 4.2231669999999895,
+          "outputBytes": 2012,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2012,
+            "projectedBlocks": 20,
+            "indexedBlocks": 1000
+          },
+          "heapUsedDeltaBeforeFinalGC": 4539168,
+          "retainedHeapUsedDeltaAfterGC": 753800
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 0,
+          "materializationMs": 0.6242079999999959,
+          "serializationMs": 0.10433399999999438,
+          "modelAndSerializationMs": 0.7285419999999903,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 1033400,
+          "retainedHeapUsedDeltaAfterGC": 299120
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 0,
+          "materializationMs": 0.5164999999999935,
+          "serializationMs": 0.004374999999996021,
+          "modelAndSerializationMs": 0.5208749999999895,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 271080,
+          "retainedHeapUsedDeltaAfterGC": 12664
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 1,
+          "materializationMs": 0.47466599999999914,
+          "serializationMs": 0.004374999999996021,
+          "modelAndSerializationMs": 0.47904099999999517,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 275432,
+          "retainedHeapUsedDeltaAfterGC": 16120
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 1,
+          "materializationMs": 0.6067910000000012,
+          "serializationMs": 0.11004200000000708,
+          "modelAndSerializationMs": 0.7168330000000083,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 1006416,
+          "retainedHeapUsedDeltaAfterGC": 281776
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 2,
+          "materializationMs": 0.5941250000000053,
+          "serializationMs": 0.10487499999999272,
+          "modelAndSerializationMs": 0.6989999999999981,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 990752,
+          "retainedHeapUsedDeltaAfterGC": 275192
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 2,
+          "materializationMs": 0.5079589999999996,
+          "serializationMs": 0.004290999999994938,
+          "modelAndSerializationMs": 0.5122499999999945,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 272488,
+          "retainedHeapUsedDeltaAfterGC": 11040
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 3,
+          "materializationMs": 0.496832999999981,
+          "serializationMs": 0.004750000000001364,
+          "modelAndSerializationMs": 0.5015829999999823,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 281688,
+          "retainedHeapUsedDeltaAfterGC": 23248
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 3,
+          "materializationMs": 0.5876250000000027,
+          "serializationMs": 0.10766699999999219,
+          "modelAndSerializationMs": 0.6952919999999949,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 1011160,
+          "retainedHeapUsedDeltaAfterGC": 280688
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 4,
+          "materializationMs": 0.6261250000000018,
+          "serializationMs": 0.09908299999997894,
+          "modelAndSerializationMs": 0.7252079999999808,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 1004032,
+          "retainedHeapUsedDeltaAfterGC": 281352
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 4,
+          "materializationMs": 0.4680840000000046,
+          "serializationMs": 0.004540999999989026,
+          "modelAndSerializationMs": 0.47262499999999363,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 269432,
+          "retainedHeapUsedDeltaAfterGC": 13976
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 5,
+          "materializationMs": 0.48441599999998175,
+          "serializationMs": 0.004500000000007276,
+          "modelAndSerializationMs": 0.488915999999989,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 276056,
+          "retainedHeapUsedDeltaAfterGC": 20664
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 5,
+          "materializationMs": 0.5802500000000066,
+          "serializationMs": 0.1052919999999915,
+          "modelAndSerializationMs": 0.6855419999999981,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 997712,
+          "retainedHeapUsedDeltaAfterGC": 285176
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 6,
+          "materializationMs": 0.5576250000000016,
+          "serializationMs": 0.1128750000000025,
+          "modelAndSerializationMs": 0.6705000000000041,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 990752,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 6,
+          "materializationMs": 0.4946250000000134,
+          "serializationMs": 0.004583999999994148,
+          "modelAndSerializationMs": 0.49920900000000756,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 267008,
+          "retainedHeapUsedDeltaAfterGC": 11616
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 7,
+          "materializationMs": 0.462333000000001,
+          "serializationMs": 0.004457999999999629,
+          "modelAndSerializationMs": 0.4667910000000006,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 279688,
+          "retainedHeapUsedDeltaAfterGC": 24624
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 7,
+          "materializationMs": 0.5878750000000252,
+          "serializationMs": 0.10149999999998727,
+          "modelAndSerializationMs": 0.6893750000000125,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 997848,
+          "retainedHeapUsedDeltaAfterGC": 279632
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 8,
+          "materializationMs": 0.562958000000009,
+          "serializationMs": 0.10295899999999847,
+          "modelAndSerializationMs": 0.6659170000000074,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 990784,
+          "retainedHeapUsedDeltaAfterGC": 278248
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 8,
+          "materializationMs": 0.4462090000000103,
+          "serializationMs": 0.004375000000010232,
+          "modelAndSerializationMs": 0.4505840000000205,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 267224,
+          "retainedHeapUsedDeltaAfterGC": 11832
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 9,
+          "materializationMs": 0.4643329999999821,
+          "serializationMs": 0.004542000000014923,
+          "modelAndSerializationMs": 0.46887499999999704,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 268384,
+          "retainedHeapUsedDeltaAfterGC": 11936
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 9,
+          "materializationMs": 0.5927499999999952,
+          "serializationMs": 0.1039169999999956,
+          "modelAndSerializationMs": 0.6966669999999908,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 990752,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 10,
+          "materializationMs": 0.5800839999999994,
+          "serializationMs": 0.10462499999999864,
+          "modelAndSerializationMs": 0.684708999999998,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 942808,
+          "retainedHeapUsedDeltaAfterGC": 278824
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 10,
+          "materializationMs": 0.4693749999999852,
+          "serializationMs": 0.004457999999999629,
+          "modelAndSerializationMs": 0.47383299999998485,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 268120,
+          "retainedHeapUsedDeltaAfterGC": 12840
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 11,
+          "materializationMs": 0.4573750000000132,
+          "serializationMs": 0.004624999999975898,
+          "modelAndSerializationMs": 0.4619999999999891,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 292432,
+          "retainedHeapUsedDeltaAfterGC": 16400
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 11,
+          "materializationMs": 0.568000000000012,
+          "serializationMs": 0.10558399999999324,
+          "modelAndSerializationMs": 0.6735840000000053,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934800,
+          "retainedHeapUsedDeltaAfterGC": 273760
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 12,
+          "materializationMs": 0.5576670000000092,
+          "serializationMs": 0.1052919999999915,
+          "modelAndSerializationMs": 0.6629590000000007,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934800,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 12,
+          "materializationMs": 0.47258399999998346,
+          "serializationMs": 0.004791000000011536,
+          "modelAndSerializationMs": 0.477374999999995,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 264864,
+          "retainedHeapUsedDeltaAfterGC": 11616
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 13,
+          "materializationMs": 0.45795799999999076,
+          "serializationMs": 0.004792000000009011,
+          "modelAndSerializationMs": 0.4627499999999998,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 268608,
+          "retainedHeapUsedDeltaAfterGC": 13328
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 13,
+          "materializationMs": 0.5352499999999907,
+          "serializationMs": 0.10116700000000378,
+          "modelAndSerializationMs": 0.6364169999999945,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934800,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 14,
+          "materializationMs": 0.6166669999999783,
+          "serializationMs": 0.10775000000001,
+          "modelAndSerializationMs": 0.7244169999999883,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934800,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 14,
+          "materializationMs": 0.45933400000001257,
+          "serializationMs": 0.004457999999999629,
+          "modelAndSerializationMs": 0.4637920000000122,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 266992,
+          "retainedHeapUsedDeltaAfterGC": 11760
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 15,
+          "materializationMs": 0.47216600000001563,
+          "serializationMs": 0.004500000000007276,
+          "modelAndSerializationMs": 0.4766660000000229,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 276528,
+          "retainedHeapUsedDeltaAfterGC": 18832
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 15,
+          "materializationMs": 0.5196669999999983,
+          "serializationMs": 0.10679199999998445,
+          "modelAndSerializationMs": 0.6264589999999828,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934880,
+          "retainedHeapUsedDeltaAfterGC": 273760
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 16,
+          "materializationMs": 0.575917000000004,
+          "serializationMs": 0.09975000000000023,
+          "modelAndSerializationMs": 0.6756670000000042,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934880,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 16,
+          "materializationMs": 0.4747079999999926,
+          "serializationMs": 0.004542000000014923,
+          "modelAndSerializationMs": 0.4792500000000075,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 265008,
+          "retainedHeapUsedDeltaAfterGC": 12840
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 17,
+          "materializationMs": 0.4788329999999803,
+          "serializationMs": 0.0041670000000237906,
+          "modelAndSerializationMs": 0.4830000000000041,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 263648,
+          "retainedHeapUsedDeltaAfterGC": 11616
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 17,
+          "materializationMs": 0.5745829999999614,
+          "serializationMs": 0.1123749999999859,
+          "modelAndSerializationMs": 0.6869579999999473,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934880,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 18,
+          "materializationMs": 0.5420419999999808,
+          "serializationMs": 0.11079200000000355,
+          "modelAndSerializationMs": 0.6528339999999844,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934880,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 18,
+          "materializationMs": 0.5051669999999717,
+          "serializationMs": 0.004542000000014923,
+          "modelAndSerializationMs": 0.5097089999999866,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 265816,
+          "retainedHeapUsedDeltaAfterGC": 11616
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 19,
+          "materializationMs": 0.48154199999999037,
+          "serializationMs": 0.004457999999999629,
+          "modelAndSerializationMs": 0.48599999999999,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 272784,
+          "retainedHeapUsedDeltaAfterGC": 13024
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 19,
+          "materializationMs": 0.6575829999999883,
+          "serializationMs": 0.09895800000003874,
+          "modelAndSerializationMs": 0.756541000000027,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934840,
+          "retainedHeapUsedDeltaAfterGC": 276784
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 20,
+          "materializationMs": 0.5007920000000468,
+          "serializationMs": 0.117999999999995,
+          "modelAndSerializationMs": 0.6187920000000418,
+          "outputBytes": 46027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 934880,
+          "retainedHeapUsedDeltaAfterGC": 278216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 20,
+          "materializationMs": 0.4556249999999977,
+          "serializationMs": 0.004041000000029271,
+          "modelAndSerializationMs": 0.459666000000027,
+          "outputBytes": 2009,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2009,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 263648,
+          "retainedHeapUsedDeltaAfterGC": 11616
+        }
+      ],
+      "warmSummary": {
+        "full": {
+          "materializationMs": {
+            "min": 0.5007920000000468,
+            "median": 0.5800839999999994,
+            "p95": 0.6261250000000018,
+            "max": 0.6575829999999883
+          },
+          "serializationMs": {
+            "min": 0.09895800000003874,
+            "median": 0.1052919999999915,
+            "p95": 0.1128750000000025,
+            "max": 0.117999999999995
+          },
+          "modelAndSerializationMs": {
+            "min": 0.6187920000000418,
+            "median": 0.6855419999999981,
+            "p95": 0.7285419999999903,
+            "max": 0.756541000000027
+          },
+          "outputBytes": {
+            "min": 46027,
+            "median": 46027,
+            "p95": 46027,
+            "max": 46027
+          },
+          "heapUsedDeltaBeforeFinalGC": {
+            "min": 934800,
+            "median": 942808,
+            "p95": 1011160,
+            "max": 1033400
+          },
+          "retainedHeapUsedDeltaAfterGC": {
+            "min": 273760,
+            "median": 278216,
+            "p95": 285176,
+            "max": 299120
+          }
+        },
+        "bounded": {
+          "materializationMs": {
+            "min": 0.4462090000000103,
+            "median": 0.47258399999998346,
+            "p95": 0.5079589999999996,
+            "max": 0.5164999999999935
+          },
+          "serializationMs": {
+            "min": 0.004041000000029271,
+            "median": 0.004500000000007276,
+            "p95": 0.004791000000011536,
+            "max": 0.004792000000009011
+          },
+          "modelAndSerializationMs": {
+            "min": 0.4505840000000205,
+            "median": 0.477374999999995,
+            "p95": 0.5122499999999945,
+            "max": 0.5208749999999895
+          },
+          "outputBytes": {
+            "min": 2009,
+            "median": 2009,
+            "p95": 2009,
+            "max": 2009
+          },
+          "heapUsedDeltaBeforeFinalGC": {
+            "min": 263648,
+            "median": 268608,
+            "p95": 281688,
+            "max": 292432
+          },
+          "retainedHeapUsedDeltaAfterGC": {
+            "min": 11040,
+            "median": 12840,
+            "p95": 23248,
+            "max": 24624
+          }
+        }
+      }
+    },
+    {
+      "fixture": "flat-100000",
+      "query": {
+        "start": 49980,
+        "limit": 20
+      },
+      "snapshotBytes": 7833428,
+      "snapshotSha256": "6e13168675be0ef1ba90258e0127028ce30a73ac618a741b00595ccbf5bb9f97",
+      "selectedChildOracle": "PASS",
+      "snapshotPreservation": "PASS",
+      "executionOrder": [
+        {
+          "phase": "first-on-restored-replica",
+          "mode": "bounded",
+          "ordinal": 0
+        },
+        {
+          "phase": "first-on-restored-replica",
+          "mode": "full",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 1
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 1
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 2
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 2
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 3
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 3
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 4
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 4
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 5
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 5
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 6
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 6
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 7
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 7
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 8
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 8
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 9
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 9
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 10
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 10
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 11
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 11
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 12
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 12
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 13
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 13
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 14
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 14
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 15
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 15
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 16
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 16
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 17
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 17
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 18
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 18
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 19
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 19
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 20
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 20
+        }
+      ],
+      "samples": [
+        {
+          "mode": "bounded",
+          "phase": "first-on-restored-replica",
+          "ordinal": 0,
+          "materializationMs": 135.31562499999995,
+          "serializationMs": 0.00408400000014808,
+          "modelAndSerializationMs": 135.3197090000001,
+          "outputBytes": 2100,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2100,
+            "projectedBlocks": 20,
+            "indexedBlocks": 100000
+          },
+          "heapUsedDeltaBeforeFinalGC": 109058560,
+          "retainedHeapUsedDeltaAfterGC": 59645544
+        },
+        {
+          "mode": "full",
+          "phase": "first-on-restored-replica",
+          "ordinal": 0,
+          "materializationMs": 330.092625,
+          "serializationMs": 14.432000000000016,
+          "modelAndSerializationMs": 344.524625,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 212587208,
+          "retainedHeapUsedDeltaAfterGC": 154920312
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 0,
+          "materializationMs": 58.5555830000003,
+          "serializationMs": 12.641291999999794,
+          "modelAndSerializationMs": 71.19687500000009,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43718736,
+          "retainedHeapUsedDeltaAfterGC": 27811024
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 0,
+          "materializationMs": 0.5157500000000255,
+          "serializationMs": 0.004124999999930878,
+          "modelAndSerializationMs": 0.5198749999999563,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 227784,
+          "retainedHeapUsedDeltaAfterGC": 13248
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 1,
+          "materializationMs": 0.4620420000001104,
+          "serializationMs": 0.004124999999930878,
+          "modelAndSerializationMs": 0.4661670000000413,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 227736,
+          "retainedHeapUsedDeltaAfterGC": 15256
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 1,
+          "materializationMs": 61.96412499999997,
+          "serializationMs": 13.742583999999624,
+          "modelAndSerializationMs": 75.70670899999959,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43718248,
+          "retainedHeapUsedDeltaAfterGC": 27795960
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 2,
+          "materializationMs": 57.53529099999969,
+          "serializationMs": 11.886417000000165,
+          "modelAndSerializationMs": 69.42170799999985,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43721048,
+          "retainedHeapUsedDeltaAfterGC": 27800624
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 2,
+          "materializationMs": 0.5117079999999987,
+          "serializationMs": 0.004124999999930878,
+          "modelAndSerializationMs": 0.5158329999999296,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 227736,
+          "retainedHeapUsedDeltaAfterGC": 31144
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 3,
+          "materializationMs": 0.4772080000002461,
+          "serializationMs": 0.004166999999597465,
+          "modelAndSerializationMs": 0.48137499999984357,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 11008
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 3,
+          "materializationMs": 57.33245799999986,
+          "serializationMs": 11.422250000000076,
+          "modelAndSerializationMs": 68.75470799999994,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43693480,
+          "retainedHeapUsedDeltaAfterGC": 27798992
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 4,
+          "materializationMs": 61.180875000000015,
+          "serializationMs": 14.61954199999991,
+          "modelAndSerializationMs": 75.80041699999992,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43736336,
+          "retainedHeapUsedDeltaAfterGC": 27800576
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 4,
+          "materializationMs": 0.43775000000005093,
+          "serializationMs": 0.003749999999854481,
+          "modelAndSerializationMs": 0.4414999999999054,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 11696
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 5,
+          "materializationMs": 0.46287499999925785,
+          "serializationMs": 0.003958000000238826,
+          "modelAndSerializationMs": 0.4668329999994967,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 15584
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 5,
+          "materializationMs": 57.648167000000285,
+          "serializationMs": 12.473041999999623,
+          "modelAndSerializationMs": 70.12120899999991,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43677160,
+          "retainedHeapUsedDeltaAfterGC": 27795760
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 6,
+          "materializationMs": 56.34491600000001,
+          "serializationMs": 11.582749999999578,
+          "modelAndSerializationMs": 67.92766599999959,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43723256,
+          "retainedHeapUsedDeltaAfterGC": 27800216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 6,
+          "materializationMs": 0.49720800000068266,
+          "serializationMs": 0.004167000000052212,
+          "modelAndSerializationMs": 0.5013750000007349,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 13248
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 7,
+          "materializationMs": 0.49904200000037235,
+          "serializationMs": 0.0040829999998095445,
+          "modelAndSerializationMs": 0.5031250000001819,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 18528
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 7,
+          "materializationMs": 58.09808300000077,
+          "serializationMs": 12.837416999999732,
+          "modelAndSerializationMs": 70.9355000000005,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43701576,
+          "retainedHeapUsedDeltaAfterGC": 27793968
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 8,
+          "materializationMs": 59.55883400000039,
+          "serializationMs": 12.800000000000182,
+          "modelAndSerializationMs": 72.35883400000057,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43725776,
+          "retainedHeapUsedDeltaAfterGC": 27800216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 8,
+          "materializationMs": 0.47091700000055425,
+          "serializationMs": 0.004208000000289758,
+          "modelAndSerializationMs": 0.475125000000844,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 11696
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 9,
+          "materializationMs": 0.41687499999989086,
+          "serializationMs": 0.003666000000521308,
+          "modelAndSerializationMs": 0.42054100000041217,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 17704
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 9,
+          "materializationMs": 60.25758299999961,
+          "serializationMs": 12.17108399999961,
+          "modelAndSerializationMs": 72.42866699999922,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43739856,
+          "retainedHeapUsedDeltaAfterGC": 27795400
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 10,
+          "materializationMs": 58.405916000000616,
+          "serializationMs": 12.184249999999338,
+          "modelAndSerializationMs": 70.59016599999995,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43736208,
+          "retainedHeapUsedDeltaAfterGC": 27800216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 10,
+          "materializationMs": 0.5360419999997248,
+          "serializationMs": 0.004125000000385626,
+          "modelAndSerializationMs": 0.5401670000001104,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 11696
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 11,
+          "materializationMs": 0.47074999999949796,
+          "serializationMs": 0.004208000000289758,
+          "modelAndSerializationMs": 0.4749579999997877,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 11696
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 11,
+          "materializationMs": 56.12391699999989,
+          "serializationMs": 11.476958000000195,
+          "modelAndSerializationMs": 67.60087500000009,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43717240,
+          "retainedHeapUsedDeltaAfterGC": 27800216
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 12,
+          "materializationMs": 64.5741250000001,
+          "serializationMs": 12.655791999999565,
+          "modelAndSerializationMs": 77.22991699999966,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43737216,
+          "retainedHeapUsedDeltaAfterGC": 27801080
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 12,
+          "materializationMs": 0.4798749999999927,
+          "serializationMs": 0.004249999999956344,
+          "modelAndSerializationMs": 0.48412499999994907,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 13248
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 13,
+          "materializationMs": 0.47991600000023027,
+          "serializationMs": 0.004208999999718799,
+          "modelAndSerializationMs": 0.48412499999994907,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 15256
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 13,
+          "materializationMs": 58.608790999999655,
+          "serializationMs": 12.500750000000153,
+          "modelAndSerializationMs": 71.10954099999981,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43718120,
+          "retainedHeapUsedDeltaAfterGC": 27795760
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 14,
+          "materializationMs": 55.36716699999943,
+          "serializationMs": 11.511415999999372,
+          "modelAndSerializationMs": 66.8785829999988,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43721376,
+          "retainedHeapUsedDeltaAfterGC": 27800216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 14,
+          "materializationMs": 0.48158299999886367,
+          "serializationMs": 0.004167000000961707,
+          "modelAndSerializationMs": 0.4857499999998254,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 11696
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 15,
+          "materializationMs": 0.48087500000110595,
+          "serializationMs": 0.004041999998662504,
+          "modelAndSerializationMs": 0.48491699999976845,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 13248
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 15,
+          "materializationMs": 58.9820409999993,
+          "serializationMs": 12.61133399999926,
+          "modelAndSerializationMs": 71.59337499999856,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43699376,
+          "retainedHeapUsedDeltaAfterGC": 27798992
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 16,
+          "materializationMs": 57.19891699999971,
+          "serializationMs": 12.83324999999968,
+          "modelAndSerializationMs": 70.03216699999939,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43775176,
+          "retainedHeapUsedDeltaAfterGC": 27800216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 16,
+          "materializationMs": 0.4668340000007447,
+          "serializationMs": 0.004166000000623171,
+          "modelAndSerializationMs": 0.4710000000013679,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 11696
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 17,
+          "materializationMs": 0.42608300000028976,
+          "serializationMs": 0.003584000000046217,
+          "modelAndSerializationMs": 0.429667000000336,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 16480
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 17,
+          "materializationMs": 56.33695799999987,
+          "serializationMs": 12.357625000000553,
+          "modelAndSerializationMs": 68.69458300000042,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43747776,
+          "retainedHeapUsedDeltaAfterGC": 27795760
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 18,
+          "materializationMs": 59.67649999999958,
+          "serializationMs": 11.913791999999376,
+          "modelAndSerializationMs": 71.59029199999895,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43747776,
+          "retainedHeapUsedDeltaAfterGC": 27801512
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 18,
+          "materializationMs": 0.5110829999994166,
+          "serializationMs": 0.0040829999998095445,
+          "modelAndSerializationMs": 0.5151659999992262,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 13248
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 19,
+          "materializationMs": 0.4599579999994603,
+          "serializationMs": 0.004124999999476131,
+          "modelAndSerializationMs": 0.46408299999893643,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 10472
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 19,
+          "materializationMs": 60.07537499999853,
+          "serializationMs": 12.429667000000336,
+          "modelAndSerializationMs": 72.50504199999887,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43708048,
+          "retainedHeapUsedDeltaAfterGC": 27800216
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 20,
+          "materializationMs": 57.47783400000117,
+          "serializationMs": 12.688000000000102,
+          "modelAndSerializationMs": 70.16583400000127,
+          "outputBytes": 4600027,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 43753176,
+          "retainedHeapUsedDeltaAfterGC": 27800216
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 20,
+          "materializationMs": 0.4844999999986612,
+          "serializationMs": 0.0040829999998095445,
+          "modelAndSerializationMs": 0.48858299999847077,
+          "outputBytes": 2095,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 20,
+          "sliceCounts": {
+            "nodes": 40,
+            "textUnits": 20,
+            "bytes": 2095,
+            "projectedBlocks": 20,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 226616,
+          "retainedHeapUsedDeltaAfterGC": 11696
+        }
+      ],
+      "warmSummary": {
+        "full": {
+          "materializationMs": {
+            "min": 55.36716699999943,
+            "median": 58.405916000000616,
+            "p95": 61.96412499999997,
+            "max": 64.5741250000001
+          },
+          "serializationMs": {
+            "min": 11.422250000000076,
+            "median": 12.473041999999623,
+            "p95": 13.742583999999624,
+            "max": 14.61954199999991
+          },
+          "modelAndSerializationMs": {
+            "min": 66.8785829999988,
+            "median": 70.9355000000005,
+            "p95": 75.80041699999992,
+            "max": 77.22991699999966
+          },
+          "outputBytes": {
+            "min": 4600027,
+            "median": 4600027,
+            "p95": 4600027,
+            "max": 4600027
+          },
+          "heapUsedDeltaBeforeFinalGC": {
+            "min": 43677160,
+            "median": 43721376,
+            "p95": 43753176,
+            "max": 43775176
+          },
+          "retainedHeapUsedDeltaAfterGC": {
+            "min": 27793968,
+            "median": 27800216,
+            "p95": 27801512,
+            "max": 27811024
+          }
+        },
+        "bounded": {
+          "materializationMs": {
+            "min": 0.41687499999989086,
+            "median": 0.4798749999999927,
+            "p95": 0.5157500000000255,
+            "max": 0.5360419999997248
+          },
+          "serializationMs": {
+            "min": 0.003584000000046217,
+            "median": 0.004124999999930878,
+            "p95": 0.004208999999718799,
+            "max": 0.004249999999956344
+          },
+          "modelAndSerializationMs": {
+            "min": 0.42054100000041217,
+            "median": 0.48412499999994907,
+            "p95": 0.5198749999999563,
+            "max": 0.5401670000001104
+          },
+          "outputBytes": {
+            "min": 2095,
+            "median": 2095,
+            "p95": 2095,
+            "max": 2095
+          },
+          "heapUsedDeltaBeforeFinalGC": {
+            "min": 226616,
+            "median": 226616,
+            "p95": 227736,
+            "max": 227784
+          },
+          "retainedHeapUsedDeltaAfterGC": {
+            "min": 10472,
+            "median": 13248,
+            "p95": 18528,
+            "max": 31144
+          }
+        }
+      }
+    },
+    {
+      "fixture": "nested-marked-1000-boxes",
+      "query": {
+        "path": [
+          500
+        ],
+        "start": 0,
+        "limit": 2
+      },
+      "snapshotBytes": 13044556,
+      "snapshotSha256": "e0ce18ec7d23b0422539ee41e590abcddfc4df43f2a2d998038255dd852a22c0",
+      "selectedChildOracle": "PASS",
+      "snapshotPreservation": "PASS",
+      "executionOrder": [
+        {
+          "phase": "first-on-restored-replica",
+          "mode": "full",
+          "ordinal": 0
+        },
+        {
+          "phase": "first-on-restored-replica",
+          "mode": "bounded",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 1
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 1
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 2
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 2
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 3
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 3
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 4
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 4
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 5
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 5
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 6
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 6
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 7
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 7
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 8
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 8
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 9
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 9
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 10
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 10
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 11
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 11
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 12
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 12
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 13
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 13
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 14
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 14
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 15
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 15
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 16
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 16
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 17
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 17
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 18
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 18
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 19
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 19
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 20
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 20
+        }
+      ],
+      "samples": [
+        {
+          "mode": "full",
+          "phase": "first-on-restored-replica",
+          "ordinal": 0,
+          "materializationMs": 116.27304200000071,
+          "serializationMs": 5.044750000000931,
+          "modelAndSerializationMs": 121.31779200000165,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 36763240,
+          "retainedHeapUsedDeltaAfterGC": 22846920
+        },
+        {
+          "mode": "bounded",
+          "phase": "first-on-restored-replica",
+          "ordinal": 0,
+          "materializationMs": 2.694666999996116,
+          "serializationMs": 0.0014579999988200143,
+          "modelAndSerializationMs": 2.696124999994936,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 3
+          },
+          "heapUsedDeltaBeforeFinalGC": 4889640,
+          "retainedHeapUsedDeltaAfterGC": 593456
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 0,
+          "materializationMs": 2.6416250000038417,
+          "serializationMs": 1.3028330000015558,
+          "modelAndSerializationMs": 3.9444580000053975,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4036984,
+          "retainedHeapUsedDeltaAfterGC": 1926560
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 0,
+          "materializationMs": 1.459500000004482,
+          "serializationMs": 0.0014999999984866008,
+          "modelAndSerializationMs": 1.4610000000029686,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2464560,
+          "retainedHeapUsedDeltaAfterGC": 14688
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 1,
+          "materializationMs": 1.408625000003667,
+          "serializationMs": 0.0014999999984866008,
+          "modelAndSerializationMs": 1.4101250000021537,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462704,
+          "retainedHeapUsedDeltaAfterGC": 4416
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 1,
+          "materializationMs": 2.9189580000020214,
+          "serializationMs": 1.4372920000023441,
+          "modelAndSerializationMs": 4.356250000004366,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4036928,
+          "retainedHeapUsedDeltaAfterGC": 1930040
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 2,
+          "materializationMs": 2.5883749999993597,
+          "serializationMs": 1.1627500000031432,
+          "modelAndSerializationMs": 3.751125000002503,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1929080
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 2,
+          "materializationMs": 1.461457999997947,
+          "serializationMs": 0.0015840000050957315,
+          "modelAndSerializationMs": 1.4630420000030426,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462456,
+          "retainedHeapUsedDeltaAfterGC": 12728
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 3,
+          "materializationMs": 1.119208999996772,
+          "serializationMs": 0.001666000003751833,
+          "modelAndSerializationMs": 1.1208750000005239,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1949920,
+          "retainedHeapUsedDeltaAfterGC": 1736
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 3,
+          "materializationMs": 2.1597079999992275,
+          "serializationMs": 1.2081249999973807,
+          "modelAndSerializationMs": 3.367832999996608,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 4,
+          "materializationMs": 2.1790840000030585,
+          "serializationMs": 0.964957999996841,
+          "modelAndSerializationMs": 3.1440419999998994,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 4,
+          "materializationMs": 1.3731249999982538,
+          "serializationMs": 0.0014999999984866008,
+          "modelAndSerializationMs": 1.3746249999967404,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462640,
+          "retainedHeapUsedDeltaAfterGC": 4160
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 5,
+          "materializationMs": 1.112874999998894,
+          "serializationMs": 0.0014579999988200143,
+          "modelAndSerializationMs": 1.114332999997714,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1949752,
+          "retainedHeapUsedDeltaAfterGC": 7544
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 5,
+          "materializationMs": 2.2621670000007725,
+          "serializationMs": 1.0528749999939464,
+          "modelAndSerializationMs": 3.315041999994719,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1926656
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 6,
+          "materializationMs": 2.5640829999974812,
+          "serializationMs": 1.0939580000049318,
+          "modelAndSerializationMs": 3.658041000002413,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 6,
+          "materializationMs": 1.4128749999945285,
+          "serializationMs": 0.0015000000057625584,
+          "modelAndSerializationMs": 1.414375000000291,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462640,
+          "retainedHeapUsedDeltaAfterGC": 4160
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 7,
+          "materializationMs": 1.0062089999992168,
+          "serializationMs": 0.0014579999988200143,
+          "modelAndSerializationMs": 1.0076669999980368,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1692864,
+          "retainedHeapUsedDeltaAfterGC": -40
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 7,
+          "materializationMs": 2.8803750000006403,
+          "serializationMs": 1.2079999999987194,
+          "modelAndSerializationMs": 4.08837499999936,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 8,
+          "materializationMs": 2.879624999994121,
+          "serializationMs": 1.2778330000001006,
+          "modelAndSerializationMs": 4.157457999994222,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 8,
+          "materializationMs": 1.3957920000029844,
+          "serializationMs": 0.001582999997481238,
+          "modelAndSerializationMs": 1.3973750000004657,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462704,
+          "retainedHeapUsedDeltaAfterGC": 233864
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 9,
+          "materializationMs": 1.056457999999111,
+          "serializationMs": 0.001582999997481238,
+          "modelAndSerializationMs": 1.0580409999965923,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1853352,
+          "retainedHeapUsedDeltaAfterGC": -112200
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 9,
+          "materializationMs": 2.561249999998836,
+          "serializationMs": 1.2567920000001322,
+          "modelAndSerializationMs": 3.818041999998968,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1931112
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 10,
+          "materializationMs": 2.5125829999960843,
+          "serializationMs": 1.2167499999995925,
+          "modelAndSerializationMs": 3.729332999995677,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 10,
+          "materializationMs": 1.377874999998312,
+          "serializationMs": 0.0014590000064345077,
+          "modelAndSerializationMs": 1.3793340000047465,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462640,
+          "retainedHeapUsedDeltaAfterGC": 233520
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 11,
+          "materializationMs": 1.121500000001106,
+          "serializationMs": 0.0015839999978197739,
+          "modelAndSerializationMs": 1.1230839999989257,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1853240,
+          "retainedHeapUsedDeltaAfterGC": -227272
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 11,
+          "materializationMs": 2.7646250000034343,
+          "serializationMs": 1.1276670000006561,
+          "modelAndSerializationMs": 3.8922920000040904,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1927880
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 12,
+          "materializationMs": 2.791958000001614,
+          "serializationMs": 1.5256670000017039,
+          "modelAndSerializationMs": 4.317625000003318,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 12,
+          "materializationMs": 1.3829160000022966,
+          "serializationMs": 0.0015839999978197739,
+          "modelAndSerializationMs": 1.3845000000001164,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462640,
+          "retainedHeapUsedDeltaAfterGC": 235072
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 13,
+          "materializationMs": 1.096333000001323,
+          "serializationMs": 0.0015419999981531873,
+          "modelAndSerializationMs": 1.0978749999994761,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1853240,
+          "retainedHeapUsedDeltaAfterGC": -233080
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 13,
+          "materializationMs": 2.175374999998894,
+          "serializationMs": 1.001209000001836,
+          "modelAndSerializationMs": 3.17658400000073,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 14,
+          "materializationMs": 2.5413750000006985,
+          "serializationMs": 1.0417499999966822,
+          "modelAndSerializationMs": 3.5831249999973807,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 14,
+          "materializationMs": 1.3902499999967404,
+          "serializationMs": 0.0014579999988200143,
+          "modelAndSerializationMs": 1.3917079999955604,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462640,
+          "retainedHeapUsedDeltaAfterGC": 233520
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 15,
+          "materializationMs": 1.0890420000068843,
+          "serializationMs": 0.0015419999981531873,
+          "modelAndSerializationMs": 1.0905840000050375,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1853240,
+          "retainedHeapUsedDeltaAfterGC": -230504
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 15,
+          "materializationMs": 2.9347080000006827,
+          "serializationMs": 1.3417919999992591,
+          "modelAndSerializationMs": 4.276499999999942,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1931112
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 16,
+          "materializationMs": 2.925416000005498,
+          "serializationMs": 1.2862499999973807,
+          "modelAndSerializationMs": 4.211666000002879,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 16,
+          "materializationMs": 1.2847919999985606,
+          "serializationMs": 0.0014169999994919635,
+          "modelAndSerializationMs": 1.2862089999980526,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462640,
+          "retainedHeapUsedDeltaAfterGC": 233520
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 17,
+          "materializationMs": 1.024083000003884,
+          "serializationMs": 0.0014579999988200143,
+          "modelAndSerializationMs": 1.025541000002704,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1853240,
+          "retainedHeapUsedDeltaAfterGC": -228152
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 17,
+          "materializationMs": 2.570750000006228,
+          "serializationMs": 1.3458339999997406,
+          "modelAndSerializationMs": 3.916584000005969,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1927880
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 18,
+          "materializationMs": 2.1932919999962905,
+          "serializationMs": 1.2033330000049318,
+          "modelAndSerializationMs": 3.3966250000012224,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 18,
+          "materializationMs": 1.4069579999995767,
+          "serializationMs": 0.0014999999984866008,
+          "modelAndSerializationMs": 1.4084579999980633,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462640,
+          "retainedHeapUsedDeltaAfterGC": 240176
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 19,
+          "materializationMs": 1.1115419999987353,
+          "serializationMs": 0.0014999999984866008,
+          "modelAndSerializationMs": 1.1130419999972219,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 1853240,
+          "retainedHeapUsedDeltaAfterGC": -104704
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 19,
+          "materializationMs": 2.7949159999989206,
+          "serializationMs": 1.0880419999957667,
+          "modelAndSerializationMs": 3.8829579999946873,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1931112
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 20,
+          "materializationMs": 2.443707999998878,
+          "serializationMs": 1.2279579999958514,
+          "modelAndSerializationMs": 3.6716659999947296,
+          "outputBytes": 513963,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4037032,
+          "retainedHeapUsedDeltaAfterGC": 1932336
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 20,
+          "materializationMs": 1.3948749999981374,
+          "serializationMs": 0.0015419999981531873,
+          "modelAndSerializationMs": 1.3964169999962905,
+          "outputBytes": 761,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 2,
+          "sliceCounts": {
+            "nodes": 7,
+            "textUnits": 266,
+            "bytes": 761,
+            "projectedBlocks": 2,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 2462640,
+          "retainedHeapUsedDeltaAfterGC": 233520
+        }
+      ],
+      "warmSummary": {
+        "full": {
+          "materializationMs": {
+            "min": 2.1597079999992275,
+            "median": 2.570750000006228,
+            "p95": 2.925416000005498,
+            "max": 2.9347080000006827
+          },
+          "serializationMs": {
+            "min": 0.964957999996841,
+            "median": 1.2081249999973807,
+            "p95": 1.4372920000023441,
+            "max": 1.5256670000017039
+          },
+          "modelAndSerializationMs": {
+            "min": 3.1440419999998994,
+            "median": 3.818041999998968,
+            "p95": 4.317625000003318,
+            "max": 4.356250000004366
+          },
+          "outputBytes": {
+            "min": 513963,
+            "median": 513963,
+            "p95": 513963,
+            "max": 513963
+          },
+          "heapUsedDeltaBeforeFinalGC": {
+            "min": 4036928,
+            "median": 4037032,
+            "p95": 4037032,
+            "max": 4037032
+          },
+          "retainedHeapUsedDeltaAfterGC": {
+            "min": 1926560,
+            "median": 1932336,
+            "p95": 1932336,
+            "max": 1932336
+          }
+        },
+        "bounded": {
+          "materializationMs": {
+            "min": 1.0062089999992168,
+            "median": 1.3731249999982538,
+            "p95": 1.459500000004482,
+            "max": 1.461457999997947
+          },
+          "serializationMs": {
+            "min": 0.0014169999994919635,
+            "median": 0.0014999999984866008,
+            "p95": 0.0015840000050957315,
+            "max": 0.001666000003751833
+          },
+          "modelAndSerializationMs": {
+            "min": 1.0076669999980368,
+            "median": 1.3746249999967404,
+            "p95": 1.4610000000029686,
+            "max": 1.4630420000030426
+          },
+          "outputBytes": {
+            "min": 761,
+            "median": 761,
+            "p95": 761,
+            "max": 761
+          },
+          "heapUsedDeltaBeforeFinalGC": {
+            "min": 1692864,
+            "median": 2462640,
+            "p95": 2462704,
+            "max": 2464560
+          },
+          "retainedHeapUsedDeltaAfterGC": {
+            "min": -233080,
+            "median": 4416,
+            "p95": 235072,
+            "max": 240176
+          }
+        }
+      }
+    },
+    {
+      "fixture": "retained-table-cell-in-rich-document",
+      "query": {
+        "path": [
+          1000,
+          0,
+          1,
+          0
+        ],
+        "start": 0,
+        "limit": 1
+      },
+      "snapshotBytes": 13055273,
+      "snapshotSha256": "183785b5b20e72a671b2be17da8daa2a410d07c88b82028d91fc7cbed0b81f15",
+      "selectedChildOracle": "PASS",
+      "snapshotPreservation": "PASS",
+      "executionOrder": [
+        {
+          "phase": "first-on-restored-replica",
+          "mode": "bounded",
+          "ordinal": 0
+        },
+        {
+          "phase": "first-on-restored-replica",
+          "mode": "full",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 0
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 1
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 1
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 2
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 2
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 3
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 3
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 4
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 4
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 5
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 5
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 6
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 6
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 7
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 7
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 8
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 8
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 9
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 9
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 10
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 10
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 11
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 11
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 12
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 12
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 13
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 13
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 14
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 14
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 15
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 15
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 16
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 16
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 17
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 17
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 18
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 18
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 19
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 19
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "full",
+          "ordinal": 20
+        },
+        {
+          "phase": "warm-same-query",
+          "mode": "bounded",
+          "ordinal": 20
+        }
+      ],
+      "samples": [
+        {
+          "mode": "bounded",
+          "phase": "first-on-restored-replica",
+          "ordinal": 0,
+          "materializationMs": 3.674791000012192,
+          "serializationMs": 0.00466700000106357,
+          "modelAndSerializationMs": 3.6794580000132555,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 1
+          },
+          "heapUsedDeltaBeforeFinalGC": 6674528,
+          "retainedHeapUsedDeltaAfterGC": 540880
+        },
+        {
+          "mode": "full",
+          "phase": "first-on-restored-replica",
+          "ordinal": 0,
+          "materializationMs": 109.84454200000619,
+          "serializationMs": 3.834208000000217,
+          "modelAndSerializationMs": 113.6787500000064,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 36589616,
+          "retainedHeapUsedDeltaAfterGC": 22890128
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 0,
+          "materializationMs": 2.3847079999977723,
+          "serializationMs": 1.9330000000045402,
+          "modelAndSerializationMs": 4.3177080000023125,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4122792,
+          "retainedHeapUsedDeltaAfterGC": 1961664
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 0,
+          "materializationMs": 3.555166999998619,
+          "serializationMs": 0.0009580000041751191,
+          "modelAndSerializationMs": 3.556125000002794,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7280568,
+          "retainedHeapUsedDeltaAfterGC": 461984
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 1,
+          "materializationMs": 1.3787080000038259,
+          "serializationMs": 0.008125000007566996,
+          "modelAndSerializationMs": 1.3868330000113929,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 3565976,
+          "retainedHeapUsedDeltaAfterGC": -480312
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 1,
+          "materializationMs": 2.1224999999976717,
+          "serializationMs": 2.068375000002561,
+          "modelAndSerializationMs": 4.190875000000233,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042168,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 2,
+          "materializationMs": 2.1429580000112765,
+          "serializationMs": 2.210584000000381,
+          "modelAndSerializationMs": 4.353542000011657,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042168,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 2,
+          "materializationMs": 3.3154169999907026,
+          "serializationMs": 0.0009580000041751191,
+          "modelAndSerializationMs": 3.3163749999948777,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 238312
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 3,
+          "materializationMs": 1.8034170000028098,
+          "serializationMs": 0.0009580000041751191,
+          "modelAndSerializationMs": 1.804375000006985,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 3826656,
+          "retainedHeapUsedDeltaAfterGC": -968
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 3,
+          "materializationMs": 2.122000000003027,
+          "serializationMs": 1.8956250000046566,
+          "modelAndSerializationMs": 4.017625000007683,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042168,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 4,
+          "materializationMs": 2.0394579999992857,
+          "serializationMs": 1.958041999998386,
+          "modelAndSerializationMs": 3.9974999999976717,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1930296
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 4,
+          "materializationMs": 3.388082999998005,
+          "serializationMs": 0.0011670000094454736,
+          "modelAndSerializationMs": 3.3892500000074506,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 232304
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 5,
+          "materializationMs": 2.125333000003593,
+          "serializationMs": 0.0009169999975711107,
+          "modelAndSerializationMs": 2.126250000001164,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 4849000,
+          "retainedHeapUsedDeltaAfterGC": -233624
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 5,
+          "materializationMs": 2.0340830000059213,
+          "serializationMs": 1.953416999996989,
+          "modelAndSerializationMs": 3.9875000000029104,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 6,
+          "materializationMs": 2.168416000000434,
+          "serializationMs": 1.8479590000060853,
+          "modelAndSerializationMs": 4.016375000006519,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 6,
+          "materializationMs": 3.425042000002577,
+          "serializationMs": 0.0011249999952269718,
+          "modelAndSerializationMs": 3.426166999997804,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 595544
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 7,
+          "materializationMs": 1.8834999999962747,
+          "serializationMs": 0.0011249999952269718,
+          "modelAndSerializationMs": 1.8846249999915017,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 3826320,
+          "retainedHeapUsedDeltaAfterGC": -240104
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 7,
+          "materializationMs": 2.088499999998021,
+          "serializationMs": 2.0201250000100117,
+          "modelAndSerializationMs": 4.108625000008033,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 8,
+          "materializationMs": 2.1793330000073183,
+          "serializationMs": 1.963458999991417,
+          "modelAndSerializationMs": 4.142791999998735,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 8,
+          "materializationMs": 3.332125000000815,
+          "serializationMs": 0.0010420000035082921,
+          "modelAndSerializationMs": 3.333167000004323,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 233856
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 9,
+          "materializationMs": 1.6941249999945285,
+          "serializationMs": 0.0009169999975711107,
+          "modelAndSerializationMs": 1.6950419999920996,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 3826568,
+          "retainedHeapUsedDeltaAfterGC": 3112
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 9,
+          "materializationMs": 2.246500000008382,
+          "serializationMs": 2.2101669999974547,
+          "modelAndSerializationMs": 4.456667000005837,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 10,
+          "materializationMs": 2.034291000003577,
+          "serializationMs": 1.844833999988623,
+          "modelAndSerializationMs": 3.8791249999922,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 10,
+          "materializationMs": 3.335207999989507,
+          "serializationMs": 0.0010000000038417056,
+          "modelAndSerializationMs": 3.3362079999933485,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 233184
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 11,
+          "materializationMs": 2.143000000010943,
+          "serializationMs": 0.0009579999896232039,
+          "modelAndSerializationMs": 2.1439580000005662,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 4848904,
+          "retainedHeapUsedDeltaAfterGC": -234600
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 11,
+          "materializationMs": 2.0621250000112923,
+          "serializationMs": 1.792749999993248,
+          "modelAndSerializationMs": 3.85487500000454,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 12,
+          "materializationMs": 2.141250000000582,
+          "serializationMs": 2.0077089999977034,
+          "modelAndSerializationMs": 4.148958999998285,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 12,
+          "materializationMs": 3.3886250000068685,
+          "serializationMs": 0.0011660000018309802,
+          "modelAndSerializationMs": 3.3897910000086995,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 626880
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 13,
+          "materializationMs": 1.79891700000735,
+          "serializationMs": 0.0009580000041751191,
+          "modelAndSerializationMs": 1.7998750000115251,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 3822680,
+          "retainedHeapUsedDeltaAfterGC": -239664
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 13,
+          "materializationMs": 2.08104099999764,
+          "serializationMs": 2.0963340000016615,
+          "modelAndSerializationMs": 4.1773749999993015,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 14,
+          "materializationMs": 2.163957999990089,
+          "serializationMs": 1.9052090000041062,
+          "modelAndSerializationMs": 4.069166999994195,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 14,
+          "materializationMs": 3.324124999999185,
+          "serializationMs": 0.0009589999972376972,
+          "modelAndSerializationMs": 3.325083999996423,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 339320
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 15,
+          "materializationMs": 1.7523749999963911,
+          "serializationMs": 0.0010840000031748787,
+          "modelAndSerializationMs": 1.753458999999566,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 3826568,
+          "retainedHeapUsedDeltaAfterGC": -2944
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 15,
+          "materializationMs": 2.1268750000017462,
+          "serializationMs": 2.15770799999882,
+          "modelAndSerializationMs": 4.284583000000566,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 16,
+          "materializationMs": 2.021500000002561,
+          "serializationMs": 1.903374999994412,
+          "modelAndSerializationMs": 3.924874999996973,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 16,
+          "materializationMs": 3.391417000006186,
+          "serializationMs": 0.0010829999955603853,
+          "modelAndSerializationMs": 3.3925000000017462,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 235488
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 17,
+          "materializationMs": 2.1360830000048736,
+          "serializationMs": 0.0008749999979045242,
+          "modelAndSerializationMs": 2.136958000002778,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 4848904,
+          "retainedHeapUsedDeltaAfterGC": -230856
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 17,
+          "materializationMs": 2.426500000001397,
+          "serializationMs": 2.0062500000058208,
+          "modelAndSerializationMs": 4.432750000007218,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042304,
+          "retainedHeapUsedDeltaAfterGC": 1927592
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 18,
+          "materializationMs": 1.9396249999990687,
+          "serializationMs": 1.8856249999953434,
+          "modelAndSerializationMs": 3.825249999994412,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042272,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 18,
+          "materializationMs": 3.514999999999418,
+          "serializationMs": 0.0008749999979045242,
+          "modelAndSerializationMs": 3.5158749999973224,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 500304
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 19,
+          "materializationMs": 1.7405829999916023,
+          "serializationMs": 0.0008749999979045242,
+          "modelAndSerializationMs": 1.7414579999895068,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 3826120,
+          "retainedHeapUsedDeltaAfterGC": -235592
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 19,
+          "materializationMs": 1.9627909999981057,
+          "serializationMs": 1.812791999996989,
+          "modelAndSerializationMs": 3.7755829999950947,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042072,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "full",
+          "phase": "warm-same-query",
+          "ordinal": 20,
+          "materializationMs": 2.142374999995809,
+          "serializationMs": 1.9909170000028098,
+          "modelAndSerializationMs": 4.133291999998619,
+          "outputBytes": 514522,
+          "toJSONCalls": 1,
+          "projectionMethodCalls": 0,
+          "sliceCounts": null,
+          "heapUsedDeltaBeforeFinalGC": 4042072,
+          "retainedHeapUsedDeltaAfterGC": 1934672
+        },
+        {
+          "mode": "bounded",
+          "phase": "warm-same-query",
+          "ordinal": 20,
+          "materializationMs": 3.362750000000233,
+          "serializationMs": 0.0009580000041751191,
+          "modelAndSerializationMs": 3.363708000004408,
+          "outputBytes": 438,
+          "toJSONCalls": 0,
+          "projectionMethodCalls": 1,
+          "sliceCounts": {
+            "nodes": 2,
+            "textUnits": 106,
+            "bytes": 438,
+            "projectedBlocks": 1,
+            "indexedBlocks": 0
+          },
+          "heapUsedDeltaBeforeFinalGC": 7292320,
+          "retainedHeapUsedDeltaAfterGC": 233856
+        }
+      ],
+      "warmSummary": {
+        "full": {
+          "materializationMs": {
+            "min": 1.9396249999990687,
+            "median": 2.1224999999976717,
+            "p95": 2.3847079999977723,
+            "max": 2.426500000001397
+          },
+          "serializationMs": {
+            "min": 1.792749999993248,
+            "median": 1.958041999998386,
+            "p95": 2.2101669999974547,
+            "max": 2.210584000000381
+          },
+          "modelAndSerializationMs": {
+            "min": 3.7755829999950947,
+            "median": 4.108625000008033,
+            "p95": 4.432750000007218,
+            "max": 4.456667000005837
+          },
+          "outputBytes": {
+            "min": 514522,
+            "median": 514522,
+            "p95": 514522,
+            "max": 514522
+          },
+          "heapUsedDeltaBeforeFinalGC": {
+            "min": 4042072,
+            "median": 4042272,
+            "p95": 4042304,
+            "max": 4122792
+          },
+          "retainedHeapUsedDeltaAfterGC": {
+            "min": 1927592,
+            "median": 1934672,
+            "p95": 1934672,
+            "max": 1961664
+          }
+        },
+        "bounded": {
+          "materializationMs": {
+            "min": 1.3787080000038259,
+            "median": 3.3154169999907026,
+            "p95": 3.514999999999418,
+            "max": 3.555166999998619
+          },
+          "serializationMs": {
+            "min": 0.0008749999979045242,
+            "median": 0.0009580000041751191,
+            "p95": 0.0011670000094454736,
+            "max": 0.008125000007566996
+          },
+          "modelAndSerializationMs": {
+            "min": 1.3868330000113929,
+            "median": 3.3163749999948777,
+            "p95": 3.5158749999973224,
+            "max": 3.556125000002794
+          },
+          "outputBytes": {
+            "min": 438,
+            "median": 438,
+            "p95": 438,
+            "max": 438
+          },
+          "heapUsedDeltaBeforeFinalGC": {
+            "min": 3565976,
+            "median": 7280568,
+            "p95": 7292320,
+            "max": 7292320
+          },
+          "retainedHeapUsedDeltaAfterGC": {
+            "min": -480312,
+            "median": 232304,
+            "p95": 595544,
+            "max": 626880
+          }
+        }
+      }
+    }
+  ]
+}

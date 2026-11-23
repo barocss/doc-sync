@@ -1,4 +1,4 @@
-import * as cmd from "../src/crdt/commands.ts";
+import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {MemoryNet, show} from "./harness.ts";

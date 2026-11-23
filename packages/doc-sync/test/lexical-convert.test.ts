@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import {test} from "node:test";
 import {createEditor, $getRoot, $createTextNode, $createParagraphNode, $createLineBreakNode, $isLineBreakNode, $isElementNode, $isTextNode} from "lexical";
 import {$createTableNodeWithDimensions, $isTableNode, $isTableRowNode, $isTableCellNode} from "@lexical/table";
-import {canonical} from "../src/crdt/model.ts";
-import {buildLexicalSchema, $toLexical, $fromLexical, toLexicalJSON, fromLexicalJSON, $setLexicalSelection, $lexicalSelection, $modelData, $setModelData} from "../src/lexical/index.ts";
+import {canonical} from "../../doc-sync-core/dist/crdt/model.js";
+import {buildLexicalSchema, $toLexical, $fromLexical, toLexicalJSON, fromLexicalJSON, $setLexicalSelection, $lexicalSelection, $modelData, $setModelData} from "../../doc-sync-lexical/dist/index.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {NodeJSON} from "../src/crdt/model.ts";
+import type {NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
 
 const p = (text: string): NodeJSON => ({type: "paragraph", runs: [{text, marks: {}}]});
 const cell = (text: string, attrs?: Record<string, unknown>): NodeJSON => ({type: "table-cell", ...(attrs ? {attrs} : {}), children: [{type: "table-cell-body", children: [p(text)]}]});
