@@ -1,0 +1,95 @@
+TAP version 13
+# Subtest: protected schema attribute stays identity-bound across peer edits
+    # Subtest: unchanged
+    ok 1 - unchanged
+      ---
+      duration_ms: 1514.007042
+      type: 'test'
+      ...
+    # Subtest: human-text
+    ok 2 - human-text
+      ---
+      duration_ms: 1345.159333
+      type: 'test'
+      ...
+    # Subtest: human-attribute
+    ok 3 - human-attribute
+      ---
+      duration_ms: 1216.121833
+      type: 'test'
+      ...
+    # Subtest: replace
+    ok 4 - replace
+      ---
+      duration_ms: 1179.591666
+      type: 'test'
+      ...
+    # Subtest: delete
+    ok 5 - delete
+      ---
+      duration_ms: 1239.11
+      type: 'test'
+      ...
+    # Subtest: move
+    ok 6 - move
+      ---
+      duration_ms: 1242.366208
+      type: 'test'
+      ...
+    # Subtest: forbidden
+    ok 7 - forbidden
+      ---
+      duration_ms: 1145.31475
+      type: 'test'
+      ...
+    # Subtest: undo-human-first
+    ok 8 - undo-human-first
+      ---
+      duration_ms: 1758.398917
+      type: 'test'
+      ...
+    # Subtest: undo-bot-first
+    ok 9 - undo-bot-first
+      ---
+      duration_ms: 1665.169417
+      type: 'test'
+      ...
+    # Subtest: restart retains protected capture and conflicts on a newer human value
+    ok 10 - restart retains protected capture and conflicts on a newer human value
+      ---
+      duration_ms: 3704.806
+      type: 'test'
+      ...
+    1..10
+ok 1 - protected schema attribute stays identity-bound across peer edits
+  ---
+  duration_ms: 16460.082459
+  type: 'test'
+  ...
+# Subtest: capture retains absent versus scalar values without inferred defaults
+ok 2 - capture retains absent versus scalar values without inferred defaults
+  ---
+  duration_ms: 1.77275
+  type: 'test'
+  ...
+# Subtest: identity, schema, epoch and value conflicts never recapture
+ok 3 - identity, schema, epoch and value conflicts never recapture
+  ---
+  duration_ms: 0.30575
+  type: 'test'
+  ...
+# Subtest: configuration is bounded, disjoint and copied
+ok 4 - configuration is bounded, disjoint and copied
+  ---
+  duration_ms: 0.158959
+  type: 'test'
+  ...
+1..4
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16913.658959

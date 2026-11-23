@@ -1,0 +1,71 @@
+TAP version 13
+# Subtest: bounded planner uses stored text identity and full authoritative finish
+    # Subtest: large
+    ok 1 - large
+      ---
+      duration_ms: 1283.415333
+      type: 'test'
+      ...
+    # Subtest: peer
+    ok 2 - peer
+      ---
+      duration_ms: 1223.040958
+      type: 'test'
+      ...
+    # Subtest: replace
+    ok 3 - replace
+      ---
+      duration_ms: 1157.553125
+      type: 'test'
+      ...
+    # Subtest: outside
+    ok 4 - outside
+      ---
+      duration_ms: 1096.09475
+      type: 'test'
+      ...
+    # Subtest: oversized
+    ok 5 - oversized
+      ---
+      duration_ms: 1443.553542
+      type: 'test'
+      ...
+    1..5
+ok 1 - bounded planner uses stored text identity and full authoritative finish
+  ---
+  duration_ms: 6318.252042
+  type: 'test'
+  ...
+# Subtest: one bounded subtree is explicit partial context and independent of unseen siblings
+ok 2 - one bounded subtree is explicit partial context and independent of unseen siblings
+  ---
+  duration_ms: 0.821042
+  type: 'test'
+  ...
+# Subtest: revision, identity, epoch, schema and placement mismatches never silently rebind
+ok 3 - revision, identity, epoch, schema and placement mismatches never silently rebind
+  ---
+  duration_ms: 0.537042
+  type: 'test'
+  ...
+# Subtest: path inputs are owned, finite and bounded
+ok 4 - path inputs are owned, finite and bounded
+  ---
+  duration_ms: 0.098833
+  type: 'test'
+  ...
+# Subtest: scope rejects out-of-target paths, structural text insertion and type-change escapes
+ok 5 - scope rejects out-of-target paths, structural text insertion and type-change escapes
+  ---
+  duration_ms: 0.168625
+  type: 'test'
+  ...
+1..5
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6578.269375

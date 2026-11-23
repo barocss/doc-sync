@@ -1,0 +1,570 @@
+{
+  "attempts": [
+    {
+      "action": "conditional",
+      "request": {
+        "change": {
+          "actor": "conditional-actor",
+          "seq": 1,
+          "ops": [
+            {
+              "t": "node",
+              "id": {
+                "actor": "conditional-actor",
+                "lamport": 1
+              },
+              "origin": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "type": "entry",
+              "attrs": {
+                "id": "data:9df03d71-5ed5-4dab-88f2-c31ac35a03a1",
+                "key": "valid-prefix",
+                "value": {
+                  "scalar": true
+                }
+              }
+            },
+            {
+              "t": "move",
+              "at": {
+                "actor": "conditional-actor",
+                "lamport": 2
+              },
+              "target": {
+                "actor": "conditional-actor",
+                "lamport": 1
+              },
+              "parent": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "after": null
+            },
+            {
+              "t": "node",
+              "id": {
+                "actor": "conditional-actor",
+                "lamport": 3
+              },
+              "origin": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "type": "entry",
+              "attrs": {
+                "id": "data:53c6235f-1f8b-4baf-8c1d-46d72914a654",
+                "key": "bad",
+                "value": {
+                  "reference": "$root",
+                  "kind": "list"
+                }
+              }
+            },
+            {
+              "t": "move",
+              "at": {
+                "actor": "conditional-actor",
+                "lamport": 4
+              },
+              "target": {
+                "actor": "conditional-actor",
+                "lamport": 3
+              },
+              "parent": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "after": null
+            }
+          ]
+        },
+        "base": {
+          "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc",
+          "serverSeq": 0,
+          "schemaVersion": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f"
+        },
+        "reservationId": "reservation-conditional-actor"
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: unknown reference or reference kind mismatch"
+        }
+      }
+    },
+    {
+      "action": "conditional",
+      "request": {
+        "change": {
+          "actor": "conditional-actor",
+          "seq": 1,
+          "ops": [
+            {
+              "t": "node",
+              "id": {
+                "actor": "conditional-actor",
+                "lamport": 1
+              },
+              "origin": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "type": "entry",
+              "attrs": {
+                "id": "data:53c6235f-1f8b-4baf-8c1d-46d72914a654",
+                "key": "conditional",
+                "value": {
+                  "scalar": true
+                }
+              }
+            },
+            {
+              "t": "move",
+              "at": {
+                "actor": "conditional-actor",
+                "lamport": 2
+              },
+              "target": {
+                "actor": "conditional-actor",
+                "lamport": 1
+              },
+              "parent": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "after": null
+            }
+          ]
+        },
+        "base": {
+          "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc",
+          "serverSeq": 0,
+          "schemaVersion": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f"
+        },
+        "reservationId": "reservation-conditional-actor"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 1,
+          "change": {
+            "actor": "conditional-actor",
+            "seq": 1,
+            "ops": [
+              {
+                "t": "node",
+                "id": {
+                  "actor": "conditional-actor",
+                  "lamport": 1
+                },
+                "origin": {
+                  "lamport": 0,
+                  "actor": "~root"
+                },
+                "type": "entry",
+                "attrs": {
+                  "id": "data:53c6235f-1f8b-4baf-8c1d-46d72914a654",
+                  "key": "conditional",
+                  "value": {
+                    "scalar": true
+                  }
+                }
+              },
+              {
+                "t": "move",
+                "at": {
+                  "actor": "conditional-actor",
+                  "lamport": 2
+                },
+                "target": {
+                  "actor": "conditional-actor",
+                  "lamport": 1
+                },
+                "parent": {
+                  "lamport": 0,
+                  "actor": "~root"
+                },
+                "after": null
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "action": "conditional",
+      "request": {
+        "change": {
+          "actor": "conditional-actor",
+          "seq": 1,
+          "ops": [
+            {
+              "t": "node",
+              "id": {
+                "actor": "conditional-actor",
+                "lamport": 1
+              },
+              "origin": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "type": "entry",
+              "attrs": {
+                "id": "data:53c6235f-1f8b-4baf-8c1d-46d72914a654",
+                "key": "conditional",
+                "value": {
+                  "scalar": true
+                }
+              }
+            },
+            {
+              "t": "move",
+              "at": {
+                "actor": "conditional-actor",
+                "lamport": 2
+              },
+              "target": {
+                "actor": "conditional-actor",
+                "lamport": 1
+              },
+              "parent": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "after": null
+            }
+          ]
+        },
+        "base": {
+          "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc",
+          "serverSeq": 0,
+          "schemaVersion": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f"
+        },
+        "reservationId": "reservation-conditional-actor"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 1,
+          "change": {
+            "actor": "conditional-actor",
+            "seq": 1,
+            "ops": [
+              {
+                "t": "node",
+                "id": {
+                  "actor": "conditional-actor",
+                  "lamport": 1
+                },
+                "origin": {
+                  "lamport": 0,
+                  "actor": "~root"
+                },
+                "type": "entry",
+                "attrs": {
+                  "id": "data:53c6235f-1f8b-4baf-8c1d-46d72914a654",
+                  "key": "conditional",
+                  "value": {
+                    "scalar": true
+                  }
+                }
+              },
+              {
+                "t": "move",
+                "at": {
+                  "actor": "conditional-actor",
+                  "lamport": 2
+                },
+                "target": {
+                  "actor": "conditional-actor",
+                  "lamport": 1
+                },
+                "parent": {
+                  "lamport": 0,
+                  "actor": "~root"
+                },
+                "after": null
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "action": "recovery",
+      "request": {
+        "change": {
+          "actor": "recovery-actor",
+          "seq": 1,
+          "ops": [
+            {
+              "t": "node",
+              "id": {
+                "actor": "recovery-actor",
+                "lamport": 1
+              },
+              "origin": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "type": "entry",
+              "attrs": {
+                "id": "data:6da41572-7758-46fe-a7af-968520dccfc6",
+                "key": "valid-prefix",
+                "value": {
+                  "scalar": true
+                }
+              }
+            },
+            {
+              "t": "move",
+              "at": {
+                "actor": "recovery-actor",
+                "lamport": 2
+              },
+              "target": {
+                "actor": "recovery-actor",
+                "lamport": 1
+              },
+              "parent": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "after": null
+            },
+            {
+              "t": "node",
+              "id": {
+                "actor": "recovery-actor",
+                "lamport": 3
+              },
+              "origin": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "type": "entry",
+              "attrs": {
+                "id": "data:fb6eb2de-202a-4efe-819c-8dd4cddd1d32",
+                "key": "bad",
+                "value": {
+                  "reference": "$root",
+                  "kind": "list"
+                }
+              }
+            },
+            {
+              "t": "move",
+              "at": {
+                "actor": "recovery-actor",
+                "lamport": 4
+              },
+              "target": {
+                "actor": "recovery-actor",
+                "lamport": 3
+              },
+              "parent": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "after": null
+            }
+          ]
+        },
+        "base": {
+          "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc",
+          "serverSeq": 1,
+          "schemaVersion": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f"
+        },
+        "reservationId": "reservation-recovery-actor"
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: unknown reference or reference kind mismatch"
+        }
+      }
+    },
+    {
+      "action": "recovery",
+      "request": {
+        "change": {
+          "actor": "recovery-actor",
+          "seq": 1,
+          "ops": [
+            {
+              "t": "node",
+              "id": {
+                "actor": "recovery-actor",
+                "lamport": 1
+              },
+              "origin": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "type": "entry",
+              "attrs": {
+                "id": "data:fb6eb2de-202a-4efe-819c-8dd4cddd1d32",
+                "key": "recovery",
+                "value": {
+                  "scalar": true
+                }
+              }
+            },
+            {
+              "t": "move",
+              "at": {
+                "actor": "recovery-actor",
+                "lamport": 2
+              },
+              "target": {
+                "actor": "recovery-actor",
+                "lamport": 1
+              },
+              "parent": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "after": null
+            }
+          ]
+        },
+        "base": {
+          "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc",
+          "serverSeq": 1,
+          "schemaVersion": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f"
+        },
+        "reservationId": "reservation-recovery-actor"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "status": "accepted",
+          "generation": "data-admission-http-generation",
+          "serverSeq": 2
+        }
+      }
+    },
+    {
+      "action": "recovery",
+      "request": {
+        "change": {
+          "actor": "recovery-actor",
+          "seq": 1,
+          "ops": [
+            {
+              "t": "node",
+              "id": {
+                "actor": "recovery-actor",
+                "lamport": 1
+              },
+              "origin": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "type": "entry",
+              "attrs": {
+                "id": "data:fb6eb2de-202a-4efe-819c-8dd4cddd1d32",
+                "key": "recovery",
+                "value": {
+                  "scalar": true
+                }
+              }
+            },
+            {
+              "t": "move",
+              "at": {
+                "actor": "recovery-actor",
+                "lamport": 2
+              },
+              "target": {
+                "actor": "recovery-actor",
+                "lamport": 1
+              },
+              "parent": {
+                "lamport": 0,
+                "actor": "~root"
+              },
+              "after": null
+            }
+          ]
+        },
+        "base": {
+          "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc",
+          "serverSeq": 1,
+          "schemaVersion": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f"
+        },
+        "reservationId": "reservation-recovery-actor"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "status": "accepted",
+          "generation": "data-admission-http-generation",
+          "serverSeq": 2
+        }
+      }
+    }
+  ],
+  "failures": [
+    "Error: Data: unknown reference or reference kind mismatch",
+    "Error: Data: unknown reference or reference kind mismatch"
+  ],
+  "headers": [
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    },
+    {
+      "action": "conditional",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    },
+    {
+      "action": "conditional",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    },
+    {
+      "action": "conditional",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    },
+    {
+      "action": "recovery",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    },
+    {
+      "action": "recovery",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    },
+    {
+      "action": "recovery",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "334d5ae7-773b-4992-971f-fb7e1e7fc8cc"
+    }
+  ]
+}

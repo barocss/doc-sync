@@ -1,0 +1,1307 @@
+
+> @doc-sync/mcp@0.0.0 test
+> node --test --test-concurrency=4 test/*.test.ts
+
+TAP version 13
+# Subtest: accepted intent cleanup interruption restores settled checkpoint once
+ok 1 - accepted intent cleanup interruption restores settled checkpoint once
+  ---
+  duration_ms: 302.191166
+  type: 'test'
+  ...
+# Subtest: accepted intent cleanup interruption restores before-snapshot checkpoint once
+ok 2 - accepted intent cleanup interruption restores before-snapshot checkpoint once
+  ---
+  duration_ms: 308.441125
+  type: 'test'
+  ...
+# Subtest: accepted intent cleanup interruption restores before-install checkpoint once
+ok 3 - accepted intent cleanup interruption restores before-install checkpoint once
+  ---
+  duration_ms: 289.070667
+  type: 'test'
+  ...
+# Subtest: accepted checkpoint with digest mismatch keeps recovery evidence and blocks edits
+ok 4 - accepted checkpoint with digest mismatch keeps recovery evidence and blocks edits
+  ---
+  duration_ms: 94.311625
+  type: 'test'
+  ...
+# Subtest: accepted checkpoint with sequence mismatch keeps recovery evidence and blocks edits
+ok 5 - accepted checkpoint with sequence mismatch keeps recovery evidence and blocks edits
+  ---
+  duration_ms: 112.292667
+  type: 'test'
+  ...
+# Subtest: accepted checkpoint with receipt mismatch keeps recovery evidence and blocks edits
+ok 6 - accepted checkpoint with receipt mismatch keeps recovery evidence and blocks edits
+  ---
+  duration_ms: 104.501542
+  type: 'test'
+  ...
+# Subtest: accepted checkpoint with reservation mismatch keeps recovery evidence and blocks edits
+ok 7 - accepted checkpoint with reservation mismatch keeps recovery evidence and blocks edits
+  ---
+  duration_ms: 102.768625
+  type: 'test'
+  ...
+# Subtest: accepted checkpoint with generation mismatch keeps recovery evidence and blocks edits
+ok 8 - accepted checkpoint with generation mismatch keeps recovery evidence and blocks edits
+  ---
+  duration_ms: 85.737542
+  type: 'test'
+  ...
+# Subtest: accepted checkpoint with schema mismatch keeps recovery evidence and blocks edits
+ok 9 - accepted checkpoint with schema mismatch keeps recovery evidence and blocks edits
+  ---
+  duration_ms: 72.621042
+  type: 'test'
+  ...
+# Subtest: accepted checkpoint with history mismatch keeps recovery evidence and blocks edits
+ok 10 - accepted checkpoint with history mismatch keeps recovery evidence and blocks edits
+  ---
+  duration_ms: 80.876458
+  type: 'test'
+  ...
+# Subtest: restore refreshes epoch after a durable reservation proof reopens the same generation
+ok 11 - restore refreshes epoch after a durable reservation proof reopens the same generation
+  ---
+  duration_ms: 163.373375
+  type: 'test'
+  ...
+# Subtest: AI and user collaboration scenarios
+    # Subtest: three agents race on one base; losers reread and each undo preserves others
+    ok 1 - three agents race on one base; losers reread and each undo preserves others
+      ---
+      duration_ms: 521.017917
+      type: 'test'
+      ...
+    # Subtest: offline user and AI insert at one position; separate undo and redo retain both intents
+    ok 2 - offline user and AI insert at one position; separate undo and redo retain both intents
+      ---
+      duration_ms: 445.28
+      type: 'test'
+      ...
+    # Subtest: offline deletion and AI bold undo and redo independently
+    ok 3 - offline deletion and AI bold undo and redo independently
+      ---
+      duration_ms: 515.426292
+      type: 'test'
+      ...
+    # Subtest: offline user split and AI text insertion preserve structure and participant history
+    ok 4 - offline user split and AI text insertion preserve structure and participant history
+      ---
+      duration_ms: 435.188833
+      type: 'test'
+      ...
+    # Subtest: AI undo and redo do not restore text deleted by the user
+    ok 5 - AI undo and redo do not restore text deleted by the user
+      ---
+      duration_ms: 454.989542
+      type: 'test'
+      ...
+    # Subtest: user changes invalidate saved AI base; invalid multi-edit is atomic
+    ok 6 - user changes invalidate saved AI base; invalid multi-edit is atomic
+      ---
+      duration_ms: 850.682334
+      type: 'test'
+      ...
+    # Subtest: agent restart restores its history without undoing a later user edit
+    ok 7 - agent restart restores its history without undoing a later user edit
+      ---
+      duration_ms: 1484.378542
+      type: 'test'
+      ...
+    1..7
+ok 12 - AI and user collaboration scenarios
+  ---
+  duration_ms: 5007.757875
+  type: 'test'
+  ...
+# Subtest: recovery reservation survives peer lease expiry and a killed server, without losing another user's edit
+ok 13 - recovery reservation survives peer lease expiry and a killed server, without losing another user's edit
+  ---
+  duration_ms: 502.08975
+  type: 'test'
+  ...
+# Subtest: MCP restart restores edit history across server restart, undo, another restart, and redo
+ok 14 - MCP restart restores edit history across server restart, undo, another restart, and redo
+  ---
+  duration_ms: 1594.556292
+  type: 'test'
+  ...
+# Subtest: MCP killed during undo before-send: exact receipt controls automatic recovery
+ok 15 - MCP killed during undo before-send: exact receipt controls automatic recovery
+  ---
+  duration_ms: 2496.53525
+  type: 'test'
+  ...
+# Subtest: MCP killed during undo after-accept: exact receipt controls automatic recovery
+ok 16 - MCP killed during undo after-accept: exact receipt controls automatic recovery
+  ---
+  duration_ms: 2984.180083
+  type: 'test'
+  ...
+# Subtest: MCP killed during redo before-send: exact receipt controls automatic recovery
+ok 17 - MCP killed during redo before-send: exact receipt controls automatic recovery
+  ---
+  duration_ms: 1645.509959
+  type: 'test'
+  ...
+# Subtest: MCP killed during redo after-accept: exact receipt controls automatic recovery
+ok 18 - MCP killed during redo after-accept: exact receipt controls automatic recovery
+  ---
+  duration_ms: 1731.695917
+  type: 'test'
+  ...
+# Subtest: MCP startup waits for atomic recovery and repeated restart hello before stdio admission
+ok 19 - MCP startup waits for atomic recovery and repeated restart hello before stdio admission
+  ---
+  duration_ms: 1610.179291
+  type: 'test'
+  ...
+# Subtest: unavailable atomic recovery keeps the pending checkpoint and blocks edits until a later restart
+ok 20 - unavailable atomic recovery keeps the pending checkpoint and blocks edits until a later restart
+  ---
+  duration_ms: 2124.516667
+  type: 'test'
+  ...
+# Subtest: SDK read_document_slice validates bounded input and reports local model scope
+ok 21 - SDK read_document_slice validates bounded input and reports local model scope
+  ---
+  duration_ms: 62.692083
+  type: 'test'
+  ...
+# Subtest: cached store create completes file and directory durability without rewriting
+ok 22 - cached store create completes file and directory durability without rewriting
+  ---
+  duration_ms: 84.481375
+  type: 'test'
+  ...
+# Subtest: cached HTTP create returns 503 until both sync barriers succeed without upstream access
+ok 23 - cached HTTP create returns 503 until both sync barriers succeed without upstream access
+  ---
+  duration_ms: 200.791833
+  type: 'test'
+  ...
+# Subtest: cached store reject completes file and directory durability without rewriting
+ok 24 - cached store reject completes file and directory durability without rewriting
+  ---
+  duration_ms: 65.302792
+  type: 'test'
+  ...
+# Subtest: cached HTTP reject returns 503 until both sync barriers succeed without upstream access
+ok 25 - cached HTTP reject returns 503 until both sync barriers succeed without upstream access
+  ---
+  duration_ms: 191.082917
+  type: 'test'
+  ...
+# Subtest: checkpoint persists privately and restores the original actor and history
+ok 26 - checkpoint persists privately and restores the original actor and history
+  ---
+  duration_ms: 52.641416
+  type: 'test'
+  ...
+# Subtest: invalid input and corrupt checkpoint do not overwrite stored bytes
+ok 27 - invalid input and corrupt checkpoint do not overwrite stored bytes
+  ---
+  duration_ms: 45.197083
+  type: 'test'
+  ...
+# Subtest: checkpoint and writer lock survive a process termination
+ok 28 - checkpoint and writer lock survive a process termination
+  ---
+  duration_ms: 183.758041
+  type: 'test'
+  ...
+# Subtest: real demo startup waits for complete port before selecting an origin (occupied prefix: false)
+ok 29 - real demo startup waits for complete port before selecting an origin (occupied prefix: false)
+  ---
+  duration_ms: 189.662084
+  type: 'test'
+  ...
+# Subtest: real demo startup waits for complete port before selecting an origin (occupied prefix: true)
+ok 30 - real demo startup waits for complete port before selecting an origin (occupied prefix: true)
+  ---
+  duration_ms: 202.830875
+  type: 'test'
+  ...
+# Subtest: checkpoint failure before durable discard does not send release
+ok 31 - checkpoint failure before durable discard does not send release
+  ---
+  duration_ms: 136.89375
+  type: 'test'
+  ...
+# Subtest: checkpoint failure after durable discard does not send release
+ok 32 - checkpoint failure after durable discard does not send release
+  ---
+  duration_ms: 163.700333
+  type: 'test'
+  ...
+# Subtest: lost release response retains marker and is safely retried after restart
+ok 33 - lost release response retains marker and is safely retried after restart
+  ---
+  duration_ms: 152.962208
+  type: 'test'
+  ...
+# Subtest: new reservation failure before acceptance retains recoverable checkpoint
+ok 34 - new reservation failure before acceptance retains recoverable checkpoint
+  ---
+  duration_ms: 158.681333
+  type: 'test'
+  ...
+# Subtest: new reservation failure after acceptance retains recoverable checkpoint
+ok 35 - new reservation failure after acceptance retains recoverable checkpoint
+  ---
+  duration_ms: 194.936875
+  type: 'test'
+  ...
+# Subtest: late echo with an unknown stored receipt blocks discard without release
+ok 36 - late echo with an unknown stored receipt blocks discard without release
+  ---
+  duration_ms: 378.47025
+  type: 'test'
+  ...
+# Subtest: discard releases only its own reservation and permits GC while keeping other edits
+ok 37 - discard releases only its own reservation and permits GC while keeping other edits
+  ---
+  duration_ms: 1253.737
+  type: 'test'
+  ...
+# Subtest: discard recovers across MCP and server crash before-send of reservation release
+ok 38 - discard recovers across MCP and server crash before-send of reservation release
+  ---
+  duration_ms: 3376.771917
+  type: 'test'
+  ...
+# Subtest: discard recovers across MCP and server crash after-accept of reservation release
+ok 39 - discard recovers across MCP and server crash after-accept of reservation release
+  ---
+  duration_ms: 2103.514292
+  type: 'test'
+  ...
+# Subtest: discard rejects an unresolved ordinary change without changing its evidence
+ok 40 - discard rejects an unresolved ordinary change without changing its evidence
+  ---
+  duration_ms: 2070.422042
+  type: 'test'
+  ...
+# Subtest: discard rejects an unresolved conditional intent and preserves it across restart
+ok 41 - discard rejects an unresolved conditional intent and preserves it across restart
+  ---
+  duration_ms: 1503.789333
+  type: 'test'
+  ...
+# Subtest: late echo cannot discard persisted pending history without an exact receipt
+ok 42 - late echo cannot discard persisted pending history without an exact receipt
+  ---
+  duration_ms: 11172.555417
+  type: 'test'
+  ...
+# Subtest: canonical actor aliases and invalid journal document IDs fail configuration
+ok 43 - canonical actor aliases and invalid journal document IDs fail configuration
+  ---
+  duration_ms: 228.032291
+  type: 'test'
+  ...
+# Subtest: read grants cannot directly invoke any mutation or schema tool
+ok 44 - read grants cannot directly invoke any mutation or schema tool
+  ---
+  duration_ms: 515.142542
+  type: 'test'
+  ...
+# Subtest: duplicate initialize and provisional capacity reserve before schema discovery
+ok 45 - duplicate initialize and provisional capacity reserve before schema discovery
+  ---
+  duration_ms: 499.247334
+  type: 'test'
+  ...
+# Subtest: DELETE drains a delayed edit, retains its journal lock, and sends no late leave
+ok 46 - DELETE drains a delayed edit, retains its journal lock, and sends no late leave
+  ---
+  duration_ms: 506.844042
+  type: 'test'
+  ...
+# Subtest: idle cleanup closes the actor and repeated shutdown shares one promise
+ok 47 - idle cleanup closes the actor and repeated shutdown shares one promise
+  ---
+  duration_ms: 334.313916
+  type: 'test'
+  ...
+# Subtest: shutdown refuses initialize whose body completes after shutdown starts
+ok 48 - shutdown refuses initialize whose body completes after shutdown starts
+  ---
+  duration_ms: 4314.603084
+  type: 'test'
+  ...
+# Subtest: chunked overflow gets 413 and bounded raw-body readers reject slow parallel bodies
+ok 49 - chunked overflow gets 413 and bounded raw-body readers reject slow parallel bodies
+  ---
+  duration_ms: 160.379917
+  type: 'test'
+  ...
+# Subtest: admitted tool calls are bounded while a schema read is delayed
+ok 50 - admitted tool calls are bounded while a schema read is delayed
+  ---
+  duration_ms: 241.82025
+  type: 'test'
+  ...
+# Subtest: failed initialize releases provisional capacity and rejects unsafe existing data directories
+ok 51 - failed initialize releases provisional capacity and rejects unsafe existing data directories
+  ---
+  duration_ms: 1152.004875
+  type: 'test'
+  ...
+# Subtest: retargeted route cannot load the previous physical actor checkpoint
+ok 52 - retargeted route cannot load the previous physical actor checkpoint
+  ---
+  duration_ms: 396.830166
+  type: 'test'
+  ...
+# Subtest: read credential cannot replay a pending checkpoint; write credential recovers it and preserves user text
+ok 53 - read credential cannot replay a pending checkpoint; write credential recovers it and preserves user text
+  ---
+  duration_ms: 414.035541
+  type: 'test'
+  ...
+# Subtest: foreign routes, guessed sessions and forged identity headers cannot change selected actor
+ok 54 - foreign routes, guessed sessions and forged identity headers cannot change selected actor
+  ---
+  duration_ms: 226.488959
+  type: 'test'
+  ...
+# Subtest: schema permission changes only the configured document
+ok 55 - schema permission changes only the configured document
+  ---
+  duration_ms: 359.506042
+  type: 'test'
+  ...
+# Subtest: stdio shutdown reads settled state after its admitted queue drains
+ok 56 - stdio shutdown reads settled state after its admitted queue drains
+  ---
+  duration_ms: 1.196875
+  type: 'test'
+  ...
+# Subtest: real SIGKILL + MCP/upstream process restart restores actor history and preserves second actor
+ok 57 - real SIGKILL + MCP/upstream process restart restores actor history and preserves second actor
+  ---
+  duration_ms: 2553.907333
+  type: 'test'
+  ...
+# Subtest: SIGKILL before send preserves exact unknown journal and blocks automatic replay
+ok 58 - SIGKILL before send preserves exact unknown journal and blocks automatic replay
+  ---
+  duration_ms: 1024.448792
+  type: 'test'
+  ...
+# Subtest: SIGKILL after upstream acceptance resolves only the exact durable receipt after restart
+ok 59 - SIGKILL after upstream acceptance resolves only the exact durable receipt after restart
+  ---
+  duration_ms: 1084.501125
+  type: 'test'
+  ...
+# Subtest: SIGTERM waits for a delayed admitted edit before closing durable resources
+ok 60 - SIGTERM waits for a delayed admitted edit before closing durable resources
+  ---
+  duration_ms: 1178.079292
+  type: 'test'
+  ...
+# Subtest: CLI rejects nonprivate, symlink, hardlinked and oversized configuration without leaking credentials
+ok 61 - CLI rejects nonprivate, symlink, hardlinked and oversized configuration without leaking credentials
+  ---
+  duration_ms: 965.752
+  type: 'test'
+  ...
+# Subtest: browser HttpTransport retains default and product-relative recovery fetch targets
+ok 62 - browser HttpTransport retains default and product-relative recovery fetch targets
+  ---
+  duration_ms: 11.592167
+  type: 'test'
+  ...
+# Subtest: configured upstream headers require an absolute valid HTTP URL
+ok 63 - configured upstream headers require an absolute valid HTTP URL
+  ---
+  duration_ms: 0.795041
+  type: 'test'
+  ...
+# Subtest: all upstream requests use only configured credentials and refuse redirects
+ok 64 - all upstream requests use only configured credentials and refuse redirects
+  ---
+  duration_ms: 4.884416
+  type: 'test'
+  ...
+# Subtest: real redirect target receives no schema, SSE or mutation request and no secret
+ok 65 - real redirect target receives no schema, SSE or mutation request and no secret
+  ---
+  duration_ms: 26.379166
+  type: 'test'
+  ...
+# Subtest: strict configuration and synchronous capacity reservations
+ok 66 - strict configuration and synchronous capacity reservations
+  ---
+  duration_ms: 3.629584
+  type: 'test'
+  ...
+# Subtest: every tool authorization runs before session access
+ok 67 - every tool authorization runs before session access
+  ---
+  duration_ms: 18.987125
+  type: 'test'
+  ...
+# Subtest: HTTP boundary rejects credentials, host, origin and bodies before upstream
+ok 68 - HTTP boundary rejects credentials, host, origin and bodies before upstream
+  ---
+  duration_ms: 30.86225
+  type: 'test'
+  ...
+# Subtest: SDK HTTP initialize, grant binding, edit, DELETE and stable reconnect history
+ok 69 - SDK HTTP initialize, grant binding, edit, DELETE and stable reconnect history
+  ---
+  duration_ms: 466.912
+  type: 'test'
+  ...
+# Subtest: SDK stdio client: schema, validated edits, concurrent user changes and actor undo/redo
+ok 70 - SDK stdio client: schema, validated edits, concurrent user changes and actor undo/redo
+  ---
+  duration_ms: 1028.172791
+  type: 'test'
+  ...
+# Subtest: journal persists the exact intent privately and restores the actor without replaying
+ok 71 - journal persists the exact intent privately and restores the actor without replaying
+  ---
+  duration_ms: 71.676042
+  type: 'test'
+  ...
+# Subtest: corrupt, mismatched and symbolic journal inputs are refused without changing their files
+ok 72 - corrupt, mismatched and symbolic journal inputs are refused without changing their files
+  ---
+  duration_ms: 6.734375
+  type: 'test'
+  ...
+# Subtest: digest corruption and actor mismatch never overwrite the record
+ok 73 - digest corruption and actor mismatch never overwrite the record
+  ---
+  duration_ms: 26.634
+  type: 'test'
+  ...
+# Subtest: concurrent writes within one process cannot replace an unresolved intent
+ok 74 - concurrent writes within one process cannot replace an unresolved intent
+  ---
+  duration_ms: 22.987208
+  type: 'test'
+  ...
+# Subtest: a rejected persistence attempt cannot replace an existing intent
+ok 75 - a rejected persistence attempt cannot replace an existing intent
+  ---
+  duration_ms: 18.648583
+  type: 'test'
+  ...
+# Subtest: a failed pre-send journal write leaves no apparent prepared request
+ok 76 - a failed pre-send journal write leaves no apparent prepared request
+  ---
+  duration_ms: 3.163917
+  type: 'test'
+  ...
+# Subtest: a retry after rename cannot proceed until directory sync succeeds
+ok 77 - a retry after rename cannot proceed until directory sync succeeds
+  ---
+  duration_ms: 40.802125
+  type: 'test'
+  ...
+# Subtest: kernel writer lock excludes another process and is released after SIGKILL
+ok 78 - kernel writer lock excludes another process and is released after SIGKILL
+  ---
+  duration_ms: 125.351708
+  type: 'test'
+  ...
+# Subtest: unsupported platforms fail closed instead of using an unsafe lock
+ok 79 - unsupported platforms fail closed instead of using an unsafe lock # SKIP
+  ---
+  duration_ms: 0.2935
+  type: 'test'
+  ...
+# Subtest: writer exclusion remains after acquisition helper exits and close permits relock on the same inode
+ok 80 - writer exclusion remains after acquisition helper exits and close permits relock on the same inode
+  ---
+  duration_ms: 4.45975
+  type: 'test'
+  ...
+# Subtest: journal refuses symlink input at intent and preserves its bytes
+ok 81 - journal refuses symlink input at intent and preserves its bytes
+  ---
+  duration_ms: 2.593792
+  type: 'test'
+  ...
+# Subtest: journal refuses hardlink input at intent and preserves its bytes
+ok 82 - journal refuses hardlink input at intent and preserves its bytes
+  ---
+  duration_ms: 2.645541
+  type: 'test'
+  ...
+# Subtest: journal refuses public input at intent and preserves its bytes
+ok 83 - journal refuses public input at intent and preserves its bytes
+  ---
+  duration_ms: 2.108167
+  type: 'test'
+  ...
+# Subtest: journal refuses fifo input at intent and preserves its bytes
+ok 84 - journal refuses fifo input at intent and preserves its bytes
+  ---
+  duration_ms: 22.676208
+  type: 'test'
+  ...
+# Subtest: journal refuses symlink input at .lock and preserves its bytes
+ok 85 - journal refuses symlink input at .lock and preserves its bytes
+  ---
+  duration_ms: 2.187417
+  type: 'test'
+  ...
+# Subtest: journal refuses hardlink input at .lock and preserves its bytes
+ok 86 - journal refuses hardlink input at .lock and preserves its bytes
+  ---
+  duration_ms: 2.997875
+  type: 'test'
+  ...
+# Subtest: journal refuses public input at .lock and preserves its bytes
+ok 87 - journal refuses public input at .lock and preserves its bytes
+  ---
+  duration_ms: 2.768959
+  type: 'test'
+  ...
+# Subtest: journal refuses fifo input at .lock and preserves its bytes
+ok 88 - journal refuses fifo input at .lock and preserves its bytes
+  ---
+  duration_ms: 16.669
+  type: 'test'
+  ...
+# Subtest: journal refuses symlink input at .checkpoint and preserves its bytes
+ok 89 - journal refuses symlink input at .checkpoint and preserves its bytes
+  ---
+  duration_ms: 8.577917
+  type: 'test'
+  ...
+# Subtest: journal refuses hardlink input at .checkpoint and preserves its bytes
+ok 90 - journal refuses hardlink input at .checkpoint and preserves its bytes
+  ---
+  duration_ms: 2.411833
+  type: 'test'
+  ...
+# Subtest: journal refuses public input at .checkpoint and preserves its bytes
+ok 91 - journal refuses public input at .checkpoint and preserves its bytes
+  ---
+  duration_ms: 2.784584
+  type: 'test'
+  ...
+# Subtest: journal refuses fifo input at .checkpoint and preserves its bytes
+ok 92 - journal refuses fifo input at .checkpoint and preserves its bytes
+  ---
+  duration_ms: 29.544042
+  type: 'test'
+  ...
+# Subtest: Linux helper errors fail closed and close the descriptor before a retry
+ok 93 - Linux helper errors fail closed and close the descriptor before a retry # SKIP
+  ---
+  duration_ms: 0.066625
+  type: 'test'
+  ...
+# Subtest: two MCP agents use separate histories and reconcile a stale concurrent base
+ok 94 - two MCP agents use separate histories and reconcile a stale concurrent base
+  ---
+  duration_ms: 1302.329917
+  type: 'test'
+  ...
+# Subtest: owner accept applies one immutable edit; same attempt is idempotent; restored actor undo preserves foreign edits
+ok 95 - owner accept applies one immutable edit; same attempt is idempotent; restored actor undo preserves foreign edits
+  ---
+  duration_ms: 1165.777458
+  type: 'test'
+  ...
+# Subtest: accept is separate opt-in; wrong digest, creator, unanswered questions and overrides deny without upstream
+ok 96 - accept is separate opt-in; wrong digest, creator, unanswered questions and overrides deny without upstream
+  ---
+  duration_ms: 273.5775
+  type: 'test'
+  ...
+# Subtest: changed authoritative base marks stale and sends no conditional change
+ok 97 - changed authoritative base marks stale and sends no conditional change
+  ---
+  duration_ms: 283.304292
+  type: 'test'
+  ...
+# Subtest: prepared guard refuses wire scope escapes and runs before journal.prepare or transport
+ok 98 - prepared guard refuses wire scope escapes and runs before journal.prepare or transport
+  ---
+  duration_ms: 11.289375
+  type: 'test'
+  ...
+# Subtest: two scalar-range replacements form separate actor history groups
+ok 99 - two scalar-range replacements form separate actor history groups
+  ---
+  duration_ms: 1270.001708
+  type: 'test'
+  ...
+# Subtest: a concurrent change before submission settles the exact rejected attempt without blocking fresh reads
+ok 100 - a concurrent change before submission settles the exact rejected attempt without blocking fresh reads
+  ---
+  duration_ms: 663.630708
+  type: 'test'
+  ...
+# Subtest: a prepared authorizer requires durability before any transport contact
+ok 101 - a prepared authorizer requires durability before any transport contact
+  ---
+  duration_ms: 0.975958
+  type: 'test'
+  ...
+# Subtest: cached terminal approval confirms file and directory durability before acknowledgment
+ok 102 - cached terminal approval confirms file and directory durability before acknowledgment
+  ---
+  duration_ms: 623.579584
+  type: 'test'
+  ...
+# Subtest: approval persists, exact UUID/grant retries survive restart; accept/reject has one winner
+ok 103 - approval persists, exact UUID/grant retries survive restart; accept/reject has one winner
+  ---
+  duration_ms: 309.610833
+  type: 'test'
+  ...
+# Subtest: startup inspection creates no absent storage and sees durable unresolved approvals
+ok 104 - startup inspection creates no absent storage and sees durable unresolved approvals
+  ---
+  duration_ms: 73.711625
+  type: 'test'
+  ...
+# Subtest: exact immutable private bridge validates actor, route, approval, base and reproduced operations
+ok 105 - exact immutable private bridge validates actor, route, approval, base and reproduced operations
+  ---
+  duration_ms: 736.290209
+  type: 'test'
+  ...
+# Subtest: negative settlement restarts after proof without startup, edit replay or history loss
+ok 106 - negative settlement restarts after proof without startup, edit replay or history loss
+  ---
+  duration_ms: 291.845959
+  type: 'test'
+  ...
+# Subtest: negative settlement restarts after checkpoint without startup, edit replay or history loss
+ok 107 - negative settlement restarts after checkpoint without startup, edit replay or history loss
+  ---
+  duration_ms: 301.779042
+  type: 'test'
+  ...
+# Subtest: negative settlement restarts after clear without startup, edit replay or history loss
+ok 108 - negative settlement restarts after clear without startup, edit replay or history loss
+  ---
+  duration_ms: 318.135958
+  type: 'test'
+  ...
+# Subtest: negative settlement restarts after terminal without startup, edit replay or history loss
+ok 109 - negative settlement restarts after terminal without startup, edit replay or history loss
+  ---
+  duration_ms: 347.5815
+  type: 'test'
+  ...
+# Subtest: unknown and mismatched negative evidence preserve the journal and checkpoint
+ok 110 - unknown and mismatched negative evidence preserve the journal and checkpoint
+  ---
+  duration_ms: 126.370958
+  type: 'test'
+  ...
+# Subtest: unexpected pending, source tag, sequence or missing plan blocks cleanup
+ok 111 - unexpected pending, source tag, sequence or missing plan blocks cleanup
+  ---
+  duration_ms: 187.560125
+  type: 'test'
+  ...
+# Subtest: fsync failure at plan is retried before intent deletion
+ok 112 - fsync failure at plan is retried before intent deletion
+  ---
+  duration_ms: 331.529792
+  type: 'test'
+  ...
+# Subtest: fsync failure at checkpoint is retried before intent deletion
+ok 113 - fsync failure at checkpoint is retried before intent deletion
+  ---
+  duration_ms: 276.478625
+  type: 'test'
+  ...
+# Subtest: proposal accepted-response loss: real host/server restart reconciles once and recovered actor undo/redo preserves human edits
+ok 114 - proposal accepted-response loss: real host/server restart reconciles once and recovered actor undo/redo preserves human edits
+  ---
+  duration_ms: 2684.939709
+  type: 'test'
+  ...
+# Subtest: proposal pre-send SIGKILL: unknown receipt remains blocked across full restart with exact journal/bridge bytes
+ok 115 - proposal pre-send SIGKILL: unknown receipt remains blocked across full restart with exact journal/bridge bytes
+  ---
+  duration_ms: 1174.869875
+  type: 'test'
+  ...
+# Subtest: real process kill before-approval: durable approval/evidence gap fails closed or reconciles exact receipt
+ok 116 - real process kill before-approval: durable approval/evidence gap fails closed or reconciles exact receipt
+  ---
+  duration_ms: 984.052917
+  type: 'test'
+  ...
+# Subtest: real process kill after-approval: durable approval/evidence gap fails closed or reconciles exact receipt
+ok 117 - real process kill after-approval: durable approval/evidence gap fails closed or reconciles exact receipt
+  ---
+  duration_ms: 1279.474625
+  type: 'test'
+  ...
+# Subtest: real process kill after-bridge: durable approval/evidence gap fails closed or reconciles exact receipt
+ok 118 - real process kill after-bridge: durable approval/evidence gap fails closed or reconciles exact receipt
+  ---
+  duration_ms: 1561.040417
+  type: 'test'
+  ...
+# Subtest: real process kill before-outcome: durable approval/evidence gap fails closed or reconciles exact receipt
+ok 119 - real process kill before-outcome: durable approval/evidence gap fails closed or reconciles exact receipt
+  ---
+  duration_ms: 1850.79975
+  type: 'test'
+  ...
+# Subtest: 1 hosted process: concurrent accept/accept has one serialized winner
+ok 120 - 1 hosted process: concurrent accept/accept has one serialized winner
+  ---
+  duration_ms: 971.399375
+  type: 'test'
+  ...
+# Subtest: 1 hosted process: concurrent accept/reject has one serialized winner
+ok 121 - 1 hosted process: concurrent accept/reject has one serialized winner
+  ---
+  duration_ms: 1373.575625
+  type: 'test'
+  ...
+# Subtest: 2 hosted processes: concurrent accept/accept has one serialized winner
+ok 122 - 2 hosted processes: concurrent accept/accept has one serialized winner
+  ---
+  duration_ms: 1255.090375
+  type: 'test'
+  ...
+# Subtest: 2 hosted processes: concurrent accept/reject has one serialized winner
+ok 123 - 2 hosted processes: concurrent accept/reject has one serialized winner
+  ---
+  duration_ms: 1163.435125
+  type: 'test'
+  ...
+# Subtest: revoked owner cannot reconcile after restart; retarget cannot inspect or apply the old physical proposal
+ok 124 - revoked owner cannot reconcile after restart; retarget cannot inspect or apply the old physical proposal
+  ---
+  duration_ms: 1487.794041
+  type: 'test'
+  ...
+# Subtest: a foreign edit between prepared bridge and conditional send rejects the old base without replay
+ok 125 - a foreign edit between prepared bridge and conditional send rejects the old base without replay
+  ---
+  duration_ms: 1299.449792
+  type: 'test'
+  ...
+# Subtest: an unresolved accepted proposal blocks a different proposal before journal restoration; exact first recovery preserves foreign edits
+ok 126 - an unresolved accepted proposal blocks a different proposal before journal restoration; exact first recovery preserves foreign edits
+  ---
+  duration_ms: 1976.382042
+  type: 'test'
+  ...
+# Subtest: restart with missing-bridge preserves original evidence and blocks receipt restore before upstream
+ok 127 - restart with missing-bridge preserves original evidence and blocks receipt restore before upstream
+  ---
+  duration_ms: 1163.239542
+  type: 'test'
+  ...
+# Subtest: restart with corrupt-bridge preserves original evidence and blocks receipt restore before upstream
+ok 128 - restart with corrupt-bridge preserves original evidence and blocks receipt restore before upstream
+  ---
+  duration_ms: 1358.488542
+  type: 'test'
+  ...
+# Subtest: restart with checkpoint-source preserves original evidence and blocks receipt restore before upstream
+ok 129 - restart with checkpoint-source preserves original evidence and blocks receipt restore before upstream
+  ---
+  duration_ms: 1220.655292
+  type: 'test'
+  ...
+# Subtest: accept-only owner refuses an unrelated durable actor intent before participant startup and preserves it after restart
+ok 130 - accept-only owner refuses an unrelated durable actor intent before participant startup and preserves it after restart
+  ---
+  duration_ms: 777.891834
+  type: 'test'
+  ...
+# Subtest: cached applied approval retries require file and directory sync without actor startup or duplicate send
+ok 131 - cached applied approval retries require file and directory sync without actor startup or duplicate send
+  ---
+  duration_ms: 782.529375
+  type: 'test'
+  ...
+# Subtest: stale prepared approval retires exact IDs, preserves prior history and foreign text, and fences delayed replay after GC and server restart
+ok 132 - stale prepared approval retires exact IDs, preserves prior history and foreign text, and fences delayed replay after GC and server restart
+  ---
+  duration_ms: 2317.914834
+  type: 'test'
+  ...
+# Subtest: rejection SIGKILL after-plan: durable negative plan resumes after host and upstream restart
+ok 133 - rejection SIGKILL after-plan: durable negative plan resumes after host and upstream restart
+  ---
+  duration_ms: 2086.1985
+  type: 'test'
+  ...
+# Subtest: rejection SIGKILL after-checkpoint: durable negative plan resumes after host and upstream restart
+ok 134 - rejection SIGKILL after-checkpoint: durable negative plan resumes after host and upstream restart
+  ---
+  duration_ms: 2054.455917
+  type: 'test'
+  ...
+# Subtest: rejection SIGKILL after-clear: durable negative plan resumes after host and upstream restart
+ok 135 - rejection SIGKILL after-clear: durable negative plan resumes after host and upstream restart
+  ---
+  duration_ms: 2429.362209
+  type: 'test'
+  ...
+# Subtest: rejection SIGKILL before-terminal: durable negative plan resumes after host and upstream restart
+ok 136 - rejection SIGKILL before-terminal: durable negative plan resumes after host and upstream restart
+  ---
+  duration_ms: 2436.672917
+  type: 'test'
+  ...
+# Subtest: settlement storage uncertainty preserves journal and checkpoint and blocks actor reuse
+ok 137 - settlement storage uncertainty preserves journal and checkpoint and blocks actor reuse
+  ---
+  duration_ms: 1572.037166
+  type: 'test'
+  ...
+# Subtest: settlement generation uncertainty preserves journal and checkpoint and blocks actor reuse
+ok 138 - settlement generation uncertainty preserves journal and checkpoint and blocks actor reuse
+  ---
+  duration_ms: 1587.264833
+  type: 'test'
+  ...
+# Subtest: generation reset after durable negative proof preserves unfinished retirement and blocks actor reuse
+ok 139 - generation reset after durable negative proof preserves unfinished retirement and blocks actor reuse
+  ---
+  duration_ms: 1815.19
+  type: 'test'
+  ...
+# Subtest: rejection after-plan with a different valid checkpoint hash preserves journal and blocks cleanup
+ok 140 - rejection after-plan with a different valid checkpoint hash preserves journal and blocks cleanup
+  ---
+  duration_ms: 1400.452458
+  type: 'test'
+  ...
+# Subtest: rejection after-checkpoint with a different valid checkpoint hash preserves journal and blocks cleanup
+ok 141 - rejection after-checkpoint with a different valid checkpoint hash preserves journal and blocks cleanup
+  ---
+  duration_ms: 1662.481083
+  type: 'test'
+  ...
+# Subtest: rejection plan-file-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+ok 142 - rejection plan-file-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+  ---
+  duration_ms: 2076.623042
+  type: 'test'
+  ...
+# Subtest: rejection plan-directory-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+ok 143 - rejection plan-directory-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+  ---
+  duration_ms: 1849.515625
+  type: 'test'
+  ...
+# Subtest: rejection checkpoint-directory-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+ok 144 - rejection checkpoint-directory-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+  ---
+  duration_ms: 1775.714875
+  type: 'test'
+  ...
+# Subtest: proposal creation and rejection leave actual upstream snapshot/sequence unchanged; owner boundary
+ok 145 - proposal creation and rejection leave actual upstream snapshot/sequence unchanged; owner boundary
+  ---
+  duration_ms: 346.289709
+  type: 'test'
+  ...
+# Subtest: unauthorized/unsupported proposals deny before any upstream access and default is disabled
+ok 146 - unauthorized/unsupported proposals deny before any upstream access and default is disabled
+  ---
+  duration_ms: 111.337125
+  type: 'test'
+  ...
+# Subtest: busy actor and unresolved journal refuse capture before upstream; owner list stays available
+ok 147 - busy actor and unresolved journal refuse capture before upstream; owner list stays available
+  ---
+  duration_ms: 261.591292
+  type: 'test'
+  ...
+# Subtest: exact generation, schema and revision are mandatory; retargeted store is isolated
+ok 148 - exact generation, schema and revision are mandatory; retargeted store is isolated
+  ---
+  duration_ms: 262.163333
+  type: 'test'
+  ...
+# Subtest: proposal HTTP host/origin/session/body bounds and slow readers retain existing admission
+ok 149 - proposal HTTP host/origin/session/body bounds and slow readers retain existing admission
+  ---
+  duration_ms: 222.726125
+  type: 'test'
+  ...
+# Subtest: owner GET holds bounded admission through store cleanup and shutdown drains it
+ok 150 - owner GET holds bounded admission through store cleanup and shutdown drains it
+  ---
+  duration_ms: 186.260625
+  type: 'test'
+  ...
+# Subtest: pure UTF16 preview matches independent string oracle and refuses scalar splits
+ok 151 - pure UTF16 preview matches independent string oracle and refuses scalar splits
+  ---
+  duration_ms: 0.677
+  type: 'test'
+  ...
+# Subtest: schema refuses authority fields, structural changes, deep paths and claimed check status
+ok 152 - schema refuses authority fields, structural changes, deep paths and claimed check status
+  ---
+  duration_ms: 3.078334
+  type: 'test'
+  ...
+# Subtest: creator capability cannot be combined with write or owner decisions
+ok 153 - creator capability cannot be combined with write or owner decisions
+  ---
+  duration_ms: 6.366125
+  type: 'test'
+  ...
+# Subtest: durable immutable create/reject and private store isolation
+ok 154 - durable immutable create/reject and private store isolation
+  ---
+  duration_ms: 58.764125
+  type: 'test'
+  ...
+# Subtest: corrupt, symlink, hardlink and public record remain untouched
+ok 155 - corrupt, symlink, hardlink and public record remain untouched
+  ---
+  duration_ms: 22.034791
+  type: 'test'
+  ...
+# Subtest: hard unresolved quota never deletes; store close drains admitted operation
+ok 156 - hard unresolved quota never deletes; store close drains admitted operation
+  ---
+  duration_ms: 5601.224125
+  type: 'test'
+  ...
+# Subtest: SIGKILL releases permanent kernel inode; persisted proposal survives restart
+ok 157 - SIGKILL releases permanent kernel inode; persisted proposal survives restart
+  ---
+  duration_ms: 187.015916
+  type: 'test'
+  ...
+# Subtest: FIFO record and lock fail without waiting or removing evidence
+ok 158 - FIFO record and lock fail without waiting or removing evidence
+  ---
+  duration_ms: 19.7365
+  type: 'test'
+  ...
+# Subtest: SIGKILL before-send: conditional intent survives process and server restart
+ok 159 - SIGKILL before-send: conditional intent survives process and server restart
+  ---
+  duration_ms: 1345.47
+  type: 'test'
+  ...
+# Subtest: SIGKILL after-accept: conditional intent survives process and server restart
+ok 160 - SIGKILL after-accept: conditional intent survives process and server restart
+  ---
+  duration_ms: 1822.203375
+  type: 'test'
+  ...
+# Subtest: reservation retention bounds release metadata and preserves protected history across real restarts
+ok 161 - reservation retention bounds release metadata and preserves protected history across real restarts
+  ---
+  duration_ms: 3590.735458
+  type: 'test'
+  ...
+# threshold=8; 24 cycles: 1753 bytes, 3 recoveryPin records; 48 cycles: 1758 bytes, 3 recoveryPin records. Document changes and receipts remain in the log.
+# Subtest: an empty unconfirmed checkpoint changes its stale era only after server and MCP restart
+ok 162 - an empty unconfirmed checkpoint changes its stale era only after server and MCP restart
+  ---
+  duration_ms: 1419.712708
+  type: 'test'
+  ...
+# Subtest: paired 48-cycle comparison bounds recovery records without removing document receipts
+ok 163 - paired 48-cycle comparison bounds recovery records without removing document receipts
+  ---
+  duration_ms: 3259.434792
+  type: 'test'
+  ...
+# 48 create/release cycles: threshold 10000 = 10343 bytes, 97 recoveryPin records; threshold 8 = 812 bytes, 1 recoveryPin records. Document changes and receipts remain; this is not a heap or throughput measurement.
+# Subtest: releasePending from a sealed era finishes after MCP and server restart
+ok 164 - releasePending from a sealed era finishes after MCP and server restart
+  ---
+  duration_ms: 1609.738333
+  type: 'test'
+  ...
+# Subtest: stale unconfirmed checkpoint with history is preserved instead of rekeyed
+ok 165 - stale unconfirmed checkpoint with history is preserved instead of rekeyed
+  ---
+  duration_ms: 1419.877709
+  type: 'test'
+  ...
+# Subtest: stale unconfirmed checkpoint with pending is preserved instead of rekeyed
+ok 166 - stale unconfirmed checkpoint with pending is preserved instead of rekeyed
+  ---
+  duration_ms: 1086.8235
+  type: 'test'
+  ...
+# Subtest: stale unconfirmed checkpoint with intent is preserved instead of rekeyed
+ok 167 - stale unconfirmed checkpoint with intent is preserved instead of rekeyed
+  ---
+  duration_ms: 1060.931792
+  type: 'test'
+  ...
+# Subtest: repeated MCP restart tolerates bounded recovery HTTP failure: lease-before
+ok 168 - repeated MCP restart tolerates bounded recovery HTTP failure: lease-before
+  ---
+  duration_ms: 2708.173333
+  type: 'test'
+  ...
+# Subtest: repeated MCP restart tolerates bounded recovery HTTP failure: lease-after
+ok 169 - repeated MCP restart tolerates bounded recovery HTTP failure: lease-after
+  ---
+  duration_ms: 1784.282292
+  type: 'test'
+  ...
+# Subtest: repeated MCP restart tolerates bounded recovery HTTP failure: state
+ok 170 - repeated MCP restart tolerates bounded recovery HTTP failure: state
+  ---
+  duration_ms: 2107.167375
+  type: 'test'
+  ...
+# Subtest: repeated MCP restart tolerates bounded recovery HTTP failure: persistent
+ok 171 - repeated MCP restart tolerates bounded recovery HTTP failure: persistent
+  ---
+  duration_ms: 2829.458125
+  type: 'test'
+  ...
+# Subtest: a failed mission evidence write prevents the conditional request from being sent
+ok 172 - a failed mission evidence write prevents the conditional request from being sent
+  ---
+  duration_ms: 52.434584
+  type: 'test'
+  ...
+# Subtest: a definitive stale rejection retires its journal and permits a fresh edit
+ok 173 - a definitive stale rejection retires its journal and permits a fresh edit
+  ---
+  duration_ms: 58.709292
+  type: 'test'
+  ...
+# Subtest: pre-send journal failure is not_sent and does not leave a conditional lock
+ok 174 - pre-send journal failure is not_sent and does not leave a conditional lock
+  ---
+  duration_ms: 37.677834
+  type: 'test'
+  ...
+# Subtest: a journal failure after a lost response keeps the original request unconfirmed
+ok 175 - a journal failure after a lost response keeps the original request unconfirmed
+  ---
+  duration_ms: 70.801125
+  type: 'test'
+  ...
+# Subtest: an uncertain journal cleanup keeps a confirmed edit and blocks a new one
+ok 176 - an uncertain journal cleanup keeps a confirmed edit and blocks a new one
+  ---
+  duration_ms: 92.321958
+  type: 'test'
+  ...
+# Subtest: lost echo reports unconfirmed, blocks another edit, and late echo restores the session
+ok 177 - lost echo reports unconfirmed, blocks another edit, and late echo restores the session
+  ---
+  duration_ms: 131.011125
+  type: 'test'
+  ...
+# Subtest: epoch change after lost response keeps the request and local state for inspection
+ok 178 - epoch change after lost response keeps the request and local state for inspection
+  ---
+  duration_ms: 3.114291
+  type: 'test'
+  ...
+# Subtest: MCP session transitions a compatible schema and preserves actor undo history
+ok 179 - MCP session transitions a compatible schema and preserves actor undo history
+  ---
+  duration_ms: 9.956291
+  type: 'test'
+  ...
+# Subtest: MCP upgrade adopts server schema while preserving and sending offline pending edits
+ok 180 - MCP upgrade adopts server schema while preserving and sending offline pending edits
+  ---
+  duration_ms: 8.249375
+  type: 'test'
+  ...
+# Subtest: accepted conditional edit survives throwing notification callbacks and remains undoable
+ok 181 - accepted conditional edit survives throwing notification callbacks and remains undoable
+  ---
+  duration_ms: 5.496292
+  type: 'test'
+  ...
+# Subtest: conditional edit checks a caller guard before submission, not after server acceptance
+ok 182 - conditional edit checks a caller guard before submission, not after server acceptance
+  ---
+  duration_ms: 3.575708
+  type: 'test'
+  ...
+# Subtest: server rejects a stale local view without changing local document, sequence or history
+ok 183 - server rejects a stale local view without changing local document, sequence or history
+  ---
+  duration_ms: 4.138375
+  type: 'test'
+  ...
+# Subtest: lost response retains exact request and retry installs accepted edit once with undo history
+ok 184 - lost response retains exact request and retry installs accepted edit once with undo history
+  ---
+  duration_ms: 5.968916
+  type: 'test'
+  ...
+# Subtest: after process loss the server snapshot keeps accepted edits, but new-session history is empty
+ok 185 - after process loss the server snapshot keeps accepted edits, but new-session history is empty
+  ---
+  duration_ms: 66.670333
+  type: 'test'
+  ...
+# Subtest: read remains available after a connection error and retains unconfirmed local changes
+ok 186 - read remains available after a connection error and retains unconfirmed local changes
+  ---
+  duration_ms: 66.097167
+  type: 'test'
+  ...
+# Subtest: agent presence rejects ranges across table cells and leaves the document unchanged
+ok 187 - agent presence rejects ranges across table cells and leaves the document unchanged
+  ---
+  duration_ms: 8.932292
+  type: 'test'
+  ...
+# Subtest: bounded reads bind continuation to the replica and reject forged or stale pages
+ok 188 - bounded reads bind continuation to the replica and reject forged or stale pages
+  ---
+  duration_ms: 18.576875
+  type: 'test'
+  ...
+# Subtest: shutdown closes the session and releases a settled actor
+ok 189 - shutdown closes the session and releases a settled actor
+  ---
+  duration_ms: 0.6665
+  type: 'test'
+  ...
+# Subtest: shutdown retains the server lease for ordinary pending or unconfirmed conditional edits
+ok 190 - shutdown retains the server lease for ordinary pending or unconfirmed conditional edits
+  ---
+  duration_ms: 0.098709
+  type: 'test'
+  ...
+# Subtest: shutdown tolerates failure to send a settled actor's leave message
+ok 191 - shutdown tolerates failure to send a settled actor's leave message
+  ---
+  duration_ms: 0.15675
+  type: 'test'
+  ...
+# Subtest: Node leave supplies a bounded abort signal to an unresponsive transport
+ok 192 - Node leave supplies a bounded abort signal to an unresponsive transport
+  ---
+  duration_ms: 11.747791
+  type: 'test'
+  ...
+# Subtest: async supported schema preserves early initialize bytes and owns startup stdin
+ok 193 - async supported schema preserves early initialize bytes and owns startup stdin
+  ---
+  duration_ms: 766.79075
+  type: 'test'
+  ...
+# Subtest: async schema preserves 8-byte early SDK initialize through bootstrap backpressure
+ok 194 - async schema preserves 8-byte early SDK initialize through bootstrap backpressure
+  ---
+  duration_ms: 1195.656708
+  type: 'test'
+  ...
+# Subtest: async schema preserves 262144-byte early SDK initialize through bootstrap backpressure
+ok 195 - async schema preserves 262144-byte early SDK initialize through bootstrap backpressure
+  ---
+  duration_ms: 1170.759417
+  type: 'test'
+  ...
+# Subtest: buffered large initialize plus bootstrap EOF releases lease and local ownership
+ok 196 - buffered large initialize plus bootstrap EOF releases lease and local ownership
+  ---
+  duration_ms: 1465.979708
+  type: 'test'
+  ...
+# Subtest: actual stdio start rejection after live SSE cleans stream and writer ownership
+ok 197 - actual stdio start rejection after live SSE cleans stream and writer ownership
+  ---
+  duration_ms: 504.974917
+  type: 'test'
+  ...
+# Subtest: EOF during async schema bootstrap admits no edit and exits without upstream work
+ok 198 - EOF during async schema bootstrap admits no edit and exits without upstream work
+  ---
+  duration_ms: 409.567959
+  type: 'test'
+  ...
+# Subtest: durable before-accept intent survives failed startup and EOF restart without duplicate or foreign loss
+ok 199 - durable before-accept intent survives failed startup and EOF restart without duplicate or foreign loss
+  ---
+  duration_ms: 1270.581917
+  type: 'test'
+  ...
+# Subtest: durable after-accept intent survives failed startup and EOF restart without duplicate or foreign loss
+ok 200 - durable after-accept intent survives failed startup and EOF restart without duplicate or foreign loss
+  ---
+  duration_ms: 1418.011959
+  type: 'test'
+  ...
+# Subtest: ready EOF drains already admitted accepted work before closing durable ownership
+ok 201 - ready EOF drains already admitted accepted work before closing durable ownership
+  ---
+  duration_ms: 724.644041
+  type: 'test'
+  ...
+# Subtest: SIGINT during schema bootstrap closes normally without an input error
+ok 202 - SIGINT during schema bootstrap closes normally without an input error
+  ---
+  duration_ms: 310.094875
+  type: 'test'
+  ...
+# Subtest: SIGTERM during schema bootstrap closes normally without an input error
+ok 203 - SIGTERM during schema bootstrap closes normally without an input error
+  ---
+  duration_ms: 299.337542
+  type: 'test'
+  ...
+# Subtest: ready signal and EOF share idempotent cleanup and release durable ownership
+ok 204 - ready signal and EOF share idempotent cleanup and release durable ownership
+  ---
+  duration_ms: 652.5985
+  type: 'test'
+  ...
+# Subtest: v4 config preserves disabled proposals and every nested bound for omitted, empty and partial input
+ok 205 - v4 config preserves disabled proposals and every nested bound for omitted, empty and partial input
+  ---
+  duration_ms: 4.002334
+  type: 'test'
+  ...
+# Subtest: stored decision IDs retain the historical version-agnostic hexadecimal contract
+ok 206 - stored decision IDs retain the historical version-agnostic hexadecimal contract
+  ---
+  duration_ms: 0.323333
+  type: 'test'
+  ...
+# Subtest: real SDK tools/list preserves required fields, strict objects, nullable positions and discriminated edits
+ok 207 - real SDK tools/list preserves required fields, strict objects, nullable positions and discriminated edits
+  ---
+  duration_ms: 14.418708
+  type: 'test'
+  ...
+# Subtest: bounded invalid collection rejects within isolated memory and wall-time limits
+ok 208 - bounded invalid collection rejects within isolated memory and wall-time limits
+  ---
+  duration_ms: 109.788333
+  type: 'test'
+  ...
+1..208
+# tests 215
+# suites 0
+# pass 213
+# fail 0
+# cancelled 0
+# skipped 2
+# todo 0
+# duration_ms 48183.167958

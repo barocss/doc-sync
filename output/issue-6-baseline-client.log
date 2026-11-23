@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: transport omission creates a fixed memory-only backend
+ok 1 - transport omission creates a fixed memory-only backend
+  ---
+  duration_ms: 8.247208
+  type: 'test'
+  ...
+# Subtest: invalid sync configuration fails before backend creation
+ok 2 - invalid sync configuration fails before backend creation
+  ---
+  duration_ms: 1.398208
+  type: 'test'
+  ...
+# Subtest: local hosts suppress their own commit and notify sibling views once
+ok 3 - local hosts suppress their own commit and notify sibling views once
+  ---
+  duration_ms: 2.293125
+  type: 'test'
+  ...
+# Subtest: sync hosts suppress their own commit and notify sibling views once
+ok 4 - sync hosts suppress their own commit and notify sibling views once
+  ---
+  duration_ms: 1.960791
+  type: 'test'
+  ...
+# Subtest: local isolates observer failures and rejects edit reentry
+ok 5 - local isolates observer failures and rejects edit reentry
+  ---
+  duration_ms: 0.516375
+  type: 'test'
+  ...
+# Subtest: sync isolates observer failures and rejects edit reentry
+ok 6 - sync isolates observer failures and rejects edit reentry
+  ---
+  duration_ms: 0.740167
+  type: 'test'
+  ...
+# Subtest: sync delegates acknowledgement, foreign edits, offline queue and reconnect unchanged
+ok 7 - sync delegates acknowledgement, foreign edits, offline queue and reconnect unchanged
+  ---
+  duration_ms: 7.915667
+  type: 'test'
+  ...
+# Subtest: sync native edit adds no model reads or snapshot copies and own ack adds no invalidation
+ok 8 - sync native edit adds no model reads or snapshot copies and own ack adds no invalidation
+  ---
+  duration_ms: 3.848083
+  type: 'test'
+  ...
+# Subtest: legacy raw SyncClient host preserves application callbacks and removes only its observer
+ok 9 - legacy raw SyncClient host preserves application callbacks and removes only its observer
+  ---
+  duration_ms: 1.16425
+  type: 'test'
+  ...
+# Subtest: local composition publishes one group and suppresses only its source view
+ok 10 - local composition publishes one group and suppresses only its source view
+  ---
+  duration_ms: 1.539625
+  type: 'test'
+  ...
+# Subtest: sync composition publishes one group and suppresses only its source view
+ok 11 - sync composition publishes one group and suppresses only its source view
+  ---
+  duration_ms: 1.18025
+  type: 'test'
+  ...
+# Subtest: local composition end retains its draft until sibling pending operations commit
+ok 12 - local composition end retains its draft until sibling pending operations commit
+  ---
+  duration_ms: 0.644209
+  type: 'test'
+  ...
+# Subtest: sync composition end retains its draft until sibling pending operations commit
+ok 13 - sync composition end retains its draft until sibling pending operations commit
+  ---
+  duration_ms: 0.665708
+  type: 'test'
+  ...
+# Subtest: sync pending native operations block history and session changes until committed
+ok 14 - sync pending native operations block history and session changes until committed
+  ---
+  duration_ms: 0.884416
+  type: 'test'
+  ...
+# Subtest: sync beforeEvent permits the native pending-input flush before a remote operation
+ok 15 - sync beforeEvent permits the native pending-input flush before a remote operation
+  ---
+  duration_ms: 3.105583
+  type: 'test'
+  ...
+# Subtest: own synchronous change echo cannot recapture native selection against the changed model
+ok 16 - own synchronous change echo cannot recapture native selection against the changed model
+  ---
+  duration_ms: 3.500167
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 315.929875

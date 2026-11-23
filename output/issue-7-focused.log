@@ -1,0 +1,74 @@
+TAP version 13
+# Subtest: Client demo local seed has a real local backend, rich text, and no sync runtime state
+ok 1 - Client demo local seed has a real local backend, rich text, and no sync runtime state
+  ---
+  duration_ms: 7.336625
+  type: 'test'
+  ...
+# Subtest: Client demo bundles all public client bindings without a caller host factory
+ok 2 - Client demo bundles all public client bindings without a caller host factory
+  ---
+  duration_ms: 333.77325
+  type: 'test'
+  ...
+# Subtest: Client preview serves both modes with static routes and no document API
+ok 3 - Client preview serves both modes with static routes and no document API
+  ---
+  duration_ms: 176.3705
+  type: 'test'
+  ...
+# Subtest: Client demo large fixtures have exact payload size and 100-character paragraphs
+ok 4 - Client demo large fixtures have exact payload size and 100-character paragraphs
+  ---
+  duration_ms: 359.918458
+  type: 'test'
+  ...
+# Subtest: local demo seed has independent documents, rich marks and empty history
+ok 5 - local demo seed has independent documents, rich marks and empty history
+  ---
+  duration_ms: 16.428209
+  type: 'test'
+  ...
+# Subtest: shared plain-text seed supports separate host origins, one history, and full document replacement
+ok 6 - shared plain-text seed supports separate host origins, one history, and full document replacement
+  ---
+  duration_ms: 6.330708
+  type: 'test'
+  ...
+# Subtest: browser bundle uses public built local entry and emits no sync client, transport or document server
+ok 7 - browser bundle uses public built local entry and emits no sync client, transport or document server
+  ---
+  duration_ms: 146.208542
+  type: 'test'
+  ...
+# Subtest: loopback preview serves only fixed assets and rejects document operations
+ok 8 - loopback preview serves only fixed assets and rejects document operations
+  ---
+  duration_ms: 140.430417
+  type: 'test'
+  ...
+# Subtest: Slate demo runtimes are explicit dependencies consistent with the frozen lockfile
+not ok 9 - Slate demo runtimes are explicit dependencies consistent with the frozen lockfile
+  ---
+  duration_ms: 2.193833
+  type: 'test'
+  location: '/Users/user/github/doc-sync-issue-2/apps/demo/test/slate-dependencies.test.ts:5:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/Users/user/github/package-lock.json'"
+  code: 'ENOENT'
+  stack: |-
+    async open (node:internal/fs/promises:641:25)
+    async readFile (node:internal/fs/promises:1245:14)
+    async TestContext.<anonymous> (file:///Users/user/github/doc-sync-issue-2/apps/demo/test/slate-dependencies.test.ts:7:29)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 8
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1254.150625

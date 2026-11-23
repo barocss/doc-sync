@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: config: explicit enable, private owner permissions, no symlink or unsafe URL
+ok 1 - config: explicit enable, private owner permissions, no symlink or unsafe URL
+  ---
+  duration_ms: 17.852
+  type: 'test'
+  ...
+# Subtest: single-use bootstrap, session authorization, foreign Origin and Host rejection
+ok 2 - single-use bootstrap, session authorization, foreign Origin and Host rejection
+  ---
+  duration_ms: 26.002834
+  type: 'test'
+  ...
+# Subtest: fixed proxy allowlist and CSRF guarded exact decision bodies
+ok 3 - fixed proxy allowlist and CSRF guarded exact decision bodies
+  ---
+  duration_ms: 17.317125
+  type: 'test'
+  ...
+# Subtest: redirect, credential reflection, upstream errors and oversized data fail closed
+ok 4 - redirect, credential reflection, upstream errors and oversized data fail closed
+  ---
+  duration_ms: 13.332125
+  type: 'test'
+  ...
+# Subtest: assets have allowlist, no-store, no-referrer and fixed frame origin
+ok 5 - assets have allowlist, no-store, no-referrer and fixed frame origin
+  ---
+  duration_ms: 5.842667
+  type: 'test'
+  ...
+# Subtest: CLI emits no bootstrap or upstream credential; access file is exclusive0600
+ok 6 - CLI emits no bootstrap or upstream credential; access file is exclusive0600
+  ---
+  duration_ms: 139.598708
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 277.878084

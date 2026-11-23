@@ -1,0 +1,958 @@
+
+> @doc-sync/demo@0.0.0 test
+> node --test test/*.test.ts proposal-review/bridge.test.mjs
+
+TAP version 13
+# Subtest: config: explicit enable, private owner permissions, no symlink or unsafe URL
+ok 1 - config: explicit enable, private owner permissions, no symlink or unsafe URL
+  ---
+  duration_ms: 17.456792
+  type: 'test'
+  ...
+# Subtest: single-use bootstrap, session authorization, foreign Origin and Host rejection
+ok 2 - single-use bootstrap, session authorization, foreign Origin and Host rejection
+  ---
+  duration_ms: 30.950583
+  type: 'test'
+  ...
+# Subtest: fixed proxy allowlist and CSRF guarded exact decision bodies
+ok 3 - fixed proxy allowlist and CSRF guarded exact decision bodies
+  ---
+  duration_ms: 24.933917
+  type: 'test'
+  ...
+# Subtest: redirect, credential reflection, upstream errors and oversized data fail closed
+ok 4 - redirect, credential reflection, upstream errors and oversized data fail closed
+  ---
+  duration_ms: 67.8405
+  type: 'test'
+  ...
+# Subtest: assets have allowlist, no-store, no-referrer and fixed frame origin
+ok 5 - assets have allowlist, no-store, no-referrer and fixed frame origin
+  ---
+  duration_ms: 39.301958
+  type: 'test'
+  ...
+# Subtest: CLI emits no bootstrap or upstream credential; access file is exclusive0600
+ok 6 - CLI emits no bootstrap or upstream credential; access file is exclusive0600
+  ---
+  duration_ms: 444.196875
+  type: 'test'
+  ...
+# Subtest: product server automatically reconciles a pre-submission interruption after restart
+ok 7 - product server automatically reconciles a pre-submission interruption after restart
+  ---
+  duration_ms: 1957.719041
+  type: 'test'
+  ...
+# Subtest: Client demo local seed has a real local backend, rich text, and no sync runtime state
+ok 8 - Client demo local seed has a real local backend, rich text, and no sync runtime state
+  ---
+  duration_ms: 16.808625
+  type: 'test'
+  ...
+# Subtest: Client demo bundles all public client bindings without a caller host factory
+ok 9 - Client demo bundles all public client bindings without a caller host factory
+  ---
+  duration_ms: 1465.353292
+  type: 'test'
+  ...
+# Subtest: Client preview serves both modes with static routes and no document API
+ok 10 - Client preview serves both modes with static routes and no document API
+  ---
+  duration_ms: 215.536167
+  type: 'test'
+  ...
+# Subtest: Client demo large fixtures have exact payload size and 100-character paragraphs
+ok 11 - Client demo large fixtures have exact payload size and 100-character paragraphs
+  ---
+  duration_ms: 762.3795
+  type: 'test'
+  ...
+# Subtest: compat range lookup uses the current model on every call
+ok 12 - compat range lookup uses the current model on every call
+  ---
+  duration_ms: 2.132417
+  type: 'test'
+  ...
+# Subtest: compat split and merge preserve intent with supplementary Unicode text
+ok 13 - compat split and merge preserve intent with supplementary Unicode text
+  ---
+  duration_ms: 0.821458
+  type: 'test'
+  ...
+# Subtest: plain adapter reads native model and preserves unchanged anchors across a minimal edit
+ok 14 - plain adapter reads native model and preserves unchanged anchors across a minimal edit
+  ---
+  duration_ms: 34.847917
+  type: 'test'
+  ...
+# Subtest: UTF-16 replacement and empty paragraphs match the native document
+ok 15 - UTF-16 replacement and empty paragraphs match the native document
+  ---
+  duration_ms: 27.529041
+  type: 'test'
+  ...
+# Subtest: newline split and cross-paragraph replacement retain untouched text and undo as one transaction
+ok 16 - newline split and cross-paragraph replacement retain untouched text and undo as one transaction
+  ---
+  duration_ms: 5.832125
+  type: 'test'
+  ...
+# Subtest: two public hosts share edits and preserve each native view selection without focus calls
+ok 17 - two public hosts share edits and preserve each native view selection without focus calls
+  ---
+  duration_ms: 4.870625
+  type: 'test'
+  ...
+# Subtest: keyboard and browser history input use host history
+ok 18 - keyboard and browser history input use host history
+  ---
+  duration_ms: 5.312167
+  type: 'test'
+  ...
+# Subtest: composition stages exact draft operations and merges foreign edits without diffing foreign text
+ok 19 - composition stages exact draft operations and merges foreign edits without diffing foreign text
+  ---
+  duration_ms: 7.54575
+  type: 'test'
+  ...
+# Subtest: dispose cancels a draft and removes subscriptions and native input listeners
+ok 20 - dispose cancels a draft and removes subscriptions and native input listeners
+  ---
+  duration_ms: 2.861958
+  type: 'test'
+  ...
+# Subtest: unsupported rich schemas are rejected before mounting
+ok 21 - unsupported rich schemas are rejected before mounting
+  ---
+  duration_ms: 1.178542
+  type: 'test'
+  ...
+# Subtest: unsupported text and cardinality constraints reject before mutation or listener attachment
+ok 22 - unsupported text and cardinality constraints reject before mutation or listener attachment
+  ---
+  duration_ms: 0.825667
+  type: 'test'
+  ...
+# Subtest: Document: repeated presence and optional draft metadata do not create operations or change native selection/history
+ok 23 - Document: repeated presence and optional draft metadata do not create operations or change native selection/history
+  ---
+  duration_ms: 45.80925
+  type: 'test'
+  ...
+# Subtest: Graphic HTTP/SSE: cursor/selection/optional draft metadata are ephemeral, isolated, and removed on disconnect
+ok 24 - Graphic HTTP/SSE: cursor/selection/optional draft metadata are ephemeral, isolated, and removed on disconnect
+  ---
+  duration_ms: 4348.013834
+  type: 'test'
+  ...
+# Subtest: browser controller restores profiles and fails closed for interrupted work
+ok 25 - browser controller restores profiles and fails closed for interrupted work
+  ---
+  duration_ms: 113.867125
+  type: 'test'
+  ...
+# Subtest: canvas schema uses stored containers, accepts its sample, and retains empty boxes
+ok 26 - canvas schema uses stored containers, accepts its sample, and retains empty boxes
+  ---
+  duration_ms: 25.930333
+  type: 'test'
+  ...
+# Subtest: canvas schema bounds reject invalid geometry and appearance atomically
+ok 27 - canvas schema bounds reject invalid geometry and appearance atomically
+  ---
+  duration_ms: 32.719083
+  type: 'test'
+  ...
+# Subtest: independent transform field edits merge without losing rotation or scale
+ok 28 - independent transform field edits merge without losing rotation or scale
+  ---
+  duration_ms: 2.470416
+  type: 'test'
+  ...
+# Subtest: benchmark scenes have exact deterministic object counts and fresh mutable data
+ok 29 - benchmark scenes have exact deterministic object counts and fresh mutable data
+  ---
+  duration_ms: 37.446833
+  type: 'test'
+  ...
+# Subtest: nested rotated and scaled transforms match independent matrix products
+ok 30 - nested rotated and scaled transforms match independent matrix products
+  ---
+  duration_ms: 0.516041
+  type: 'test'
+  ...
+# Subtest: coordinate inverses match an independent determinant inverse and known quarter turn
+ok 31 - coordinate inverses match an independent determinant inverse and known quarter turn
+  ---
+  duration_ms: 0.190166
+  type: 'test'
+  ...
+# Subtest: reparenting preserves all world points under rotated scaled parents
+ok 32 - reparenting preserves all world points under rotated scaled parents
+  ---
+  duration_ms: 0.173
+  type: 'test'
+  ...
+# Subtest: invalid, singular, overflow and out-of-bounds transforms do not mutate inputs
+ok 33 - invalid, singular, overflow and out-of-bounds transforms do not mutate inputs
+  ---
+  duration_ms: 0.110333
+  type: 'test'
+  ...
+# Subtest: world bounds and hit test follow the transformed explicit object box
+ok 34 - world bounds and hit test follow the transformed explicit object box
+  ---
+  duration_ms: 0.367625
+  type: 'test'
+  ...
+# Subtest: real HTTP/SSE: independent clients, reconnect, guards and room isolation
+ok 35 - real HTTP/SSE: independent clients, reconnect, guards and room isolation
+  ---
+  duration_ms: 652.857792
+  type: 'test'
+  ...
+# Subtest: stable IDs, field merges, presence and actor-local undo
+ok 36 - stable IDs, field merges, presence and actor-local undo
+  ---
+  duration_ms: 292.129375
+  type: 'test'
+  ...
+# Subtest: reparent preserves world and stale IDs fail without editing another object
+ok 37 - reparent preserves world and stale IDs fail without editing another object
+  ---
+  duration_ms: 173.93525
+  type: 'test'
+  ...
+# Subtest: create label and edit text; lock prevents drag
+ok 38 - create label and edit text; lock prevents drag
+  ---
+  duration_ms: 353.008292
+  type: 'test'
+  ...
+# Subtest: fresh ID resolution survives peer insert, reparent and sibling reorder
+ok 39 - fresh ID resolution survives peer insert, reparent and sibling reorder
+  ---
+  duration_ms: 204.925667
+  type: 'test'
+  ...
+# Subtest: duplicate display names remain distinct and delete undo restores the same stable ID
+ok 40 - duplicate display names remain distinct and delete undo restores the same stable ID
+  ---
+  duration_ms: 189.177416
+  type: 'test'
+  ...
+# Subtest: held incoming overflow closes a synchronous subscription without a temporal dead zone
+ok 41 - held incoming overflow closes a synchronous subscription without a temporal dead zone
+  ---
+  duration_ms: 13.157917
+  type: 'test'
+  ...
+# Subtest: concurrent label inspector splices keep different-locus edits and actor-local undo
+ok 42 - concurrent label inspector splices keep different-locus edits and actor-local undo
+  ---
+  duration_ms: 278.710667
+  type: 'test'
+  ...
+# Subtest: label splice boundaries keep complete surrogate pairs and unchanged character IDs
+ok 43 - label splice boundaries keep complete surrogate pairs and unchanged character IDs
+  ---
+  duration_ms: 267.928958
+  type: 'test'
+  ...
+# Subtest: view notifications run after client edit, coalesce, and stop safely on disposal
+ok 44 - view notifications run after client edit, coalesce, and stop safely on disposal
+  ---
+  duration_ms: 77.383083
+  type: 'test'
+  ...
+# Subtest: local demo seed has independent documents, rich marks and empty history
+ok 45 - local demo seed has independent documents, rich marks and empty history
+  ---
+  duration_ms: 79.486584
+  type: 'test'
+  ...
+# Subtest: shared plain-text seed supports separate host origins, one history, and full document replacement
+ok 46 - shared plain-text seed supports separate host origins, one history, and full document replacement
+  ---
+  duration_ms: 10.904625
+  type: 'test'
+  ...
+# Subtest: browser bundle uses public built local entry and emits no sync client, transport or document server
+ok 47 - browser bundle uses public built local entry and emits no sync client, transport or document server
+  ---
+  duration_ms: 1211.736708
+  type: 'test'
+  ...
+# Subtest: loopback preview serves only fixed assets and rejects document operations
+ok 48 - loopback preview serves only fixed assets and rejects document operations
+  ---
+  duration_ms: 282.140458
+  type: 'test'
+  ...
+# Subtest: application storage restores exact local state, shared history and anchored selection
+ok 49 - application storage restores exact local state, shared history and anchored selection
+  ---
+  duration_ms: 48.278
+  type: 'test'
+  ...
+# Subtest: failed saves and failed opens preserve current client and existing saved bytes
+ok 50 - failed saves and failed opens preserve current client and existing saved bytes
+  ---
+  duration_ms: 17.775334
+  type: 'test'
+  ...
+# Subtest: invalid saved view metadata disposes the candidate without changing the saved bytes
+ok 51 - invalid saved view metadata disposes the candidate without changing the saved bytes
+  ---
+  duration_ms: 16.256959
+  type: 'test'
+  ...
+# Subtest: 데모 presence: 전방·역방향과 collapsed, 문자 범위의 끝은 제외한다
+ok 52 - 데모 presence: 전방·역방향과 collapsed, 문자 범위의 끝은 제외한다
+  ---
+  duration_ms: 3.237667
+  type: 'test'
+  ...
+# Subtest: 데모 presence: 같은 줄의 여러 문단과 삭제된 토큰 위치를 다시 푼다
+ok 53 - 데모 presence: 같은 줄의 여러 문단과 삭제된 토큰 위치를 다시 푼다
+  ---
+  duration_ms: 4.638166
+  type: 'test'
+  ...
+# Subtest: 데모 presence: 없는 끝점은 문서 처음으로 바꾸지 않는다
+ok 54 - 데모 presence: 없는 끝점은 문서 처음으로 바꾸지 않는다
+  ---
+  duration_ms: 0.363958
+  type: 'test'
+  ...
+# Subtest: 데모 presence: 다른 칸과 숨은 칸의 범위를 옆 칸에 칠하지 않는다
+ok 55 - 데모 presence: 다른 칸과 숨은 칸의 범위를 옆 칸에 칠하지 않는다
+  ---
+  duration_ms: 5.537292
+  type: 'test'
+  ...
+# Subtest: demo presence follows moved paragraph tokens after the birth container is hidden
+ok 56 - demo presence follows moved paragraph tokens after the birth container is hidden
+  ---
+  duration_ms: 7.762667
+  type: 'test'
+  ...
+# Subtest: word native demo retains the rich sample and adds exactly 100k generated UTF-16 units
+ok 57 - word native demo retains the rich sample and adds exactly 100k generated UTF-16 units
+  ---
+  duration_ms: 47.53725
+  type: 'test'
+  ...
+# Subtest: notion native demo retains the rich sample and adds exactly 100k generated UTF-16 units
+ok 58 - notion native demo retains the rich sample and adds exactly 100k generated UTF-16 units
+  ---
+  duration_ms: 83.827334
+  type: 'test'
+  ...
+# Subtest: presentation native demo retains the rich sample and adds exactly 100k generated UTF-16 units
+ok 59 - presentation native demo retains the rich sample and adds exactly 100k generated UTF-16 units
+  ---
+  duration_ms: 178.064334
+  type: 'test'
+  ...
+# Subtest: native demo generation rejects invalid sizes and server rejects unknown schema profiles
+ok 60 - native demo generation rejects invalid sizes and server rejects unknown schema profiles
+  ---
+  duration_ms: 266.997167
+  type: 'test'
+  ...
+# Subtest: cold replay shares one load while another document remains responsive
+ok 61 - cold replay shares one load while another document remains responsive
+  ---
+  duration_ms: 2628.553334
+  type: 'test'
+  ...
+# Cold fixture: 20000 real formatting changes, 3388635 bytes; shared load and unrelated document were observed at a deterministic gate.
+# Subtest: cold replay refuses a truncated log without changing its original bytes
+ok 62 - cold replay refuses a truncated log without changing its original bytes
+  ---
+  duration_ms: 187.355708
+  type: 'test'
+  ...
+# Subtest: cold replay detects a same-size change after opening the source
+ok 63 - cold replay detects a same-size change after opening the source
+  ---
+  duration_ms: 222.891125
+  type: 'test'
+  ...
+# Subtest: cold replay interrupted by SIGKILL leaves the original log recoverable
+ok 64 - cold replay interrupted by SIGKILL leaves the original log recoverable
+  ---
+  duration_ms: 595.550416
+  type: 'test'
+  ...
+# Subtest: reset queued behind cold replay cannot restore the old generation
+ok 65 - reset queued behind cold replay cannot restore the old generation
+  ---
+  duration_ms: 632.580625
+  type: 'test'
+  ...
+# Subtest: a pending file sync hides its change and serializes the same document while other documents progress
+ok 66 - a pending file sync hides its change and serializes the same document while other documents progress
+  ---
+  duration_ms: 616.560125
+  type: 'test'
+  ...
+# Subtest: live log truncate before append cannot produce a false accepted change
+ok 67 - live log truncate before append cannot produce a false accepted change
+  ---
+  duration_ms: 157.186625
+  type: 'test'
+  ...
+# Subtest: live log replace-inode before append cannot produce a false accepted change
+ok 68 - live log replace-inode before append cannot produce a false accepted change
+  ---
+  duration_ms: 193.703542
+  type: 'test'
+  ...
+# Subtest: idempotent conditional retry fails closed after live log truncate
+ok 69 - idempotent conditional retry fails closed after live log truncate
+  ---
+  duration_ms: 168.073167
+  type: 'test'
+  ...
+# Subtest: idempotent conditional retry fails closed after live log delete
+ok 70 - idempotent conditional retry fails closed after live log delete
+  ---
+  duration_ms: 180.197375
+  type: 'test'
+  ...
+# Subtest: idempotent conditional retry fails closed after live log replace-inode
+ok 71 - idempotent conditional retry fails closed after live log replace-inode
+  ---
+  duration_ms: 173.95775
+  type: 'test'
+  ...
+# Subtest: a protected reservation released during compaction is not reported as still protected
+ok 72 - a protected reservation released during compaction is not reported as still protected
+  ---
+  duration_ms: 497.870459
+  type: 'test'
+  ...
+# Subtest: cold receipt and reset never return old acceptance after reset commits
+ok 73 - cold receipt and reset never return old acceptance after reset commits
+  ---
+  duration_ms: 764.448291
+  type: 'test'
+  ...
+# Subtest: a change fsynced before in-memory commit is recovered exactly once after SIGKILL
+ok 74 - a change fsynced before in-memory commit is recovered exactly once after SIGKILL
+  ---
+  duration_ms: 383.797583
+  type: 'test'
+  ...
+# Subtest: large log compaction preserves exact receipts, concurrent edits and GC pins across server restart
+ok 75 - large log compaction preserves exact receipts, concurrent edits and GC pins across server restart
+  ---
+  duration_ms: 2927.7595
+  type: 'test'
+  ...
+# Fixture: 20000 formatting edits, 3388529 initial JSONL bytes. A worker pause established that edit, GC and another reservation overlapped compaction.
+# Subtest: server reset while compaction is paused cannot restore the old generation
+ok 76 - server reset while compaction is paused cannot restore the old generation
+  ---
+  duration_ms: 895.032667
+  type: 'test'
+  ...
+# Subtest: same-length receipt tampering during paused compaction fails closed without replacing the log
+ok 77 - same-length receipt tampering during paused compaction fails closed without replacing the log
+  ---
+  duration_ms: 750.596791
+  type: 'test'
+  ...
+# Subtest: SIGKILL while compaction is paused retains accepted edits and pins on restart
+ok 78 - SIGKILL while compaction is paused retains accepted edits and pins on restart
+  ---
+  duration_ms: 1192.664584
+  type: 'test'
+  ...
+# Subtest: receipt verification retries an actual concurrent edit and preserves the exact receipt after restart
+ok 79 - receipt verification retries an actual concurrent edit and preserves the exact receipt after restart
+  ---
+  duration_ms: 1301.563375
+  type: 'test'
+  ...
+# Subtest: receipt verification detects same-length receipt tampering without replacing source
+ok 80 - receipt verification detects same-length receipt tampering without replacing source
+  ---
+  duration_ms: 615.671125
+  type: 'test'
+  ...
+# Subtest: receipt lookup for a missing document does not create a file
+ok 81 - receipt lookup for a missing document does not create a file
+  ---
+  duration_ms: 123.095916
+  type: 'test'
+  ...
+# Subtest: compaction and receipt gate controls are unavailable without test settings
+ok 82 - compaction and receipt gate controls are unavailable without test settings
+  ---
+  duration_ms: 125.205666
+  type: 'test'
+  ...
+# Subtest: recovery metadata compacts across server restart without losing receipts, active pins or concurrent edits
+ok 83 - recovery metadata compacts across server restart without losing receipts, active pins or concurrent edits
+  ---
+  duration_ms: 1548.512708
+  type: 'test'
+  ...
+# Subtest: repeated release compaction bounds metadata and rejects old reservation IDs after restart
+ok 84 - repeated release compaction bounds metadata and rejects old reservation IDs after restart
+  ---
+  duration_ms: 2310.646791
+  type: 'test'
+  ...
+# Subtest: compaction fails closed on a corrupt durable log and preserves the original bytes
+ok 85 - compaction fails closed on a corrupt durable log and preserves the original bytes
+  ---
+  duration_ms: 204.041167
+  type: 'test'
+  ...
+# Subtest: compaction refuses a modified conditional receipt even when the document is unchanged
+ok 86 - compaction refuses a modified conditional receipt even when the document is unchanged
+  ---
+  duration_ms: 223.97025
+  type: 'test'
+  ...
+# Subtest: future-shaped legacy IDs defer compaction without breaking reservation operations
+ok 87 - future-shaped legacy IDs defer compaction without breaking reservation operations
+  ---
+  duration_ms: 320.879625
+  type: 'test'
+  ...
+# Subtest: recovery reservation survives server crash, concurrent edits, and blocks GC until release
+ok 88 - recovery reservation survives server crash, concurrent edits, and blocks GC until release
+  ---
+  duration_ms: 537.493375
+  type: 'test'
+  ...
+# Subtest: released reservation cannot be recreated after server crash or a delayed retry
+ok 89 - released reservation cannot be recreated after server crash or a delayed retry
+  ---
+  duration_ms: 370.319458
+  type: 'test'
+  ...
+# Subtest: ordinary exact receipt survives server crash and rejects conflicting actor sequence
+ok 90 - ordinary exact receipt survives server crash and rejects conflicting actor sequence
+  ---
+  duration_ms: 386.724416
+  type: 'test'
+  ...
+# Subtest: recovery submit survives a lost reply and never creates a missing reservation
+ok 91 - recovery submit survives a lost reply and never creates a missing reservation
+  ---
+  duration_ms: 340.847417
+  type: 'test'
+  ...
+# Subtest: browser HTTP recovery primitives preserve exact changes and other users across restart
+ok 92 - browser HTTP recovery primitives preserve exact changes and other users across restart
+  ---
+  duration_ms: 433.820416
+  type: 'test'
+  ...
+# Subtest: durable generation and exact receipt survive process restart and reset changes the generation
+ok 93 - durable generation and exact receipt survive process restart and reset changes the generation
+  ---
+  duration_ms: 651.479667
+  type: 'test'
+  ...
+# Subtest: legacy logs and malformed or truncated logs never produce a false receipt
+ok 94 - legacy logs and malformed or truncated logs never produce a false receipt
+  ---
+  duration_ms: 168.238542
+  type: 'test'
+  ...
+# Subtest: receipt inspection of a missing document never creates a generation or file
+ok 95 - receipt inspection of a missing document never creates a generation or file
+  ---
+  duration_ms: 112.289625
+  type: 'test'
+  ...
+# Subtest: receipt inspection fails closed if the live log is truncated
+ok 96 - receipt inspection fails closed if the live log is truncated
+  ---
+  duration_ms: 184.647541
+  type: 'test'
+  ...
+# Subtest: missing live log is not recreated by a write or a later request
+ok 97 - missing live log is not recreated by a write or a later request
+  ---
+  duration_ms: 154.666208
+  type: 'test'
+  ...
+# Subtest: an in-flight body and scheduled GC cannot mutate an invalidated hub
+ok 98 - an in-flight body and scheduled GC cannot mutate an invalidated hub
+  ---
+  duration_ms: 1195.118
+  type: 'test'
+  ...
+# Subtest: live recovery retains unsent edits and undo across server restart
+ok 99 - live recovery retains unsent edits and undo across server restart
+  ---
+  duration_ms: 533.466542
+  type: 'test'
+  ...
+# Subtest: live recovery retains accepted but unconfirmed edits and undo across server restart
+ok 100 - live recovery retains accepted but unconfirmed edits and undo across server restart
+  ---
+  duration_ms: 548.091958
+  type: 'test'
+  ...
+# Subtest: protected acknowledged history survives a server restart without pending changes
+ok 101 - protected acknowledged history survives a server restart without pending changes
+  ---
+  duration_ms: 326.995167
+  type: 'test'
+  ...
+# Subtest: live recovery refuses reset generation and preserves the local pending edit and undo stack
+ok 102 - live recovery refuses reset generation and preserves the local pending edit and undo stack
+  ---
+  duration_ms: 172.658167
+  type: 'test'
+  ...
+# Subtest: conditional settlement fences a delayed body across restart, GC and recovery metadata compaction
+ok 103 - conditional settlement fences a delayed body across restart, GC and recovery metadata compaction
+  ---
+  duration_ms: 1633.451583
+  type: 'test'
+  ...
+# Subtest: settlement and conditional acceptance share one durable serial order
+ok 104 - settlement and conditional acceptance share one durable serial order
+  ---
+  duration_ms: 972.980083
+  type: 'test'
+  ...
+# Subtest: missing or corrupted settlement source is unknown and never creates a document
+ok 105 - missing or corrupted settlement source is unknown and never creates a document
+  ---
+  duration_ms: 183.213208
+  type: 'test'
+  ...
+# Subtest: negative settlement requires actual file and directory sync after uncertain append and cached retries
+ok 106 - negative settlement requires actual file and directory sync after uncertain append and cached retries
+  ---
+  duration_ms: 297.640959
+  type: 'test'
+  ...
+# Subtest: 초기화: seq0이어도 모든 reset 이벤트 전에는 끝나지 않고 기존 훅을 복구한다
+ok 107 - 초기화: seq0이어도 모든 reset 이벤트 전에는 끝나지 않고 기존 훅을 복구한다
+  ---
+  duration_ms: 5.527417
+  type: 'test'
+  ...
+# Subtest: 초기화: POST 실패와 이벤트 시간 초과에도 훅을 복구하고 다음 초기화를 허용한다
+ok 108 - 초기화: POST 실패와 이벤트 시간 초과에도 훅을 복구하고 다음 초기화를 허용한다
+  ---
+  duration_ms: 12.439875
+  type: 'test'
+  ...
+# Subtest: 초기화 UI guard: reset 요청·이벤트 대기·seed 처리 전체에서 중복 진입을 막는다
+ok 109 - 초기화 UI guard: reset 요청·이벤트 대기·seed 처리 전체에서 중복 진입을 막는다
+  ---
+  duration_ms: 8.205375
+  type: 'test'
+  ...
+# Subtest: 초기화 UI guard: 실패 후 다음 작업을 허용한다
+ok 110 - 초기화 UI guard: 실패 후 다음 작업을 허용한다
+  ---
+  duration_ms: 0.307166
+  type: 'test'
+  ...
+# Subtest: HTTP conditional submission and schema transition survive restart and exact retries
+ok 111 - HTTP conditional submission and schema transition survive restart and exact retries
+  ---
+  duration_ms: 1349.819209
+  type: 'test'
+  ...
+# Subtest: simultaneous transition and conditional edit accept at most one old-base request
+ok 112 - simultaneous transition and conditional edit accept at most one old-base request
+  ---
+  duration_ms: 270.486417
+  type: 'test'
+  ...
+# Subtest: a damaged schema transition is never skipped during log replay
+ok 113 - a damaged schema transition is never skipped during log replay
+  ---
+  duration_ms: 197.270959
+  type: 'test'
+  ...
+# Subtest: a damaged earlier change is not skipped before a later schema transition
+ok 114 - a damaged earlier change is not skipped before a later schema transition
+  ---
+  duration_ms: 151.695958
+  type: 'test'
+  ...
+# Subtest: 데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경로를 제공한다
+ok 115 - 데모 HTTP: 세 페이지의 import map과 모든 모듈·스타일 경로를 제공한다
+  ---
+  duration_ms: 1424.4325
+  type: 'test'
+  ...
+# Subtest: 데모 HTTP: 변경 검사·중복·SSE 동기화·GC 로그 복구를 유지한다
+ok 116 - 데모 HTTP: 변경 검사·중복·SSE 동기화·GC 로그 복구를 유지한다
+  ---
+  duration_ms: 443.62525
+  type: 'test'
+  ...
+# Subtest: demo HTTP rejects old stream and change clients before document mutation
+ok 117 - demo HTTP rejects old stream and change clients before document mutation
+  ---
+  duration_ms: 198.610917
+  type: 'test'
+  ...
+# Subtest: Slate demo runtimes are explicit dependencies consistent with the frozen lockfile
+ok 118 - Slate demo runtimes are explicit dependencies consistent with the frozen lockfile
+  ---
+  duration_ms: 33.63575
+  type: 'test'
+  ...
+# Subtest: custom task peers validate atomically, merge field edits, retain defaults sparsely, undo and redo
+ok 119 - custom task peers validate atomically, merge field edits, retain defaults sparsely, undo and redo
+  ---
+  duration_ms: 206.759042
+  type: 'test'
+  ...
+# Subtest: custom sensor view parses native input and dirty inspector edits retain peer fields and types
+ok 120 - custom sensor view parses native input and dirty inspector edits retain peer fields and types
+  ---
+  duration_ms: 37.62475
+  type: 'test'
+  ...
+# Subtest: descriptor and identity mismatches preserve room, pending edits and exact retry receipts
+ok 121 - descriptor and identity mismatches preserve room, pending edits and exact retry receipts
+  ---
+  duration_ms: 15.836
+  type: 'test'
+  ...
+# Subtest: a stale inspector changes only user-edited fields, preserving peer text and numeric types
+ok 122 - a stale inspector changes only user-edited fields, preserving peer text and numeric types
+  ---
+  duration_ms: 1.496417
+  type: 'test'
+  ...
+# Subtest: HTTP/SSE previews before commit leave sheet, clock, pending and undo untouched
+ok 123 - HTTP/SSE previews before commit leave sheet, clock, pending and undo untouched
+  ---
+  duration_ms: 178.54975
+  type: 'test'
+  ...
+# Subtest: presence validation is atomic and old sequence cannot revive a cancelled draft
+ok 124 - presence validation is atomic and old sequence cannot revive a cancelled draft
+  ---
+  duration_ms: 58.951833
+  type: 'test'
+  ...
+# Subtest: stable targets follow axis moves and resolve deleted targets without writing cells
+ok 125 - stable targets follow axis moves and resolve deleted targets without writing cells
+  ---
+  duration_ms: 59.978375
+  type: 'test'
+  ...
+# Subtest: latest coalesced text wins and clear survives a delayed preview response
+ok 126 - latest coalesced text wins and clear survives a delayed preview response
+  ---
+  duration_ms: 78.768125
+  type: 'test'
+  ...
+# Subtest: SSE disconnect clears preview and stale stream close preserves newer stream
+ok 127 - SSE disconnect clears preview and stale stream close preserves newer stream
+  ---
+  duration_ms: 3046.272417
+  type: 'test'
+  ...
+# Subtest: HTTP-only session disconnect fences a delayed preview and reconnect accepts new state
+ok 128 - HTTP-only session disconnect fences a delayed preview and reconnect accepts new state
+  ---
+  duration_ms: 63.054208
+  type: 'test'
+  ...
+# Subtest: SSE generation rejects late preview and leave across disconnect, replacement and HTTP-only reconnect
+ok 129 - SSE generation rejects late preview and leave across disconnect, replacement and HTTP-only reconnect
+  ---
+  duration_ms: 47.668792
+  type: 'test'
+  ...
+# Subtest: a rectangle uses only its outer edges and includes VTable header offsets
+ok 130 - a rectangle uses only its outer edges and includes VTable header offsets
+  ---
+  duration_ms: 2.326375
+  type: 'test'
+  ...
+# Subtest: adjacent selections have separate full outlines inside their own cells
+ok 131 - adjacent selections have separate full outlines inside their own cells
+  ---
+  duration_ms: 0.089291
+  type: 'test'
+  ...
+# Subtest: crossing stable endpoints draw the same rectangle
+ok 132 - crossing stable endpoints draw the same rectangle
+  ---
+  duration_ms: 0.065125
+  type: 'test'
+  ...
+# Subtest: a window intersection does not invent edges where the original range continues
+ok 133 - a window intersection does not invent edges where the original range continues
+  ---
+  duration_ms: 0.122375
+  type: 'test'
+  ...
+# Subtest: huge ranges use two authoritative rectangles, with no logical cell traversal
+ok 134 - huge ranges use two authoritative rectangles, with no logical cell traversal
+  ---
+  duration_ms: 0.193375
+  type: 'test'
+  ...
+# Subtest: coincident actors use deterministic distinct paths independent of unrelated peers
+ok 135 - coincident actors use deterministic distinct paths independent of unrelated peers
+  ---
+  duration_ms: 0.5105
+  type: 'test'
+  ...
+# Subtest: overflow coincidences share a bounded inner lane with distinct dash phases
+ok 136 - overflow coincidences share a bounded inner lane with distinct dash phases
+  ---
+  duration_ms: 0.225458
+  type: 'test'
+  ...
+# Subtest: HTTP accept and atomic rejection at 1k/10k use no full-state capture or replay
+ok 137 - HTTP accept and atomic rejection at 1k/10k use no full-state capture or replay
+  ---
+  duration_ms: 976.255291
+  type: 'test'
+  ...
+# Subtest: stable default HTTP preserves cell identity, presence and structural history
+ok 138 - stable default HTTP preserves cell identity, presence and structural history
+  ---
+  duration_ms: 120.938625
+  type: 'test'
+  ...
+# Subtest: stable tasks HTTP preserves cell identity, presence and structural history
+ok 139 - stable tasks HTTP preserves cell identity, presence and structural history
+  ---
+  duration_ms: 180.304167
+  type: 'test'
+  ...
+# Subtest: stable room rejects S1, atomically rejects ticket reuse and retries exact receipts
+ok 140 - stable room rejects S1, atomically rejects ticket reuse and retries exact receipts
+  ---
+  duration_ms: 8.517292
+  type: 'test'
+  ...
+# Subtest: stable status and ID edits need no full range reads
+ok 141 - stable status and ID edits need no full range reads
+  ---
+  duration_ms: 0.440708
+  type: 'test'
+  ...
+# Subtest: stable offline structure and edits survive a lost acceptance response with exact retry
+ok 142 - stable offline structure and edits survive a lost acceptance response with exact retry
+  ---
+  duration_ms: 18.68475
+  type: 'test'
+  ...
+# Subtest: stable server rejects unknown reference poisoning without consuming tickets or sequences
+ok 143 - stable server rejects unknown reference poisoning without consuming tickets or sequences
+  ---
+  duration_ms: 8.204875
+  type: 'test'
+  ...
+# Subtest: status summary reads no cell ranges or pending operation copies and matches debug status
+ok 144 - status summary reads no cell ranges or pending operation copies and matches debug status
+  ---
+  duration_ms: 15.897209
+  type: 'test'
+  ...
+# Subtest: UTF-16 preview normalization keeps Korean, emoji, ZWJ, RTL and newline offsets
+ok 145 - UTF-16 preview normalization keeps Korean, emoji, ZWJ, RTL and newline offsets
+  ---
+  duration_ms: 0.974
+  type: 'test'
+  ...
+# Subtest: HTTP text selection validation rejects malformed updates before sequence or document mutation
+ok 146 - HTTP text selection validation rejects malformed updates before sequence or document mutation
+  ---
+  duration_ms: 99.79525
+  type: 'test'
+  ...
+# Subtest: session copies selection and stable IDs; previews leave draft history and undo intact
+ok 147 - session copies selection and stable IDs; previews leave draft history and undo intact
+  ---
+  duration_ms: 112.041958
+  type: 'test'
+  ...
+# Subtest: real HTTP independent peers converge, preserve fields, fence undo, repeat history, reconnect pending
+ok 148 - real HTTP independent peers converge, preserve fields, fence undo, repeat history, reconnect pending
+  ---
+  duration_ms: 132.522041
+  type: 'test'
+  ...
+# Subtest: schema, batch, actor, sequence and ticket checks are atomic; retry returns exact original receipt
+ok 149 - schema, batch, actor, sequence and ticket checks are atomic; retry returns exact original receipt
+  ---
+  duration_ms: 29.534917
+  type: 'test'
+  ...
+# Subtest: epoch reset blocks reconnect and keeps the complete local pending state
+ok 150 - epoch reset blocks reconnect and keeps the complete local pending state
+  ---
+  duration_ms: 4.199875
+  type: 'test'
+  ...
+# Subtest: lost acceptance response retries the exact request before a newer pending suffix
+ok 151 - lost acceptance response retries the exact request before a newer pending suffix
+  ---
+  duration_ms: 39.869875
+  type: 'test'
+  ...
+# Subtest: SSE emits live accepted changes and range presence; closing a stream expires presence
+ok 152 - SSE emits live accepted changes and range presence; closing a stream expires presence
+  ---
+  duration_ms: 23.219292
+  type: 'test'
+  ...
+1..152
+# tests 152
+# suites 0
+# pass 152
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14903.994834
+: 'test'
+  ...
+# Subtest: lost acceptance response retries the exact request before a newer pending suffix
+ok 151 - lost acceptance response retries the exact request before a newer pending suffix
+  ---
+  duration_ms: 37.091458
+  type: 'test'
+  ...
+# Subtest: SSE emits live accepted changes and range presence; closing a stream expires presence
+ok 152 - SSE emits live accepted changes and range presence; closing a stream expires presence
+  ---
+  duration_ms: 16.873334
+  type: 'test'
+  ...
+1..152
+# tests 152
+# suites 0
+# pass 151
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14215.930167
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /Users/user/github/doc-sync-issue-2/apps/demo
+npm error workspace @doc-sync/demo@0.0.0
+npm error location /Users/user/github/doc-sync-issue-2/apps/demo
+npm error command failed
+npm error command sh -c node --test test/*.test.ts proposal-review/bridge.test.mjs

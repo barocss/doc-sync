@@ -1,0 +1,430 @@
+TAP version 13
+# Subtest: config: explicit enable, private owner permissions, no symlink or unsafe URL
+ok 1 - config: explicit enable, private owner permissions, no symlink or unsafe URL
+  ---
+  duration_ms: 36.91175
+  type: 'test'
+  ...
+# Subtest: single-use bootstrap, session authorization, foreign Origin and Host rejection
+ok 2 - single-use bootstrap, session authorization, foreign Origin and Host rejection
+  ---
+  duration_ms: 89.361083
+  type: 'test'
+  ...
+# Subtest: fixed proxy allowlist and CSRF guarded exact decision bodies
+ok 3 - fixed proxy allowlist and CSRF guarded exact decision bodies
+  ---
+  duration_ms: 70.086125
+  type: 'test'
+  ...
+# Subtest: redirect, credential reflection, upstream errors and oversized data fail closed
+ok 4 - redirect, credential reflection, upstream errors and oversized data fail closed
+  ---
+  duration_ms: 88.382708
+  type: 'test'
+  ...
+# Subtest: assets have allowlist, no-store, no-referrer and fixed frame origin
+ok 5 - assets have allowlist, no-store, no-referrer and fixed frame origin
+  ---
+  duration_ms: 46.652875
+  type: 'test'
+  ...
+# Subtest: CLI emits no bootstrap or upstream credential; access file is exclusive0600
+ok 6 - CLI emits no bootstrap or upstream credential; access file is exclusive0600
+  ---
+  duration_ms: 262.3945
+  type: 'test'
+  ...
+# Subtest: owner accept applies one immutable edit; same attempt is idempotent; restored actor undo preserves foreign edits
+ok 7 - owner accept applies one immutable edit; same attempt is idempotent; restored actor undo preserves foreign edits
+  ---
+  duration_ms: 1196.071
+  type: 'test'
+  ...
+# Subtest: accept is separate opt-in; wrong digest, creator, unanswered questions and overrides deny without upstream
+ok 8 - accept is separate opt-in; wrong digest, creator, unanswered questions and overrides deny without upstream
+  ---
+  duration_ms: 577.750917
+  type: 'test'
+  ...
+# Subtest: changed authoritative base marks stale and sends no conditional change
+ok 9 - changed authoritative base marks stale and sends no conditional change
+  ---
+  duration_ms: 411.840125
+  type: 'test'
+  ...
+# Subtest: prepared guard refuses wire scope escapes and runs before journal.prepare or transport
+ok 10 - prepared guard refuses wire scope escapes and runs before journal.prepare or transport
+  ---
+  duration_ms: 23.936166
+  type: 'test'
+  ...
+# Subtest: two scalar-range replacements form separate actor history groups
+ok 11 - two scalar-range replacements form separate actor history groups
+  ---
+  duration_ms: 1287.492208
+  type: 'test'
+  ...
+# Subtest: a concurrent change before submission settles the exact rejected attempt without blocking fresh reads
+ok 12 - a concurrent change before submission settles the exact rejected attempt without blocking fresh reads
+  ---
+  duration_ms: 680.994791
+  type: 'test'
+  ...
+# Subtest: a prepared authorizer requires durability before any transport contact
+ok 13 - a prepared authorizer requires durability before any transport contact
+  ---
+  duration_ms: 1.118541
+  type: 'test'
+  ...
+# Subtest: cached terminal approval confirms file and directory durability before acknowledgment
+ok 14 - cached terminal approval confirms file and directory durability before acknowledgment
+  ---
+  duration_ms: 585.27025
+  type: 'test'
+  ...
+# Subtest: approval persists, exact UUID/grant retries survive restart; accept/reject has one winner
+ok 15 - approval persists, exact UUID/grant retries survive restart; accept/reject has one winner
+  ---
+  duration_ms: 320.425917
+  type: 'test'
+  ...
+# Subtest: startup inspection creates no absent storage and sees durable unresolved approvals
+ok 16 - startup inspection creates no absent storage and sees durable unresolved approvals
+  ---
+  duration_ms: 89.176042
+  type: 'test'
+  ...
+# Subtest: exact immutable private bridge validates actor, route, approval, base and reproduced operations
+ok 17 - exact immutable private bridge validates actor, route, approval, base and reproduced operations
+  ---
+  duration_ms: 3445.361833
+  type: 'test'
+  ...
+# Subtest: negative settlement restarts after proof without startup, edit replay or history loss
+ok 18 - negative settlement restarts after proof without startup, edit replay or history loss
+  ---
+  duration_ms: 482.471541
+  type: 'test'
+  ...
+# Subtest: negative settlement restarts after checkpoint without startup, edit replay or history loss
+ok 19 - negative settlement restarts after checkpoint without startup, edit replay or history loss
+  ---
+  duration_ms: 603.907209
+  type: 'test'
+  ...
+# Subtest: negative settlement restarts after clear without startup, edit replay or history loss
+ok 20 - negative settlement restarts after clear without startup, edit replay or history loss
+  ---
+  duration_ms: 517.276042
+  type: 'test'
+  ...
+# Subtest: negative settlement restarts after terminal without startup, edit replay or history loss
+ok 21 - negative settlement restarts after terminal without startup, edit replay or history loss
+  ---
+  duration_ms: 429.988042
+  type: 'test'
+  ...
+# Subtest: unknown and mismatched negative evidence preserve the journal and checkpoint
+ok 22 - unknown and mismatched negative evidence preserve the journal and checkpoint
+  ---
+  duration_ms: 190.371625
+  type: 'test'
+  ...
+# Subtest: unexpected pending, source tag, sequence or missing plan blocks cleanup
+ok 23 - unexpected pending, source tag, sequence or missing plan blocks cleanup
+  ---
+  duration_ms: 209.115083
+  type: 'test'
+  ...
+# Subtest: fsync failure at plan is retried before intent deletion
+ok 24 - fsync failure at plan is retried before intent deletion
+  ---
+  duration_ms: 429.396875
+  type: 'test'
+  ...
+# Subtest: fsync failure at checkpoint is retried before intent deletion
+ok 25 - fsync failure at checkpoint is retried before intent deletion
+  ---
+  duration_ms: 528.065
+  type: 'test'
+  ...
+# Subtest: proposal accepted-response loss: real host/server restart reconciles once and recovered actor undo/redo preserves human edits
+ok 26 - proposal accepted-response loss: real host/server restart reconciles once and recovered actor undo/redo preserves human edits
+  ---
+  duration_ms: 3388.814167
+  type: 'test'
+  ...
+# Subtest: proposal pre-send SIGKILL: unknown receipt remains blocked across full restart with exact journal/bridge bytes
+ok 27 - proposal pre-send SIGKILL: unknown receipt remains blocked across full restart with exact journal/bridge bytes
+  ---
+  duration_ms: 1376.926917
+  type: 'test'
+  ...
+# Subtest: real process kill before-approval: durable approval/evidence gap fails closed or reconciles exact receipt
+ok 28 - real process kill before-approval: durable approval/evidence gap fails closed or reconciles exact receipt
+  ---
+  duration_ms: 723.0525
+  type: 'test'
+  ...
+# Subtest: real process kill after-approval: durable approval/evidence gap fails closed or reconciles exact receipt
+ok 29 - real process kill after-approval: durable approval/evidence gap fails closed or reconciles exact receipt
+  ---
+  duration_ms: 716.802417
+  type: 'test'
+  ...
+# Subtest: real process kill after-bridge: durable approval/evidence gap fails closed or reconciles exact receipt
+ok 30 - real process kill after-bridge: durable approval/evidence gap fails closed or reconciles exact receipt
+  ---
+  duration_ms: 986.700084
+  type: 'test'
+  ...
+# Subtest: real process kill before-outcome: durable approval/evidence gap fails closed or reconciles exact receipt
+ok 31 - real process kill before-outcome: durable approval/evidence gap fails closed or reconciles exact receipt
+  ---
+  duration_ms: 1065.033042
+  type: 'test'
+  ...
+# Subtest: 1 hosted process: concurrent accept/accept has one serialized winner
+ok 32 - 1 hosted process: concurrent accept/accept has one serialized winner
+  ---
+  duration_ms: 606.011791
+  type: 'test'
+  ...
+# Subtest: 1 hosted process: concurrent accept/reject has one serialized winner
+ok 33 - 1 hosted process: concurrent accept/reject has one serialized winner
+  ---
+  duration_ms: 619.368333
+  type: 'test'
+  ...
+# Subtest: 2 hosted processes: concurrent accept/accept has one serialized winner
+ok 34 - 2 hosted processes: concurrent accept/accept has one serialized winner
+  ---
+  duration_ms: 787.9715
+  type: 'test'
+  ...
+# Subtest: 2 hosted processes: concurrent accept/reject has one serialized winner
+ok 35 - 2 hosted processes: concurrent accept/reject has one serialized winner
+  ---
+  duration_ms: 885.490125
+  type: 'test'
+  ...
+# Subtest: revoked owner cannot reconcile after restart; retarget cannot inspect or apply the old physical proposal
+ok 36 - revoked owner cannot reconcile after restart; retarget cannot inspect or apply the old physical proposal
+  ---
+  duration_ms: 1044.102375
+  type: 'test'
+  ...
+# Subtest: a foreign edit between prepared bridge and conditional send rejects the old base without replay
+ok 37 - a foreign edit between prepared bridge and conditional send rejects the old base without replay
+  ---
+  duration_ms: 816.913791
+  type: 'test'
+  ...
+# Subtest: an unresolved accepted proposal blocks a different proposal before journal restoration; exact first recovery preserves foreign edits
+ok 38 - an unresolved accepted proposal blocks a different proposal before journal restoration; exact first recovery preserves foreign edits
+  ---
+  duration_ms: 1473.999708
+  type: 'test'
+  ...
+# Subtest: restart with missing-bridge preserves original evidence and blocks receipt restore before upstream
+ok 39 - restart with missing-bridge preserves original evidence and blocks receipt restore before upstream
+  ---
+  duration_ms: 877.652792
+  type: 'test'
+  ...
+# Subtest: restart with corrupt-bridge preserves original evidence and blocks receipt restore before upstream
+ok 40 - restart with corrupt-bridge preserves original evidence and blocks receipt restore before upstream
+  ---
+  duration_ms: 879.116417
+  type: 'test'
+  ...
+# Subtest: restart with checkpoint-source preserves original evidence and blocks receipt restore before upstream
+ok 41 - restart with checkpoint-source preserves original evidence and blocks receipt restore before upstream
+  ---
+  duration_ms: 1007.392417
+  type: 'test'
+  ...
+# Subtest: accept-only owner refuses an unrelated durable actor intent before participant startup and preserves it after restart
+ok 42 - accept-only owner refuses an unrelated durable actor intent before participant startup and preserves it after restart
+  ---
+  duration_ms: 840.587792
+  type: 'test'
+  ...
+# Subtest: cached applied approval retries require file and directory sync without actor startup or duplicate send
+ok 43 - cached applied approval retries require file and directory sync without actor startup or duplicate send
+  ---
+  duration_ms: 770.2015
+  type: 'test'
+  ...
+# Subtest: stale prepared approval retires exact IDs, preserves prior history and foreign text, and fences delayed replay after GC and server restart
+ok 44 - stale prepared approval retires exact IDs, preserves prior history and foreign text, and fences delayed replay after GC and server restart
+  ---
+  duration_ms: 3002.601208
+  type: 'test'
+  ...
+# Subtest: rejection SIGKILL after-plan: durable negative plan resumes after host and upstream restart
+ok 45 - rejection SIGKILL after-plan: durable negative plan resumes after host and upstream restart
+  ---
+  duration_ms: 1824.801
+  type: 'test'
+  ...
+# Subtest: rejection SIGKILL after-checkpoint: durable negative plan resumes after host and upstream restart
+ok 46 - rejection SIGKILL after-checkpoint: durable negative plan resumes after host and upstream restart
+  ---
+  duration_ms: 1311.029667
+  type: 'test'
+  ...
+# Subtest: rejection SIGKILL after-clear: durable negative plan resumes after host and upstream restart
+ok 47 - rejection SIGKILL after-clear: durable negative plan resumes after host and upstream restart
+  ---
+  duration_ms: 1262.389958
+  type: 'test'
+  ...
+# Subtest: rejection SIGKILL before-terminal: durable negative plan resumes after host and upstream restart
+ok 48 - rejection SIGKILL before-terminal: durable negative plan resumes after host and upstream restart
+  ---
+  duration_ms: 1652.014333
+  type: 'test'
+  ...
+# Subtest: settlement storage uncertainty preserves journal and checkpoint and blocks actor reuse
+ok 49 - settlement storage uncertainty preserves journal and checkpoint and blocks actor reuse
+  ---
+  duration_ms: 1017.744834
+  type: 'test'
+  ...
+# Subtest: settlement generation uncertainty preserves journal and checkpoint and blocks actor reuse
+ok 50 - settlement generation uncertainty preserves journal and checkpoint and blocks actor reuse
+  ---
+  duration_ms: 1280.45925
+  type: 'test'
+  ...
+# Subtest: generation reset after durable negative proof preserves unfinished retirement and blocks actor reuse
+ok 51 - generation reset after durable negative proof preserves unfinished retirement and blocks actor reuse
+  ---
+  duration_ms: 1165.587917
+  type: 'test'
+  ...
+# Subtest: rejection after-plan with a different valid checkpoint hash preserves journal and blocks cleanup
+ok 52 - rejection after-plan with a different valid checkpoint hash preserves journal and blocks cleanup
+  ---
+  duration_ms: 1113.733584
+  type: 'test'
+  ...
+# Subtest: rejection after-checkpoint with a different valid checkpoint hash preserves journal and blocks cleanup
+ok 53 - rejection after-checkpoint with a different valid checkpoint hash preserves journal and blocks cleanup
+  ---
+  duration_ms: 1205.904833
+  type: 'test'
+  ...
+# Subtest: rejection plan-file-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+ok 54 - rejection plan-file-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+  ---
+  duration_ms: 1535.908791
+  type: 'test'
+  ...
+# Subtest: rejection plan-directory-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+ok 55 - rejection plan-directory-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+  ---
+  duration_ms: 1862.962167
+  type: 'test'
+  ...
+# Subtest: rejection checkpoint-directory-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+ok 56 - rejection checkpoint-directory-sync-fail: fsync uncertainty cannot authorize clear on this process or the next
+  ---
+  duration_ms: 1575.813542
+  type: 'test'
+  ...
+# Subtest: proposal creation and rejection leave actual upstream snapshot/sequence unchanged; owner boundary
+ok 57 - proposal creation and rejection leave actual upstream snapshot/sequence unchanged; owner boundary
+  ---
+  duration_ms: 492.300333
+  type: 'test'
+  ...
+# Subtest: unauthorized/unsupported proposals deny before any upstream access and default is disabled
+ok 58 - unauthorized/unsupported proposals deny before any upstream access and default is disabled
+  ---
+  duration_ms: 388.966333
+  type: 'test'
+  ...
+# Subtest: busy actor and unresolved journal refuse capture before upstream; owner list stays available
+ok 59 - busy actor and unresolved journal refuse capture before upstream; owner list stays available
+  ---
+  duration_ms: 654.117833
+  type: 'test'
+  ...
+# Subtest: exact generation, schema and revision are mandatory; retargeted store is isolated
+ok 60 - exact generation, schema and revision are mandatory; retargeted store is isolated
+  ---
+  duration_ms: 432.1465
+  type: 'test'
+  ...
+# Subtest: proposal HTTP host/origin/session/body bounds and slow readers retain existing admission
+ok 61 - proposal HTTP host/origin/session/body bounds and slow readers retain existing admission
+  ---
+  duration_ms: 197.174208
+  type: 'test'
+  ...
+# Subtest: owner GET holds bounded admission through store cleanup and shutdown drains it
+ok 62 - owner GET holds bounded admission through store cleanup and shutdown drains it
+  ---
+  duration_ms: 178.974834
+  type: 'test'
+  ...
+# Subtest: pure UTF16 preview matches independent string oracle and refuses scalar splits
+ok 63 - pure UTF16 preview matches independent string oracle and refuses scalar splits
+  ---
+  duration_ms: 0.716333
+  type: 'test'
+  ...
+# Subtest: schema refuses authority fields, structural changes, deep paths and claimed check status
+ok 64 - schema refuses authority fields, structural changes, deep paths and claimed check status
+  ---
+  duration_ms: 3.956083
+  type: 'test'
+  ...
+# Subtest: creator capability cannot be combined with write or owner decisions
+ok 65 - creator capability cannot be combined with write or owner decisions
+  ---
+  duration_ms: 3.225792
+  type: 'test'
+  ...
+# Subtest: durable immutable create/reject and private store isolation
+ok 66 - durable immutable create/reject and private store isolation
+  ---
+  duration_ms: 180.281584
+  type: 'test'
+  ...
+# Subtest: corrupt, symlink, hardlink and public record remain untouched
+ok 67 - corrupt, symlink, hardlink and public record remain untouched
+  ---
+  duration_ms: 113.319667
+  type: 'test'
+  ...
+# Subtest: hard unresolved quota never deletes; store close drains admitted operation
+ok 68 - hard unresolved quota never deletes; store close drains admitted operation
+  ---
+  duration_ms: 4555.073459
+  type: 'test'
+  ...
+# Subtest: SIGKILL releases permanent kernel inode; persisted proposal survives restart
+ok 69 - SIGKILL releases permanent kernel inode; persisted proposal survives restart
+  ---
+  duration_ms: 124.846542
+  type: 'test'
+  ...
+# Subtest: FIFO record and lock fail without waiting or removing evidence
+ok 70 - FIFO record and lock fail without waiting or removing evidence
+  ---
+  duration_ms: 20.817625
+  type: 'test'
+  ...
+1..70
+# tests 70
+# suites 0
+# pass 70
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20187.039666

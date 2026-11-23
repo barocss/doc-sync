@@ -1,0 +1,50 @@
+apps/mcp/src/server.ts(38,9): error TS2322: Type 'ZodObject<{}, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{}, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{}, $strict>'.
+apps/mcp/src/server.ts(43,9): error TS2322: Type 'ZodObject<{}, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{}, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{}, $strict>'.
+apps/mcp/src/server.ts(50,9): error TS2322: Type 'ZodObject<{}, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{}, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{}, $strict>'.
+apps/mcp/src/server.ts(57,9): error TS2322: Type 'ZodObject<{}, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{}, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{}, $strict>'.
+apps/mcp/src/server.ts(63,9): error TS2322: Type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodString; }, $strict>; schema: ZodRecord<ZodString, ZodUnknown>; }, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodString; }, $strict>; schema: ZodRecord<ZodString, ZodUnknown>; }, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodString; }, $strict>; schema: ZodRecord<ZodString, ZodUnknown>; }, $strict>'.
+apps/mcp/src/server.ts(64,22): error TS7031: Binding element 'transitionBase' implicitly has an 'any' type.
+apps/mcp/src/server.ts(64,38): error TS7031: Binding element 'schema' implicitly has an 'any' type.
+apps/mcp/src/server.ts(69,9): error TS2322: Type 'ZodObject<{}, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{}, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{}, $strict>'.
+apps/mcp/src/server.ts(76,9): error TS2322: Type 'ZodObject<{ path: ZodOptional<ZodArray<ZodNumber>>; start: ZodOptional<ZodNumber>; limit: ZodOptional<ZodNumber>; maxNodes: ZodOptional<...>; maxTextUnits: ZodOptional<...>; maxBytes: ZodOptional<...>; cursor: ZodOptional<...>; }, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{ path: ZodOptional<ZodArray<ZodNumber>>; start: ZodOptional<ZodNumber>; limit: ZodOptional<ZodNumber>; maxNodes: ZodOptional<...>; maxTextUnits: ZodOptional<...>; maxBytes: ZodOptional<...>; cursor: ZodOptional<...>; }, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{ path: ZodOptional<ZodArray<ZodNumber>>; start: ZodOptional<ZodNumber>; limit: ZodOptional<ZodNumber>; maxNodes: ZodOptional<...>; maxTextUnits: ZodOptional<...>; maxBytes: ZodOptional<...>; cursor: ZodOptional<...>; }, $strict>'.
+apps/mcp/src/server.ts(80,14): error TS7006: Parameter 'query' implicitly has an 'any' type.
+apps/mcp/src/server.ts(85,9): error TS2322: Type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodNullable<ZodString>; }, $strict>; ... 6 more ...; activity: ZodOptional<...>; }, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodNullable<ZodString>; }, $strict>; ... 6 more ...; activity: ZodOptional<...>; }, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodNullable<ZodString>; }, $strict>; ... 6 more ...; activity: ZodOptional<...>; }, $strict>'.
+apps/mcp/src/server.ts(86,22): error TS7031: Binding element 'revision' implicitly has an 'any' type.
+apps/mcp/src/server.ts(86,32): error TS7031: Binding element 'name' implicitly has an 'any' type.
+apps/mcp/src/server.ts(86,38): error TS7031: Binding element 'color' implicitly has an 'any' type.
+apps/mcp/src/server.ts(86,45): error TS7031: Binding element 'anchor' implicitly has an 'any' type.
+apps/mcp/src/server.ts(86,53): error TS7031: Binding element 'focus' implicitly has an 'any' type.
+apps/mcp/src/server.ts(86,60): error TS7031: Binding element 'character' implicitly has an 'any' type.
+apps/mcp/src/server.ts(86,71): error TS7031: Binding element 'expression' implicitly has an 'any' type.
+apps/mcp/src/server.ts(86,83): error TS7031: Binding element 'activity' implicitly has an 'any' type.
+apps/mcp/src/server.ts(91,9): error TS2322: Type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodNullable<ZodString>; }, $strict>; edits: ZodArray<...>; stepId: ZodOptional<...>; }, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodNullable<ZodString>; }, $strict>; edits: ZodArray<...>; stepId: ZodOptional<...>; }, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{ base: ZodObject<{ epoch: ZodString; serverSeq: ZodNumber; schemaVersion: ZodNullable<ZodString>; }, $strict>; edits: ZodArray<...>; stepId: ZodOptional<...>; }, $strict>'.
+apps/mcp/src/server.ts(92,22): error TS7031: Binding element 'revision' implicitly has an 'any' type.
+apps/mcp/src/server.ts(92,32): error TS7031: Binding element 'edits' implicitly has an 'any' type.
+apps/mcp/src/server.ts(92,39): error TS7031: Binding element 'stepId' implicitly has an 'any' type.
+apps/mcp/src/server.ts(97,9): error TS2322: Type 'ZodObject<{}, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{}, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{}, $strict>'.
+apps/mcp/src/server.ts(103,9): error TS2322: Type 'ZodObject<{}, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{}, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{}, $strict>'.
+apps/mcp/src/server.ts(111,13): error TS2322: Type 'ZodObject<{}, $strict>' is not assignable to type 'AnySchema | ZodRawShapeCompat | undefined'.
+  Type 'ZodObject<{}, $strict>' is not assignable to type 'ZodRawShapeCompat'.
+    Index signature for type 'string' is missing in type 'ZodObject<{}, $strict>'.

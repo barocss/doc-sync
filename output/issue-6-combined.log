@@ -1,0 +1,148 @@
+TAP version 13
+# Subtest: generated 0: two-actor deliveries, foreign writes and both undo orders
+ok 1 - generated 0: two-actor deliveries, foreign writes and both undo orders
+  ---
+  duration_ms: 31.7975
+  type: 'test'
+  ...
+# Subtest: generated 1: two-actor deliveries, foreign writes and both undo orders
+ok 2 - generated 1: two-actor deliveries, foreign writes and both undo orders
+  ---
+  duration_ms: 11.190375
+  type: 'test'
+  ...
+# Subtest: generated 7: two-actor deliveries, foreign writes and both undo orders
+ok 3 - generated 7: two-actor deliveries, foreign writes and both undo orders
+  ---
+  duration_ms: 9.46825
+  type: 'test'
+  ...
+# Subtest: generated 65535: two-actor deliveries, foreign writes and both undo orders
+ok 4 - generated 65535: two-actor deliveries, foreign writes and both undo orders
+  ---
+  duration_ms: 8.171916
+  type: 'test'
+  ...
+# Subtest: bounded validator rejects malformed causal round and altered schema; serialization detects corruption
+ok 5 - bounded validator rejects malformed causal round and altered schema; serialization detects corruption
+  ---
+  duration_ms: 2.406583
+  type: 'test'
+  ...
+# Subtest: same-class reducer preserves valid complete causal rounds and independent inputs
+ok 6 - same-class reducer preserves valid complete causal rounds and independent inputs
+  ---
+  duration_ms: 13.316958
+  type: 'test'
+  ...
+# Subtest: successful schedules are not reduced into artificial failures
+ok 7 - successful schedules are not reduced into artificial failures
+  ---
+  duration_ms: 4.642375
+  type: 'test'
+  ...
+# Subtest: public two-actor contract: foreign-same-block
+ok 8 - public two-actor contract: foreign-same-block
+  ---
+  duration_ms: 3.195
+  type: 'test'
+  ...
+# Subtest: public two-actor contract: late-batch
+ok 9 - public two-actor contract: late-batch
+  ---
+  duration_ms: 2.083333
+  type: 'test'
+  ...
+# Subtest: public two-actor contract: peer-delete
+ok 10 - public two-actor contract: peer-delete
+  ---
+  duration_ms: 3.535041
+  type: 'test'
+  ...
+# Subtest: public two-actor contract: peer-move
+ok 11 - public two-actor contract: peer-move
+  ---
+  duration_ms: 2.476666
+  type: 'test'
+  ...
+# Subtest: v2 seed 0: explicit actions and independent checkpoints for all round kinds
+ok 12 - v2 seed 0: explicit actions and independent checkpoints for all round kinds
+  ---
+  duration_ms: 96.258333
+  type: 'test'
+  ...
+# Subtest: v2 seed 1: explicit actions and independent checkpoints for all round kinds
+ok 13 - v2 seed 1: explicit actions and independent checkpoints for all round kinds
+  ---
+  duration_ms: 60.742334
+  type: 'test'
+  ...
+# Subtest: v2 seed 7: explicit actions and independent checkpoints for all round kinds
+ok 14 - v2 seed 7: explicit actions and independent checkpoints for all round kinds
+  ---
+  duration_ms: 51.769458
+  type: 'test'
+  ...
+# Subtest: v2 seed 65535: explicit actions and independent checkpoints for all round kinds
+ok 15 - v2 seed 65535: explicit actions and independent checkpoints for all round kinds
+  ---
+  duration_ms: 55.956959
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves concurrent causal round and failure class
+ok 16 - v2 reducer preserves concurrent causal round and failure class
+  ---
+  duration_ms: 162.845709
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves attr-mark causal round and failure class
+ok 17 - v2 reducer preserves attr-mark causal round and failure class
+  ---
+  duration_ms: 145.704833
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves foreign causal round and failure class
+ok 18 - v2 reducer preserves foreign causal round and failure class
+  ---
+  duration_ms: 136.096375
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves peer-move causal round and failure class
+ok 19 - v2 reducer preserves peer-move causal round and failure class
+  ---
+  duration_ms: 124.668542
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves peer-delete causal round and failure class
+ok 20 - v2 reducer preserves peer-delete causal round and failure class
+  ---
+  duration_ms: 141.891458
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves late-batch causal round and failure class
+ok 21 - v2 reducer preserves late-batch causal round and failure class
+  ---
+  duration_ms: 139.876042
+  type: 'test'
+  ...
+# Subtest: v2 rejects orphan guard, changed expected model, duplicate actors and malformed late batch before execution
+ok 22 - v2 rejects orphan guard, changed expected model, duplicate actors and malformed late batch before execution
+  ---
+  duration_ms: 4.880375
+  type: 'test'
+  ...
+# Subtest: v2 successful corpus stays unchanged by reduction
+ok 23 - v2 successful corpus stays unchanged by reduction
+  ---
+  duration_ms: 32.890833
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1758.01325

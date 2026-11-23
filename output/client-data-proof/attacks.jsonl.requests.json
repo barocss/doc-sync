@@ -1,0 +1,2304 @@
+{
+  "attempts": [
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-0",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-0",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:6f631878-6438-40a7-99db-8bda7e4fa4b3",
+              "key": "valid-prefix-0",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-0",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-0",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-0",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "map",
+            "attrs": {
+              "id": "data:637ad5b6-937e-4401-a8ba-315629d3f574"
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-0",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-0",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-0",
+              "lamport": 5
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "map",
+            "attrs": {
+              "id": "data:637ad5b6-937e-4401-a8ba-315629d3f574"
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-0",
+              "lamport": 6
+            },
+            "target": {
+              "actor": "attack-0",
+              "lamport": 5
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: duplicate storage ID"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-0",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-0",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:746944fa-2c30-453b-8276-5ba575b6cecc",
+              "key": "fixed-0",
+              "value": {
+                "scalar": 0
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-0",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-0",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 1
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-0",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-0",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:746944fa-2c30-453b-8276-5ba575b6cecc",
+              "key": "fixed-0",
+              "value": {
+                "scalar": 0
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-0",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-0",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-1",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-1",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:8928be68-5947-412b-ae10-cdf3ac650fdb",
+              "key": "valid-prefix-1",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-1",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-1",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-1",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "list",
+            "attrs": {
+              "id": "data:2512d0e8-3b39-4125-8dbc-eaaa19791cd7"
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-1",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-1",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-1",
+              "lamport": 5
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "list",
+            "attrs": {
+              "id": "data:2512d0e8-3b39-4125-8dbc-eaaa19791cd7"
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-1",
+              "lamport": 6
+            },
+            "target": {
+              "actor": "attack-1",
+              "lamport": 5
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: duplicate storage ID"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-1",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-1",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:9e69299a-5b99-43c1-bca9-a0642ef1ccaa",
+              "key": "fixed-1",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-1",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-1",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 2
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-1",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-1",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:9e69299a-5b99-43c1-bca9-a0642ef1ccaa",
+              "key": "fixed-1",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-1",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-1",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-2",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-2",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:5ba7917b-cef2-4dcf-af38-a9a697f50e5f",
+              "key": "valid-prefix-2",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-2",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-2",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-2",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:dc10a44e-b227-446d-b5a1-c6e933731ad9",
+              "key": "duplicate",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-2",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-2",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-2",
+              "lamport": 5
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:dc10a44e-b227-446d-b5a1-c6e933731ad9",
+              "key": "duplicate",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-2",
+              "lamport": 6
+            },
+            "target": {
+              "actor": "attack-2",
+              "lamport": 5
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: duplicate storage ID"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-2",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-2",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:8a3ce24f-81ba-40b7-be37-ebcb3a6b325a",
+              "key": "fixed-2",
+              "value": {
+                "scalar": 2
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-2",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-2",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 3
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-2",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-2",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:8a3ce24f-81ba-40b7-be37-ebcb3a6b325a",
+              "key": "fixed-2",
+              "value": {
+                "scalar": 2
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-2",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-2",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-3",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-3",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:3ebeedcf-8754-42e9-8ac6-2c77f046dd3d",
+              "key": "valid-prefix-3",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-3",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-3",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-3",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:e98e3a88-1c03-42f9-98bd-4b3086c887b9",
+              "key": "scalar",
+              "value": {
+                "scalar": {}
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-3",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-3",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: invalid encoded scalar"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-3",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-3",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:558a4623-e8e1-4b68-bac0-7341773981bd",
+              "key": "fixed-3",
+              "value": {
+                "scalar": 3
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-3",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-3",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 4
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-3",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-3",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:558a4623-e8e1-4b68-bac0-7341773981bd",
+              "key": "fixed-3",
+              "value": {
+                "scalar": 3
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-3",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-3",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-4",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-4",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:0bb1cbc6-2eb2-462b-9705-56cadc20fb5e",
+              "key": "valid-prefix-4",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-4",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-4",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-4",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:db020689-785a-48a2-a458-a90c12377775",
+              "key": "tag",
+              "value": {
+                "scalar": 1,
+                "extra": true
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-4",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-4",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: invalid encoded value"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-4",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-4",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:12fcb1cf-21d2-4782-8555-6ee50a025159",
+              "key": "fixed-4",
+              "value": {
+                "scalar": 4
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-4",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-4",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 5
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-4",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-4",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:12fcb1cf-21d2-4782-8555-6ee50a025159",
+              "key": "fixed-4",
+              "value": {
+                "scalar": 4
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-4",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-4",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-5",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-5",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:0300e25a-a38b-4ff4-b90b-d6aa71d8c85f",
+              "key": "valid-prefix-5",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-5",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-5",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-5",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:d48f37bf-42d5-41fc-9625-bd960ae8e427",
+              "key": "kind",
+              "value": {
+                "reference": "$root",
+                "kind": "entry"
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-5",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-5",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: invalid reference kind"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-5",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-5",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:3d909988-6410-4757-926c-b854bda92a1a",
+              "key": "fixed-5",
+              "value": {
+                "scalar": 5
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-5",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-5",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 6
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-5",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-5",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:3d909988-6410-4757-926c-b854bda92a1a",
+              "key": "fixed-5",
+              "value": {
+                "scalar": 5
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-5",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-5",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-6",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-6",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:8775aa58-1742-4749-8b40-cd6e208da785",
+              "key": "valid-prefix-6",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-6",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-6",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-6",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:ed82e7da-868f-4534-904f-fcb314c2eda8",
+              "key": "missingReference",
+              "value": {
+                "reference": "data:1cc51acc-ef51-400b-894d-be66207e559a",
+                "kind": "map"
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-6",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-6",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: unknown reference or reference kind mismatch"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-6",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-6",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:09a0d474-fc56-4941-8387-9482fe0f1c5e",
+              "key": "fixed-6",
+              "value": {
+                "scalar": 6
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-6",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-6",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 7
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-6",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-6",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:09a0d474-fc56-4941-8387-9482fe0f1c5e",
+              "key": "fixed-6",
+              "value": {
+                "scalar": 6
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-6",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-6",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-7",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-7",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:c7491c70-c7ed-4522-a8af-68d6890fa256",
+              "key": "valid-prefix-7",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-7",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-7",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-7",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:93838ece-5639-483c-b10c-326b54a68a90",
+              "key": "referenceType",
+              "value": {
+                "reference": 2,
+                "kind": "map"
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-7",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-7",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: unknown reference or reference kind mismatch"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-7",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-7",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:3fe1b30d-fa28-47b7-a368-29b4f4f366d8",
+              "key": "fixed-7",
+              "value": {
+                "scalar": 7
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-7",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-7",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 8
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-7",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-7",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:3fe1b30d-fa28-47b7-a368-29b4f4f366d8",
+              "key": "fixed-7",
+              "value": {
+                "scalar": 7
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-7",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-7",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-8",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-8",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:435b1321-e1cc-4ea9-b6c4-7deab5250cec",
+              "key": "valid-prefix-8",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-8",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-8",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-8",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "map",
+            "attrs": {
+              "id": "not-a-data-uuid"
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-8",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-8",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: Data: invalid storage ID"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-8",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-8",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:277b29d6-11fa-4b3e-8d94-60a494cb7b71",
+              "key": "fixed-8",
+              "value": {
+                "scalar": 8
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-8",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-8",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 9
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-8",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-8",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:277b29d6-11fa-4b3e-8d94-60a494cb7b71",
+              "key": "fixed-8",
+              "value": {
+                "scalar": 8
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-8",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-8",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-9",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-9",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:87bd4b77-2ce8-4407-a871-8fba0551fb4e",
+              "key": "valid-prefix-9",
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-9",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-9",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          },
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-9",
+              "lamport": 3
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:922be545-f852-4d16-83a2-19ef5e75aab4",
+              "key": 42,
+              "value": {
+                "scalar": 1
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-9",
+              "lamport": 4
+            },
+            "target": {
+              "actor": "attack-9",
+              "lamport": 3
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: \"entry\" 의 속성 key=42 이 맞지 않는다"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-9",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-9",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:33d9a060-107d-4a05-b05a-e700eaa19519",
+              "key": "fixed-9",
+              "value": {
+                "scalar": 9
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-9",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-9",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 10
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "attack-9",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "attack-9",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:33d9a060-107d-4a05-b05a-e700eaa19519",
+              "key": "fixed-9",
+              "value": {
+                "scalar": 9
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "attack-9",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "attack-9",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": null
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "unknown-target",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "set",
+            "at": {
+              "actor": "unknown-target",
+              "lamport": 1
+            },
+            "ids": [
+              {
+                "actor": "absent",
+                "lamport": 900
+              }
+            ],
+            "key": "value",
+            "value": {
+              "scalar": 1
+            }
+          }
+        ]
+      },
+      "response": {
+        "status": 409,
+        "body": {
+          "error": "Error: 없는 토큰을 가리킨다"
+        }
+      }
+    },
+    {
+      "action": "changes",
+      "request": {
+        "actor": "unknown-target",
+        "seq": 1,
+        "ops": [
+          {
+            "t": "node",
+            "id": {
+              "actor": "unknown-target",
+              "lamport": 1
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "type": "entry",
+            "attrs": {
+              "id": "data:4cbd3361-ce34-4d9e-a947-0f6e3c4ff4b8",
+              "key": "fixed-unknown",
+              "value": {
+                "scalar": true
+              }
+            }
+          },
+          {
+            "t": "move",
+            "at": {
+              "actor": "unknown-target",
+              "lamport": 2
+            },
+            "target": {
+              "actor": "unknown-target",
+              "lamport": 1
+            },
+            "parent": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "after": null
+          }
+        ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "serverSeq": 11
+        }
+      }
+    }
+  ],
+  "failures": [
+    "Error: Data: duplicate storage ID",
+    "Error: Data: duplicate storage ID",
+    "Error: Data: duplicate storage ID",
+    "Error: Data: invalid encoded scalar",
+    "Error: Data: invalid encoded value",
+    "Error: Data: invalid reference kind",
+    "Error: Data: unknown reference or reference kind mismatch",
+    "Error: Data: unknown reference or reference kind mismatch",
+    "Error: Data: invalid storage ID",
+    "Error: \"entry\" 의 속성 key=42 이 맞지 않는다",
+    "Error: 없는 토큰을 가리킨다"
+  ],
+  "headers": [
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "changes",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    },
+    {
+      "action": "ack",
+      "protocol": "3",
+      "schema": "sha256:96b65879a3d426ab2aeeeb7e60b02e207ba5bfb66e9b211f14b2707be972f23f",
+      "epoch": "ceee561a-0d06-4a08-a09e-5f5abaa89ef0"
+    }
+  ]
+}

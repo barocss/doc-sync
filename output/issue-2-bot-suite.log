@@ -1,0 +1,413 @@
+
+> @doc-sync/bot@0.0.0 test
+> node --test test/*.test.ts
+
+TAP version 13
+# Subtest: invalid brief is rejected before state or network work, including the CLI
+ok 1 - invalid brief is rejected before state or network work, including the CLI
+  ---
+  duration_ms: 379.861167
+  type: 'test'
+  ...
+# Subtest: authoritative finish checks reject partial text and wrong structure, and accept the complete result
+    # Subtest: Confirmed
+    ok 1 - Confirmed
+      ---
+      duration_ms: 1385.625333
+      type: 'test'
+      ...
+    # Subtest: Confirmed exactly once.
+    ok 2 - Confirmed exactly once.
+      ---
+      duration_ms: 1197.284334
+      type: 'test'
+      ...
+    # Subtest: occurrence counts and ordered child types use authoritative persisted evidence
+    ok 3 - occurrence counts and ordered child types use authoritative persisted evidence
+      ---
+      duration_ms: 1244.720416
+      type: 'test'
+      ...
+    # Subtest: heading text in paragraph does not prove heading placement
+    ok 4 - heading text in paragraph does not prove heading placement
+      ---
+      duration_ms: 1152.754542
+      type: 'test'
+      ...
+    # Subtest: manual checks remain unchecked
+    ok 5 - manual checks remain unchecked
+      ---
+      duration_ms: 1036.41825
+      type: 'test'
+      ...
+    # Subtest: concurrent revision prevents stale completion
+    ok 6 - concurrent revision prevents stale completion
+      ---
+      duration_ms: 1125.838917
+      type: 'test'
+      ...
+    # Subtest: delayed bot stream cannot verify a stale local snapshot
+    ok 7 - delayed bot stream cannot verify a stale local snapshot
+      ---
+      duration_ms: 1172.850334
+      type: 'test'
+      ...
+    # Subtest: legacy completion is explicitly model reported
+    ok 8 - legacy completion is explicitly model reported
+      ---
+      duration_ms: 1052.095667
+      type: 'test'
+      ...
+    # Subtest: killed mission resumes with its original detached brief
+    ok 9 - killed mission resumes with its original detached brief
+      ---
+      duration_ms: 1811.123458
+      type: 'test'
+      ...
+    1..9
+ok 2 - authoritative finish checks reject partial text and wrong structure, and accept the complete result
+  ---
+  duration_ms: 11376.440958
+  type: 'test'
+  ...
+# Subtest: authoritative completion verifies URL and mark rather than matching text alone
+    # Subtest: correct
+    ok 1 - correct
+      ---
+      duration_ms: 1550.336167
+      type: 'test'
+      ...
+    # Subtest: wrong-url
+    ok 2 - wrong-url
+      ---
+      duration_ms: 1186.724708
+      type: 'test'
+      ...
+    # Subtest: wrong-mark
+    ok 3 - wrong-mark
+      ---
+      duration_ms: 1211.714959
+      type: 'test'
+      ...
+    1..3
+ok 3 - authoritative completion verifies URL and mark rather than matching text alone
+  ---
+  duration_ms: 4165.089208
+  type: 'test'
+  ...
+# Subtest: equal text does not prove requested URL or mark; span values are not inherited marks
+ok 4 - equal text does not prove requested URL or mark; span values are not inherited marks
+  ---
+  duration_ms: 14.889083
+  type: 'test'
+  ...
+# Subtest: missing differs from explicit defaults, null, false, zero and empty string
+ok 5 - missing differs from explicit defaults, null, false, zero and empty string
+  ---
+  duration_ms: 4.437167
+  type: 'test'
+  ...
+# Subtest: nested attributes use own JSON leaf properties and declared roots only
+ok 6 - nested attributes use own JSON leaf properties and declared roots only
+  ---
+  duration_ms: 4.603875
+  type: 'test'
+  ...
+# Subtest: run targets reject missing indices, atoms, text as span and attribute text-run targets
+ok 7 - run targets reject missing indices, atoms, text as span and attribute text-run targets
+  ---
+  duration_ms: 1.947708
+  type: 'test'
+  ...
+# Subtest: new inputs are bounded and fail closed without coercion or accessor evaluation
+ok 8 - new inputs are bounded and fail closed without coercion or accessor evaluation
+  ---
+  duration_ms: 2.763708
+  type: 'test'
+  ...
+# Subtest: requirements remain owned and schema/revision evidence stays fenced
+ok 9 - requirements remain owned and schema/revision evidence stays fenced
+  ---
+  duration_ms: 2.366917
+  type: 'test'
+  ...
+# Subtest: exact requirements reject the real-model truncated completion and extra copies
+ok 10 - exact requirements reject the real-model truncated completion and extra copies
+  ---
+  duration_ms: 7.469792
+  type: 'test'
+  ...
+# Subtest: verification reads only the selected model node, never metadata or unrelated descendants
+ok 11 - verification reads only the selected model node, never metadata or unrelated descendants
+  ---
+  duration_ms: 3.101458
+  type: 'test'
+  ...
+# Subtest: declared text spans and formatted runs preserve exact UTF-16 text
+ok 12 - declared text spans and formatted runs preserve exact UTF-16 text
+  ---
+  duration_ms: 1.715
+  type: 'test'
+  ...
+# Subtest: inline atoms and undeclared spans cannot disappear into an exact-text pass
+ok 13 - inline atoms and undeclared spans cannot disappear into an exact-text pass
+  ---
+  duration_ms: 0.498833
+  type: 'test'
+  ...
+# Subtest: node checks verify explicit placement and schema ancestry
+ok 14 - node checks verify explicit placement and schema ancestry
+  ---
+  duration_ms: 0.74375
+  type: 'test'
+  ...
+# Subtest: manual requirements remain not_checked and failed evidence has priority
+ok 15 - manual requirements remain not_checked and failed evidence has priority
+  ---
+  duration_ms: 1.43325
+  type: 'test'
+  ...
+# Subtest: brief parser rejects unknown fields, invalid paths, duplicates and all declared bounds
+ok 16 - brief parser rejects unknown fields, invalid paths, duplicates and all declared bounds
+  ---
+  duration_ms: 6.535875
+  type: 'test'
+  ...
+# Subtest: brief and verification snapshots have independent ownership
+ok 17 - brief and verification snapshots have independent ownership
+  ---
+  duration_ms: 1.354333
+  type: 'test'
+  ...
+# Subtest: oversized or cyclic selected text fails closed and malformed revisions are rejected
+ok 18 - oversized or cyclic selected text fails closed and malformed revisions are rejected
+  ---
+  duration_ms: 6.050833
+  type: 'test'
+  ...
+# Subtest: checked revision must bind to the supplied schema fingerprint
+ok 19 - checked revision must bind to the supplied schema fingerprint
+  ---
+  duration_ms: 1.506084
+  type: 'test'
+  ...
+# Subtest: subtree occurrence counts do not use metadata or copies elsewhere
+ok 20 - subtree occurrence counts do not use metadata or copies elsewhere
+  ---
+  duration_ms: 3.647292
+  type: 'test'
+  ...
+# Subtest: occurrences use non-overlapping exact UTF-16 sequences with span joins and inline boundaries
+ok 21 - occurrences use non-overlapping exact UTF-16 sequences with span joins and inline boundaries
+  ---
+  duration_ms: 1.119541
+  type: 'test'
+  ...
+# Subtest: child type checks require exact order, duplicates, empty lists and a container path
+ok 22 - child type checks require exact order, duplicates, empty lists and a container path
+  ---
+  duration_ms: 0.986042
+  type: 'test'
+  ...
+# Subtest: canonical retained spanned cells remain in occurrence and child-type evidence
+ok 23 - canonical retained spanned cells remain in occurrence and child-type evidence
+  ---
+  duration_ms: 0.53025
+  type: 'test'
+  ...
+# Subtest: new checks reject malformed, non-finite, cyclic and oversized whole-model inputs
+ok 24 - new checks reject malformed, non-finite, cyclic and oversized whole-model inputs
+  ---
+  duration_ms: 14.381
+  type: 'test'
+  ...
+# Subtest: new brief fields have finite integer, nonempty needle, list and aggregate limits
+ok 25 - new brief fields have finite integer, nonempty needle, list and aggregate limits
+  ---
+  duration_ms: 3.541333
+  type: 'test'
+  ...
+# Subtest: new checks and parse roundtrip preserve ownership, manual priority, schema and input data
+ok 26 - new checks and parse roundtrip preserve ownership, manual priority, schema and input data
+  ---
+  duration_ms: 0.805875
+  type: 'test'
+  ...
+# Subtest: recorded bot examples retain their requested document structures
+ok 27 - recorded bot examples retain their requested document structures
+  ---
+  duration_ms: 13.425125
+  type: 'test'
+  ...
+# Subtest: mission startup provenance: schema discovery failure
+ok 28 - mission startup provenance: schema discovery failure
+  ---
+  duration_ms: 804.563875
+  type: 'test'
+  ...
+# Subtest: mission startup provenance: split known marker
+ok 29 - mission startup provenance: split known marker
+  ---
+  duration_ms: 725.658041
+  type: 'test'
+  ...
+# Subtest: mission startup provenance: unknown and oversized stderr
+ok 30 - mission startup provenance: unknown and oversized stderr
+  ---
+  duration_ms: 407.98075
+  type: 'test'
+  ...
+# Subtest: profile identity and history survive bot and server restarts without undoing a user
+ok 31 - profile identity and history survive bot and server restarts without undoing a user
+  ---
+  duration_ms: 5189.245041
+  type: 'test'
+  ...
+# Subtest: profiles persist, reject overwrites and keep document-scoped identities
+ok 32 - profiles persist, reject overwrites and keep document-scoped identities
+  ---
+  duration_ms: 115.82875
+  type: 'test'
+  ...
+# Subtest: profile CLI persists across processes and reports identity without running a model
+ok 33 - profile CLI persists across processes and reports identity without running a model
+  ---
+  duration_ms: 1240.235166
+  type: 'test'
+  ...
+# Subtest: profile claims exclude other tasks and unresolved records block direct runner calls
+ok 34 - profile claims exclude other tasks and unresolved records block direct runner calls
+  ---
+  duration_ms: 27.216584
+  type: 'test'
+  ...
+# Subtest: a killed process releases the profile claim
+ok 35 - a killed process releases the profile claim
+  ---
+  duration_ms: 75.1615
+  type: 'test'
+  ...
+# Subtest: profile claims refuse symlink lock input without replacing it
+ok 36 - profile claims refuse symlink lock input without replacing it
+  ---
+  duration_ms: 3.352458
+  type: 'test'
+  ...
+# Subtest: profile claims refuse hardlink lock input without replacing it
+ok 37 - profile claims refuse hardlink lock input without replacing it
+  ---
+  duration_ms: 3.960834
+  type: 'test'
+  ...
+# Subtest: profile claims refuse public lock input without replacing it
+ok 38 - profile claims refuse public lock input without replacing it
+  ---
+  duration_ms: 2.828
+  type: 'test'
+  ...
+# Subtest: profile claims refuse fifo lock input without replacing it
+ok 39 - profile claims refuse fifo lock input without replacing it
+  ---
+  duration_ms: 26.114334
+  type: 'test'
+  ...
+# Subtest: canonical state-directory aliases share one claim and retain its private inode
+ok 40 - canonical state-directory aliases share one claim and retain its private inode
+  ---
+  duration_ms: 4.883292
+  type: 'test'
+  ...
+# Subtest: owner CLI accepts and reconciles only an explicit ID through hosted route with private input
+ok 41 - owner CLI accepts and reconciles only an explicit ID through hosted route with private input
+  ---
+  duration_ms: 140.732292
+  type: 'test'
+  ...
+# Subtest: proposal CLI authenticates hosted-only exact endpoint and reads private bounded input
+ok 42 - proposal CLI authenticates hosted-only exact endpoint and reads private bounded input
+  ---
+  duration_ms: 130.828166
+  type: 'test'
+  ...
+# Subtest: bot discovers server schema, replans a stale edit and preserves a user's edit
+ok 43 - bot discovers server schema, replans a stale edit and preserves a user's edit
+  ---
+  duration_ms: 8856.130792
+  type: 'test'
+  ...
+# Subtest: bot retains a failed mission and does not treat it as completed
+ok 44 - bot retains a failed mission and does not treat it as completed
+  ---
+  duration_ms: 239.790375
+  type: 'test'
+  ...
+# Subtest: bot discovers a different product schema from the server
+ok 45 - bot discovers a different product schema from the server
+  ---
+  duration_ms: 1152.6155
+  type: 'test'
+  ...
+# Subtest: a killed bot and restarted server preserve another user's change (retained)
+ok 46 - a killed bot and restarted server preserve another user's change (retained)
+  ---
+  duration_ms: 2672.831125
+  type: 'test'
+  ...
+# Subtest: a killed bot and restarted server preserve another user's change (cleared)
+ok 47 - a killed bot and restarted server preserve another user's change (cleared)
+  ---
+  duration_ms: 2852.652625
+  type: 'test'
+  ...
+# Subtest: a killed bot and restarted server preserve another user's change (unknown)
+ok 48 - a killed bot and restarted server preserve another user's change (unknown)
+  ---
+  duration_ms: 935.066417
+  type: 'test'
+  ...
+# Subtest: a killed bot and restarted server preserve another user's change (repeat)
+ok 49 - a killed bot and restarted server preserve another user's change (repeat)
+  ---
+  duration_ms: 2161.657417
+  type: 'test'
+  ...
+# Subtest: bot refuses an invalid schema fingerprint before the planner runs
+ok 50 - bot refuses an invalid schema fingerprint before the planner runs
+  ---
+  duration_ms: 275.384958
+  type: 'test'
+  ...
+# Subtest: three profile bots and a user preserve a proposal across bot and server crashes
+ok 51 - three profile bots and a user preserve a proposal across bot and server crashes
+  ---
+  duration_ms: 6110.383166
+  type: 'test'
+  ...
+# Writer and organizer edited; reviewer remained read-only. Planner calls: organizer 3, reviewer 2. Writer resumed the same mission and two writer undos plus one organizer undo retained the user change.
+# Subtest: review watcher baselines, coalesces changes, and stops at its budget
+ok 52 - review watcher baselines, coalesces changes, and stops at its budget
+  ---
+  duration_ms: 3.246292
+  type: 'test'
+  ...
+# Subtest: watcher fails closed when document identity changes or a review is uncertain
+ok 53 - watcher fails closed when document identity changes or a review is uncertain
+  ---
+  duration_ms: 0.481417
+  type: 'test'
+  ...
+# Subtest: review polls cannot overlap and stop prevents a new review
+ok 54 - review polls cannot overlap and stop prevents a new review
+  ---
+  duration_ms: 0.121583
+  type: 'test'
+  ...
+1..54
+# tests 66
+# suites 0
+# pass 66
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19650.208958

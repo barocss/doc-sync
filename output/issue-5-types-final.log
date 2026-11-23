@@ -1,0 +1,18 @@
+apps/bot/test/planning-context-runner.test.ts(26,62): error TS2322: Type '{ type: string; runs: { text: string; }[]; }' is not assignable to type 'string | NodeJSON | Run'.
+  Type '{ type: string; runs: { text: string; }[]; }' is not assignable to type '{ type: string; attrs?: Record<string, unknown> | undefined; runs?: Run[] | undefined; }'.
+    Types of property 'runs' are incompatible.
+      Type '{ text: string; }[]' is not assignable to type 'Run[]'.
+        Type '{ text: string; }' is not assignable to type 'Run'.
+          Property 'marks' is missing in type '{ text: string; }' but required in type '{ text: string; marks: Marks; }'.
+apps/bot/test/planning-context-runner.test.ts(32,117): error TS2322: Type '{ type: string; runs: { text: string; }[]; }' is not assignable to type 'string | NodeJSON | Run'.
+  Type '{ type: string; runs: { text: string; }[]; }' is not assignable to type '{ type: string; attrs?: Record<string, unknown> | undefined; runs?: Run[] | undefined; }'.
+    Types of property 'runs' are incompatible.
+      Type '{ text: string; }[]' is not assignable to type 'Run[]'.
+        Type '{ text: string; }' is not assignable to type 'Run'.
+          Property 'marks' is missing in type '{ text: string; }' but required in type '{ text: string; marks: Marks; }'.
+apps/bot/test/planning-context-runner.test.ts(45,101): error TS2322: Type '{ type: string; runs: { text: string; }[]; }' is not assignable to type 'string | NodeJSON | Run'.
+  Type '{ type: string; runs: { text: string; }[]; }' is not assignable to type '{ type: string; attrs?: Record<string, unknown> | undefined; runs?: Run[] | undefined; }'.
+    Types of property 'runs' are incompatible.
+      Type '{ text: string; }[]' is not assignable to type 'Run[]'.
+        Type '{ text: string; }' is not assignable to type 'Run'.
+          Property 'marks' is missing in type '{ text: string; }' but required in type '{ text: string; marks: Marks; }'.

@@ -1,0 +1,555 @@
+{
+  "tools": [
+    {
+      "name": "get_schema",
+      "description": "Read the configured schema and whether the connected server verified its version.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_server_schema",
+      "description": "Read the authoritative server schema and its version, including after a schema transition.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "recovery_status",
+      "description": "Inspect a durable unresolved edit and any exact server receipt. Unknown never means rejected. No edit is sent by this tool.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "upgrade_schema",
+      "description": "Install the current server schema when compatible and reconnect. Pending changes and this actor's history are preserved. Resolve an unconfirmed conditional edit first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "transition_schema",
+      "description": "Request a compatible schema transition using an exact server epoch, sequence and schema version. Network failure leaves the outcome unknown; inspect get_server_schema before retrying.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "object",
+            "properties": {
+              "epoch": {
+                "type": "string",
+                "minLength": 1
+              },
+              "serverSeq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "schemaVersion": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "epoch",
+              "serverSeq",
+              "schemaVersion"
+            ],
+            "additionalProperties": false
+          },
+          "schema": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "base",
+          "schema"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "read_document",
+      "description": "Read the local replica, revision, and pending changes. Remote changes may still be in transit.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "read_document_slice",
+      "description": "Read bounded canonical model children from this local replica. Paths are child indexes. Covered table-cell data is retained, as in read_document. Use nextCursor alone for the next page; any document/revision change invalidates it. Direct row/cell slicing is unsupported; target a cell body at [table,row,col,0]. maxBytes bounds successful MCP tool-result JSON including text/structuredContent duplication; JSON-RPC frames and transport headers are excluded.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxItems": 32
+          },
+          "start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "maxNodes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4096
+          },
+          "maxTextUnits": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65536
+          },
+          "maxBytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 262144
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 4096
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "set_presence",
+      "description": "Publish the agent's actual caret or selection in the current document. Use the revision from read_document; anchor is the active end and focus is the other end. Pass null endpoints to hide. Presence is transient and delivery is unconfirmed.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "object",
+            "properties": {
+              "epoch": {
+                "type": "string",
+                "minLength": 1
+              },
+              "serverSeq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "schemaVersion": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "epoch",
+              "serverSeq",
+              "schemaVersion"
+            ],
+            "additionalProperties": false
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+          },
+          "anchor": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "focus": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/properties/anchor/anyOf/0/items"
+                },
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "character": {
+            "type": "string",
+            "enum": [
+              "cat",
+              "fox",
+              "owl",
+              "robot"
+            ]
+          },
+          "expression": {
+            "type": "string",
+            "enum": [
+              "thinking",
+              "editing",
+              "happy",
+              "concerned",
+              "curious",
+              "focused",
+              "surprised"
+            ]
+          },
+          "activity": {
+            "type": "string",
+            "enum": [
+              "reading",
+              "thinking",
+              "editing",
+              "done",
+              "needs_attention"
+            ]
+          }
+        },
+        "required": [
+          "base",
+          "name",
+          "color",
+          "anchor",
+          "focus"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "edit_document",
+      "description": "Apply model edits only if the server atomically confirms the revision from read_document. On an unconfirmed result call retry_edit, not edit_document again.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "object",
+            "properties": {
+              "epoch": {
+                "type": "string",
+                "minLength": 1
+              },
+              "serverSeq": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "schemaVersion": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "epoch",
+              "serverSeq",
+              "schemaVersion"
+            ],
+            "additionalProperties": false
+          },
+          "edits": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "const": "insert"
+                    },
+                    "at": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "minItems": 1
+                    },
+                    "content": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "at",
+                    "content"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "const": "delete"
+                    },
+                    "at": {
+                      "$ref": "#/properties/edits/items/anyOf/0/properties/at"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "at",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "const": "update"
+                    },
+                    "at": {
+                      "$ref": "#/properties/edits/items/anyOf/0/properties/at"
+                    },
+                    "attrs": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "length": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "at",
+                    "attrs"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "const": "split"
+                    },
+                    "at": {
+                      "$ref": "#/properties/edits/items/anyOf/0/properties/at"
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "at"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "const": "merge"
+                    },
+                    "at": {
+                      "$ref": "#/properties/edits/items/anyOf/0/properties/at"
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "at"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "type": "string",
+                      "const": "move"
+                    },
+                    "from": {
+                      "$ref": "#/properties/edits/items/anyOf/0/properties/at"
+                    },
+                    "at": {
+                      "$ref": "#/properties/edits/items/anyOf/0/properties/at"
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "from",
+                    "at"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "stepId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "base",
+          "edits"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "retry_edit",
+      "description": "Resolve an unconfirmed conditional edit by retrying the exact same request. Do not submit a new edit until it is resolved.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "discard_history",
+      "description": "Permanently discard this participant's undo and redo history and release its old recovery reservation. Pending or uncertain edits block this operation; other participants' edits are preserved.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "destructiveHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "undo",
+      "description": "undo the AI participant's own history in this running session. Other participants' changes follow the existing collaboration rules.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "redo",
+      "description": "redo the AI participant's own history in this running session. Other participants' changes follow the existing collaboration rules.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    }
+  ]
+}

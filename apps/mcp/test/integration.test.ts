@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {spawn} from "node:child_process";
 import {once} from "node:events";
-import {mkdtemp, rm} from "node:fs/promises";
+import {mkdtemp, rm, readdir, readFile, stat} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
 import {fileURLToPath} from "node:url";
@@ -62,13 +62,27 @@ test("SDK stdio client: schema, validated edits, concurrent user changes and act
     const human = new SyncClient("human", humanTransport, {schema: DEMO_SCHEMA});
     try {
         await mcp.connect(stdio);
-        assert.deepEqual((await mcp.listTools()).tools.map(tool => tool.name).sort(), ["discard_history", "edit_document", "get_schema", "get_server_schema", "read_document", "read_document_slice", "recovery_status", "redo", "retry_edit", "set_presence", "transition_schema", "undo", "upgrade_schema"]);
+        assert.deepEqual((await mcp.listTools()).tools.map(tool => tool.name).sort(), ["discard_history", "edit_document", "get_schema", "get_server_schema", "preview_edits", "read_document", "read_document_slice", "recovery_status", "redo", "retry_edit", "set_presence", "transition_schema", "undo", "upgrade_schema"]);
         const schema = await call(mcp, "get_schema");
         assert.equal((schema.structuredContent as {verifiedAgainstServer: boolean}).verifiedAgainstServer, true);
         let view = payload(await call(mcp, "read_document"));
         assert.equal(payload(await call(mcp, "edit_document", {base: view.revision, edits: [{op: "insert", at: [0, 0], content: "abc"}]})).status, "confirmed");
         view = payload(await call(mcp, "read_document"));
         assert.equal(text(view.document), "abc");
+        const journalFiles = async () => {
+            if (journalEnv.DOC_SYNC_JOURNAL !== "on") return [];
+            const root = join(data, "journal"), entries = await readdir(root, {recursive: true});
+            const files = [];
+            for (const name of entries.sort()) { const path = join(root, name), meta = await stat(path); if (meta.isFile()) files.push([name, meta.mtimeMs, (await readFile(path)).toString("base64")]); }
+            return files;
+        };
+        const savedJournal = await journalFiles();
+        const preview = await call(mcp, "preview_edits", {base: view.revision, edits: [{op: "insert", at: [0, 0], content: "preview"}]});
+        assert.equal(preview.isError, undefined); assert.equal(text(payload(preview).document), "previewabc");
+        assert.deepEqual(await journalFiles(), savedJournal);
+        const unchanged = payload(await call(mcp, "read_document"));
+        assert.equal(text(unchanged.document), "abc"); assert.deepEqual(unchanged.revision, view.revision);
+
         const stale = await call(mcp, "edit_document", {base: {...view.revision, serverSeq: 0}, edits: [{op: "insert", at: [0, 0], content: "x"}]});
         assert.equal(stale.isError, true);
         const unknownGuard = await call(mcp, "edit_document", {base: view.revision, edits: [{op: "delete", at: [0, 0], count: 1, expectedText: "x"}]});

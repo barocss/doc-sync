@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: equal text does not prove requested URL or mark; span values are not inherited marks
+ok 1 - equal text does not prove requested URL or mark; span values are not inherited marks
+  ---
+  duration_ms: 8.827792
+  type: 'test'
+  ...
+# Subtest: missing differs from explicit defaults, null, false, zero and empty string
+not ok 2 - missing differs from explicit defaults, null, false, zero and empty string
+  ---
+  duration_ms: 0.304625
+  type: 'test'
+  location: '/Users/user/github/doc-sync-issue-2/apps/bot/test/brief-values.test.ts:17:1'
+  failureType: 'testCodeFailure'
+  error: 'Invalid schema: callout.default "undefined" 는 text 모양이어야 한다; callout.default 는 children 에 있어야 한다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    schemaVersion (file:///Users/user/github/doc-sync-issue-2/packages/doc-sync/dist/crdt/schema-version.js:127:15)
+    check (file:///Users/user/github/doc-sync-issue-2/apps/bot/test/brief-values.test.ts:12:144)
+    TestContext.<anonymous> (file:///Users/user/github/doc-sync-issue-2/apps/bot/test/brief-values.test.ts:19:205)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: nested attributes use own JSON leaf properties and declared roots only
+not ok 3 - nested attributes use own JSON leaf properties and declared roots only
+  ---
+  duration_ms: 0.250458
+  type: 'test'
+  location: '/Users/user/github/doc-sync-issue-2/apps/bot/test/brief-values.test.ts:22:1'
+  failureType: 'testCodeFailure'
+  error: 'Invalid schema: callout.default "undefined" 는 text 모양이어야 한다; callout.default 는 children 에 있어야 한다'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    schemaVersion (file:///Users/user/github/doc-sync-issue-2/packages/doc-sync/dist/crdt/schema-version.js:127:15)
+    check (file:///Users/user/github/doc-sync-issue-2/apps/bot/test/brief-values.test.ts:12:144)
+    TestContext.<anonymous> (file:///Users/user/github/doc-sync-issue-2/apps/bot/test/brief-values.test.ts:25:15)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: run targets reject missing indices, atoms, text as span and attribute text-run targets
+ok 4 - run targets reject missing indices, atoms, text as span and attribute text-run targets
+  ---
+  duration_ms: 2.256167
+  type: 'test'
+  ...
+# Subtest: new inputs are bounded and fail closed without coercion or accessor evaluation
+not ok 5 - new inputs are bounded and fail closed without coercion or accessor evaluation
+  ---
+  duration_ms: 0.417917
+  type: 'test'
+  location: '/Users/user/github/doc-sync-issue-2/apps/bot/test/brief-values.test.ts:33:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/user/github/doc-sync-issue-2/apps/bot/test/brief-values.test.ts:34:76)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: requirements remain owned and schema/revision evidence stays fenced
+ok 6 - requirements remain owned and schema/revision evidence stays fenced
+  ---
+  duration_ms: 0.894958
+  type: 'test'
+  ...
+# Subtest: exact requirements reject the real-model truncated completion and extra copies
+ok 7 - exact requirements reject the real-model truncated completion and extra copies
+  ---
+  duration_ms: 4.158
+  type: 'test'
+  ...
+# Subtest: verification reads only the selected model node, never metadata or unrelated descendants
+ok 8 - verification reads only the selected model node, never metadata or unrelated descendants
+  ---
+  duration_ms: 2.283667
+  type: 'test'
+  ...
+# Subtest: declared text spans and formatted runs preserve exact UTF-16 text
+ok 9 - declared text spans and formatted runs preserve exact UTF-16 text
+  ---
+  duration_ms: 0.473375
+  type: 'test'
+  ...
+# Subtest: inline atoms and undeclared spans cannot disappear into an exact-text pass
+ok 10 - inline atoms and undeclared spans cannot disappear into an exact-text pass
+  ---
+  duration_ms: 0.856125
+  type: 'test'
+  ...
+# Subtest: node checks verify explicit placement and schema ancestry
+ok 11 - node checks verify explicit placement and schema ancestry
+  ---
+  duration_ms: 0.942792
+  type: 'test'
+  ...
+# Subtest: manual requirements remain not_checked and failed evidence has priority
+ok 12 - manual requirements remain not_checked and failed evidence has priority
+  ---
+  duration_ms: 0.826834
+  type: 'test'
+  ...
+# Subtest: brief parser rejects unknown fields, invalid paths, duplicates and all declared bounds
+ok 13 - brief parser rejects unknown fields, invalid paths, duplicates and all declared bounds
+  ---
+  duration_ms: 0.428
+  type: 'test'
+  ...
+# Subtest: brief and verification snapshots have independent ownership
+ok 14 - brief and verification snapshots have independent ownership
+  ---
+  duration_ms: 0.230417
+  type: 'test'
+  ...
+# Subtest: oversized or cyclic selected text fails closed and malformed revisions are rejected
+ok 15 - oversized or cyclic selected text fails closed and malformed revisions are rejected
+  ---
+  duration_ms: 3.500792
+  type: 'test'
+  ...
+# Subtest: checked revision must bind to the supplied schema fingerprint
+ok 16 - checked revision must bind to the supplied schema fingerprint
+  ---
+  duration_ms: 1.108125
+  type: 'test'
+  ...
+# Subtest: subtree occurrence counts do not use metadata or copies elsewhere
+ok 17 - subtree occurrence counts do not use metadata or copies elsewhere
+  ---
+  duration_ms: 1.5155
+  type: 'test'
+  ...
+# Subtest: occurrences use non-overlapping exact UTF-16 sequences with span joins and inline boundaries
+ok 18 - occurrences use non-overlapping exact UTF-16 sequences with span joins and inline boundaries
+  ---
+  duration_ms: 1.1825
+  type: 'test'
+  ...
+# Subtest: child type checks require exact order, duplicates, empty lists and a container path
+ok 19 - child type checks require exact order, duplicates, empty lists and a container path
+  ---
+  duration_ms: 0.954708
+  type: 'test'
+  ...
+# Subtest: canonical retained spanned cells remain in occurrence and child-type evidence
+ok 20 - canonical retained spanned cells remain in occurrence and child-type evidence
+  ---
+  duration_ms: 0.594334
+  type: 'test'
+  ...
+# Subtest: new checks reject malformed, non-finite, cyclic and oversized whole-model inputs
+ok 21 - new checks reject malformed, non-finite, cyclic and oversized whole-model inputs
+  ---
+  duration_ms: 10.965208
+  type: 'test'
+  ...
+# Subtest: new brief fields have finite integer, nonempty needle, list and aggregate limits
+ok 22 - new brief fields have finite integer, nonempty needle, list and aggregate limits
+  ---
+  duration_ms: 3.158292
+  type: 'test'
+  ...
+# Subtest: new checks and parse roundtrip preserve ownership, manual priority, schema and input data
+ok 23 - new checks and parse roundtrip preserve ownership, manual priority, schema and input data
+  ---
+  duration_ms: 0.657208
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 20
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 167.199291

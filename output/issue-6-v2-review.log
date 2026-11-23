@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: v2 seed 0: explicit actions and independent checkpoints for all round kinds
+ok 1 - v2 seed 0: explicit actions and independent checkpoints for all round kinds
+  ---
+  duration_ms: 173.249375
+  type: 'test'
+  ...
+# Subtest: v2 seed 1: explicit actions and independent checkpoints for all round kinds
+ok 2 - v2 seed 1: explicit actions and independent checkpoints for all round kinds
+  ---
+  duration_ms: 85.609
+  type: 'test'
+  ...
+# Subtest: v2 seed 7: explicit actions and independent checkpoints for all round kinds
+ok 3 - v2 seed 7: explicit actions and independent checkpoints for all round kinds
+  ---
+  duration_ms: 181.475917
+  type: 'test'
+  ...
+# Subtest: v2 seed 65535: explicit actions and independent checkpoints for all round kinds
+ok 4 - v2 seed 65535: explicit actions and independent checkpoints for all round kinds
+  ---
+  duration_ms: 162.115542
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves concurrent causal round and failure class
+ok 5 - v2 reducer preserves concurrent causal round and failure class
+  ---
+  duration_ms: 219.226959
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves attr-mark causal round and failure class
+ok 6 - v2 reducer preserves attr-mark causal round and failure class
+  ---
+  duration_ms: 276.160125
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves foreign causal round and failure class
+ok 7 - v2 reducer preserves foreign causal round and failure class
+  ---
+  duration_ms: 187.676625
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves peer-move causal round and failure class
+ok 8 - v2 reducer preserves peer-move causal round and failure class
+  ---
+  duration_ms: 161.102209
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves peer-delete causal round and failure class
+ok 9 - v2 reducer preserves peer-delete causal round and failure class
+  ---
+  duration_ms: 140.660125
+  type: 'test'
+  ...
+# Subtest: v2 reducer preserves late-batch causal round and failure class
+ok 10 - v2 reducer preserves late-batch causal round and failure class
+  ---
+  duration_ms: 182.387208
+  type: 'test'
+  ...
+# Subtest: v2 rejects orphan guard, changed expected model, duplicate actors and malformed late batch before execution
+ok 11 - v2 rejects orphan guard, changed expected model, duplicate actors and malformed late batch before execution
+  ---
+  duration_ms: 8.959333
+  type: 'test'
+  ...
+# Subtest: v2 successful corpus stays unchanged by reduction
+ok 12 - v2 successful corpus stays unchanged by reduction
+  ---
+  duration_ms: 31.352834
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2037.150042

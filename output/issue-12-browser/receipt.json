@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "cases": [
+    "inspect / XSS-safe display / cancel / close unchanged",
+    "two browser actors / peer edit after preview -> stale, zero submitted changes",
+    "stored fresh successor links prior stale evidence / renewed review / cancellation does not apply",
+    "explicit rejection leaves document unchanged",
+    "duplicate decision clicks apply once",
+    "cross-tab persisted decision invalidates competing confirmation; second tab opens no editor streams",
+    "accepted response loss / original reconciliation / reload / no resubmission",
+    "unknown original attempt -> reconcile only until explicit original retry / no fresh approval",
+    "pending local approval explicit cancel / exact original retry retains ID and digest",
+    "hosted service shutdown/restart same durable store restores original applied evidence",
+    "peer race at conditional submission proves not_applied / evidence shown / no replay action",
+    "corrupt actual negative proof rejected / no decision controls or writes / exact proof restored",
+    "proposal actor undo retains human browser edit",
+    "closing editor owner allows explicit review-tab handoff without document changes",
+    "synthetic persisted pagehide/pageshow releases and reacquires editor lease"
+  ],
+  "longLoad": "NOT_RUN",
+  "actualModel": "NOT_RUN",
+  "finalText": "{\"type\":\"content\",\"children\":[{\"type\":\"paragraph\",\"runs\":[{\"text\":\"Race peer Human \",\"marks\":{}}]}]}"
+}

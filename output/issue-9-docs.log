@@ -1,0 +1,45 @@
+
+> doc-sync-workspace@0.0.0 predocs:build
+> npm run build
+
+
+> doc-sync-workspace@0.0.0 build
+> node scripts/build-packages.mjs
+
+
+> doc-sync-workspace@0.0.0 docs:build
+> npm run build --workspace @doc-sync/docs
+
+
+> @doc-sync/docs@0.0.0 build
+> npm run prepare:content && vitepress build
+
+
+> @doc-sync/docs@0.0.0 prepare:content
+> node scripts/prepare-content.mjs && node scripts/prepare-diagrams.mjs && node scripts/prepare-full-schema.mjs && node scripts/generate-bot-gallery.mjs
+
+Prepared 5 reference pages from repository documents.
+Prepared 7 operation diagrams and their actual model trace.
+Prepared full demo schema (unchanged).
+
+  vitepress 2.0.0-alpha.20  (using vite 8.3.5)
+
+- building client + server bundles...
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[32m✓[0m building client + server bundles...
+- rendering pages...
+[32m✓[0m rendering pages...
+build complete in 4.56s.
+
+> doc-sync-workspace@0.0.0 docs:check
+> npm run check:build --workspace @doc-sync/docs
+
+
+> @doc-sync/docs@0.0.0 check:build
+> node scripts/check-build.mjs
+
+{"pages":55,"checkedInternalLinks":2613,"english":true,"localPathsExcluded":true}
