@@ -1,0 +1,46 @@
+
+> doc-sync-workspace@0.0.0 check:packages
+> npm run build && node scripts/check-package-artifacts.mjs
+
+
+> doc-sync-workspace@0.0.0 build
+> node scripts/build-packages.mjs
+
+(node:30967) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("./loader.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "facade-core-only",
+      "status": "PASS"
+    },
+    {
+      "name": "doc-sync-prosemirror",
+      "status": "PASS"
+    },
+    {
+      "name": "doc-sync-tiptap",
+      "status": "PASS"
+    },
+    {
+      "name": "doc-sync-slate",
+      "status": "PASS"
+    },
+    {
+      "name": "doc-sync-lexical",
+      "status": "PASS"
+    },
+    {
+      "name": "all-eight-legacy-imports-and-six-packages",
+      "status": "PASS"
+    },
+    {
+      "name": "independent-slate-0.0.1-with-unchanged-facade",
+      "status": "PASS"
+    }
+  ],
+  "receipt": "/Users/user/github/doc-sync-bindings/output/binding-packages/pack-consumers.json"
+}

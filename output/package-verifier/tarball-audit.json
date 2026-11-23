@@ -1,0 +1,549 @@
+{
+  "status": "PASS",
+  "firstFailure": null,
+  "errors": [],
+  "packages": [
+    {
+      "name": "@barocss/doc-sync",
+      "manifest": {
+        "version": "0.0.0",
+        "private": true,
+        "type": "module",
+        "engines": {
+          "node": ">=22.18"
+        },
+        "files": [
+          "dist",
+          "README.md"
+        ],
+        "publishConfig": {
+          "access": "public"
+        },
+        "scripts": {
+          "build": "node ../../scripts/build-package.mjs",
+          "typecheck": "tsc -p tsconfig.json",
+          "test": "node --test test/*.test.ts",
+          "prepack": "npm run build"
+        },
+        "name": "@barocss/doc-sync",
+        "description": "Compatibility facade for DocSync core and independent editor bindings",
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+          },
+          "./sync": {
+            "types": "./dist/sync.d.ts",
+            "import": "./dist/sync.js",
+            "default": "./dist/sync.js"
+          },
+          "./node": {
+            "types": "./dist/node.d.ts",
+            "import": "./dist/node.js",
+            "default": "./dist/node.js"
+          },
+          "./server": {
+            "types": "./dist/server.d.ts",
+            "import": "./dist/server.js",
+            "default": "./dist/server.js"
+          },
+          "./prosemirror": {
+            "types": "./dist/prosemirror.d.ts",
+            "import": "./dist/prosemirror.js",
+            "default": "./dist/prosemirror.js"
+          },
+          "./tiptap": {
+            "types": "./dist/tiptap.d.ts",
+            "import": "./dist/tiptap.js",
+            "default": "./dist/tiptap.js"
+          },
+          "./slate": {
+            "types": "./dist/slate.d.ts",
+            "import": "./dist/slate.js",
+            "default": "./dist/slate.js"
+          },
+          "./lexical": {
+            "types": "./dist/lexical.d.ts",
+            "import": "./dist/lexical.js",
+            "default": "./dist/lexical.js"
+          }
+        },
+        "dependencies": {
+          "@barocss/doc-sync-core": ">=0.0.0 <0.1.0"
+        },
+        "peerDependencies": {
+          "@barocss/doc-sync-prosemirror": ">=0.0.0 <0.1.0",
+          "@barocss/doc-sync-tiptap": ">=0.0.0 <0.1.0",
+          "@barocss/doc-sync-slate": ">=0.0.0 <0.1.0",
+          "@barocss/doc-sync-lexical": ">=0.0.0 <0.1.0"
+        },
+        "peerDependenciesMeta": {
+          "@barocss/doc-sync-prosemirror": {
+            "optional": true
+          },
+          "@barocss/doc-sync-tiptap": {
+            "optional": true
+          },
+          "@barocss/doc-sync-slate": {
+            "optional": true
+          },
+          "@barocss/doc-sync-lexical": {
+            "optional": true
+          }
+        },
+        "devDependencies": {
+          "@lexical/rich-text": "0.52.0",
+          "@lexical/table": "0.52.0",
+          "@tiptap/core": "3.32.2",
+          "@tiptap/pm": "3.32.2",
+          "@types/jsdom": "^21.1.7",
+          "jsdom": "^26.1.0",
+          "lexical": "0.52.0",
+          "prosemirror-commands": "^1.7.2",
+          "prosemirror-model": "^1.25.12",
+          "prosemirror-state": "^1.4.4",
+          "prosemirror-tables": "^1.8.5",
+          "prosemirror-transform": "^1.12.2",
+          "prosemirror-view": "^1.42.6",
+          "slate": "0.146.0"
+        }
+      },
+      "sha256": "3749a7e0d7a1ee18a9b307b3e43876737fc5a8a3a344c91350aa33065635ef52",
+      "files": [
+        "package/dist/index.js",
+        "package/dist/lexical.js",
+        "package/dist/node.js",
+        "package/dist/prosemirror.js",
+        "package/dist/server.js",
+        "package/dist/slate.js",
+        "package/dist/sync.js",
+        "package/dist/tiptap.js",
+        "package/package.json",
+        "package/README.md",
+        "package/dist/index.d.ts",
+        "package/dist/lexical.d.ts",
+        "package/dist/node.d.ts",
+        "package/dist/prosemirror.d.ts",
+        "package/dist/server.d.ts",
+        "package/dist/slate.d.ts",
+        "package/dist/sync.d.ts",
+        "package/dist/tiptap.d.ts"
+      ],
+      "exportTargets": [
+        "package/dist/index.d.ts",
+        "package/dist/index.js",
+        "package/dist/index.js",
+        "package/dist/sync.d.ts",
+        "package/dist/sync.js",
+        "package/dist/sync.js",
+        "package/dist/node.d.ts",
+        "package/dist/node.js",
+        "package/dist/node.js",
+        "package/dist/server.d.ts",
+        "package/dist/server.js",
+        "package/dist/server.js",
+        "package/dist/prosemirror.d.ts",
+        "package/dist/prosemirror.js",
+        "package/dist/prosemirror.js",
+        "package/dist/tiptap.d.ts",
+        "package/dist/tiptap.js",
+        "package/dist/tiptap.js",
+        "package/dist/slate.d.ts",
+        "package/dist/slate.js",
+        "package/dist/slate.js",
+        "package/dist/lexical.d.ts",
+        "package/dist/lexical.js",
+        "package/dist/lexical.js"
+      ],
+      "jsCount": 8,
+      "declarationCount": 8
+    },
+    {
+      "name": "@barocss/doc-sync-core",
+      "manifest": {
+        "version": "0.0.0",
+        "private": true,
+        "type": "module",
+        "engines": {
+          "node": ">=22.18"
+        },
+        "files": [
+          "dist",
+          "README.md",
+          "ENGINE-CONTRACT.md"
+        ],
+        "publishConfig": {
+          "access": "public"
+        },
+        "scripts": {
+          "build": "node ../../scripts/build-package.mjs",
+          "typecheck": "tsc -p tsconfig.json",
+          "test": "node --test test/*.test.ts",
+          "prepack": "npm run build"
+        },
+        "name": "@barocss/doc-sync-core",
+        "description": "Dependency-free document CRDT, sync, server, and editor support",
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+          },
+          "./sync": {
+            "types": "./dist/sync/index.d.ts",
+            "import": "./dist/sync/index.js",
+            "default": "./dist/sync/index.js"
+          },
+          "./editor": {
+            "types": "./dist/editor/index.d.ts",
+            "import": "./dist/editor/index.js",
+            "default": "./dist/editor/index.js"
+          },
+          "./server": {
+            "types": "./dist/server/index.d.ts",
+            "import": "./dist/server/index.js",
+            "default": "./dist/server/index.js"
+          },
+          "./node": {
+            "types": "./dist/node.d.ts",
+            "import": "./dist/node.js",
+            "default": "./dist/node.js"
+          },
+          "./engine": {
+            "types": "./dist/engine/index.d.ts",
+            "import": "./dist/engine/index.js",
+            "default": "./dist/engine/index.js"
+          }
+        }
+      },
+      "sha256": "c19f949b5c064b67500a19da78a9f2df2c68865a748be2a840b94b02aef1a702",
+      "files": [
+        "package/dist/crdt/annotations.js",
+        "package/dist/sync/browser-recovery.js",
+        "package/dist/crdt/cardinality.js",
+        "package/dist/sync/character.js",
+        "package/dist/sync/client.js",
+        "package/dist/crdt/commands.js",
+        "package/dist/engine/contract.js",
+        "package/dist/crdt/doc.js",
+        "package/dist/crdt/edit.js",
+        "package/dist/crdt/fields.js",
+        "package/dist/crdt/history.js",
+        "package/dist/sync/http-transport.js",
+        "package/dist/server/hub.js",
+        "package/dist/editor/index.js",
+        "package/dist/engine/index.js",
+        "package/dist/index.js",
+        "package/dist/server/index.js",
+        "package/dist/sync/index.js",
+        "package/dist/crdt/key-index.js",
+        "package/dist/sync/live-recovery.js",
+        "package/dist/sync/model-events.js",
+        "package/dist/crdt/model.js",
+        "package/dist/sync/node-http-transport.js",
+        "package/dist/node.js",
+        "package/dist/crdt/placement.js",
+        "package/dist/sync/protocol.js",
+        "package/dist/editor/schema-transition.js",
+        "package/dist/crdt/schema-version.js",
+        "package/dist/crdt/schema.js",
+        "package/dist/server/staged.js",
+        "package/dist/crdt/text-storage.js",
+        "package/dist/crdt/ticket.js",
+        "package/dist/engine/typescript.js",
+        "package/package.json",
+        "package/ENGINE-CONTRACT.md",
+        "package/README.md",
+        "package/dist/crdt/annotations.d.ts",
+        "package/dist/sync/browser-recovery.d.ts",
+        "package/dist/crdt/cardinality.d.ts",
+        "package/dist/sync/character.d.ts",
+        "package/dist/sync/client.d.ts",
+        "package/dist/crdt/commands.d.ts",
+        "package/dist/engine/contract.d.ts",
+        "package/dist/crdt/doc.d.ts",
+        "package/dist/crdt/edit.d.ts",
+        "package/dist/crdt/fields.d.ts",
+        "package/dist/crdt/history.d.ts",
+        "package/dist/sync/http-transport.d.ts",
+        "package/dist/server/hub.d.ts",
+        "package/dist/editor/index.d.ts",
+        "package/dist/engine/index.d.ts",
+        "package/dist/index.d.ts",
+        "package/dist/server/index.d.ts",
+        "package/dist/sync/index.d.ts",
+        "package/dist/crdt/key-index.d.ts",
+        "package/dist/sync/live-recovery.d.ts",
+        "package/dist/sync/model-events.d.ts",
+        "package/dist/crdt/model.d.ts",
+        "package/dist/sync/node-http-transport.d.ts",
+        "package/dist/node.d.ts",
+        "package/dist/crdt/placement.d.ts",
+        "package/dist/sync/protocol.d.ts",
+        "package/dist/editor/schema-transition.d.ts",
+        "package/dist/crdt/schema-version.d.ts",
+        "package/dist/crdt/schema.d.ts",
+        "package/dist/server/staged.d.ts",
+        "package/dist/crdt/text-storage.d.ts",
+        "package/dist/crdt/ticket.d.ts",
+        "package/dist/engine/typescript.d.ts"
+      ],
+      "exportTargets": [
+        "package/dist/index.d.ts",
+        "package/dist/index.js",
+        "package/dist/index.js",
+        "package/dist/sync/index.d.ts",
+        "package/dist/sync/index.js",
+        "package/dist/sync/index.js",
+        "package/dist/editor/index.d.ts",
+        "package/dist/editor/index.js",
+        "package/dist/editor/index.js",
+        "package/dist/server/index.d.ts",
+        "package/dist/server/index.js",
+        "package/dist/server/index.js",
+        "package/dist/node.d.ts",
+        "package/dist/node.js",
+        "package/dist/node.js",
+        "package/dist/engine/index.d.ts",
+        "package/dist/engine/index.js",
+        "package/dist/engine/index.js"
+      ],
+      "jsCount": 33,
+      "declarationCount": 33
+    },
+    {
+      "name": "@barocss/doc-sync-lexical",
+      "manifest": {
+        "version": "0.0.0",
+        "private": true,
+        "type": "module",
+        "engines": {
+          "node": ">=22.18"
+        },
+        "files": [
+          "dist",
+          "README.md"
+        ],
+        "publishConfig": {
+          "access": "public"
+        },
+        "scripts": {
+          "build": "node ../../scripts/build-package.mjs",
+          "typecheck": "tsc -p tsconfig.json",
+          "prepack": "npm run build"
+        },
+        "name": "@barocss/doc-sync-lexical",
+        "description": "DocSync lexical binding",
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+          }
+        },
+        "peerDependencies": {
+          "@barocss/doc-sync-core": ">=0.0.0 <0.1.0",
+          "lexical": "^0.52.0",
+          "@lexical/rich-text": "^0.52.0",
+          "@lexical/table": "^0.52.0"
+        }
+      },
+      "sha256": "4f0c79f860478be7197d02d52d1438b507102d6a755674f4214db374805d3946",
+      "files": [
+        "package/dist/binding.js",
+        "package/dist/convert.js",
+        "package/dist/grid.js",
+        "package/dist/index.js",
+        "package/dist/movement.js",
+        "package/dist/nodes.js",
+        "package/dist/schema.js",
+        "package/dist/selection.js",
+        "package/package.json",
+        "package/README.md",
+        "package/dist/binding.d.ts",
+        "package/dist/convert.d.ts",
+        "package/dist/grid.d.ts",
+        "package/dist/index.d.ts",
+        "package/dist/movement.d.ts",
+        "package/dist/nodes.d.ts",
+        "package/dist/schema.d.ts",
+        "package/dist/selection.d.ts"
+      ],
+      "exportTargets": [
+        "package/dist/index.d.ts",
+        "package/dist/index.js",
+        "package/dist/index.js"
+      ],
+      "jsCount": 8,
+      "declarationCount": 8
+    },
+    {
+      "name": "@barocss/doc-sync-prosemirror",
+      "manifest": {
+        "version": "0.0.0",
+        "private": true,
+        "type": "module",
+        "engines": {
+          "node": ">=22.18"
+        },
+        "files": [
+          "dist",
+          "README.md"
+        ],
+        "publishConfig": {
+          "access": "public"
+        },
+        "scripts": {
+          "build": "node ../../scripts/build-package.mjs",
+          "typecheck": "tsc -p tsconfig.json",
+          "prepack": "npm run build"
+        },
+        "name": "@barocss/doc-sync-prosemirror",
+        "description": "DocSync prosemirror binding",
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+          }
+        },
+        "peerDependencies": {
+          "@barocss/doc-sync-core": ">=0.0.0 <0.1.0",
+          "prosemirror-model": "^1.25.0",
+          "prosemirror-state": "^1.4.0",
+          "prosemirror-transform": "^1.12.0",
+          "prosemirror-view": "^1.42.0"
+        }
+      },
+      "sha256": "2b90e7b80016e7786f417476596da4e0d1345c612b3f6a5dd9dc1823597b4c20",
+      "files": [
+        "package/dist/binding.js",
+        "package/dist/convert.js",
+        "package/dist/index.js",
+        "package/dist/schema.js",
+        "package/package.json",
+        "package/README.md",
+        "package/dist/binding.d.ts",
+        "package/dist/convert.d.ts",
+        "package/dist/index.d.ts",
+        "package/dist/schema.d.ts"
+      ],
+      "exportTargets": [
+        "package/dist/index.d.ts",
+        "package/dist/index.js",
+        "package/dist/index.js"
+      ],
+      "jsCount": 4,
+      "declarationCount": 4
+    },
+    {
+      "name": "@barocss/doc-sync-slate",
+      "manifest": {
+        "version": "0.0.0",
+        "private": true,
+        "type": "module",
+        "engines": {
+          "node": ">=22.18"
+        },
+        "files": [
+          "dist",
+          "README.md"
+        ],
+        "publishConfig": {
+          "access": "public"
+        },
+        "scripts": {
+          "build": "node ../../scripts/build-package.mjs",
+          "typecheck": "tsc -p tsconfig.json",
+          "prepack": "npm run build"
+        },
+        "name": "@barocss/doc-sync-slate",
+        "description": "DocSync slate binding",
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+          }
+        },
+        "peerDependencies": {
+          "@barocss/doc-sync-core": ">=0.0.0 <0.1.0",
+          "slate": "^0.146.0"
+        }
+      },
+      "sha256": "2282634343dde50a5fa1290817014a7f938be715b14dbe357bccf96622e3924c",
+      "files": [
+        "package/dist/binding.js",
+        "package/dist/codec.js",
+        "package/dist/index.js",
+        "package/package.json",
+        "package/README.md",
+        "package/dist/binding.d.ts",
+        "package/dist/codec.d.ts",
+        "package/dist/index.d.ts"
+      ],
+      "exportTargets": [
+        "package/dist/index.d.ts",
+        "package/dist/index.js",
+        "package/dist/index.js"
+      ],
+      "jsCount": 3,
+      "declarationCount": 3
+    },
+    {
+      "name": "@barocss/doc-sync-tiptap",
+      "manifest": {
+        "version": "0.0.0",
+        "private": true,
+        "type": "module",
+        "engines": {
+          "node": ">=22.18"
+        },
+        "files": [
+          "dist",
+          "README.md"
+        ],
+        "publishConfig": {
+          "access": "public"
+        },
+        "scripts": {
+          "build": "node ../../scripts/build-package.mjs",
+          "typecheck": "tsc -p tsconfig.json",
+          "prepack": "npm run build"
+        },
+        "name": "@barocss/doc-sync-tiptap",
+        "description": "DocSync tiptap binding",
+        "exports": {
+          ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+          }
+        },
+        "peerDependencies": {
+          "@barocss/doc-sync-core": ">=0.0.0 <0.1.0",
+          "@tiptap/core": "3.32.2",
+          "@tiptap/pm": "3.32.2",
+          "@barocss/doc-sync-prosemirror": ">=0.0.0 <0.1.0"
+        }
+      },
+      "sha256": "357320350498dc59085ba1b5c55c712786b625cebd6552cfd9d9e1271da7de00",
+      "files": [
+        "package/dist/index.js",
+        "package/package.json",
+        "package/README.md",
+        "package/dist/index.d.ts"
+      ],
+      "exportTargets": [
+        "package/dist/index.d.ts",
+        "package/dist/index.js",
+        "package/dist/index.js"
+      ],
+      "jsCount": 1,
+      "declarationCount": 1
+    }
+  ],
+  "finalFreezeVerified": true,
+  "scope": "Final frozen tarball JS/declaration exports, dependency graph, no source leak, single class definitions; hashes matched to external consumer receipt"
+}

@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "node": "24.22.1",
+  "focusedTests": {
+    "pass": 15,
+    "fail": 0,
+    "command": "node --test packages/doc-sync-core/test/engine-contract.test.ts"
+  },
+  "checks": {
+    "coreBuild": "PASS",
+    "workspaceTypecheck": "PASS",
+    "emittedJsImportEdit": "PASS"
+  },
+  "scope": "Draft TypeScript engine adapter source contract only; no production binding migration, WASM, transport/recovery, performance or publication claim",
+  "hashes": {
+    "packages/doc-sync-core/src/engine/contract.ts": "6d0f82603a19c83ce1cf4786493bf0613b9f728618acdc427214e257c5755758",
+    "packages/doc-sync-core/src/engine/typescript.ts": "231b1bca7c45ba2b0ad614d2d420bca7bcf8970edd5d0c1d97d98219ed81d0e3",
+    "packages/doc-sync-core/src/engine/index.ts": "4d4a84f84e61479cd12caf5ef80f314117473762b9a6e1a069638cb1e8c71b04",
+    "packages/doc-sync-core/test/engine-contract.test.ts": "b4e0e24c71dfa60ccef8ee2ec913d8f3f7d251b0ce6b5a0b539e7bcb37667d92",
+    "packages/doc-sync-core/ENGINE-CONTRACT.md": "fdba020422b42ac3eb70eb93e0fc2d5547843b3881b5fcb45feb3cb2b32ff460"
+  }
+}

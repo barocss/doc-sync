@@ -1,10 +1,10 @@
 # @barocss/doc-sync
 
-A document CRDT library with an injected schema. It is written in TypeScript. The CRDT, sync client, and server have **no dependencies**. ProseMirror, Slate and Lexical integrations use optional editor peers. The repository contains the CRDT, a sync client, a server (DocHub), three editor bindings, and browser demos.
+A document CRDT library with an injected schema. The production engine is written in TypeScript. The CRDT, sync client, and server have **no dependencies**. ProseMirror, Tiptap, Slate and Lexical integrations use optional editor peers. The repository contains the CRDT, a sync client, a server (DocHub), four editor bindings, and browser demos.
 It started with an idea tested in an earlier Yorkie experiment repository: "a document as one token sequence." It is now a standalone library, separate from Yorkie and the schema-based document editor. Its name is `@barocss/doc-sync` (user decision, 2026-10-22).
 **Read [`HANDOFF.md`](HANDOFF.md) first in a new session.**
 
-**Monorepo structure**: `packages/doc-sync` is the only library that provides the public API. The apps and benchmarks are separate private npm workspaces. The shared example schema is in `fixtures/demo-schema.ts`. The existing package name remains. Entry points expose the core, sync, Node transport, server, and three editor bindings. The library also keeps its existing `private: true` setting until release preparation.
+**Monorepo structure**: `packages/doc-sync` is the only npm library that provides the public API. The apps and benchmarks are separate private npm workspaces. The shared example schema is in `fixtures/demo-schema.ts`. The existing package name remains. Entry points expose the core, sync, Node transport, server, and four editor bindings. The library also keeps its existing `private: true` setting until release preparation. Native Rust experiments remain separate private Cargo crates.
 
 **Documentation**: Read the [public documentation site](https://barocss.github.io/doc-sync/) for schema-driven block operations, ProseMirror, Slate, and Lexical integration examples, collaboration rules, and verification limits. The site is built from `apps/docs` and deployed to GitHub Pages. Slate and Lexical have public binding subpaths in the same package. The complete example schema has its own guide. [Editor design lessons](https://barocss.github.io/doc-sync/guide/editor-lessons.html) compare the bindings and explain the input, selection, history, table and rendering problems we solved.
 
@@ -12,6 +12,9 @@ It started with an idea tested in an earlier Yorkie experiment repository: "a do
 
 Representative [Word, Notion and presentation schemas](https://barocss.github.io/doc-sync/guide/product-schemas.html) include complete sample models and tests for concurrent editing, history, snapshots and editor conversion. Run `npm run dev:products` for the native Slate/Lexical/ProseMirror demo; setup is in [apps/demo/products](apps/demo/products/README.md). These views do not provide product file import/export or page/canvas rendering.
 
+**Tiptap**: The optional `@barocss/doc-sync/tiptap` subpath provides `DocSync` and `createTiptapExtensions`. It preserves Tiptap transaction/plugin ownership and uses the shared actor-owned History. Read the [Tiptap guide](apps/docs/src/guide/tiptap.md), then run `node apps/demo/tiptap/start.mjs` for two editors on a shared in-memory hub. Use the generated schema; arbitrary StarterKit schemas are not supported.
+
+**Native Rust SDK**: The private [SDK crate](experiments/rust-sdk/README.md) provides typed native document, operation, History, selection and checkpoint APIs over the experimental Rust core. Run its `two_actors` example for concurrency, retry and undo after restart. It supports six fixed schema presets. Runtime arbitrary schemas, browser/WASM bindings, Node adapters and Rust editor integration remain separate work. See the [Rust engine guide](apps/docs/src/guide/rust.md) and [roadmap](docs/rust-roadmap.md).
 
 **Remote user display**: The demo and ProseMirror show user-colored selection ranges and named carets. They support forward, backward, and multi-paragraph selections, position tracking after edits, and overlapping participants. Demo ranges stay within one CRDT sequence (slot). See [`HANDOFF.md` §5.5](HANDOFF.md#55-remote-user-selection-ranges-2026-10-22) for the rules and browser results.
 
@@ -332,6 +335,9 @@ Use `DATA_DIR=/absolute/path PORT=5411 npm run dev` for a separate log folder an
 | `packages/doc-sync/test/tables.test.ts` | Tables, virtual blocks, dividers, images, schema validation, alternate schema injection, and schema-free server |
 | `packages/doc-sync/test/edit.test.ts` | Editing API: path round trips, schema-based editor operation batches, column folding, links, receive-side events, and selections |
 | `packages/doc-sync/src/pm/*` | ProseMirror: schema generation, model ↔ document, path ↔ position, Step ↔ model operations (binding) |
+| `packages/doc-sync/src/tiptap/*` | Tiptap extension, generated schema, accepted transaction bridge, actor-owned History, and presence |
+| `apps/demo/tiptap/*`, `packages/doc-sync/test/tiptap.test.ts` | Two-editor Tiptap demo and real Editor lifecycle/transaction regressions |
+| `experiments/rust-sdk/*` | Private native Rust SDK, typed operations, restart/History tests, executable examples, and TypeScript authoring comparison |
 | `apps/demo/ui/pm.html`, `pm-app.ts` | Demo editor × ProseMirror demo (`/pm`) |
 | `packages/doc-sync/test/pm.test.ts`, `packages/doc-sync/test/pm-fuzz.ts` | ProseMirror tests: same-position Enter, Enter intent, column folding, undo, formatting, links, and random traces |
 | `packages/doc-sync/test/fuzz-core.ts`, `packages/doc-sync/test/fuzz.test.ts` | Random concurrent editing in the body, cells, and containers; table, row, column, image, and divider insertion/deletion; disconnection, partial delivery, and arbitrary GC |

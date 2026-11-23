@@ -1,0 +1,13 @@
+import ts from '../../node_modules/typescript/lib/typescript.js';
+import fs from 'node:fs';
+const main='/Users/user/github/doc-sync/packages/doc-sync/src';
+const current='/Users/user/github/doc-sync-bindings/packages/doc-sync/dist';
+const pairs=[['root','index.ts','index.d.ts'],['sync','sync/index.ts','sync.d.ts'],['server','server/index.ts','server.d.ts'],['node','node.ts','node.d.ts'],['prosemirror','pm/index.ts','prosemirror.d.ts'],['tiptap','tiptap/index.ts','tiptap.d.ts'],['slate','slate/index.ts','slate.d.ts'],['lexical','lexical/index.ts','lexical.d.ts']];
+const files=pairs.flatMap(([,a,b])=>[main+'/'+a,current+'/'+b]);
+const program=ts.createProgram(files,{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.NodeNext,moduleResolution:ts.ModuleResolutionKind.NodeNext,skipLibCheck:true,allowImportingTsExtensions:true,noEmit:true});
+const checker=program.getTypeChecker();
+const names=path=>checker.getExportsOfModule(checker.getSymbolAtLocation(program.getSourceFile(path))).map(x=>x.name).sort();
+const cases=pairs.map(([entry,a,b])=>{const before=names(main+'/'+a),after=names(current+'/'+b);return {entry,before,after,missing:before.filter(n=>!after.includes(n)),added:after.filter(n=>!before.includes(n))};});
+const report={status:cases.some(c=>c.missing.length)?'FAIL':'PASS',scope:'TypeScript exported symbol names, main source checkpoint versus new built facade declarations; behavior not covered',cases};
+fs.writeFileSync('output/package-verifier/legacy-api-surface.json',JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify({status:report.status,cases:cases.map(c=>({entry:c.entry,before:c.before.length,after:c.after.length,missing:c.missing,added:c.added}))},null,2));

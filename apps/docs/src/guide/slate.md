@@ -136,3 +136,62 @@ Remote changes currently rebuild the native tree. That has a cost for large docu
 The headless tests use real Slate editing operations and cover conversion, UTF-16 selections, remote edits without echo, concurrent Enter, undo/redo, composition, reset, reconnect, and disposal. Browser/CDP input checks and actual OS IME acceptance are separate evidence. These tests do not approve product performance targets or production readiness.
 
 See [editor integration](./editors), [the editing API](./editing), and [binding source](https://github.com/barocss/doc-sync/tree/main/packages/doc-sync/src/slate).
+
+## Rust experiment
+
+This calls the native SDK selection boundary. The Rust model position is a UTF-16 path. The host must still map Slate points and leaf paths to this path and map the resolved path back through the TypeScript binding shown above. No native browser binding is supplied.
+
+Use the [native SDK crate setup](./rust#use-the-native-rust-sdk) to run this complete Rust program.
+
+```rust
+use doc_sync_native_sdk::{
+    Attributes, Document, EditOptions, Key, Position, Result, SchemaPreset, Selection,
+};
+
+fn main() -> Result<()> {
+    let mut doc = Document::new("slate-host", SchemaPreset::Text)?;
+    let mut peer = Document::new("slate-peer", SchemaPreset::Text)?;
+    let change = doc.insert_text(
+        &Key::root(),
+        "Hi",
+        Attributes::new(),
+        EditOptions::default(),
+        0.0,
+    )?;
+    peer.apply_remote(&change.ops)?;
+    let range = Selection {
+        anchor: Position(vec![0, 1]),
+        focus: Position(vec![0, 0]),
+    };
+    let captured = doc.capture_selection(Some(range.clone()))?;
+    assert_eq!(peer.resolve_selection(captured)?, Some(range));
+    assert_eq!(doc.model()?, peer.model()?);
+    Ok(())
+}
+```
+
+The existing TypeScript adapter uses `slateRangeToModel` and `modelRangeToSlate` in `packages/doc-sync/src/slate/codec.ts`. A Rust-backed adapter must connect these conversions to `capture_selection` and `resolve_selection`, and project `model()` into Slate children. The example does not install or test that adapter.
+
+The native SDK uses six fixed `SchemaPreset` values. Runtime schema registration, live schema changes, the full `doc.edit()` compiler, WASM, Node, HTTP, MCP, and editor bindings are not included.
+
+<details>
+<summary>Raw protocol probe and reference checks</summary>
+
+The production Slate binding still converts Slate leaf paths and offsets through TypeScript. Test the core side separately with an emoji. Its two UTF-16 units occupy offsets 0 through 2 in paragraph 0.
+
+Build the driver with [Run the private experiment](./rust#run-the-private-experiment), then run this from the repository root:
+
+```sh
+experiments/rust-shadow/target/debug/doc-sync-rust-shadow <<'JSONL'
+{"cmd":"new","replica":"editor","actor":"editor","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1"}
+{"cmd":"apply","replica":"editor","schema":"flow-root-paragraph:boolean-marks:bold,italic:v1","ops":[{"t":"text","id":{"lamport":1,"actor":"human"},"origin":{"lamport":0,"actor":"~root"},"units":[55357,56832]}]}
+{"cmd":"selection_capture","replica":"editor","range":{"anchor":[0,2],"focus":[0,0]}}
+{"cmd":"selection_resolve","replica":"editor","range":{"anchor":"2@human","focus":"0@~root"}}
+JSONL
+```
+
+The reversed range resolves from `[0, 2]` to `[0, 0]`. This checks UTF-16 direction and token anchors, not Slate leaf mapping, composition, or DOM selection. Inline nodes count once; link spans add no model-path level. Hidden table-cell contents stay in the core; the TypeScript binding maps visible paths and retains the reference contents.
+
+This uses the fixed base text schema. Rust has no production editor, bot, or MCP adapter. See the [Rust engine guide](./rust) for the separate v1 through v6 capabilities and limits.
+
+</details>

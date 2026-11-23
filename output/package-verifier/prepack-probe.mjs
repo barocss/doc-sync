@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
+const root='/Users/user/github/doc-sync-bindings';const output=path.join(root,'output/package-verifier');
+const fixture=fs.mkdtempSync(path.join(output,'clean-prepack-'));const pkg=path.join(fixture,'packages/doc-sync-core');fs.mkdirSync(pkg,{recursive:true});fs.mkdirSync(path.join(fixture,'scripts'));
+for(const file of ['package.json','tsconfig.build.json','tsconfig.json','README.md','ENGINE-CONTRACT.md'])fs.copyFileSync(path.join(root,'packages/doc-sync-core',file),path.join(pkg,file));
+fs.cpSync(path.join(root,'packages/doc-sync-core/src'),path.join(pkg,'src'),{recursive:true});
+fs.copyFileSync(path.join(root,'tsconfig.base.json'),path.join(fixture,'tsconfig.base.json'));
+fs.copyFileSync(path.join(root,'scripts/build-package.mjs'),path.join(fixture,'scripts/build-package.mjs'));
+// This fixture tests source-build lifecycle only. It borrows compiler/type tooling;
+// all runtime consumer identity probes use separately installed tarballs.
+fs.symlinkSync(path.join(root,'node_modules'),path.join(fixture,'node_modules'),'dir');
+fs.mkdirSync(path.join(pkg,'dist'));fs.writeFileSync(path.join(pkg,'dist/index.js'),'throw new Error("VERIFIER_STALE_INDEX");\n');fs.writeFileSync(path.join(pkg,'dist/orphan.js'),'throw new Error("VERIFIER_ORPHAN_FILE");\n');fs.writeFileSync(path.join(pkg,'dist/orphan.d.ts'),'export declare const orphan: unique symbol;\n');
+const npmCli='/Users/user/.volta/tools/image/node/24.22.1/lib/node_modules/npm/bin/npm-cli.js';
+const stdout=execFileSync(process.execPath,[npmCli,'pack','--json','--pack-destination',fixture],{cwd:pkg,encoding:'utf8',env:{...process.env,PATH:path.dirname(process.execPath)+':'+process.env.PATH,npm_config_cache:path.join(output,'npm-cache')},maxBuffer:8*1024*1024});fs.writeFileSync(path.join(fixture,'npm-pack.log'),stdout);
+const archive=path.join(fixture,'barocss-doc-sync-core-0.0.0.tgz');
+const names=execFileSync('/usr/bin/tar',['-tzf',archive],{encoding:'utf8'}).trim().split('\n');assert(!names.some(n=>n.includes('orphan')),'prepack retained orphan output');
+const index=execFileSync('/usr/bin/tar',['-xOf',archive,'package/dist/index.js'],{encoding:'utf8'});assert(!index.includes('VERIFIER_STALE_INDEX'),'prepack retained stale index');assert(index.includes('./crdt/doc.js'),'prepack failed to rebuild core');
+assert(!fs.existsSync(path.join(pkg,'dist/orphan.js')));assert(!fs.existsSync(path.join(pkg,'dist/orphan.d.ts')));
+const report={status:'PASS',node:process.version,scope:'Independent temp source-tree npm pack lifecycle using copied real manifest/build helper; compiler/type tooling symlink only; separate runtime consumers remain tarball-only',staleIndexRebuilt:true,orphanJsRemoved:true,orphanDeclarationRemoved:true,fixture,sourceWorkspaceMutated:false};
+fs.writeFileSync(path.join(output,'prepack-clean-guard.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

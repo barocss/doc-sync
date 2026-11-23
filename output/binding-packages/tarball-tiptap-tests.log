@@ -1,0 +1,24 @@
+✔ Tiptap real Editor chain edits and remote receipt do not echo (44.072125ms)
+✔ Tiptap accepted appended transactions retain plugin state and reject filtered edits (13.30275ms)
+✔ Tiptap native marks, paragraph splits, flattened lists, and tables converge (24.507666ms)
+✔ Tiptap CRDT undo preserves foreign text and supports command can/redo (12.948833ms)
+✔ Tiptap remote receipt maps UTF-16 range endpoints without changing focus (10.704208ms)
+✔ Tiptap reset and offline reconnect update native state; read-only accepts remote edits (8.936875ms)
+✔ Tiptap destruction restores application callbacks and permits a new editor (7.812083ms)
+✔ Tiptap rejects extra schema nodes and native history before shared editing (8.184625ms)
+✔ Tiptap rejects mixed history/content chains before either model changes (7.282125ms)
+✔ Tiptap mounts an existing snapshot without rewriting or adding undo history (6.732917ms)
+✔ Tiptap reports both presence endpoints and rejects duplicate ownership without stealing callbacks (16.123625ms)
+✔ Tiptap unavailable history cannot allow mixed edit chains (5.905166ms)
+✔ Tiptap rejects altered generated node schema before shared editing (6.2945ms)
+✔ Tiptap presence broadcast settles without a selection feedback loop (13.31625ms)
+✔ Tiptap reports host callback errors after apply without losing document changes (7.674541ms)
+✔ Tiptap selection callbacks can issue commands after apply and stop after destroy (7.687458ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 504.600875

@@ -1,0 +1,25 @@
+import ts from '../../node_modules/typescript/lib/typescript.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+const root='/Users/user/github/doc-sync-bindings';
+const config=path.join(root,'packages/doc-sync-core/tsconfig.build.json');
+const parsed=ts.getParsedCommandLineOfConfigFile(config,{}, {...ts.sys,onUnRecoverableConfigFileDiagnostic:d=>{throw new Error(ts.flattenDiagnosticMessageText(d.messageText,'\n'));}});
+const digest=data=>createHash('sha256').update(data).digest('hex');
+const sourceHashes=Object.fromEntries(parsed.fileNames.map(f=>[path.relative(root,f),digest(fs.readFileSync(f))]));
+const outputs=new Map();
+const program=ts.createProgram(parsed.fileNames,parsed.options);
+const diagnostics=ts.getPreEmitDiagnostics(program);
+assert.equal(diagnostics.length,0,ts.formatDiagnosticsWithColorAndContext(diagnostics,{getCanonicalFileName:f=>f,getCurrentDirectory:()=>root,getNewLine:()=> '\n'}));
+const result=program.emit(undefined,(file,text)=>outputs.set(path.relative(path.join(root,'packages/doc-sync-core'),file),Buffer.from(text)));
+assert.equal(result.emitSkipped,false);assert.equal(result.diagnostics.length,0);
+const archive=path.join(root,'output/binding-packages/barocss-doc-sync-core-0.0.0.tgz');
+const files=execFileSync('/usr/bin/tar',['-tzf',archive],{encoding:'utf8'}).trim().split('\n').filter(f=>f.startsWith('package/dist/')&&!f.endsWith('/')).sort();
+assert.deepEqual(files,[...outputs.keys()].map(p=>'package/'+p).sort(),'packed dist file set differs from current compiler output');
+for(const [file,expected] of outputs){const packed=execFileSync('/usr/bin/tar',['-xOf',archive,'package/'+file]);assert(packed.equals(expected),'stale packed compiler output '+file);assert(fs.readFileSync(path.join(root,'packages/doc-sync-core',file)).equals(expected),'stale workspace dist '+file);}
+for(const [file,hash] of Object.entries(sourceHashes))assert.equal(digest(fs.readFileSync(path.join(root,file))),hash,'source changed while compiling '+file);
+const report={status:'PASS',node:process.version,typescript:ts.version,scope:'Independent in-memory complete core tsc emit against current frozen source; byte comparison with both final tarball dist and workspace dist',emittedFiles:outputs.size,sourceHashes,archiveSha256:digest(fs.readFileSync(archive)),outputHashes:Object.fromEntries([...outputs].map(([f,b])=>[f,digest(b)]))};
+fs.writeFileSync(path.join(root,'output/package-verifier/core-compiler-freshness.json'),JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify({status:report.status,typescript:report.typescript,emittedFiles:report.emittedFiles,archiveSha256:report.archiveSha256},null,2));

@@ -1,0 +1,3725 @@
+[
+  {
+    "label": "A insert isolated UTF16 explicit italic",
+    "ops": [
+      {
+        "t": "text",
+        "id": {
+          "lamport": 1,
+          "actor": "A"
+        },
+        "origin": {
+          "lamport": 0,
+          "actor": "~root"
+        },
+        "marks": {
+          "italic": true
+        },
+        "units": [
+          55296,
+          97,
+          56320
+        ]
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  55296,
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": []
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": false,
+        "canRedo": false
+      },
+      "pending": []
+    }
+  },
+  {
+    "label": "B concurrent insert explicit empty marks",
+    "ops": [
+      {
+        "t": "text",
+        "id": {
+          "lamport": 1,
+          "actor": "B"
+        },
+        "origin": {
+          "lamport": 0,
+          "actor": "~root"
+        },
+        "marks": {},
+        "units": [
+          66
+        ]
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  55296,
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A apply B insert",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296,
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "B apply A insert",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296,
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296,
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A bold first A unit",
+    "ops": [
+      {
+        "t": "set",
+        "at": {
+          "lamport": 4,
+          "actor": "A"
+        },
+        "ids": [
+          {
+            "lamport": 1,
+            "actor": "A"
+          }
+        ],
+        "key": "bold",
+        "value": true
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296,
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "B apply A mark",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "B same value foreign mark",
+    "ops": [
+      {
+        "t": "set",
+        "at": {
+          "lamport": 5,
+          "actor": "B"
+        },
+        "ids": [
+          {
+            "lamport": 1,
+            "actor": "A"
+          }
+        ],
+        "key": "bold",
+        "value": true
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A apply B mark",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A undo fenced mark",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": true
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A delete middle A unit",
+    "ops": [
+      {
+        "t": "del",
+        "at": {
+          "lamport": 6,
+          "actor": "A"
+        },
+        "ids": [
+          {
+            "lamport": 2,
+            "actor": "A"
+          }
+        ]
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  97,
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "B concurrent delete same unit",
+    "ops": [
+      {
+        "t": "del",
+        "at": {
+          "lamport": 6,
+          "actor": "B"
+        },
+        "ids": [
+          {
+            "lamport": 2,
+            "actor": "A"
+          }
+        ]
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A apply B delete",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "B apply A delete",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A restart and exact pending retry twice to A and B",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A undo own deletion foreign remains",
+    "ops": [
+      {
+        "t": "undel",
+        "at": {
+          "lamport": 7,
+          "actor": "A"
+        },
+        "cancels": [
+          {
+            "lamport": 6,
+            "actor": "A"
+          }
+        ],
+        "ids": [
+          {
+            "lamport": 2,
+            "actor": "A"
+          }
+        ]
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": true
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "undel",
+            "at": {
+              "lamport": 7,
+              "actor": "A"
+            },
+            "cancels": [
+              {
+                "lamport": 6,
+                "actor": "A"
+              }
+            ],
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "B apply A undelete",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": true
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "undel",
+            "at": {
+              "lamport": 7,
+              "actor": "A"
+            },
+            "cancels": [
+              {
+                "lamport": 6,
+                "actor": "A"
+              }
+            ],
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A redo own deletion",
+    "ops": [
+      {
+        "t": "del",
+        "at": {
+          "lamport": 8,
+          "actor": "A"
+        },
+        "ids": [
+          {
+            "lamport": 2,
+            "actor": "A"
+          }
+        ]
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "undel",
+            "at": {
+              "lamport": 7,
+              "actor": "A"
+            },
+            "cancels": [
+              {
+                "lamport": 6,
+                "actor": "A"
+              }
+            ],
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 8,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "B apply A redo",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "undel",
+            "at": {
+              "lamport": 7,
+              "actor": "A"
+            },
+            "cancels": [
+              {
+                "lamport": 6,
+                "actor": "A"
+              }
+            ],
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 8,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "B undo own deletion A remains",
+    "ops": [
+      {
+        "t": "undel",
+        "at": {
+          "lamport": 9,
+          "actor": "B"
+        },
+        "cancels": [
+          {
+            "lamport": 6,
+            "actor": "B"
+          }
+        ],
+        "ids": [
+          {
+            "lamport": 2,
+            "actor": "A"
+          }
+        ]
+      }
+    ],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "undel",
+            "at": {
+              "lamport": 7,
+              "actor": "A"
+            },
+            "cancels": [
+              {
+                "lamport": 6,
+                "actor": "A"
+              }
+            ],
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 8,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": true
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "undel",
+            "at": {
+              "lamport": 9,
+              "actor": "B"
+            },
+            "cancels": [
+              {
+                "lamport": 6,
+                "actor": "B"
+              }
+            ],
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "label": "A apply B undelete",
+    "ops": [],
+    "A": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": false
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "A"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {
+              "italic": true
+            },
+            "units": [
+              55296,
+              97,
+              56320
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 4,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "undel",
+            "at": {
+              "lamport": 7,
+              "actor": "A"
+            },
+            "cancels": [
+              {
+                "lamport": 6,
+                "actor": "A"
+              }
+            ],
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 8,
+              "actor": "A"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    "B": {
+      "model": {
+        "type": "content",
+        "attrs": {},
+        "children": [
+          {
+            "type": "paragraph",
+            "attrs": {},
+            "children": [],
+            "runs": [
+              {
+                "units": [
+                  66
+                ],
+                "marks": {}
+              },
+              {
+                "units": [
+                  55296
+                ],
+                "marks": {
+                  "bold": true,
+                  "italic": true
+                }
+              },
+              {
+                "units": [
+                  56320
+                ],
+                "marks": {
+                  "italic": true
+                }
+              }
+            ]
+          }
+        ],
+        "runs": []
+      },
+      "history": {
+        "canUndo": true,
+        "canRedo": true
+      },
+      "pending": [
+        [
+          {
+            "t": "text",
+            "id": {
+              "lamport": 1,
+              "actor": "B"
+            },
+            "origin": {
+              "lamport": 0,
+              "actor": "~root"
+            },
+            "marks": {},
+            "units": [
+              66
+            ]
+          }
+        ],
+        [
+          {
+            "t": "set",
+            "at": {
+              "lamport": 5,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 1,
+                "actor": "A"
+              }
+            ],
+            "key": "bold",
+            "value": true
+          }
+        ],
+        [
+          {
+            "t": "del",
+            "at": {
+              "lamport": 6,
+              "actor": "B"
+            },
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "t": "undel",
+            "at": {
+              "lamport": 9,
+              "actor": "B"
+            },
+            "cancels": [
+              {
+                "lamport": 6,
+                "actor": "B"
+              }
+            ],
+            "ids": [
+              {
+                "lamport": 2,
+                "actor": "A"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  }
+]

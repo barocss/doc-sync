@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "freeze": "FINAL_CLEAN_HELPER_ENGINE15",
+  "checks": {
+    "finalTarballStaticAudit": "PASS",
+    "legacyExportNames": "PASS",
+    "canonicalModuleDefinitions": "PASS",
+    "unchangedImplementationBodies": "PASS",
+    "externalConsumerEsmIdentity": "PASS",
+    "independentBindingPatch": "PASS",
+    "currentCoreCompilerOutputMatchesTarball": "PASS",
+    "independentPrepackCleanGuard": "PASS"
+  },
+  "firstUnresolvedFailure": null,
+  "supersedes": "Prior engine10 artifact snapshot; prior hashes are not final evidence",
+  "transientProbeFailures": [
+    {
+      "cause": "Default node resolved v18.10.0; experimental import.meta.resolve returned Promise",
+      "resolution": "Explicit Node v24.22.1 ESM identity probe PASS"
+    },
+    {
+      "cause": "Global /usr/local npm has incompatible tar dependency under Node24",
+      "resolution": "Node24 bundled npm 11.19.1 temp-source prepack probe PASS"
+    }
+  ],
+  "borrowedProducerEvidence": {
+    "path": "../binding-packages/pack-consumers.json",
+    "status": "PASS",
+    "externalConsumers": 7,
+    "typescript": "5.8.3",
+    "typesWithoutAliases": "PASS",
+    "nativeTarballTiptapTests": "16/16",
+    "engineTests": "15/15 producer rerun; not independently rerun here"
+  },
+  "notRunInVerifierLane": [
+    "browser product traces",
+    "Rust differential harness",
+    "registry publish"
+  ],
+  "sourceEdits": false,
+  "commitPushPublish": false
+}

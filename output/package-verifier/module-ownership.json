@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "classDefinitions": {
+    "Doc": [
+      "@barocss/doc-sync-core:package/dist/crdt/doc.js"
+    ],
+    "History": [
+      "@barocss/doc-sync-core:package/dist/crdt/history.js"
+    ],
+    "PmBinding": [
+      "@barocss/doc-sync-prosemirror:package/dist/binding.js"
+    ],
+    "SlateBinding": [
+      "@barocss/doc-sync-slate:package/dist/binding.js"
+    ],
+    "LexicalBinding": [
+      "@barocss/doc-sync-lexical:package/dist/binding.js"
+    ]
+  },
+  "runtimeExternalImports": {
+    "@barocss/doc-sync": [
+      "@barocss/doc-sync-core",
+      "@barocss/doc-sync-core/node",
+      "@barocss/doc-sync-core/server",
+      "@barocss/doc-sync-core/sync",
+      "@barocss/doc-sync-lexical",
+      "@barocss/doc-sync-prosemirror",
+      "@barocss/doc-sync-slate",
+      "@barocss/doc-sync-tiptap"
+    ],
+    "@barocss/doc-sync-core": [],
+    "@barocss/doc-sync-lexical": [
+      "@barocss/doc-sync-core",
+      "@barocss/doc-sync-core/editor",
+      "@lexical/rich-text",
+      "@lexical/table",
+      "lexical"
+    ],
+    "@barocss/doc-sync-prosemirror": [
+      "@barocss/doc-sync-core",
+      "@barocss/doc-sync-core/sync",
+      "prosemirror-model",
+      "prosemirror-state",
+      "prosemirror-transform",
+      "prosemirror-view"
+    ],
+    "@barocss/doc-sync-slate": [
+      "@barocss/doc-sync-core",
+      "@barocss/doc-sync-core/editor",
+      "slate"
+    ],
+    "@barocss/doc-sync-tiptap": [
+      "@barocss/doc-sync-prosemirror",
+      "@tiptap/core",
+      "@tiptap/pm/state"
+    ]
+  },
+  "artifactHashes": {
+    "@barocss/doc-sync": "3749a7e0d7a1ee18a9b307b3e43876737fc5a8a3a344c91350aa33065635ef52",
+    "@barocss/doc-sync-core": "c19f949b5c064b67500a19da78a9f2df2c68865a748be2a840b94b02aef1a702",
+    "@barocss/doc-sync-lexical": "4f0c79f860478be7197d02d52d1438b507102d6a755674f4214db374805d3946",
+    "@barocss/doc-sync-prosemirror": "2b90e7b80016e7786f417476596da4e0d1345c612b3f6a5dd9dc1823597b4c20",
+    "@barocss/doc-sync-slate": "2282634343dde50a5fa1290817014a7f938be715b14dbe357bccf96622e3924c",
+    "@barocss/doc-sync-tiptap": "357320350498dc59085ba1b5c55c712786b625cebd6552cfd9d9e1271da7de00"
+  },
+  "scope": "Final frozen tarball JS static class definitions and runtime imports"
+}

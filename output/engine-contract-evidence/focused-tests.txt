@@ -1,0 +1,23 @@
+✔ two unrelated schema names compile without a fixed preset and return detached DTOs (6.951208ms)
+✔ UTF-16 offsets preserve surrogate pairs and isolated surrogates through wire/checkpoint/undo (3.71175ms)
+✔ concurrent actors converge with causal delayed delivery and duplicate retries (2.103958ms)
+✔ own edit/undo/redo echoes are idempotent before and after a coupled restore (2.941208ms)
+✔ foreign same-value formatting fences local undo and redo (2.747292ms)
+✔ undo cancels only local deletion; foreign deletion remains and pin uses value pairs (0.946167ms)
+✔ anchors reject invalid paths and return null for hidden nested content (1.971416ms)
+✔ invalid edit/wire batches leave document history clock and revision unchanged (1.791ms)
+✔ checkpoint metadata, graph and document coupling failures are atomic (2.43525ms)
+✔ table edits return nonempty normalization for one-row column insertion (4.557041ms)
+✔ backward selection follows remote insert and survives checkpoint restore (0.741916ms)
+✔ structural move/split history remains coupled across repeated undo and redo (11.192291ms)
+✔ invalid schema and non-JSON DTO inputs reject without changing live state (0.309833ms)
+✔ shared and distinct object span values match the real Doc compiler and checkpoint continuation (2.686ms)
+✔ negative-zero DTOs and undo match the existing Doc/History JSON semantics (1.047125ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 401.791625

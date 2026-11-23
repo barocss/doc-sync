@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "workspaceTests": {
+    "total": 952,
+    "pass": 951,
+    "fail": 0,
+    "skip": 1,
+    "skipReason": "unsupported platforms lock test",
+    "engineContractCasesAtThatRun": 10,
+    "note": "Full workspace result predates five final engine cases; unchanged library implementation. Root will rerun after integration."
+  },
+  "libraryTests": {
+    "total": 742,
+    "pass": 742
+  },
+  "engineTests": {
+    "total": 15,
+    "pass": 15,
+    "log": "engine-final15.log"
+  },
+  "compatTests": {
+    "total": 32,
+    "pass": 32
+  },
+  "staticServerAfterFinalDenyChecks": {
+    "total": 3,
+    "pass": 3
+  },
+  "typecheck": "PASS after final engine15 and prepack scripts",
+  "build": "PASS",
+  "demoBuilds": {
+    "compat": "PASS",
+    "products": "PASS",
+    "tiptap": "PASS"
+  },
+  "realTarballSmoke": "pack-consumers.json (final engine15 + all6prepack stale-index AND orphan-dist checks)",
+  "browserProductProof": "ROOT_INTEGRATION_PENDING",
+  "rustDifferential": "ROOT_INTEGRATION_PENDING",
+  "registryPublished": false,
+  "mainWorkspaceWritten": false,
+  "perPackageBuild": "scripts/build-package.mjs: validate named package, clean dist, compile"
+}

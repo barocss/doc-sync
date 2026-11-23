@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {createEditor, Editor, Transforms} from "slate";
-import {SlateBinding, fromSlate, slateRangeToModel, toSlate} from "../src/slate/index.ts";
+import {SlateBinding, fromSlate, slateRangeToModel, toSlate} from "../../doc-sync-slate/dist/index.js";
 import {MemoryNet, tick} from "./harness.ts";
 import type {Descendant} from "slate";
-import type {NodeJSON} from "../src/crdt/model.ts";
+import type {NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
 
 const start = async (text = "abcd", groupTyping = true) => {
     const net = new MemoryNet();
