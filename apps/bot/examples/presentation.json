@@ -1,0 +1,535 @@
+{
+  "type": "presentation",
+  "children": [
+    {
+      "type": "paragraph",
+      "attrs": {
+        "style": {
+          "align": "left",
+          "spacing": 1,
+          "indent": 0
+        }
+      },
+      "runs": [
+        {
+          "text": "Quarterly plan",
+          "marks": {}
+        }
+      ]
+    },
+    {
+      "type": "slide",
+      "attrs": {
+        "layout": "title",
+        "canvas": {
+          "width": 1280,
+          "height": 720,
+          "background": "#ffffff"
+        }
+      },
+      "children": [
+        {
+          "type": "title",
+          "runs": [
+            {
+              "text": "Project overview",
+              "marks": {}
+            }
+          ]
+        },
+        {
+          "type": "text-box",
+          "attrs": {
+            "frame": {
+              "x": 80,
+              "y": 120,
+              "width": 600,
+              "height": 180,
+              "rotation": 0,
+              "z": 1
+            }
+          },
+          "children": [
+            {
+              "type": "paragraph",
+              "attrs": {
+                "style": {
+                  "align": "left",
+                  "spacing": 1,
+                  "indent": 0
+                }
+              },
+              "runs": [
+                {
+                  "text": "Shared 😀 ",
+                  "marks": {
+                    "bold": true,
+                    "color": "#123456",
+                    "fontSize": 18
+                  }
+                },
+                {
+                  "type": "link",
+                  "attrs": {
+                    "url": "https://example.test/design"
+                  },
+                  "runs": [
+                    {
+                      "text": "design",
+                      "marks": {
+                        "italic": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "mention",
+                  "attrs": {
+                    "kind": "user",
+                    "id": "reviewer",
+                    "label": "Reviewer"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "attrs": {
+                "listType": "numbered"
+              },
+              "children": [
+                {
+                  "type": "list-item",
+                  "attrs": {
+                    "level": 0
+                  },
+                  "runs": [
+                    {
+                      "text": "Research",
+                      "marks": {}
+                    }
+                  ]
+                },
+                {
+                  "type": "list-item",
+                  "attrs": {
+                    "level": 1
+                  },
+                  "runs": [
+                    {
+                      "text": "Implementation",
+                      "marks": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text-box",
+          "attrs": {
+            "frame": {
+              "x": 80,
+              "y": 320,
+              "width": 600,
+              "height": 100,
+              "rotation": 0,
+              "z": 2
+            }
+          },
+          "children": [
+            {
+              "type": "paragraph",
+              "attrs": {
+                "style": {
+                  "align": "left",
+                  "spacing": 1,
+                  "indent": 0
+                }
+              },
+              "runs": [
+                {
+                  "text": "Next steps",
+                  "marks": {}
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "attrs": {
+            "src": "https://example.test/roadmap.png",
+            "alt": "Roadmap",
+            "frame": {
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 180,
+              "rotation": 0,
+              "z": 0
+            }
+          }
+        },
+        {
+          "type": "shape",
+          "attrs": {
+            "kind": "ellipse",
+            "frame": {
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 180,
+              "rotation": 0,
+              "z": 0
+            },
+            "fill": "#123456"
+          }
+        },
+        {
+          "type": "object-group",
+          "attrs": {
+            "frame": {
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 180,
+              "rotation": 0,
+              "z": 0
+            }
+          },
+          "children": [
+            {
+              "type": "paragraph",
+              "attrs": {
+                "style": {
+                  "align": "left",
+                  "spacing": 1,
+                  "indent": 0
+                }
+              },
+              "runs": [
+                {
+                  "text": "Group label",
+                  "marks": {}
+                }
+              ]
+            },
+            {
+              "type": "shape",
+              "attrs": {
+                "kind": "rectangle",
+                "frame": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 320,
+                  "height": 180,
+                  "rotation": 0,
+                  "z": 0
+                },
+                "fill": "#ffffff"
+              }
+            },
+            {
+              "type": "text-box",
+              "attrs": {
+                "frame": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 320,
+                  "height": 180,
+                  "rotation": 0,
+                  "z": 0
+                }
+              },
+              "children": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "style": {
+                      "align": "left",
+                      "spacing": 1,
+                      "indent": 0
+                    }
+                  },
+                  "runs": [
+                    {
+                      "text": "Grouped text",
+                      "marks": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "notes",
+          "children": [
+            {
+              "type": "paragraph",
+              "attrs": {
+                "style": {
+                  "align": "left",
+                  "spacing": 1,
+                  "indent": 0
+                }
+              },
+              "runs": [
+                {
+                  "text": "Presenter only: introduce the roadmap.",
+                  "marks": {}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "slide",
+      "attrs": {
+        "layout": "two-column",
+        "canvas": {
+          "width": 1280,
+          "height": 720,
+          "background": "#ffffff"
+        }
+      },
+      "children": [
+        {
+          "type": "title",
+          "runs": [
+            {
+              "text": "Results",
+              "marks": {}
+            }
+          ]
+        },
+        {
+          "type": "text-box",
+          "attrs": {
+            "frame": {
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 180,
+              "rotation": 0,
+              "z": 0
+            }
+          },
+          "children": [
+            {
+              "type": "paragraph",
+              "attrs": {
+                "style": {
+                  "align": "left",
+                  "spacing": 1,
+                  "indent": 0
+                }
+              },
+              "runs": [
+                {
+                  "text": "Result summary",
+                  "marks": {}
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "attrs": {
+            "header": false
+          },
+          "children": [
+            {
+              "type": "row",
+              "children": [
+                {
+                  "type": "cell",
+                  "attrs": {
+                    "properties": {
+                      "label": "",
+                      "complete": false
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "cell-body",
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "attrs": {
+                            "style": {
+                              "align": "left",
+                              "spacing": 1,
+                              "indent": 0
+                            }
+                          },
+                          "runs": [
+                            {
+                              "text": "Name",
+                              "marks": {}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "cell",
+                  "attrs": {
+                    "properties": {
+                      "label": "",
+                      "complete": false
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "cell-body",
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "attrs": {
+                            "style": {
+                              "align": "left",
+                              "spacing": 1,
+                              "indent": 0
+                            }
+                          },
+                          "runs": [
+                            {
+                              "text": "Status",
+                              "marks": {}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "row",
+              "children": [
+                {
+                  "type": "cell",
+                  "attrs": {
+                    "properties": {
+                      "label": "",
+                      "complete": false
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "cell-body",
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "attrs": {
+                            "style": {
+                              "align": "left",
+                              "spacing": 1,
+                              "indent": 0
+                            }
+                          },
+                          "runs": [
+                            {
+                              "text": "Draft",
+                              "marks": {}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "cell",
+                  "attrs": {
+                    "properties": {
+                      "label": "",
+                      "complete": false
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "cell-body",
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "attrs": {
+                            "style": {
+                              "align": "left",
+                              "spacing": 1,
+                              "indent": 0
+                            }
+                          },
+                          "runs": [
+                            {
+                              "text": "Review",
+                              "marks": {}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "chart",
+          "attrs": {
+            "kind": "bar",
+            "data": [
+              {
+                "label": "Q1",
+                "value": 4
+              },
+              {
+                "label": "Q2",
+                "value": 7
+              }
+            ],
+            "frame": {
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 180,
+              "rotation": 0,
+              "z": 0
+            }
+          }
+        },
+        {
+          "type": "notes",
+          "children": [
+            {
+              "type": "paragraph",
+              "attrs": {
+                "style": {
+                  "align": "left",
+                  "spacing": 1,
+                  "indent": 0
+                }
+              },
+              "runs": [
+                {
+                  "text": "Discuss the two metrics.",
+                  "marks": {}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

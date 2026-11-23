@@ -1,11 +1,11 @@
-import {Doc} from "../src/crdt/doc.ts";
-import {DocHub} from "../src/server/hub.ts";
-import {SyncClient} from "../src/sync/client.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {DocHub} from "../../doc-sync-core/dist/server/hub.js";
+import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {NodeJSON} from "../src/crdt/doc.ts";
-import type {Schema} from "../src/crdt/schema.ts";
-import type {HubOptions} from "../src/server/hub.ts";
-import type {Outbound, Presence, ServerEvent, Transport} from "../src/sync/protocol.ts";
+import type {NodeJSON} from "../../doc-sync-core/dist/crdt/doc.js";
+import type {Schema} from "../../doc-sync-core/dist/crdt/schema.js";
+import type {HubOptions} from "../../doc-sync-core/dist/server/hub.js";
+import type {Outbound, Presence, ServerEvent, Transport} from "../../doc-sync-core/dist/sync/protocol.js";
 
 // 시험에서는 블록 목록 고쳐 쓰기를 늘 처음부터 계산한 것과 맞춰 본다. VERIFY_BLOCKS=0 으로 끈다
 Doc.verifyBlocks = process.env.VERIFY_BLOCKS !== "0";

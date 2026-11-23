@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import * as cmd from "../src/crdt/commands.ts";
-import {anchorAt, pathAt, pathOfPos, posOfPath} from "../src/crdt/edit.ts";
-import {applyEdits} from "../src/crdt/model.ts";
+import * as cmd from "../../doc-sync-core/dist/crdt/commands.js";
+import {anchorAt, pathAt, pathOfPos, posOfPath} from "../../doc-sync-core/dist/crdt/edit.js";
+import {applyEdits} from "../../doc-sync-core/dist/crdt/model.js";
 import {MemoryNet, show} from "./harness.ts";
 import {visibleLines} from "./fuzz-core.ts";
-import type {GridBlock, NodeJSON, Doc} from "../src/crdt/doc.ts";
-import type {EditOp} from "../src/crdt/model.ts";
-import type {SyncClient} from "../src/sync/client.ts";
+import type {GridBlock, NodeJSON, Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import type {EditOp} from "../../doc-sync-core/dist/crdt/model.js";
+import type {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
 
 /**
  * 편집 API — 모델 연산 다섯 가지(insert · delete · update · split · merge)와 받는 쪽 이벤트.
