@@ -8,7 +8,7 @@ import {join} from "node:path";
 import {test} from "node:test";
 import {fileURLToPath} from "node:url";
 import {Doc, schemaVersion} from "@barocss/doc-sync";
-import {PROTOCOL_VERSION} from "@barocss/doc-sync/sync";
+import {HttpTransport,PROTOCOL_VERSION} from "@barocss/doc-sync/sync";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
 
 const serverFile = fileURLToPath(new URL("../server.ts", import.meta.url));
@@ -310,6 +310,29 @@ test("recovery submit survives a lost reply and never creates a missing reservat
     } finally { await server.stop(); await rm(data, {recursive: true, force: true}); }
 });
 
+test("browser HTTP recovery primitives preserve exact changes and other users across restart", {timeout:20_000},async()=>{
+    const data=await mkdtemp(join(tmpdir(),"doc-sync-browser-recovery-http-"));let server=await start(data);
+    try {
+        const initial=await state(server.origin,"browser-primitives");assert.ok(initial.generation);
+        let browser=new HttpTransport("browser-primitives","browser",server.origin);
+        const metadata=await browser.getRecoveryState();assert.equal(metadata.generation,initial.generation);
+        const reservation=`r${metadata.reservationEra??0}~${crypto.randomUUID()}`;
+        const local=makeChange("browser","local"),remote=makeChange("other","other");
+        assert.equal((await browser.reserveRecovery(initial.generation,reservation,1)).status,"protected");
+        assert.equal((await fetch(url(server.origin,"browser-primitives","changes"),{method:"POST",headers:{"content-type":"application/json","x-doc-sync-protocol":String(PROTOCOL_VERSION),"x-doc-sync-epoch":initial.epoch,"x-doc-sync-schema":initial.schemaVersion},body:JSON.stringify(remote)})).status,200);
+        assert.deepEqual(await browser.getChangeReceipt(initial.generation,local),{status:"unknown"});
+        await browser.recoverChange(initial.generation,reservation,initial.schemaVersion,local);
+        await server.stop("SIGKILL");server=await start(data);browser=new HttpTransport("browser-primitives","browser",server.origin);
+        assert.equal((await browser.reserveRecovery(initial.generation,reservation,1,true)).status,"protected");
+        assert.equal((await browser.getChangeReceipt(initial.generation,local)).status,"accepted");
+        await browser.recoverChange(initial.generation,reservation,initial.schemaVersion,local);
+        const restored=await state(server.origin,"browser-primitives"),text=JSON.stringify(restored.model);
+        assert.equal(restored.serverSeq,2);assert.equal((text.match(/local/g)??[]).length,1);assert.equal((text.match(/other/g)??[]).length,1);
+        await assert.rejects(browser.recoverChange("wrong-generation",reservation,initial.schemaVersion,local));
+        await browser.releaseRecovery(initial.generation,reservation);
+    } finally {await server.stop();await rm(data,{recursive:true,force:true});}
+});
+
 test("durable generation and exact receipt survive process restart and reset changes the generation", {timeout: 20_000}, async () => {
     const data = await mkdtemp(join(tmpdir(), "doc-sync-receipt-"));
     let server = await start(data);
@@ -469,4 +492,118 @@ test("an in-flight body and scheduled GC cannot mutate an invalidated hub", {
         assert.notEqual(reloaded.epoch, initial.epoch);
         assert.equal(reloaded.serverSeq, 2);
     } finally { await server.stop(); await rm(data, {recursive: true, force: true}); }
+});
+
+for (const acceptedFirst of [false, true]) test(`live recovery retains ${acceptedFirst ? 'accepted but unconfirmed' : 'unsent'} edits and undo across server restart`, {timeout: 30_000}, async () => {
+    const {SyncClient, LiveRecovery} = await import('@barocss/doc-sync/sync');
+    const {NodeHttpTransport} = await import('@barocss/doc-sync/node');
+    const data = await mkdtemp(join(tmpdir(), 'doc-sync-live-recover-'));
+    const recovered: number[] = [];
+    let server = await start(data), wire = new NodeHttpTransport('live-recover','human',server.origin), blocked = false;
+    const transport = {
+        subscribe: (...args: Parameters<typeof wire.subscribe>) => wire.subscribe(...args),
+        send: async (message: Parameters<typeof wire.send>[0]) => { if (blocked && message.kind === 'change') throw Error('held'); return wire.send(message); },
+        sendPresence: (...args: Parameters<typeof wire.sendPresence>) => wire.sendPresence(...args),
+        getRecoveryState: () => wire.getRecoveryState(),
+        reserveRecovery: (...args: Parameters<typeof wire.reserveRecovery>) => wire.reserveRecovery(...args),
+        getChangeReceipt: (...args: Parameters<typeof wire.getChangeReceipt>) => wire.getChangeReceipt(...args),
+        recoverChange: (...args: Parameters<typeof wire.recoverChange>) => { recovered.push(args[3].seq); return wire.recoverChange(...args); },
+        releaseRecovery: (...args: Parameters<typeof wire.releaseRecovery>) => wire.releaseRecovery(...args),
+    };
+    const client = new SyncClient('human',transport,{schema:DEMO_SCHEMA});
+    const wait = async (condition: () => boolean) => { const until=Date.now()+8000; while(!condition()) {if(Date.now()>until) throw Error('condition timeout'); await new Promise(resolve=>setTimeout(resolve,10));} };
+    try {
+        client.connect(); await wait(()=>client.synchronized);
+        const recovery = new LiveRecovery(client,transport); await recovery.establish();
+        blocked=true;
+        client.commit(client.doc.edit([{op:'insert',at:[0,0],content:'human'}]).ops);
+        client.commit(client.doc.edit([{op:'insert',at:[0,5],content:'-tail'}]).ops);
+        assert.equal(client.pending.length,2);
+        const pending=structuredClone(client.pending);
+        if(acceptedFirst){
+            // Persist the exact first change, but withhold its acknowledgement and SSE from this client.
+            client.disconnect();
+            const initial=await state(server.origin,'live-recover');
+            assert.equal((await fetch(url(server.origin,'live-recover','changes'),{method:'POST',headers:{'content-type':'application/json','x-doc-sync-protocol':String(PROTOCOL_VERSION),'x-doc-sync-epoch':initial.epoch,'x-doc-sync-schema':initial.schemaVersion},body:JSON.stringify(pending[0])})).status,200);
+        }
+        await server.stop('SIGKILL'); client.disconnect(); server=await start(data);
+        wire=new NodeHttpTransport('live-recover','human',server.origin);
+        const remote=makeChange('other','other'), current=await state(server.origin,'live-recover');
+        const response=await fetch(url(server.origin,'live-recover','changes'),{method:'POST',headers:{'content-type':'application/json','x-doc-sync-protocol':String(PROTOCOL_VERSION),'x-doc-sync-epoch':current.epoch,'x-doc-sync-schema':current.schemaVersion},body:JSON.stringify(remote)});
+        assert.equal(response.status,200); blocked=false;
+        await recovery.recover(); await wait(()=>client.synchronized && client.pending.length===0);
+        assert.deepEqual(recovered,acceptedFirst?[pending[1].seq]:pending.map(change=>change.seq),'exact accepted receipts must prevent replay');
+        let text=JSON.stringify(client.doc.toJSON()); assert.equal((text.match(/human/g)??[]).length,1); assert.equal((text.match(/other/g)??[]).length,1);
+        assert.match(text,/human-tail/);
+        client.undo(); await wait(()=>client.pending.length===0); text=JSON.stringify(client.doc.toJSON()); assert.doesNotMatch(text,/-tail/); assert.match(text,/human/); assert.match(text,/other/);
+        client.undo(); await wait(()=>client.pending.length===0); text=JSON.stringify(client.doc.toJSON()); assert.doesNotMatch(text,/human/); assert.match(text,/other/);
+        client.redo(); await wait(()=>client.pending.length===0); text=JSON.stringify(client.doc.toJSON()); assert.equal((text.match(/human/g)??[]).length,1); assert.match(text,/other/);
+        client.redo(); await wait(()=>client.pending.length===0); assert.match(JSON.stringify(client.doc.toJSON()),/human-tail/);
+        assert.deepEqual(client.doc.toJSON(),(await state(server.origin,'live-recover')).model);
+    } finally { client.disconnect(); await server.stop(); await rm(data,{recursive:true,force:true}); }
+});
+
+test('protected acknowledged history survives a server restart without pending changes', {timeout:30_000}, async()=>{
+    const {SyncClient,LiveRecovery}=await import('@barocss/doc-sync/sync');
+    const {NodeHttpTransport}=await import('@barocss/doc-sync/node');
+    const data=await mkdtemp(join(tmpdir(),'doc-sync-history-restart-'));
+    let server=await start(data),wire=new NodeHttpTransport('history-restart','human',server.origin);
+    const transport={
+        subscribe:(...args:Parameters<typeof wire.subscribe>)=>wire.subscribe(...args),
+        sendPresence:(...args:Parameters<typeof wire.sendPresence>)=>wire.sendPresence(...args),
+        send:(...args:Parameters<typeof wire.send>)=>wire.send(...args),
+        getRecoveryState:()=>wire.getRecoveryState(),
+        reserveRecovery:(...args:Parameters<typeof wire.reserveRecovery>)=>wire.reserveRecovery(...args),
+        getChangeReceipt:(...args:Parameters<typeof wire.getChangeReceipt>)=>wire.getChangeReceipt(...args),
+        recoverChange:(...args:Parameters<typeof wire.recoverChange>)=>wire.recoverChange(...args),
+        releaseRecovery:(...args:Parameters<typeof wire.releaseRecovery>)=>wire.releaseRecovery(...args),
+    };
+    const client=new SyncClient('human',transport,{schema:DEMO_SCHEMA});
+    const wait=async(condition:()=>boolean)=>{const until=Date.now()+8000;while(!condition()){if(Date.now()>until)throw Error('condition timeout');await new Promise(resolve=>setTimeout(resolve,10));}};
+    try{
+        client.connect();await wait(()=>client.synchronized);
+        const recovery=new LiveRecovery(client,transport);await recovery.establish();
+        client.commit(client.doc.edit([{op:'insert',at:[0,0],content:'human'}]).ops);
+        await wait(()=>client.pending.length===0);assert.ok(client.history.canUndo);
+        await server.stop('SIGKILL');client.disconnect();server=await start(data);
+        wire=new NodeHttpTransport('history-restart','human',server.origin);
+        client.connect();await wait(()=>!!client.connectionError&&!client.online);
+        assert.ok(client.history.canUndo,'epoch mismatch must preserve the acknowledged undo stack');
+        await recovery.recover();await wait(()=>client.synchronized);
+        client.undo();await wait(()=>client.pending.length===0);assert.doesNotMatch(JSON.stringify(client.doc.toJSON()),/human/);
+        client.redo();await wait(()=>client.pending.length===0);assert.match(JSON.stringify(client.doc.toJSON()),/human/);
+        assert.deepEqual(client.doc.toJSON(),(await state(server.origin,'history-restart')).model);
+    }finally{client.disconnect();await server.stop();await rm(data,{recursive:true,force:true});}
+});
+
+test('live recovery refuses reset generation and preserves the local pending edit and undo stack', {timeout:30_000}, async()=>{
+    const {SyncClient,LiveRecovery}=await import('@barocss/doc-sync/sync');
+    const {NodeHttpTransport}=await import('@barocss/doc-sync/node');
+    const data=await mkdtemp(join(tmpdir(),'doc-sync-live-reset-'));
+    const server=await start(data),wire=new NodeHttpTransport('live-reset','human',server.origin);
+    let blocked=false;
+    const transport={
+        subscribe:(...args:Parameters<typeof wire.subscribe>)=>wire.subscribe(...args),
+        sendPresence:(...args:Parameters<typeof wire.sendPresence>)=>wire.sendPresence(...args),
+        send:(...args:Parameters<typeof wire.send>)=>blocked?Promise.reject(Error('held')):wire.send(...args),
+        getRecoveryState:()=>wire.getRecoveryState(),
+        reserveRecovery:(...args:Parameters<typeof wire.reserveRecovery>)=>wire.reserveRecovery(...args),
+        getChangeReceipt:(...args:Parameters<typeof wire.getChangeReceipt>)=>wire.getChangeReceipt(...args),
+        recoverChange:(...args:Parameters<typeof wire.recoverChange>)=>wire.recoverChange(...args),
+        releaseRecovery:(...args:Parameters<typeof wire.releaseRecovery>)=>wire.releaseRecovery(...args),
+    };
+    const client=new SyncClient('human',transport,{schema:DEMO_SCHEMA});
+    const wait=async(condition:()=>boolean)=>{const until=Date.now()+8000;while(!condition()){if(Date.now()>until)throw Error('condition timeout');await new Promise(resolve=>setTimeout(resolve,10));}};
+    try{
+        client.connect();await wait(()=>client.synchronized);
+        const recovery=new LiveRecovery(client,transport);await recovery.establish();
+        blocked=true;client.commit(client.doc.edit([{op:'insert',at:[0,0],content:'keep-local'}]).ops);client.disconnect();
+        const before=client.checkpoint(),model=client.doc.toJSON();
+        assert.equal((await post(server.origin,'live-reset','reset',{})).status,200);
+        const reset=await state(server.origin,'live-reset');
+        await assert.rejects(recovery.recover(),/generation, schema or history changed/i);
+        assert.deepEqual(client.checkpoint(),before);assert.deepEqual(client.doc.toJSON(),model);assert.ok(client.history.canUndo);
+        assert.deepEqual((await state(server.origin,'live-reset')).model,reset.model,'failed recovery must not write the old edit into the reset document');
+        assert.equal(client.online,false);
+    }finally{client.disconnect();await server.stop();await rm(data,{recursive:true,force:true});}
 });

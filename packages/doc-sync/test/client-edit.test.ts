@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../src/crdt/doc.ts";
-import {compileEdits} from "../src/crdt/edit.ts";
-import {applyEdits, diffModels} from "../src/crdt/model.ts";
-import {SyncClient} from "../src/sync/client.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {compileEdits} from "../../doc-sync-core/dist/crdt/edit.js";
+import {applyEdits, diffModels} from "../../doc-sync-core/dist/crdt/model.js";
+import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
 import {MemoryNet} from "./harness.ts";
-import type {EditOp, NodeJSON} from "../src/crdt/model.ts";
-import type {GridBlock} from "../src/crdt/doc.ts";
+import type {EditOp, NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
+import type {GridBlock} from "../../doc-sync-core/dist/crdt/doc.js";
 
 const start = async () => {
     const net = new MemoryNet();

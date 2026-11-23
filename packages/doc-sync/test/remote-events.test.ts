@@ -1,16 +1,16 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, MAIN} from "../src/crdt/doc.ts";
-import {schemaVersion} from "../src/crdt/schema-version.ts";
-import {insertText, setSpan} from "../src/crdt/commands.ts";
-import {applyEdits, diffModels} from "../src/crdt/model.ts";
-import {keyOf} from "../src/crdt/ticket.ts";
-import {SyncClient} from "../src/sync/client.ts";
-import {textEventScopes} from "../src/sync/model-events.ts";
+import {Doc, MAIN} from "../../doc-sync-core/dist/crdt/doc.js";
+import {schemaVersion} from "../../doc-sync-core/dist/crdt/schema-version.js";
+import {insertText, setSpan} from "../../doc-sync-core/dist/crdt/commands.js";
+import {applyEdits, diffModels} from "../../doc-sync-core/dist/crdt/model.js";
+import {keyOf} from "../../doc-sync-core/dist/crdt/ticket.js";
+import {SyncClient} from "../../doc-sync-core/dist/sync/client.js";
+import {textEventScopes} from "../../doc-sync-core/dist/sync/model-events.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {EditOp, NodeJSON} from "../src/crdt/model.ts";
-import type {Op} from "../src/crdt/doc.ts";
-import type {ServerEvent} from "../src/sync/protocol.ts";
+import type {EditOp, NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
+import type {Op} from "../../doc-sync-core/dist/crdt/doc.js";
+import type {ServerEvent} from "../../doc-sync-core/dist/sync/protocol.js";
 
 const setup = (content?: NodeJSON[]) => {
     const seed = new Doc("seed", DEMO_SCHEMA);

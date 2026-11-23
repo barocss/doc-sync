@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc, History, checkSchema, type Schema, type Op} from "../src/index.ts";
+import {Doc, History, checkSchema, type Schema, type Op} from "../../doc-sync-core/dist/index.js";
 
 const schema: Schema = {root: "content", marks: [], nodes: {
     content: {shape: "flow", children: ["paragraph", "caption", "rule"], default: "paragraph", childRules: {caption: {min: 1, max: 1}, rule: {min: 0, max: 0}}},

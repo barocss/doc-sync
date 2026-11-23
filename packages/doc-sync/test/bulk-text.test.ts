@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../src/crdt/doc.ts";
-import {insertText} from "../src/crdt/commands.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {insertText} from "../../doc-sync-core/dist/crdt/commands.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {Op} from "../src/crdt/doc.ts";
+import type {Op} from "../../doc-sync-core/dist/crdt/doc.js";
 
 /** 같은 text op를 한 code unit씩 적용한 결과와 비교한다. ID와 origin은 그대로다. */
 const applyOneByOne = (doc: Doc, op: Extract<Op, {t: "text"}>): void => {

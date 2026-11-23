@@ -57,7 +57,19 @@ class HubTransport implements Transport {
     }
 }
 
-test("a definitive stale rejection retires its journal and permits a fresh edit", {skip: process.platform !== "darwin"}, async () => {
+test('a failed mission evidence write prevents the conditional request from being sent', {skip:(process.platform!=='darwin' && process.platform!=='linux')},async()=>{
+    const directory=await mkdtemp(join(tmpdir(),'doc-sync-step-write-failure-'));
+    const journal=await IntentJournal.open(join(directory,'doc.json'),{document:'doc',actor:'ai'});
+    const hub=new DocHub({schema:DEMO_SCHEMA,generation:crypto.randomUUID()}),transport=new HubTransport(hub,'ai');
+    const session=new DocumentSession('ai',transport,DEMO_SCHEMA,100,journal,async()=>{throw Error('evidence write failed');});
+    try {
+        await session.start();const before=await session.read();assert.ok(before.revision);
+        await assert.rejects(session.edit(before.revision,[{op:'insert',at:[0,0],content:'X'}],'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'),/not_sent/);
+        assert.equal(hub.serverSeq,0);assert.equal(await journal.read(),null);
+    } finally {await session.close();await rm(directory,{recursive:true,force:true});}
+});
+
+test("a definitive stale rejection retires its journal and permits a fresh edit", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-stale-journal-"));
     const journal = await IntentJournal.open(join(directory, "doc.json"), {document: "doc", actor: "ai"});
     const hub = new DocHub({schema: DEMO_SCHEMA, generation: crypto.randomUUID()});
@@ -80,7 +92,7 @@ test("a definitive stale rejection retires its journal and permits a fresh edit"
     } finally { await session.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("pre-send journal failure is not_sent and does not leave a conditional lock", {skip: process.platform !== "darwin"}, async () => {
+test("pre-send journal failure is not_sent and does not leave a conditional lock", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-not-sent-"));
     const journal = await IntentJournal.open(join(directory, "doc.json"), {document: "doc", actor: "ai"});
     const hub = new DocHub({schema: DEMO_SCHEMA, generation: crypto.randomUUID()});
@@ -100,7 +112,7 @@ test("pre-send journal failure is not_sent and does not leave a conditional lock
     } finally { await session.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("a journal failure after a lost response keeps the original request unconfirmed", {skip: process.platform !== "darwin"}, async () => {
+test("a journal failure after a lost response keeps the original request unconfirmed", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-unknown-retry-"));
     const journal = await IntentJournal.open(join(directory, "doc.json"), {document: "doc", actor: "ai"});
     const hub = new DocHub({schema: DEMO_SCHEMA, generation: crypto.randomUUID()});
@@ -122,7 +134,7 @@ test("a journal failure after a lost response keeps the original request unconfi
     } finally { await session.close(); await rm(directory, {recursive: true, force: true}); }
 });
 
-test("an uncertain journal cleanup keeps a confirmed edit and blocks a new one", {skip: process.platform !== "darwin"}, async () => {
+test("an uncertain journal cleanup keeps a confirmed edit and blocks a new one", {skip: (process.platform !== "darwin" && process.platform !== "linux")}, async () => {
     const directory = await mkdtemp(join(tmpdir(), "doc-sync-cleanup-unknown-"));
     const journal = await IntentJournal.open(join(directory, "doc.json"), {document: "doc", actor: "ai"});
     const hub = new DocHub({schema: DEMO_SCHEMA, generation: crypto.randomUUID()});
@@ -370,4 +382,21 @@ test("read remains available after a connection error and retains unconfirmed lo
     assert.equal(view.sessionOnline, false);
     assert.equal(view.connectionError, "epoch conflict");
     await assert.rejects(session.edit(revision, [{op: "insert", at: [0, 0], content: "more"}]), /unconfirmed/);
+});
+
+test("agent presence rejects ranges across table cells and leaves the document unchanged", async () => {
+    const hub = new DocHub({schema: DEMO_SCHEMA});
+    const session = new DocumentSession("ai-presence", new HubTransport(hub, "ai-presence"), DEMO_SCHEMA, 100);
+    await session.start();
+    try {
+        const {revision} = await session.read(); assert.ok(revision);
+        const cell = () => ({type: "table-cell", children: [{type: "table-cell-body", children: [{type: "paragraph", runs: [{text: "cell"}]}]}]});
+        const table = {type: "table", children: [{type: "table-row", children: [cell(), cell()]}]};
+        assert.equal((await session.edit(revision, [{op: "insert", at: [1], content: [table]}])).status, "confirmed");
+        const before = await session.read(); assert.ok(before.revision);
+        await assert.rejects(session.setPresence(before.revision, "AI", "#7c3aed", [1, 0, 0, 0, 0, 2], [1, 0, 1, 0, 0, 2]), /same visible document line/);
+        assert.equal(hub.presence.has("ai-presence"), false);
+        assert.equal((await session.setPresence(before.revision, "AI", "#7c3aed", [1, 0, 0, 0, 0, 3], [1, 0, 0, 0, 0, 1])).status, "sent");
+        assert.equal(hub.serverSeq, before.revision.serverSeq);
+    } finally { await session.close(); }
 });
