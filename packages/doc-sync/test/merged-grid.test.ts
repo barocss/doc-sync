@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import {test} from "node:test";
 import {createEditor, $getRoot, $isElementNode, $isTextNode} from "lexical";
 import {registerTablePlugin, $isTableNode, $isTableCellNode, $computeTableMapSkipCellCheck, $unmergeCellNode} from "@lexical/table";
-import {canonical} from "../src/crdt/model.ts";
-import {buildLexicalSchema, $toLexical, $fromLexical, $setLexicalSelection, $lexicalSelection, fromLexicalJSON, $createModelNode, $setModelData} from "../src/lexical/index.ts";
+import {canonical} from "../../doc-sync-core/dist/crdt/model.js";
+import {buildLexicalSchema, $toLexical, $fromLexical, $setLexicalSelection, $lexicalSelection, fromLexicalJSON, $createModelNode, $setModelData} from "../../doc-sync-lexical/dist/index.js";
 import {DEMO_SCHEMA} from "../../../fixtures/demo-schema.ts";
-import type {NodeJSON} from "../src/crdt/model.ts";
+import type {NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
 
 const p = (text: string): NodeJSON => ({type: "paragraph", runs: [{text, marks: {}}]});
 const cell = (text: string): NodeJSON => ({type: "table-cell", children: [{type: "table-cell-body", children: [p(text)]}]});
@@ -63,7 +63,7 @@ test("Lexical merged-grid visible cell selection uses full-grid coordinates and 
 
 for (const order of [0, 1]) test(`Lexical merged binding preserves concurrent hidden edits and history, receipt order ${order}`, async () => {
     const {MemoryNet} = await import("./harness.ts");
-    const {LexicalBinding, readLexicalModel} = await import("../src/lexical/index.ts");
+    const {LexicalBinding, readLexicalModel} = await import("../../doc-sync-lexical/dist/index.js");
     const {registerRichText} = await import("@lexical/rich-text");
     const net = new MemoryNet(), a = net.add("merge"), b = net.add("hidden");
     a.connect(); b.connect(); await net.settle();
@@ -107,7 +107,7 @@ for (const order of [0, 1]) test(`Lexical merged binding preserves concurrent hi
 });
 
 test("PM reference roundtrip preserves hidden cell attributes, rich content, and output isolation", async () => {
-    const {buildPmSchema, fromPmJSON, toPmJSON} = await import("../src/pm/index.ts");
+    const {buildPmSchema, fromPmJSON, toPmJSON} = await import("../../doc-sync-prosemirror/dist/index.js");
     const schema = structuredClone(DEMO_SCHEMA);
     schema.nodes["table-cell"].attrs!.metadata = {default: {label: ""}, fields: {label: {default: ""}}};
     const mapped = buildPmSchema(schema), model = fixture(2, 2);

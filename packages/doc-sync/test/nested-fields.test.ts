@@ -1,15 +1,15 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Doc} from "../src/crdt/doc.ts";
-import {applyEdits, diffModels} from "../src/crdt/model.ts";
-import {checkSchema} from "../src/crdt/schema.ts";
+import {Doc} from "../../doc-sync-core/dist/crdt/doc.js";
+import {applyEdits, diffModels} from "../../doc-sync-core/dist/crdt/model.js";
+import {checkSchema} from "../../doc-sync-core/dist/crdt/schema.js";
 import {
     FIELD_PREFIX, MAX_FIELD_PATH, decodeFieldKey, diffFields, encodeFieldKey, fieldJsonOk,
     fieldSpecAt, fieldValueOk, fieldsSchemaProblems, flattenFieldPatch, materializeFields, patchFields,
-} from "../src/crdt/fields.ts";
+} from "../../doc-sync-core/dist/crdt/fields.js";
 import {MemoryNet} from "./harness.ts";
-import type {AttrSpec, Schema} from "../src/crdt/schema.ts";
-import type {NodeJSON} from "../src/crdt/model.ts";
+import type {AttrSpec, Schema} from "../../doc-sync-core/dist/crdt/schema.js";
+import type {NodeJSON} from "../../doc-sync-core/dist/crdt/model.js";
 
 type Spec = AttrSpec & {fields?: Record<string, Spec>};
 const defaults = {width: 10, theme: "light", layout: {x: 1, y: 2}, tags: ["a"], data: {code: "base"}};
