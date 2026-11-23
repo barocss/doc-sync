@@ -1,0 +1,5291 @@
+{
+  "format": 1,
+  "target": "/Users/user/github/doc-sync-local",
+  "backend": "local",
+  "mode": "timing",
+  "node": "v24.22.1",
+  "execPath": "/Users/user/.nvm/versions/node/v24.22.1/bin/node",
+  "date": "2026-11-02T08:34:16.921Z",
+  "boundary": "Real PM native headless transactions; excludes browser paint and OS IME. External SyncClient application includes explicit pull; LocalClient notifies automatically.",
+  "budget": {
+    "ordinarySnapshots": 0,
+    "ordinaryNativeFromJSON": "no increase over paired SyncClient baseline",
+    "median": {
+      "relative": 0.1,
+      "absoluteMs": 0.1
+    },
+    "p95": {
+      "relative": 0.15,
+      "absoluteMs": 0.2
+    },
+    "rule": "Investigate regression above max(relative baseline, absolute); no timing claim from counts mode."
+  },
+  "sizes": [
+    10000,
+    100000
+  ],
+  "reps": 10,
+  "warmups": 3,
+  "blocks": 1,
+  "harnessHash": "c05ddd3b3622ae71bb18e9f9aa3e0cc7ff6162102e417d02ee719d38bd3a1cb9",
+  "before": {
+    "aggregate": "cc0c79b58533586f785376adde70ee3e893c95cdfceaca8b8b271532c0b36808",
+    "files": {
+      "packages/doc-sync-core/dist/crdt/annotations.d.ts": "41cfa550c11e9f15a51a5510ea582d42b888ec1acf66977f2363a3fff7eda7e4",
+      "packages/doc-sync-core/dist/crdt/annotations.js": "4695422598676eabc3b19c7dfde638709e9dfb9226d210ce097659c160ade6d7",
+      "packages/doc-sync-core/dist/crdt/cardinality.d.ts": "3effba877b20ef1e975c3dbed4467e64f65fb3e716b55086511120da602f3b3b",
+      "packages/doc-sync-core/dist/crdt/cardinality.js": "ba47ad026937ae24138652395778391d750db2da678db31aef0c9f15fd451dfb",
+      "packages/doc-sync-core/dist/crdt/commands.d.ts": "a72e8cf99faf115accbdd3e388170daa29275876f056f0a1a7645aaa7c134bb6",
+      "packages/doc-sync-core/dist/crdt/commands.js": "3072a1aa80303a5c1571e170d5e1d55197d2a492c083157682dd5a389dd58f9f",
+      "packages/doc-sync-core/dist/crdt/doc.d.ts": "a81c36084fad211dd1fd1ca6297666f82affb874cab6f5768cd6e33e2b47a79a",
+      "packages/doc-sync-core/dist/crdt/doc.js": "8405a4de12da6db9f78d179ff4e728b0c93ddb2324f4adde6e86f53d782abfd1",
+      "packages/doc-sync-core/dist/crdt/edit.d.ts": "1202b9f7c18305428fd1679a462b388c85c7496a01796df5d45b36f23359334f",
+      "packages/doc-sync-core/dist/crdt/edit.js": "76be0ee44e2f8dc397e680b1d11f3cf86b3ad34e4ad94ff0ae8f5267c1e9d37a",
+      "packages/doc-sync-core/dist/crdt/fields.d.ts": "18e1c3e00c379813c938a5c8516180700ec7c4fcaa3830f666e726bd3fde5903",
+      "packages/doc-sync-core/dist/crdt/fields.js": "3178d4dc73d73beeb97ba541b2e959cf7d78e6ef3350c86554de04657116079d",
+      "packages/doc-sync-core/dist/crdt/history.d.ts": "08983e9545d33d886a414eb8b6f03caa1fc8ac8ec9e07809aa3e2244ff0f3a78",
+      "packages/doc-sync-core/dist/crdt/history.js": "c0a2e2bcabb9d9a8a42d112e3fd5a161bd91c1ca3b2724890e1437f72191559d",
+      "packages/doc-sync-core/dist/crdt/key-index.d.ts": "69d27a3d0589d24b9ce3536d0e4307ea9c3c5a0ef9e570d1cbf90ceb29eea71a",
+      "packages/doc-sync-core/dist/crdt/key-index.js": "b2766dd659ca8ea08ac46e8b667e5487dd019adfd42fd6d4b7695ede27c78463",
+      "packages/doc-sync-core/dist/crdt/model.d.ts": "05c445a19cb4c6d4e0a6fb31dc34276c432d63aee48fa8c8416d700afe952ddc",
+      "packages/doc-sync-core/dist/crdt/model.js": "348693cac18ff02ac2d592b56c14c53e6fa36c852dd6431b46f667b4d54d1cf0",
+      "packages/doc-sync-core/dist/crdt/placement.d.ts": "c8c2c964ed63bfbfefd8c4ad323e88dfe778bc8b1e8301ba78745986c4f48945",
+      "packages/doc-sync-core/dist/crdt/placement.js": "6da00d46128a12e9a9e364620d9229aedcea5d4a93ee3db3c92cc9011d39fb1d",
+      "packages/doc-sync-core/dist/crdt/read-budget.d.ts": "6e4714020ffd0f29a77529874d1e6d5ebc1ab1885a8b906babfb0c3bcaab3c8f",
+      "packages/doc-sync-core/dist/crdt/read-budget.js": "1095ac191302464c87b136c67ba520e0a1c23e1966a4ea4ff7e4fa670bbf10a8",
+      "packages/doc-sync-core/dist/crdt/read-preflight.d.ts": "2cf57a5c1456e9339957fb1db014cb2c41dfe54b05b2c34bcd91615619cae4b6",
+      "packages/doc-sync-core/dist/crdt/read-preflight.js": "b2651da97c9da74ff6b6ae449a15b04de4badc846a66bdf5d5cf7920431c63ec",
+      "packages/doc-sync-core/dist/crdt/read.d.ts": "544356d926eade990c98046103d4413f8ed918bb60f3a10e0bb0c6eb3662f53b",
+      "packages/doc-sync-core/dist/crdt/read.js": "30052fc4214145a4a6e6b6c48448fe279d4638f3bc392878a63f1033e3934d2d",
+      "packages/doc-sync-core/dist/crdt/schema-version.d.ts": "a61b12557ef291d222d492fdd856ec71d3ed67024b49f428f40e9389262a9017",
+      "packages/doc-sync-core/dist/crdt/schema-version.js": "6f0553688ba7df186f2d6a07cb532c8a1a682f2cb924d917c869212f51551e4c",
+      "packages/doc-sync-core/dist/crdt/schema.d.ts": "2e641b8962749070b69d3ff51a383878a35a3c77b1328a12d7d4eaba6a621b43",
+      "packages/doc-sync-core/dist/crdt/schema.js": "1e66a7fceb701739f12b6d2278e006b6e3ef7714bab67caa13474899a45773b5",
+      "packages/doc-sync-core/dist/crdt/text-storage.d.ts": "fb1b68325938c00b7c71c6918d4a6e0dfa52127f26a22d9d6aaab48f1709480e",
+      "packages/doc-sync-core/dist/crdt/text-storage.js": "f661e421fc0d4d20097659760003b1174216fdd50090504ffa58ddbb20e7aa07",
+      "packages/doc-sync-core/dist/crdt/ticket.d.ts": "42ea7522715e8afc344a983d2daaf6fe310e7c2cc9a73cea8753d3fd91c396af",
+      "packages/doc-sync-core/dist/crdt/ticket.js": "d600cb5381e48565d928ebe5274de45ba18514c0698b0322d9b49eb5234f3cae",
+      "packages/doc-sync-core/dist/editor/host-contract.d.ts": "35c43a79ca87b3cd96bb861afd82591b5bf5c2228bdc39010ec3701f81f4eda4",
+      "packages/doc-sync-core/dist/editor/host-contract.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "packages/doc-sync-core/dist/editor/index.d.ts": "14e1fa266ac5b3ad5c3c67484de604ec690a9553750357ca47b52f0298e84a32",
+      "packages/doc-sync-core/dist/editor/index.js": "471363e42e8b91a08b650b3019d4103ee1225e4300e816bd6aaa9c03bf432adf",
+      "packages/doc-sync-core/dist/editor/schema-transition.d.ts": "0ef861cb28941475bcfc16b4ae123506cfcc987f311a902f4be84bfa51708db6",
+      "packages/doc-sync-core/dist/editor/schema-transition.js": "5a9cb243b0f651023daeb33c29aa9c84a062b9426024c072d3eddadbd1c1928a",
+      "packages/doc-sync-core/dist/editor/sync-client-host.d.ts": "66c725edb80c1c149fd4b26f33aa2242e161cee4d7e1a83d1eabc8a72b1b94bd",
+      "packages/doc-sync-core/dist/editor/sync-client-host.js": "bd2b3eaaff7a454dbadd2a12e19745a1019796678bb809c18a61b3d1c3415916",
+      "packages/doc-sync-core/dist/editor/typescript-compatibility.d.ts": "cf8a310aeaed5eb72f02269e13dcc1e5fb5161955ced218fb686e912c69e2684",
+      "packages/doc-sync-core/dist/editor/typescript-compatibility.js": "0e8cd48b1a03f22be4636cacb79e8c11487711a4b21eed57e230ec3aaaa9e13b",
+      "packages/doc-sync-core/dist/engine/client-contract.d.ts": "0dca5392ffb5dcdbbbee59dfc3b3a04b97eab3540e641cc15bb6f27838a2e3ab",
+      "packages/doc-sync-core/dist/engine/client-contract.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "packages/doc-sync-core/dist/engine/contract.d.ts": "eeb4eb45e5a0b0bd61457a7d6c9d013edc6e2608c5f9b91b107d68c988449897",
+      "packages/doc-sync-core/dist/engine/contract.js": "bfd603bcfe5b03a6eb52bf26841429c33477cbc5910fa6c8b6ec1329d236de81",
+      "packages/doc-sync-core/dist/engine/editing.d.ts": "2911bafee593d7728ad6a7704e4329444ba3426d93e09aae66dc3585390a09cf",
+      "packages/doc-sync-core/dist/engine/editing.js": "b6ef3a8ef92a15a1cd906a8a5d8db97af71b573c3145e03f442a717632996d3f",
+      "packages/doc-sync-core/dist/engine/index.d.ts": "eff46636cf8f7cba545fe21438bc058384365311214081a0c415595f18724478",
+      "packages/doc-sync-core/dist/engine/index.js": "b95b2064b4067f876e04fd064c38c56f501cc8e7ccb630c4b8c5edd9b897c421",
+      "packages/doc-sync-core/dist/engine/typescript-client.d.ts": "d445cd5d1ee8debc4557c4dd98d9f01e9aa12fac6ae58d2d462f4a34e1115443",
+      "packages/doc-sync-core/dist/engine/typescript-client.js": "a1f56fadd886db734245ee69f7f8af229ea59f21cf0da0e271aa2912c9859063",
+      "packages/doc-sync-core/dist/engine/typescript.d.ts": "67a4e82697f55f6ad470f3b79b9df41e60ebb76b435d398a5a2b54da3cce1db5",
+      "packages/doc-sync-core/dist/engine/typescript.js": "601314ffa4a0cedbee5d74d86735878a1b4ba64de4c60f920147b9a42c711f5e",
+      "packages/doc-sync-core/dist/index.d.ts": "7d7e857139fc0ed3f03047f42ed0f4368508d35d490827b1a00a27c8f10092f3",
+      "packages/doc-sync-core/dist/index.js": "23fddf221ec9b31c85b2d1669ec7e4f19997c896e97dbe470765006a103529a2",
+      "packages/doc-sync-core/dist/local/client.d.ts": "82d235615ec88dc3dd2b590f862433b2e46a107c6e736ec3ea5173a40badc2ce",
+      "packages/doc-sync-core/dist/local/client.js": "27f3685983105dfea1ea4240422dd42cb4cdbffc68934baca24e52008bbb4fd5",
+      "packages/doc-sync-core/dist/local/editor-host.d.ts": "7227cd2c964c48c023164ba488591a58e4dbb612b7085976681309187800799c",
+      "packages/doc-sync-core/dist/local/editor-host.js": "18485de2350ec048f4cb943925716dc1f461d6cde40caa8e1ebda544f6233625",
+      "packages/doc-sync-core/dist/local/index.d.ts": "eebb78d16a81113c7cb2617c54b4abb3a1c1cab8e66a3466f20aea4e875d4b94",
+      "packages/doc-sync-core/dist/local/index.js": "6923790024eb34051442e0e05c0d007bc9bc66a401228cf74d17e2a141ffc624",
+      "packages/doc-sync-core/dist/node.d.ts": "bdfc35631bab1b1c31ffae5d6ce185f5e0cd262803e5493f1d4012cc13b2facb",
+      "packages/doc-sync-core/dist/node.js": "73ab7aa2a1bd982a45b493a2dfdcc096ee970d937a9b9f55ebd85d6b52ebe2e0",
+      "packages/doc-sync-core/dist/server/hub.d.ts": "9edb38017873411f19918de951b7798d75a0d7dc99e3074312e5dbdb77f7824a",
+      "packages/doc-sync-core/dist/server/hub.js": "97dc73faa8dab99d167fa011b93f3c23330b665dd166bf7ff4f11ff25c7488bb",
+      "packages/doc-sync-core/dist/server/index.d.ts": "0f0c38ab522e194f40c52846b4ae78959c92db0e7bb4d6b0813cdf3fe82cbc7f",
+      "packages/doc-sync-core/dist/server/index.js": "01db7b6b44c98f100a3f5f82d1cbd78cc566f32a894b9696e16838cba05f0935",
+      "packages/doc-sync-core/dist/server/staged.d.ts": "f87ca45c86100045260365c3cf9ac7246e68a0ae33f97f8945bf9129aa1531a2",
+      "packages/doc-sync-core/dist/server/staged.js": "614d2e81ac67141ce83ad33f64ddfc27ffe47de6fcce6855878e120a76dfd176",
+      "packages/doc-sync-core/dist/sync/browser-recovery.d.ts": "518c375d0ea4d5fe91bc0245c306b5e3416223368b6d7db2aed2d80158bf663e",
+      "packages/doc-sync-core/dist/sync/browser-recovery.js": "f9e9221af87303b77911b37eb4c9a7d56c5c48452111da737a0cea0793751fe9",
+      "packages/doc-sync-core/dist/sync/character.d.ts": "7925eef339d36070369651e2ff3724f26d88287b1892d1d647e3a8214c2afe5e",
+      "packages/doc-sync-core/dist/sync/character.js": "5acedeb57ad63db83a1051a31c04183b006fbf7cdb10e4c718992fc226442938",
+      "packages/doc-sync-core/dist/sync/client.d.ts": "52c64f8fb594720b3537f1b74ff021cadeaeab3f5317012401945eaaa06118c9",
+      "packages/doc-sync-core/dist/sync/client.js": "2800b609f56147a5b4c01a47ae47daed3c306250b9c5bbec0730caa6f5d65d6a",
+      "packages/doc-sync-core/dist/sync/http-transport.d.ts": "d508c2a59317da357a3094e8da14647a3c8099d1136edd4b96aafb8494e5b749",
+      "packages/doc-sync-core/dist/sync/http-transport.js": "3bb259383bee36ac878c75aa373a91038a93ade625d5d9e5a3bf782c02da6e08",
+      "packages/doc-sync-core/dist/sync/index.d.ts": "c37df1f001d0b71a145be63655b663d45fe6bc9cb50d87e16ef862eb2d10a631",
+      "packages/doc-sync-core/dist/sync/index.js": "c7a16cf11955ca65a10c2de68057bc5a3114eff371ac6de91142acef00d28afa",
+      "packages/doc-sync-core/dist/sync/live-recovery.d.ts": "d22840db4e42189e8b7841d27322a530cf83dc0726c7f62200e5fe62c655ae92",
+      "packages/doc-sync-core/dist/sync/live-recovery.js": "0c1b29bfede327321e95cf1750963ed7992937a354a470d15f7139c96a0fca14",
+      "packages/doc-sync-core/dist/sync/model-events.d.ts": "363e665f1d0b52b7e1c9a526015cfe9d6c98e43d20be48479225a20d9c009659",
+      "packages/doc-sync-core/dist/sync/model-events.js": "e1eec7e2141c4d5f2a01b1d82ae5da65e3ec5f2e48835c7192706596bd618aa1",
+      "packages/doc-sync-core/dist/sync/node-http-transport.d.ts": "7c11575ec25bad7133d95eee48b4e52b8b6c898b30f92de77f9dc96942d9bf05",
+      "packages/doc-sync-core/dist/sync/node-http-transport.js": "0dcf7ca70ef701a048aa29756585ae8318645a96f8770a2ccf3d9da22edbab74",
+      "packages/doc-sync-core/dist/sync/protocol.d.ts": "4da150a2bd52baa99004c822e4361b8214f5ace35a3ed2bf7cf4f485faed98c2",
+      "packages/doc-sync-core/dist/sync/protocol.js": "0066d5900ba339d82810a8e3ef8b38f60dbd7f7b29d98a99e29bfa5ba306cb22",
+      "packages/doc-sync-prosemirror/dist/binding.d.ts": "e6d722417e3e632ad6e1fe7efb194cac69d0b46f49166f0f33e65a4f844ef568",
+      "packages/doc-sync-prosemirror/dist/binding.js": "ad1b244ea8e94b7ef980495362871893f634fe92befb6ee717e80bb910a9ea92",
+      "packages/doc-sync-prosemirror/dist/convert.d.ts": "9d7c87ec382d6a0315877a1f3c9beff2120316578167dce242b5a96be965db04",
+      "packages/doc-sync-prosemirror/dist/convert.js": "001a1572f6646fc9bfd014f7dc057542e6c0b0a2c56d7c13d16430f04ac22885",
+      "packages/doc-sync-prosemirror/dist/host-binding.d.ts": "36f11c29125173b033b5a1f7346bba2eba9b6e59432b8769867b08ee344af5dd",
+      "packages/doc-sync-prosemirror/dist/host-binding.js": "bd22bfc3bcd83ba8f8756148d1a67380803d93aa6365ef9bc386ac1a0f57a6af",
+      "packages/doc-sync-prosemirror/dist/index.d.ts": "bc0b9e54c2b7fa8540ff2a3f2ab097fc81203fa1f2eaa5af7622a9e45d360fd8",
+      "packages/doc-sync-prosemirror/dist/index.js": "2e1aebe6d4a4652d378b89815d9e1bac2d1cf3ec8282d851d7916e643be15393",
+      "packages/doc-sync-prosemirror/dist/schema.d.ts": "74a222265edf9b8a1917fda2289b6da738019f78cd4fdddc0367aeb07e92a8ad",
+      "packages/doc-sync-prosemirror/dist/schema.js": "878894e88101a2c8076876c374f45b714096ba73666a5668e0a68791563c1d0b"
+    }
+  },
+  "after": {
+    "aggregate": "cc0c79b58533586f785376adde70ee3e893c95cdfceaca8b8b271532c0b36808",
+    "files": {
+      "packages/doc-sync-core/dist/crdt/annotations.d.ts": "41cfa550c11e9f15a51a5510ea582d42b888ec1acf66977f2363a3fff7eda7e4",
+      "packages/doc-sync-core/dist/crdt/annotations.js": "4695422598676eabc3b19c7dfde638709e9dfb9226d210ce097659c160ade6d7",
+      "packages/doc-sync-core/dist/crdt/cardinality.d.ts": "3effba877b20ef1e975c3dbed4467e64f65fb3e716b55086511120da602f3b3b",
+      "packages/doc-sync-core/dist/crdt/cardinality.js": "ba47ad026937ae24138652395778391d750db2da678db31aef0c9f15fd451dfb",
+      "packages/doc-sync-core/dist/crdt/commands.d.ts": "a72e8cf99faf115accbdd3e388170daa29275876f056f0a1a7645aaa7c134bb6",
+      "packages/doc-sync-core/dist/crdt/commands.js": "3072a1aa80303a5c1571e170d5e1d55197d2a492c083157682dd5a389dd58f9f",
+      "packages/doc-sync-core/dist/crdt/doc.d.ts": "a81c36084fad211dd1fd1ca6297666f82affb874cab6f5768cd6e33e2b47a79a",
+      "packages/doc-sync-core/dist/crdt/doc.js": "8405a4de12da6db9f78d179ff4e728b0c93ddb2324f4adde6e86f53d782abfd1",
+      "packages/doc-sync-core/dist/crdt/edit.d.ts": "1202b9f7c18305428fd1679a462b388c85c7496a01796df5d45b36f23359334f",
+      "packages/doc-sync-core/dist/crdt/edit.js": "76be0ee44e2f8dc397e680b1d11f3cf86b3ad34e4ad94ff0ae8f5267c1e9d37a",
+      "packages/doc-sync-core/dist/crdt/fields.d.ts": "18e1c3e00c379813c938a5c8516180700ec7c4fcaa3830f666e726bd3fde5903",
+      "packages/doc-sync-core/dist/crdt/fields.js": "3178d4dc73d73beeb97ba541b2e959cf7d78e6ef3350c86554de04657116079d",
+      "packages/doc-sync-core/dist/crdt/history.d.ts": "08983e9545d33d886a414eb8b6f03caa1fc8ac8ec9e07809aa3e2244ff0f3a78",
+      "packages/doc-sync-core/dist/crdt/history.js": "c0a2e2bcabb9d9a8a42d112e3fd5a161bd91c1ca3b2724890e1437f72191559d",
+      "packages/doc-sync-core/dist/crdt/key-index.d.ts": "69d27a3d0589d24b9ce3536d0e4307ea9c3c5a0ef9e570d1cbf90ceb29eea71a",
+      "packages/doc-sync-core/dist/crdt/key-index.js": "b2766dd659ca8ea08ac46e8b667e5487dd019adfd42fd6d4b7695ede27c78463",
+      "packages/doc-sync-core/dist/crdt/model.d.ts": "05c445a19cb4c6d4e0a6fb31dc34276c432d63aee48fa8c8416d700afe952ddc",
+      "packages/doc-sync-core/dist/crdt/model.js": "348693cac18ff02ac2d592b56c14c53e6fa36c852dd6431b46f667b4d54d1cf0",
+      "packages/doc-sync-core/dist/crdt/placement.d.ts": "c8c2c964ed63bfbfefd8c4ad323e88dfe778bc8b1e8301ba78745986c4f48945",
+      "packages/doc-sync-core/dist/crdt/placement.js": "6da00d46128a12e9a9e364620d9229aedcea5d4a93ee3db3c92cc9011d39fb1d",
+      "packages/doc-sync-core/dist/crdt/read-budget.d.ts": "6e4714020ffd0f29a77529874d1e6d5ebc1ab1885a8b906babfb0c3bcaab3c8f",
+      "packages/doc-sync-core/dist/crdt/read-budget.js": "1095ac191302464c87b136c67ba520e0a1c23e1966a4ea4ff7e4fa670bbf10a8",
+      "packages/doc-sync-core/dist/crdt/read-preflight.d.ts": "2cf57a5c1456e9339957fb1db014cb2c41dfe54b05b2c34bcd91615619cae4b6",
+      "packages/doc-sync-core/dist/crdt/read-preflight.js": "b2651da97c9da74ff6b6ae449a15b04de4badc846a66bdf5d5cf7920431c63ec",
+      "packages/doc-sync-core/dist/crdt/read.d.ts": "544356d926eade990c98046103d4413f8ed918bb60f3a10e0bb0c6eb3662f53b",
+      "packages/doc-sync-core/dist/crdt/read.js": "30052fc4214145a4a6e6b6c48448fe279d4638f3bc392878a63f1033e3934d2d",
+      "packages/doc-sync-core/dist/crdt/schema-version.d.ts": "a61b12557ef291d222d492fdd856ec71d3ed67024b49f428f40e9389262a9017",
+      "packages/doc-sync-core/dist/crdt/schema-version.js": "6f0553688ba7df186f2d6a07cb532c8a1a682f2cb924d917c869212f51551e4c",
+      "packages/doc-sync-core/dist/crdt/schema.d.ts": "2e641b8962749070b69d3ff51a383878a35a3c77b1328a12d7d4eaba6a621b43",
+      "packages/doc-sync-core/dist/crdt/schema.js": "1e66a7fceb701739f12b6d2278e006b6e3ef7714bab67caa13474899a45773b5",
+      "packages/doc-sync-core/dist/crdt/text-storage.d.ts": "fb1b68325938c00b7c71c6918d4a6e0dfa52127f26a22d9d6aaab48f1709480e",
+      "packages/doc-sync-core/dist/crdt/text-storage.js": "f661e421fc0d4d20097659760003b1174216fdd50090504ffa58ddbb20e7aa07",
+      "packages/doc-sync-core/dist/crdt/ticket.d.ts": "42ea7522715e8afc344a983d2daaf6fe310e7c2cc9a73cea8753d3fd91c396af",
+      "packages/doc-sync-core/dist/crdt/ticket.js": "d600cb5381e48565d928ebe5274de45ba18514c0698b0322d9b49eb5234f3cae",
+      "packages/doc-sync-core/dist/editor/host-contract.d.ts": "35c43a79ca87b3cd96bb861afd82591b5bf5c2228bdc39010ec3701f81f4eda4",
+      "packages/doc-sync-core/dist/editor/host-contract.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "packages/doc-sync-core/dist/editor/index.d.ts": "14e1fa266ac5b3ad5c3c67484de604ec690a9553750357ca47b52f0298e84a32",
+      "packages/doc-sync-core/dist/editor/index.js": "471363e42e8b91a08b650b3019d4103ee1225e4300e816bd6aaa9c03bf432adf",
+      "packages/doc-sync-core/dist/editor/schema-transition.d.ts": "0ef861cb28941475bcfc16b4ae123506cfcc987f311a902f4be84bfa51708db6",
+      "packages/doc-sync-core/dist/editor/schema-transition.js": "5a9cb243b0f651023daeb33c29aa9c84a062b9426024c072d3eddadbd1c1928a",
+      "packages/doc-sync-core/dist/editor/sync-client-host.d.ts": "66c725edb80c1c149fd4b26f33aa2242e161cee4d7e1a83d1eabc8a72b1b94bd",
+      "packages/doc-sync-core/dist/editor/sync-client-host.js": "bd2b3eaaff7a454dbadd2a12e19745a1019796678bb809c18a61b3d1c3415916",
+      "packages/doc-sync-core/dist/editor/typescript-compatibility.d.ts": "cf8a310aeaed5eb72f02269e13dcc1e5fb5161955ced218fb686e912c69e2684",
+      "packages/doc-sync-core/dist/editor/typescript-compatibility.js": "0e8cd48b1a03f22be4636cacb79e8c11487711a4b21eed57e230ec3aaaa9e13b",
+      "packages/doc-sync-core/dist/engine/client-contract.d.ts": "0dca5392ffb5dcdbbbee59dfc3b3a04b97eab3540e641cc15bb6f27838a2e3ab",
+      "packages/doc-sync-core/dist/engine/client-contract.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "packages/doc-sync-core/dist/engine/contract.d.ts": "eeb4eb45e5a0b0bd61457a7d6c9d013edc6e2608c5f9b91b107d68c988449897",
+      "packages/doc-sync-core/dist/engine/contract.js": "bfd603bcfe5b03a6eb52bf26841429c33477cbc5910fa6c8b6ec1329d236de81",
+      "packages/doc-sync-core/dist/engine/editing.d.ts": "2911bafee593d7728ad6a7704e4329444ba3426d93e09aae66dc3585390a09cf",
+      "packages/doc-sync-core/dist/engine/editing.js": "b6ef3a8ef92a15a1cd906a8a5d8db97af71b573c3145e03f442a717632996d3f",
+      "packages/doc-sync-core/dist/engine/index.d.ts": "eff46636cf8f7cba545fe21438bc058384365311214081a0c415595f18724478",
+      "packages/doc-sync-core/dist/engine/index.js": "b95b2064b4067f876e04fd064c38c56f501cc8e7ccb630c4b8c5edd9b897c421",
+      "packages/doc-sync-core/dist/engine/typescript-client.d.ts": "d445cd5d1ee8debc4557c4dd98d9f01e9aa12fac6ae58d2d462f4a34e1115443",
+      "packages/doc-sync-core/dist/engine/typescript-client.js": "a1f56fadd886db734245ee69f7f8af229ea59f21cf0da0e271aa2912c9859063",
+      "packages/doc-sync-core/dist/engine/typescript.d.ts": "67a4e82697f55f6ad470f3b79b9df41e60ebb76b435d398a5a2b54da3cce1db5",
+      "packages/doc-sync-core/dist/engine/typescript.js": "601314ffa4a0cedbee5d74d86735878a1b4ba64de4c60f920147b9a42c711f5e",
+      "packages/doc-sync-core/dist/index.d.ts": "7d7e857139fc0ed3f03047f42ed0f4368508d35d490827b1a00a27c8f10092f3",
+      "packages/doc-sync-core/dist/index.js": "23fddf221ec9b31c85b2d1669ec7e4f19997c896e97dbe470765006a103529a2",
+      "packages/doc-sync-core/dist/local/client.d.ts": "82d235615ec88dc3dd2b590f862433b2e46a107c6e736ec3ea5173a40badc2ce",
+      "packages/doc-sync-core/dist/local/client.js": "27f3685983105dfea1ea4240422dd42cb4cdbffc68934baca24e52008bbb4fd5",
+      "packages/doc-sync-core/dist/local/editor-host.d.ts": "7227cd2c964c48c023164ba488591a58e4dbb612b7085976681309187800799c",
+      "packages/doc-sync-core/dist/local/editor-host.js": "18485de2350ec048f4cb943925716dc1f461d6cde40caa8e1ebda544f6233625",
+      "packages/doc-sync-core/dist/local/index.d.ts": "eebb78d16a81113c7cb2617c54b4abb3a1c1cab8e66a3466f20aea4e875d4b94",
+      "packages/doc-sync-core/dist/local/index.js": "6923790024eb34051442e0e05c0d007bc9bc66a401228cf74d17e2a141ffc624",
+      "packages/doc-sync-core/dist/node.d.ts": "bdfc35631bab1b1c31ffae5d6ce185f5e0cd262803e5493f1d4012cc13b2facb",
+      "packages/doc-sync-core/dist/node.js": "73ab7aa2a1bd982a45b493a2dfdcc096ee970d937a9b9f55ebd85d6b52ebe2e0",
+      "packages/doc-sync-core/dist/server/hub.d.ts": "9edb38017873411f19918de951b7798d75a0d7dc99e3074312e5dbdb77f7824a",
+      "packages/doc-sync-core/dist/server/hub.js": "97dc73faa8dab99d167fa011b93f3c23330b665dd166bf7ff4f11ff25c7488bb",
+      "packages/doc-sync-core/dist/server/index.d.ts": "0f0c38ab522e194f40c52846b4ae78959c92db0e7bb4d6b0813cdf3fe82cbc7f",
+      "packages/doc-sync-core/dist/server/index.js": "01db7b6b44c98f100a3f5f82d1cbd78cc566f32a894b9696e16838cba05f0935",
+      "packages/doc-sync-core/dist/server/staged.d.ts": "f87ca45c86100045260365c3cf9ac7246e68a0ae33f97f8945bf9129aa1531a2",
+      "packages/doc-sync-core/dist/server/staged.js": "614d2e81ac67141ce83ad33f64ddfc27ffe47de6fcce6855878e120a76dfd176",
+      "packages/doc-sync-core/dist/sync/browser-recovery.d.ts": "518c375d0ea4d5fe91bc0245c306b5e3416223368b6d7db2aed2d80158bf663e",
+      "packages/doc-sync-core/dist/sync/browser-recovery.js": "f9e9221af87303b77911b37eb4c9a7d56c5c48452111da737a0cea0793751fe9",
+      "packages/doc-sync-core/dist/sync/character.d.ts": "7925eef339d36070369651e2ff3724f26d88287b1892d1d647e3a8214c2afe5e",
+      "packages/doc-sync-core/dist/sync/character.js": "5acedeb57ad63db83a1051a31c04183b006fbf7cdb10e4c718992fc226442938",
+      "packages/doc-sync-core/dist/sync/client.d.ts": "52c64f8fb594720b3537f1b74ff021cadeaeab3f5317012401945eaaa06118c9",
+      "packages/doc-sync-core/dist/sync/client.js": "2800b609f56147a5b4c01a47ae47daed3c306250b9c5bbec0730caa6f5d65d6a",
+      "packages/doc-sync-core/dist/sync/http-transport.d.ts": "d508c2a59317da357a3094e8da14647a3c8099d1136edd4b96aafb8494e5b749",
+      "packages/doc-sync-core/dist/sync/http-transport.js": "3bb259383bee36ac878c75aa373a91038a93ade625d5d9e5a3bf782c02da6e08",
+      "packages/doc-sync-core/dist/sync/index.d.ts": "c37df1f001d0b71a145be63655b663d45fe6bc9cb50d87e16ef862eb2d10a631",
+      "packages/doc-sync-core/dist/sync/index.js": "c7a16cf11955ca65a10c2de68057bc5a3114eff371ac6de91142acef00d28afa",
+      "packages/doc-sync-core/dist/sync/live-recovery.d.ts": "d22840db4e42189e8b7841d27322a530cf83dc0726c7f62200e5fe62c655ae92",
+      "packages/doc-sync-core/dist/sync/live-recovery.js": "0c1b29bfede327321e95cf1750963ed7992937a354a470d15f7139c96a0fca14",
+      "packages/doc-sync-core/dist/sync/model-events.d.ts": "363e665f1d0b52b7e1c9a526015cfe9d6c98e43d20be48479225a20d9c009659",
+      "packages/doc-sync-core/dist/sync/model-events.js": "e1eec7e2141c4d5f2a01b1d82ae5da65e3ec5f2e48835c7192706596bd618aa1",
+      "packages/doc-sync-core/dist/sync/node-http-transport.d.ts": "7c11575ec25bad7133d95eee48b4e52b8b6c898b30f92de77f9dc96942d9bf05",
+      "packages/doc-sync-core/dist/sync/node-http-transport.js": "0dcf7ca70ef701a048aa29756585ae8318645a96f8770a2ccf3d9da22edbab74",
+      "packages/doc-sync-core/dist/sync/protocol.d.ts": "4da150a2bd52baa99004c822e4361b8214f5ace35a3ed2bf7cf4f485faed98c2",
+      "packages/doc-sync-core/dist/sync/protocol.js": "0066d5900ba339d82810a8e3ef8b38f60dbd7f7b29d98a99e29bfa5ba306cb22",
+      "packages/doc-sync-prosemirror/dist/binding.d.ts": "e6d722417e3e632ad6e1fe7efb194cac69d0b46f49166f0f33e65a4f844ef568",
+      "packages/doc-sync-prosemirror/dist/binding.js": "ad1b244ea8e94b7ef980495362871893f634fe92befb6ee717e80bb910a9ea92",
+      "packages/doc-sync-prosemirror/dist/convert.d.ts": "9d7c87ec382d6a0315877a1f3c9beff2120316578167dce242b5a96be965db04",
+      "packages/doc-sync-prosemirror/dist/convert.js": "001a1572f6646fc9bfd014f7dc057542e6c0b0a2c56d7c13d16430f04ac22885",
+      "packages/doc-sync-prosemirror/dist/host-binding.d.ts": "36f11c29125173b033b5a1f7346bba2eba9b6e59432b8769867b08ee344af5dd",
+      "packages/doc-sync-prosemirror/dist/host-binding.js": "bd22bfc3bcd83ba8f8756148d1a67380803d93aa6365ef9bc386ac1a0f57a6af",
+      "packages/doc-sync-prosemirror/dist/index.d.ts": "bc0b9e54c2b7fa8540ff2a3f2ab097fc81203fa1f2eaa5af7622a9e45d360fd8",
+      "packages/doc-sync-prosemirror/dist/index.js": "2e1aebe6d4a4652d378b89815d9e1bac2d1cf3ec8282d851d7916e643be15393",
+      "packages/doc-sync-prosemirror/dist/schema.d.ts": "74a222265edf9b8a1917fda2289b6da738019f78cd4fdddc0367aeb07e92a8ad",
+      "packages/doc-sync-prosemirror/dist/schema.js": "878894e88101a2c8076876c374f45b714096ba73666a5668e0a68791563c1d0b"
+    }
+  },
+  "rows": [
+    {
+      "block": 0,
+      "size": 10000,
+      "scenario": "insert",
+      "samples": [
+        1.8345000000000482,
+        0.6200410000000147,
+        0.581292000000019,
+        0.5636250000000018,
+        0.5492500000000291,
+        0.5982079999999996,
+        0.4899589999999989,
+        1.0525409999999056,
+        2.2020410000000084,
+        0.6212919999999258
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 0.5982079999999996,
+      "p95": 2.2020410000000084,
+      "invariants": [
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 4,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 5,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 6,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 7,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 8,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 9,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 10,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 11,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 12,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a6242e388dc1457092c9364c556a7fa58ec446adb8765fca1543e2277a7c44cb",
+          "generatedHash": "629cc206202a33b382cf748f15413bbf5e7eb8b4ad9073e8b577fdc5feb77d27",
+          "generation": 13,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 10000,
+      "scenario": "delete",
+      "samples": [
+        1.1970830000000205,
+        0.6557920000000195,
+        0.5146660000000338,
+        0.8207920000000968,
+        0.6515419999999494,
+        1.0051660000001448,
+        0.6176250000000891,
+        1.1511249999998654,
+        0.6254999999998745,
+        1.22199999999998
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 0.6557920000000195,
+      "p95": 1.22199999999998,
+      "invariants": [
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 17,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 18,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 19,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 20,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 21,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 22,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 23,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 24,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 25,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "4ec87bb82bf5925270d7de886035536651a7c28e12fa605611ee960ccf775b59",
+          "generatedHash": "c5744efb0d0c375b86ff429c1859a87e0ad6e80b130956bad400eb3cfb27220e",
+          "generation": 26,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 10000,
+      "scenario": "mark",
+      "samples": [
+        0.5064589999999498,
+        0.5384169999999813,
+        0.5382080000001679,
+        0.5932500000001255,
+        0.520917000000054,
+        0.5424169999998867,
+        0.6630000000000109,
+        0.4911669999999049,
+        1.0625410000000102,
+        0.4518750000002001
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 203
+        }
+      ],
+      "p50": 0.5382080000001679,
+      "p95": 1.0625410000000102,
+      "invariants": [
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 30,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 31,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 32,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 33,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 34,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 35,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 36,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 37,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 38,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "327ef18de3c16d8ea936c0805944bc9808b869e8eb091d9b859489490ed6fdfc",
+          "generatedHash": "e7416137009a4c5cb923a4e08d8d0995905227cc8535ac0851951dfdd1768ecd",
+          "generation": 39,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 10000,
+      "scenario": "selection",
+      "samples": [
+        0.12200000000007094,
+        0.09550000000012915,
+        0.10812499999997272,
+        0.09262499999999818,
+        0.07458299999984774,
+        0.08979199999998855,
+        0.11554200000000492,
+        0.07295799999997143,
+        0.09383299999990413,
+        0.07420799999999872
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "p50": 0.09262499999999818,
+      "p95": 0.12200000000007094,
+      "invariants": [
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 43,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 44,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 45,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 46,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 47,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 48,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 49,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 50,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 51,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 52,
+          "revision": 199,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 10000,
+      "scenario": "composition",
+      "samples": [
+        18.146541999999954,
+        13.00066599999991,
+        15.550750000000335,
+        18.40058399999998,
+        13.474541000000045,
+        16.014250000000175,
+        18.536417000000256,
+        26.634542000000238,
+        25.061083000000053,
+        10.3523339999997
+      ],
+      "counts": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 16.014250000000175,
+      "p95": 26.634542000000238,
+      "invariants": [
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 62,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 65,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 68,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 71,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 74,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 77,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 80,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 83,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 86,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "cc052eb051595177aa17ed5d25989f78edd2dd9964cfed5ab11c13b8bd63af86",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 89,
+          "revision": 201,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 10000,
+      "scenario": "external",
+      "samples": [
+        0.459041999999954,
+        0.5100829999996677,
+        1.1922500000000582,
+        0.60024999999996,
+        0.7432909999997719,
+        0.4921669999998812,
+        0.5564580000000205,
+        0.5532079999998132,
+        0.4867500000000291,
+        0.46945800000003146
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 0.5100829999996677,
+      "p95": 1.1922500000000582,
+      "invariants": [
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 95,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 96,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 97,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 98,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 99,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 100,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 101,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 102,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 103,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "d42c179e33aae3e2aec2b49b4a0405c1bd239bcf7ca99b6e4191f5d83ce90eb0",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 104,
+          "revision": 200,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 10000,
+      "scenario": "undo",
+      "samples": [
+        8.281499999999596,
+        4.361167000000023,
+        2.8119580000002316,
+        3.196374999999989,
+        4.627915999999914,
+        6.996959000000061,
+        2.991375000000062,
+        3.879707999999937,
+        2.238333000000239,
+        2.5509579999998095
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 3.196374999999989,
+      "p95": 8.281499999999596,
+      "invariants": [
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 108,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 109,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 110,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 111,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 112,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 113,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 114,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 115,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 116,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "90a295c78bcdce0cacab0008e96e2a68420e5109fb4aa276c8b3cf366a61abae",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 117,
+          "revision": 201,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 10000,
+      "scenario": "redo",
+      "samples": [
+        6.384542000000238,
+        2.471125000000029,
+        2.4627080000000205,
+        6.415208000000348,
+        4.007333000000017,
+        3.54720800000041,
+        2.6725839999999152,
+        5.16820800000005,
+        2.291125000000193,
+        4.503833000000213
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 201
+        }
+      ],
+      "p50": 3.54720800000041,
+      "p95": 6.415208000000348,
+      "invariants": [
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 121,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 122,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 123,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 124,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 125,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 126,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 127,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 128,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 129,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bbab1ac3a5a73917f1ec3e8112343b7770ce03726717e3adac1c13148097bef0",
+          "generatedHash": "a9620f60cb0ea89239ffa84ddf21d6014cbac97da69f3747cf9e31778216381b",
+          "generation": 130,
+          "revision": 202,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 100000,
+      "scenario": "insert",
+      "samples": [
+        4.5561250000000655,
+        3.3144170000005033,
+        5.821332999999868,
+        2.9031250000007276,
+        6.496999999999389,
+        3.560165999999299,
+        3.5606669999997393,
+        2.5735829999994166,
+        13.742042000000765,
+        2.799833000000035
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 3.560165999999299,
+      "p95": 13.742042000000765,
+      "invariants": [
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 134,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 135,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 136,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 137,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 138,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 139,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 140,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 141,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 142,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "ddcd25c2708d61e1abce42b9ba30db44c87aa5d90d8e11d5a3c54526305b057f",
+          "generatedHash": "9fae360af8e817e25b1f8e5435894b32f9899d8fbc37abba6e9f4843986bad52",
+          "generation": 143,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 100000,
+      "scenario": "delete",
+      "samples": [
+        2.555625000000873,
+        3.3841670000001614,
+        3.3132499999992433,
+        3.781874999998763,
+        2.963792000000467,
+        3.6054999999996653,
+        4.942208000000392,
+        3.1831249999995634,
+        2.730875000001106,
+        5.8521250000012515
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 3.3132499999992433,
+      "p95": 5.8521250000012515,
+      "invariants": [
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 147,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 148,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 149,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 150,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 151,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 152,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 153,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 154,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 155,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f231138d0242a10f231652fb9954279332cb62a560c268bb0ca5f33783379284",
+          "generatedHash": "34aa3b360b7da41f83d73c26a3604011a74dac73534fc23f6ca05d61dc42ef12",
+          "generation": 156,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 100000,
+      "scenario": "mark",
+      "samples": [
+        3.2908749999987776,
+        2.7337079999997513,
+        3.4413750000003347,
+        2.6995000000006257,
+        3.445625000000291,
+        2.680000000000291,
+        3.145042000000103,
+        2.72387499999968,
+        4.740208000001076,
+        4.877207999999882
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2003
+        }
+      ],
+      "p50": 3.145042000000103,
+      "p95": 4.877207999999882,
+      "invariants": [
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 160,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 161,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 162,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 163,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 164,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 165,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 166,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 167,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 168,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "f061eeaf315dea31ffa800e4505384a867d2e8e1c30efd37de112237a4db487c",
+          "generatedHash": "59f6005cd7a81bf50935ab587c6d82b14de8c55ac8f7d332d5056a75f0b05eb2",
+          "generation": 169,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "mark": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 100000,
+      "scenario": "selection",
+      "samples": [
+        0.6163749999996071,
+        0.30533400000058464,
+        0.6014589999995223,
+        0.4232910000009724,
+        0.8486659999998665,
+        0.32550000000082946,
+        0.6393750000006548,
+        0.4781250000014552,
+        0.5836250000011205,
+        0.3771249999990687
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 0,
+          "pmFromJSON": 0
+        }
+      ],
+      "p50": 0.4781250000014552,
+      "p95": 0.8486659999998665,
+      "invariants": [
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 173,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 174,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 175,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 176,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 177,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 178,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 179,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 180,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 181,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 182,
+          "revision": 1999,
+          "history": {
+            "canUndo": false,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 0,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 100000,
+      "scenario": "composition",
+      "samples": [
+        306.48141699999906,
+        190.31066700000156,
+        200.6606670000001,
+        192.65400000000227,
+        160.97295799999847,
+        188.02820900000006,
+        214.67037499999788,
+        152.55325000000084,
+        181.0586669999975,
+        253.54012499999953
+      ],
+      "counts": [
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 1,
+          "fromSnapshot": 1,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 190.31066700000156,
+      "p95": 306.48141699999906,
+      "invariants": [
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 192,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 195,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 198,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 201,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 204,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 207,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 210,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 213,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 216,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "24b61284e3d0aa54dee969f25ce8421586ecebd60ae36d4fd2594d4c4ddfabcc",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 219,
+          "revision": 2001,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 100000,
+      "scenario": "external",
+      "samples": [
+        3.652125000000524,
+        6.2115000000012515,
+        3.2892079999983252,
+        3.3103330000012647,
+        3.690792000001238,
+        5.258499999999913,
+        3.1608329999980924,
+        3.4925829999992857,
+        5.245834000001196,
+        3.637458000001061
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 1,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 3.637458000001061,
+      "p95": 6.2115000000012515,
+      "invariants": [
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 225,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 226,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 227,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 228,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 229,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 230,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 231,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 232,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 233,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "087cd245277dab574c2cab2c82fddf26a21327158100062522cde3a64c8380a7",
+          "generatedHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "generation": 234,
+          "revision": 2000,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {},
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 100000,
+      "scenario": "undo",
+      "samples": [
+        18.934000000001106,
+        19.66124999999738,
+        18.85899999999674,
+        17.693332999999257,
+        16.562167000000045,
+        17.666000000001077,
+        16.001374999999825,
+        15.167333000001236,
+        15.242874999999913,
+        23.510333000001992
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 17.666000000001077,
+      "p95": 23.510333000001992,
+      "invariants": [
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 238,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 239,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 240,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 241,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 242,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 243,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 244,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 245,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 246,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "bc0384a21113db8e57267634360d7ddfe7b64623e53b6e70767c1940e8e558fb",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 247,
+          "revision": 2001,
+          "history": {
+            "canUndo": false,
+            "canRedo": true
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 1,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    },
+    {
+      "block": 0,
+      "size": 100000,
+      "scenario": "redo",
+      "samples": [
+        23.72833399999945,
+        20.947457999998733,
+        21.647499999999127,
+        20.42462499999965,
+        24.09991600000285,
+        19.613750000000437,
+        23.33070900000166,
+        19.68699999999808,
+        21.250833000001876,
+        18.747834000001603
+      ],
+      "counts": [
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        },
+        {
+          "snapshot": 0,
+          "fromSnapshot": 0,
+          "toJSON": 3,
+          "pmFromJSON": 2001
+        }
+      ],
+      "p50": 20.947457999998733,
+      "p95": 24.09991600000285,
+      "invariants": [
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 251,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 252,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 253,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 254,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 255,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 256,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 257,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 258,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 259,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        },
+        {
+          "modelHash": "a42f6794eadc4a18fdb8a28825a131d9ab9addb0acd9075160e4f0c1b8e63647",
+          "generatedHash": "956d1da99ee3b559ebf5127021bd97a980115ca38bf7ba4e0de0d3f086ec0bf4",
+          "generation": 260,
+          "revision": 2002,
+          "history": {
+            "canUndo": true,
+            "canRedo": false
+          },
+          "nativeStats": {
+            "steps": {
+              "text": 1
+            },
+            "reconciled": 0,
+            "pushedBack": 0,
+            "remote": 2,
+            "wholeReplace": 0
+          },
+          "transportCalls": {
+            "subscribe": 0,
+            "send": 0,
+            "presence": 0
+          }
+        }
+      ]
+    }
+  ]
+}
