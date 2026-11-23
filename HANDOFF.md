@@ -34,6 +34,14 @@ part of the retained verification contract. See
 `docs/reports/push-cleanup-2026-11-23/README.md` and
 `secondary-recovery-index.md` in that report for restoration instructions.
 
+
+Filesystem cleanup is complete: the primary checkout and all 23 secondary
+worktrees are absent. The 145 inventoried temporary targets and old owned
+browser session are removed. Available disk space at verification was 105.6 GiB.
+The final local receipt is `/Users/user/github/doc-sync-cleanup-receipt-20261123.json`.
+The private archive remains outside the removed checkouts. Codex conversation
+deletion is requested separately through the app's named-chat approval flow.
+
 ## Q1.3.4 local catalog prototype — 2026-11-16
 
 Added read_model_with_catalog for discoverable stored blocks, owned grid axes and
