@@ -3,12 +3,13 @@ import {anchorAt, pathAt, posOfPath} from "../crdt/edit.ts";
 import {deleteRange} from "../crdt/commands.ts";
 import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, ModelPath, NodeJSON} from "../crdt/model.ts";
+import type {EngineEditingView} from "../engine/client-contract.ts";
 import type {SyncClient} from "../sync/client.ts";
 import {InputSession, commitModelEdits, subscribeClient} from "./index.ts";
 import type {AnchoredRange, ModelRange} from "./index.ts";
 import type {AnchorVisibility, EditorHost, EditorModelView, EditorSession, EditorStamp} from "./host-contract.ts";
 
-/** Also accepts the demo's existing composition session without creating a second fork. */
+/** TypeScript compatibility input for existing custom composition sessions. */
 export interface SyncClientEditorInput {
     readonly doc: Doc;
     readonly active: boolean;
@@ -24,7 +25,7 @@ const owners = new WeakMap<EditorHost, object>();
 /** Legacy mount bridges use backend identity, even when two adapters wrap one client. */
 export const getSyncClientEditorHostOwner = (host: EditorHost): object => owners.get(host) ?? host;
 
-function editingView(client: SyncClient, document: () => Doc) {
+function typeScriptCompatibilityEditingView(client: SyncClient, document: () => Doc) {
     let current: Doc | null = null, generation = 0;
     let cached: EditorModelView | null = null;
     const stamp = (): EditorStamp => {
@@ -65,13 +66,38 @@ function editingView(client: SyncClient, document: () => Doc) {
     };
 }
 
+/** Wrap a selected engine view without exposing its document representation. */
+function editingView(client: SyncClient, selected: EngineEditingView) {
+    let cached: EditorModelView | null = null;
+    return {
+        stamp: () => selected.stamp(),
+        model(): EditorModelView {
+            const stamp = selected.stamp();
+            if (!cached || cached.stamp.generation !== stamp.generation || cached.stamp.revision !== stamp.revision) {
+                cached = {stamp, model: selected.model()};
+            }
+            return cached;
+        },
+        apply(edits: EditOp[]): Op[] { client.assertLocalEditing(); return selected.apply(edits); },
+        applyModelEdits(before: NodeJSON, edits: EditOp[]): Op[] { client.assertLocalEditing(); return selected.applyModelEdits(before, edits); },
+        deleteRange(from: ModelPath, to: ModelPath): Op[] | null { client.assertLocalEditing(); return selected.deleteRange(from, to); },
+        captureAnchor: (path: ModelPath) => selected.captureAnchor(path),
+        locateAnchor: (key: string, visibility: AnchorVisibility) => selected.locateAnchor(key, visibility),
+    };
+}
+
+function inputEditingView(client: SyncClient, input: SyncClientEditorInput) {
+    return input instanceof InputSession
+        ? editingView(client, input.editing)
+        : typeScriptCompatibilityEditingView(client, () => input.doc);
+}
+
 export function createSyncClientEditorSession(client: SyncClient, input: SyncClientEditorInput = new InputSession(client)): EditorSession {
     return {
-        ...editingView(client, () => input.doc),
+        ...inputEditingView(client, input),
         get active() { return input.active; },
         begin: () => { client.assertLocalEditing(); input.begin(); },
-        // Clock reservation only synchronizes bookkeeping. Remote notifications must
-        // keep running while local mutations are paused or conditionally blocked.
+        // Remote notifications reserve clocks even when local mutations are paused.
         reserveClock: () => input.reserveClock(),
         commit: (ops, record) => { client.assertLocalEditing(); input.commit(ops, record); },
         end: () => { client.assertLocalEditing(); return input.end(); },
@@ -87,9 +113,15 @@ export function createSyncClientEditorHost(client: SyncClient, options: {input?:
         contractVersion: 1,
         get actor() { return client.actor; },
         get schema() { return client.schema; },
-        ...editingView(client, () => options.input?.doc ?? client.doc),
+        ...(options.input ? inputEditingView(client, options.input)
+            : !client.engine || (!Object.hasOwn(client, "engine") && Object.hasOwn(client, "doc"))
+                ? typeScriptCompatibilityEditingView(client, () => client.doc)
+                : editingView(client, client.engine)),
         status: () => ({online: client.online, synchronized: client.synchronized}),
-        historyStatus: () => ({canUndo: client.history.canUndo, canRedo: client.history.canRedo}),
+        historyStatus: () => {
+            const {canUndo, canRedo} = client.engine.historyStatus();
+            return {canUndo, canRedo};
+        },
         commit: (ops, record) => {
             client.assertLocalEditing();
             (options.input ?? client).commit(ops, record);

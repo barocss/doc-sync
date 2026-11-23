@@ -1,8 +1,8 @@
 # Rust engine roadmap
 
 This roadmap separates Rust research from production engine delivery and the
-[bot roadmap](bot-roadmap.md). The current TypeScript server and client remain
-unchanged by these experiments. A storage result does not approve an engine
+[bot roadmap](bot-roadmap.md). The production server remains TypeScript. The
+client has a shared engine boundary with a TypeScript implementation. A storage result does not approve an engine
 migration. Each stage needs its own evidence and decision.
 
 ## Delivery goal and ordered work
@@ -16,8 +16,8 @@ is not required for the first release.
 
 The historical R1–R6 research gates below stay in place. D1–D8 are the ordered
 implementation queue that makes the remaining R4–R6 work actionable. D9 is a
-separate native-server option. All D stages are **planned**, not implemented
-configuration or new verification results.
+separate native-server option. D1 is implemented with the qualified evidence below. D2–D9
+remain planned; they are not implemented configuration or new verification results.
 
 ### Current source boundary
 
@@ -25,12 +25,21 @@ configuration or new verification results.
 | --- | --- |
 | Native SDK | Private typed API, History, anchors, pending prefix and checkpoints; six fixed presets. See [SchemaPreset](../experiments/rust-sdk/src/lib.rs#L26-L55). |
 | Runtime schemas | Native manifests are compiled in. Arbitrary node names/rules and live transitions are not implemented. See [native schema constants](../experiments/rust-shadow/src/lib.rs#L17-L37). |
-| Engine port | Draft factory supports five basic capabilities. Composition, events, GC, schema transition and disposal need callable contracts. See [contract](../packages/doc-sync-core/src/engine/contract.ts#L6-L68). |
-| Client selection | SyncClient owns Doc and History. A factory alone cannot replace them. See [client](../packages/doc-sync-core/src/sync/client.ts#L69-L70) and [host adapter](../packages/doc-sync-core/src/editor/sync-client-host.ts#L27-L64). |
+| Engine port | Production client ports cover editing, History, anchors, sessions, events, GC, schema changes and lifecycle. The immutable draft is separate. See [client contract](../packages/doc-sync-core/src/engine/client-contract.ts). |
+| Client selection | SyncClient and portable editor hosts call the selected engine. TypeScript is the default and the only production implementation. See [client](../packages/doc-sync-core/src/sync/client.ts) and [host adapter](../packages/doc-sync-core/src/editor/sync-client-host.ts). |
 | Wire compatibility | Native Text uses UTF-16 units; TypeScript uses a string. Current comparison normalizes their values. A real wire codec and complete server snapshot import still need qualification. See [SDK comparison](../experiments/rust-sdk/scripts/compare-typescript.mjs#L38-L44). |
 | WASM | Current rust-core module is a UTF-16 storage experiment, not a CRDT document engine. See [module scope](../experiments/rust-core/src/lib.rs#L1). |
 
-### D1. Complete the shared client and engine boundary — first priority
+### D1. Shared client and engine boundary
+
+**Status:** implemented. Selected-TS routing, 1,199 regression cases (1,197 PASS,
+two platform SKIPs), package consumers and conversion-count gates pass.
+Repeated/pooled Node and exact controlled Chrome comparisons qualify the client
+migration. Small-block tails remain reported. This is a bounded migration
+result, not general product-latency acceptance. The original separate-server Chrome comparison
+retains 12/27 flagged cells; general end-to-end latency acceptance remains open.
+See [comparison and limits](../benchmarks/results/client-engine-selection/report.md).
+This is not a Rust/WASM delivery or global product-performance acceptance.
 
 Define real operations for transactions, model reads, anchor visibility,
 events, composition sessions, ordered GC, schema changes, checkpoint transfer,
@@ -186,10 +195,11 @@ recovery have separate evidence. D9 is not required to finish the WASM client.
 - D5 native SDK and D6 WASM delivery can proceed in parallel once the shared
   kernel gates pass. D9 server work is independently optional.
 
-The next concrete change is D1: write failing routing/conformance tests, complete
-the missing callable ports, and run one real binding through the selected TS
-engine. Keep legacy constructors and the same concurrent editing behavior.
-Do not start with a fake Rust selector or only another benchmark.
+The D1 source now supplies callable client ports and selected-TS routing through
+the real bindings, with the bounded evidence above. General Chrome latency
+remains a separate open acceptance item. D2 is the next Rust implementation lane. Keep legacy constructors and
+the same concurrent editing behavior; a fake Rust selector or storage benchmark
+does not deliver a production engine.
 
 ## R1. Freeze the UTF-16 contract and baseline
 

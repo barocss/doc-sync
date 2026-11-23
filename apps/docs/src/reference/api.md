@@ -7,7 +7,7 @@ Six packages provide Core, four editor bindings, and a compatibility facade. All
 | Import | Main exports |
 |---|---|
 | `@barocss/doc-sync` | `Doc`, `History`, `commands`, model/schema/position helpers, and shared types. |
-| `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `upgradeOpenEditorSchema`, `OpenEditorSchemaHost`, `ModelRange`, protocol constants and types. |
+| `@barocss/doc-sync/sync` | `SyncClient`, `HttpTransport`, `typescriptClientEngineFactory`, `ClientEngineFactory`, `upgradeOpenEditorSchema`, `OpenEditorSchemaHost`, `ModelRange`, protocol constants and types. |
 | `@barocss/doc-sync/node` | `NodeHttpTransport`, `NodeHttpTransportOptions` for Node.js HTTP and SSE synchronization. |
 | `@barocss/doc-sync/server` | `DocHub`, `HubOptions`. |
 | `@barocss/doc-sync/prosemirror` | `PmBinding`, `buildPmSchema`, model/position conversion. |
@@ -19,11 +19,43 @@ These eight compatibility entry points re-export the independent packages. Curre
 
 ## Editor host
 
-`@barocss/doc-sync-core/editor` exports `EditorHost`, `EditorSession`, and `createSyncClientEditorHost(client)`. The adapter uses the existing TypeScript SyncClient/InputSession without a full snapshot per ordinary edit. Model values are borrowed immutable views with generation/revision stamps.
+`@barocss/doc-sync-core/editor` exports `EditorHost`, `EditorSession`, and `createSyncClientEditorHost(client)`. The adapter uses the selected production SyncClient engine and its input sessions. The TypeScript implementation keeps ordinary single-text edits on an incremental path. Model values are borrowed immutable views with generation/revision stamps.
 
-The independent binding packages export `PmHostBinding`, `SlateHostBinding`, and `LexicalHostBinding`. Legacy client constructors share those implementations and preserve `.client`; Lexical preserves its original `.input` session. Tiptap uses the shared PM implementation. See [host integration](../guide/packages#connect-prosemirror-through-an-editor-host) for examples. A Rust/WASM host and backend selector remain unimplemented.
+The independent binding packages export `PmHostBinding`, `SlateHostBinding`, and `LexicalHostBinding`. Legacy client constructors share those implementations and preserve `.client`; Lexical preserves its original `.input` session. Tiptap uses the shared PM implementation. See [host integration](../guide/packages#connect-prosemirror-through-an-editor-host) for examples. Only the TypeScript production factory ships; a Rust/WASM adapter is not selectable.
 
 `OpenEditorSchemaHost` below is the application-owned native editor rebuild lifecycle. It is separate from the backend-facing `EditorHost` interface.
+
+## Production engine and client state
+
+`@barocss/doc-sync-core/engine` exports `ClientEngineFactory`, `ClientEngine`,
+`EngineEditingView`, `EngineInputSession`, and `typescriptClientEngineFactory`.
+Pass the factory as `new SyncClient(actor, transport, {schema, engineFactory})`.
+Omit it for the TypeScript default. The constructor validates methods, identity,
+schema, version, and capabilities before connection. `client.engine` owns the
+authoritative state. The common port exposes no `Doc` or `History` objects.
+
+| Member | Contract |
+|---|---|
+| `engine.apply(edits)` | Compile and apply local edits; return exact wire operations without History or transport queuing. |
+| `client.commit(ops, record?)` | Record once and queue already-applied operations. |
+| `engine.createSession()` | Create an engine-owned composition draft. Publication applies its retained operations; InputSession commits once. |
+| `client.disconnect()` | Stop transport and retain pending changes and History. |
+| `client.dispose()` | End the client; reject protected work, unresolved conditional work, or undo/redo History. |
+| `client.checkpoint()` / `restoreCheckpoint(value, epoch)` | Exact legacy format-1 TypeScript snapshot/History envelope. |
+| `client.captureState()` / `restoreState(value, epoch)` | Format-2 client envelope with one tagged opaque engine payload and transport metadata. Restore requires matching engine/version/actor/schema and external epoch/GC proof. |
+
+Format 2 does not convert between engines. `LiveRecovery` and the Node journal
+still use the TypeScript-specific format-1 recovery path; a portable durable
+adapter is future D4 work. A checkpoint capture does not persist durable state.
+
+Legacy `client.doc`, `client.history`, and `InputSession.doc` return the real
+TypeScript objects through an optional compatibility extension. Custom Doc input
+sessions and document facades have a separate TypeScript adapter. A portable
+backend can reject those accesses. The older immutable `DocumentEngine` /
+`typescriptEngine` API is separate and cannot serve as `ClientEngineFactory`.
+Only TypeScript ships. Live engine switching and Rust/WASM selection are not
+available. Selected-engine routing and regression checks pass; broader end-to-end Chrome
+latency acceptance remains open. See [status and limits](../status).
 
 ## Doc
 

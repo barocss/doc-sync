@@ -22,6 +22,23 @@ client.commit(result.ops);
 
 This transport expects the API served by the demo server. It does not add authentication, authorization, request limits, or production storage.
 
+## Select the client engine
+
+Pass `engineFactory: typescriptClientEngineFactory` in the constructor options
+to select the production TypeScript engine explicitly. Both exports are
+available from `@barocss/doc-sync-core/sync`. The default uses that same factory.
+`client.engine` is the selected authoritative engine; common editor hosts and
+input sessions use it without a Doc-based interface. Factory and capability
+checks finish before connection. Only TypeScript ships; Rust/WASM selection and
+live engine switching are not available.
+
+For a portable edit, call
+`client.commit(client.engine.apply([{op: "insert", at: [0, 0], content: "Hello"}]))`.
+`apply` compiles and applies without History. `commit` records and queues once.
+The `client.doc` example above uses the optional TypeScript compatibility
+extension. The older immutable `typescriptEngine` factory cannot be used as a
+production client factory. See [packages and engines](./packages#engine-selection-is-a-separate-milestone).
+
 ## Ordered changes
 
 A change has an actor, an actor-local `seq`, and wire operations. The hub assigns a document-wide `serverSeq`. Dependencies must arrive before operations that reference them. `Doc.apply()` is not a buffer for arbitrary out-of-order dependencies.
@@ -46,6 +63,22 @@ The hub is independent of HTTP. The repository demo attaches HTTP, SSE, and a JS
 Pending changes can be sent after a normal disconnect. Acknowledgments include history pins so GC does not discard data still needed for undo. An ordinary `SyncClient` keeps these changes and history in memory; it does not automatically persist a checkpoint or establish durable recovery protection.
 
 The macOS MCP app and single-process demo server provide a bounded recovery path using a checkpoint, exact receipts and a recovery reservation. An ordinary pending change can be recognized or applied once after restart when the required protection is proven. An unresolved conditional outcome or unsafe recovery blocks further edits for inspection. See the [recovery plan](../reference/recovery-plan) for its conditions and remaining work. A server snapshot by itself does not restore a participant's undo history.
+
+`disconnect()` retains pending changes and History. `dispose()` ends the client
+and rejects protected local state, unresolved conditional work, or remaining
+undo/redo History.
+
+`checkpoint()` / `restoreCheckpoint()` keep the exact legacy format-1
+TypeScript envelope. `captureState()` / `restoreState()` use format 2 with one
+tagged, opaque engine payload and the client transport metadata. Restore checks
+engine, contract version, actor, and schema identity; it does not convert state
+between engines. It requires a disconnected, settled client and the same external
+epoch/GC recovery proof. Capture alone does not establish durable protection.
+
+`LiveRecovery` and the Node recovery journal still use the TypeScript-specific
+format-1 path. Portable durable recovery integration is future D4 work. Selected-engine routing and regression checks pass. Repeated/pooled Node and controlled Chrome timing qualify the client migration.
+Original separate-server and small-block guard crossings remain reported;
+general end-to-end latency acceptance remains open. See [status and limits](../status).
 
 After a compatible server schema transition, use [the open-editor transition procedure](./schema-transition) to rebuild a mounted editor without discarding its client or pending work.
 

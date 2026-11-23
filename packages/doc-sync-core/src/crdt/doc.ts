@@ -345,12 +345,40 @@ export class Doc {
         return [...this.lineMap.values()];
     }
 
+    private storedInspectionDepth = 0;
+    private storedInspectionMisses = 0;
+
+    /** Non-mutating membership and a constant-time allocation upper bound. */
+    hasStoredToken(key: string): boolean { return this.byKey.has(key); }
+    storedTokenCount(): number { return this.byKey.size; }
+
+    /** Reuse live read caches, but stop before a read creates implicit storage. */
+    inspectStored<T>(read: (doc: Doc) => T): {value: T | undefined; needsProjection: boolean} {
+        const misses = this.storedInspectionMisses;
+        this.storedInspectionDepth++;
+        try {
+            const value = read(this);
+            return {value, needsProjection: this.storedInspectionMisses !== misses};
+        } catch (error) {
+            if (this.storedInspectionMisses === misses) throw error;
+            return {value: undefined, needsProjection: true};
+        } finally {
+            this.storedInspectionDepth--;
+            if (!this.storedInspectionDepth) this.storedInspectionMisses = 0;
+        }
+    }
+
     /** 토큰 찾기. 자리 머리는 처음 찾을 때 만든다 (모든 복제본에서 같은 이름표) */
     get(key: string): Item | undefined {
         const found = this.byKey.get(key);
 
         if (found) {
             return found;
+        }
+
+        if (this.storedInspectionDepth) {
+            this.storedInspectionMisses++;
+            throw new Error("Stored inspection requires an implicit-storage projection");
         }
 
         if (key === ANNOTATION_HEAD_KEY) {
@@ -2155,8 +2183,11 @@ export class Doc {
      * 보통은 비어 있다. CRDT 쪽 규칙 때문에 모양이 달라지는 드문 경우에만 생긴다 — 흐름은 언제나 글 블록으로 시작한다,
      * 행마다 칸 수가 다른 열 넣기는 열 하나로 바로잡는다, 같은 칸을 겹쳐 합치면 하나만 받는다 …
      */
-    edit(edits: EditOp[], options: {normalize?: boolean} = {}): {ops: Op[]; normalize: EditOp[]} {
+    edit(edits: EditOp[], options: {normalize?: boolean; preflight?: () => void} = {}): {ops: Op[]; normalize: EditOp[]} {
         this.editGuard?.();
+        // An engine can prove semantic inputs after the caller's initial guard,
+        // before any compiler allocation or normalization model is read.
+        options.preflight?.();
         const want = options.normalize || !!this.editListener;
         const scope = want ? this.textEditScope(edits) : null;
         const before = want ? (scope ? scope.read() : this.toJSON()) : null;

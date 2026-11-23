@@ -1,11 +1,12 @@
-import {Doc, MAIN} from "../crdt/doc.ts";
-import {anchorAt, pathAt, posOfPath} from "../crdt/edit.ts";
-import {applyEdit, applyEdits, diffModels, runsToUnits} from "../crdt/model.ts";
+import type {Doc} from "../crdt/doc.ts";
+import {applyEdits, diffModels, runsToUnits} from "../crdt/model.ts";
 import type {Op} from "../crdt/doc.ts";
 import type {RecordOptions} from "../crdt/history.ts";
 import type {EditOp, ModelPath, NodeJSON} from "../crdt/model.ts";
 import type {Schema} from "../crdt/schema.ts";
 import type {SyncClient} from "../sync/client.ts";
+import {createTypeScriptCompatibilitySession} from "./typescript-compatibility.ts";
+import type {EngineInputSession} from "../engine/client-contract.ts";
 
 /** Native editor points use UTF-16 offsets, with one position per inline node. */
 export type ModelRange = {anchor: ModelPath; focus: ModelPath};
@@ -15,73 +16,41 @@ export const sameModel = (a: unknown, b: unknown): boolean => JSON.stringify(a) 
 /** Keep composition edits on their original token identities while remote receipt stays live. */
 export class InputSession {
     readonly client: SyncClient;
-    private fork: Doc | null = null;
-    private pending: Array<{ops: Op[]; record?: RecordOptions | null}> = [];
+    /** The selected engine owns the live and composition state. */
+    readonly editing: EngineInputSession;
 
-    constructor(client: SyncClient) { this.client = client; }
-    get active(): boolean { return this.fork !== null; }
-    get doc(): Doc { this.reserveClock(); return this.fork ?? this.client.doc; }
-
-    reserveClock(): void {
-        if (!this.fork) return;
-        const lamport = Math.max(this.fork.clock.lamport, this.client.doc.clock.lamport);
-        this.fork.clock.lamport = lamport;
-        this.client.doc.clock.lamport = lamport;
+    constructor(client: SyncClient) {
+        this.client = client;
+        this.editing = client.engine ? client.engine.createSession() : createTypeScriptCompatibilitySession(client);
     }
-
-    begin(): void {
-        if (this.fork) return;
-        this.fork = Doc.fromSnapshot(this.client.actor, this.client.doc.snapshot(), this.client.schema);
-        this.pending = [];
-    }
-
-    end(): Op[] {
-        if (!this.fork) return [];
-        this.client.assertLocalEditing();
+    get active(): boolean { return this.editing.active; }
+    /** Legacy TypeScript access. Portable editor hosts use editing instead. */
+    get doc(): Doc {
         this.reserveClock();
-        const ops = this.pending.flatMap(change => change.ops);
-        const first = this.pending[0]?.record;
-        const last = this.pending.at(-1)?.record;
-        this.client.doc.emit(ops);
-        this.client.commit(ops, {caretBefore: first?.caretBefore ?? "", caretAfter: last?.caretAfter ?? "", typing: false});
-        this.cancel();
-        return ops;
+        const session = this.editing as EngineInputSession & {typescriptDocument?: () => Doc};
+        if (!session.typescriptDocument) throw new Error("The selected engine does not expose a TypeScript document");
+        return session.typescriptDocument();
     }
-
-    cancel(): void { this.fork = null; this.pending = []; }
-
+    reserveClock(): void { this.editing.reserveClock(); }
+    begin(): void { this.client.assertLocalEditing(); this.editing.begin(); }
+    end(): Op[] {
+        if (!this.active) return [];
+        this.client.assertLocalEditing();
+        const published = this.editing.publish();
+        if (!published) return [];
+        this.client.commit(published.ops, published.record);
+        this.cancel();
+        return published.ops;
+    }
+    cancel(): void { this.editing.cancel(); }
     commit(ops: Op[], record?: RecordOptions | null): void {
         this.client.assertLocalEditing();
-        if (this.fork) {
-            this.reserveClock();
-            if (ops.length) this.pending.push({ops, record});
-        } else if (record === undefined) this.client.commit(ops);
+        if (this.active) this.editing.collect(ops, record);
+        else if (record === undefined) this.client.commit(ops);
         else this.client.commit(ops, record);
     }
-
-    capture(range: ModelRange | null): AnchoredRange | null {
-        if (!range) return null;
-        const doc = this.doc;
-        const valid = (path: ModelPath) => {
-            if (path.length < 2 || path.some(value => !Number.isInteger(value) || value < 0)) return null;
-            const pos = posOfPath(doc, path);
-            return pos && pos.o === path.at(-1) && doc.visible(pos.line ?? MAIN) ? anchorAt(doc, path) : null;
-        };
-        const anchor = valid(range.anchor), focus = valid(range.focus);
-        return anchor && focus ? {anchor, focus} : null;
-    }
-
-    resolve(range: AnchoredRange | null): ModelRange | null {
-        if (!range) return null;
-        const doc = this.client.doc;
-        const resolve = (key: string) => {
-            const item = doc.get(key);
-            const visible = doc.hasMoves || doc.hasCardinality ? doc.tokenLocation(key)?.visible : item && doc.visible(item.line.key);
-            return item && visible ? pathAt(doc, key) : null;
-        };
-        const anchor = resolve(range.anchor), focus = resolve(range.focus);
-        return anchor && focus ? {anchor, focus} : null;
-    }
+    capture(range: ModelRange | null): AnchoredRange | null { return this.editing.capture(range); }
+    resolve(range: AnchoredRange | null): ModelRange | null { return this.editing.resolve(range); }
 }
 
 /** Prefer semantic split/merge when a model transition has that exact meaning. */
@@ -126,39 +95,7 @@ export function modelEdits(schema: Schema, before: NodeJSON, after: NodeJSON): E
     return visit(before, after, []) ?? diffModels(schema, before, after);
 }
 
-/** Model diffs count code points; Doc.edit consumes UTF-16 token offsets. */
-export function commitModelEdits(doc: Doc, before: NodeJSON, edits: EditOp[]): Op[] {
-    const work = structuredClone(before);
-    const mapped: EditOp[] = [];
-    for (const edit of edits) {
-        let parent: NodeJSON | undefined = work;
-        for (const index of edit.at.slice(0, -1)) parent = parent?.children?.[index];
-        let next = edit;
-        const target = edit.at.length ? parent?.children?.[edit.at.at(-1)!] : work;
-        if (edit.op === "update" && target && doc.schema!.nodes[target.type]?.shape === "cell") {
-            const attrs = {...edit.attrs};
-            if (attrs.rowspan === null) attrs.rowspan = 1;
-            if (attrs.colspan === null) attrs.colspan = 1;
-            next = {...edit, attrs};
-        }
-        if (parent?.runs && edit.op !== "merge") {
-            const units = runsToUnits(doc.schema!, parent.runs);
-            const size = (from: number, count: number) => units.slice(from, from + count).reduce((sum, unit) => sum + ("ch" in unit ? unit.ch.length : 1), 0);
-            const start = edit.at.at(-1)!;
-            next = {...edit, at: [...edit.at.slice(0, -1), size(0, start)]};
-            if (next.op === "delete" && edit.op === "delete") next.count = size(start, edit.count);
-            if (next.op === "update" && edit.op === "update" && edit.length !== undefined) next.length = size(start, edit.length);
-        }
-        mapped.push(next);
-        applyEdit(doc.schema!, work, edit);
-    }
-    // Validate movement batches on a disposable replica before changing live state.
-    // Native editors can normalize several operations in one update.
-    if (mapped.some(edit => edit.op === "move")) {
-        Doc.fromSnapshot(doc.clock.actor, doc.snapshot(), doc.schema).edit(mapped);
-    }
-    return doc.edit(mapped).ops;
-}
+export {commitModelEdits} from "../engine/editing.ts";
 
 type Observer = {
     beforeEvent?: NonNullable<SyncClient["onEvent"]>;
